@@ -49,7 +49,7 @@ Many new languages, frameworks and transpilers have arisen in order to hide the 
 
 ### SagaScript's Origins
 
-SagaScript started out as a holiday project in tinkering with language grammars and writing documentation. The language started out as TypeScript with the semantics of Python, and over the months has pulled many influences from other languages such as Ruby, Elixir, Clojure, LiveScript, Haskell, OCaml, Go, Scala, Flix, Bash and YAML.
+SagaScript started out as a holiday project in tinkering with language grammars and writing documentation. The language started out as TypeScript with the semantics of Python, and over the months has pulled many influences from other languages such as Ruby, Elixir, Clojure, LiveScript, Haskell, OCaml, Go, Scala, Swift, Flix, Bash and YAML.
 
 SagaScript aims to compile to two languages: JavaScript and WebAssembly, both readable, boilerplate-free and performance-optimized. SagaScript's library will be implemented completely in JS, which means you can inter-mix SagaScript code with regular JS or TypeScript through Babel, call SagaScript code from JavaScript, and even use SagaScript's APIs from within vanilla JS.
 
