@@ -185,8 +185,8 @@ SagaScript has a core library implemented in JavaScript that contains types, dat
 #### Syntax
 
 - Saga is a whitespace-sensitive language, which means that whitespace has a significant effect on the meaning of your code.
-- Use indentation to delimit blocks of code. This includes functions, classes, other declarations, or control flow statements such as `if`, `for` or `try`.
-- You don't need to use semicolons to terminate expressions, ending the line would do just fine. Semicolons can still be used to separate expressions on the same line, however.
+- Use indentation to delimit blocks of code. You can also use curly braces for compactness if you so wish to (inspired by YAML)
+- You can use semicolons to separate statements, or commas to separate individual elements in an array or pairs in a map. 
 - You won't need to use commas to separate individual elements in an array, parameters in a function call or pairs in a map, when you can use new-lines instead. 
 
 #### Variables
