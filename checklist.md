@@ -120,13 +120,17 @@ Additionally, your marketing has the following problems:
 - [x] Unsupported claims of increased productivity
 - [x] Unsupported claims of greater "ease of use"
 - [ ] Obviously rigged benchmarks
-- [ ] Graphics, simulation, or crypto benchmarks where your code - just calls
-- handwritten assembly through your FFI
+- [ ] Graphics, simulation, or crypto benchmarks where your code just calls handwritten assembly through your FFI
 - [ ] String-processing benchmarks where you just call PCRE
 - [ ] Matrix-math benchmarks where you just call BLAS
 - [ ] Noone really believes that your language is faster than:
-- [ ] assembly [ ] C [ ] FORTRAN [ ] Java [ ] Ruby [ ] Prolog
-- [ ] Rejection of orthodox programming-language theory without - justification
+- [ ] assembly 
+  - [ ] C 
+  - [ ] FORTRAN 
+  - [ ] Java
+  - [ ] Ruby 
+  - [ ] Prolog
+- [ ] Rejection of orthodox programming-language theory without justification
 - [ ] Rejection of orthodox systems programming without justification
 - [ ] Rejection of orthodox algorithmic theory without justification
 - [ ] Rejection of basic computer science without justification
