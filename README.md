@@ -124,6 +124,8 @@ SagaScript has a core library implemented in JavaScript that contains types, dat
 
 ## Updates (Grammar)
 
+- **Features** 
+  - 
 - **To-Do:**
   - Add support to the first set of embedded languages:
     - YAML
