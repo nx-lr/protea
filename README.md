@@ -1,5 +1,3 @@
-# sagascript
-An in-progress Pythonic programming language.
 # SagaScript
 
 > Yet another JavaScript-like language with a Pythonic syntax.
