@@ -21,6 +21,7 @@ You appear to be advocating a new...
 ...programming language. Your language will not work. Here is why it will not work.
 
 You appear to believe that:
+
 - [x] Syntax is what makes programming difficult
 - [x] Garbage collection is free 
 - [x] Computers have infinite memory
@@ -40,37 +41,37 @@ You appear to believe that:
 - [ ] "Spooky action at a distance" makes programming more fun
 
 Unfortunately, your language (has/lacks):
-- [h] comprehensible syntax 
-- [h] semicolons 
-- [h] significant whitespace 
+
+- [x] comprehensible syntax 
+- [x] semicolons 
+- [x] significant whitespace 
 - [ ] macros
 - [ ] implicit type conversion 
-- [h] explicit casting 
-- [h] type inference
+- [x] explicit casting 
+- [x] type inference
 - [ ] goto 
-- [h] exceptions 
-- [h] closures 
-- [h] tail recursion 
-- [h] coroutines
+- [x] exceptions 
+- [x] closures 
+- [x] tail recursion 
+- [x] coroutines
 - [ ] reflection 
-- [h] subtyping 
-- [h] multiple inheritance 
-- [h] operator overloading
-- [h] algebraic datatypes 
-- [h] recursive types 
-- [h] polymorphic types
+- [x] subtyping 
+- [x] multiple inheritance 
+- [x] operator overloading
+- [x] algebraic datatypes 
+- [x] recursive types 
+- [x] polymorphic types
 - [ ] covariant array typing 
-- [h] monads 
+- [x] monads 
 - [ ] dependent types
-- [h] infix operators 
-- [h] nested comments 
-- [h] multi-line strings
-- [h] regexes
-- [h] call-by-value 
-- [h] call-by-name 
+- [x] infix operators 
+- [x] nested comments 
+- [x] multi-line strings
+- [x] regexes
+- [x] call-by-value 
+- [x] call-by-name 
 - [ ] call-by-reference
 - [ ] call-cc
-
 
 The following philosophical objections apply:
 
@@ -96,6 +97,7 @@ The following philosophical objections apply:
 - [x] Hindley-Milner type inference takes exponential time
 
 Your implementation has the following flaws:
+
 - [x] CPUs do not work that way
 - [x] RAM does not work that way
 - [ ] VMs do not work that way
@@ -114,8 +116,9 @@ Your implementation has the following flaws:
 - [ ] You don't seem to understand functions
 
 Additionally, your marketing has the following problems:
-- [h] Unsupported claims of increased productivity
-- [h] Unsupported claims of greater "ease of use"
+
+- [x] Unsupported claims of increased productivity
+- [x] Unsupported claims of greater "ease of use"
 - [ ] Obviously rigged benchmarks
 - [ ] Graphics, simulation, or crypto benchmarks where your code - just calls
 - handwritten assembly through your FFI
@@ -129,12 +132,13 @@ Additionally, your marketing has the following problems:
 - [ ] Rejection of basic computer science without justification
 
 Taking the wider ecosystem into account, I would like to note that:
+
 - [x] Your complex sample code would be one line in: Haskell, Prolog, Scala, ...
 - [ ] We already have an unsafe imperative language
 - [ ] We already have a safe imperative OO language
 - [x] We already have a safe statically-typed eager functional language
 - [ ] You have reinvented Lisp but worse
-- [ ] You have reinvented Javascript but worse
+- [ ] You have reinvented JavaScript but worse
 - [ ] You have reinvented Java but worse
 - [ ] You have reinvented C++ but worse
 - [ ] You have reinvented PHP but worse
@@ -142,6 +146,7 @@ Taking the wider ecosystem into account, I would like to note that:
 - [ ] You have reinvented Brainfuck but non-ironically
 
 In conclusion, this is what I think of you:
+
 - [x] You have some interesting ideas, but this won't fly.
 - [ ] This is a bad language, and you should feel bad for inventing it.
 - [ ] Programming in this language is an adequate punishment for inventing it.
