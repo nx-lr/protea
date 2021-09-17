@@ -125,7 +125,43 @@ SagaScript has a core library implemented in JavaScript that contains types, dat
 ## Updates (Grammar)
 
 - **Features** 
-  - 
+  - Full support for OOP and FP
+  - Extensible classes
+  - First-class functions
+  - Comprehensive standard library
+  - "Everything is an expression"
+  - Static typing, dynamic feel
+  - Algebraic data types
+  - Pattern matching
+  - JavaScript interop
+  - WebAssembly compilation (near future)
+  - Python-inspired syntax
+  - Keyword-based syntax*
+  - Custom numeric literals
+  - Custom operators
+  - Extended string/list slicing
+  - Query expressions
+  - Sequential types and generators 
+  - Asynchrony support
+  - Unquoted/raw strings
+  - PCRE-compliant regular expressions*
+  - Pure `func` and impure `proc`
+  - Type constraints and combinators
+  - Embedded language support
+    - HTML, CSS, JS, JSON, YAML, TOML, HAML, Pug, Markdown, SASS, SCSS, LESS, Stylus, CoffeeScript, LiveScript
+  - Immutable data structures
+  - Private/immutable by default
+  - First-class concurrency
+  - Extensible type classes & records
+  - Higher-kinded types
+  - Type inference
+  - Opaque types/type aliases
+  - Human friendly errors (near future)
+  - Interactive mode (near future)
+  - Redundancy checks
+  - full tail call elimination
+  - Tree-shaking (near future)
+
 - **To-Do:**
   - Add support to the first set of embedded languages:
     - YAML
@@ -149,22 +185,14 @@ SagaScript has a core library implemented in JavaScript that contains types, dat
 #### Syntax
 
 - Saga is a whitespace-sensitive language, which means that whitespace has a significant effect on the meaning of your code.
-
 - Use indentation to delimit blocks of code. This includes functions, classes, other declarations, or control flow statements such as `if`, `for` or `try`.
-
 - You don't need to use semicolons to terminate expressions, ending the line would do just fine. Semicolons can still be used to separate expressions on the same line, however.
-
-- You won't need to use commas to separate individual elements in an array, function call or object, when you can just use 
-
+- You won't need to use commas to separate individual elements in an array, parameters in a function call or pairs in a map, when you can use new-lines instead. 
 
 #### Variables
 
-- [Update] Variable highlighting has been fixed. Previously, variables greater than 15 chars in length would not highlight.
-
 - Variables must begin with a letter (`L` or `Nl`) or the underscore character `_`. Further characters can include digits and combining marks.
-
 - Only the underscore character is considered a "letter". `#`, `\`, `;`, `,` and all opening or closing brackets (Unicode categories `Ps` or `Pe`) are considered punctuation.
-
 - Revamped function or method call syntax. Two or more identifiers in a row, such as `f x y z`, are now parsed as `f(x(y(z)))`. Like JavaScript, function calls are still evaluated first.
 - Clauses end with `:`, `->`, `then`, `begin` or `do`.
 
