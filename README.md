@@ -34,7 +34,7 @@ export default function* fib<N extends Int>(...start: N[], term: N): N {
   } else {
     throw new Error("Invalid term in Fibonacci sequence");
   }
-};
+}
 ```
 
 ## Introduction
@@ -49,7 +49,13 @@ Many new languages, frameworks and transpilers have arisen in order to hide the 
 
 ### SagaScript's Origins
 
-SagaScript started out as a holiday project in tinkering with language grammars and writing documentation. The language started out as TypeScript with the semantics of Python, and over the months has pulled many influences from other languages such as Ruby, Elixir, Clojure, LiveScript, Haskell, OCaml, Go, Scala, Swift, Flix, Bash and YAML.
+SagaScript started out as a holiday project in tinkering with language grammars and writing documentation. The language started out as TypeScript with the semantics of Python, and over the months has pulled many influences from other languages.
+
+SagaScript is heavily influenced by other modern languages, either through syntax or the standard library (in descending influence):
+
+```txt
+Nim, Python, Swift, Scala, Go, Rust, TypeScript, Elixir, F#, OCaml, CoffeeScript, Haskell, Flix, C#, Kotlin, LiveScript, Bash, Smalltalk, YAML, Elm, Ada, Erlang, PureScript, Java.
+```
 
 SagaScript aims to compile to two languages: JavaScript and WebAssembly, both readable, boilerplate-free and performance-optimized. SagaScript's library will be implemented completely in JS, which means you can inter-mix SagaScript code with regular JS or TypeScript through Babel, call SagaScript code from JavaScript, and even use SagaScript's APIs from within vanilla JS.
 
@@ -122,7 +128,8 @@ SagaScript has a core library implemented in JavaScript that contains types, dat
 
 ## Updates (Grammar)
 
-- **Features** 
+- **Features**
+
   - Full support for OOP and FP
   - Extensible classes
   - First-class functions
@@ -134,15 +141,15 @@ SagaScript has a core library implemented in JavaScript that contains types, dat
   - JavaScript interop
   - WebAssembly compilation (near future)
   - Python-inspired syntax
-  - Keyword-based syntax*
+  - Keyword-based syntax\*
   - Custom numeric literals
   - Custom operators
   - Extended string/list slicing
   - Query expressions
-  - Sequential types and generators 
+  - Sequential types and generators
   - Asynchrony support
   - Unquoted/raw strings
-  - PCRE-compliant regular expressions*
+  - PCRE-compliant regular expressions\*
   - Pure `func` and impure `proc`
   - Type constraints and combinators
   - Embedded language support
@@ -388,4 +395,3 @@ This would only be a textual overview of the Saga programming language, as the g
 - [CLI Reference](#)
 
 </td></tr></table>
-
