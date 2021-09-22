@@ -2328,12 +2328,11 @@ repository:
           4: {name: keyword.operator.accessor.sa}
           5: {name: support.type.builtin.class.sa}
 
-  modifiers-raw:
-    comment: Modifier keywords only activate when they are next to a declaration.
+  modifier-keywords:
     match: |
-      (?x)\s*\b
-      (
-      (?:\s*\b
+      (?x)
+      ((?:
+      (?<![!?~]\.=|(?<!\.)\.=|[!?~]\.|(?<!\.)\.|[?!:]:|->)\s*(?:
       (?:# Access modifiers
       pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
       |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
@@ -2343,9 +2342,13 @@ repository:
       |# Function or method modifiers
       (?:pre|in|post|suf|af|trans|inter)fix|
       (?:u|bi|ter|)nary|oper
+      |@(?:
+      [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+      (?:(?:[?!~]?\.|[?!:]:|->)
+      (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
       )
-      \b\s*)*
-      )
+      ))
+      \s*)*)
       (?=\s*\b
       (?:
       def|func?|fn|macro|proc|sub
@@ -2369,28 +2372,36 @@ repository:
       )\b
       )
     captures:
-      1: {patterns: [{include: "#modifiers-raw"}]}
-
-  modifier-keywords:
-    match: |
-      (?x)(?<![!?~]\.=|(?<!\.)\.=|[!?~]\.|(?<!\.)\.|[?!:]:|->)\s*\b(?:
-      (# Access modifiers
-      pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
-      |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
-      )|
-      (# Function or method modifiers
-      [gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
-      |(?:un)?(?:sign|safe|check|lock|fixed|size)
-      )|
-      (# Property modifiers
-      (?:pre|in|post|suf|af|trans|inter)fix|
-      (?:u|bi|ter|)nary|oper
-      )
-      )\b\s*
-    captures:
-      1: {name: storage.modifier.sa}
-      2: {name: storage.type.accessor.sa}
-      3: {name: storage.type.property.sa}
+      1:
+        patterns:
+          - match: |
+              (?x)\s*@(?:
+              [_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*
+              (?:(?:[?!~]?\.|[?!:]:|->)
+              (?:(?:[_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)))*
+              )\s*
+            name: entity.name.class.decorator.sa
+          - match: |
+              (?x)\s*
+              (?<![!?~]\.=|(?<!\.)\.=|[!?~]\.|(?<!\.)\.|[?!:]:|->)\b
+              (?:
+              (# Access modifiers
+              pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
+              |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
+              )|
+              (# Function or method modifiers
+              [gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
+              |(?:un)?(?:sign|safe|check|lock|fixed|size)
+              )|
+              (# Property modifiers
+              (?:pre|in|post|suf|af|trans|inter)fix|
+              (?:u|bi|ter|)nary|oper
+              )
+              )\b\s*
+            captures:
+              1: {name: storage.modifier.sa}
+              2: {name: storage.type.accessor.sa}
+              3: {name: storage.type.property.sa}
 
   support:
     patterns:
