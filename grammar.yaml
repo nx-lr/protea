@@ -2881,7 +2881,12 @@ repository:
 
       arguments-clause:
         patterns:
-          - begin: (?<=(?:[\p{ps}]\|?|\b(?:do|redo|def|func?|fn|macro|proc|sub)\b)\s*)(\|)(?=[\w\s])
+          - begin: |
+              (?x)
+              (?<=(?:[\p{ps}]\|?|\b(?:do|redo|def|func?|fn|macro|proc|sub)\b)\s*)
+
+              (\|)
+              (?!\|)
             captures:
               1: {name: punctuation.separator.arguments.sa}
             end: (?<!\|)(\|)(?!\|)
@@ -2923,7 +2928,7 @@ repository:
 
               )\s*
               (\|)
-              (?=[\w\s])
+              (?!\|)
             end: (?<!\|)(\|)(?!\|)
             beginCaptures:
               1:
@@ -3005,7 +3010,7 @@ repository:
 
               )\s*
               (\|)
-              (?=[\w\s])
+              (?!\|)
             end: (?<!\|)(\|)(?!\|)
             beginCaptures:
               1:
