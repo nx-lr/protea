@@ -73,7 +73,7 @@ define:
     # Extended-POSIX
     |symbol|open|close|dash|link|start|final|math|money
     |number|letter|title|mark|modify
-    |binary|quater|senary|octal|decim|dozen|hexa
+    |bin|qua|sen|oct|dec|doz|hex
     )
 
 repository:
@@ -92,9 +92,6 @@ repository:
       - include: "#calls"
       - include: "#variables"
       - include: "#illegal"
-      - include: source.ruby
-      - include: source.python
-      - include: source.fsharp
 
   illegal:
     patterns:
@@ -107,50 +104,20 @@ repository:
       - match: '\S+?'
         name: invalid.illegal.syntax.sa
 
-  clause-content:
-    patterns:
-      - include: "#embedded-langs"
-      - include: "#declarations"
-      - include: "#clauses"
-      - include: "#keywords"
-      - include: "#comments"
-      - include: "#brackets"
-      - include: "#punctuation"
-      - include: "#type-annotation"
-      - include: "#operators"
-      - include: "#literals"
-      - include: "#calls"
-      - include: "#variables"
-      - include: "#illegal"
-
   entities:
     patterns:
       - include: "#function-names"
       - include: "#constant-names"
       - include: "#type-names"
+      - include: "#variable-names"
 
-  function-names:
-    comment: Names for built-in functions
-    patterns: []
-
-  method-names:
-    comment: Names for static and instance methods
-    patterns: []
-
-  constant-names:
-    comment: Names for constants, symbols and static properties
-    patterns: []
-
-  variable-names:
-    comment: Standard Library variable names
-    patterns: []
-
-  property-names:
-    comment: Standard Library property names
-    patterns: []
+  class-names:
+    comment: Names for built-in classes
+    patterns:
+      - comment:
 
   type-names:
-    comment: Names for types and more
+    comment: Names for built-in types
     patterns:
       - comment: primitive data types
         match: |
@@ -185,7 +152,7 @@ repository:
       - comment: built-in primitive type classes
         match: |
           (?x)\s*\b(
-          True|False|Nil|Null|Void|NaN|Infin
+          True|Yes|On|False|No|Off|Null|Nil|None|Undef|Void|NaN|Inf|Infin
           |Any|Empty|Object|Record|Unit|Mixed
           |Array|Tuple|(?:Mut)?(?:List|Set|Map)|Dict|Seq|Gen|Range
           )\b
@@ -199,6 +166,38 @@ repository:
       - comment: error classes (ending with Error)
         match: (?x)\s*\b(((\p{lu}\p{ll}*)+)Error)\b
         name: support.class.error.sa
+      - include: "#function-names"
+
+  function-names:
+    comment: Names for built-in functions
+    patterns: []
+
+  constant-names:
+    comment: Names for constants, symbols and static properties
+    patterns: []
+
+  variable-names:
+    comment: Standard Library variable names
+    patterns: []
+
+  property-names:
+    comment: Standard Library property names
+    patterns: []
+
+  clause-content:
+    patterns:
+      - include: "#embedded-langs"
+      - include: "#declarations"
+      - include: "#clauses"
+      - include: "#keywords"
+      - include: "#comments"
+      - include: "#brackets"
+      - include: "#punctuation"
+      - include: "#operators"
+      - include: "#literals"
+      - include: "#calls"
+      - include: "#variables"
+      - include: "#illegal"
 
   literals:
     patterns:
@@ -612,7 +611,7 @@ repository:
 
   embedded:
     patterns:
-      - match: (\$)(\d+)
+      - match: (\#)(\d+)
         captures:
           1: {name: punctuation.quasi.element.sa}
           2: {name: constant.numeric.decimal.sa}
@@ -623,7 +622,7 @@ repository:
       - match: |
           (?xi)
           #(?<!\\)# no backslash
-          (\$)# prefix
+          (\#)# prefix
           (
           [_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*
           (?:(?:[?!~]?\.|[?!:]:|->)
@@ -632,7 +631,7 @@ repository:
         captures:
           1: {name: punctuation.quasi.element.sa}
           2: {patterns: [{include: "#core"}]}
-      - begin: (?#?<!\\)(\${)\s*
+      - begin: (?#?<!\\)(\#{)\s*
         end: (})
         name: entity.quasi.element.sa
         captures:
@@ -642,11 +641,11 @@ repository:
 
   embedded-raw:
     patterns:
-      - match: (\$)(\d+)
+      - match: (\#)(\d+)
         captures:
           1: {name: punctuation.quasi.element.sa}
           2: {name: constant.numeric.decimal.sa}
-      - match: ([$%]){2}
+      - match: ([#%]){2}
         name: constant.character.escape.sa
       - match: (%)((['"\`])(?:\\\g<-1>|.)*?\g<-1>|\w+(?:[^\s'"\`]+\w+)*)
         captures:
@@ -654,8 +653,8 @@ repository:
           2: {name: storage.type.format.sa}
       - match: |
           (?xi)
-          (?<!\$)# no dollar
-          (\$)# prefix
+          (?<!\#)# no dollar
+          (\#)# prefix
           (
           [_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*
           (?:(?:[?!~]?\.|[?!:]:|->)
@@ -664,7 +663,7 @@ repository:
         captures:
           1: {name: punctuation.quasi.element.sa}
           2: {patterns: [{include: "#core"}]}
-      - begin: (?<!\$)(\${)\s*
+      - begin: (?<!\#)(\#{)\s*
         end: (})
         name: entity.quasi.element.sa
         captures:
@@ -675,7 +674,7 @@ repository:
   symbols:
     match: |
       (?x)
-      \s*\b
+      \s*
       (:)((?:\w|\\.)(?:\\.|[^\s,:;])*?)
       \b\s*
     name: meta.symbol.sa
@@ -1507,7 +1506,7 @@ repository:
           |module|nspace|object|record|label
           |raw|data|query|schema|style|trait|alias|type
           |if|else|elif|eless|unless|guard
-          |for|each|while|until|repeat|do|redo
+          |for|each|while|until|repeat
           |switch|case|fail|default|match|when|pass|fallthru
           |try|retry|throw|raise|catch|rescue|finally
           |with|ref|defer|refer|show|hide|enter|exit
@@ -2345,7 +2344,7 @@ repository:
       - include: "#type-operators"
       - include: "#type-brackets"
 
-      - match: \s*(=+>|-+>)\s*
+      - match: \s*([~=]>)\s*
         name: storage.type.function.arrow.sa
 
       - match: (?!^)\s*\b((?>WeakSet|WeakMap|URIError|Uint8ClampedArray|Uint8Array|Uint32Array|Uint16Array|TypeError|TypedArray|SyntaxError|Symbol|strings|SIMD.Uint8x16|SIMD.Uint32x4|SIMD.Uint16x8|SIMD.Int8x16|SIMD.Int32x4|SIMD.Int16x8|SIMD.Float64x2|SIMD.Float32x4|SIMD.Bool8x16|SIMD.Bool64x2|SIMD.Bool32x4|SIMD.Bool16x8|SIMD|SharedArrayBuffer|Set|RegExp|Reflect|ReferenceError|RangeError|Proxy|Promise|Object|numbers|NaN|Math|Map|JSON|Intl.NumberFormat|Intl.DateTimeFormat|Intl.Collator|Intl|InternalError|Int8Array|Int32Array|Int16Array|Infinity|GeneratorFunction|Generator|Function|Float64Array|Float32Array|EvalError|Error|Date|DataView|Boolean|Atomics|ArrayBuffer|Array))\b
@@ -3459,6 +3458,7 @@ repository:
       - include: "#raw-html"
       - include: "#raw-javascript"
       - include: "#raw-typescript"
+      - include: "#raw-other"
 
     repository:
       raw-yaml:
@@ -3668,7 +3668,7 @@ repository:
       raw-stylus:
         begin: \s*\b(raw)\b\s*\b((?i:styl|stylus))\b\s*(?:(:?=)|(:))?\s*
         end: ^(?=\S)|(?!\G)
-        name: meta.embedded.haml.sa
+        name: meta.embedded.stylus.sa
         beginCaptures:
           1: {name: storage.type.raw.sa}
           2: {name: entity.name.raw.sa}
@@ -3681,6 +3681,22 @@ repository:
             patterns:
               - include: "#embedded-raw"
               - include: "#embedded-stylus"
+          - include: $self
+      raw-other:
+        begin: \s*\b(raw)\b\s*\b([_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\b\s*(?:(:?=)|(:))?\s*
+        end: ^(?=\S)|(?!\G)
+        name: meta.embedded.other.sa
+        beginCaptures:
+          1: {name: storage.type.raw.sa}
+          2: {name: entity.name.raw.sa}
+          3: {name: keyword.operator.assignment.sa}
+          4: {name: punctuation.separator.colon.sa}
+        patterns:
+          - begin: ^((\p{zs})+)(?!\2)
+            end: ^(?!\1|\s*$)
+            name: string.unquoted.plain.in.sa
+            patterns:
+              - include: "#embedded-raw"
           - include: $self
 
   embedded-haml:
