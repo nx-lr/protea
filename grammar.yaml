@@ -80,8 +80,8 @@ repository:
   core:
     patterns:
       - include: "#embedded-langs"
-      - include: "#declarations"
       - include: "#clauses"
+      - include: "#declarations"
       - include: "#keywords"
       - include: "#comments"
       - include: "#brackets"
@@ -166,11 +166,188 @@ repository:
       - comment: error classes (ending with Error)
         match: (?x)\s*\b(((\p{lu}\p{ll}*)+)Error)\b
         name: support.class.error.sa
-      - include: "#function-names"
 
   function-names:
-    comment: Names for built-in functions
-    patterns: []
+    comment: Names for built-in functions (initial dump)
+    patterns:
+      - match: \s*\b(shift|sort|splice|unshift|pop|push|reverse)\b
+        name: support.function.mutator.nyx}
+      - match: \s*\b(decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|escape|eval|isFinite|isNaN|parseFloat|parseInt|unescape)\b
+        name: support.function.nyx
+      - match: \s*\b(add|append|at|average|chunk|clone|compact|concat|construct|copyWithin|count|create|difference|differenceBy|differenceWith|drop|dropRight|dropRightWhile|dropWhile|entries|every|exclude|fill|filter|find|findIndex|findLastIndex|first|flat|flatMap|flatten|flattenDeep|flattenDepth|fnFromIndex|forEach|from|fromPairs|groupBy|head|includes|indexOf|inGroups|inGroupsOf|initial|insert|intersect|intersection|intersectionBy|intersectionWith|isArray|isEmpty|isEqual|join|keys|last|lastIndexOf|least|map|max|median|min|most|none|nth|object|of|pop|pull|pullAll|pullAllBy|pullAllWith|pullAt|push|range|reduce|reduceRight|remove|removeAt|rest|reverse|sample|shift|shuffle|slice|some|sort|sortBy|sortedIndex|sortedIndexBy|sortedIndexOf|sortedLastIndex|sortedLastIndexBy|sortedLastIndexOf|sortedUniq|sortedUniqBy|splice|subtract|sum|tail|take|takeRight|takeRightWhile|takeWhile|to|toLocaleString|toSource|toString|union|unionBy|unionWith|uniq|uniqBy|unique|uniqWith|unshift|unzip|unzipWith|values|without|xor|xorBy|xorWith|zip|zipObject|zipObjectDeep|zipWith)\b
+        name: support.function.method.array.nyx
+      - match: \s*\b(add|and|clamp|clone|compareExchange|contains|dateUnit|every|exchange|intersect|isLockFree|isValid|load|notify|or|span|store|sub|toArray|toString|union|wait|xor)\b
+        name: support.function.method.atomics.nyx
+      - match: \s*\b(asIntN|asUintN|toLocaleString|toString|valueOf)\b
+        name: support.function.method.bigint.nyx
+      - match: \s*\b(toSource|toString|valueOf)\b
+        name: support.function.method.boolean.nyx
+      - match: \s*\b(contains|countBy|each|eachRight|every|filter|find|findLast|findWhere|flatMap|flatMapDeep|flatMapDepth|forEach|forEachRight|groupBy|includes|indexBy|invoke|invokeMap|keyBy|map|max|min|orderBy|partition|pluck|reduce|reduceRight|reject|sample|sampleSize|shuffle|size|some|sortBy|toArray|where)\b
+        name: support.function.method.collection.nyx
+      - match: \s*\b(getBigInt64|getBigUint64|getFloat32|getFloat64|getInt16|getInt32|getInt8|getUint16|getUint32|getUint8|setBigInt64|setBigUint64|setFloat32|setFloat64|setInt16|setInt32|setInt8|setUint16|setUint32|setUint8)\b
+        name: support.function.method.dataview.nyx
+      - match: \s*\b(addLocale|addUnits|advance|beginningOfISOWeek|beginningOfUnit|clone|create|daysInMonth|endOfISOWeek|endOfUnit|format|full|get|getAllLocaleCodes|getAllLocales|getDate|getDay|getFullYear|getHours|getISOWeek|getLocale|getMilliseconds|getMinutes|getMonth|getOption|getSeconds|getTime|getTimezoneOffset|getUTCDate|getUTCDay|getUTCFullYear|getUTCHours|getUTCMilliseconds|getUTCMinutes|getUTCMonth|getUTCOffset|getUTCSeconds|getUTCWeekday|getWeekday|getYear|is|isAfter|isBefore|isBetween|isDay|isFuture|isLastUnit|isLeapYear|isNextUnit|iso|isPast|isThisUnit|isUTC|isValid|long|medium|now|parse|range|relative|relativeTo|removeLocale|reset|rewind|set|setDate|setFullYear|setHours|setISOWeek|setLocale|setMilliseconds|setMinutes|setMonth|setOption|setSeconds|setTime|setUTC|setUTCDate|setUTCFullYear|setUTCHours|setUTCMilliseconds|setUTCMinutes|setUTCMonth|setUTCSeconds|setWeekday|setYear|short|toDateString|toGMTString|toISOString|toJSON|toLocaleDateString|toLocaleString|toLocaleTimeString|toSource|toString|toTimeString|toUTCString|unitsAgo|unitsFromNow|unitsSince|unitsUntil|UTC|valueOf|add|closestIndexTo|closestTo|compareAsc|compareDesc|format|formatDistance|formatDistanceStrict|formatDistanceToNow|formatDistanceToNowStrict|formatDuration|formatISO|formatISO9075|formatISODuration|formatRFC3339|formatRFC7231|formatRelative|intervalToDuration|intlFormat|isAfter|isBefore|isDate|isEqual|isExists|isFuture|isMatch|validates|isPast|isValid|lightFormat|max|min|parse|parseISO|parseJSON|set|sub|toDate|daysToWeeks|hoursToMilliseconds|hoursToMinutes|hoursToSeconds|millisecondsToHours|millisecondsToMinutes|millisecondsToSeconds|minutesToHours|minutesToMilliseconds|minutesToSeconds|monthsToQuarters|monthsToYears|quartersToMonths|quartersToYears|secondsToHours|secondsToMilliseconds|secondsToMinutes|weeksToDays|yearsToMonths|yearsToQuarters|areIntervalsOverlapping|clamp|eachDayOfInterval|eachHourOfInterval|eachMinuteOfInterval|eachMonthOfInterval|eachQuarterOfInterval|eachWeekOfInterval|eachWeekendOfInterval|eachYearOfInterval|getOverlappingDaysInIntervals|isWithinInterval|fromUnixTime|getTime|getUnixTime|addMilliseconds|differenceInMilliseconds|getMilliseconds|milliseconds|setMilliseconds|subMilliseconds|addSeconds|differenceInSeconds|endOfSecond|getSeconds|isSameSecond|isThisSecond|setSeconds|startOfSecond|subSeconds|addMinutes|differenceInMinutes|endOfMinute|getMinutes|isSameMinute|isThisMinute|roundToNearestMinutes|setMinutes|startOfMinute|subMinutes|addHours|differenceInHours|endOfHour|getHours|isSameHour|isThisHour|setHours|startOfHour|subHours|addBusinessDays|addDays|differenceInBusinessDays|differenceInCalendarDays|differenceInDays|endOfDay|endOfToday|endOfTomorrow|endOfYesterday|getDate|getDayOfYear|isSameDay|isToday|isTomorrow|isYesterday|setDate|setDayOfYear|startOfDay|startOfToday|startOfTomorrow|startOfYesterday|subBusinessDays|subDays|getDay|getISODay|isFriday|isMonday|isSaturday|isSunday|isThursday|isTuesday|isWednesday|isWeekend|nextDay|nextFriday|nextMonday|nextSaturday|nextSunday|nextThursday|nextTuesday|nextWednesday|previousDay|previousFriday|previousMonday|previousSaturday|previousSunday|previousThursday|previousTuesday|previousWednesday|setDay|setISODay|addWeeks|differenceInCalendarWeeks|differenceInWeeks|endOfWeek|getWeek|getWeekOfMonth|getWeeksInMonth|isSameWeek|isThisWeek|lastDayOfWeek|setWeek|startOfWeek|subWeeks|differenceInCalendarISOWeeks|endOfISOWeek|getISOWeek|isSameISOWeek|isThisISOWeek|lastDayOfISOWeek|setISOWeek|startOfISOWeek|addMonths|differenceInCalendarMonths|differenceInMonths|eachWeekendOfMonth|endOfMonth|getDaysInMonth|getMonth|isFirstDayOfMonth|isLastDayOfMonth|isSameMonth|isThisMonth|lastDayOfMonth|setMonth|startOfMonth|subMonths|addQuarters|differenceInCalendarQuarters|differenceInQuarters|endOfQuarter|getQuarter|isSameQuarter|isThisQuarter|lastDayOfQuarter|setQuarter|startOfQuarter|subQuarters|addYears|differenceInCalendarYears|differenceInYears|eachWeekendOfYear|endOfYear|getDaysInYear|getYear|isLeapYear|isSameYear|isThisYear|lastDayOfYear|setYear|startOfYear|subYears|addISOWeekYears|differenceInCalendarISOWeekYears|differenceInISOWeekYears|endOfISOWeekYear|getISOWeekYear|getISOWeeksInYear|isSameISOWeekYear|lastDayOfISOWeekYear|setISOWeekYear|startOfISOWeekYear|subISOWeekYears|endOfDecade|getDecade|lastDayOfDecade|startOfDecade|getWeekYear|setWeekYear|startOfWeekYear)\b
+        name: support.function.method.date.nyx
+      - match: \s*\b(__|add|addIndex|adjust|after|all|allpass|fail|always|and|andThen|any|anypass|fail|ap|aperture|append|apply|applySpec|applyTo|ary|ascend|assoc|assocPath|before|binary|bind|bindAll|bindKey|both|call|cancel|chain|clamp|clone|comparator|complement|compose|composeK|composeP|composeWith|concat|cond|construct|constructN|contains|converge|countBy|curry|curryN|curryRight|debounce|dec|defaultTo|defer|delay|descend|difference|differenceWith|dissoc|dissocPath|divide|drop|dropLast|dropLastWhile|dropRepeats|dropRepeatsWith|dropWhile|either|empty|endsWith|eqBy|eqProps|equals|every|evolve|F|filter|find|findIndex|findLast|findLastIndex|flatten|flip|forEach|forEachObjIndexed|fromPairs|groupBy|groupWith|gt|gte|has|hasIn|hasPath|head|identical|identity|ifElse|inc|includes|indexBy|indexOf|init|innerJoin|insert|insertAll|intersection|intersperse|into|invert|invertObj|invoker|is|isEmpty|isNil|join|juxt|keys|keysIn|last|lastIndexOf|lazy|length|lens|lensIndex|lensPath|lensProp|lift|liftN|lock|lt|lte|map|mapAccum|mapAccumRight|mapObjIndexed|match|mathMod|max|maxBy|mean|median|memoize|memoizeWith|merge|mergeAll|mergeDeepLeft|mergeDeepRight|mergeDeepWith|mergeDeepWithKey|mergeLeft|mergeRight|mergeWith|mergeWithKey|min|minBy|modulo|move|multiply|nAry|negate|none|not|nth|nthArg|o|objOf|of|omit|once|or|otherwise|over|overArgs|pair|partial|partialRight|partition|path|pathEq|pathOr|paths|pathSatisfies|pick|pickAll|pickBy|pipe|pipeK|pipeP|pipeWith|pluck|prepend|product|project|prop|propEq|propIs|propOr|props|propSatisfies|range|rearg|reduce|reduceBy|reduced|reduceRight|reduceWhile|reject|remove|repeat|replace|rest|restArguments|reverse|scan|sequence|set|slice|sort|sortBy|sortWith|split|splitAt|splitEvery|splitWhen|spread|startsWith|subtract|sum|symmetricDifference|symmetricDifferenceWith|T|tail|take|takeLast|takeLastWhile|takeWhile|tap|test|throttle|thunkify|times|toLower|toPairs|toPairsIn|toSource|toString|toUpper|transduce|transpose|traverse|trim|tryCatch|type|unapply|unary|uncurryN|unfold|union|unionWith|uniq|uniqBy|uniqWith|unless|unnest|until|update|useWith|values|valuesIn|view|when|where|whereEq|without|wrap|xor|xprod|zip|zipObj|zipWith)\b
+        name: support.function.method.function.nyx
+      - match: \s*\b(next|return|throw)\b
+        name: support.function.method.generator.nyx
+      - match: \s*\b(chain|parse|stringify|value)\b
+        name: support.function.method.json.nyx
+      - match: \s*\b(castArray|clone|cloneDeep|cloneDeepWith|cloneWith|conformsTo|eq|gt|gte|isArguments|isArray|isArrayBuffer|isArrayLike|isArrayLikeObject|isBoolean|isBuffer|isDate|isElement|isEmpty|isError|iSetual|iSetualWith|isFinite|isFunction|isInteger|isLength|isMap|isMatch|isMatchWith|isNaN|isNative|isNil|isNull|isNumber|isObject|isObjectLike|isPlainObject|isProxy|isRegExp|isSafeInteger|isSet|isString|isSymbol|isUndefined|isWeakMap|isWeakSet|lt|lte|toArray|toFinite|toInteger|toLength|toNumber|toPlainObject|toSafeInteger|toString)\b
+        name: support.function.method.lang.nyx
+      - match: \s*\b(clear|delete|entries|forEach|get|has|keys|set|values)\b
+        name: support.function.method.map.nyx
+      - match: \s*\b(abs|acos|acosh|acot|acoth|acsc|acsch|add|and|apply|arg|asec|asech|asin|asinh|atan|atan2|atanh|bellNumbers|bin|bitAnd|bitNot|bitOr|bitXor|catalan|cbrt|ceil|clone|clz32|column|combinations|combinationsWithRep|compare|compareNatural|compareText|compile|composition|concat|conj|cos|cosh|cot|coth|count|cross|csc|csch|ctranspose|cube|deepEqual|derivative|det|diag|diff|distance|divide|dot|dotDivide|dotMultiply|dotPow|eigs|equal|equalText|erf|evaluate|exp|expm|expm1|factorial|filter|fix|flatten|floor|forEach|format|fround|gamma|gcd|getMatrixDataType|hasNumericValue|help|hex|hypot|identity|im|imul|intersect|inv|isInteger|isNaN|isNegative|isNumeric|isPositive|isPrime|isZero|kldivergence|kron|larger|largerEq|lcm|leftShift|log|log10|log1p|log2|lsolve|lup|lusolve|mad|map|max|maxBy|mean|meanBy|median|min|minBy|mod|mode|multinomial|multiply|norm|not|nthRoot|nthRoots|numeric|oct|ones|or|parser|partitionSelect|permutations|pickRandom|pow|print|prod|qr|quantileSeq|random|randomInt|range|rationalize|re|reshape|resize|rightArithShift|rightLogShift|rotate|rotationMatrix|round|row|sec|sech|setCartesian|setDifference|setDistinct|setIntersect|setIsSubset|setMultiplicity|setPowerset|setSize|setSymDifference|setUnion|sign|simplify|sin|sinh|size|slu|smaller|smallerEq|sort|sqrt|sqrtm|square|squeeze|std|stirlingS2|subset|subtract|sum|sumBy|tan|tanh|to|trace|transpose|trunc|typeOf|unaryMinus|unaryPlus|unequal|usolve|variance|xgcd|xor|zeros)\b
+        name: support.function.method.math.nyx
+      - match: \s*\b(abbr|bytes|cap|ceil|chr|clamp|dateUnit|dateUnitAfter|dateUnitAgo|dateUnitBefore|dateUnitFromNow|downto|duration|floor|format|hex|inRange|isEven|isFinite|isInteger|isMultipleOf|isNaN|isOdd|isSafeInteger|log|math|metric|ordinalize|pad|parseFloat|parseInt|random|range|round|times|toExponential|toFixed|toLocaleString|toNumber|toPrecision|toSource|toString|upto|valueOf)\b
+        name: support.function.method.number.nyx
+      - match: \s*\b(__defineGetter__|__defineSetter__|__lookupGetter__|__lookupSetter__|add|addAll|allKeys|assign|assignIn|assignInWith|assignWith|at|average|clone|count|create|defaults|defaultsDeep|defineProperties|defineProperty|entries|entriesIn|every|exclude|extend|extendOwn|extendWith|filter|find|findKey|findLastKey|forEach|forIn|forInRight|forOwn|forOwnRight|freeze|fromEntries|fromQueryString|functions|functionsIn|get|getOwnPropertyDescriptor|getOwnPropertyDescriptors|getOwnPropertyNames|getOwnPropertySymbols|getPrototypeOf|has|hasIn|hasOwnProperty|intersect|invert|invertBy|invoke|is|isArguments|isArray|isArrayBuffer|isBoolean|isDataView|isDate|isElement|isEmpty|isEqual|isError|isExtensible|isFinite|isFrozen|isFunction|isMap|isMatch|isNaN|isNull|isNumber|isObject|isPrototypeOf|isRegExp|isSealed|isSet|isString|isSymbol|isType|isTypedArray|isUndefined|isWeakMap|isWeakSet|keys|keysIn|least|map|mapKeys|mapObject|mapValues|matcher|max|median|merge|mergeAll|mergeWith|min|most|none|omit|omitBy|pairs|pick|pickBy|preventExtensions|property|propertyIsEnumerable|propertyOf|reduce|reject|remove|result|seal|select|set|setPrototypeOf|setWith|size|some|subtract|sum|tap|toLocaleString|toPairs|toPairsIn|toPath|toQueryString|toSource|toString|transform|unset|update|updateWith|valueOf|values|valuesIn)\b
+        name: support.function.method.object.nyx
+      - match: \s*\b(all|allSettled|any|catch|finally|race|reject|resolve|then)\b
+        name: support.function.method.promise.nyx
+      - match: \s*\b(apply|construct|defineProperty|deleteProperty|get|getOwnPropertyDescriptor|getPrototypeOf|has|isExtensible|ownKeys|preventExtensions|register|set|setPrototypeOf|unregister)\b
+        name: support.function.method.proxy.nyx
+      - match: \s*\b(address|age|altitude|ampm|android_id|animal|apple_token|areacode|avatar|bb_pin|birthday|bool|capitalize|cc|cc_type|cf|character|city|coin|color|company|coordinates|country|cpf|currency|currency_pair|date|depth|dice|dollar|domain|email|euro|exp|exp_month|exp_year|falsy|fbid|first|floating|gender|geohash|google_analytics|guid|hammertime|hash|hashtag|hidden|hour|integer|ip|ipv6|klout|last|latitude|letter|locale|longitude|millisecond|minute|mixin|month|n|name|natural|normal|pad|paragraph|phone|pick|pickone|pickset|postal|postcode|prefix|prime|profession|province|radio|rpg|second|sentence|set|shuffle|ssn|state|street|string|suffix|syllable|timestamp|timezone|tld|tv|twitter|unique|url|weekday|weighted|word|wp7_anid|wp8_anid2|year|zip)\b
+        name: support.function.method.random.nyx
+      - match: \s*\b(addFlags|compile|escape|exec|getFlags|removeFlags|setFlags|test|toSource|toString)\b
+        name: support.function.method.regexp.nyx
+      - match: \s*\b(at|chain|commit|next|plant|prototype|reverse|tap|thru|toJSON|value|valueOf)\b
+        name: support.function.method.seq.nyx
+      - match: \s*\b(add|clear|delete|entries|forEach|has|values)\b
+        name: support.function.method.set.nyx
+      - match: \s*\b(addAcronym|addHuman|addPlural|anchor|at|big|blink|bold|camelCase|camelize|capitalize|chain|charAt|charCodeAt|chars|codePointAt|codePoints|codes|compact|concat|count|countGraphemes|countSubstrings|countWhere|countWords|dasherize|deburr|decapitalize|decodeBase64|encodeBase64|endsWith|escape|escapeHtml|escapeHTML|escapeRegExp|escapeURL|first|fixed|fontcolor|fontsize|forEach|format|from|fromCharCode|fromCodePoint|graphemeAt|graphemes|hankaku|hasScript|hiragana|humanize|includes|indexOf|insert|isAlpha|isAlphaDigit|isBlank|isDigit|isEmpty|isLowerCase|isNumeric|isScript|isString|isUpperCase|italics|katakana|kebabCase|last|lastIndexOf|latinise|lines|link|localeCompare|lowerCase|lowerFirst|match|matchAll|matches|normalize|pad|padEnd|padLeft|padRight|padStart|parameterize|parseInt|pluralize|prune|range|raw|remove|removeAll|removeTags|repeat|replace|replaceAll|reverse|reverseGrapheme|search|shift|singularize|slice|slugify|small|snakeCase|spacify|splice|split|sprintf|startCase|startsWith|strike|stripBom|stripTags|sub|substr|substring|sup|swapCase|template|thru|titleCase|titleize|to|toLocaleLowerCase|toLocaleUpperCase|toLower|toLowerCase|toNumber|toSource|toString|toUpper|toUpperCase|tr|trim|trimEnd|trimLeft|trimRight|trimStart|truncate|truncateOnWord|underscore|unescape|unescapeHtml|unescapeHTML|unescapeURL|upperCase|upperFirst|value|valueOf|vprintf|words|wordWrap|zenkaku)\b
+        name: support.function.method.string.nyx
+      - match: \s*\b(for|keyFor|toSource|toString|valueOf)\b
+        name: support.function.method.symbol.nyx
+      - match: \s*\b(at|copyWithin|entries|every|fill|filter|find|findIndex|forEach|from|includes|indexOf|join|keys|lastIndexOf|map|of|reduce|reduceRight|reverse|set|slice|some|sort|subarray|toLocaleString|toString|values)\b
+        name: support.function.method.typedarray.nyx
+      - match: \s*\b(attempt|bindAll|cond|conforms|constant|defaultTo|escape|flow|flowRight|identity|iteratee|matches|matchesProperty|method|methodOf|mixin|noConflict|noop|now|nthArg|over|overEvery|overSome|property|propertyOf|random|range|rangeRight|result|runInContext|stubArray|stubFalse|stubObject|stubString|stubTrue|template|times|toPath|unescape|uniqueId)\b
+        name: support.function.method.util.nyx
+      - match: \s*\b(compile|compileStreaming|instantiate|instantiateStreaming|validate)\b
+        name: support.function.method.webassembly.nyx
+      - match: \s*\b(on(?:Rowsinserted|Rowsdelete|Rowenter|Rowexit|Resize|Resizestart|Resizeend|Reset|Readystatechange|Mouseout|Mouseover|Mousedown|Mouseup|Mousemove|Before(?:cut|deactivate|unload|update|paste|print|editfocus|activate)|Blur|Scrolltop|Submit|Select|Selectstart|Selectionchange|Hover|Help|Change|Contextmenu|Controlselect|Cut|Cellchange|Clock|Close|Deactivate|Datasetchanged|Datasetcomplete|Dataavailable|Drop|Drag|Dragstart|Dragover|Dragdrop|Dragenter|Dragend|Dragleave|Dblclick|Unload|Paste|Propertychange|Error|Errorupdate|Keydown|Keyup|Keypress|Focus|Load|Activate|Afterupdate|Afterprint|Abort))\b
+        name: support.function.event-handler.nyx
+      - match: \s*\b(shift|showModelessDialog|showModalDialog|showHelp|scroll|scrollX|scrollByPages|scrollByLines|scrollY|scrollTo|stop|strike|sizeToContent|sidebar|signText|sort|sup|sub|substr|substring|splice|split|send|set(Milliseconds|Seconds|Minutes|Hours|Month|Year|FullYear|Date|UTC(Milliseconds|Seconds|Minutes|Hours|Month|FullYear|Date)|Time|Hotkeys|Cursor|ZOptions|Active|Resizable|RequestHeader)|search|slice|savePreferences|small|home|handleEvent|navigate|char|charCodeAt|charAt|concat|contextual|confirm|compile|clear|captureEvents|call|createStyleSheet|createPopup|createEventObject|to(GMTString|UTCString|String|Source|UpperCase|LowerCase|LocaleString)|test|taint|taintEnabled|indexOf|italics|disableExternalCapture|dump|detachEvent|unshift|untaint|unwatch|updateCommands|join|javaEnabled|pop|push|plugins.refresh|paddings|parse|print|prompt|preference|enableExternalCapture|exec|execScript|valueOf|UTC|find|file|fileModifiedDate|fileSize|fileCreatedDate|fileUpdatedDate|fixed|fontsize|fontcolor|forward|fromCharCode|watch|link|load|lastIndexOf|anchor|attachEvent|atob|apply|alert|abort|routeEvents|resize|resizeBy|resizeTo|recalc|returnValue|replace|reverse|reload|releaseCapture|releaseEvents|go|get(Milliseconds|Seconds|Minutes|Hours|Month|Day|Year|FullYear|Time|Date|TimezoneOffset|UTC(Milliseconds|Seconds|Minutes|Hours|Day|Month|FullYear|Date)|Attention|Selection|ResponseHeader|AllResponseHeaders)|moveBy|moveBelow|moveTo|moveToAbsolute|moveAbove|mergeAttributes|match|margins|btoa|big|bold|borderWidths|blink|back)\b
+        name: support.function.method.nyx
+      - match: \s*\b(acceptNode|add|addEventListener|addTextTrack|adoptNode|after|animate|append|appendChild|appendData|before|blur|canPlayType|captureStream|caretPositionFromPoint|caretRangeFromPoint|checkValidity|clear|click|cloneContents|cloneNode|cloneRange|close|closest|collapse|compareBoundaryPoints|compareDocumentPosition|comparePoint|contains|convertPointFromNode|convertQuadFromNode|convertRectFromNode|createAttribute|createAttributeNS|createCaption|createCDATASection|createComment|createContextualFragment|createDocument|createDocumentFragment|createDocumentType|createElement|createElementNS|createEntityReference|createEvent|createExpression|createHTMLDocument|createNodeIterator|createNSResolver|createProcessingInstruction|createRange|createShadowRoot|createTBody|createTextNode|createTFoot|createTHead|createTreeWalker|delete|deleteCaption|deleteCell|deleteContents|deleteData|deleteRow|deleteTFoot|deleteTHead|detach|disconnect|dispatchEvent|elementFromPoint|elementsFromPoint|enableStyleSheetsForSet|entries|evaluate|execCommand|exitFullscreen|exitPointerLock|expand|extractContents|fastSeek|firstChild|focus|forEach|get|getAll|getAnimations|getAttribute|getAttributeNames|getAttributeNode|getAttributeNodeNS|getAttributeNS|getBoundingClientRect|getBoxQuads|getClientRects|getContext|getDestinationInsertionPoints|getElementById|getElementsByClassName|getElementsByName|getElementsByTagName|getElementsByTagNameNS|getItem|getNamedItem|getSelection|getStartDate|getVideoPlaybackQuality|has|hasAttribute|hasAttributeNS|hasAttributes|hasChildNodes|hasFeature|hasFocus|importNode|initEvent|insertAdjacentElement|insertAdjacentHTML|insertAdjacentText|insertBefore|insertCell|insertData|insertNode|insertRow|intersectsNode|isDefaultNamespace|isEqualNode|isPointInRange|isSameNode|item|key|keys|lastChild|load|lookupNamespaceURI|lookupPrefix|matches|move|moveAttribute|moveAttributeNode|moveChild|moveNamedItem|namedItem|nextNode|nextSibling|normalize|observe|open|parentNode|pause|play|postMessage|prepend|preventDefault|previousNode|previousSibling|probablySupportsContext|queryCommandEnabled|queryCommandIndeterm|queryCommandState|queryCommandSupported|queryCommandValue|querySelector|querySelectorAll|registerContentHandler|registerElement|registerProtocolHandler|releaseCapture|releaseEvents|remove|removeAttribute|removeAttributeNode|removeAttributeNS|removeChild|removeEventListener|removeItem|replace|replaceChild|replaceData|replaceWith|reportValidity|requestFullscreen|requestPointerLock|reset|scroll|scrollBy|scrollIntoView|scrollTo|seekToNextFrame|select|selectNode|selectNodeContents|set|setAttribute|setAttributeNode|setAttributeNodeNS|setAttributeNS|setCapture|setCustomValidity|setEnd|setEndAfter|setEndBefore|setItem|setNamedItem|setRangeText|setSelectionRange|setSinkId|setStart|setStartAfter|setStartBefore|slice|splitText|stepDown|stepUp|stopImmediatePropagation|stopPropagation|submit|substringData|supports|surroundContents|takeRecords|terminate|toBlob|toDataURL|toggle|toString|values|write|writeln)\b
+        name: support.function.dom.nyx
+      - match: (?x)\s*\b(import|abs|all|any|ascii|bin|breakpoint|callable|chr|compile|copyright|credits|delattr|dir|divmod|enumerate|eval|exec|exit|filter|format|getattr|globals|hasattr|hash|help|hex|id|input|isinstance|issubclass|iter|len|license|locals|map|max|memoryview|min|next|oct|open|ord|pow|print|quit|range|reload|repr|reversed|round|setattr|sorted|sum|vars|zip)\b\s*
+        name: support.function.builtin.sa
+      - match: \s*\b((?:abs|add|aenter|aexit|aiter|and|anext|await|bool|call|ceil|cmp|coerce|complex|contains|copy|deepcopy|del|delattr|delete|delitem|delslice|dir|div|divmod|enter|eq|exit|float|floor|floordiv|format|ge|get|getattr|getattribute|getinitargs|getitem|getnewargs|getslice|getstate|gt|hash|hex|iadd|iand|idiv|ifloordiv|ilshift|imod|imul|index|init|instancecheck|int|invert|ior|ipow|irshift|isub|iter|itruediv|ixor|le|len|long|lshift|lt|missing|mod|mul|ne|neg|new|next|nonzero|oct|or|pos|pow|radd|rand|rdiv|rdivmod|reduce|reduce_ex|repr|reversed|rfloordiv|rlshift|rmod|rmul|ror|round|rpow|rrshift|rshift|rsub|rtruediv|rxor|set|setattr|setitem|setslice|setstate|sizeof|str|sub|subclasscheck|truediv|trunc|unicode|xor|matmul|rmatmul|imatmul|init_subclass|set_name|fspath|bytes|prepare))\b\s*
+        name: support.function.magic.sa
+      - match: \s*\b(alias|bg|bind|break|builtin|caller|cd|command|compgen|complete|dirs|disown|echo|enable|eval|exec|exit|false|fc|fg|getopts|hash|help|history|jobs|kill|let|logout|popd|printf|pushd|pwd|read|readonly|set|shift|shopt|source|suspend|test|times|trap|true|type|ulimit|umask|unalias|unset|wait)\b\s*
+        name: support.function.shell.sa
+      - match: \s*\b(headings|stylesheet_url|rgba?|hsla?|ie_hex_str|red|green|blue|alpha|opacity|hue|saturation|lightness|prefixed|prefix|_moz|_svg|_css2|_pie|_webkit|_ms|font_(?:files|url)|grid_image|image_(?:width|height|url|color)|sprites?|sprite_(?:map|map_name|file|url|position)|inline_(?:font_files|image)|opposite_position|grad_point|grad_end_position|color_stops|color_stops_in_percentages|grad_color_stops|(?:radial|linear)_(?:gradient|svg_gradient)|opacify|fade_?in|transparentize|fade_?out|lighten|darken|saturate|desaturate|grayscale|adjust_(?:hue|lightness|saturation|color)|scale_(?:lightness|saturation|color)|change_color|spin|complement|invert|mix|_compass_(?:list|space_list|slice|nth|list_size)|blank|compact|nth|first_value_of|join|length|append|nest|append_selector|headers|enumerate|range|percentage|unitless|unit|if|type_of|comparable|elements_of_type|quote|unquote|escape|e|sin|cos|tan|abs|round|ceil|floor|pi|translate(?:X|Y))\b\s*
+        name: support.function.misc.sa
+      - match: \s*\b(eager|hyper|substr|index|rindex|grep|map|sort|join|lines|hints|chmod|split|reduce|min|max|reverse|truncate|zip|cat|roundrobin|classify|first|sum|keys|values|pairs|defined|delete|exists|elems|end|kv|any|all|one|wrap|shape|key|value|name|pop|push|shift|splice|unshift|floor|ceiling|abs|exp|log|log10|rand|sign|sqrt|sin|cos|tan|round|strand|roots|cis|unpolar|polar|atan2|pick|chop|p5chop|chomp|p5chomp|lc|lcfirst|uc|ucfirst|capitalize|normalize|pack|unpack|quotemeta|comb|samecase|sameaccent|chars|nfd|nfc|nfkd|nfkc|printf|sprintf|caller|evalfile|run|runinstead|nothing|want|bless|chr|ord|gmtime|time|eof|localtime|gethost|getpw|chroot|getlogin|getpeername|kill|fork|wait|perl|graphs|codes|bytes|clone|print|open|read|write|readline|say|seek|close|opendir|readdir|slurp|spurt|shell|run|pos|fmt|vec|link|unlink|symlink|uniq|pair|asin|atan|sec|cosec|cotan|asec|acosec|acotan|sinh|cosh|tanh|asinh|done|acos|acosh|atanh|sech|cosech|cotanh|sech|acosech|acotanh|asech|ok|nok|plan_ok|dies_ok|lives_ok|skip|todo|pass|flunk|force_todo|use_ok|isa_ok|diag|is_deeply|isnt|like|skip_rest|unlike|cmp_ok|eval_dies_ok|nok_error|eval_lives_ok|approx|is_approx|throws_ok|version_lt|plan|EVAL|succ|pred|times|nonce|once|signature|new|connect|operator|undef|undefine|sleep|from|to|infix|postfix|prefix|circumfix|postcircumfix|minmax|lazy|count|unwrap|getc|pi|e|context|void|quasi|body|each|contains|rewinddir|subst|can|isa|flush|arity|assuming|rewind|callwith|callsame|nextwith|nextsame|attr|eval_elsewhere|none|srand|trim|trim_start|trim_end|lastcall|WHAT|WHERE|HOW|WHICH|VAR|WHO|WHENCE|ACCEPTS|REJECTS|not|true|iterator|by|re|im|invert|flip|gist|flat|tree|is_prime|throws_like|trans)\b\s*
+        name: support.function.perl.sa
+      - match: \s*\b(assert|collectgarbage|dofile|error|getfenv|getmetatable|ipairs|loadfile|loadstring|module|next|pairs|pcall|print|rawequal|rawget|rawset|require|select|setfenv|setmetatable|tonumber|tostring|type|unpack|xpcall)\b\s*
+        name: support.function.lua.sa
+      - match: \s*\b(coroutine\.(create|resume|running|status|wrap|yield)|string\.(byte|char|dump|find|format|gmatch|gsub|len|lower|match|rep|reverse|sub|upper)|table\.(concat|insert|maxn|remove|sort)|math\.(abs|acos|asin|atan2?|ceil|cosh?|deg|exp|floor|fmod|frexp|ldexp|log|log10|max|min|modf|pow|rad|random|randomseed|sinh?|sqrt|tanh?)|io\.(close|flush|input|lines|open|output|popen|read|tmpfile|type|write)|os\.(clock|date|difftime|execute|exit|getenv|remove|rename|setlocale|time|tmpname)|package\.(cpath|loaded|loadlib|path|preload|seeall)|debug\.(debug|[gs]etfenv|[gs]ethook|getinfo|[gs]etlocal|[gs]etmetatable|getregistry|[gs]etupvalue|traceback))\b\s*
+        name: support.function.library.sa
+      - match: \s*\b(abbreviate|abs|acos|acosh|addNA|addTaskCallback|agrep|agrepl|alist|all|all\.equal|all\.equal\.character|all\.equal\.default|all\.equal\.environment|all\.equal\.envRefClass|all\.equal\.factor|all\.equal\.formula|all\.equal\.language|all\.equal\.list|all\.equal\.numeric|all\.equal\.POSIXt|all\.equal\.raw|all\.names|all\.vars|any|anyDuplicated|anyDuplicated\.array|anyDuplicated\.data\.frame|anyDuplicated\.default|anyDuplicated\.matrix|anyNA|anyNA\.numeric_version|anyNA\.POSIXlt|aperm|aperm\.default|aperm\.table|append|apply|Arg|args|array|arrayInd|as\.array|as\.array\.default|as\.call|as\.character|as\.character\.condition|as\.character\.Date|as\.character\.default|as\.character\.error|as\.character\.factor|as\.character\.hexmode|as\.character\.numeric_version|as\.character\.octmode|as\.character\.POSIXt|as\.character\.srcref|as\.complex|as\.data\.frame|as\.data\.frame\.array|as\.data\.frame\.AsIs|as\.data\.frame\.character|as\.data\.frame\.complex|as\.data\.frame\.data\.frame|as\.data\.frame\.Date|as\.data\.frame\.default|as\.data\.frame\.difftime|as\.data\.frame\.factor|as\.data\.frame\.integer|as\.data\.frame\.list|as\.data\.frame\.logical|as\.data\.frame\.matrix|as\.data\.frame\.model\.matrix|as\.data\.frame\.noquote|as\.data\.frame\.numeric|as\.data\.frame\.numeric_version|as\.data\.frame\.ordered|as\.data\.frame\.POSIXct|as\.data\.frame\.POSIXlt|as\.data\.frame\.raw|as\.data\.frame\.table|as\.data\.frame\.ts|as\.data\.frame\.vector|as\.Date|as\.Date\.character|as\.Date\.date|as\.Date\.dates|as\.Date\.default|as\.Date\.factor|as\.Date\.numeric|as\.Date\.POSIXct|as\.Date\.POSIXlt|as\.difftime|as\.double|as\.double\.difftime|as\.double\.POSIXlt|as\.environment|as\.expression|as\.expression\.default|as\.factor|as\.function|as\.function\.default|as\.hexmode|as\.integer|as\.list|as\.list\.data\.frame|as\.list\.Date|as\.list\.default|as\.list\.environment|as\.list\.factor|as\.list\.function|as\.list\.numeric_version|as\.list\.POSIXct|as\.logical|as\.logical\.factor|as\.matrix|as\.matrix\.data\.frame|as\.matrix\.default|as\.matrix\.noquote|as\.matrix\.POSIXlt|as\.name|as\.null|as\.null\.default|as\.numeric|as\.numeric_version|as\.octmode|as\.ordered|as\.package_version|as\.pairlist|as\.POSIXct|as\.POSIXct\.date|as\.POSIXct\.Date|as\.POSIXct\.dates|as\.POSIXct\.default|as\.POSIXct\.numeric|as\.POSIXct\.POSIXlt|as\.POSIXlt|as\.POSIXlt\.character|as\.POSIXlt\.date|as\.POSIXlt\.Date|as\.POSIXlt\.dates|as\.POSIXlt\.default|as\.POSIXlt\.factor|as\.POSIXlt\.numeric|as\.POSIXlt\.POSIXct|as\.qr|as\.raw|as\.single|as\.single\.default|as\.symbol|as\.table|as\.table\.default|as\.vector|as\.vector\.factor|asin|asinh|asNamespace|asS3|asS4|assign|atan|atan2|atanh|attach|attachNamespace|attr|attr\.all\.equal|attributes|autoload|autoloader|backsolve|baseenv|basename|besselI|besselJ|besselK|besselY|beta|bindingIsActive|bindingIsLocked|bindtextdomain|bitwAnd|bitwNot|bitwOr|bitwShiftL|bitwShiftR|bitwXor|body|bquote|break|browser|browserCondition|browserSetDebug|browserText|builtins|by|by\.data\.frame|by\.default|bzfile|c|c\.Date|c\.difftime|c\.noquote|c\.numeric_version|c\.POSIXct|c\.POSIXlt|c\.warnings|call|callCC|capabilities|casefold|cat|cbind|cbind\.data\.frame|ceiling|char\.expand|character|charmatch|charToRaw|chartr|check_tzones|chkDots|chol|chol\.default|chol2inv|choose|class|clearPushBack|close|close\.connection|close\.srcfile|close\.srcfilealias|closeAllConnections|col|colMeans|colnames|colSums|commandArgs|comment|complex|computeRestarts|conditionCall|conditionCall\.condition|conditionMessage|conditionMessage\.condition|conflicts|Conj|contributors|cos|cosh|cospi|crossprod|Cstack_info|cummax|cummin|cumprod|cumsum|curlGetHeaders|cut|cut\.Date|cut\.default|cut\.POSIXt|data\.class|data\.frame|data\.matrix|date|debug|debuggingState|debugonce|default\.stringsAsFactors|delayedAssign|deparse|det|detach|determinant|determinant\.matrix|dget|diag|diff|diff\.Date|diff\.default|diff\.difftime|diff\.POSIXt|difftime|digamma|dim|dim\.data\.frame|dimnames|dimnames\.data\.frame|dir|dir\.create|dir\.exists|dirname|do\.call|dontCheck|double|dput|dQuote|drop|droplevels|droplevels\.data\.frame|droplevels\.factor|dump|duplicated|duplicated\.array|duplicated\.data\.frame|duplicated\.default|duplicated\.matrix|duplicated\.numeric_version|duplicated\.POSIXlt|duplicated\.warnings|dyn\.load|dyn\.unload|dynGet|eapply|eigen|emptyenv|enc2native|enc2utf8|encodeString|Encoding|endsWith|enquote|env\.profile|environment|environmentIsLocked|environmentName|eval|eval\.parent|evalq|exists|exp|expand\.grid|expm1|expression|extSoftVersion|factor|factorial|fifo|file|file\.access|file\.append|file\.choose|file\.copy|file\.create|file\.exists|file\.info|file\.link|file\.mode|file\.mtime|file\.path|file\.remove|file\.rename|file\.show|file\.size|file\.symlink|Filter|Find|find\.package|findInterval|findPackageEnv|findRestart|floor|flush|flush\.connection|for|force|forceAndCall|formals|format|format\.AsIs|format\.data\.frame|format\.Date|format\.default|format\.difftime|format\.factor|format\.hexmode|format\.info|format\.libraryIQR|format\.numeric_version|format\.octmode|format\.packageInfo|format\.POSIXct|format\.POSIXlt|format\.pval|format\.summaryDefault|formatC|formatDL|forwardsolve|function|gamma|gc|gc\.time|gcinfo|gctorture|gctorture2|get|get0|getAllConnections|getCallingDLL|getCallingDLLe|getConnection|getDLLRegisteredRoutines|getDLLRegisteredRoutines\.character|getDLLRegisteredRoutines\.DLLInfo|getElement|geterrmessage|getExportedValue|getHook|getLoadedDLLs|getNamespace|getNamespaceExports|getNamespaceImports|getNamespaceInfo|getNamespaceName|getNamespaceUsers|getNamespaceVersion|getNativeSymbolInfo|getOption|getRversion|getSrcLines|getTaskCallbackNames|gettext|gettextf|getwd|gl|globalenv|gregexpr|grep|grepl|grepRaw|grouping|gsub|gzcon|gzfile|I|iconv|iconvlist|icuGetCollate|icuSetCollate|identical|identity|if|ifelse|Im|importIntoEnv|inherits|integer|interaction|interactive|intersect|intToBits|intToUtf8|inverse\.rle|invisible|invokeRestart|invokeRestartInteractively|is\.array|is\.atomic|is\.call|is\.character|is\.complex|is\.data\.frame|is\.double|is\.element|is\.environment|is\.expression|is\.factor|is\.finite|is\.function|is\.infinite|is\.integer|is\.language|is\.list|is\.loaded|is\.logical|is\.matrix|is\.na|is\.na\.data\.frame|is\.na\.numeric_version|is\.na\.POSIXlt|is\.name|is\.nan|is\.null|is\.numeric|is\.numeric_version|is\.numeric\.Date|is\.numeric\.difftime|is\.numeric\.POSIXt|is\.object|is\.ordered|is\.package_version|is\.pairlist|is\.primitive|is\.qr|is\.R|is\.raw|is\.recursive|is\.single|is\.symbol|is\.table|is\.unsorted|is\.vector|isatty|isBaseNamespace|isdebugged|isIncomplete|isNamespace|isNamespaceLoaded|ISOdate|ISOdatetime|isOpen|isRestart|isS4|isSeekable|isSymmetric|isSymmetric\.matrix|isTRUE|jitter|julian|julian\.Date|julian\.POSIXt|kappa|kappa\.default|kappa\.lm|kappa\.qr|kronecker|l10n_info|La_library|La_version|La\.svd|labels|labels\.default|lapply|lazyLoad|lazyLoadDBexec|lazyLoadDBfetch|lbeta|lchoose|length|length\.POSIXlt|lengths|levels|levels\.default|lfactorial|lgamma|libcurlVersion|library|library\.dynam|library\.dynam\.unload|licence|license|list|list\.dirs|list\.files|list2env|load|loadedNamespaces|loadingNamespaceInfo|loadNamespace|local|lockBinding|lockEnvironment|log|log10|log1p|log2|logb|logical|lower\.tri|ls|make\.names|make\.unique|makeActiveBinding|Map|mapply|margin\.table|mat\.or\.vec|match|match\.arg|match\.call|match\.fun|Math\.data\.frame|Math\.Date|Math\.difftime|Math\.factor|Math\.POSIXt|matrix|max|max\.col|mean|mean\.Date|mean\.default|mean\.difftime|mean\.POSIXct|mean\.POSIXlt|mem\.limits|memCompress|memDecompress|memory\.profile|merge|merge\.data\.frame|merge\.default|message|mget|min|missing|Mod|mode|months|months\.Date|months\.POSIXt|names|names\.POSIXlt|namespaceExport|namespaceImport|namespaceImportClasses|namespaceImportFrom|namespaceImportMethods|nargs|nchar|ncol|NCOL|Negate|new\.env|next|NextMethod|ngettext|nlevels|noquote|norm|normalizePath|nrow|NROW|numeric|numeric_version|nzchar|objects|oldClass|OlsonNames|on\.exit|open|open\.connection|open\.srcfile|open\.srcfilealias|open\.srcfilecopy|Ops\.data\.frame|Ops\.Date|Ops\.difftime|Ops\.factor|Ops\.numeric_version|Ops\.ordered|Ops\.POSIXt|options|order|ordered|outer|package_version|packageEvent|packageHasNamespace|packageStartupMessage|packBits|pairlist|parent\.env|parent\.frame|parse|parseNamespaceFile|paste|paste0|path\.expand|path\.package|pcre_config|pipe|pmatch|pmax|pmax\.int|pmin|pmin\.int|polyroot|pos\.to\.env|Position|pretty|pretty\.default|prettyNum|print|print\.AsIs|print\.by|print\.condition|print\.connection|print\.data\.frame|print\.Date|print\.default|print\.difftime|print\.Dlist|print\.DLLInfo|print\.DLLInfoList|print\.DLLRegisteredRoutines|print\.eigen|print\.factor|print\.function|print\.hexmode|print\.libraryIQR|print\.listof|print\.NativeRoutineList|print\.noquote|print\.numeric_version|print\.octmode|print\.packageInfo|print\.POSIXct|print\.POSIXlt|print\.proc_time|print\.restart|print\.rle|print\.simple\.list|print\.srcfile|print\.srcref|print\.summary\.table|print\.summaryDefault|print\.table|print\.warnings|prmatrix|proc\.time|prod|prop\.table|provideDimnames|psigamma|pushBack|pushBackLength|q|qr|qr\.coef|qr\.default|qr\.fitted|qr\.Q|qr\.qty|qr\.qy|qr\.R|qr\.resid|qr\.solve|qr\.X|quarters|quarters\.Date|quarters\.POSIXt|quit|quote|R_system_version|R\.home|R\.Version|range|range\.default|rank|rapply|raw|rawConnection|rawConnectionValue|rawShift|rawToBits|rawToChar|rbind|rbind\.data\.frame|rcond|Re|read\.dcf|readBin|readChar|readline|readLines|readRDS|readRenviron|Recall|Reduce|reg\.finalizer|regexec|regexpr|registerS3method|registerS3methods|regmatches|remove|removeTaskCallback|rep|rep_len|rep\.Date|rep\.factor|rep\.int|rep\.numeric_version|rep\.POSIXct|rep\.POSIXlt|repeat|replace|replicate|require|requireNamespace|restartDescription|restartFormals|retracemem|return|returnValue|rev|rev\.default|rle|rm|RNGkind|RNGversion|round|round\.Date|round\.POSIXt|row|row\.names|row\.names\.data\.frame|row\.names\.default|rowMeans|rownames|rowsum|rowsum\.data\.frame|rowsum\.default|rowSums|sample|sample\.int|sapply|save|save\.image|saveRDS|scale|scale\.default|scan|search|searchpaths|seek|seek\.connection|seq|seq_along|seq_len|seq\.Date|seq\.default|seq\.int|seq\.POSIXt|sequence|serialize|set\.seed|setdiff|setequal|setHook|setNamespaceInfo|setSessionTimeLimit|setTimeLimit|setwd|showConnections|shQuote|sign|signalCondition|signif|simpleCondition|simpleError|simpleMessage|simpleWarning|simplify2array|sin|single|sinh|sink|sink\.number|sinpi|slice\.index|socketConnection|socketSelect|solve|solve\.default|solve\.qr|sort|sort\.default|sort\.int|sort\.list|sort\.POSIXlt|source|split|split\.data\.frame|split\.Date|split\.default|split\.POSIXct|sprintf|sqrt|sQuote|srcfile|srcfilealias|srcfilecopy|srcref|standardGeneric|startsWith|stderr|stdin|stdout|stop|stopifnot|storage\.mode|strftime|strptime|strrep|strsplit|strtoi|strtrim|structure|strwrap|sub|subset|subset\.data\.frame|subset\.default|subset\.matrix|substitute|substr|substring|sum|summary|summary\.connection|summary\.data\.frame|Summary\.data\.frame|summary\.Date|Summary\.Date|summary\.default|Summary\.difftime|summary\.factor|Summary\.factor|summary\.matrix|Summary\.numeric_version|Summary\.ordered|summary\.POSIXct|Summary\.POSIXct|summary\.POSIXlt|Summary\.POSIXlt|summary\.proc_time|summary\.srcfile|summary\.srcref|summary\.table|suppressMessages|suppressPackageStartupMessages|suppressWarnings|svd|sweep|switch|sys\.call|sys\.calls|Sys\.chmod|Sys\.Date|sys\.frame|sys\.frames|sys\.function|Sys\.getenv|Sys\.getlocale|Sys\.getpid|Sys\.glob|Sys\.info|sys\.load\.image|Sys\.localeconv|sys\.nframe|sys\.on\.exit|sys\.parent|sys\.parents|Sys\.readlink|sys\.save\.image|Sys\.setenv|Sys\.setFileTime|Sys\.setlocale|Sys\.sleep|sys\.source|sys\.status|Sys\.time|Sys\.timezone|Sys\.umask|Sys\.unsetenv|Sys\.which|system|system\.file|system\.time|system2|t|t\.data\.frame|t\.default|table|tabulate|tan|tanh|tanpi|tapply|taskCallbackManager|tcrossprod|tempdir|tempfile|testPlatformEquivalence|textConnection|textConnectionValue|tolower|topenv|toString|toString\.default|toupper|trace|traceback|tracemem|tracingState|transform|transform\.data\.frame|transform\.default|trigamma|trimws|trunc|trunc\.Date|trunc\.POSIXt|truncate|truncate\.connection|try|tryCatch|typeof|unclass|undebug|union|unique|unique\.array|unique\.data\.frame|unique\.default|unique\.matrix|unique\.numeric_version|unique\.POSIXlt|unique\.warnings|units|units\.difftime|unix\.time|unlink|unlist|unloadNamespace|unlockBinding|unname|unserialize|unsplit|untrace|untracemem|unz|upper\.tri|url|UseMethod|utf8ToInt|validEnc|validUTF8|vapply|vector|Vectorize|warning|warnings|weekdays|weekdays\.Date|weekdays\.POSIXt|which|which\.max|which\.min|while|with|with\.default|withAutoprint|withCallingHandlers|within|within\.data\.frame|within\.list|withRestarts|withVisible|write|write\.dcf|writeBin|writeChar|writeLines|xor|xor\.hexmode|xor\.octmode|xpdrows\.data\.frame|xtfrm|xtfrm\.AsIs|xtfrm\.Date|xtfrm\.default|xtfrm\.difftime|xtfrm\.factor|xtfrm\.numeric_version|xtfrm\.POSIXct|xtfrm\.POSIXlt|xtfrm\.Surv|xzfile|zapsmall)\s*\b
+        name: support.function.r.sa
+      - match: \s*\b(abline|arrows|assocplot|axis|Axis|axis\.Date|Axis\.Date|Axis\.default|axis\.POSIXct|Axis\.POSIXt|Axis\.table|axTicks|barplot|barplot\.default|box|boxplot|boxplot\.default|boxplot\.formula|boxplot\.matrix|bxp|cdplot|cdplot\.default|cdplot\.formula|clip|close\.screen|co\.intervals|contour|contour\.default|coplot|curve|dotchart|erase\.screen|filled\.contour|fourfoldplot|frame|grconvertX|grconvertY|grid|hist|hist\.Date|hist\.default|hist\.POSIXt|identify|identify\.default|image|image\.default|layout|layout\.show|lcm|legend|lines|lines\.default|lines\.formula|lines\.histogram|lines\.table|locator|matlines|matplot|matpoints|mosaicplot|mosaicplot\.default|mosaicplot\.formula|mtext|pairs|pairs\.default|pairs\.formula|panel\.smooth|par|persp|persp\.default|pie|piechart|plot|plot\.data\.frame|plot\.default|plot\.design|plot\.factor|plot\.formula|plot\.function|plot\.histogram|plot\.new|plot\.raster|plot\.table|plot\.window|plot\.xy|plotHclust|points|points\.default|points\.formula|points\.table|polygon|polypath|rasterImage|rect|rug|screen|segments|smoothScatter|spineplot|spineplot\.default|spineplot\.formula|split\.screen|stars|stem|strheight|stripchart|stripchart\.default|stripchart\.formula|strwidth|sunflowerplot|sunflowerplot\.default|sunflowerplot\.formula|symbols|text|text\.default|text\.formula|title|xinch|xspline|xyinch|yinch)\b\s*
+        name: support.function.r.sa
+      - match: \s*\b(adjustcolor|anyNA\.raster|as\.graphicsAnnot|as\.matrix\.raster|as\.raster|as\.raster\.array|as\.raster\.character|as\.raster\.logical|as\.raster\.matrix|as\.raster\.numeric|as\.raster\.raster|as\.raster\.raw|axisTicks|bitmap|bmp|boxplot\.stats|c2to3|cairo_pdf|cairo_ps|cairoVersion|check_for_XQuartz|check_gs_type|check\.options|checkFont|checkFont\.CIDFont|checkFont\.default|checkFont\.Type1Font|checkFontInUse|checkIntFormat|checkQuartzFont|checkX11Font|chromaticAdaptation|chull|CIDFont|cm|cm\.colors|col2rgb|colorConverter|colorRamp|colorRampPalette|colors|colours|contourLines|convertColor|densCols|dev\.capabilities|dev\.capture|dev\.control|dev\.copy|dev\.copy2eps|dev\.copy2pdf|dev\.cur|dev\.displaylist|dev\.flush|dev\.hold|dev\.interactive|dev\.list|dev\.new|dev\.next|dev\.off|dev\.prev|dev\.print|dev\.set|dev\.size|dev2bitmap|devAskNewPage|deviceIsInteractive|embedFonts|extendrange|getGraphicsEvent|getGraphicsEventEnv|graphics\.off|gray|gray\.colors|grey|grey\.colors|grSoftVersion|guessEncoding|hcl|heat\.colors|hsv|initPSandPDFfonts|is\.na\.raster|is\.raster|isPDF|jpeg|make\.rgb|matchEncoding|matchEncoding\.CIDFont|matchEncoding\.Type1Font|matchFont|n2mfrow|nclass\.FD|nclass\.scott|nclass\.Sturges|Ops\.raster|palette|pdf|pdf\.options|pdfFonts|pictex|png|postscript|postscriptFonts|prettyDate|print\.colorConverter|print\.raster|print\.recordedplot|print\.RGBcolorConverter|printFont|printFont\.CIDFont|printFont\.Type1Font|printFonts|ps\.options|quartz|quartz\.options|quartz\.save|quartzFont|quartzFonts|rainbow|recordGraphics|recordPalette|recordPlot|replayPlot|restoreRecordedPlot|rgb|rgb2hsv|savePlot|seqDtime|setEPS|setFonts|setGraphicsEventEnv|setGraphicsEventHandlers|setPS|setQuartzFonts|setX11Fonts|svg|terrain\.colors|tiff|topo\.colors|trans3d|trunc_POSIXt|Type1Font|x11|X11|X11\.options|X11Font|X11FontError|X11Fonts|xfig|xy\.coords|xyTable|xyz\.coords)\b\s*
+        name: support.function.r.sa
+      - match: \s*\b(addNextMethod|allGenerics|allNames|Arith|as|asMethodDefinition|assignClassDef|assignMethodsMetaData|balanceMethodsList|bind_activation|cacheGenericsMetaData|cacheMetaData|cacheMethod|cacheOnAssign|callGeneric|callNextMethod|canCoerce|cbind|cbind2|checkAtAssignment|checkSlotAssignment|classesToAM|classGeneratorFunction|classLabel|classMetaName|className|coerce|Compare|completeClassDefinition|completeExtends|completeSubclasses|Complex|conformMethod|defaultDumpName|defaultPrototype|dispatchIsInternal|doPrimitiveMethod|dumpMethod|dumpMethods|el|elNamed|empty\.dump|emptyMethodsList|envRefInferField|envRefSetField|evalOnLoad|evalqOnLoad|evalSource|existsFunction|existsMethod|extends|externalRefMethod|finalDefaultMethod|findClass|findFunction|findMethod|findMethods|findMethodSignatures|findUnique|fixPre1\.8|formalArgs|fromNextMethod|functionBody|generic\.skeleton|genericForBasic|getAccess|getAllMethods|getAllSuperClasses|getClass|getClassDef|getClasses|getClassName|getClassPackage|getDataPart|getExtends|getFunction|getGeneric|getGenericFromCall|getGenerics|getGroup|getGroupMembers|getLoadActions|getMethod|getMethods|getMethodsAndAccessors|getMethodsForDispatch|getMethodsMetaData|getPackageName|getProperties|getPrototype|getRefClass|getRefSuperClasses|getSlots|getSubclasses|getValidity|getVirtual|hasArg|hasLoadAction|hasMethod|hasMethods|implicitGeneric|inBasicFuns|inferProperties|inheritedSlotNames|inheritedSubMethodLists|initFieldArgs|initialize|initMethodDispatch|initRefFields|insertClassMethods|insertMethod|insertMethodInEmptyList|insertSource|installClassMethod|is|isBaseFun|isClass|isClassDef|isClassUnion|isGeneric|isGrammarSymbol|isGroup|isMixin|isRematched|isS3Generic|isSealedClass|isSealedMethod|isVirtualClass|isXS3Class|kronecker|languageEl|linearizeMlist|listFromMethods|listFromMlist|loadMethod|Logic|makeClassMethod|makeClassRepresentation|makeEnvRefMethods|makeExtends|makeGeneric|makeMethodsList|makePrototypeFromClassDef|makeStandardGeneric|matchDefaults|matchSignature|Math|Math2|mergeMethods|metaNameUndo|method\.skeleton|MethodAddCoerce|methodSignatureMatrix|MethodsList|MethodsListSelect|methodsPackageMetaName|missingArg|mlistMetaName|multipleClasses|new|newBasic|newClassRepresentation|newEmptyObject|Ops|outerLabels|packageSlot|possibleExtends|print\.MethodsList|printClassRepresentation|printPropertiesList|prohibitGeneric|promptClass|promptMethods|prototype|Quote|rbind|rbind2|reconcilePropertiesAndPrototype|refClassFields|refClassInformation|refClassMethods|refClassPrompt|refObjectClass|registerImplicitGenerics|rematchDefinition|removeClass|removeGeneric|removeMethod|removeMethods|removeMethodsObject|representation|requireMethods|resetClass|resetGeneric|S3Class|S3forS4Methods|S3Part|sealClass|seemsS4Object|selectMethod|selectSuperClasses|setAs|setCacheOnAssign|setClass|setClassUnion|setDataPart|setGeneric|setGenericImplicit|setGroupGeneric|setIs|setLoadAction|setLoadActions|setMethod|setNames|setOldClass|setPackageName|setPrimitiveMethods|setRefClass|setReplaceMethod|setValidity|show|showClass|showClassMethod|showDefault|showExtends|showExtraSlots|showMethods|showMlist|showRefClassDef|signature|SignatureMethod|sigToEnv|slot|slotNames|slotsFromS3|substituteDirect|substituteFunctionArgs|Summary|superClassDepth|superClassMethodName|tableNames|testInheritedMethods|testVirtual|traceOff|traceOn|tryNew|unRematchDefinition|useMTable|validObject|validSlotNames)\b\s*
+        name: support.function.r.sa
+      - match: \s*\b(acf|acf2AR|add\.name|add1|add1\.default|add1\.glm|add1\.lm|add1\.mlm|addmargins|aggregate|aggregate\.data\.frame|aggregate\.default|aggregate\.formula|aggregate\.ts|AIC|AIC\.default|AIC\.logLik|alias|alias\.formula|alias\.lm|anova|anova\.glm|anova\.glmlist|anova\.lm|anova\.lmlist|anova\.loess|anova\.mlm|anova\.mlmlist|anova\.nls|anovalist\.nls|ansari\.test|ansari\.test\.default|ansari\.test\.formula|aov|approx|approxfun|ar|ar\.burg|ar\.burg\.default|ar\.burg\.mts|ar\.mle|ar\.ols|ar\.yw|ar\.yw\.default|ar\.yw\.mts|arima|arima\.sim|arima0|arima0\.diag|ARMAacf|ARMAtoMA|as\.data\.frame\.aovproj|as\.data\.frame\.ftable|as\.data\.frame\.logLik|as\.dendrogram|as\.dendrogram\.dendrogram|as\.dendrogram\.hclust|as\.dist|as\.dist\.default|as\.formula|as\.hclust|as\.hclust\.default|as\.hclust\.dendrogram|as\.hclust\.twins|as\.matrix\.dist|as\.matrix\.ftable|as\.stepfun|as\.stepfun\.default|as\.stepfun\.isoreg|as\.table\.ftable|as\.ts|as\.ts\.default|asOneSidedFormula|ave|bandwidth\.kernel|bartlett\.test|bartlett\.test\.default|bartlett\.test\.formula|BIC|BIC\.default|BIC\.logLik|binom\.test|binomial|biplot|biplot\.default|biplot\.prcomp|biplot\.princomp|Box\.test|bw_pair_cnts|bw\.bcv|bw\.nrd|bw\.nrd0|bw\.SJ|bw\.ucv|C|cancor|case\.names|case\.names\.default|case\.names\.lm|cbind\.ts|ccf|check_exact|chisq\.test|cmdscale|coef|coef\.aov|coef\.Arima|coef\.default|coef\.listof|coef\.maov|coef\.nls|coefficients|complete\.cases|confint|confint\.default|confint\.glm|confint\.lm|confint\.nls|constrOptim|contr\.helmert|contr\.poly|contr\.SAS|contr\.sum|contr\.treatment|contrasts|convolve|cooks\.distance|cooks\.distance\.glm|cooks\.distance\.lm|cophenetic|cophenetic\.default|cophenetic\.dendrogram|cor|cor\.test|cor\.test\.default|cor\.test\.formula|cov|cov\.wt|cov2cor|covratio|cpgram|cut\.dendrogram|cutree|cycle|cycle\.default|cycle\.ts|D|dbeta|dbinom|dcauchy|dchisq|decompose|delete\.response|deltat|deltat\.default|dendrapply|density|density\.default|deriv|deriv\.default|deriv\.formula|deriv3|deriv3\.default|deriv3\.formula|deviance|deviance\.default|deviance\.glm|deviance\.lm|deviance\.mlm|deviance\.nls|dexp|df|df\.kernel|df\.residual|df\.residual\.default|df\.residual\.nls|dfbeta|dfbeta\.lm|dfbetas|dfbetas\.lm|dffits|dgamma|dgeom|dhyper|diff\.ts|diffinv|diffinv\.default|diffinv\.ts|diffinv\.vector|dist|dlnorm|dlogis|dmultinom|dnbinom|dnorm|dpois|drop\.name|drop\.terms|drop1|drop1\.default|drop1\.glm|drop1\.lm|drop1\.mlm|dsignrank|dt|dummy\.coef|dummy\.coef\.aovlist|dummy\.coef\.lm|dunif|dweibull|dwilcox|ecdf|eff\.aovlist|effects|effects\.glm|effects\.lm|embed|end|end\.default|estVar|estVar\.mlm|estVar\.SSD|expand\.model\.frame|extractAIC|extractAIC\.aov|extractAIC\.coxph|extractAIC\.glm|extractAIC\.lm|extractAIC\.negbin|extractAIC\.survreg|factanal|factanal\.fit\.mle|factor\.name|family|family\.glm|family\.lm|fft|filter|fisher\.test|fitted|fitted\.default|fitted\.isoreg|fitted\.kmeans|fitted\.nls|fitted\.smooth\.spline|fitted\.values|fivenum|fligner\.test|fligner\.test\.default|fligner\.test\.formula|format_perc|format\.dist|format\.ftable|format\.perc|formula|formula\.character|formula\.data\.frame|formula\.default|formula\.formula|formula\.glm|formula\.lm|formula\.nls|formula\.terms|frequency|frequency\.default|friedman\.test|friedman\.test\.default|friedman\.test\.formula|ftable|ftable\.default|ftable\.formula|Gamma|gaussian|get_all_vars|getCall|getCall\.default|getInitial|getInitial\.default|getInitial\.formula|getInitial\.selfStart|glm|glm\.control|glm\.fit|hasTsp|hat|hatvalues|hatvalues\.lm|hatvalues\.smooth\.spline|hclust|heatmap|HL|HoltWinters|hyman_filter|identify\.hclust|influence|influence\.glm|influence\.lm|influence\.measures|integrate|interaction\.plot|inverse\.gaussian|IQR|is\.empty\.model|is\.leaf|is\.mts|is\.stepfun|is\.ts|is\.tskernel|isoreg|KalmanForecast|KalmanLike|KalmanRun|KalmanSmooth|kernapply|kernapply\.default|kernapply\.ts|kernapply\.tskernel|kernapply\.vector|kernel|kmeans|knots|knots\.stepfun|kruskal\.test|kruskal\.test\.default|kruskal\.test\.formula|ks\.test|ksmooth|labels\.dendrogram|labels\.dist|labels\.lm|labels\.terms|lag|lag\.default|lag\.plot|line|lines\.isoreg|lines\.stepfun|lines\.ts|lm|lm\.fit|lm\.influence|lm\.wfit|loadings|loess|loess\.control|loess\.smooth|logLik|logLik\.Arima|logLik\.glm|logLik\.lm|logLik\.logLik|logLik\.nls|loglin|lowess|ls\.diag|ls\.print|lsfit|mad|mahalanobis|make\.link|make\.tables\.aovproj|make\.tables\.aovprojlist|makeARIMA|makepredictcall|makepredictcall\.default|makepredictcall\.poly|manova|mantelhaen\.test|mauchly\.test|mauchly\.test\.mlm|mauchly\.test\.SSD|mcnemar\.test|median|median\.default|medpolish|merge\.dendrogram|midcache\.dendrogram|model\.extract|model\.frame|model\.frame\.aovlist|model\.frame\.default|model\.frame\.glm|model\.frame\.lm|model\.matrix|model\.matrix\.default|model\.matrix\.lm|model\.offset|model\.response|model\.tables|model\.tables\.aov|model\.tables\.aovlist|model\.weights|monthplot|monthplot\.default|monthplot\.stl|monthplot\.StructTS|monthplot\.ts|mood\.test|mood\.test\.default|mood\.test\.formula|mvfft|n\.knots|na\.action|na\.action\.default|na\.contiguous|na\.contiguous\.default|na\.exclude|na\.exclude\.data\.frame|na\.exclude\.default|na\.fail|na\.fail\.default|na\.omit|na\.omit\.data\.frame|na\.omit\.default|na\.omit\.ts|na\.pass|napredict|napredict\.default|napredict\.exclude|naprint|naprint\.default|naprint\.exclude|naprint\.omit|naresid|naresid\.default|naresid\.exclude|nextn|nleaves|nlm|nlminb|nls|nls_port_fit|nls\.control|nlsModel|nlsModel\.plinear|NLSstAsymptotic|NLSstAsymptotic\.sortedXyData|NLSstClosestX|NLSstClosestX\.sortedXyData|NLSstLfAsymptote|NLSstLfAsymptote\.sortedXyData|NLSstRtAsymptote|NLSstRtAsymptote\.sortedXyData|nobs|nobs\.default|nobs\.dendrogram|nobs\.glm|nobs\.lm|nobs\.logLik|nobs\.nls|numericDeriv|offset|oneway\.test|Ops\.ts|optim|optimHess|optimise|optimize|order\.dendrogram|p\.adjust|pacf|pacf\.default|pairwise\.prop\.test|pairwise\.t\.test|pairwise\.table|pairwise\.wilcox\.test|pbeta|pbinom|pbirthday|pcauchy|pchisq|pexp|pf|pgamma|pgeom|phyper|Pillai|plclust|plnorm|plogis|plot\.acf|plot\.decomposed\.ts|plot\.dendrogram|plot\.density|plot\.ecdf|plot\.hclust|plot\.HoltWinters|plot\.isoreg|plot\.lm|plot\.medpolish|plot\.mlm|plot\.ppr|plot\.prcomp|plot\.princomp|plot\.profile\.nls|plot\.spec|plot\.spec\.coherency|plot\.spec\.phase|plot\.stepfun|plot\.stl|plot\.ts|plot\.tskernel|plot\.TukeyHSD|plotNode|plotNodeLimit|pnbinom|pnorm|pointwise|poisson|poisson\.test|poly|polym|port_get_named_v|port_msg|power|power\.anova\.test|power\.prop\.test|power\.t\.test|PP\.test|ppoints|ppois|ppr|ppr\.default|ppr\.formula|prcomp|prcomp\.default|prcomp\.formula|predict|predict\.ar|predict\.Arima|predict\.arima0|predict\.glm|predict\.HoltWinters|predict\.lm|predict\.loess|predict\.mlm|predict\.nls|predict\.poly|predict\.ppr|predict\.prcomp|predict\.princomp|predict\.smooth\.spline|predict\.smooth\.spline\.fit|predict\.StructTS|predLoess|preplot|princomp|princomp\.default|princomp\.formula|print\.acf|print\.anova|print\.aov|print\.aovlist|print\.ar|print\.Arima|print\.arima0|print\.dendrogram|print\.density|print\.dist|print\.dummy_coef|print\.dummy_coef_list|print\.ecdf|print\.factanal|print\.family|print\.formula|print\.ftable|print\.glm|print\.hclust|print\.HoltWinters|print\.htest|print\.infl|print\.integrate|print\.isoreg|print\.kmeans|print\.lm|print\.loadings|print\.loess|print\.logLik|print\.medpolish|print\.mtable|print\.nls|print\.pairwise\.htest|print\.power\.htest|print\.ppr|print\.prcomp|print\.princomp|print\.smooth\.spline|print\.stepfun|print\.stl|print\.StructTS|print\.summary\.aov|print\.summary\.aovlist|print\.summary\.ecdf|print\.summary\.glm|print\.summary\.lm|print\.summary\.loess|print\.summary\.manova|print\.summary\.nls|print\.summary\.ppr|print\.summary\.prcomp|print\.summary\.princomp|print\.tables_aov|print\.terms|print\.ts|print\.tskernel|print\.TukeyHSD|print\.tukeyline|print\.tukeysmooth|print\.xtabs|printCoefmat|profile|profile\.nls|profiler|profiler\.nls|proj|proj\.aov|proj\.aovlist|proj\.default|proj\.lm|proj\.matrix|promax|prop\.test|prop\.trend\.test|psignrank|pt|ptukey|punif|pweibull|pwilcox|qbeta|qbinom|qbirthday|qcauchy|qchisq|qexp|qf|qgamma|qgeom|qhyper|qlnorm|qlogis|qnbinom|qnorm|qpois|qqline|qqnorm|qqnorm\.default|qqplot|qr\.lm|qsignrank|qt|qtukey|quade\.test|quade\.test\.default|quade\.test\.formula|quantile|quantile\.default|quantile\.ecdf|quantile\.POSIXt|quasi|quasibinomial|quasipoisson|qunif|qweibull|qwilcox|r2dtable|Rank|rbeta|rbinom|rcauchy|rchisq|read\.ftable|rect\.hclust|reformulate|regularize\.values|relevel|relevel\.default|relevel\.factor|relevel\.ordered|reorder|reorder\.default|reorder\.dendrogram|replications|reshape|resid|residuals|residuals\.default|residuals\.glm|residuals\.HoltWinters|residuals\.isoreg|residuals\.lm|residuals\.nls|residuals\.smooth\.spline|residuals\.tukeyline|rev\.dendrogram|rexp|rf|rgamma|rgeom|rhyper|rlnorm|rlogis|rmultinom|rnbinom|rnorm|Roy|rpois|rsignrank|rstandard|rstandard\.glm|rstandard\.lm|rstudent|rstudent\.glm|rstudent\.lm|rt|runif|runmed|rweibull|rwilcox|rWishart|safe_pchisq|safe_pf|scatter\.smooth|screeplot|screeplot\.default|sd|se\.aov|se\.aovlist|se\.contrast|se\.contrast\.aov|se\.contrast\.aovlist|selfStart|selfStart\.default|selfStart\.formula|setNames|shapiro\.test|sigma|sigma\.default|sigma\.mlm|simpleLoess|simulate|simulate\.lm|smooth|smooth\.spline|smoothEnds|sortedXyData|sortedXyData\.default|spec\.ar|spec\.pgram|spec\.taper|spectrum|sphericity|spl_coef_conv|spline|splinefun|splinefunH|splinefunH0|SSasymp|SSasympOff|SSasympOrig|SSbiexp|SSD|SSD\.mlm|SSfol|SSfpl|SSgompertz|SSlogis|SSmicmen|SSweibull|start|start\.default|stat\.anova|step|stepfun|stl|str\.dendrogram|str\.logLik|StructTS|summary\.aov|summary\.aovlist|summary\.ecdf|summary\.glm|summary\.infl|summary\.lm|summary\.loess|summary\.manova|summary\.mlm|summary\.nls|summary\.ppr|summary\.prcomp|summary\.princomp|summary\.stepfun|summary\.stl|summary\.tukeysmooth|supsmu|symnum|t\.test|t\.test\.default|t\.test\.formula|t\.ts|termplot|terms|terms\.aovlist|terms\.default|terms\.formula|terms\.terms|Thin\.col|Thin\.row|time|time\.default|time\.ts|toeplitz|Tr|ts|ts\.intersect|ts\.plot|ts\.union|tsdiag|tsdiag\.Arima|tsdiag\.arima0|tsdiag\.StructTS|tsp|tsSmooth|tsSmooth\.StructTS|TukeyHSD|TukeyHSD\.aov|uniroot|update|update\.default|update\.formula|var|var\.test|var\.test\.default|var\.test\.formula|variable\.names|variable\.names\.default|variable\.names\.lm|varimax|vcov|vcov\.Arima|vcov\.glm|vcov\.lm|vcov\.mlm|vcov\.nls|vcov\.summary\.glm|vcov\.summary\.lm|weighted\.mean|weighted\.mean\.Date|weighted\.mean\.default|weighted\.mean\.difftime|weighted\.mean\.POSIXct|weighted\.mean\.POSIXlt|weighted\.residuals|weights|weights\.default|weights\.glm|weights\.nls|wilcox\.test|wilcox\.test\.default|wilcox\.test\.formula|Wilks|window|window\.default|window\.ts|write\.ftable|xtabs)\b\s*
+        name: support.function.r.sa
+      - match: \s*\b(adist|alarm|apropos|aregexec|argNames|argsAnywhere|as\.bibentry|as\.bibentry\.bibentry|as\.bibentry\.citation|as\.character\.person|as\.character\.roman|as\.person|as\.person\.default|as\.personList|as\.personList\.default|as\.personList\.person|as\.relistable|as\.roman|aspell|aspell_find_dictionaries|aspell_find_program|aspell_inspect_context|aspell_package|aspell_package_C_files|aspell_package_description|aspell_package_pot_files|aspell_package_R_files|aspell_package_Rd_files|aspell_package_vignettes|aspell_R_C_files|aspell_R_manuals|aspell_R_R_files|aspell_R_Rd_files|aspell_R_vignettes|aspell_write_personal_dictionary_file|assignInMyNamespace|assignInNamespace|attachedPackageCompletions|available\.packages|bibentry|blank_out_ignores_in_lines|blank_out_regexp_matches|browseEnv|browseURL|browseVignettes|bug\.report|bug\.report\.info|c\.bibentry|c\.person|capture\.output|changedFiles|check_for_XQuartz|checkCRAN|chooseBioCmirror|chooseCRANmirror|citation|cite|citeNatbib|citEntry|citFooter|citHeader|close\.socket|close\.txtProgressBar|combn|compareVersion|contrib\.url|correctFilenameToken|count\.fields|CRAN\.packages|create\.post|data|data\.entry|dataentry|de|de\.ncols|de\.restore|de\.setup|debugcall|debugger|defaultUserAgent|demo|download\.file|download\.packages|dump\.frames|edit|edit\.data\.frame|edit\.default|edit\.matrix|edit\.vignette|emacs|example|expr2token|file_test|file\.edit|fileCompletionPreferred|fileCompletions|fileSnapshot|filter_packages_by_depends_predicates|find|find_files_in_directories|findExactMatches|findFuzzyMatches|findGeneric|findLineNum|findMatches|fix|fixInNamespace|flush\.console|fnLineNum|format\.aspell|format\.bibentry|format\.citation|format\.news_db|format\.object_size|format\.person|format\.roman|formatOL|formatUL|functionArgs|fuzzyApropos|get_parse_data_for_message_strings|getAnywhere|getCRANmirrors|getDependencies|getFromNamespace|getIsFirstArg|getKnownS3generics|getParseData|getParseText|getRcode|getRcode\.vignette|getS3method|getSrcDirectory|getSrcfile|getSrcFilename|getSrcLocation|getSrcref|getTxtProgressBar|glob2rx|globalVariables|hasName|head|head\.data\.frame|head\.default|head\.ftable|head\.function|head\.matrix|head\.table|help|help\.request|help\.search|help\.start|helpCompletions|history|hsearch_db|hsearch_db_concepts|hsearch_db_keywords|index\.search|inFunction|install\.packages|installed\.packages|is\.relistable|isBasePkg|isInsideQuotes|isS3method|isS3stdGeneric|keywordCompletions|limitedLabels|loadedPackageCompletions|loadhistory|localeToCharset|ls\.str|lsf\.str|maintainer|make_sysdata_rda|make\.packages\.html|make\.socket|makeRegexpSafe|makeRweaveLatexCodeRunner|makeUserAgent|matchAvailableTopics|memory\.limit|memory\.size|menu|merge_demo_index|merge_vignette_index|methods|mirror2html|modifyList|new\.packages|news|normalCompletions|nsl|object\.size|offline_help_helper|old\.packages|Ops\.roman|package\.skeleton|packageDescription|packageName|packageStatus|packageVersion|page|person|personList|pico|print\.aspell|print\.aspell_inspect_context|print\.bibentry|print\.Bibtex|print\.browseVignettes|print\.changedFiles|print\.citation|print\.fileSnapshot|print\.findLineNumResult|print\.getAnywhere|print\.help_files_with_topic|print\.hsearch|print\.hsearch_db|print\.Latex|print\.ls_str|print\.MethodsFunction|print\.news_db|print\.object_size|print\.packageDescription|print\.packageIQR|print\.packageStatus|print\.person|print\.roman|print\.sessionInfo|print\.socket|print\.summary\.packageStatus|print\.vignette|printhsearchInternal|process\.events|prompt|prompt\.data\.frame|prompt\.default|promptData|promptImport|promptPackage|rc\.getOption|rc\.options|rc\.settings|rc\.status|read\.csv|read\.csv2|read\.delim|read\.delim2|read\.DIF|read\.fortran|read\.fwf|read\.socket|read\.table|readCitationFile|recover|registerNames|regquote|relist|relist\.default|relist\.factor|relist\.list|relist\.matrix|remove\.packages|removeSource|rep\.bibentry|rep\.roman|resolvePkgType|Rprof|Rprof_memory_summary|Rprofmem|RShowDoc|RSiteSearch|rtags|rtags\.file|Rtangle|RtangleFinish|RtangleRuncode|RtangleSetup|RtangleWritedoc|RweaveChunkPrefix|RweaveEvalWithOpt|RweaveLatex|RweaveLatexFinish|RweaveLatexOptions|RweaveLatexRuncode|RweaveLatexSetup|RweaveLatexWritedoc|RweaveTryStop|savehistory|select\.list|sessionInfo|setBreakpoint|setIsFirstArg|setRepositories|setTxtProgressBar|shorten\.to\.string|simplifyRepos|sort\.bibentry|specialCompletions|specialFunctionArgs|specialOpCompletionsHelper|specialOpLocs|stack|stack\.data\.frame|stack\.default|Stangle|str|str\.data\.frame|str\.Date|str\.default|str\.POSIXt|strcapture|strextract|strOptions|substr_with_tabs|summary\.aspell|summary\.packageStatus|summaryRprof|suppressForeignCheck|Sweave|SweaveGetSyntax|SweaveHooks|SweaveParseOptions|SweaveReadFile|SweaveSyntConv|tail|tail\.data\.frame|tail\.default|tail\.ftable|tail\.function|tail\.matrix|tail\.table|tar|timestamp|toBibtex|toBibtex\.bibentry|toBibtex\.person|toLatex|toLatex\.sessionInfo|topicName|txtProgressBar|type\.convert|undebugcall|unique\.bibentry|unlist\.relistable|unstack|unstack\.data\.frame|unstack\.default|untar|untar2|unzip|update\.packages|update\.packageStatus|upgrade|upgrade\.packageStatus|url\.show|URLdecode|URLencode|vi|View|vignette|write\.csv|write\.csv2|write\.etags|write\.socket|write\.table|wsbrowser|xedit|xemacs|zip)\b\s*
+        name: support.function.r.sa
+      - match: \s*\b(debug|warn|info|log|error|time|timeEnd|assert)\b\s*
+        name: support.function.console.sa
+      - match: \s*\b(apply|call|concat|every|filter|forEach|from|hasOwnProperty|indexOf|isPrototypeOf|join|lastIndexOf|map|of|pop|propertyIsEnumerable|push|reduce(Right)?|reverse|shift|slice|some|sort|splice|to(Locale)?String|unshift|valueOf)\b\s*
+        name: support.function.method.array.sa
+      - match: \s*\b(isArray)\b\s*
+        name: support.function.static.array.sa
+      - match: \s*\b(create|definePropert(ies|y)|freeze|getOwnProperty(Descriptors?|Names)|getProperty(Descriptor|Names)|getPrototypeOf|is(Extensible|Frozen|Sealed)?|isnt|keys|preventExtensions|seal)\b\s*
+        name: support.function.static.object.sa
+      - match: \s*\b(abs|acos|acosh|asin|asinh|atan|atan2|atanh|ceil|cos|cosh|exp|expm1|floor|hypot|log|log10|log1p|log2|max|min|pow|random|round|sign|sin|sinh|sqrt|tan|tanh|trunc)\b\s*
+        name: support.function.static.math.sa
+      - match: \s*\b(is(Finite|Integer|NaN)|toInteger)\b\s*
+        name: support.function.static.number.sa
+      - match: (?x)\s*\b(isNaN|isFinite|eval|uneval|parseInt|parseFloat|decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|escape|unescape|require|set(Interval|Timeout)|clear(Interval|Timeout))\b\s*
+        name: support.function.coffee
+      - match: \s*\b(append|cap|close|complex|copy|delete|imag|len|make|new|panic|print|println|real|recover)\b\s*
+        name: support.function.builtin.sa
+      - match: (?x)\s*\b(?:sprintf|print(?:f|ln)?)\b\s*
+        name: support.function.print.sa
+      - match: (?x)\s*\b(?:shouldFail|fail(?:NotEquals)?|ass(?:ume|ert(?:S(?:cript|ame)|N(?:ot(?:Same|Null)|ull)|Contains|T(?:hat|oString|rue)|Inspect|Equals|False|Length|ArrayEquals)))\b\s*
+        name: support.function.testing.sa
+      - match: (?i:\s*\b(Lock|Unlock|SetAbort|SetComplete|BinaryRead|AddHeader|AppendToLog|BinaryWrite|Clear|End|Flush|Redirect|Write|CreateObject|HTMLEncode|MapPath|URLEncode|Abandon|Convert|Regex)\b)
+        name: support.function.asp.sa
+      - match: (?i:\s*\b(Application_OnEnd|Application_OnStart|OnTransactionAbort|OnTransactionCommit|Session_OnEnd|Session_OnStart)\b)
+        name: support.function.event.sa
+      - match: (?i:\s*\b(Array|Add|Asc|Atn|CBool|CByte|CCur|CDate|CDbl|Chr|CInt|CLng|Conversions|Cos|CreateObject|CSng|CStr|Date|DateAdd|DateDiff|DatePart|DateSerial|DateValue|Day|Derived|Math|Escape|Eval|Exists|Exp|Filter|FormatCurrency|FormatDateTime|FormatNumber|FormatPercent|GetLocale|GetObject|GetRef|Hex|Hour|InputBox|InStr|InStrRev|Int|Fix|IsArray|IsDate|IsEmpty|IsNull|IsNumeric|IsObject|Item|Items|Join|Keys|LBound|LCase|Left|Len|LoadPicture|Log|LTrim|RTrim|Trim|Maths|Mid|Minute|Month|MonthName|MsgBox|Now|Oct|Remove|RemoveAll|Replace|RGB|Right|Rnd|Round|ScriptEngine|ScriptEngineBuildVersion|ScriptEngineMajorVersion|ScriptEngineMinorVersion|Second|SetLocale|Sgn|Sin|Space|Split|Sqr|StrComp|String|StrReverse|Tan|Time|Timer|TimeSerial|TimeValue|TypeName|UBound|UCase|Unescape|VarType|Weekday|WeekdayName|Year)\b)
+        name: support.function.vb.sa
+      - match: \s*\bdefault\b\s*
+        name: support.function.default.sa
+      - match: \s*\b(isurl|isstring|isnumber|iskeyword|iscolor)\b\s*
+        name: support.function.type_checking.sa
+      - match: \s*\b(isunit|ispixel|ispercentage|isem)\b\s*
+        name: support.function.unit_checking.sa
+      - match: \s*\b(subst|patsubst|strip|findstring|filter(_out)?|sort|word(list)?|firstword|lastword|dir|notdir|suffix|basename|addsuffix|addprefix|join|wildcard|realpath|abspath|info|error|warning|shell|foreach|if|or|and|call|eval|value|file|guile)\b\s*
+        name: support.function.makefile.sa
+      - match: \s*\b(ARGV|DATA|ENV|SIG|STDERR|STDIN|STDOUT|atan2|bind|binmode|bless|caller|chdir|chmod|chomp|chop|chown|chr|chroot|close|closedir|cmp|connect|cos|crypt|dbmclose|dbmopen|defined|delete|dump|each|endgrent|endhostent|endnetent|endprotoent|endpwent|endservent|eof|eq|eval|exec|exists|exp|fcntl|fileno|flock|fork|formline|ge|getc|getgrent|getgrgid|getgrnam|gethostbyaddr|gethostbyname|gethostent|getlogin|getnetbyaddr|getnetbyname|getnetent|getpeername|getpgrp|getppid|getpriority|getprotobyname|getprotobynumber|getprotoent|getpwent|getpwnam|getpwuid|getservbyname|getservbyport|getservent|getsockname|getsockopt|glob|gmtime|grep|gt|hex|import|index|int|ioctl|join|keys|kill|lc|lcfirst|le|length|link|listen|local|localtime|log|lstat|lt|m|map|mkdir|msgctl|msgget|msgrcv|msgsnd|ne|no|oct|open|opendir|ord|pack|pipe|pop|pos|print|printf|push|quotemeta|rand|read|readdir|readlink|recv|ref|rename|reset|reverse|rewinddir|rindex|rmdir|s|say|scalar|seek|seekdir|semctl|semget|semop|send|setgrent|sethostent|setnetent|setpgrp|setpriority|setprotoent|setpwent|setservent|setsockopt|shift|shmctl|shmget|shmread|shmwrite|shutdown|sin|sleep|socket|socketpair|sort|splice|split|sprintf|sqrt|srand|stat|study|substr|symlink|syscall|sysopen|sysread|system|syswrite|tell|telldir|tie|tied|time|times|tr|truncate|uc|ucfirst|umask|undef|unlink|unpack|unshift|untie|utime|values|vec|waitpid|wantarray|warn|write|y)\b\s*
+        name: support.function.perl.sa
+      - match: \s*\b(abort|at_exit|autoload[?]?|binding|callcc|caller|caller_locations|chomp|chop|eval|exec|exit|exit!|fork|format|gets|global_variables|gsub|lambda|load|local_variables|open|p|print|printf|proc|putc|puts|rand|readline|readlines|select|set_trace_func|sleep|spawn|sprintf|srand|sub|syscall|system|test|trace_var|trap|untrace_var|warn)\b\s*
+        name: support.function.kernel.sa
+      - match: (?i)\s*\b(avg|checksum_agg|count|count_big|grouping|grouping_id|max|min|sum|stdev|stdevp|var|varp)\b\s*
+        name: support.function.aggregate.sa
+      - match: (?i)\s*\b(cast|convert|parse|try_cast|try_convert|try_parse)\b\s*
+        name: support.function.conversion.sa
+      - match: (?i)\s*\b(cursor_status)\b\s*
+        name: support.function.cursor.sa
+      - match: (?i)\s*\b(sysdatetime|sysdatetimeoffset|sysutcdatetime|current_time(stamp)?|getdate|getutcdate|datename|datepart|day|month|year|datefromparts|datetime2fromparts|datetimefromparts|datetimeoffsetfromparts|smalldatetimefromparts|timefromparts|datediff|dateadd|eomonth|switchoffset|todatetimeoffset|isdate)\b\s*
+        name: support.function.datetime.sa
+      - match: (?i)\s*\b(coalesce|nullif)\b\s*
+        name: support.function.expression.sa
+      - match: (?i)\s*\b(cursor_rows|connections|cpu_busy|datefirst|dbts|error|fetch_status|identity|idle|io_busy|langid|language|lock_timeout|max_connections|max_precision|nestlevel|options|packet_errors|pack_received|pack_sent|procid|remserver|rowcount|servername|servicename|spid|textsize|timeticks|total_errors|total_read|total_write|trancount|version)\b\s*
+        name: support.function.globalvar.sa
+      - match: (?i)\s*\b(choose|iif)\b\s*
+        name: support.function.logical.sa
+      - match: (?i)\s*\b(abs|acos|asin|atan|atn2|ceiling|cos|cot|degrees|exp|floor|log|log10|pi|power|radians|rand|round|sign|sin|sqrt|square|tan)\b\s*
+        name: support.function.mathematical.sa
+      - match: (?i)\s*\b(app_name|applock_mode|applock_test|assemblyproperty|col_length|col_name|columnproperty|database_principal_id|databasepropertyex|db_id|db_name|file_id|file_idex|file_name|filegroup_id|filegroup_name|filegroupproperty|fileproperty|fulltextcatalogproperty|fulltextserviceproperty|index_col|indexkey_property|indexproperty|object_definition|object_id|object_name|object_schema_name|objectproperty|objectpropertyex|original_db_name|parsename|schema_id|schema_name|scope_identity|serverproperty|stats_date|type_id|type_name|typeproperty)\b\s*
+        name: support.function.metadata.sa
+      - match: (?i)\s*\b(rank|dense_rank|ntile|row_number)\b\s*
+        name: support.function.ranking.sa
+      - match: (?i)\s*\b(opendatasource|openrowset|openquery|openxml)\b\s*
+        name: support.function.rowset.sa
+      - match: (?i)\s*\b(certencoded|certprivatekey|current_user|database_principal_id|has_perms_by_name|is_member|is_rolemember|is_srvrolemember|original_login|permissions|pwdcompare|pwdencrypt|schema_id|schema_name|session_user|suser_id|suser_sid|suser_sname|system_user|suser_name|user_id|user_name)\b\s*
+        name: support.function.security.sa
+      - match: (?i)\s*\b(ascii|char|charindex|concat|difference|format|left|len|lower|ltrim|nchar|nodes|patindex|quotename|replace|replicate|reverse|right|rtrim|soundex|space|str|string_agg|string_escape|string_split|stuff|substring|translate|trim|unicode|upper)\b\s*
+        name: support.function.string.sa
+      - match: (?i)\s*\b(binary_checksum|checksum|compress|connectionproperty|context_info|current_request_id|current_transaction_id|decompress|error_line|error_message|error_number|error_procedure|error_severity|error_state|formatmessage|get_filestream_transaction_context|getansinull|host_id|host_name|isnull|isnumeric|min_active_rowversion|newid|newsequentialid|rowcount_big|session_context|session_id|xact_state)\b\s*
+        name: support.function.system.sa
+      - match: (?i)\s*\b(patindex|textptr|textvalid)\b\s*
+        name: support.function.textimage.sa
+      - match: \s*\b(?:s(?:ort(?:ed)?|plit)|contains|index|partition|f(?:i(?:lter|rst)|orEach|latMap)|with(?:MutableCharacters|CString|U(?:nsafe(?:Mutable(?:BufferPointer|Pointer(?:s|To(?:Header|Elements)))|BufferPointer)|TF8Buffer))|m(?:in|a(?:p|x)))(?=\s*[({])\b\s*
+        name: support.function.swift.sa
+      - match: \s*\b(?:s(?:ymmetricDifference|t(?:oreBytes|arts|ride)|ortInPlace|u(?:ccessor|ffix|btract(?:ing|InPlace|WithOverflow)?)|quareRoot|amePosition)|h(?:oldsUnique(?:Reference|OrPinnedReference)|as(?:Suffix|Prefix))|ne(?:gate(?:d)?|xt)|c(?:o(?:untByEnumerating|py(?:Bytes)?)|lamp(?:ed)?|reate)|t(?:o(?:IntMax|Opaque|UIntMax)|ake(?:RetainedValue|UnretainedValue)|r(?:uncatingRemainder|a(?:nscodedLength|ilSurrogate)))|i(?:s(?:MutableAndUniquelyReferenced(?:OrPinned)?|S(?:trictSu(?:perset(?:Of)?|bset(?:Of)?)|u(?:perset(?:Of)?|bset(?:Of)?))|Continuation|T(?:otallyOrdered|railSurrogate)|Disjoint(?:With)?|Unique(?:Reference|lyReferenced(?:OrPinned)?)|Equal|Le(?:ss(?:ThanOrEqualTo)?|adSurrogate))|n(?:sert(?:ContentsOf)?|tersect(?:ion|InPlace)?|itialize(?:Memory|From)?|dex(?:Of|ForKey)))|o(?:verlaps|bjectAt)|d(?:i(?:stance(?:To)?|vide(?:d|WithOverflow)?)|e(?:s(?:cendant|troy)|code(?:CString)?|initialize|alloc(?:ate(?:Capacity)?)?)|rop(?:First|Last))|u(?:n(?:ion(?:InPlace)?|derestimateCount|wrappedOrError)|p(?:date(?:Value)?|percased))|join(?:ed|WithSeparator)|p(?:op(?:First|Last)|ass(?:Retained|Unretained)|re(?:decessor|fix))|e(?:scape(?:d)?|n(?:code|umerate(?:d)?)|lementsEqual|xclusiveOr(?:InPlace)?)|f(?:orm(?:Remainder|S(?:ymmetricDifference|quareRoot)|TruncatingRemainder|In(?:tersection|dex)|Union)|latten|rom(?:CString(?:RepairingIllFormedUTF8)?|Opaque))|w(?:i(?:thMemoryRebound|dth)|rite(?:To)?)|l(?:o(?:wercased|ad)|e(?:adSurrogate|xicographical(?:Compare|lyPrecedes)))|a(?:ss(?:ign(?:BackwardFrom|From)?|umingMemoryBound)|d(?:d(?:ing(?:Product)?|Product|WithOverflow)?|vanced(?:By)?)|utorelease|ppend(?:ContentsOf)?|lloc(?:ate)?|bs)|r(?:ound(?:ed)?|e(?:serveCapacity|tain|duce|place(?:Range|Subrange)?|verse(?:d)?|quest(?:NativeBuffer|UniqueMutableBackingBuffer)|lease|m(?:ove(?:Range|Subrange|Value(?:ForKey)?|First|Last|A(?:tIndex|ll))?|ainder(?:WithOverflow)?)))|ge(?:nerate|t(?:Objects|Element))|m(?:in(?:imum(?:Magnitude)?|Element)|ove(?:Initialize(?:Memory|BackwardFrom|From)?|Assign(?:From)?)?|ultipl(?:y(?:WithOverflow)?|ied)|easure|a(?:ke(?:Iterator|Description)|x(?:imum(?:Magnitude)?|Element)))|bindMemory)\b\s*
+        name: support.function.swift.sa
+      - match: \s*\b(?:s(?:uperclassMirror|amePositionIn|tartsWith)|nextObject|c(?:haracterAtIndex|o(?:untByEnumeratingWithState|pyWithZone)|ustom(?:Mirror|PlaygroundQuickLook))|is(?:EmptyInput|ASCII)|object(?:Enumerator|ForKey|AtIndex)|join|put|keyEnumerator|withUnsafeMutablePointerToValue|length|getMirror|m(?:oveInitializeAssignFrom|ember))\b\s*
+        name: support.function.swift.sa
+      - match: \s*\b(?:anyGenerator|autoreleasepool)\b\s*
+        name: support.function.swift.sa
+      - match: \s*\b(?:s(?:tride(?:of(?:Value)?)?|izeof(?:Value)?|equence|wap)|numericCast|transcode|is(?:UniquelyReferenced(?:NonObjC)?|KnownUniquelyReferenced)|zip|d(?:ump|ebugPrint)|unsafe(?:BitCast|Downcast|Unwrap|Address(?:Of)?)|pr(?:int|econdition(?:Failure)?)|fatalError|with(?:Unsafe(?:MutablePointer|Pointer)|ExtendedLifetime|VaList)|a(?:ssert(?:ionFailure)?|lignof(?:Value)?|bs)|re(?:peatElement|adLine)|getVaList|m(?:in|ax))(?=\s*\()
+        name: support.function.swift.sa
+      - match: \s*\b(?:s(?:ort|uffix|pli(?:ce|t))|insert|overlaps|d(?:istance|rop(?:First|Last))|join|prefix|extend|withUnsafe(?:MutablePointers|Pointers)|lazy|advance|re(?:flect|move(?:Range|Last|A(?:tIndex|ll))))(?=\s*\()
+        name: support.function.swift.sa
+      - match: \s*\b(abs|acos|alpha|argb|asin|atan|average|blue|calc|ceil|color|contrast|convert|convert|cos|darken|data_uri|desaturate|difference|e|escape|exclusion|extract|fade|fadein|fadeout|floor|format|green|greyscale|hardlight|hsl|hsla|hsv|hsva|hsvhue|hsvsaturation|hsvvalue|hue|length|lighten|lightness|luma|max|min|mix|mod|multiply|negation|overlay|percentage|pi|pow|red|replace|round|saturate|saturation|screen|sin|softlight|spin|sqrt|tan|unit)\b\s*
+        name: support.function.any_method.builtin.less
+      - match: (?x)\s*\bon(Rowsinserted|Rowsdelete|Rowenter|Rowexit|Resize|Resizestart|Resizeend|Reset|Readystatechange|Mouseout|Mouseover|Mousedown|Mouseup|Mousemove|Before(cut|deactivate|unload|update|paste|print|editfocus|activate)|Blur|Scrolltop|Submit|Select|Selectstart|Selectionchange|Hover|Help|Change|Contextmenu|Controlselect|Cut|Cellchange|Clock|Close|Deactivate|Datasetchanged|Datasetcomplete|Dataavailable|Drop|Drag|Dragstart|Dragover|Dragdrop|Dragenter|Dragend|Dragleave|Dblclick|Unload|Paste|Propertychange|Error|Errorupdate|Keydown|Keyup|Keypress|Focus|Load|Activate|Afterupdate|Afterprint|Abort)\b\s*
+        name: support.function.event_handler.sa
+      - match: (?x)\s*\b(shift|showModelessDialog|showModalDialog|showHelp|scroll|scrollX|scrollByPages|scrollByLines|scrollY|scrollTo|stop|strike|sizeToContent|sidebar|signText|sort|sup|sub|substr|substring|splice|split|send|set(Milliseconds|Seconds|Minutes|Hours|Month|Year|FullYear|Date|UTC(Milliseconds|Seconds|Minutes|Hours|Month|FullYear|Date)|Time|Hotkeys|Cursor|ZOptions|Active|Resizable|RequestHeader)|search|slice|savePreferences|small|home|handleEvent|navigate|char|charCodeAt|charAt|concat|contextual|confirm|compile|clear|captureEvents|call|createStyleSheet|createPopup|createEventObject|to(GMTString|UTCString|String|Source|UpperCase|LowerCase|LocaleString)|test|taint|taintEnabled|indexOf|italics|disableExternalCapture|dump|detachEvent|unshift|untaint|unwatch|updateCommands|join|javaEnabled|pop|push|plugins.refresh|paddings|parse|print|prompt|preference|enableExternalCapture|exec|execScript|valueOf|UTC|find|file|fileModifiedDate|fileSize|fileCreatedDate|fileUpdatedDate|fixed|fontsize|fontcolor|forward|fromCharCode|watch|link|load|lastIndexOf|anchor|attachEvent|atob|apply|alert|abort|routeEvents|resize|resizeBy|resizeTo|recalc|returnValue|replace|reverse|reload|releaseCapture|releaseEvents|go|get(Milliseconds|Seconds|Minutes|Hours|Month|Day|Year|FullYear|Time|Date|TimezoneOffset|UTC(Milliseconds|Seconds|Minutes|Hours|Day|Month|FullYear|Date)|Attention|Selection|ResponseHeader|AllResponseHeaders)|moveBy|moveBelow|moveTo|moveToAbsolute|moveAbove|mergeAttributes|match|margins|btoa|big|bold|borderWidths|blink|back)\b\s*
+        name: support.function.sa
+      - match: (?x)\s*\b(acceptNode|add|addEventListener|addTextTrack|adoptNode|after|animate|append|appendChild|appendData|before|blur|canPlayType|captureStream|caretPositionFromPoint|caretRangeFromPoint|checkValidity|clear|click|cloneContents|cloneNode|cloneRange|close|closest|collapse|compareBoundaryPoints|compareDocumentPosition|comparePoint|contains|convertPointFromNode|convertQuadFromNode|convertRectFromNode|createAttribute|createAttributeNS|createCaption|createCDATASection|createComment|createContextualFragment|createDocument|createDocumentFragment|createDocumentType|createElement|createElementNS|createEntityReference|createEvent|createExpression|createHTMLDocument|createNodeIterator|createNSResolver|createProcessingInstruction|createRange|createShadowRoot|createTBody|createTextNode|createTFoot|createTHead|createTreeWalker|delete|deleteCaption|deleteCell|deleteContents|deleteData|deleteRow|deleteTFoot|deleteTHead|detach|disconnect|dispatchEvent|elementFromPoint|elementsFromPoint|enableStyleSheetsForSet|entries|evaluate|execCommand|exitFullscreen|exitPointerLock|expand|extractContents|fastSeek|firstChild|focus|forEach|get|getAll|getAnimations|getAttribute|getAttributeNames|getAttributeNode|getAttributeNodeNS|getAttributeNS|getBoundingClientRect|getBoxQuads|getClientRects|getContext|getDestinationInsertionPoints|getElementById|getElementsByClassName|getElementsByName|getElementsByTagName|getElementsByTagNameNS|getItem|getNamedItem|getSelection|getStartDate|getVideoPlaybackQuality|has|hasAttribute|hasAttributeNS|hasAttributes|hasChildNodes|hasFeature|hasFocus|importNode|initEvent|insertAdjacentElement|insertAdjacentHTML|insertAdjacentText|insertBefore|insertCell|insertData|insertNode|insertRow|intersectsNode|isDefaultNamespace|isEqualNode|isPointInRange|isSameNode|item|key|keys|lastChild|load|lookupNamespaceURI|lookupPrefix|matches|move|moveAttribute|moveAttributeNode|moveChild|moveNamedItem|namedItem|nextNode|nextSibling|normalize|observe|open|parentNode|pause|play|postMessage|prepend|preventDefault|previousNode|previousSibling|probablySupportsContext|queryCommandEnabled|queryCommandIndeterm|queryCommandState|queryCommandSupported|queryCommandValue|querySelector|querySelectorAll|registerContentHandler|registerElement|registerProtocolHandler|releaseCapture|releaseEvents|remove|removeAttribute|removeAttributeNode|removeAttributeNS|removeChild|removeEventListener|removeItem|replace|replaceChild|replaceData|replaceWith|reportValidity|requestFullscreen|requestPointerLock|reset|scroll|scrollBy|scrollIntoView|scrollTo|seekToNextFrame|select|selectNode|selectNodeContents|set|setAttribute|setAttributeNode|setAttributeNodeNS|setAttributeNS|setCapture|setCustomValidity|setEnd|setEndAfter|setEndBefore|setItem|setNamedItem|setRangeText|setSelectionRange|setSinkId|setStart|setStartAfter|setStartBefore|slice|splitText|stepDown|stepUp|stopImmediatePropagation|stopPropagation|submit|substringData|supports|surroundContents|takeRecords|terminate|toBlob|toDataURL|toggle|toString|values|write|writeln)\b\s*
+        name: support.function.dom.sa
+      - match: \s*\b(?i)(abort|abort_after_wait|absent|absolute|accent_sensitivity|acceptable_cursopt|acp|action|activation|add|address|admin|aes_128|aes_192|aes_256|affinity|after|aggregate|algorithm|all_constraints|all_errormsgs|all_indexes|all_levels|all_results|allow_connections|allow_dup_row|allow_encrypted_value_modifications|allow_page_locks|allow_row_locks|allow_snapshot_isolation|alter|altercolumn|always|anonymous|ansi_defaults|ansi_null_default|ansi_null_dflt_off|ansi_null_dflt_on|ansi_nulls|ansi_padding|ansi_warnings|appdomain|append|application|apply|arithabort|arithignore|assembly|asymmetric|asynchronous_commit|at|atan2|atomic|attach|attach_force_rebuild_log|attach_rebuild_log|audit|auth_realm|authentication|auto|auto_cleanup|auto_close|auto_create_statistics|auto_shrink|auto_update_statistics|auto_update_statistics_async|automated_backup_preference|automatic|autopilot|availability|availability_mode|backup_priority|base64|basic|batches|batchsize|before|between|bigint|binary|binding|bit|block|blocksize|bmk|break|broker|broker_instance|bucket_count|buffer|buffercount|bulk_logged|by|call|caller|card|case|catalog|catch|cert|certificate|change_retention|change_tracking|change_tracking_context|changes|char|character|character_set|check_expiration|check_policy|checkconstraints|checkindex|checkpoint|cleanup_policy|clear|clear_port|close|clustered|codepage|collection|column_encryption_key|column_master_key|columnstore|columnstore_archive|colv_80_to_100|colv_100_to_80|commit_differential_base|committed|compatibility_level|compress_all_row_groups|compression|compression_delay|concat_null_yields_null|concatenate|configuration|connect|continue|continue_after_error|contract|contract_name|control|conversation|conversation_group_id|conversation_handle|copy|copy_only|count_rows|counter|create(\s+or\s+alter)?|credential|cross|cryptographic|cryptographic_provider|cube|cursor|cursor_close_on_commit|cursor_default|data|data_compression|data_flush_interval_seconds|data_mirroring|data_purity|data_source|database|database_name|database_snapshot|datafiletype|date_correlation_optimization|date|datefirst|dateformat|date_format|datetime|datetime2|datetimeoffset|days|db_chaining|dbid|dbidexec|dbo_only|deadlock_priority|deallocate|dec|decimal|declare|decrypt|decrypt_a|decryption|default_database|default_language|default_logon_domain|default_schema|definition|delay|delayed_durability|delimitedtext|density_vector|dependent|des|description|desired_state|desx|differential|digest|disable|disable_broker|disable_def_cnst_chk|disabled|disk|distinct|distributed|distribution|drop|drop_existing|dts_buffers|dump|durability|dynamic|edition|elements|else|emergency|empty|enable|enable_broker|enabled|encoding|encrypted|encrypted_value|encryption|encryption_type|end|endpoint|endpoint_url|enhancedintegrity|entry|error_broker_conversations|errorfile|estimateonly|event|except|exec|executable|execute|exists|expand|expiredate|expiry_date|explicit|external|external_access|failover|failover_mode|failure_condition_level|fast|fast_forward|fastfirstrow|federated_service_account|fetch|field_terminator|fieldterminator|file|filelistonly|filegroup|filename|filestream|filestream_log|filestream_on|filetable|file_format|filter|first_row|fips_flagger|fire_triggers|first|firstrow|float|flush_interval_seconds|fmtonly|following|force|force_failover_allow_data_loss|force_service_allow_data_loss|forced|forceplan|formatfile|format_options|format_type|formsof|forward_only|free_cursors|free_exec_context|fullscan|fulltext|fulltextall|fulltextkey|function|generated|get|geography|geometry|global|go|goto|governor|guid|hadoop|hardening|hash|hashed|header_limit|headeronly|health_check_timeout|hidden|hierarchyid|histogram|histogram_steps|hits_cursors|hits_exec_context|hours|http|identity|identity_value|if|ifnull|ignore_constraints|ignore_dup_key|ignore_dup_row|ignore_triggers|image|immediate|implicit_transactions|include|include_null_values|index|inflectional|init|initiator|insensitive|insert|instead|int|integer|integrated|intersect|intermediate|interval_length_minutes|into|inuse_cursors|inuse_exec_context|io|is|isabout|iso_week|isolation|job_tracker_location|json|keep|keep_nulls|keep_replication|keepdefaults|keepfixed|keepidentity|keepnulls|kerberos|key|key_path|key_source|key_store_provider_name|keyset|kill|kilobytes_per_batch|labelonly|langid|language|last|lastrow|legacy_cardinality_estimation|length|level|lifetime|lineage_80_to_100|lineage_100_to_80|listener_ip|listener_port|load|loadhistory|lob_compaction|local|local_service_name|locate|location|lock_escalation|lock_timeout|lockres|login|login_type|loop|manual|mark_in_use_for_removal|masked|master|matched|max_queue_readers|max_duration|max_outstanding_io_per_volume|maxdop|maxerrors|maxlength|maxtransfersize|max_plans_per_query|max_storage_size_mb|mediadescription|medianame|mediapassword|memogroup|memory_optimized|merge|message|message_forward_size|message_forwarding|microsecond|millisecond|minutes|mirror_address|misses_cursors|misses_exec_context|mixed|modify|money|move|multi_user|must_change|name|namespace|nanosecond|native|native_compilation|nchar|ncharacter|never|new_account|new_broker|newname|next|no|no_browsetable|no_checksum|no_compression|no_infomsgs|no_triggers|no_truncate|nocount|noexec|noexpand|noformat|noinit|nolock|nonatomic|nonclustered|nondurable|none|norecompute|norecovery|noreset|norewind|noskip|not|notification|nounload|now|nowait|ntext|ntlm|numeric|numeric_roundabort|nvarchar|object|objid|oem|offline|old_account|online|operation_mode|open|openjson|optimistic|option|orc|out|outer|output|over|override|owner|ownership|pad_index|page|page_checksum|page_verify|pagecount|paglock|param|parameter_sniffing|parameter_type_expansion|parameterization|parquet|parseonly|partial|partition|partner|password|path|pause|percentage|permission_set|persisted|period|physical_only|plan_forcing_mode|policy|pool|population|ports|preceding|precision|predicate|presume_abort|primary|primary_role|print|prior|priority |priority_level|private|proc(edure)?|procedure_name|profile|provider|query_capture_mode|query_governor_cost_limit|query_optimizer_hotfixes|query_store|queue|quoted_identifier|raiserror|range|raw|rcfile|rc2|rc4|rc4_128|rdbms|read_committed_snapshot|read|read_only|read_write|readcommitted|readcommittedlock|readonly|readpast|readuncommitted|readwrite|real|rebuild|receive|recmodel_70backcomp|recompile|reconfigure|recovery|recursive|recursive_triggers|redo_queue|reject_sample_value|reject_type|reject_value|relative|remote|remote_data_archive|remote_proc_transactions|remote_service_name|remove|removed_cursors|removed_exec_context|reorganize|repeat|repeatable|repeatableread|replica|replicated|replnick_100_to_80|replnickarray_80_to_100|replnickarray_100_to_80|required|required_cursopt|resample|reset|resource|resource_manager_location|restart|restore|restricted_user|resume|retaindays|retention|return|revert|rewind|rewindonly|returns|robust|role|rollup|root|round_robin|route|row|rowdump|rowguidcol|rowlock|row_terminator|rows|rows_per_batch|rowsets_only|rowterminator|rowversion|rsa_1024|rsa_2048|rsa_3072|rsa_4096|rsa_512|safe|safety|sample|save|schema|schemabinding|scoped|scroll|scroll_locks|sddl|secexpr|secondary|secondary_only|secondary_role|secret|security|securityaudit|selective|self|send|sent|sequence|serde_method|serializable|server|service|service_broker|service_name|service_objective|session_timeout|session|sessions|seterror|setopts|sets|shard_map_manager|shard_map_name|sharded|shared_memory|show_statistics|showplan_all|showplan_text|showplan_xml|showplan_xml_with_recompile|shrinkdb|shutdown|sid|signature|simple|single_blob|single_clob|single_nclob|single_user|singleton|site|size_based_cleanup_mode|skip|smalldatetime|smallint|smallmoney|snapshot|snapshot_import|snapshotrestorephase|soap|softnuma|sort_in_tempdb|sorted_data|sorted_data_reorg|spatial|sql|sql_bigint|sql_binary|sql_bit|sql_char|sql_date|sql_decimal|sql_double|sql_float|sql_guid|sql_handle|sql_longvarbinary|sql_longvarchar|sql_numeric|sql_real|sql_smallint|sql_time|sql_timestamp|sql_tinyint|sql_tsi_day|sql_tsi_frac_second|sql_tsi_hour|sql_tsi_minute|sql_tsi_month|sql_tsi_quarter|sql_tsi_second|sql_tsi_week|sql_tsi_year|sql_type_date|sql_type_time|sql_type_timestamp|sql_varbinary|sql_varchar|sql_variant|sql_wchar|sql_wlongvarchar|ssl|ssl_port|standard|standby|start|start_date|started|stat_header|state|statement|static|statistics|statistics_incremental|statistics_norecompute|statistics_only|statman|stats_stream|status|stop|stop_on_error|stopat|stopatmark|stopbeforemark|stoplist|stopped|string_delimiter|subject|supplemental_logging|supported|suspend|symmetric|synchronous_commit|synonym|sysname|system|system_time|system_versioning|table|tableresults|tablock|tablockx|take|tape|target|target_index|target_partition|tcp|temporal_history_retention|text|textimage_on|then|thesaurus|throw|time|timeout|timestamp|tinyint|to|top|torn_page_detection|track_columns_updated|tran|transaction|transfer|triple_des|triple_des_3key|truncate|trustworthy|try|tsql|type|type_desc|type_warning|tzoffset|uid|unbounded|uncommitted|unique|uniqueidentifier|unlimited|unload|unlock|unsafe|updlock|url|use|useplan|useroptions|use_type_default|using|utcdatetime|valid_xml|validation|value|values|varbinary|varchar|verbose|verifyonly|version|view_metadata|virtual_device|visiblity|waitfor|webmethod|weekday|weight|well_formed_xml|when|while|widechar|widechar_ansi|widenative|windows|with|within|witness|without|without_array_wrapper|workload|wsdl|xact_abort|xlock|xml|xmlschema|xquery|xsinil|zone)\b\s*
+        name: support.function.sql.sa
 
   constant-names:
     comment: Names for constants, symbols and static properties
@@ -187,8 +364,8 @@ repository:
   clause-content:
     patterns:
       - include: "#embedded-langs"
-      - include: "#declarations"
       - include: "#clauses"
+      - include: "#declarations"
       - include: "#keywords"
       - include: "#comments"
       - include: "#brackets"
@@ -3698,799 +3875,3 @@ repository:
             patterns:
               - include: "#embedded-raw"
           - include: $self
-
-  embedded-haml:
-    patterns:
-      - begin: ^(\s*)==
-        contentName: string.quoted.double.ruby
-        end: $\n*
-        patterns:
-          - include: "#interpolated_ruby"
-      - begin: ^(\s*):ruby
-        end: ^(?!\1\s+|$\n*)
-        name: source.ruby.embedded.filter.haml
-        patterns:
-          - include: source.ruby
-      - match: ^(!!!)($|\s.*)
-        name: meta.prolog.haml
-        captures:
-          1: {name: punctuation.definition.prolog.haml}
-      - begin: ^(\s*):javascript
-        end: ^(?!\1\s+|$\n*)
-        name: js.haml
-        patterns:
-          - include: source.js
-      - begin: ^(\s*):ruby$
-        end: ^(?!\1\s+|$\n*)
-        name: source.ruby.embedded.filter.haml
-        patterns:
-          - include: source.ruby
-      - match: ^(\s*)(\/\[[^\]].*?$\n?)
-        name: comment.line.slash.haml
-        captures:
-          1: {name: punctuation.section.comment.haml}
-      - begin: ^(\s*)(\-\#|\/|\-\s*\\#[\[{]+)
-        end: ^(?!\1\s+|\n)
-        name: comment.block.haml
-        beginCaptures:
-          2: {name: punctuation.section.comment.haml}
-        patterns:
-          - include: text.haml
-      - begin: ^\s*(?:((%)([-\w:]+))|(?=\.|#))
-        end: $|(?!\.|#|\{|\(|\[|&amp;|=|-|~|!=|&=|/)
-        captures:
-          1: {name: meta.tag.haml}
-          2: {name: punctuation.definition.tag.haml}
-          3: {name: entity.name.tag.haml}
-        patterns:
-          - begin: "=="
-            contentName: string.quoted.double.ruby
-            end: $\n?
-            patterns:
-              - include: "#interpolated_ruby"
-          - match: (\.[\w\-\:]+)
-            name: meta.selector.css
-            captures:
-              1: {name: entity.other.attribute-name.class}
-          - match: (#[\w-]+)
-            name: meta.selector.css
-            captures:
-              1: {name: entity.other.attribute-name.id}
-          - begin: (?<!\#)\{(?=.+(,|(do)|\{|\}|\||(\#.*))\s*)
-            end: \s*\}(?!\s*\,)(?!\s*\|)(?!\#\{.*\})
-            name: meta.section.attributes.haml
-            patterns:
-              - include: source.ruby
-              - include: "#continuation"
-              - include: "#rubyline"
-          - begin: \(
-            end: \)
-            name: meta.section.attributes.plain.haml
-            patterns:
-              - match: ([\w-]+)
-                name: constant.other.symbol.ruby
-              - match: \=
-                name: punctuation
-              - include: "#variables"
-              - begin: '"'
-                end: '"'
-                name: string.quoted.double.ruby
-                patterns:
-                  - match: \\(x\h{2}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)
-                    name: constant.character.escape.ruby
-                  - include: "#interpolated_ruby"
-              - include: "#interpolated_ruby"
-          - begin: \[(?=.+(,|\[|\]|\||(\#.*))\s*)
-            end: \s*\](?!.*(?!\#\[)\])
-            name: meta.section.object.haml
-            patterns:
-              - include: source.ruby
-              - include: "#continuation"
-              - include: "#rubyline"
-          - include: "#interpolated_ruby_line"
-          - include: "#rubyline"
-          - match: /
-            name: punctuation.terminator.tag.haml
-      - begin: ^(\s*):(ruby|opal)$
-        end: ^(?!\1\s+|$\n*)
-        name: source.ruby.embedded.filter.haml
-        patterns:
-          - include: source.ruby
-      - begin: ^(\s*):ruby$
-        end: ^(?!\1\s+|$\n*)
-        name: source.ruby.embedded.filter.haml
-        patterns:
-          - include: source.ruby
-      - begin: ^(\s*):(style|sass)$
-        end: ^(?=\1\s+|$\n*)
-        name: source.sass.embedded.filter.haml
-        patterns:
-          - include: source.sass
-      - begin: ^(\s*):coffee(script)?
-        end: ^(?!\1\s+|$\n*)
-        name: source.coffee.embedded.filter.haml
-        patterns:
-          - include: source.coffee
-      - begin: ^(\s*):plain$
-        end: ^(?=\1\s+|$\n*)
-        name: text.plain.embedded.filter.haml
-        patterns:
-          - include: text.plain
-      - begin: ^(\s*)(:ruby)
-        end: (?m:(?<=\n)(?!\1\s+|$\n*))
-        name: source.ruby.embedded.filter.haml
-        beginCaptures:
-          2: {name: keyword.control.filter.haml}
-        patterns:
-          - include: source.ruby
-      - begin: ^(\s*)(:sass)
-        end: ^(?!\1\s+|$\n*)
-        name: source.embedded.filter.sass
-        beginCaptures:
-          2: {name: keyword.control.filter.haml}
-        patterns:
-          - include: source.sass
-      - begin: ^(\s*):(styles|sass)$
-        end: ^(?=\1\s+|$\n*)
-        name: source.sass.embedded.filter.haml
-        patterns:
-          - include: source.sass
-      - begin: ^(\s*):plain$
-        end: ^(?=\1\s+|$\n*)
-        name: text.plain.embedded.filter.haml
-        patterns:
-          - include: text.plain
-      - match: ^\s*(\.)
-        captures:
-          1: {name: meta.escape.haml}
-      - begin: ^\s*(?==|-|~|!=|&=)
-        end: $
-        patterns:
-          - include: "#interpolated_ruby_line"
-          - include: "#rubyline"
-      - begin: ^(\s*)(:php)
-        end: ^(?!\1\s+|$\n*)
-        name: meta.embedded.php
-        captures:
-          2: {name: entity.name.tag.haml}
-        patterns:
-          - include: text.html.php#language
-      - begin: ^(\s*)(:markdown)
-        end: ^(?!\1\s+|$\n*)
-        name: meta.embedded.markdown
-        captures:
-          2: {name: entity.name.tag.haml}
-        patterns:
-          - include: text.html.markdown
-      - begin: ^(\s*)(:(css|styles?))$
-        end: ^(?!\1\s+|$\n*)
-        name: meta.embedded.css
-        captures:
-          2: {name: entity.name.tag.haml}
-        patterns:
-          - include: source.css
-      - begin: ^(\s*)(:sass)$
-        end: ^(?!\1\s+|$\n*)
-        name: meta.embedded.sass
-        captures:
-          2: {name: entity.name.tag.haml}
-        patterns:
-          - include: source.sass
-      - begin: ^(\s*)(:scss)$
-        end: ^(?!\1\s+|$\n*)
-        name: meta.embedded.scss
-        captures:
-          2: {name: entity.name.tag.haml}
-        patterns:
-          - include: source.scss
-    repository:
-      continuation:
-        match: (\|)\s*\n
-        captures:
-          1: {name: punctuation.separator.continuation.haml}
-      interpolated_ruby:
-        patterns:
-          - match: '#\{(\})'
-            name: source.ruby.embedded.source
-            captures:
-              0: {name: punctuation.section.embedded.ruby}
-              1: {name: source.ruby.embedded.source.empty}
-          - begin: '#\{'
-            end: (\})
-            name: source.ruby.embedded.source
-            captures:
-              0: {name: punctuation.section.embedded.ruby}
-            patterns:
-              - include: "#nest_curly_and_self"
-              - include: source.ruby
-          - include: "#variables"
-      interpolated_ruby_line:
-        begin: "!?=="
-        contentName: string.source.ruby.embedded.haml
-        end: $
-        name: meta.line.ruby.interpolated.haml
-        patterns:
-          - include: "#interpolated_ruby"
-          - include: source.ruby#escaped_char
-      nest_curly_and_self:
-        patterns:
-          - begin: \{
-            end: \}
-            captures:
-              0: {name: punctuation.section.scope.ruby}
-            patterns:
-              - include: "#nest_curly_and_self"
-              - include: source.ruby
-      rubyline:
-        begin: (&amp|!)?(=|-|~)
-        contentName: source.ruby.embedded.haml
-        end: ((do\{)( \|[.*]+\|)?)$|$|^(?!.*\|\s*)$\n?
-        name: meta.line.ruby.haml
-        endCaptures:
-          1: {name: source.ruby.embedded.html}
-          2: {name: keyword.control.ruby.start-block}
-        patterns:
-          - match: \s+((elseif|foreach|switch|declare|default|use))(?=\s|\()
-            captures:
-              1: {name: keyword.control.php}
-          - match: \s+(require_once|include_once)(?=\s|\()
-            captures:
-              1: {name: keyword.control.import.include.php}
-          - match: \s+(catch|try|retry|throw|exception|finally|die)(?=\s|\(|\n*)
-            name: keyword.control.exception.php
-          - match: \s+(function\s*)((?=\())
-            captures:
-              1: {name: storage.type.function.php}
-          - match: \s+(use\s*)((?=\())
-            captures:
-              1: {name: keyword.control.php}
-          - match: (\||,|<|do\{)\s*(\#.*)?$\n*
-            name: source.ruby
-            patterns:
-              - include: "#rubyline"
-          - match: "#.*$"
-            name: comment.line.number-sign.ruby
-          - include: source.ruby
-          - include: "#continuation"
-      variables:
-        patterns:
-          - match: (#@)[a-zA-Z_]\w*
-            name: variable.other.readwrite.instance.ruby
-            captures:
-              1: {name: punctuation.definition.variable.ruby}
-          - match: (#@@)[a-zA-Z_]\w*
-            name: variable.other.readwrite.class.ruby
-            captures:
-              1: {name: punctuation.definition.variable.ruby}
-          - match: (#\$)[a-zA-Z_]\w*
-            name: variable.other.readwrite.global.ruby
-            captures:
-              1: {name: punctuation.definition.variable.ruby}
-
-  embedded-stylus:
-    patterns:
-      - include: "#comment"
-      - include: "#at_rule"
-      - include: "#language_keywords"
-      - include: "#language_constants"
-      - include: "#variable_declaration"
-      - include: "#function"
-      - include: "#selector"
-      - include: "#declaration"
-      - match: (\{)(\})
-        name: meta.brace.curly.css
-        captures:
-          1: {name: punctuation.section.property-list.begin.css}
-          2: {name: punctuation.section.property-list.end.css}
-      - match: \{|\}
-        name: meta.brace.curly.css
-      - include: "#numeric"
-      - include: "#string"
-      - include: "#operator"
-    repository:
-      at_rule:
-        patterns:
-          - begin: \s*(@)(import|require)\b\s*
-            end: \s*((?=;|$|\n))
-            name: meta.at-rule.import.css
-            beginCaptures:
-              1: {name: punctuation.definition.keyword.stylus}
-              2: {name: keyword.control.at-rule.import.stylus}
-            endCaptures:
-              1: {name: punctuation.terminator.rule.css}
-            patterns:
-              - include: "#string"
-          - begin: \s*(@)(extend[s]?)\b\s*
-            end: \s*((?=;|$|\n))
-            name: meta.at-rule.extend.css
-            beginCaptures:
-              1: {name: punctuation.definition.keyword.stylus}
-              2: {name: keyword.control.at-rule.extend.stylus}
-            endCaptures:
-              1: {name: punctuation.terminator.rule.css}
-            patterns:
-              - include: "#selector"
-          - match: ^\s*(@)(font-face)\b
-            name: meta.at-rule.fontface.stylus
-            captures:
-              1: {name: punctuation.definition.keyword.stylus}
-              2: {name: keyword.control.at-rule.fontface.stylus}
-          - match: ^\s*(@)(css)\b
-            name: meta.at-rule.css.stylus
-            captures:
-              1: {name: punctuation.definition.keyword.stylus}
-              2: {name: keyword.control.at-rule.css.stylus}
-          - begin: \s*(@)(charset)\b\s*
-            end: \s*((?=;|$|\n))
-            name: meta.at-rule.charset.stylus
-            beginCaptures:
-              1: {name: punctuation.definition.keyword.stylus}
-              2: {name: keyword.control.at-rule.charset.stylus}
-            patterns:
-              - include: "#string"
-          - begin: \s*(@)(keyframes)\b\s+([a-zA-Z_-][a-zA-Z0-9_-]*)
-            end: \s*((?=\{|$|\n))
-            name: meta.at-rule.keyframes.stylus
-            beginCaptures:
-              1: {name: punctuation.definition.keyword.stylus}
-              2: {name: keyword.control.at-rule.keyframes.stylus}
-              3: {name: entity.name.function.keyframe.stylus}
-          - begin: (?=(\b(\d+%|from\b|to\b)))
-            end: (?=(\{|\n))
-            name: meta.at-rule.keyframes.stylus
-            patterns:
-              - match: (\b(\d+%|from\b|to\b))
-                name: entity.other.attribute-name.stylus
-          - match: ^\s*(@)(media)\b
-            name: meta.at-rule.media.stylus
-            captures:
-              1: {name: punctuation.definition.keyword.stylus}
-              2: {name: keyword.control.at-rule.media.stylus}
-          - match: (?:(?=\w)(?<![\w-]))(width|scan|resolution|orientation|monochrome|min-width|min-resolution|min-monochrome|min-height|min-device-width|min-device-height|min-device-aspect-ratio|min-color-index|min-color|min-aspect-ratio|max-width|max-resolution|max-monochrome|max-height|max-device-width|max-device-height|max-device-aspect-ratio|max-color-index|max-color|max-aspect-ratio|height|grid|device-width|device-height|device-aspect-ratio|color-index|color|aspect-ratio)(?:(?<=\w)(?![\w-]))
-            name: support.type.property-name.media-feature.media.css
-          - match: (?:(?=\w)(?<![\w-]))(tv|tty|screen|projection|print|handheld|embossed|braille|aural|all)(?:(?<=\w)(?![\w-]))
-            name: support.constant.media-type.media.css
-          - match: (?:(?=\w)(?<![\w-]))(portrait|landscape)(?:(?<=\w)(?![\w-]))
-            name: support.constant.property-value.media-property.media.css
-      char_escape:
-        match: \\(.)
-        name: constant.character.escape.stylus
-      color:
-        patterns:
-          - begin: \b(rgb|rgba|hsl|hsla)(\()
-            end: (\))
-            name: meta.function.color.css
-            beginCaptures:
-              1: {name: support.function.color.css}
-              2: {name: punctuation.section.function.css}
-            endCaptures:
-              1: {name: punctuation.section.function.css}
-            patterns:
-              - match: \s*(,)\s*
-                name: punctuation.separator.parameter.css
-              - include: "#numeric"
-              - include: "#property_variable"
-          - match: (#)([0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b
-            name: constant.other.color.rgb-value.css
-            captures:
-              1: {name: punctuation.definition.constant.css}
-          - match: \b(aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|purple|red|silver|teal|white|yellow)\b
-            name: support.constant.color.w3c-standard-color-name.css
-          - match: \b(aliceblue|antiquewhite|aquamarine|azure|beige|bisque|blanchedalmond|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|gainsboro|ghostwhite|gold|goldenrod|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|limegreen|linen|magenta|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|oldlace|olivedrab|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|thistle|tomato|turquoise|violet|wheat|whitesmoke|yellowgreen)\b
-            name: support.constant.color.w3c-extended-color-name.css
-      comment_block:
-        begin: /\*
-        end: \*/
-        name: comment.block.css
-        beginCaptures:
-          0: {name: punctuation.definition.comment.begin.css}
-        endCaptures:
-          0: {name: punctuation.definition.comment.end.css}
-      comment_line:
-        begin: (^[ \t]+)?(?=//)
-        end: (?!\G)
-        beginCaptures:
-          1: {name: punctuation.whitespace.comment.leading.stylus}
-        patterns:
-          - begin: //
-            end: (?=\n)
-            name: comment.line.double-slash.stylus
-            beginCaptures:
-              0: {name: punctuation.definition.comment.stylus}
-      declaration:
-        begin: ((?<=^)[^\S\n]+)|((?<=;)[^\S\n]*)|((?<=\{)[^\S\n]*)
-        end: (?=\n)|(;)|(?=\})|(\n)
-        name: meta.property-list.css
-        endCaptures:
-          2: {name: punctuation.terminator.rule.css}
-        patterns:
-          - include: "#language_keywords"
-          - include: "#language_constants"
-          - match: (?:(?<=^)[^\S\n]+(\n))
-          - match: \G\s*(counter-reset|counter-increment)(?:(:)|[^\S\n])[^\S\n]*([a-zA-Z_-][a-zA-Z0-9_-]*)
-            name: meta.property.counter.css
-            captures:
-              1: {name: support.type.property-name.css}
-              2: {name: punctuation.separator.key-value.css}
-              3: {name: variable.section.css}
-          - begin: \G\s*(filter)(?:(:)|[^\S\n])[^\S\n]*
-            end: (?=\n|;|\}|$)
-            name: meta.property.filter.css
-            beginCaptures:
-              1: {name: support.type.property-name.css}
-              2: {name: punctuation.separator.key-value.css}
-            patterns:
-              - include: "#function"
-              - include: "#property_values"
-          - include: "#property"
-          - include: "#interpolation"
-          - include: $self
-      font_name:
-        match: (\b(?i:arial|century|comic|courier|cursive|fantasy|futura|garamond|georgia|helvetica|impact|lucida|monospace|symbol|system|tahoma|times|trebuchet|utopia|verdana|webdings|sans-serif|serif)\b)
-        name: support.constant.font-name.css
-      function:
-        begin: (?=[a-zA-Z_-][a-zA-Z0-9_-]*\()
-        end: (\))
-        endCaptures:
-          1: {name: punctuation.section.function.css}
-        patterns:
-          - begin: (format|url|local)(\()
-            end: (?=\))
-            name: meta.function.misc.css
-            beginCaptures:
-              1: {name: support.function.misc.css}
-              2: {name: punctuation.section.function.css}
-            patterns:
-              - match: (?<=\()[^\)\s]*(?=\))
-                name: string.css
-              - include: "#string"
-              - include: "#variable"
-              - include: "#operator"
-              - match: \s*
-          - match: (counter)(\()([a-zA-Z_-][a-zA-Z0-9_-]*)(?=\))
-            name: meta.function.misc.counter.css
-            captures:
-              1: {name: support.function.misc.counter.css}
-              2: {name: punctuation.section.function.css}
-              3: {name: variable.section.css}
-          - begin: (counters)(\()
-            end: (?=\))
-            name: meta.function.misc.counters.css
-            beginCaptures:
-              1: {name: support.function.misc.counters.css}
-              2: {name: punctuation.section.function.css}
-            patterns:
-              - match: \G[a-zA-Z_-][a-zA-Z0-9_-]*
-                name: variable.section.css
-              - match: \s*(,)\s*
-                name: punctuation.separator.parameter.css
-              - include: "#string"
-              - include: "#interpolation"
-          - begin: (attr)(\()
-            end: (?=\))
-            name: meta.function.misc.attr.css
-            beginCaptures:
-              1: {name: support.function.misc.attr.css}
-              2: {name: punctuation.section.function.css}
-            patterns:
-              - match: \G[a-zA-Z_-][a-zA-Z0-9_-]*
-                name: entity.other.attribute-name.attribute.css
-              - match: (?<=[a-zA-Z0-9_-])\s*\b(string|color|url|integer|number|length|em|ex|px|rem|vw|vh|vmin|vmax|mm|cm|in|pt|pc|angle|deg|grad|rad|time|s|ms|frequency|Hz|kHz|%)\b
-                name: support.type.attr.css
-              - match: \s*(,)\s*
-                name: punctuation.separator.parameter.css
-              - include: "#string"
-              - include: "#interpolation"
-          - begin: (calc)(\()
-            end: (?=\))
-            name: meta.function.misc.calc.css
-            beginCaptures:
-              1: {name: support.function.misc.calc.css}
-              2: {name: punctuation.section.function.css}
-            patterns:
-              - include: "#property_values"
-          - begin: (cubic-bezier)(\()
-            end: (?=\))
-            name: meta.function.timing.cubic-bezier.css
-            beginCaptures:
-              1: {name: support.function.timing.cubic-bezier.css}
-              2: {name: punctuation.section.function.css}
-            patterns:
-              - match: \s*(,)\s*
-                name: punctuation.separator.parameter.css
-              - include: "#numeric"
-              - include: "#interpolation"
-          - begin: (steps)(\()
-            end: (?=\))
-            name: meta.function.timing.steps.css
-            beginCaptures:
-              1: {name: support.function.timing.steps.css}
-              2: {name: punctuation.section.function.css}
-            patterns:
-              - match: \s*(,)\s*
-                name: punctuation.separator.parameter.css
-              - include: "#numeric"
-              - match: \b(start|end)\b
-                name: support.constant.timing.steps.direction.css
-              - include: "#interpolation"
-          - begin: (linear-gradient|radial-gradient|repeating-linear-gradient|repeating-radial-gradient)(\()
-            end: (?=\))
-            name: meta.function.gradient.css
-            beginCaptures:
-              1: {name: support.function.gradient.css}
-              2: {name: punctuation.section.function.css}
-            patterns:
-              - match: \s*(,)\s*
-                name: punctuation.separator.parameter.css
-              - include: "#numeric"
-              - include: "#color"
-              - match: \b(to|bottom|right|left|top|circle|ellipse|center|closest-side|closest-corner|farthest-side|farthest-corner|at)\b
-                name: support.constant.gradient.css
-              - include: "#interpolation"
-          - begin: (blur|brightness|contrast|grayscale|hue-rotate|invert|opacity|saturate|sepia)(\()
-            end: (?=\))
-            name: meta.function.filter.css
-            beginCaptures:
-              1: {name: support.function.filter.css}
-              2: {name: punctuation.section.function.css}
-            patterns:
-              - include: "#numeric"
-              - include: "#property_variable"
-              - include: "#interpolation"
-          - begin: (drop-shadow)(\()
-            end: (?=\))
-            name: meta.function.filter.drop-shadow.css
-            beginCaptures:
-              1: {name: support.function.filter.drop-shadow.css}
-              2: {name: punctuation.section.function.css}
-            patterns:
-              - include: "#numeric"
-              - include: "#color"
-              - include: "#property_variable"
-              - include: "#interpolation"
-          - begin: (matrix|matrix3d|perspective|rotate|rotate3d|rotate[Xx]|rotate[yY]|rotate[zZ]|scale|scale3d|scale[xX]|scale[yY]|scale[zZ]|skew|skew[xX]|skew[yY]|translate|translate3d|translate[xX]|translate[yY]|translate[zZ])(\()
-            end: (?=\))
-            name: meta.function.transform.css
-            beginCaptures:
-              1: {name: support.function.transform.css}
-              2: {name: punctuation.section.function.css}
-            patterns:
-              - include: "#numeric"
-              - include: "#property_variable"
-              - include: "#interpolation"
-          - match: (url|local|format|counter|counters|attr|calc)(?=\()
-            name: support.function.misc.css
-          - match: (cubic-bezier|steps)(?=\()
-            name: support.function.timing.css
-          - match: (linear-gradient|radial-gradient|repeating-linear-gradient|repeating-radial-gradient)(?=\()
-            name: support.function.gradient.css
-          - match: (blur|brightness|contrast|drop-shadow|grayscale|hue-rotate|invert|opacity|saturate|sepia)(?=\()
-            name: support.function.filter.css
-          - match: (matrix|matrix3d|perspective|rotate|rotate3d|rotate[Xx]|rotate[yY]|rotate[zZ]|scale|scale3d|scale[xX]|scale[yY]|scale[zZ]|skew|skew[xX]|skew[yY]|translate|translate3d|translate[xX]|translate[yY]|translate[zZ])(?=\()
-            name: support.function.transform.css
-          - begin: ([a-zA-Z_-][a-zA-Z0-9_-]*)(\()
-            end: (?=\))
-            name: meta.function.stylus
-            beginCaptures:
-              1: {name: entity.name.function.stylus}
-              2: {name: punctuation.section.function.css}
-            patterns:
-              - match: \s*(,)\s*
-                name: punctuation.separator.parameter.css
-              - include: "#interpolation"
-              - include: "#property_values"
-          - match: \(
-            name: punctuation.section.function.css
-      interpolation:
-        begin: (?:(\{)[^\S\n]*)(?=[^;=]*[^\S\n]*\})
-        end: (?:[^\S\n]*(\}))|\n|$
-        name: meta.interpolation.stylus
-        beginCaptures:
-          1: {name: meta.brace.curly}
-        endCaptures:
-          1: {name: meta.brace.curly}
-        patterns:
-          - include: "#variable"
-          - include: "#numeric"
-          - include: "#string"
-          - include: "#operator"
-      language_constants:
-        match: \b(true|false|null)\b
-        name: constant.language.stylus
-      language_keywords:
-        patterns:
-          - match: (\b|\s)(return|else|for|unless|if|else)\b
-            name: keyword.control.stylus
-          - match: (\b|\s)(!important|in|is defined|is a)\b
-            name: keyword.other.stylus
-          - match: \barguments\b
-            name: variable.language.stylus
-      numeric:
-        patterns:
-          - match: (?x) (?<!\w|-)(?:(?:-|\+)?(?:[0-9]+(?:\.[0-9]+)?)|(?:\.[0-9]+)) ((?:px|pt|ch|cm|mm|in|r?em|ex|pc|deg|g?rad|dpi|dpcm|dppx|fr|ms|s|turn|vh|vmax|vmin|vw)\b|%)?
-            name: constant.numeric.css
-            captures:
-              1: {name: keyword.other.unit.css}
-      operator:
-        patterns:
-          - match: ((?:\?|:|!|~|\+|(\s-\s)|(?:\*)?\*|\/|%|(\.)?\.\.|<|>|(?:=|:|\?|\+|-|\*|\/|%|<|>)?=|!=)|\b(?:in|is(?:nt)?|(?<!:)not|or|and)\b)
-            name: keyword.operator.stylus
-          - include: "#char_escape"
-      property:
-        begin: |-
-          (?x:\G\s*(?:
-            (-webkit-[-A-Za-z]+|-moz-[-A-Za-z]+|-o-[-A-Za-z]+|-ms-[-A-Za-z]+|-khtml-[-A-Za-z]+|zoom|z-index|y|x|wrap|word-wrap|word-spacing|word-break|word|width|widows|white-space-collapse|white-space|white|weight|volume|voice-volume|voice-stress|voice-rate|voice-pitch-range|voice-pitch|voice-family|voice-duration|voice-balance|voice|visibility|vertical-align|variant|user-select|up|unicode-bidi|unicode-range|unicode|trim|transition-timing-function|transition-property|transition-duration|transition-delay|transition|transform|touch-action|top-width|top-style|top-right-radius|top-left-radius|top-color|top|timing-function|text-wrap|text-transform|text-shadow|text-replace|text-rendering|text-overflow|text-outline|text-justify|text-indent|text-height|text-emphasis|text-decoration|text-align-last|text-align|text|target-position|target-new|target-name|target|table-layout|tab-size|style-type|style-position|style-image|style|string-set|stretch|stress|stacking-strategy|stacking-shift|stacking-ruby|stacking|src|speed|speech-rate|speech|speak-punctuation|speak-numeral|speak-header|speak|span|spacing|space-collapse|space|sizing|size-adjust|size|shadow|respond-to|rule-width|rule-style|rule-color|rule|ruby-span|ruby-position|ruby-overhang|ruby-align|ruby|rows|rotation-point|rotation|role|right-width|right-style|right-color|right|richness|rest-before|rest-after|rest|resource|resize|reset|replace|repeat|rendering-intent|rate|radius|quotes|punctuation-trim|punctuation|property|profile|presentation-level|presentation|position|pointer-events|point|play-state|play-during|play-count|pitch-range|pitch|phonemes|pause-before|pause-after|pause|page-policy|page-break-inside|page-break-before|page-break-after|page|padding-top|padding-right|padding-left|padding-bottom|padding|pack|overhang|overflow-y|overflow-x|overflow-style|overflow|outline-width|outline-style|outline-offset|outline-color|outline|orphans|origin|orientation|orient|ordinal-group|order|opacity|offset|numeral|new|nav-up|nav-right|nav-left|nav-index|nav-down|nav|name|move-to|model|mix-blend-mode|min-width|min-height|min|max-width|max-height|max|marquee-style|marquee-speed|marquee-play-count|marquee-direction|marquee|marks|mark-before|mark-after|mark|margin-top|margin-right|margin-left|margin-bottom|margin|mask-image|list-style-type|list-style-position|list-style-image|list-style|list|lines|line-stacking-strategy|line-stacking-shift|line-stacking-ruby|line-stacking|line-height|line-break|level|letter-spacing|length|left-width|left-style|left-color|left|label|justify-content|justify|iteration-count|inline-box-align|initial-value|initial-size|initial-before-align|initial-before-adjust|initial-after-align|initial-after-adjust|index|indent|increment|image-resolution|image-orientation|image|ihyphens|hyphenate-resource|hyphenate-lines|hyphenate-character|hyphenate-before|hyphenate-after|hyphenate|height|header|hanging-punctuation|gap|grid|grid-area|grid-auto-columns|grid-auto-flow|grid-auto-rows|grid-column|grid-column-end|grid-column-start|grid-row|grid-row-end|grid-row-start|grid-template|grid-template-areas|grid-template-columns|grid-template-rows|row-gap|gap|font-kerning|font-language-override|font-weight|font-variant-caps|font-variant|font-style|font-synthesis|font-stretch|font-size-adjust|font-size|font-family|font|float-offset|float|flex-wrap|flex-shrink|flex-grow|flex-group|flex-flow|flex-direction|flex-basis|flex|fit-position|fit|fill|filter|family|empty-cells|emphasis|elevation|duration|drop-initial-value|drop-initial-size|drop-initial-before-align|drop-initial-before-adjust|drop-initial-after-align|drop-initial-after-adjust|drop|down|dominant-baseline|display-role|display-model|display|direction|delay|decoration-break|decoration|cursor|cue-before|cue-after|cue|crop|counter-reset|counter-increment|counter|count|content|columns|column-width|column-span|column-rule-width|column-rule-style|column-rule-color|column-rule|column-gap|column-fill|column-count|column-break-before|column-break-after|column|color-profile|color|collapse|clip|clear|character|caption-side|break-inside|break-before|break-after|break|box-sizing|box-shadow|box-pack|box-orient|box-ordinal-group|box-lines|box-flex-group|box-flex|box-direction|box-decoration-break|box-align|box|bottom-width|bottom-style|bottom-right-radius|bottom-left-radius|bottom-color|bottom|border-width|border-top-width|border-top-style|border-top-right-radius|border-top-left-radius|border-top-color|border-top|border-style|border-spacing|border-right-width|border-right-style|border-right-color|border-right|border-radius|border-length|border-left-width|border-left-style|border-left-color|border-left|border-image|border-color|border-collapse|border-bottom-width|border-bottom-style|border-bottom-right-radius|border-bottom-left-radius|border-bottom-color|border-bottom|border|bookmark-target|bookmark-level|bookmark-label|bookmark|binding|bidi|before|baseline-shift|baseline|balance|background-blend-mode|background-size|background-repeat|background-position|background-origin|background-image|background-color|background-clip|background-break|background-attachment|background|azimuth|attachment|appearance|animation-timing-function|animation-play-state|animation-name|animation-iteration-count|animation-duration|animation-direction|animation-delay|animation-fill-mode|animation|alignment-baseline|alignment-adjust|alignment|align-self|align-last|align-items|align-content|align|after|adjust|will-change)|
-            (writing-mode|text-anchor|stroke-width|stroke-opacity|stroke-miterlimit|stroke-linejoin|stroke-linecap|stroke-dashoffset|stroke-dasharray|stroke|stop-opacity|stop-color|shape-rendering|marker-start|marker-mid|marker-end|lighting-color|kerning|image-rendering|glyph-orientation-vertical|glyph-orientation-horizontal|flood-opacity|flood-color|fill-rule|fill-opacity|fill|enable-background|color-rendering|color-interpolation-filters|color-interpolation|clip-rule|clip-path)|
-            ([a-zA-Z_-][a-zA-Z0-9_-]*)
-          )(?!([^\S\n]*&)|([^\S\n]*\{))(?=:|([^\S\n]+[^\s])))
-        end: (;)|(?=\n|\}|$)
-        beginCaptures:
-          1: {name: support.type.property-name.css}
-          2: {name: support.type.property-name.svg.css}
-          3: {name: support.function.mixin.stylus}
-        endCaptures:
-          1: {name: punctuation.terminator.rule.css}
-        patterns:
-          - include: "#property_value"
-      property_value:
-        begin: \G(?:(:)|(\s))(\s*)(?!&)
-        end: (?=\n|;|\})
-        name: meta.property-value.css
-        beginCaptures:
-          1: {name: punctuation.separator.key-value.css}
-          2: {name: punctuation.separator.key-value.css}
-        endCaptures:
-          1: {name: punctuation.terminator.rule.css}
-        patterns:
-          - include: "#property_values"
-          - match: '[^\n]+?'
-      property_values:
-        patterns:
-          - include: "#function"
-          - include: "#comment"
-          - include: "#language_keywords"
-          - include: "#language_constants"
-          - match: (?:(?=\w)(?<![\w-]))(wrap-reverse|wrap|whitespace|wait|w-resize|visible|vertical-text|vertical-ideographic|uppercase|upper-roman|upper-alpha|unicase|underline|ultra-expanded|ultra-condensed|transparent|transform|top|titling-caps|thin|thick|text-top|text-bottom|text|tb-rl|table-row-group|table-row|table-header-group|table-footer-group|table-column-group|table-column|table-cell|table|sw-resize|super|strict|stretch|step-start|step-end|static|square|space-between|space-around|space|solid|soft-light|small-caps|separate|semi-expanded|semi-condensed|se-resize|scroll|screen|saturation|s-resize|running|rtl|row-reverse|row-resize|row|round|right|ridge|reverse|repeat-y|repeat-x|repeat|relative|progressive|progress|pre-wrap|pre-line|pre|pointer|petite-caps|paused|pan-x|pan-left|pan-right|pan-y|pan-up|pan-down|padding-box|overline|overlay|outside|outset|optimizeSpeed|optimizeLegibility|opacity|oblique|nw-resize|nowrap|not-allowed|normal|none|no-repeat|no-drop|newspaper|ne-resize|n-resize|multiply|move|middle|medium|max-height|manipulation|main-size|luminosity|ltr|lr-tb|lowercase|lower-roman|lower-alpha|loose|local|list-item|linear(?!-)|line-through|line-edge|line|lighter|lighten|left|keep-all|justify|italic|inter-word|inter-ideograph|inside|inset|inline-block|inline|inherit|infinite|inactive|ideograph-space|ideograph-parenthesis|ideograph-numeric|ideograph-alpha|hue|horizontal|hidden|help|hard-light|hand|groove|geometricPrecision|forwards|flex-start|flex-end|flex|fixed|extra-expanded|extra-condensed|expanded|exclusion|ellipsis|ease-out|ease-in-out|ease-in|ease|e-resize|double|dotted|distribute-space|distribute-letter|distribute-all-lines|distribute|disc|disabled|difference|default|decimal|dashed|darken|currentColor|crosshair|cover|content-box|contain|condensed|column-reverse|column|color-dodge|color-burn|color|collapse|col-resize|circle|char|center|capitalize|break-word|break-all|bottom|both|border-box|bolder|bold|block|bidi-override|below|baseline|balance|backwards|auto|antialiased|always|alternate-reverse|alternate|all-small-caps|all-scroll|all-petite-caps|all|absolute)(?:(?<=\w)(?![\w-]))
-            name: support.constant.property-value.css
-          - match: (?:(?=\w)(?<![\w-]))(start|sRGB|square|round|optimizeSpeed|optimizeQuality|nonzero|miter|middle|linearRGB|geometricPrecision |evenodd |end |crispEdges|butt|bevel)(?:(?<=\w)(?![\w-]))
-            name: support.constant.property-value.svg.css
-          - include: "#font_name"
-          - include: "#numeric"
-          - include: "#color"
-          - include: "#string"
-          - match: \!\s*important
-            name: keyword.other.important.css
-          - include: "#operator"
-          - include: "#stylus_keywords"
-          - include: "#property_variable"
-      property_variable:
-        patterns:
-          - include: "#variable"
-          - match: (?<!^)(\@[a-zA-Z_-][a-zA-Z0-9_-]*)
-            name: variable.property.stylus
-      selector:
-        patterns:
-          - match: (?:(?=\w)(?<![\w-]))(a|abbr|acronym|address|area|article|aside|audio|b|base|bdi|bdo|redo|big|blockquote|body|br|button|canvas|caption|cite|code|col|colgroup|data|datalist|dd|del|details|dfn|dialog|div|dl|dt|em|embed|eventsource|fieldset|figure|figcaption|footer|form|frame|frameset|(h[1-6])|head|header|hgroup|hr|html|i|iframe|img|input|ins|kbd|keygen|label|legend|li|link|main|map|mark|math|menu|menuitem|meta|meter|nav|noframes|noscript|object|ol|optgroup|option|output|p|param|picture|pre|progress|q|rb|rp|rt|rtc|ruby|s|samp|script|section|select|small|source|span|strike|strong|style|sub|summary|sup|svg|table|tbody|td|template|textarea|tfoot|th|thead|time|title|tr|track|tt|u|ul|var|video|wbr)(?:(?<=\w)(?![\w-]))
-            name: entity.name.tag.css
-          - match: (?:(?=\w)(?<![\w-]))(vkern|view|use|tspan|tref|title|textPath|text|symbol|switch|svg|style|stop|set|script|rect|radialGradient|polyline|polygon|pattern|path|mpath|missing-glyph|metadata|mask|marker|linearGradient|line|image|hkern|glyphRef|glyph|g|foreignObject|font-face-uri|font-face-src|font-face-name|font-face-format|font-face|font|filter|feTurbulence|feTile|feSpotLight|feSpecularLighting|fePointLight|feOffset|feMorphology|feMergeNode|feMerge|feImage|feGaussianBlur|feFuncR|feFuncG|feFuncB|feFuncA|feFlood|feDistantLight|feDisplacementMap|feDiffuseLighting|feConvolveMatrix|feComposite|feComponentTransfer|feColorMatrix|feBlend|ellipse|desc|defs|cursor|color-profile|clipPath|circle|animateTransform|animateMotion|animateColor|animate|altGlyphItem|altGlyphDef|altGlyph|a)(?:(?<=\w)(?![\w-]))
-            name: entity.name.tag.svg.css
-          - match: \s*(\,)\s*
-            name: meta.selector.stylus
-          - match: \*
-            name: meta.selector.stylus
-          - match: \s*(\&)([a-zA-Z0-9_-]+)\s*
-            name: meta.selector.stylus
-            captures:
-              2:
-                {
-                  name: entity.other.attribute-name.parent-selector-suffix.stylus,
-                }
-          - match: \s*(\&)\s*
-            name: meta.selector.stylus
-          - match: (\.)[a-zA-Z0-9_-]+
-            name: entity.other.attribute-name.class.css
-            captures:
-              1: {name: punctuation.definition.entity.css}
-          - match: (#)[a-zA-Z][a-zA-Z0-9_-]*
-            name: entity.other.attribute-name.id.css
-            captures:
-              1: {name: punctuation.definition.entity.css}
-          - match: (:+)(after|before|content|first-letter|first-line|host|(-(moz|webkit|ms)-)?selection)\b
-            name: entity.other.attribute-name.pseudo-element.css
-            captures:
-              1: {name: punctuation.definition.entity.css}
-          - match: (:)((first|last)-child|(first|last|only)-of-type|empty|root|target|first|left|right)\b
-            name: entity.other.attribute-name.pseudo-class.css
-            captures:
-              1: {name: punctuation.definition.entity.css}
-          - match: (:)(checked|enabled|default|disabled|indeterminate|invalid|optional|required|valid)\b
-            name: entity.other.attribute-name.pseudo-class.ui-state.css
-            captures:
-              1: {name: punctuation.definition.entity.css}
-          - begin: ((:)not)(\()
-            end: \)
-            beginCaptures:
-              1: {name: entity.other.attribute-name.pseudo-class.css}
-              2: {name: punctuation.definition.entity.css}
-              3: {name: punctuation.section.function.css}
-            endCaptures:
-              0: {name: punctuation.section.function.css}
-            patterns:
-              - include: "#selector"
-          - match: ((:)nth-(?:(?:last-)?child|(?:last-)?of-type))(\()(\-?(?:\d+n?|n)(?:\+\d+)?|even|odd)(\))
-            captures:
-              1: {name: entity.other.attribute-name.pseudo-class.css}
-              2: {name: punctuation.definition.entity.css}
-              3: {name: punctuation.section.function.css}
-              4: {name: constant.numeric.css}
-              5: {name: punctuation.section.function.css}
-          - match: ((:)dir)\s*(?:(\()(ltr|rtl)?(\)))?
-            captures:
-              1: {name: entity.other.attribute-name.pseudo-class.css}
-              2: {name: puncutation.definition.entity.css}
-              3: {name: punctuation.section.function.css}
-              4: {name: constant.language.css}
-              5: {name: punctuation.section.function.css}
-          - match: ((:)lang)\s*(?:(\()(\w+(-\w+)?)?(\)))?
-            captures:
-              1: {name: entity.other.attribute-name.pseudo-class.css}
-              2: {name: puncutation.definition.entity.css}
-              3: {name: punctuation.section.function.css}
-              4: {name: constant.language.css}
-              6: {name: punctuation.section.function.css}
-          - match: (:)(active|hover|link|visited|focus)\b
-            name: entity.other.attribute-name.pseudo-class.css
-            captures:
-              1: {name: punctuation.definition.entity.css}
-          - match: (::)(shadow)\b
-            name: entity.other.attribute-name.pseudo-class.css
-            captures:
-              1: {name: punctuation.definition.entity.css}
-          - match: (?i)(\[)\s*(-?[_a-z\\[[:^ascii:]]][_a-z0-9\-\\[[:^ascii:]]]*)(?:\s*([~|^$*]?=)\s*(?:(-?[_a-z\\[[:^ascii:]]][_a-z0-9\-\\[[:^ascii:]]]*)|((?>(['"])(?:[^\\]|\\.)*?(\6)))))?\s*(\])
-            name: meta.attribute-selector.css
-            captures:
-              1: {name: punctuation.definition.entity.css}
-              2: {name: entity.other.attribute-name.attribute.css}
-              3: {name: punctuation.separator.operator.css}
-              4: {name: string.unquoted.attribute-value.css}
-              5: {name: string.quoted.double.attribute-value.css}
-              6: {name: punctuation.definition.string.begin.css}
-              7: {name: punctuation.definition.string.end.css}
-              8: {name: punctuation.definition.entity.css}
-          - include: "#interpolation"
-          - include: "#variable"
-      string:
-        patterns:
-          - begin: '"'
-            end: '"'
-            name: string.quoted.double.css
-            beginCaptures:
-              0: {name: punctuation.definition.string.begin.css}
-            endCaptures:
-              0: {name: punctuation.definition.string.end.css}
-            patterns:
-              - match: \\([a-fA-F0-9]{1,6}|.)
-                name: constant.character.escape.css
-          - begin: "'"
-            end: "'"
-            name: string.quoted.single.css
-            beginCaptures:
-              0: {name: punctuation.definition.string.begin.css}
-            endCaptures:
-              0: {name: punctuation.definition.string.end.css}
-            patterns:
-              - match: \\([a-fA-F0-9]{1,6}|.)
-                name: constant.character.escape.css
-      variable:
-        match: (\$[a-zA-Z_-][a-zA-Z0-9_-]*)
-        name: variable.stylus
-      variable_declaration:
-        begin: ^[^\S\n]*(\$?[a-zA-Z_-][a-zA-Z0-9_-]*)[^\S\n]*(\=|\?\=|\:\=)
-        end: (\n)|(;)|(?=\})
-        beginCaptures:
-          1: {name: variable.stylus}
-          2: {name: keyword.operator.stylus}
-        endCaptures:
-          2: {name: punctuation.terminator.rule.css}
-        patterns:
-          - include: "#property_values"
