@@ -685,7 +685,7 @@ repository:
   labels:
     match: |
       (?x)
-      (?<=^|[\p{ps}\s,;])\s*
+      (?<=^|[\p{ps}\s,;*+-])\s*
 
       (?!
       \b(?:# don't match keywords
@@ -2891,7 +2891,7 @@ repository:
 
       arguments-clause:
         patterns:
-          - begin: (?<=(?:[\p{ps}]\|?|\bdo\b)\s*)(\|)(?=[\w\s])
+          - begin: (?<=(?:[\p{ps}]\|?|\b(?:do|redo|def|func?|fn|macro|proc|sub)\b)\s*)(\|)(?=[\w\s])
             captures:
               1: {name: punctuation.separator.arguments.sa}
             end: (?<!\|)(\|)(?!\|)
