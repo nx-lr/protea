@@ -33,7 +33,6 @@ define:
     (?x)\s*\b
 
     (?!
-    (?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)
     \b(?:# don't match keywords
     in|of|as|is|new|infer|unset
     |typeof|nameof|sizeof|keyof|valof
@@ -80,6 +79,7 @@ define:
 repository:
   core:
     patterns:
+      - include: "#embedded-langs"
       - include: "#declarations"
       - include: "#clauses"
       - include: "#keywords"
@@ -109,6 +109,7 @@ repository:
 
   clause-content:
     patterns:
+      - include: "#embedded-langs"
       - include: "#declarations"
       - include: "#clauses"
       - include: "#keywords"
@@ -154,41 +155,39 @@ repository:
       - comment: primitive data types
         match: |
           (?x)\s*\b(
-          bool|int|float|[nr]at|real|imag|comp|num
-          |char|rune|str|sym|regex|func?|buff|bin
+          bool|u?int|float|nat|ratio|real|imag|complex|number
+          |char|rune|string|symbol|regexp?|func|buffer|binary
           |# numeric types
           (?:c|i|f|s|u|n|[nr]at|u?int|float|imag|comp)
           (?:8|16|32|64|128)
-          |(?:c|i|)(?:half|float|double|quad|oct)
+          |(?:c|i|)(?:half|float|double|quad|octa)
           )\b
         name: support.type.builtin.primitive.sa
       - comment: built-in constant types and data structures
         match: |
           (?x)\s*\b(
-          true|yes|on|false|no|off
-          |null|nil|none|undef|void
-          |nan|inf|infin
-          |any|empty|obj|rec|unit|mix|this|that|it|self|super
-          |arr|tuple|list|set|map|dict|seq|gen|range
+          true|yes|on|false|no|off|null|nil|none|undef|void|nan|inf|infin
+          |any|empty|object|record|unit|mixed
+          |array|tuple|(?:mut)?(?:list|set|map)|dict|seq|gen|range
           )\b
         name: support.type.builtin.sa
       - comment: built-in primitive classes
         match: |
           (?x)\s*\b(
-          Bool|Int|Float|[NR]at|Real|Imag|Comp|Number
+          Bool|U?Int|Float|Nat|Ratio|Real|Imag|Complex|Number
           |Char|Rune|String|Symbol|RegExp?|Func|Buffer|Binary
           |# numeric types
           (?:C|I|F|S|U|N|[NR]at|U?Int|Real|Imag|Comp)
           (?:8|16|32|64|128)
-          |(?:C|I|)(?:Half|Float|Double|Quad|Oct)
+          |(?:C|I|)(?:Half|Float|Double|Quad|Octa)
           )\b
         name: support.type.builtin.class.sa
       - comment: built-in primitive type classes
         match: |
           (?x)\s*\b(
-          True|False|Nil|Void|NaN|Infin
+          True|False|Nil|Null|Void|NaN|Infin
           |Any|Empty|Object|Record|Unit|Mixed
-          |Array|Tuple|List|Set|Map|Dict|Seq|Gen|Range
+          |Array|Tuple|(?:Mut)?(?:List|Set|Map)|Dict|Seq|Gen|Range
           )\b
         name: support.type.class.sa
       - comment: interface classes (beginning with I)
@@ -213,7 +212,7 @@ repository:
   constants:
     patterns:
       - match: |
-          (?x)(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\s*\b(?:
+          (?x)\s*\b(?:
           (true|yes|on)|(false|no|off)|(null|nil|none)|(undef|void)|(nan)|(inf|infin)
           )\b\s*
         captures:
@@ -224,7 +223,7 @@ repository:
           5: {name: constant.language.nan.sa}
           6: {name: constant.language.infinity.sa}
       - match: |
-          (?x)(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\s*\b(?:
+          (?x)\s*\b(?:
           (params|args)|(super|this|self)|(_|proto)|(ctor)|(targ)
           )\b\s*
         captures:
@@ -530,13 +529,13 @@ repository:
                 name: invalid.illegal.expected-comment-or-newline.sa
         end: ^(?=\S)|(?!\G)
         patterns:
-          - begin: ^(([ \t])+)(?!\2)
+          - begin: ^((\p{zs})+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.unquoted.block.sa
             patterns:
               - include: "#embedded-raw"
               - include: text.html.markdown#inline
-          - include: "#core"
+          - include: $self
       - begin: |
           (?x)\s*
           (\\\>)\s*
@@ -561,13 +560,13 @@ repository:
                 name: invalid.illegal.syntax.sa
         end: ^(?=\S)|(?!\G)
         patterns:
-          - begin: ^(([ \t])+)(?!\2)
+          - begin: ^((\p{zs})+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.unquoted.plain.in.sa
             patterns:
               - include: "#string-escapes"
               - include: text.html.markdown#inline
-          - include: "#core"
+          - include: $self
       - match: |
           (?x)
           \s*(\\)
@@ -639,7 +638,7 @@ repository:
         captures:
           1: {name: punctuation.quasi.element.sa}
         patterns:
-          - include: "#core"
+          - include: $self
 
   embedded-raw:
     patterns:
@@ -671,7 +670,7 @@ repository:
         captures:
           1: {name: punctuation.quasi.element.sa}
         patterns:
-          - include: "#core"
+          - include: $self
 
   symbols:
     match: |
@@ -687,10 +686,9 @@ repository:
   labels:
     match: |
       (?x)
-      (?<=^|\p{ps}|\s+)\s*
+      (?<=^|[\p{ps}\s,;])\s*
 
       (?!
-      (?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)
       \b(?:# don't match keywords
       in|of|as|is|new|infer|unset
       |typeof|nameof|sizeof|keyof|valof
@@ -771,12 +769,12 @@ repository:
                 name: invalid.illegal.expected-comment-or-newline.sa
         end: ^(?=\S)|(?!\G)
         patterns:
-          - begin: ^(([ \t])+)(?!\2)
+          - begin: ^((\p{zs})+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.unquoted.plain.out.sa
             patterns:
               - include: "#regexp-patterns"
-          - include: "#core"
+          - include: $self
 
   back-references:
     patterns:
@@ -959,7 +957,7 @@ repository:
                   4: {patterns: [{include: "#function-entities"}]}
                   5: {name: punctuation.definition.tag.sa}
                 patterns:
-                  - include: "#core"
+                  - include: $self
               - include: "#regexp-patterns"
           - begin: (\(\?>)
             end: \s*(\))
@@ -989,7 +987,7 @@ repository:
               1: {name: punctuation.definition.group.absent.sa}
             patterns:
               - include: "#regexp-patterns"
-          - begin: \((\?(?:&)(?:([+-]?\d+)|([_\p{L}\p{Nl}][_\\d\p{L}\p{M}\p{N}]*)|([+-]?\d*)))(:)?
+          - begin: \((\?(?:&)(?:([+-]?\d+)|([_\p{l}\p{Nl}][_\\d\p{l}\p{M}\p{N}]*)|([+-]?\d*)))(:)?
             end: \s*\)
             name: meta.group.back-reference.sa
             captures:
@@ -1451,7 +1449,6 @@ repository:
           (?x)\s*\b
           (
           (?!
-          (?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
           |typeof|nameof|sizeof|keyof|valof
@@ -1483,7 +1480,6 @@ repository:
           \b\s+
           (?=
           (?!
-          (?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
           |typeof|nameof|sizeof|keyof|valof
@@ -1521,7 +1517,6 @@ repository:
           (?x)\s*\b
           (
           (?!
-          (?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
           |typeof|nameof|sizeof|keyof|valof
@@ -1556,7 +1551,6 @@ repository:
           \s+[\p{s}\p{po}\p{pd}\p{pi}\p{pf}\p{pc}&&[^_,;'"\`\\\#]]*
 
           (?!
-          (?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
           |typeof|nameof|sizeof|keyof|valof
@@ -1585,7 +1579,7 @@ repository:
           )
 
           [_\p{l}\p{m}\p{n}]+|\[<|
-          (?:[!?~]?\.|[?!:]:|->)?\s*['"\`\\\p{ps}&&[^\[{]]
+          (?:[!?~]?\.=?|[?!:]:=?|->)?\s*['"\`\\\p{ps}&&[^\[{]]
           )
         captures:
           1: {patterns: [{include: "#function-entities"}]}
@@ -1632,7 +1626,7 @@ repository:
           10: {name: entity.name.type.sa}
           11: {name: entity.name.class.sa}
           12: {name: entity.name.function.sa}
-      - include: "#core"
+      - include: $self
 
   variables:
     comment: |
@@ -1647,7 +1641,6 @@ repository:
       (?x)\s*\b
 
       (?!
-      (?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)
       \b(?:# don't match keywords
       in|of|as|is|new|infer|unset
       |typeof|nameof|sizeof|keyof|valof
@@ -1768,13 +1761,13 @@ repository:
             match: (?<=^|['"\`\\\p{ps}\s])([!=~]+~|~[!=~]+|[<~>]+~[<~>]*|~[<~>]+)(?=$|['"\`\\\s\p{pe}])
             name: keyword.operator.similarity.sa
           - comment: fat arrow-like => ==> <==
-            match: (?<=^|['"\`\\\p{ps}\s])([=>]+|[<=]+|[=>]+[<=]+)(?=$|['"\`\\\s\p{Pe}])
+            match: (?<=^|['"\`\\\p{ps}\s])([=>]+|[<=]+|[=>]+[<=]+)(?=$|['"\`\\\s\p{pe}])
             name: keyword.operator.arrow.fat.sa
           - comment: skinny arrow-like -> <- --> <--
-            match: (?<=^|['"\`\\\p{ps}\s])([->]+|[<-]+|[->]+[<-]+)(?=$|['"\`\\\s\p{Pe}])
+            match: (?<=^|['"\`\\\p{ps}\s])([->]+|[<-]+|[->]+[<-]+)(?=$|['"\`\\\s\p{pe}])
             name: keyword.operator.arrow.skinny.sa
           - comment: wavy arrow-like ~> <~ ~~> <~~
-            match: (?<=^|['"\`\\\p{ps}\s])([~>]+|[<~]+|[~>]+[<~]+)(?=$|['"\`\\\s\p{Pe}])
+            match: (?<=^|['"\`\\\p{ps}\s])([~>]+|[<~]+|[~>]+[<~]+)(?=$|['"\`\\\s\p{pe}])
             name: keyword.operator.arrow.wavy.sa
           - comment: null-coalescing ??
             match: (?<=^|['"\`\\\p{ps}\s])(\?{2,})(?=$|['"\`\\\s\p{pe}])
@@ -1925,7 +1918,6 @@ repository:
               [\p{s}\p{po}\p{pd}\p{pi}\p{pf}\p{pc}&&[^_,;'"\`\\\#]]*# prefix
 
               (?!
-              (?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)
               \b(?:# don't match keywords
               in|of|as|is|new|infer|unset
               |typeof|nameof|sizeof|keyof|valof
@@ -1967,7 +1959,7 @@ repository:
                   (?x)\s*\b
 
                   (?!
-                  \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
+                  \s*\b
                   (?:# don't match keywords
                   new|unset|len|del|to|til|thru|at|by
                   |and|x?or|not|para|seq|spawn
@@ -2047,7 +2039,7 @@ repository:
                 patterns:
                   - include: "#constants"
                   - include: "#variables"
-              - include: "#core"
+              - include: $self
           - begin: (?<=\s)(\!)(?=\s)
             end: (?<=^|\s)(:)(?=\s|$)
             captures:
@@ -2058,7 +2050,7 @@ repository:
                 patterns:
                   - include: "#constants"
                   - include: "#variables"
-              - include: "#core"
+              - include: $self
           - begin: (?<=\s)(\$)(?=\s)
             end: (?<=^|\s)(:)(?=\s|$)
             captures:
@@ -2067,7 +2059,7 @@ repository:
               - begin: \s*(?=([_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\s*:)
                 end: \s*(?=:\s|$)
                 name: entity.name.function.sa
-              - include: "#core"
+              - include: $self
 
   constant-types:
     - include: "#literals"
@@ -2086,7 +2078,7 @@ repository:
       (?x)\s*\b
 
       (?!
-      \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
+      \s*\b
       (?:# don't match keywords
       new|unset|len|del|to|til|thru|at|by
       |and|x?or|not|para|seq|spawn
@@ -2160,6 +2152,16 @@ repository:
 
     repository:
       curly-brackets: &type-curly-brackets
+        repository:
+          punctuation:
+            patterns:
+              - match: ","
+                name: punctuation.separator.mapping.sa
+              - match: (?<!\s):(?!:)
+                name: punctuation.separator.key-value.sa
+              - match: (?<=^|\p{ps})\s*([*+-](?:\s+[*+-])*)
+                name: punctuation.definition.block.sequence.item.saga
+
         patterns:
           - begin: \s*(\{\|)
             end: \s*(\|\})
@@ -2167,74 +2169,94 @@ repository:
               1: {name: punctuation.definition.mapping.sa}
             patterns:
               - include: "#labels"
+              - include: "#punctuation"
               - include: "#types"
-              - include: "#core"
+              - include: $self
           - begin: \s*(\{)
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.dictionary.sa}
             patterns:
               - include: "#labels"
+              - include: "#punctuation"
               - include: "#types"
-              - include: "#core"
+              - include: $self
 
       round-brackets: &type-round-brackets
+        repository:
+          punctuation:
+            patterns:
+              - match: ","
+                name: punctuation.separator.arguments.sa
         patterns:
           - begin: \s*(\(\|)
             end: \s*(\|\))
             captures:
               1: {name: punctuation.definition.parameters.sa}
             patterns:
+              - include: "#punctuation"
               - include: "#types"
-              - include: "#core"
+              - include: $self
           - begin: \s*(\()
             end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.sa}
             patterns:
+              - include: "#punctuation"
               - include: "#types"
-              - include: "#core"
+              - include: $self
 
       square-brackets: &type-square-brackets
+        repository:
+          punctuation:
+            patterns:
+              - match: (?<=\b|^|[\p{pe}'"\`\\\s])(:)(?=\b|$|[\p{ps}'"\`\\\s])
+                captures:
+                  1: {name: punctuation.separator.slice.sa}
+              - match: ","
+                name: punctuation.separator.sequence.sa
         patterns:
           - begin: \s*(\[<)
             end: \s*(>\])
             captures:
               1: {name: punctuation.definition.typeparameters.sa}
             patterns:
+              - include: "#punctuation"
               - include: "#types"
-              - include: "#core"
+              - include: $self
           - begin: \s*(\[\|)
             end: \s*(\|\])
             captures:
               1: {name: punctuation.definition.sequence.sa}
             patterns:
+              - include: "#punctuation"
               - include: "#types"
-              - include: "#core"
+              - include: $self
           - begin: \s*(\[)
             end: \s*(\])
             captures:
               1: {name: punctuation.definition.array.sa}
             patterns:
+              - include: "#punctuation"
               - include: "#types"
-              - include: "#core"
+              - include: $self
 
   type-keywords:
     patterns:
       - match: |
-          (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
+          (?x)\s*\b
           (ext)\b\s*
         name: storage.type.extends.sa
       - match: |
-          (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
+          (?x)\s*\b
           (impl)\b\s*
         name: storage.type.implements.sa
       - match: |
-          (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
+          (?x)\s*\b
           ((?:type|name|size|key)of|only|infer|in|of|as|is)\b\s*
         name: keyword.operator.expression.$1.sa
       - match: |
-          (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
+          (?x)\s*\b
           (valof)\b\s*
         name: keyword.operator.expression.valueof.sa
 
@@ -2288,9 +2310,6 @@ repository:
       - comment: class type < >
         match: \s*([<>])(?![\p{s}\p{po}\p{pd}\p{pi}\p{pf}\p{pc}&&[^_,;'"\`\\\#]])
         name: keyword.operator.class.sa
-      - comment: "type operator :"
-        match: \s*(:)(?![\p{s}\p{po}\p{pd}\p{pi}\p{pf}\p{pc}&&[^_,;'"\`\\\#]])
-        name: punctuation.definition.annotation.sa
 
   type-annotation:
     applyEndPatternLast: 1
@@ -2311,7 +2330,7 @@ repository:
       - include: "#type-operators"
       - include: "#type-brackets"
 
-      - match: (?<=\))\s*((?:(?://?|\|\|?|[!:])*=*)*=>)\s*
+      - match: \s*((?:(?://?|\|\|?|[!:])*=*)*=>)\s*
         name: storage.type.function.arrow.sa
 
       - match: (?!^)\s*\b((?>WeakSet|WeakMap|URIError|Uint8ClampedArray|Uint8Array|Uint32Array|Uint16Array|TypeError|TypedArray|SyntaxError|Symbol|strings|SIMD.Uint8x16|SIMD.Uint32x4|SIMD.Uint16x8|SIMD.Int8x16|SIMD.Int32x4|SIMD.Int16x8|SIMD.Float64x2|SIMD.Float32x4|SIMD.Bool8x16|SIMD.Bool64x2|SIMD.Bool32x4|SIMD.Bool16x8|SIMD|SharedArrayBuffer|Set|RegExp|Reflect|ReferenceError|RangeError|Proxy|Promise|Object|numbers|NaN|Math|Map|JSON|Intl.NumberFormat|Intl.DateTimeFormat|Intl.Collator|Intl|InternalError|Int8Array|Int32Array|Int16Array|Infinity|GeneratorFunction|Generator|Function|Float64Array|Float32Array|EvalError|Error|Date|DataView|Boolean|Atomics|ArrayBuffer|Array))\b
@@ -2332,7 +2351,7 @@ repository:
     match: |
       (?x)
       ((?:
-      (?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\s*(?:
+      \s*(?:
       (?:# Access modifiers
       pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
       |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
@@ -2342,10 +2361,11 @@ repository:
       |# Function or method modifiers
       (?:pre|in|post|suf|af|trans|inter)fix|
       (?:u|bi|ter|)nary|oper
-      |@(?:
-      [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+      |# Decorators
+      @(?:
+      [_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*
       (?:(?:[?!~]?\.|[?!:]:|->)
-      (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
+      (?:(?:[_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)))*
       )
       ))
       \s*)*)
@@ -2373,7 +2393,7 @@ repository:
       )
     captures:
       1:
-        patterns:
+        patterns: &modifier-keywords
           - match: |
               (?x)\s*@(?:
               [_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*
@@ -2383,7 +2403,7 @@ repository:
             name: entity.name.class.decorator.sa
           - match: |
               (?x)\s*
-              \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
+              \s*\b
               (?:
               (# Access modifiers
               pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
@@ -2412,7 +2432,7 @@ repository:
   clause-keywords:
     comment: clause keywords
     match: |
-      (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(?:
+      (?x)\s*\b(?:
       (def|func?|fn|macro|proc|sub)# function
       |(let|va[rl]|const)# variable
       |(class|ext)# class
@@ -2453,7 +2473,7 @@ repository:
   general-keywords:
     comment: general keywords
     match: |
-      (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(?:
+      (?x)\s*\b(?:
       (if|else|elif|eless|unless|guard|fi)#1
       |(for|each|while|until|repeat|rof)#2
       |(switch|case|fail|esac)#3
@@ -2488,7 +2508,7 @@ repository:
   expression-keywords:
     comment: expression keywords
     match: |
-      (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(?:
+      (?x)\s*\b(?:
       (in)|(of)|(as)|(is)|(new)|(infer)
       |(typeof|nameof|sizeof|keyof)
       |(valof)|(len)|(del)|(to|til|thru|at|by)|(unset)
@@ -2522,7 +2542,7 @@ repository:
     repository:
       control-expression:
         applyEndPatternLast: 1
-        begin: (?<!\.|::)\s*\b(halt|skip|break|cont|goto|label)\b
+        begin: \s*\b(halt|skip|break|cont|goto|label)\b
         end: (?=\O)|$
         beginCaptures:
           1: {name: keyword.control.flow.sa}
@@ -2533,18 +2553,14 @@ repository:
 
       module-expression:
         applyEndPatternLast: 1
-        begin: |
-          (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-          (import|export|open|close|use|using)\b\s*
+        begin: \s*\b(import|export|open|close|use|using)\b\s*
         end: (?=\O)|$
         beginCaptures:
           1: {name: keyword.control.module.sa}
         patterns:
           - include: "#modifier-keywords"
           - include: "#type-keywords"
-          - match: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              (from|to|as|all|any|show|hide|to|and|x?or|not)\b\s*
+          - match: \s*\b(from|to|as|all|any|show|hide|to|and|x?or|not)\b\s*
             name: keyword.control.module.sa
           - match: \s*\*
             name: keyword.operator.module.all.sa
@@ -2586,59 +2602,35 @@ repository:
 
       query-expression:
         patterns:
-          - begin: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              (from)\b\s*
-            end: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              (in|of)\b\s*
+          - begin: \s*\b(from)\b\s*
+            end: \s*\b(in|of)\b\s*
             captures:
               1: {name: keyword.query.sa}
             patterns:
-              - include: "#core"
-          - match: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              ((\b(fold|scan)\b)\s*(\b(left|right)\b)?\s*(\b(by|while|until|with)\b)?)\b\s*
+              - include: $self
+          - match: \s*\b((\b(fold|scan)\b)\s*(\b(left|right)\b)?\s*(\b(by|while|until|with)\b)?)\b\s*
             name: keyword.query.sa
-          - begin: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              (group)\b\s*
-            end: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              (by)\b\s*
+          - begin: \s*\b(group)\b\s*
+            end: \s*\b(by)\b\s*
             captures:
               1: {name: keyword.query.sa}
             patterns:
-              - include: "#core"
-          - begin: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              (join)\b\s*
-            end: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              (in|of)\b\s*
+              - include: $self
+          - begin: \s*\b(join)\b\s*
+            end: \s*\b(in|of)\b\s*
             captures:
               1: {name: keyword.query.sa}
             patterns:
-              - include: "#core"
-          - match: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              (equals?|[io]nto)\b\s*
+              - include: $self
+          - match: \s*\b(equals?|[io]nto)\b\s*
             name: keyword.query.sa
-          - match: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              ((\b(order)\b)\s*(\b((a|de)sc)\b)?\s*(\b(by)\b)?)\b\s*
+          - match: \s*\b((\b(order)\b)\s*(\b((a|de)sc)\b)?\s*(\b(by)\b)?)\b\s*
             name: keyword.query.sa
-          - match: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              (select)\b\s*
+          - match: \s*\b(select)\b\s*
             name: keyword.query.sa
-          - match: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              ((\b(take|drop)\b)\s*(\b(left|right|init|head|tail|last)\b)?\s*(\b(by|while|until|with)\b)?)\b\s*
+          - match: \s*\b((\b(take|drop)\b)\s*(\b(left|right|init|head|tail|last)\b)?\s*(\b(by|while|until|with)\b)?)\b\s*
             name: keyword.query.sa
-          - match: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b
-              (where)\b\s*
+          - match: \s*\b(where)\b\s*
             name: keyword.query.sa
 
   parameter-brackets:
@@ -2706,7 +2698,7 @@ repository:
     repository:
       class:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(class|ext)\s+
+        begin: \s*\b(class|ext)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.class.sa}
@@ -2717,7 +2709,7 @@ repository:
           - include: "#block-entities"
       constraint:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(given|law)\s+
+        begin: \s*\b(given|law)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.constraint.sa}
@@ -2728,7 +2720,7 @@ repository:
           - include: "#block-entities"
       enum:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(enum|rel)\s+
+        begin: \s*\b(enum|rel)\b\s*
         end: $|(?=.)
         name: meta.enum.declaration.sa
         beginCaptures:
@@ -2741,7 +2733,7 @@ repository:
           - include: "#block-entities"
       project:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(proj|impl)\s+
+        begin: \s*\b(proj|impl)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.project.sa}
@@ -2752,7 +2744,7 @@ repository:
           - include: "#block-entities"
       fragment:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(frag|struct)\s+
+        begin: \s*\b(frag|struct)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.fragment.sa}
@@ -2763,7 +2755,7 @@ repository:
           - include: "#block-entities"
       function:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(def|func?|fn|macro|proc|sub)\s+
+        begin: \s*\b(def|func?|fn|macro|proc|sub)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.function.sa}
@@ -2774,7 +2766,7 @@ repository:
           - include: "#block-entities"
       interface:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(inter|schema)\s+
+        begin: \s*\b(inter|schema)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.interface.sa}
@@ -2785,7 +2777,7 @@ repository:
           - include: "#block-entities"
       module:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(module|lat)\s+
+        begin: \s*\b(module|lat)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.module.sa}
@@ -2796,7 +2788,7 @@ repository:
           - include: "#block-entities"
       namespace:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(nspace)\s+
+        begin: \s*\b(nspace)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.namespace.sa}
@@ -2807,7 +2799,7 @@ repository:
           - include: "#block-entities"
       object:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(object|record)\s+
+        begin: \s*\b(object|record)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.object.sa}
@@ -2818,7 +2810,7 @@ repository:
           - include: "#block-entities"
       raw:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(raw)\s+
+        begin: \s*\b(raw)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.raw.sa}
@@ -2828,7 +2820,7 @@ repository:
           - include: "#block-entities"
       schema:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(data|query)\s+
+        begin: \s*\b(data|query)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.schema.sa}
@@ -2838,7 +2830,7 @@ repository:
           - include: "#block-entities"
       style:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(style)\s+
+        begin: \s*\b(style)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.style.sa}
@@ -2848,7 +2840,7 @@ repository:
           - include: "#block-entities"
       trait:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(trait|impl)\s+
+        begin: \s*\b(trait|impl)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.trait.sa}
@@ -2862,6 +2854,7 @@ repository:
     patterns:
       - include: "#variable-clause"
       - include: "#constant-clause"
+      - include: "#arguments-clause"
       - include: "#for-clause"
       - include: "#if-clause"
       - include: "#switch-clause"
@@ -2881,6 +2874,15 @@ repository:
       function-params:
         patterns: *function-params
 
+      arguments-clause:
+        patterns:
+          - begin: (?<=(?:[\p{ps}]\|?|\bdo\b)\s*)(\|)(?=[\w\s])
+            captures:
+              1: {name: punctuation.separator.arguments.sa}
+            end: (?<!\|)(\|)(?!\|)
+            patterns:
+              - include: "#function-params"
+
       pattern-brackets:
         begin: \s*(\()
         end: \s*(\))
@@ -2888,24 +2890,45 @@ repository:
           1: {name: punctuation.definition.parameters.sa}
         patterns:
           - include: "#function-params"
-          - include: "#core"
 
       method-clause:
         patterns:
-          - comment: |
-              Simple arrow method assignment
-              x = x =>
-            match: |
+          - begin: |
               (?x)(?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
               ([_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\s+
               (:?=)\s+
-              ([?*&%$]?[_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\s+
-              ((?:(?://?|\|\|?|[!:])*=*)*=>)(?=$|['"\`\\\s\p{pe}])
-            captures:
+              (
+
+              (?:(?:# Access modifiers
+              pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
+              |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
+              # Function or method modifiers
+              |[gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
+              |(?:un)?(?:sign|safe|check|lock|fixed|size)
+              |# Function or method modifiers
+              (?:pre|in|post|suf|af|trans|inter)fix|
+              (?:u|bi|ter|)nary|oper
+              |# Decorators
+              @(?:
+              [_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*
+              (?:(?:[?!~]?\.|[?!:]:|->)
+              (?:(?:[_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)))*
+              )
+              )\s*\b)*
+
+              )\s*
+              (\|)
+              (?=[\w\s])
+            end: (?<!\|)(\|)(?!\|)
+            beginCaptures:
               1: {name: entity.name.function.method.sa}
               2: {name: keyword.operator.assignment.sa}
-              3: {patterns: [{include: "#function-params"}]}
-              4: {name: storage.type.function.arrow.sa}
+              3: {patterns: *modifier-keywords}
+              4: {name: punctuation.separator.arguments.sa}
+            endCaptures:
+              1: {name: punctuation.separator.arguments.sa}
+            patterns:
+              - include: "#function-params"
           - comment: |
               Method def before function keyword
               x = def()
@@ -2913,8 +2936,12 @@ repository:
               (?x)(?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
               ([_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\s+
               (:?=)\s+
-              (?=\b
-              (?:\s*\b
+
+              ([_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\s+
+              (:?=)\s+
+
+              ((?:
+              \s*(?:
               (?:# Access modifiers
               pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
               |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
@@ -2924,22 +2951,33 @@ repository:
               |# Function or method modifiers
               (?:pre|in|post|suf|af|trans|inter)fix|
               (?:u|bi|ter|)nary|oper
+              |# Decorators
+              @(?:
+              [_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*
+              (?:(?:[?!~]?\.|[?!:]:|->)
+              (?:(?:[_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)))*
               )
-              \b\s*)*
-              \s*\b
-              (?:def|func?|fn|macro|proc|sub)\b
+              ))
+              \s*)*)
+              (?=\s*\b
+              (?:
+              def|func?|fn|macro|proc|sub
+              )\b
               )
             captures:
               1: {name: entity.name.function.method.sa}
               2: {name: keyword.operator.assignment.sa}
-          - comment: |
-              Method def before arrow function
-              x.x = async pub (): void =>
-            match: |
-              (?x)(?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
+              3: {patterns: *modifier-keywords}
+
+      function-clause:
+        patterns:
+          - begin: |
+              (?x)
               ([_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\s+
               (:?=)\s+
-              ((?:(?:# Access modifiers
+              (
+
+              (?:(?:# Access modifiers
               pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
               |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
               # Function or method modifiers
@@ -2948,21 +2986,27 @@ repository:
               |# Function or method modifiers
               (?:pre|in|post|suf|af|trans|inter)fix|
               (?:u|bi|ter|)nary|oper
-              )\s*\b)*)\s*
-              ((?:\(.*?\))*)\s*
-              (?:\s*(:)\s*(.*))?\s*
-              ((?:(?://?|\|\|?|[!:])*=*)*=>)(?=$|['"\`\\\s\p{pe}])
-            captures:
-              1: {name: entity.name.function.method.sa}
-              2: {name: keyword.operator.assignment.sa}
-              3: {name: storage.modifier.sa}
-              4: {patterns: [{include: "#pattern-brackets"}]}
-              5: {name: punctuation.definition.annotation.sa}
-              6: {patterns: [{include: "#types"}]}
-              7: {name: storage.type.function.arrow.sa}
+              |# Decorators
+              @(?:
+              [_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*
+              (?:(?:[?!~]?\.|[?!:]:|->)
+              (?:(?:[_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)))*
+              )
+              )\s*\b)*
 
-      function-clause:
-        patterns:
+              )\s*
+              (\|)
+              (?=[\w\s])
+            end: (?<!\|)(\|)(?!\|)
+            beginCaptures:
+              1: {name: entity.name.function.sa}
+              2: {name: keyword.operator.assignment.sa}
+              3: {patterns: *modifier-keywords}
+              4: {name: punctuation.separator.arguments.sa}
+            endCaptures:
+              1: {name: punctuation.separator.arguments.sa}
+            patterns:
+              - include: "#function-params"
           - comment: |
               Function def before function keyword
               x = def()
@@ -2970,8 +3014,9 @@ repository:
               (?x)\s*
               ([_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\s+
               (:?=)\s+
-              (?=\b
-              (?:\s*\b
+
+              ((?:
+              \s*(?:
               (?:# Access modifiers
               pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
               |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
@@ -2981,94 +3026,27 @@ repository:
               |# Function or method modifiers
               (?:pre|in|post|suf|af|trans|inter)fix|
               (?:u|bi|ter|)nary|oper
+              |# Decorators
+              @(?:
+              [_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*
+              (?:(?:[?!~]?\.|[?!:]:|->)
+              (?:(?:[_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)))*
               )
-              \b\s*)*
-              \s*\b
-              (?:def|func?|fn|macro|proc|sub)\b
+              ))
+              \s*)*)
+              (?=\s*\b
+              (?:
+              def|func?|fn|macro|proc|sub
+              )\b
               )
             captures:
               1: {name: entity.name.function.sa}
               2: {name: keyword.operator.assignment.sa}
-          - comment: |
-              function def before arrow function
-              x = async pub (): void =>
-            match: |
-              (?x)\s*
-              ([_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\s+
-              (:?=)\s+
-              ((?:(?:# Access modifiers
-              pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
-              |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
-              # Function or method modifiers
-              |[gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
-              |(?:un)?(?:sign|safe|check|lock|fixed|size)
-              |# Function or method modifiers
-              (?:pre|in|post|suf|af|trans|inter)fix|
-              (?:u|bi|ter|)nary|oper
-              )\s*\b)*)\s*
-              ((?:\(.*?\))*)\s*
-              (?:\s*(:)\s*(.*))?\s*
-              ((?:(?://?|\|\|?|[!:])*=*)*=>)(?=$|['"\`\\\s\p{pe}])
-            captures:
-              1: {name: entity.name.function.sa}
-              2: {name: keyword.operator.assignment.sa}
-              3: {name: storage.modifier.sa}
-              4: {patterns: [{include: "#pattern-brackets"}]}
-              5: {name: punctuation.definition.annotation.sa}
-              6: {patterns: [{include: "#types"}]}
-              7: {name: storage.type.function.arrow.sa}
-          - comment: |
-              Arrow function with modifiers
-              async pub (): void =>
-            match: |
-              (?x)\s*
-              ((?:(?:# Access modifiers
-              pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
-              |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
-              # Function or method modifiers
-              |[gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
-              |(?:un)?(?:sign|safe|check|lock|fixed|size)
-              |# Function or method modifiers
-              (?:pre|in|post|suf|af|trans|inter)fix|
-              (?:u|bi|ter|)nary|oper
-              )\s*\b)*)\s+
-              ((?:\(.*?\))*)\s*
-              (?:\s*(:)\s*(.*))?\s+
-              ((?:(?://?|\|\|?|[!:])*=*)*=>)(?=$|['"\`\\\s\p{pe}])
-            captures:
-              1: {name: storage.modifier.sa}
-              2: {patterns: [{include: "#pattern-brackets"}]}
-              3: {name: punctuation.definition.annotation.sa}
-              4: {patterns: [{include: "#types"}]}
-              5: {name: storage.type.function.arrow.sa}
-          - comment: |
-              Simple arrow method assignment
-              x = x =>
-            match: |
-              (?x)\s*
-              ([_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\s+
-              (:?=)\s+
-              ([?*&%$]?[_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\s+
-              ((?:(?://?|\|\|?|[!:])*=*)*=>)(?=$|['"\`\\\s\p{pe}])
-            captures:
-              1: {name: entity.name.function.sa}
-              2: {name: keyword.operator.assignment.sa}
-              3: {patterns: [{include: "#function-params"}]}
-              4: {name: storage.type.function.arrow.sa}
-          - comment: |
-              Simple arrow function
-              x =>
-            match: |
-              (?x)\s*
-              ([?*&%$]?[_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\s+
-              ((?:(?://?|\|\|?|[!:])*=*)*=>)(?=$|['"\`\\\s\p{pe}])
-            captures:
-              1: {patterns: [{include: "#function-params"}]}
-              2: {name: storage.type.function.arrow.sa}
+              3: {patterns: *modifier-keywords}
 
       variable-clause:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(var|let)\b
+        begin: \s*\b(var|let)\b
         end: (?=\O)|$
         beginCaptures:
           1: {name: storage.type.sa}
@@ -3077,7 +3055,7 @@ repository:
 
       constant-clause:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(val|const)\b
+        begin: \s*\b(val|const)\b
         end: (?=\O)|$
         beginCaptures:
           1: {name: storage.type.sa}
@@ -3089,7 +3067,7 @@ repository:
 
       new-clause:
         applyEndPatternLast: 1
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(new)\b
+        begin: \s*\b(new)\b
         end: (?=\O)|$
         beginCaptures:
           1: {name: keyword.operator.expression.$1.sa}
@@ -3101,14 +3079,29 @@ repository:
       type-clause:
         patterns:
           - applyEndPatternLast: 1
-            begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(as|is)\b
+            begin: \s*\b(as|is)\b
             end: (?=\O)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.sa}
             patterns:
               - include: "#types"
+          - begin: \s*\b(type|alias)\b\s*\b([_\p{l}\p{nl}][_\p{l}\p{m}\p{n}]*)\b\s*(?:(:?=)|(:))?\s*
+            end: ^(?=\S)|(?!\G)
+            name: meta.type-alias.sa
+            beginCaptures:
+              1: {name: keyword.other.typedef.sa}
+              2: {patterns: [{include: '#types'}]}
+              3: {name: keyword.operator.assignment.sa}
+              4: {name: punctuation.separator.colon.sa}
+            patterns:
+              - begin: ^((\p{zs})+)(?!\2)
+                end: ^(?!\1|\s*$)
+                name: meta.type-alias.sa
+                patterns:
+                  - include: "#types"
+              - include: $self
           - applyEndPatternLast: 1
-            begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(type|alias)\b
+            begin: \s*\b(type|alias)\b
             end: (?=\O)|$
             beginCaptures:
               1: {name: keyword.other.typedef.sa}
@@ -3118,7 +3111,7 @@ repository:
                   1: {name: keyword.operator.assignment.sa}
               - include: "#types"
           - applyEndPatternLast: 1
-            begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(decl)\b
+            begin: \s*\b(decl)\b
             end: (?=\O)|$
             beginCaptures:
               1: {name: keyword.other.declare.sa}
@@ -3129,7 +3122,7 @@ repository:
               - include: "#types"
           - applyEndPatternLast: 1
             begin: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(
+              (?x)\s*\b(
               (?:return|give|await|yield|throw|raise)s
               )\b
             end: (?=\O)|$
@@ -3139,7 +3132,7 @@ repository:
               - include: "#types"
 
       case-clause:
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(case|fail)\b
+        begin: \s*\b(case|fail)\b
         end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
         endCaptures:
           0: {name: punctuation.separator.colon.sa}
@@ -3149,7 +3142,7 @@ repository:
           - include: "#clause-content"
 
       catch-clause:
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(try|retry|catch|rescue|finally)\b
+        begin: \s*\b(try|retry|catch|rescue|finally)\b
         end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
         endCaptures:
           0: {name: punctuation.separator.colon.sa}
@@ -3162,15 +3155,15 @@ repository:
             captures:
               1: {name: meta.brace.round.sa}
             patterns:
-              - match: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(as)\b
+              - match: \s*\b(as)\b
                 name: keyword.control.error.sa
-              - include: "#core"
-          - match: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(as)\b
+              - include: $self
+          - match: \s*\b(as)\b
             name: keyword.control.error.sa
           - include: "#clause-content"
 
       thread-clause:
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(para|seq|spawn|fixed|lock)\b
+        begin: \s*\b(para|seq|spawn|fixed|lock)\b
         end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
         endCaptures:
           0: {name: punctuation.separator.colon.sa}
@@ -3183,15 +3176,15 @@ repository:
             beginCaptures:
               1: {name: meta.brace.round.sa}
             patterns:
-              - match: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(as)\b
+              - match: \s*\b(as)\b
                 name: keyword.control.thread.sa
-              - include: "#core"
-          - match: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(as)\b
+              - include: $self
+          - match: \s*\b(as)\b
             name: keyword.control.thread.sa
           - include: "#clause-content"
 
       do-clause:
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(do|redo)\b
+        begin: \s*\b(do|redo)\b
         end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
         endCaptures:
           0: {name: punctuation.separator.colon.sa}
@@ -3202,7 +3195,7 @@ repository:
           - include: "#clause-content"
 
       for-clause:
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(for|each|while|until|repeat)\b
+        begin: \s*\b(for|each|while|until|repeat)\b
         end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
         endCaptures:
           0: {name: punctuation.separator.colon.sa}
@@ -3210,20 +3203,20 @@ repository:
         beginCaptures:
           1: {name: keyword.control.loop.sa}
         patterns:
-          - match: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(in|of|to|til|thru|at|by)\b
+          - match: \s*\b(in|of|to|til|thru|at|by)\b
             name: keyword.control.loop.sa
           - begin: \s*(\()
             end: \s*(\))
             captures:
               1: {name: meta.brace.round.sa}
             patterns:
-              - match: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(in|of|to|til|thru|at|by)\b
+              - match: \s*\b(in|of|to|til|thru|at|by)\b
                 name: keyword.control.loop.sa
-              - include: "#core"
+              - include: $self
           - include: "#clause-content"
 
       if-clause:
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(if|elif|else|unless|eless|guard)\b
+        begin: \s*\b(if|elif|else|unless|eless|guard)\b
         end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
         endCaptures:
           0: {name: punctuation.separator.colon.sa}
@@ -3234,7 +3227,7 @@ repository:
           - include: "#clause-content"
 
       match-clause:
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(match)\b
+        begin: \s*\b(match)\b
         end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
         endCaptures:
           0: {name: punctuation.separator.colon.sa}
@@ -3245,7 +3238,7 @@ repository:
           - include: "#clause-content"
 
       switch-clause:
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(switch)\b
+        begin: \s*\b(switch)\b
         end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
         endCaptures:
           0: {name: punctuation.separator.colon.sa}
@@ -3256,7 +3249,7 @@ repository:
           - include: "#clause-content"
 
       when-clause:
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(when)\b
+        begin: \s*\b(when)\b
         end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
         endCaptures:
           0: {name: punctuation.separator.colon.sa}
@@ -3264,7 +3257,7 @@ repository:
           1: {name: keyword.control.match.sa}
         patterns:
           - applyEndPatternLast: 1
-            begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(as|is)\b
+            begin: \s*\b(as|is)\b
             end: (?=\O)|$
             beginCaptures:
               1: {name: keyword.control.match.sa}
@@ -3272,25 +3265,25 @@ repository:
               - include: "#types"
           - applyEndPatternLast: 1
             begin: |
-              (?x)\s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b((?:return|give|await|yield|throw|raise)s?)\b
+              (?x)\s*\b((?:return|give|await|yield|throw|raise)s?)\b
             end: (?=\O)|$
             beginCaptures:
               1: {name: keyword.control.match.sa}
             patterns:
               - include: "#types"
-          - begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(if|elif|else|unless|eless|guard)\b
+          - begin: \s*\b(if|elif|else|unless|eless|guard)\b
             end: (?=[\p{pe};]|:(?=\s+|$)|(?<=\s)(?:->|\b(?:begin|then))|$)
             endCaptures:
               0: {name: punctuation.separator.colon.sa}
             beginCaptures:
               1: {name: keyword.control.match.sa}
             patterns:
-              - include: "#core"
+              - include: $self
           - include: "#type-operators"
           - include: "#clause-content"
 
       with-clause:
-        begin: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(with)\b
+        begin: \s*\b(with)\b
         end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
         endCaptures:
           0: {name: punctuation.separator.colon.sa}
@@ -3301,17 +3294,17 @@ repository:
           - begin: \s*
             end: \s*(?=[{,])
             patterns:
-              - match: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(as)\b
+              - match: \s*\b(as)\b
                 name: keyword.control.with.sa
-              - include: "#core"
+              - include: $self
           - begin: \s*(\()
             end: \s*(\))
             captures:
               1: {name: meta.brace.round.sa}
             patterns:
-              - match: \s*(?<![!?~]\.=?|(?<!\.+)\.=?|[?!:]:=?|->)\b(as)\b
+              - match: \s*\b(as)\b
                 name: keyword.control.with.sa
-              - include: "#core"
+              - include: $self
           - include: "#clause-content"
 
   punctuation:
@@ -3319,7 +3312,6 @@ repository:
       - include: "#line-continuation"
       - include: "#comma"
       - include: "#right-arrow"
-      - include: "#fat-arrow"
       - include: "#semicolon"
       - include: "#double-semi"
 
@@ -3336,10 +3328,6 @@ repository:
         match: (?:^|['"\`\\\p{ps}\s]*)(->)(?:$|['"\`\\\s\p{pe}])
         captures:
           1: {name: punctuation.definition.arrow.sa}
-      fat-arrow:
-        match: (?:^|['"\`\\\p{ps}\s]*)((?:(?://?|\|\|?|[!:])*=*)*=>)(?:$|['"\`\\\s\p{pe}])
-        captures:
-          1: {name: storage.type.function.arrow.sa}
       double-semi:
         match: \s*(;;)
         captures:
@@ -3357,12 +3345,14 @@ repository:
 
   curly-brackets:
     repository:
-      yaml:
+      punctuation:
         patterns:
           - match: ","
             name: punctuation.separator.mapping.sa
-          - match: ":"
+          - match: (?<!\s):(?!:)
             name: punctuation.separator.key-value.sa
+          - match: (?<=^|\p{ps})\s*([*+-](?:\s+[*+-])*)
+            name: punctuation.definition.block.sequence.item.saga
 
     patterns:
       - begin: (\{\|)\s*
@@ -3371,16 +3361,16 @@ repository:
           1: {name: punctuation.definition.mapping.sa}
         patterns:
           - include: "#labels"
-          - include: "#yaml"
-          - include: "#core"
+          - include: "#punctuation"
+          - include: $self
       - begin: (\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.sa}
         patterns:
           - include: "#labels"
-          - include: "#yaml"
-          - include: "#core"
+          - include: "#punctuation"
+          - include: $self
 
   round-brackets:
     repository:
@@ -3396,14 +3386,14 @@ repository:
           1: {name: punctuation.definition.parameters.sa}
         patterns:
           - include: "#punctuation"
-          - include: "#core"
+          - include: $self
       - begin: (\()\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.expression.sa}
         patterns:
           - include: "#punctuation"
-          - include: "#core"
+          - include: $self
 
   square-brackets:
     repository:
@@ -3422,23 +3412,113 @@ repository:
           1: {name: punctuation.definition.typeparameters.sa}
         patterns:
           - include: "#types"
-          - include: "#core"
+          - include: $self
       - begin: (\[\|)\s*
         end: \s*(\|\])
         captures:
           1: {name: punctuation.definition.sequence.sa}
         patterns:
           - include: "#punctuation"
-          - include: "#core"
+          - include: $self
       - begin: (\[)\s*
         end: \s*(\])
         captures:
           1: {name: punctuation.definition.array.sa}
         patterns:
           - include: "#punctuation"
-          - include: "#core"
+          - include: $self
 
-  patterns:
-    - include: "#round-brackets"
-    - include: "#square-brackets"
-    - include: "#curly-brackets"
+  embedded-langs:
+    patterns:
+      - include: "#raw-yaml"
+      - include: "#raw-python"
+      - include: "#raw-ruby"
+      - include: "#raw-pug"
+      - include: "#raw-markdown"
+
+    repository:
+      raw-yaml:
+        begin: \s*\b(raw)\b\s*\b((?i:yaml))\b\s*(?:(:?=)|(:))?\s*
+        end: ^(?=\S)|(?!\G)
+        name: meta.embedded.yaml.sa
+        beginCaptures:
+          1: {name: storage.type.raw.sa}
+          2: {name: entity.name.raw.sa}
+          3: {name: keyword.operator.assignment.sa}
+          4: {name: punctuation.separator.colon.sa}
+        patterns:
+          - begin: ^((\p{zs})+)(?!\2)
+            end: ^(?!\1|\s*$)
+            name: meta.embedded.yaml.sa
+            patterns:
+              - include: "#embedded-raw"
+              - include: source.yaml
+          - include: $self
+      raw-python:
+        begin: \s*\b(raw)\b\s*\b((?i:py|python))\b\s*(?:(:?=)|(:))?\s*
+        end: ^(?=\S)|(?!\G)
+        name: meta.embedded.python.sa
+        beginCaptures:
+          1: {name: storage.type.raw.sa}
+          2: {name: entity.name.raw.sa}
+          3: {name: keyword.operator.assignment.sa}
+          4: {name: punctuation.separator.colon.sa}
+        patterns:
+          - begin: ^((\p{zs})+)(?!\2)
+            end: ^(?!\1|\s*$)
+            name: meta.embedded.python.sa
+            patterns:
+              - include: "#embedded-raw"
+              - include: source.python
+          - include: $self
+      raw-ruby:
+        begin: \s*\b(raw)\b\s*\b((?i:rb|ruby))\b\s*(?:(:?=)|(:))?\s*
+        end: ^(?=\S)|(?!\G)
+        name: meta.embedded.ruby.sa
+        beginCaptures:
+          1: {name: storage.type.raw.sa}
+          2: {name: entity.name.raw.sa}
+          3: {name: keyword.operator.assignment.sa}
+          4: {name: punctuation.separator.colon.sa}
+        patterns:
+          - begin: ^((\p{zs})+)(?!\2)
+            end: ^(?!\1|\s*$)
+            name: meta.embedded.ruby.sa
+            patterns:
+              - include: "#embedded-raw"
+              - include: source.ruby
+          - include: $self
+      raw-pug:
+        begin: \s*\b(raw)\b\s*\b((?i:pug))\b\s*(?:(:?=)|(:))?\s*
+        end: ^(?=\S)|(?!\G)
+        name: meta.embedded.pug.sa
+        beginCaptures:
+          1: {name: storage.type.raw.sa}
+          2: {name: entity.name.raw.sa}
+          3: {name: keyword.operator.assignment.sa}
+          4: {name: punctuation.separator.colon.sa}
+        patterns:
+          - begin: ^((\p{zs})+)(?!\2)
+            end: ^(?!\1|\s*$)
+            name: meta.embedded.pug.sa
+            patterns:
+              - include: "#embedded-raw"
+              - include: text.pug
+          - include: $self
+      raw-markdown:
+        begin: \s*\b(raw)\b\s*\b((?i:(m|mark)(d|down)))\b\s*(?:(:?=)|(:))?\s*
+        end: ^(?=\S)|(?!\G)
+        name: meta.embedded.markdown.sa
+        beginCaptures:
+          1: {name: storage.type.raw.sa}
+          2: {name: entity.name.raw.sa}
+          3: {name: keyword.operator.assignment.sa}
+          4: {name: punctuation.separator.colon.sa}
+        patterns:
+          - begin: ^((\p{zs})+)(?!\2)
+            end: ^(?!\1|\s*$)
+            name: meta.embedded.markdown.sa
+            patterns:
+              - include: "#embedded-raw"
+              - include: text.html.markdown
+          - include: $self
