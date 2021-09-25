@@ -25,6 +25,7 @@ comment: |
 
   - Add function labels
   - Add keywords for types from SQL
+  - Add JSX syntax and more
   - Add grammars for Unicode character entities
     - HTML5, AGL and LaTeX
     - Locale and Unicode script codes
@@ -43,7 +44,7 @@ comment: |
 
   Done:
   - Standardized modiier and declaration keywords
-  - Syntax changed to Θ
+  - Syntax changed
 define:
   number-literal: &number-literal
     1: {name: storage.type.numeric.sa}
@@ -101,6 +102,9 @@ define:
 repository:
   core:
     patterns:
+      - comment: The following are placeholders.
+          Will redo embedded HTML and CSS syntax later.
+      - include: "#jsx"
       - include: "#embedded-langs"
       - include: "#clauses"
       - include: "#declarations"
@@ -114,6 +118,129 @@ repository:
       - include: "#calls"
       - include: "#variables"
       - include: "#illegal"
+
+  jsx:
+    comment: Avoid < operator expressions as best we can using Zertosh's regex
+    patterns:
+      - begin: (?=<[_\p{L}\p{Nl}])
+        end: (?=.)
+        applyEndPatternLast: 1
+        patterns:
+          - include: "#jsx-tag-element-name"
+    repository:
+      jsx-tag-element-name:
+        patterns:
+          - comment: JSX Fragment
+            name: meta.tag.sa
+            contentName: JSXAttrs
+            begin: \s*+(<)\s*(?=>)
+            end: (?<=</)(>)
+            beginCaptures:
+              1: {name: punctuation.definition.tag.sa}
+            endCaptures:
+              1: {name: punctuation.definition.tag.sa}
+            patterns:
+              - include: "#jsx-tag-termination"
+          - comment: "Tags that end > are trapped in #jsx-tag-termination"
+            name: meta.tag.sa
+            contentName: JSXAttrs
+            begin: |
+              (?x)\s*+(<)([_\p{L}\p{Nl}][^\s_,;'"`\\]*)(?=[\/>\s])(?![:])(?<!\.|:)
+            end: \s*(?<=</)(\2)(>)|(/>)|((?<=</)\O*?)>
+            beginCaptures:
+              1: {name: punctuation.definition.tag.sa}
+              2:
+                patterns:
+                  - include: "#type-names"
+                  - include: "#custom-types"
+                  - include: "#function-entities"
+                  - include: "#operators"
+            endCaptures:
+              1:
+                patterns:
+                  - include: "#type-names"
+                  - include: "#custom-types"
+                  - include: "#function-entities"
+                  - include: "#operators"
+              2: {name: punctuation.definition.tag.sa}
+              3: {name: punctuation.definition.tag.sa}
+              4: {name: invalid.illegal.termination.sa}
+            patterns:
+              - include: "#jsx-tag-termination"
+              - include: "#jsx-tag-attributes"
+      jsx-tag-termination:
+        patterns:
+          - comment: uses non consuming search for </ in </tag>
+            contentName: JSXNested
+            begin: (>)
+            end: (</)
+            beginCaptures:
+              0: {name: punctuation.definition.tag.sa}
+              1: {name: JSXStartTagEnd}
+            endCaptures:
+              0: {name: punctuation.definition.tag.sa}
+              1: {name: JSXEndTagStart}
+            patterns:
+              - include: "#jsx-evaluated-code"
+              - include: "#jsx-entities"
+              - include: "#jsx-tag-element-name"
+      jsx-tag-attributes:
+        patterns:
+          - include: "#jsx-attribute-name"
+          - include: "#jsx-assignment"
+          - include: "#strings-quoted"
+          - include: "#jsx-evaluated-code"
+          - include: "#jsx-tag-element-name"
+          - include: "#comments"
+      jsx-spread-attribute:
+        patterns:
+          - comment: Spread attribute { ... AssignmentExpression }
+            match: (?<!\*)\*(?!\*)
+            name: keyword.operator.spread.sa
+      jsx-attribute-name:
+        patterns:
+          - comment: look for attribute name
+            match: (?<!\S)([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)(?<!\.)(?=//|/\*|=|\s|>|/>)
+            captures:
+              0: {name: entity.other.attribute-name.sa}
+      jsx-assignment:
+        patterns:
+          - comment: look for attribute assignment
+            name: keyword.operator.assignment.sa
+            match: =(?=\s*(?:'|"|{|/\*|<|//|\n))
+          - comment: look for attribute assignment
+            captures:
+              1:
+                name: string.unquoted.sa
+                patterns: [{include: "#string-escapes"}]
+            match: (?<==)((?:\w|\\.)(?:\\.|[^\s</>])*)(?=\s+|\s*/?>)
+      jsx-evaluated-code:
+        patterns:
+          - name: meta.embedded.expression.js
+            contentName: source.js
+            begin: "{"
+            end: "}"
+            beginCaptures:
+              0: {name: punctuation.section.embedded.begin.sa}
+            endCaptures:
+              0: {name: punctuation.section.embedded.end.sa}
+            patterns:
+              - include: "#jsx-string-double-quoted"
+              - include: "#jsx-string-single-quoted"
+              - include: "#jsx-spread-attribute"
+              - include: "#core"
+      jsx-entities:
+        patterns:
+          - comment: Embedded HTML entities &blah
+            match: (&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)
+            captures:
+              0: {name: constant.character.entity.sa}
+              1: {name: punctuation.definition.entity.sa}
+              2: {name: entity.name.tag.html.sa}
+              3: {name: punctuation.definition.entity.sa}
+          - comment: Entity with & and invalid name
+            match: "&\\s*+;"
+            name: invalid.illegal.bad-ampersand.sa
 
   illegal:
     patterns:
@@ -1967,8 +2094,8 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]])#15
-              (?=[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*
+              |[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\<>]])#15
+              (?=[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\<>]]*
               [\p{L}\p{M}\p{N}({\[_,;'"`])
             name: keyword.operator.prefix.sa
             captures:
@@ -1993,7 +2120,7 @@ repository:
             match: |
               (?x)
               (?<=[\p{L}\p{M}\p{N})}\]_,;'"`]
-              [\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*)
+              [\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\<>]]*)
               (?:(\*)#1
               |(\+)#2
               |(\-)#3
@@ -2008,7 +2135,7 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]])#15
+              |[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\<>]])#15
             name: keyword.operator.suffix.sa
             captures:
               1: {name: keyword.operator.module.all.sa}
@@ -2735,7 +2862,7 @@ repository:
         name: variable.parameter.optional.sa
       - match: (?i)\s*\*[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
         name: variable.parameter.spread.sa
-      - match: (?i)\s*\&[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
+      - match: (?i)\s*[&~][_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
         name: variable.parameter.name.sa
       - match: (?i)\s*\%[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
         name: variable.parameter.reference.sa
@@ -2760,7 +2887,7 @@ repository:
       - include: "#type-annotation"
       - match: \s*(?<!\*)\*(?!\*)\s*
         name: keyword.generator.asterisk.sa
-      - *transfix-operators
+      - include: "#operators"
       - applyEndPatternLast: 1
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]))
         end: (?=\O)|$
@@ -3732,7 +3859,7 @@ repository:
             name: meta.embedded.less.sa
             patterns:
               - include: "#embedded-raw"
-              - include: source.less
+              - include: source.css.less
           - include: $self
       raw-pug:
         begin: \s*\b(raw)\b\s*\b((?i:pug))\b\s*(?:(:?=)|(:))?\s*
