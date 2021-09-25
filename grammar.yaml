@@ -20,6 +20,24 @@ information_for_contributors: |
   need to be fixed. All this info would be on my Trello which I will be posting very soon.
   I will come back to fix them if I have the time.
 
+comment: |
+  To-Do:
+
+  - Add standard library functions, types, classes
+    - JavaScript/TypeScript
+    - C#/F#/.NET
+    - PHP
+    - Perl
+    - Java/Scala/Flix/Kotlin
+    - Rust
+    - Python
+    - Swift/C(++) + Objective-C(++)
+    - Ruby
+    - Elixir
+    - Haskell, Elm, PureScript etc
+
+  - Add grammars for Unicode character entities
+
 define:
   number-literal: &number-literal
     1: {name: storage.type.numeric.sa}
@@ -35,10 +53,10 @@ define:
     (?!
     \b(?:# don't match keywords
     in|of|as|is|new|infer|unset
-    |typeof|nameof|sizeof|keyof|valof
+    |typeof|nameof|sizeof|pairof|keyof|valof
     |len|del|to|til|thru|at|by
     |and|x?or|not|para|seq|spawn
-    |def|func?|fn|macro|proc|sub
+    |def|func?|function|macro|proc|process
     |let|var|val|const|decl
     |class|given|law|enum|rel|lat
     |proj|prot|ext|impl|frag|inter|struct
@@ -52,11 +70,10 @@ define:
     |then|begin|end|debug|check|assert
     |break|continue|halt|skip|fixed|lock
     |(?:return|give|await|yield|throw|raise)s?
-    |yield\b\s*\bfrom|import|export|show|hide
+    |import|export|show|hide|open|close
     |from|where|join|equals|[io]nto|order
     |take|drop|fold|scan|select|use|using
     |fi|rof|done|esac|wend|yrt|disc|wout
-    |open|close
     )\b
     )
 
@@ -135,7 +152,7 @@ repository:
           (?x)\s*\b(
           true|false|null|void|nan|infin
           |any|empty|object|record|unit|mixed
-          |just|some|none|never
+          |just|some|none|never|(im)?pure
           )\b
         name: support.type.builtin.sa
       - comment: Data structures
@@ -144,7 +161,7 @@ repository:
           array|tuple|(?:mut)?(?:list|set|map)|dict
           |seq|gen|range|stack|heap|queue|tree|trie
           )\b
-        name: support.type.data-structure.sa
+        name: support.type.primitive.sa
       - comment: Primitive classes
         match: |
           (?x)\s*\b(
@@ -161,7 +178,7 @@ repository:
           (?x)\s*\b(
           True|False|Null|Void|NaN|Infin
           |Any|Empty|Object|Record|Unit|Mixed
-          |Just|Some|None|Never
+          |Just|Some|None|Never|(Im)?pure
           )\b
         name: support.class.builtin.sa
       - comment: Data structure classes
@@ -170,7 +187,7 @@ repository:
           Array|Tuple|(Mut)?(List|Set|Map)|Dict
           |Seq|Gen|Range|Stack|Heap|Queue|Tree|Trie
           )\b
-        name: support.class.data-structure.sa
+        name: support.class.primitive.sa
 
       - comment: Interface classes | IEnumerable, etc
         match: (?x)\s*\bI((\p{Lu}[\w&&\P{Lu}]*)+)\b
@@ -240,14 +257,11 @@ repository:
           6: {name: constant.language.infinity.sa}
       - match: |
           (?x)\s*\b(?:
-          (_|params|args)|(super|this|self)|(proto)|(ctor)|(target)
+          (_|params)|(super|this|self|proto|prototype|constructor|target)
           )\b\s*
         captures:
           1: {name: variable.language.arguments.sa}
           2: {name: variable.language.$2.sa}
-          3: {name: variable.language.prototype.sa}
-          4: {name: variable.language.constructor.sa}
-          5: {name: variable.language.target.sa}
 
   numbers:
     patterns:
@@ -267,7 +281,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           ((?:[2-9]|[1-9]\d+)b)
@@ -280,7 +299,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0b)
@@ -293,7 +317,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.binary.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0b)
@@ -306,7 +335,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.binary.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0q)
@@ -319,7 +353,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0q)
@@ -332,7 +371,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0s)
@@ -345,7 +389,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.senary.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0s)
@@ -358,7 +407,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.senary.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0o)
@@ -371,7 +425,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.octal.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0o)
@@ -384,7 +443,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.octal.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0z)
@@ -397,7 +461,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0z)
@@ -410,7 +479,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0x)
@@ -423,7 +497,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (0x)
@@ -436,7 +515,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           ()
@@ -449,7 +533,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           ()
@@ -462,7 +551,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (\d+\w)
@@ -475,7 +569,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.illegal.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
       - match: |-
           (?ix)\s*\b
           (\d+\w)
@@ -488,7 +587,12 @@ repository:
           \b\s*
         captures:
           0: {name: constant.numeric.illegal.sa}
-          <<: *number-literal
+          1: {name: storage.type.numeric.sa}
+          2: {name: punctuation.separator.decimal.period.sa}
+          3: {name: constant.numeric.other.separator.sa}
+          4: {name: constant.numeric.other.exponent.sa}
+          5: {name: constant.numeric.other.density.sa}
+          6: {name: storage.type.numeric.sa}
 
   strings-quoted:
     patterns:
@@ -707,10 +811,10 @@ repository:
       (?!
       \b(?:# don't match keywords
       in|of|as|is|new|infer|unset
-      |typeof|nameof|sizeof|keyof|valof
+      |typeof|nameof|sizeof|pairof|keyof|valof
       |len|del|to|til|thru|at|by
       |and|x?or|not|para|seq|spawn
-      |def|func?|fn|macro|proc|sub
+      |def|func?|function|macro|proc|process
       |let|var|val|const|decl
       |class|given|law|enum|rel|lat
       |proj|prot|ext|impl|frag|inter|struct
@@ -724,11 +828,10 @@ repository:
       |then|begin|end|debug|check|assert
       |break|continue|halt|skip|fixed|lock
       |(?:return|give|await|yield|throw|raise)s?
-      |yield\b\s*\bfrom|import|export|show|hide
+      |import|export|show|hide|open|close
       |from|where|join|equals|[io]nto|order
       |take|drop|fold|scan|select|use|using
       |fi|rof|done|esac|wend|yrt|disc|wout
-      |open|close
       )\b
       )
 
@@ -1189,10 +1292,10 @@ repository:
           (@acc)\b\s*\b
           (?:
           (?:
-          pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
+          public|private|protected|read|a?sync|inline|lazy|eager|trans|part
           |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
           # Function or method modifiers
-          |[gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
+          |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
           |(?:un)?(?:sign|safe|check|lock|fixed|size)
           |# Function or method modifiers
           (?:pre|in|post|suf|af|trans|inter)fix|
@@ -1276,7 +1379,7 @@ repository:
       document-type-name:
         begin: |
           (?x)(@(
-          def|func?|fn|macro|proc|sub|class|given|law|const|enum|rel|lat
+          def|func?|function|macro|proc|process|class|given|law|const|enum|rel|lat
           |proj|prot|ext|impl|frag|inter|struct|module|nspace|object|record|raw
           |data|query|schema|style|trait|alias|type|decl|let|va[rl]
           |arg|ctor|member|method|mixin|param
@@ -1292,10 +1395,10 @@ repository:
         begin: |
           (?x)
           (@(
-          pub|prot|pvt|pte|priv|read|a?sync|inline|lazy|eager|trans|part
+          public|private|protected|read|a?sync|inline|lazy|eager|trans|part
           |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
           # Function or method modifiers
-          |[gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
+          |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
           |(?:un)?(?:sign|safe|check|lock|fixed|size)
           |# Function or method modifiers
           (?:pre|in|post|suf|af|trans|inter)fix|
@@ -1482,10 +1585,10 @@ repository:
           (?!
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
-          |typeof|nameof|sizeof|keyof|valof
+          |typeof|nameof|sizeof|pairof|keyof|valof
           |len|del|to|til|thru|at|by
           |and|x?or|not|para|seq|spawn
-          |def|func?|fn|macro|proc|sub
+          |def|func?|function|macro|proc|process
           |let|var|val|const|decl
           |class|given|law|enum|rel|lat
           |proj|prot|ext|impl|frag|inter|struct
@@ -1499,11 +1602,10 @@ repository:
           |then|begin|end|debug|check|assert
           |break|continue|halt|skip|fixed|lock
           |(?:return|give|await|yield|throw|raise)s?
-          |yield\b\s*\bfrom|import|export|show|hide
+          |import|export|show|hide|open|close
           |from|where|join|equals|[io]nto|order
           |take|drop|fold|scan|select|use|using
           |fi|rof|done|esac|wend|yrt|disc|wout
-          |open|close
           )\b
           )
           [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
@@ -1513,10 +1615,10 @@ repository:
           (?!
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
-          |typeof|nameof|sizeof|keyof|valof
+          |typeof|nameof|sizeof|pairof|keyof|valof
           |len|del|to|til|thru|at|by
           |and|x?or|not|para|seq|spawn
-          |def|func?|fn|macro|proc|sub
+          |def|func?|function|macro|proc|process
           |let|var|val|const|decl
           |class|given|law|enum|rel|lat
           |proj|prot|ext|impl|frag|inter|struct
@@ -1530,11 +1632,10 @@ repository:
           |then|begin|end|debug|check|assert
           |break|continue|halt|skip|fixed|lock
           |(?:return|give|await|yield|throw|raise)s?
-          |yield\b\s*\bfrom|import|export|show|hide
+          |import|export|show|hide|open|close
           |from|where|join|equals|[io]nto|order
           |take|drop|fold|scan|select|use|using
           |fi|rof|done|esac|wend|yrt|disc|wout
-          |open|close
           )\b
           )
           [_\p{L}\p{M}\p{N}]+|\[(?!<))
@@ -1550,10 +1651,10 @@ repository:
           (?!
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
-          |typeof|nameof|sizeof|keyof|valof
+          |typeof|nameof|sizeof|pairof|keyof|valof
           |len|del|to|til|thru|at|by
           |and|x?or|not|para|seq|spawn
-          |def|func?|fn|macro|proc|sub
+          |def|func?|function|macro|proc|process
           |let|var|val|const|decl
           |class|given|law|enum|rel|lat
           |proj|prot|ext|impl|frag|inter|struct
@@ -1567,11 +1668,10 @@ repository:
           |then|begin|end|debug|check|assert
           |break|continue|halt|skip|fixed|lock
           |(?:return|give|await|yield|throw|raise)s?
-          |yield\b\s*\bfrom|import|export|show|hide
+          |import|export|show|hide|open|close
           |from|where|join|equals|[io]nto|order
           |take|drop|fold|scan|select|use|using
           |fi|rof|done|esac|wend|yrt|disc|wout
-          |open|close
           )\b
           )
           [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
@@ -1584,10 +1684,10 @@ repository:
           (?!
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
-          |typeof|nameof|sizeof|keyof|valof
+          |typeof|nameof|sizeof|pairof|keyof|valof
           |len|del|to|til|thru|at|by
           |and|x?or|not|para|seq|spawn
-          |def|func?|fn|macro|proc|sub
+          |def|func?|function|macro|proc|process
           |let|var|val|const|decl
           |class|given|law|enum|rel|lat
           |proj|prot|ext|impl|frag|inter|struct
@@ -1601,11 +1701,10 @@ repository:
           |then|begin|end|debug|check|assert
           |break|continue|halt|skip|fixed|lock
           |(?:return|give|await|yield|throw|raise)s?
-          |yield\b\s*\bfrom|import|export|show|hide
+          |import|export|show|hide|open|close
           |from|where|join|equals|[io]nto|order
           |take|drop|fold|scan|select|use|using
           |fi|rof|done|esac|wend|yrt|disc|wout
-          |open|close
           )\b
           )
 
@@ -1648,9 +1747,7 @@ repository:
           1: {name: entity.name.tag.sa}
           2: {name: entity.name.tag.sa support.class.component.sa}
           3: {name: entity.name.class.builtin.sa}
-          4:
-            name: entity.name.function.method.sa
-            patterns: [{include: "#function-names"}]
+          4: {name: entity.name.function.method.sa}
           5: {name: variable.other.global.sa}
           6: {name: variable.other.constant.object.sa}
           7: {name: variable.other.conditional.sa}
@@ -1658,9 +1755,7 @@ repository:
           9: {name: entity.name.function.tagged-template.sa}
           10: {name: entity.name.type.sa}
           11: {name: entity.name.class.sa}
-          12:
-            name: entity.name.function.sa
-            patterns: [{include: "#function-names"}]
+          12: {name: entity.name.function.sa}
       - include: $self
 
   variables:
@@ -1678,10 +1773,10 @@ repository:
       (?!
       \b(?:# don't match keywords
       in|of|as|is|new|infer|unset
-      |typeof|nameof|sizeof|keyof|valof
+      |typeof|nameof|sizeof|pairof|keyof|valof
       |len|del|to|til|thru|at|by
       |and|x?or|not|para|seq|spawn
-      |def|func?|fn|macro|proc|sub
+      |def|func?|function|macro|proc|process
       |let|var|val|const|decl
       |class|given|law|enum|rel|lat
       |proj|prot|ext|impl|frag|inter|struct
@@ -1695,11 +1790,10 @@ repository:
       |then|begin|end|debug|check|assert
       |break|continue|halt|skip|fixed|lock
       |(?:return|give|await|yield|throw|raise)s?
-      |yield\b\s*\bfrom|import|export|show|hide
+      |import|export|show|hide|open|close
       |from|where|join|equals|[io]nto|order
       |take|drop|fold|scan|select|use|using
       |fi|rof|done|esac|wend|yrt|disc|wout
-      |open|close
       )\b
       )
 
@@ -1955,10 +2049,10 @@ repository:
               (?!
               \b(?:# don't match keywords
               in|of|as|is|new|infer|unset
-              |typeof|nameof|sizeof|keyof|valof
+              |typeof|nameof|sizeof|pairof|keyof|valof
               |len|del|to|til|thru|at|by
               |and|x?or|not|para|seq|spawn
-              |def|func?|fn|macro|proc|sub
+              |def|func?|function|macro|proc|process
               |let|var|val|const|decl
               |class|given|law|enum|rel|lat
               |proj|prot|ext|impl|frag|inter|struct
@@ -1972,11 +2066,10 @@ repository:
               |then|begin|end|debug|check|assert
               |break|continue|halt|skip|fixed|lock
               |(?:return|give|await|yield|throw|raise)s?
-              |yield\b\s*\bfrom|import|export|show|hide
+              |import|export|show|hide|open|close
               |from|where|join|equals|[io]nto|order
               |take|drop|fold|scan|select|use|using
               |fi|rof|done|esac|wend|yrt|disc|wout
-              |open|close
               )\b
               )
 
@@ -1998,7 +2091,7 @@ repository:
                   (?:# don't match keywords
                   new|unset|len|del|to|til|thru|at|by
                   |and|x?or|not|para|seq|spawn
-                  |def|func?|fn|macro|proc|sub
+                  |def|func?|function|macro|proc|process
                   |let|var|val|const|decl
                   |class|given|law|enum|rel|lat
                   |proj|prot|ext|impl|frag|inter|struct
@@ -2012,11 +2105,10 @@ repository:
                   |then|begin|end|debug|check|assert
                   |break|continue|halt|skip|fixed|lock
                   |(?:return|give|await|yield|throw|raise)s?
-                  |yield\b\s*\bfrom|import|export|show|hide
+                  |import|export|show|hide|open|close
                   |from|where|join|equals|[io]nto|order
                   |take|drop|fold|scan|select|use|using
                   |fi|rof|done|esac|wend|yrt|disc|wout
-                  |open|close
                   )\b
                   )
 
@@ -2054,15 +2146,11 @@ repository:
                   5: {name: entity.name.tag.sa}
                   6: {name: entity.name.tag.sa support.class.component.sa}
                   7: {name: entity.name.class.builtin.sa}
-                  8:
-                    name: entity.name.function.method.sa
-                    patterns: [{include: "#function-names"}]
+                  8: {name: entity.name.function.method.sa}
                   9: {name: entity.name.function.tagged-template.sa}
                   10: {name: entity.name.type.sa}
                   11: {name: entity.name.class.sa}
-                  12:
-                    name: entity.name.function.sa
-                    patterns: [{include: "#function-names"}]
+                  12: {name: entity.name.function.sa}
               - *transfix-operators
 
       special-operators:
@@ -2121,7 +2209,7 @@ repository:
       (?:# don't match keywords
       new|unset|len|del|to|til|thru|at|by
       |and|x?or|not|para|seq|spawn
-      |def|func?|fn|macro|proc|sub
+      |def|func?|function|macro|proc|process
       |let|var|val|const|decl
       |class|given|law|enum|rel|lat
       |proj|prot|ext|impl|frag|inter|struct
@@ -2135,11 +2223,10 @@ repository:
       |then|begin|end|debug|check|assert
       |break|continue|halt|skip|fixed|lock
       |(?:return|give|await|yield|throw|raise)s?
-      |yield\b\s*\bfrom|import|export|show|hide
+      |import|export|show|hide|open|close
       |from|where|join|equals|[io]nto|order
       |take|drop|fold|scan|select|use|using
       |fi|rof|done|esac|wend|yrt|disc|wout
-      |open|close
       )\b
       )
 
@@ -2373,10 +2460,10 @@ repository:
       ((?:
       \s*(?:
       (?:# Access modifiers
-      pub|prot|priv|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
+      public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
       |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
       # Function or method modifiers
-      |[gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
+      |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
       |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
       |# Function or method modifiers
       (?:pre|in|post|suf|af|trans|inter)fix|
@@ -2392,7 +2479,7 @@ repository:
       \s*)*)
       (?=\s*\b
       (?:
-      def|func?|fn|macro|proc|sub
+      def|func?|function|macro|proc|process
       |let|va[rl]|const
       |class|ext
       |given|law
@@ -2427,11 +2514,11 @@ repository:
               \s*\b
               (?:
               (# Access modifiers
-              pub|prot|priv|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
+              public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
               |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
               )|
               (# Function or method modifiers
-              [gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
+              [gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
               |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
               )|
               (# Property modifiers
@@ -2454,7 +2541,7 @@ repository:
     comment: clause keywords
     match: |
       (?x)\s*\b(?:
-      (def|func?|fn|macro|proc|sub)# function
+      (def|func?|function|macro|proc|process)# function
       |(let|va[rl]|const)# variable
       |(class|ext)# class
       |(given|law)# constraint
@@ -2531,7 +2618,7 @@ repository:
     match: |
       (?x)\s*\b(?:
       (in)|(of)|(as)|(is)|(new)|(infer)
-      |(typeof|nameof|sizeof|keyof)
+      |(typeof|nameof|sizeof|keyof|pairof)
       |(valof)|(len)|(del)|(to|til|thru|at|by)|(unset)
       |(and|x?or|not)
       )\b\s*
@@ -2809,7 +2896,7 @@ repository:
           - include: "#block-entities"
       function:
         applyEndPatternLast: 1
-        begin: \s*\b(def|func?|fn|macro|proc|sub)\b\s*
+        begin: \s*\b(def|func?|function|macro|proc|process)\b\s*
         end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.function.sa}
@@ -2932,7 +3019,7 @@ repository:
         patterns:
           - begin: |
               (?x)
-              (?<=(?:[\p{Ps}]\|?|\b(?:do|redo|def|func?|fn|macro|proc|sub)\b)\s*)
+              (?<=(?:[\p{Ps}]\|?|\b(?:do|redo|def|func?|function|macro|proc|process)\b)\s*)
 
               (\|)
               (?!\|)
@@ -2959,10 +3046,10 @@ repository:
               (
 
               (?:(?:# Access modifiers
-              pub|prot|priv|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
+              public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
               |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
               # Function or method modifiers
-              |[gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
+              |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
               |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
               |# Function or method modifiers
               (?:pre|in|post|suf|af|trans|inter)fix|
@@ -2980,9 +3067,7 @@ repository:
               (?!\|)
             end: (?<!\|)(\|)(?!\|)
             beginCaptures:
-              1:
-                name: entity.name.function.method.sa
-                patterns: [{include: "#function-names"}]
+              1: {name: entity.name.function.method.sa}
               2: {name: keyword.operator.assignment.sa}
               3: {patterns: *modifier-keywords}
               4: {name: punctuation.separator.arguments.sa}
@@ -3004,10 +3089,10 @@ repository:
               ((?:
               \s*(?:
               (?:# Access modifiers
-              pub|prot|priv|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
+              public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
               |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
               # Function or method modifiers
-              |[gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
+              |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
               |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
               |# Function or method modifiers
               (?:pre|in|post|suf|af|trans|inter)fix|
@@ -3022,13 +3107,11 @@ repository:
               \s*)*)
               (?=\s*\b
               (?:
-              def|func?|fn|macro|proc|sub
+              def|func?|function|macro|proc|process
               )\b
               )
             captures:
-              1:
-                name: entity.name.function.method.sa
-                patterns: [{include: "#function-names"}]
+              1: {name: entity.name.function.method.sa}
               2: {name: keyword.operator.assignment.sa}
               3: {patterns: *modifier-keywords}
 
@@ -3041,10 +3124,10 @@ repository:
               (
 
               (?:(?:# Access modifiers
-              pub|prot|priv|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
+              public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
               |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
               # Function or method modifiers
-              |[gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
+              |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
               |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
               |# Function or method modifiers
               (?:pre|in|post|suf|af|trans|inter)fix|
@@ -3062,9 +3145,7 @@ repository:
               (?!\|)
             end: (?<!\|)(\|)(?!\|)
             beginCaptures:
-              1:
-                name: entity.name.function.sa
-                patterns: [{include: "#function-names"}]
+              1: {name: entity.name.function.sa}
               2: {name: keyword.operator.assignment.sa}
               3: {patterns: *modifier-keywords}
               4: {name: punctuation.separator.arguments.sa}
@@ -3083,10 +3164,10 @@ repository:
               ((?:
               \s*(?:
               (?:# Access modifiers
-              pub|prot|priv|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
+              public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
               |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
               # Function or method modifiers
-              |[gs]et|ref|rec|gen|(?:im)?(?:mut|pure)|local|global|native|opaque
+              |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
               |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
               |# Function or method modifiers
               (?:pre|in|post|suf|af|trans|inter)fix|
@@ -3101,15 +3182,11 @@ repository:
               \s*)*)
               (?=\s*\b
               (?:
-              def|func?|fn|macro|proc|sub
+              def|func?|function|macro|proc|process
               )\b
               )
             captures:
-              1:
-                {
-                  name: entity.name.function.sa,
-                  patterns: [{include: "#function-names"}],
-                }
+              1: {name: entity.name.function.sa}
               2: {name: keyword.operator.assignment.sa}
               3: {patterns: *modifier-keywords}
 
