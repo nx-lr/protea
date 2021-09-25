@@ -59,14 +59,14 @@
       \b(?:# don't match keywords
       in|of|as|is|new|infer|unset
       |typeof|nameof|sizeof|pairof|keyof|valueof
-      |len|del|to|til|thru|at|by
-      |and|x?or|not|para|seq|spawn
-      |def|func?|function|macro|proc|process
-      |let|var|val|const|decl
-      |class|given|law|enum|rel|lat
-      |proj|prot|ext|impl|frag|inter|struct
-      |module|nspace|object|record|label
-      |raw|data|query|schema|style|trait|alias|type
+      |length|delete|to|til|thru|at|by
+      |and|x?or|not|parallel|series|spawn
+      |func?|function|proc|process|macro
+      |let|var|val|const|declare
+      |class|given|constraint|enum|relation|lattice
+      |project|attribute|protocol|member|extend|fragment|interface|struct
+      |module|package|namespace|object|record|label
+      |raw|data|query|schema|style|trait|friend|alias|type
       |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
       |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
       |switch|case|fail|default|match|when|pass|fallthru
@@ -77,8 +77,7 @@
       |(?:return|give|await|yield|throw|raise)s?
       |import|export|show|hide|open|close
       |from|where|join|equals|[io]nto|order
-      |take|drop|fold|scan|select|group|order|use|using
-      |fi|rof|done|esac|wend|yrt|disc|wout
+      |take|drop|fold|scan|select|group|use|using
       )\b
       )
 
@@ -149,7 +148,7 @@
             |# numeric types
             ([cifsun]|nat|ratio|u?int|real|imag|comp)
             (8|16|32|64|128)
-            |[ci](half|float|double|deci|word)
+            |[ci](half|float|double|deci|octuple)
             )\b
           name: support.type.builtin.primitive.sa
         - comment: Constant/algebraic types
@@ -164,7 +163,7 @@
           match: |
             (?x)\s*\b(
             array|tuple|(?:mut)?(?:list|set|map)|dict
-            |seq|gen|range|stack|heap|queue|tree|trie
+            |sequence|generator|range|stack|heap|queue|tree|trie
             )\b
           name: support.type.primitive.sa
         - comment: Primitive classes
@@ -175,7 +174,7 @@
             |# Numeric Types
             ([CIFSUN]|Nat|Ratio|U?Int|Real|Imag|Comp)
             (8|16|32|64|128)
-            |[CI](Half|Float|Double|Deci|Word)
+            |[CI](Half|Float|Double|Deci|Octuple)
             )\b
           name: support.class.builtin.primitive.sa
         - comment: Constant/algebraic classes
@@ -190,7 +189,7 @@
           match: |
             (?x)\s*\b(
             Array|Tuple|(Mut)?(List|Set|Map)|Dict
-            |Seq|Gen|Range|Stack|Heap|Queue|Tree|Trie
+            |Sequence|Gen|Range|Stack|Heap|Queue|Tree|Trie
             )\b
           name: support.class.primitive.sa
 
@@ -817,14 +816,14 @@
         \b(?:# don't match keywords
         in|of|as|is|new|infer|unset
         |typeof|nameof|sizeof|pairof|keyof|valueof
-        |len|del|to|til|thru|at|by
-        |and|x?or|not|para|seq|spawn
-        |def|func?|function|macro|proc|process
-        |let|var|val|const|decl
-        |class|given|law|enum|rel|lat
-        |proj|prot|ext|impl|frag|inter|struct
-        |module|nspace|object|record|label
-        |raw|data|query|schema|style|trait|alias|type
+        |length|delete|to|til|thru|at|by
+        |and|x?or|not|parallel|series|spawn
+        |func?|function|proc|process|macro
+        |let|var|val|const|declare
+        |class|given|constraint|enum|relation|lattice
+        |project|attribute|protocol|member|extend|fragment|interface|struct
+        |module|package|namespace|object|record|label
+        |raw|data|query|schema|style|trait|friend|alias|type
         |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
         |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
         |switch|case|fail|default|match|when|pass|fallthru
@@ -835,8 +834,7 @@
         |(?:return|give|await|yield|throw|raise)s?
         |import|export|show|hide|open|close
         |from|where|join|equals|[io]nto|order
-        |take|drop|fold|scan|select|group|order|use|using
-        |fi|rof|done|esac|wend|yrt|disc|wout
+        |take|drop|fold|scan|select|group|use|using
         )\b
         )
 
@@ -1303,7 +1301,7 @@
             |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
             |(?:un)?(?:sign|safe|check|lock|fixed|size)
             |# Function or method modifiers
-            (?:pre|in|post|suf|af|trans|inter)fix|
+            (?:pre|in|post|suf|af|trans|interface)fix|
             (?:u|bi|ter|)nary|oper
             |# Decorators
             @(?:
@@ -1349,7 +1347,7 @@
             1: {name: storage.type.class.sa}
           patterns:
             - include: "#document-typedef-scopes"
-            - match: (?:(module)(:))?(((?![}\]]\#)\S)+)
+            - match: (?:(module|package)(:))?(((?![}\]]\#)\S)+)
               captures:
                 1: {name: keyword.module.sa}
                 2: {name: punctuation.sa}
@@ -1384,9 +1382,9 @@
         document-type-name:
           begin: |
             (?x)(@(
-            def|func?|function|macro|proc|process|class|given|law|const|enum|rel|lat
-            |proj|prot|ext|impl|frag|inter|struct|module|nspace|object|record|raw
-            |data|query|schema|style|trait|alias|type|decl|let|va[rl]
+            func?|function|proc|process|macro|class|given|constraint|const|enum|relation|lattice
+            |project|attribute|protocol|member|extend|fragment|interface|struct|module|package|namespace|object|record|raw
+            |data|query|schema|style|trait|friend|alias|type|declare|let|va[rl]
             |arg|ctor|member|method|mixin|param
             )\b)\s*
             (?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(((\[(?:(?>[^\[\]]+)|\g<-1>)*\])|\S)+)?([\S\s]*))
@@ -1406,7 +1404,7 @@
             |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
             |(?:un)?(?:sign|safe|check|lock|fixed|size)
             |# Function or method modifiers
-            (?:pre|in|post|suf|af|trans|inter)fix|
+            (?:pre|in|post|suf|af|trans|interface)fix|
             (?:u|bi|ter|)nary|oper
             |# Decorators
             @(?:
@@ -1439,8 +1437,8 @@
 
     comments:
       patterns:
-        - begin: \s*((#\())
-          end: (\s*(\)))
+        - begin: \s*((/\+))
+          end: (\s*(\+/))
           name: comment.block.inline.sa
           captures:
             1: {name: comment.block.inline.sa}
@@ -1448,8 +1446,8 @@
           patterns:
             - include: "#markdown-inline"
             - include: "#nested-inline"
-        - begin: \s*((#{))
-          end: (\s*(}#))
+        - begin: \s*((/\*\*))
+          end: (\s*(\*\*/))
           name: comment.block.documentation.sa
           captures:
             1: {name: comment.block.documentation.sa}
@@ -1458,8 +1456,8 @@
             - include: "#document"
             - include: "#markdown-inline"
             - include: "#nested-document-block"
-        - begin: \s*((#\[))
-          end: (\s*(\]#))
+        - begin: \s*((/\*))
+          end: (\s*(\*/))
           name: comment.block.sa
           captures:
             1: {name: comment.block.sa}
@@ -1467,7 +1465,7 @@
           patterns:
             - include: "#markdown-inline"
             - include: "#nested-block"
-        - begin: ((^\s*)|\s*)((#=))
+        - begin: ((^\s*)|\s*)((//=))
           end: \s*$
           name: comment.line.special.sa
           beginCaptures:
@@ -1479,7 +1477,7 @@
           patterns:
             - include: "#comment-special"
             - include: "#markdown-inline"
-        - begin: ((^\s*)|\s*)((##))
+        - begin: ((^\s*)|\s*)((//\+))
           end: \s*$
           name: comment.line.playground.sa
           beginCaptures:
@@ -1491,7 +1489,7 @@
           patterns:
             - include: "#document"
             - include: "#markdown-inline"
-        - begin: ((^\s*)|\s*)((#:))
+        - begin: ((^\s*)|\s*)((///))
           end: \s*$
           name: comment.line.documentation.sa
           beginCaptures:
@@ -1503,7 +1501,7 @@
           patterns:
             - include: "#document"
             - include: "#markdown-inline"
-        - begin: ((^\s*)|\s*)((#!))
+        - begin: ((^\s*)|\s*)((//!|#!))
           end: \s*$
           name: comment.line.shebang.sa
           beginCaptures:
@@ -1514,7 +1512,7 @@
             0: {name: comment.line.shebang.sa}
           patterns:
             - include: "#markdown-inline"
-        - begin: ((^\s*)|\s*)((#\?))
+        - begin: ((^\s*)|\s*)((//:))
           end: \s*$
           name: comment.line.doctype.sa
           beginCaptures:
@@ -1525,7 +1523,7 @@
             0: {name: comment.line.doctype.sa}
           patterns:
             - include: "#markdown-inline"
-        - begin: ((^\s*)|\s*)((#))
+        - begin: ((^\s*)|\s*)((//))
           end: \s*$
           name: comment.line.number-sign.sa
           beginCaptures:
@@ -1591,14 +1589,14 @@
             \b(?:# don't match keywords
             in|of|as|is|new|infer|unset
             |typeof|nameof|sizeof|pairof|keyof|valueof
-            |len|del|to|til|thru|at|by
-            |and|x?or|not|para|seq|spawn
-            |def|func?|function|macro|proc|process
-            |let|var|val|const|decl
-            |class|given|law|enum|rel|lat
-            |proj|prot|ext|impl|frag|inter|struct
-            |module|nspace|object|record|label
-            |raw|data|query|schema|style|trait|alias|type
+            |length|delete|to|til|thru|at|by
+            |and|x?or|not|parallel|series|spawn
+            |func?|function|proc|process|macro
+            |let|var|val|const|declare
+            |class|given|constraint|enum|relation|lattice
+            |project|attribute|protocol|member|extend|fragment|interface|struct
+            |module|package|namespace|object|record|label
+            |raw|data|query|schema|style|trait|friend|alias|type
             |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
             |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
             |switch|case|fail|default|match|when|pass|fallthru
@@ -1609,8 +1607,7 @@
             |(?:return|give|await|yield|throw|raise)s?
             |import|export|show|hide|open|close
             |from|where|join|equals|[io]nto|order
-            |take|drop|fold|scan|select|group|order|use|using
-            |fi|rof|done|esac|wend|yrt|disc|wout
+            |take|drop|fold|scan|select|group|use|using
             )\b
             )
             [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
@@ -1621,14 +1618,14 @@
             \b(?:# don't match keywords
             in|of|as|is|new|infer|unset
             |typeof|nameof|sizeof|pairof|keyof|valueof
-            |len|del|to|til|thru|at|by
-            |and|x?or|not|para|seq|spawn
-            |def|func?|function|macro|proc|process
-            |let|var|val|const|decl
-            |class|given|law|enum|rel|lat
-            |proj|prot|ext|impl|frag|inter|struct
-            |module|nspace|object|record|label
-            |raw|data|query|schema|style|trait|alias|type
+            |length|delete|to|til|thru|at|by
+            |and|x?or|not|parallel|series|spawn
+            |func?|function|proc|process|macro
+            |let|var|val|const|declare
+            |class|given|constraint|enum|relation|lattice
+            |project|attribute|protocol|member|extend|fragment|interface|struct
+            |module|package|namespace|object|record|label
+            |raw|data|query|schema|style|trait|friend|alias|type
             |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
             |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat
             |switch|case|fail|default|match|when|pass|fallthru
@@ -1639,11 +1636,10 @@
             |(?:return|give|await|yield|throw|raise)s?
             |import|export|show|hide|open|close
             |from|where|join|equals|[io]nto|order
-            |take|drop|fold|scan|select|group|order|use|using
-            |fi|rof|done|esac|wend|yrt|disc|wout
+            |take|drop|fold|scan|select|group|use|using
             )\b
             )
-            [_\p{L}\p{M}\p{N}]+|\[(?!<))
+            [_\p{L}\p{M}\p{N}]+|\[(?!<)|<\|(?!>)(?=\|*)|<\+(?!>)(?=\+*))
           captures:
             1: {patterns: [{include: "#function-entities"}]}
         - comment: |
@@ -1657,14 +1653,14 @@
             \b(?:# don't match keywords
             in|of|as|is|new|infer|unset
             |typeof|nameof|sizeof|pairof|keyof|valueof
-            |len|del|to|til|thru|at|by
-            |and|x?or|not|para|seq|spawn
-            |def|func?|function|macro|proc|process
-            |let|var|val|const|decl
-            |class|given|law|enum|rel|lat
-            |proj|prot|ext|impl|frag|inter|struct
-            |module|nspace|object|record|label
-            |raw|data|query|schema|style|trait|alias|type
+            |length|delete|to|til|thru|at|by
+            |and|x?or|not|parallel|series|spawn
+            |func?|function|proc|process|macro
+            |let|var|val|const|declare
+            |class|given|constraint|enum|relation|lattice
+            |project|attribute|protocol|member|extend|fragment|interface|struct
+            |module|package|namespace|object|record|label
+            |raw|data|query|schema|style|trait|friend|alias|type
             |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
             |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
             |switch|case|fail|default|match|when|pass|fallthru
@@ -1675,8 +1671,7 @@
             |(?:return|give|await|yield|throw|raise)s?
             |import|export|show|hide|open|close
             |from|where|join|equals|[io]nto|order
-            |take|drop|fold|scan|select|group|order|use|using
-            |fi|rof|done|esac|wend|yrt|disc|wout
+            |take|drop|fold|scan|select|group|use|using
             )\b
             )
             [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
@@ -1690,14 +1685,14 @@
             \b(?:# don't match keywords
             in|of|as|is|new|infer|unset
             |typeof|nameof|sizeof|pairof|keyof|valueof
-            |len|del|to|til|thru|at|by
-            |and|x?or|not|para|seq|spawn
-            |def|func?|function|macro|proc|process
-            |let|var|val|const|decl
-            |class|given|law|enum|rel|lat
-            |proj|prot|ext|impl|frag|inter|struct
-            |module|nspace|object|record|label
-            |raw|data|query|schema|style|trait|alias|type
+            |length|delete|to|til|thru|at|by
+            |and|x?or|not|parallel|series|spawn
+            |func?|function|proc|process|macro
+            |let|var|val|const|declare
+            |class|given|constraint|enum|relation|lattice
+            |project|attribute|protocol|member|extend|fragment|interface|struct
+            |module|package|namespace|object|record|label
+            |raw|data|query|schema|style|trait|friend|alias|type
             |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
             |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
             |switch|case|fail|default|match|when|pass|fallthru
@@ -1708,8 +1703,7 @@
             |(?:return|give|await|yield|throw|raise)s?
             |import|export|show|hide|open|close
             |from|where|join|equals|[io]nto|order
-            |take|drop|fold|scan|select|group|order|use|using
-            |fi|rof|done|esac|wend|yrt|disc|wout
+            |take|drop|fold|scan|select|group|use|using
             )\b
             )
 
@@ -1779,14 +1773,14 @@
         \b(?:# don't match keywords
         in|of|as|is|new|infer|unset
         |typeof|nameof|sizeof|pairof|keyof|valueof
-        |len|del|to|til|thru|at|by
-        |and|x?or|not|para|seq|spawn
-        |def|func?|function|macro|proc|process
-        |let|var|val|const|decl
-        |class|given|law|enum|rel|lat
-        |proj|prot|ext|impl|frag|inter|struct
-        |module|nspace|object|record|label
-        |raw|data|query|schema|style|trait|alias|type
+        |length|delete|to|til|thru|at|by
+        |and|x?or|not|parallel|series|spawn
+        |func?|function|proc|process|macro
+        |let|var|val|const|declare
+        |class|given|constraint|enum|relation|lattice
+        |project|attribute|protocol|member|extend|fragment|interface|struct
+        |module|package|namespace|object|record|label
+        |raw|data|query|schema|style|trait|friend|alias|type
         |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
         |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
         |switch|case|fail|default|match|when|pass|fallthru
@@ -1797,8 +1791,7 @@
         |(?:return|give|await|yield|throw|raise)s?
         |import|export|show|hide|open|close
         |from|where|join|equals|[io]nto|order
-        |take|drop|fold|scan|select|group|order|use|using
-        |fi|rof|done|esac|wend|yrt|disc|wout
+        |take|drop|fold|scan|select|group|use|using
         )\b
         )
 
@@ -2055,14 +2048,14 @@
                 \b(?:# don't match keywords
                 in|of|as|is|new|infer|unset
                 |typeof|nameof|sizeof|pairof|keyof|valueof
-                |len|del|to|til|thru|at|by
-                |and|x?or|not|para|seq|spawn
-                |def|func?|function|macro|proc|process
-                |let|var|val|const|decl
-                |class|given|law|enum|rel|lat
-                |proj|prot|ext|impl|frag|inter|struct
-                |module|nspace|object|record|label
-                |raw|data|query|schema|style|trait|alias|type
+                |length|delete|to|til|thru|at|by
+                |and|x?or|not|parallel|series|spawn
+                |func?|function|proc|process|macro
+                |let|var|val|const|declare
+                |class|given|constraint|enum|relation|lattice
+                |project|attribute|protocol|member|extend|fragment|interface|struct
+                |module|package|namespace|object|record|label
+                |raw|data|query|schema|style|trait|friend|alias|type
                 |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
                 |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
                 |switch|case|fail|default|match|when|pass|fallthru
@@ -2073,8 +2066,7 @@
                 |(?:return|give|await|yield|throw|raise)s?
                 |import|export|show|hide|open|close
                 |from|where|join|equals|[io]nto|order
-                |take|drop|fold|scan|select|group|order|use|using
-                |fi|rof|done|esac|wend|yrt|disc|wout
+                |take|drop|fold|scan|select|group|use|using
                 )\b
                 )
 
@@ -2094,14 +2086,14 @@
                     (?!
                     \s*\b
                     (?:# don't match keywords
-                    new|unset|len|del|to|til|thru|at|by
-                    |and|x?or|not|para|seq|spawn
-                    |def|func?|function|macro|proc|process
-                    |let|var|val|const|decl
-                    |class|given|law|enum|rel|lat
-                    |proj|prot|ext|impl|frag|inter|struct
-                    |module|nspace|object|record|label
-                    |raw|data|query|schema|style|trait|alias|type
+                    new|unset|length|delete|to|til|thru|at|by
+                    |and|x?or|not|parallel|series|spawn
+                    |func?|function|proc|process|macro
+                    |let|var|val|const|declare
+                    |class|given|constraint|enum|relation|lattice
+                    |project|attribute|protocol|member|extend|fragment|interface|struct
+                    |module|package|namespace|object|record|label
+                    |raw|data|query|schema|style|trait|friend|alias|type
                     |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
                     |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
                     |switch|case|fail|default|match|when|pass|fallthru
@@ -2112,8 +2104,7 @@
                     |(?:return|give|await|yield|throw|raise)s?
                     |import|export|show|hide|open|close
                     |from|where|join|equals|[io]nto|order
-                    |take|drop|fold|scan|select|group|order|use|using
-                    |fi|rof|done|esac|wend|yrt|disc|wout
+                    |take|drop|fold|scan|select|group|use|using
                     )\b
                     )
 
@@ -2212,14 +2203,14 @@
         (?!
         \s*\b
         (?:# don't match keywords
-        new|unset|len|del|to|til|thru|at|by
-        |and|x?or|not|para|seq|spawn
-        |def|func?|function|macro|proc|process
-        |let|var|val|const|decl
-        |class|given|law|enum|rel|lat
-        |proj|prot|ext|impl|frag|inter|struct
-        |module|nspace|object|record|label
-        |raw|data|query|schema|style|trait|alias|type
+        new|unset|length|delete|to|til|thru|at|by
+        |and|x?or|not|parallel|series|spawn
+        |func?|function|proc|process|macro
+        |let|var|val|const|declare
+        |class|given|constraint|enum|relation|lattice
+        |project|attribute|protocol|member|extend|fragment|interface|struct
+        |module|package|namespace|object|record|label
+        |raw|data|query|schema|style|trait|friend|alias|type
         |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
         |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
         |switch|case|fail|default|match|when|pass|fallthru
@@ -2230,8 +2221,7 @@
         |(?:return|give|await|yield|throw|raise)s?
         |import|export|show|hide|open|close
         |from|where|join|equals|[io]nto|order
-        |take|drop|fold|scan|select|group|order|use|using
-        |fi|rof|done|esac|wend|yrt|disc|wout
+        |take|drop|fold|scan|select|group|use|using
         )\b
         )
 
@@ -2376,11 +2366,11 @@
       patterns:
         - match: |
             (?x)\s*\b
-            (ext)\b\s*
+            (extends)\b\s*
           name: storage.type.extends.sa
         - match: |
             (?x)\s*\b
-            (impl)\b\s*
+            (implements)\b\s*
           name: storage.type.implements.sa
         - match: |
             (?x)\s*\b
@@ -2471,7 +2461,7 @@
         |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
         |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
         |# Function or method modifiers
-        (?:pre|in|post|suf|af|trans|inter)fix|
+        (?:pre|in|post|suf|af|trans|interface)fix|
         (?:u|bi|ter|)nary|oper
         |# Decorators
         @(?:
@@ -2484,23 +2474,23 @@
         \s*)*)
         (?=\s*\b
         (?:
-        def|func?|function|macro|proc|process
+        func?|function|proc|process|macro
         |let|va[rl]|const
-        |class|ext
-        |given|law
-        |enum|rel|lat
-        |proj
-        |frag|struct
-        |inter|schema
-        |module|lat
-        |nspace
+        |class|extend
+        |given|constraint
+        |enum|relation|lattice
+        |project
+        |fragment|struct
+        |interface|schema
+        |module|package|lattice
+        |namespace
         |object|record
         |raw
         |data|query
         |style
-        |trait|impl
+        |trait
         |type|alias
-        |decl
+        |declare
         |do|redo
         )\b
         )
@@ -2527,7 +2517,7 @@
                 |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
                 )|
                 (# Property modifiers
-                (?:pre|in|post|suf|af|trans|inter)fix|
+                (?:pre|in|post|suf|af|trans|interface)fix|
                 (?:u|bi|ter|)nary|oper
                 )
                 )\b\s*
@@ -2546,23 +2536,23 @@
       comment: clause keywords
       match: |
         (?x)\s*\b(?:
-        (def|func?|function|macro|proc|process)# function
+        (func?|function|proc|process|macro)# function
         |(let|va[rl]|const)# variable
-        |(class|ext)# class
-        |(given|law)# constraint
-        |(enum|rel|lat)# enumeration
-        |(proj)# project
-        |(frag|struct)# fragment
-        |(inter|schema)# interface
-        |(module|lat)# module
-        |(nspace)# function
+        |(class|extend)# class
+        |(given|constraint)# constraint
+        |(enum|relation)# enumeration
+        |(project|attribute)# project
+        |(fragment|struct)# fragment
+        |(interface|schema)# interface
+        |(module|package)# module
+        |(namespace|lattice)# function
         |(object|record)# object
         |(raw)# markup
         |(data|query)# indented GraphQL
         |(style)# inline CSS
-        |(trait|impl)# trait
+        |(trait|friend)# trait
         |(type|alias)# type alias
-        |(decl)# declaration
+        |(declare)# declaration
         )\b\s*
       captures:
         1: {name: storage.type.function.sa}
@@ -2587,19 +2577,19 @@
       comment: general keywords
       match: |
         (?x)\s*\b(?:
-        (if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard|fi)#1
-        |(for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|rof)#2
-        |(switch|case|fail|default|fallthru|esac)#3
-        |(match|when|pass|wend)#4
-        |(try|retry|throw|raise|catch|rescue|finally|yrt)#5
-        |(with|wout)#6
-        |(ref|refer|show|hide|enter|exit)#7
+        (if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard)#1
+        |(for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat)#2
+        |(switch|case|fail|default|fallthru)#3
+        |(match|when|pass)#4
+        |(try|retry|throw|raise|catch|rescue|finally)#5
+        |(with)#6
+        |(ref|[dr]efer|show|hide|enter|exit)#7
         |(then)#8
         |(debug|check|assert)#9
         |(break|continue|halt|skip|return|give|label|await|yield|throw|raise|yield\b\s+\bfrom)# 10
         |((?:im|ex)port|show|hide)# 11
-        |(para|seq|spawn|disc)#12
-        |(do|redo|done)#13
+        |(parallel|series|spawn)#12
+        |(do|redo)#13
         |(begin|end)#14
         )\b\s*
       captures:
@@ -2623,8 +2613,8 @@
       match: |
         (?x)\s*\b(?:
         (in)|(of)|(as)|(is)|(new)|(infer)
-        |(typeof|nameof|sizeof|keyof|pairof)
-        |(valueof)|(len)|(del)|(to|til|thru|at|by)|(unset)
+        |(typeof|nameof|sizeof|keyof|pairof|valueof)
+        |(length)|(delete)|(to|til|thru|at|by)|(unset)
         |(and|x?or|not)
         )\b\s*
       captures:
@@ -2635,12 +2625,11 @@
         5: {name: keyword.operator.expression.new.sa}
         6: {name: keyword.operator.expression.infer.sa}
         7: {name: keyword.operator.expression.$7.sa}
-        8: {name: keyword.operator.expression.valueof.sa}
-        9: {name: keyword.operator.expression.length.sa}
-        10: {name: keyword.operator.expression.delete.sa}
-        11: {name: keyword.operator.expression.range.sa}
-        12: {name: keyword.operator.expression.void.sa}
-        13: {name: keyword.operator.expression.logical.sa}
+        8: {name: keyword.operator.expression.length.sa}
+        9: {name: keyword.operator.expression.delete.sa}
+        10: {name: keyword.operator.expression.range.sa}
+        11: {name: keyword.operator.expression.void.sa}
+        12: {name: keyword.operator.expression.logical.sa}
 
     keywords:
       patterns:
@@ -2775,11 +2764,11 @@
         type-curly-brackets: *type-curly-brackets
 
       patterns:
+        - include: "#curly-brackets"
         - include: "#type-keywords"
         - include: "#type-square-brackets"
         - include: "#parameter-brackets"
         - include: "#round-brackets"
-        - include: "#curly-brackets"
         - include: "#type-annotation"
         - include: "#type-operators"
         - *transfix-operators
@@ -2812,39 +2801,28 @@
         - include: "#constant"
 
       repository:
-        variable:
-          applyEndPatternLast: 1
-          begin: \s*\b(let|var)\b\s*
-          end: $|(?=.)
-          beginCaptures:
-            1: {name: storage.type.sa}
-          patterns:
-            - include: $self
-        constant:
-          applyEndPatternLast: 1
-          begin: \s*\b(const|val)\b\s*
-          end: $|(?=.)
-          beginCaptures:
-            1: {name: storage.type.sa}
-          patterns:
-            - match: *entity-name
-              captures:
-                1: {name: variable.other.constant.sa}
-            - include: $self
-        protocol:
-          applyEndPatternLast: 1
-          begin: \s*\b(prot)\b\s*
-          end: $|(?=.)
-          beginCaptures:
-            1: {name: storage.type.protocol.sa}
-          patterns:
-            - match: *entity-name
-              captures:
-                1: {name: entity.name.protocol.sa}
-            - include: "#block-entities"
+        # variable:
+        #   applyEndPatternLast: 1
+        #   begin: \s*\b(let|var)\b\s*
+        #   end: $|(?=.)
+        #   beginCaptures:
+        #     1: {name: storage.type.sa}
+        #   patterns:
+        #     - include: $self
+        # constant:
+        #   applyEndPatternLast: 1
+        #   begin: \s*\b(const|val)\b\s*
+        #   end: $|(?=.)
+        #   beginCaptures:
+        #     1: {name: storage.type.sa}
+        #   patterns:
+        #     - match: *entity-name
+        #       captures:
+        #         1: {name: variable.other.constant.sa}
+        #     - include: $self
         class:
           applyEndPatternLast: 1
-          begin: \s*\b(class|ext)\b\s*
+          begin: \s*\b(class|extend)\b\s*
           end: $|(?=.)
           beginCaptures:
             1: {name: storage.type.class.sa}
@@ -2855,7 +2833,7 @@
             - include: "#block-entities"
         constraint:
           applyEndPatternLast: 1
-          begin: \s*\b(given|law)\b\s*
+          begin: \s*\b(given|constraint)\b\s*
           end: $|(?=.)
           beginCaptures:
             1: {name: storage.type.constraint.sa}
@@ -2866,7 +2844,7 @@
             - include: "#block-entities"
         enum:
           applyEndPatternLast: 1
-          begin: \s*\b(enum|rel)\b\s*
+          begin: \s*\b(enum|relation)\b\s*
           end: $|(?=.)
           name: meta.enum.declaration.sa
           beginCaptures:
@@ -2877,20 +2855,9 @@
               captures:
                 1: {name: entity.name.enum.sa}
             - include: "#block-entities"
-        project:
-          applyEndPatternLast: 1
-          begin: \s*\b(proj|impl)\b\s*
-          end: $|(?=.)
-          beginCaptures:
-            1: {name: storage.type.project.sa}
-          patterns:
-            - match: *entity-name
-              captures:
-                1: {name: entity.name.project.sa}
-            - include: "#block-entities"
         fragment:
           applyEndPatternLast: 1
-          begin: \s*\b(frag|struct)\b\s*
+          begin: \s*\b(fragment|struct)\b\s*
           end: $|(?=.)
           beginCaptures:
             1: {name: storage.type.fragment.sa}
@@ -2901,7 +2868,7 @@
             - include: "#block-entities"
         function:
           applyEndPatternLast: 1
-          begin: \s*\b(def|func?|function|macro|proc|process)\b\s*
+          begin: \s*\b(func?|function|proc|process|macro)\b\s*
           end: $|(?=.)
           beginCaptures:
             1: {name: storage.type.function.sa}
@@ -2912,7 +2879,7 @@
             - include: "#block-entities"
         interface:
           applyEndPatternLast: 1
-          begin: \s*\b(inter|schema)\b\s*
+          begin: \s*\b(interface|schema)\b\s*
           end: $|(?=.)
           beginCaptures:
             1: {name: storage.type.interface.sa}
@@ -2923,7 +2890,7 @@
             - include: "#block-entities"
         module:
           applyEndPatternLast: 1
-          begin: \s*\b(module|lat)\b\s*
+          begin: \s*\b(module|package)\b\s*
           end: $|(?=.)
           beginCaptures:
             1: {name: storage.type.module.sa}
@@ -2934,7 +2901,7 @@
             - include: "#block-entities"
         namespace:
           applyEndPatternLast: 1
-          begin: \s*\b(nspace)\b\s*
+          begin: \s*\b(namespace|lattice)\b\s*
           end: $|(?=.)
           beginCaptures:
             1: {name: storage.type.namespace.sa}
@@ -2953,6 +2920,28 @@
             - match: *entity-name
               captures:
                 1: {name: entity.name.object.sa}
+            - include: "#block-entities"
+        protocol:
+          applyEndPatternLast: 1
+          begin: \s*\b(protocol|member)\b\s*
+          end: $|(?=.)
+          beginCaptures:
+            1: {name: storage.type.protocol.sa}
+          patterns:
+            - match: *entity-name
+              captures:
+                1: {name: entity.name.protocol.sa}
+            - include: "#block-entities"
+        project:
+          applyEndPatternLast: 1
+          begin: \s*\b(project|attribute)\b\s*
+          end: $|(?=.)
+          beginCaptures:
+            1: {name: storage.type.protocol.sa}
+          patterns:
+            - match: *entity-name
+              captures:
+                1: {name: entity.name.project.sa}
             - include: "#block-entities"
         raw:
           applyEndPatternLast: 1
@@ -2986,7 +2975,7 @@
             - include: "#block-entities"
         trait:
           applyEndPatternLast: 1
-          begin: \s*\b(trait|impl)\b\s*
+          begin: \s*\b(trait|friend)\b\s*
           end: $|(?=.)
           beginCaptures:
             1: {name: storage.type.trait.sa}
@@ -3024,7 +3013,7 @@
           patterns:
             - begin: |
                 (?x)
-                (?<=(?:[\p{Ps}]\|?|\b(?:do|redo|def|func?|function|macro|proc|process)\b)\s*)
+                (?<=(?:[\p{Ps}]\|?|\b(?:do|redo|func?|function|proc|process|macro)\b)\s*)
 
                 (\|)
                 (?!\|)
@@ -3057,7 +3046,7 @@
                 |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
                 |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
                 |# Function or method modifiers
-                (?:pre|in|post|suf|af|trans|inter)fix|
+                (?:pre|in|post|suf|af|trans|interface)fix|
                 (?:u|bi|ter|)nary|oper
                 |# Decorators
                 @(?:
@@ -3100,7 +3089,7 @@
                 |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
                 |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
                 |# Function or method modifiers
-                (?:pre|in|post|suf|af|trans|inter)fix|
+                (?:pre|in|post|suf|af|trans|interface)fix|
                 (?:u|bi|ter|)nary|oper
                 |# Decorators
                 @(?:
@@ -3112,7 +3101,7 @@
                 \s*)*)
                 (?=\s*\b
                 (?:
-                def|func?|function|macro|proc|process
+                func?|function|proc|process|macro
                 )\b
                 )
               captures:
@@ -3123,7 +3112,7 @@
         function-clause:
           patterns:
             - begin: |
-                (?x)
+                (?x)\s*
                 ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s+
                 (:?=)\s+
                 (
@@ -3135,7 +3124,7 @@
                 |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
                 |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
                 |# Function or method modifiers
-                (?:pre|in|post|suf|af|trans|inter)fix|
+                (?:pre|in|post|suf|af|trans|interface)fix|
                 (?:u|bi|ter|)nary|oper
                 |# Decorators
                 @(?:
@@ -3175,7 +3164,7 @@
                 |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
                 |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
                 |# Function or method modifiers
-                (?:pre|in|post|suf|af|trans|inter)fix|
+                (?:pre|in|post|suf|af|trans|interface)fix|
                 (?:u|bi|ter|)nary|oper
                 |# Decorators
                 @(?:
@@ -3187,7 +3176,7 @@
                 \s*)*)
                 (?=\s*\b
                 (?:
-                def|func?|function|macro|proc|process
+                func?|function|proc|process|macro
                 )\b
                 )
               captures:
@@ -3262,7 +3251,7 @@
                     1: {name: keyword.operator.assignment.sa}
                 - include: "#types"
             - applyEndPatternLast: 1
-              begin: \s*\b(decl)\b
+              begin: \s*\b(declare)\b
               end: (?=\O)|$
               beginCaptures:
                 1: {name: keyword.other.declare.sa}
@@ -3284,7 +3273,7 @@
 
         case-clause:
           begin: \s*\b(case|fail|default)\b
-          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
+          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|{|\b(?:begin|then))|$)
           endCaptures:
             0: {name: punctuation.separator.colon.sa}
           beginCaptures:
@@ -3294,7 +3283,7 @@
 
         catch-clause:
           begin: \s*\b(try|retry|catch|rescue|finally)\b
-          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
+          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|{|\b(?:begin|then))|$)
           endCaptures:
             0: {name: punctuation.separator.colon.sa}
           name: meta.catch.sa
@@ -3314,8 +3303,8 @@
             - include: "#clause-content"
 
         thread-clause:
-          begin: \s*\b(para|seq|spawn|fixed|lock)\b
-          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
+          begin: \s*\b(parallel|series|spawn|fixed|lock)\b
+          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|{|\b(?:begin|then))|$)
           endCaptures:
             0: {name: punctuation.separator.colon.sa}
           name: meta.thread.sa
@@ -3336,7 +3325,7 @@
 
         do-clause:
           begin: \s*\b(do|redo)\b
-          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
+          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|{|\b(?:begin|then))|$)
           endCaptures:
             0: {name: punctuation.separator.colon.sa}
           name: meta.do.sa
@@ -3347,7 +3336,7 @@
 
         for-clause:
           begin: \s*\b(for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat)\b
-          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
+          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|{|\b(?:begin|then))|$)
           endCaptures:
             0: {name: punctuation.separator.colon.sa}
           name: meta.for.sa
@@ -3368,7 +3357,7 @@
 
         if-clause:
           begin: \s*\b(if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard)\b
-          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
+          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|{|\b(?:begin|then))|$)
           endCaptures:
             0: {name: punctuation.separator.colon.sa}
           name: meta.if.sa
@@ -3379,7 +3368,7 @@
 
         match-clause:
           begin: \s*\b(match)\b
-          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
+          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|{|\b(?:begin|then))|$)
           endCaptures:
             0: {name: punctuation.separator.colon.sa}
           name: meta.match.sa
@@ -3390,7 +3379,7 @@
 
         switch-clause:
           begin: \s*\b(switch)\b
-          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
+          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|{|\b(?:begin|then))|$)
           endCaptures:
             0: {name: punctuation.separator.colon.sa}
           name: meta.switch.sa
@@ -3401,7 +3390,7 @@
 
         when-clause:
           begin: \s*\b(when)\b
-          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
+          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|{|\b(?:begin|then))|$)
           endCaptures:
             0: {name: punctuation.separator.colon.sa}
           beginCaptures:
@@ -3435,7 +3424,7 @@
 
         with-clause:
           begin: \s*\b(with)\b
-          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|\b(?:begin|then))|$)
+          end: (?<=^|\s*)(:)(?=\s|$)|(?=[\p{Pe};]|(?<=\s)(?:->|{|\b(?:begin|then))|$)
           endCaptures:
             0: {name: punctuation.separator.colon.sa}
           name: meta.with.sa
