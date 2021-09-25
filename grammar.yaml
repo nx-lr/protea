@@ -144,12 +144,12 @@ repository:
       - comment: Primitive data types
         match: |
           (?x)\s*\b(
-          bool|u?int|float|nat|ratio|real|imag|complex|number
-          |char|rune|string|symbol|regexp?|func|buffer|binary
+          bool|u?int|float|natural|ratio|real|imag|complex|number
+          |char|rune|string|symbol|regexp?|function|buffer|binary
           |# numeric types
-          ([cifsun]|nat|ratio|u?int|real|imag|comp)
+          ([cifsun]|natural|ratio|u?int|real|imag|complex)
           (8|16|32|64|128)
-          |[ci](half|float|double|deci|octuple)
+          |[ci](half|float|double|decimal|octuple)
           )\b
         name: support.type.builtin.primitive.sa
       - comment: Constant/algebraic types
@@ -157,25 +157,25 @@ repository:
           (?x)\s*\b(
           true|false|null|void|nan|infin
           |any|empty|object|record|unit|mixed
-          |just|some|none|never|(im)?pure|chan
+          |just|some|none|never|(im)?pure|channel
           )\b
         name: support.type.builtin.sa
       - comment: Data structures
         match: |
           (?x)\s*\b(
-          array|tuple|(?:mut)?(?:list|set|map)|dict
-          |sequence|generator|range|stack|heap|queue|tree|trie
+          array|tuple|(?:mut)?(?:list|set|map)|dict|function
+          |process|sequence|generator|range|stack|heap|queue|tree|trie
           )\b
         name: support.type.primitive.sa
       - comment: Primitive classes
         match: |
           (?x)\s*\b(
-          Bool|U?Int|Float|Nat|Ratio|Real|Imag|Complex|Number
-          |Char|Rune|String|Symbol|RegExp?|Func|Buffer|Binary
+          Bool|U?Int|Float|Natural|Ratio|Real|Imag|Complex|Number
+          |Char|Rune|String|Symbol|RegExp?|Function|Buffer|Binary
           |# Numeric Types
-          ([CIFSUN]|Nat|Ratio|U?Int|Real|Imag|Comp)
+          ([CIFSUN]|Natural|Ratio|U?Int|Real|Imag|Complex)
           (8|16|32|64|128)
-          |[CI](Half|Float|Double|Deci|Octuple)
+          |[CI](Half|Float|Double|Decimal|Octuple)
           )\b
         name: support.class.builtin.primitive.sa
       - comment: Constant/algebraic classes
@@ -183,14 +183,14 @@ repository:
           (?x)\s*\b(
           True|False|Null|Void|NaN|Infin
           |Any|Empty|Object|Record|Unit|Mixed
-          |Just|Some|None|Never|(Im)?pure|Chan
+          |Just|Some|None|Never|(Im)?pure|Channel
           )\b
         name: support.class.builtin.sa
       - comment: Data structure classes
         match: |
           (?x)\s*\b(
-          Array|Tuple|(Mut)?(List|Set|Map)|Dict
-          |Sequence|Gen|Range|Stack|Heap|Queue|Tree|Trie
+          Array|Tuple|(Mut)?(List|Set|Map)|Dict|Function
+          |Process|Sequence|Generator|Range|Stack|Heap|Queue|Tree|Trie
           )\b
         name: support.class.primitive.sa
 
@@ -732,7 +732,7 @@ repository:
           2: {name: storage.type.format.sa}
       - match: |
           (?xi)
-          #(?<!\\)# no backslash
+          (?#?<!\\)# discard escape prefix
           (\$)# prefix
           (
           [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
@@ -764,7 +764,7 @@ repository:
           2: {name: storage.type.format.sa}
       - match: |
           (?xi)
-          (?<!\#)# no dollar
+          (?<!\$)# discard escape prefix
           (\$)# prefix
           (
           [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
@@ -937,7 +937,7 @@ repository:
         end: (\\E)
         name: string.quoted.raw.sa
         captures:
-          1: {name: keyword.control.quote.sa}
+          1: {name: punctuation.definition.string.sa}
         patterns:
           - include: "#string-escapes"
       - begin: (\\q)
@@ -945,7 +945,7 @@ repository:
         end: (\\e)
         name: string.quoted.sa
         captures:
-          1: {name: keyword.control.quote.sa}
+          1: {name: punctuation.definition.string.sa}
         patterns:
           - include: "#embedded-raw"
       - begin: (\\k<)
@@ -1046,7 +1046,7 @@ repository:
               2: {name: entity.name.function.method.sa}
               3: {name: keyword.control.recursion.sa}
               4: {name: keyword.other.flag.sa}
-              5: {name: punctuation.separator.key-value.sa}
+              5: {name: punctuation.separator.colon.sa}
             patterns:
               - include: "#regexp-patterns"
           - begin: (\(\?)(?={)
@@ -1103,7 +1103,7 @@ repository:
               1: {name: punctuation.definition.group.back-reference.sa}
               2: {name: entity.name.function.method.sa}
               3: {name: variable.other.sa}
-              4: {name: punctuation.separator.key-value.sa}
+              4: {name: punctuation.separator.colon.sa}
             patterns:
               - include: "#regexp-patterns"
           - begin: \(\?(?=<(?![!=]))
