@@ -1640,7 +1640,7 @@ repository:
           0: {name: comment.line.shebang.ig}
         patterns:
           - include: "#markdown-inline"
-      - begin: ((^\s*)|\s*)((//:))
+      - begin: ((^\s*)|\s*)((//\*))
         end: \s*$
         name: comment.line.doctype.ig
         beginCaptures:
@@ -1668,8 +1668,8 @@ repository:
         patterns:
           - include: text.html.markdown#inline
       nested-block:
-        begin: (#\[)\s*
-        end: \s*(\]#)
+        begin: (/\*)\s*
+        end: \s*(\*/)
         captures:
           1: {name: punctuation.definition.comment.ig}
         patterns:
@@ -1677,8 +1677,8 @@ repository:
           - include: "#markdown-inline"
           - include: "#nested-block"
       nested-document-block:
-        begin: (#{)\s*
-        end: \s*(}#)
+        begin: (/\*\*?)\s*
+        end: \s*(\*/)
         captures:
           1: {name: punctuation.definition.comment.ig}
         patterns:
@@ -1686,8 +1686,8 @@ repository:
           - include: "#markdown-inline"
           - include: "#nested-document-block"
       nested-inline:
-        begin: (\()\s*
-        end: \s*(\))
+        begin: (/\+)\s*
+        end: \s*(\+/)
         name: comment.block.inline.ig
         captures:
           1: {name: punctuation.definition.comment.ig}
@@ -1695,8 +1695,8 @@ repository:
           - include: "#markdown-inline"
           - include: "#nested-inline"
       nested-special:
-        begin: (\()\s*
-        end: \s*(\))
+        begin: (/\+)\s*
+        end: \s*(\+/)
         captures:
           1: {name: punctuation.definition.comment.ig}
         patterns:
