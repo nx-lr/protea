@@ -1,6 +1,6 @@
 # Isogram
 
-> Feels like JavaScript. Far more powerful.
+> Feels like JavaScript, better than JavaScript.
 
 Isogram is an open-source, robustly typed language that compiles to efficient and human-readable JavaScript, enabling you to avoid type-related bugs as your applications grow in complexity. It comes with a huge standard library and a unique combination of features that no other language offers.
 
