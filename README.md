@@ -1,73 +1,87 @@
-# SagaScript
+# Isogram
 
-> Yet another JavaScript-like language with a Pythonic syntax.
+> Feels like JavaScript. Far more powerful.
 
-SagaScript is a modern functional, imperative and object-oriented programming language with a syntax inspired by Python, and (will) compile(s) to JavaScript and WebAssembly. SagaScript as well as powerful features and APIs out of the box, SagaScript provides everything you need to develop modern applications that don't crash, quicker and safer.
+Isogram is an open-source, robustly typed language that compiles to efficient and human-readable JavaScript, enabling you to avoid type-related bugs as your applications grow in complexity. It comes with a huge standard library and a unique combination of features that no other language offers.
 
 ```coffee
-#: Generates a custom Fibonacci sequence
-#: with an arbitrary set of integers
-rec gen def fib[N: int](*start: []N, term: N): N =
-  if term of start:
-    yield start[term - 1]
-  elif term > len start:
-    yield from in term - len start to term
-      select x => fib start, x
-      fold left (+)
-  else:
-    raise new Error
-      "Invalid term in Fibonacci sequence"
+/// Generates a custom Fibonacci sequence
+/// with an arbitrary set of integers
+export module Button {
+  @React.Component
+  export function make(&number: int): React.HTML = {
+    let times: string = switch number {
+      case 1 -> "once"
+      case 2 -> "twice"
+      case n -> "$n times"
+    };
+    let msg: string = "Click me $times";
+    <button> {msg as React.string} </button>;
+  };
+};
 ```
 
-```ts
-import S from "@Saga/core";
-import {len, range} from "@Saga/std";
-import {Int} from "@Saga/types";
+```js
+var React = require("react");
 
-export default function* fib<N extends Int>(...start: N[], term: N): N {
-  if (term in start) {
-    yield start[term - 1];
-  } else if (term > len(start)) {
-    yield (range(term - len(start)).to(term) as S.Range)
-      .select(x => fib(start, x))
-      .foldLeft(($0, $1) => $0 + $1);
-  } else {
-    throw new Error("Invalid term in Fibonacci sequence");
-  }
+function Playground$Button(Props) {
+  var count = Props.count;
+  var times =
+    count !== 1 ? (count !== 2 ? String(count) + " times" : "twice") : "once";
+  var msg = "Click me " + times;
+  return React.createElement("button", undefined, msg);
 }
+
+var Button = {
+  make: Playground$Button,
+};
+
+exports.Button = Button;
 ```
 
 ## Introduction
 
-JavaScript is a very flexible and versatile language today, however in the beginning it was never designed that way. It has received tons of backlash by the programming community: bloated NPM projects, weak typing and countless other reasons. I can go on for hours explaining why JS is good or bad, but I've hooked up [a source][wtfjs] on GitHub instead.
+JavaScript is the world's most popular programming language, by force. It's in every device with a browser, running on backends and now on mobile and IoT. It's constantly growing and evolving, being used for all kinds of things, and we're so used to pushing it to its limits.
+
+But many people hate on JavaScript for its fundamentally flawed design, and the ecosystem that surrounds it. Bloated projects, type coercion and more. Many new languages and trans-compilers have been built to try and solve these fundamental problems, but introduce some new problems, such as cryptic stack traces or undebuggable output. This is especially important while learning, where users might want to understand how the code's compiled, and to audit for bugs.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 
-It seems, by force, JS has become the most popular programming language in the world. It's in every browser, and in perhaps every backend and every IOT device in the world. And with the creation of many client-side app environments like Ionic and Electron, JS had been used to create native applications such as VS Code and Vivaldi. It's constantly evolving and constantly growing, being used for all kinds of applications.
+Many new languages, frameworks and transpilers have been introduced in order to solve some of the more fundamental problems of JavaScript but they too introduce some complexity, some in terms of the generated code, some in terms of dependencies and installations.
 
-Many new languages, frameworks and transpilers have arisen in order to hide the existing implementation of JavaScript, but some of them introduce some new problems. Tons of boilerplate code is generated and dependencies are installed, and as a result, JavaScript projects naturally bloat with tons of dead code, lots of which the project doesn't actually use.
+### Isogram's Origins
 
-### SagaScript's Origins
+Isogram started out as a holiday project in tinkering with language grammars and writing documentation about them. The name was randomly chosen from the infamous Universal Analytics snippet:
 
-SagaScript started out as a holiday project in tinkering with language grammars and writing documentation. The language started out as TypeScript with the semantics of Python, and over the months has pulled many influences from other languages.
-
-SagaScript is heavily influenced by other modern languages, either through syntax or the standard library (in descending influence):
-
-```txt
-Nim, Python, Swift, Scala, Go, Rust, TypeScript, Elixir, F#, OCaml, CoffeeScript, Haskell, Flix, C#, Kotlin, LiveScript, Bash, Smalltalk, YAML, Elm, Ada, Erlang, PureScript, Java.
+```js
+(function (i, s, o, g, r, a, m) {
+  i["GoogleAnalyticsObject"] = r;
+  (i[r] =
+    i[r] ||
+    function () {
+      (i[r].q = i[r].q || []).push(arguments);
+    }),
+    (i[r].l = 1 * new Date());
+  (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+  a.async = 1;
+  a.src = g;
+  m.parentNode.insertBefore(a, m);
+})(window, document, "script", "//www.google-analytics.com/analytics.js", "ga");
+ga("create", "UA-123123123", "auto");
+ga("send", "pageview");
 ```
 
-SagaScript aims to compile to two languages: JavaScript and WebAssembly, both readable, boilerplate-free and performance-optimized. SagaScript's library will be implemented completely in JS, which means you can inter-mix SagaScript code with regular JS or TypeScript through Babel, call SagaScript code from JavaScript, and even use SagaScript's APIs from within vanilla JS.
+I blended different parts of my favorite languages (TypeScript, Python, Rust, Go, Scala, Bash, Haskell, Perl, Ruby and OCaml) to form a new language that balanced functional programming with an object-oriented and imperative style.
 
 ## Language Principles
 
-SagaScript will have a large standard library inspired by those languages, covering many domains all the way from primitive operations in **/Core** to advanced such as:
+Isogram will have a large standard library inspired by those languages, covering many domains all the way from primitive operations in **/Core** to advanced such as:
 
 ---
 
-This document is currently in the works and is my largest project to date. Some things are going to change. I will be posting a Trello on SagaScript very, very soon, for all of you to see.
+This document is currently in the works and is my largest project to date. Some things are going to change. I will be posting a Trello on Isogram very, very soon, for all of you to see.
 
-Feel free to open or contribute to the project on this GitHub repository: http://github.com/nxltm/sagascript/.
+Feel free to open or contribute to the project on this GitHub repository: http://github.com/nxltm/isogram/.
 
 ### Version Name Lists
 
@@ -95,11 +109,11 @@ Feel free to open or contribute to the project on this GitHub repository: http:/
 - JavaScript with Babel: compiler and standard library
   - Lodash: Core libraries
 
-<!-- TODO: List more libraries here as modules for SagaScript's standard library -->
+<!-- TODO: List more libraries here as modules for Isogram's standard library -->
 
 ## Guidelines and Principles
 
-The development of a programming language should follow a set of principles, each with their own rationale behind them. Many of these ideas and principles come from languages that have inspired SagaScript, including TypeScript, Python, Ruby, Elixir, Nim, Rust, Scala, Haskell, and OCaml.
+The development of a programming language should follow a set of principles, each with their own rationale behind them. Many of these ideas and principles come from languages that have inspired Isogram, including TypeScript, Python, Ruby, Elixir, Nim, Rust, Scala, Haskell, and OCaml.
 
 - Significant whitespace.
 - Everything is an expression.
@@ -120,52 +134,55 @@ The development of a programming language should follow a set of principles, eac
 
 ### Libraries
 
-SagaScript has a core library of modules completely implemented in JavaScript that contains a wide variety of types, each with tons of functionality and algorithms that work with them. These modules cover primitive data types and structures, documents and files, APIs, sites and more.
+Isogram has a core library of modules completely implemented in JavaScript that contains a wide variety of types, each with tons of functionality and algorithms that work with them. These modules cover primitive data types and structures, documents and files, APIs, sites and more.
 
-SagaScript has a core library implemented in JavaScript that contains types, data structures, and tons of functions/algorithms that work with them.
+Isogram has a core library implemented in JavaScript that contains types, data structures, and tons of functions/algorithms that work with them.
 
 ## Language Ideas
 
 ## Updates (Grammar)
 
 - **Features**
-
-  - Full support for OOP and FP
+  - Pure object-oriented programming
+  - Pure functional programming
   - Extensible classes
-  - First-class functions
-  - Comprehensive standard library
-  - "Everything is an expression"
-  - Static typing, dynamic feel
+  - Modular standard library
+  - Everything is an expression
+  - Everything is an object
+  - Every expression is a value
+  - Every function is a value
+  - Static typing
+  - Type inference
   - Algebraic data types
   - Pattern matching
-  - JavaScript interop
+  - JavaScript API
+  - Opaque types/type aliases
+  - Redundancy checks
   - WebAssembly compilation (near future)
-  - Python-inspired syntax
-  - Keyword-based syntax\*
+  - Python-inspired, keyword-based syntax
   - Custom numeric literals
   - Custom operators
   - Extended string/list slicing
   - Query expressions
-  - Sequential types and generators
-  - Asynchrony support
+  - Lazy data structures
+  - Asynchrony and concurrency
   - Unquoted/raw strings
-  - PCRE-compliant regular expressions\*
-  - Pure `func` and impure `proc`
+  - PCRE-compliant regular expressions
+  - Pure and impure functions
   - Type constraints and combinators
-  - Embedded language support
-    - HTML, CSS, JS, JSON, YAML, TOML, HAML, Pug, Markdown, SASS, SCSS, LESS, Stylus, CoffeeScript, LiveScript
+  - Template string
   - Immutable data structures
-  - Private/immutable by default
+  - Private & immutable by default
   - First-class concurrency
   - Extensible type classes & records
   - Higher-kinded types
   - Type inference
-  - Opaque types/type aliases
   - Human friendly errors (near future)
   - Interactive mode (near future)
-  - Redundancy checks
-  - full tail call elimination
+  - Full tail call elimination
   - Tree-shaking (near future)
+
+<!--  -->
 
 - **To-Do:**
   - Add support to the first set of embedded languages:
@@ -176,7 +193,7 @@ SagaScript has a core library implemented in JavaScript that contains types, dat
   - Use Oniguruma to figure out how to validate arbitrary-radix numeric literals and highlight them.
   - Rework query syntax, which is inspired by SQL.
     - Query syntax begins with `from`.
-    - Ends in a `select` statement.
+    - Ends in a `select` or `fold` statement.
   - Add standard library stuff (the bulk of this grammar)
     - (https://github.com/nxltm/cspell-dicts)
       - JS, TS, R, C#, Go, PHP, Perl, Scala, Flix, Java, Kotlin, Rust, Python, Swift, Ruby, Elixir, Haskell
