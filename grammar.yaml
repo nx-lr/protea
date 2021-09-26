@@ -127,9 +127,9 @@ repository:
         end: (?=.)
         applyEndPatternLast: 1
         patterns:
-          - include: "#jsx-tag-element-name"
+          - include: "#tag-element-name"
     repository:
-      jsx-tag-element-name:
+      tag-element-name:
         patterns:
           - comment: JSX Fragment
             name: meta.tag.ig
@@ -141,8 +141,8 @@ repository:
             endCaptures:
               1: {name: punctuation.definition.tag.ig}
             patterns:
-              - include: "#jsx-tag-termination"
-          - comment: "Tags that end > are trapped in #jsx-tag-termination"
+              - include: "#tag-termination"
+          - comment: "Tags that end > are trapped in #tag-termination"
             name: meta.tag.ig
             contentName: JSXAttrs
             begin: |
@@ -162,9 +162,9 @@ repository:
               3: {name: punctuation.definition.tag.ig}
               4: {name: invalid.illegal.termination.ig}
             patterns:
-              - include: "#jsx-tag-termination"
-              - include: "#jsx-tag-attributes"
-      jsx-tag-termination:
+              - include: "#tag-termination"
+              - include: "#tag-attributes"
+      tag-termination:
         patterns:
           - comment: uses non consuming search for </ in </tag>
             contentName: JSXNested
@@ -177,26 +177,38 @@ repository:
               0: {name: punctuation.definition.tag.ig}
               1: {name: JSXEndTagStart}
             patterns:
-              - include: "#jsx-evaluated-code"
-              - include: "#jsx-entities"
-              - include: "#jsx-tag-element-name"
-      jsx-tag-attributes:
+              - include: "#evaluated-code"
+              - include: "#entities"
+              - include: "#tag-element-name"
+              - include: "#string-escapes"
+              - include: markdown.math.block
+              - include: text.html.markdown#inline
+      attribute-expression:
+        name: meta.embedded.expression.js
+          contentName: source.js
+          begin: \(
+          end: \)
+          captures:
+            0: {name: punctuation.section.embedded.ig}
+          patterns:
+            - include: $self
+        - include: source.yaml#flow-collection
+      tag-attributes:
         patterns:
           - include: "#comments"
-          - include: "#jsx-attribute-name"
-          - include: "#jsx-assignment"
+          - include: "#attribute-name"
+          - include: "#assignment"
           - include: "#literals"
-          - include: "#jsx-evaluated-code"
-          - include: "#jsx-tag-element-name"
-          - include: "#operators"
-      jsx-spread-attribute:
+          - include: "#evaluated-code"
+          - include: "#tag-element-name"
+      spread-attribute:
         patterns:
           - comment: Spread attribute { ... AssignmentExpression }
             match: (?<!\*)\*(?!\*)
             name: keyword.operator.spread.ig
-      jsx-attribute-name:
+      attribute-name:
         patterns:
-          - comment: Style attributes
+          - comment: Style attribute
             begin: (?<!\S)(style)(=)?({)
             end: \s*(})\s*
             beginCaptures:
@@ -210,7 +222,16 @@ repository:
               - include: source.css.scss#rules
               - include: source.css.scss#properties
               - include: source.css.scss
-          - comment: Attribute names (basic)
+          - comment: Attribute names
+            match: (?<=[)\]}])(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
+            captures:
+              1: {name: punctuation.separator.key-value.ig}
+              2:
+                name: string.unquoted.html.ig
+                patterns:
+                  - include: "#string-escapes"
+                  - include: source.yaml#flow-scalar
+          - comment: Attribute names
             match: (?<!\S)([_\p{L}\p{Nl}][^\s,;'"`\\/<=>]*)(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
             captures:
               1: {name: entity.other.attribute-name.ig}
@@ -219,30 +240,21 @@ repository:
                 name: string.unquoted.html.ig
                 patterns:
                   - include: "#string-escapes"
-                  - include: source.yaml#flow-collection
-                  - include: source.yaml#flow-scalar-plain-out-implicit-type
-      jsx-evaluated-code:
+                  - include: source.yaml#flow-scalar
+      evaluated-code:
         patterns:
           - name: meta.embedded.expression.js
             contentName: source.js
             begin: "{"
             end: "}"
             captures:
-              0: {name: punctuation.section.embedded.begin.ig}
+              0: {name: punctuation.section.embedded.ig}
             patterns:
-              - include: "#jsx-string-double-quoted"
-              - include: "#jsx-string-single-quoted"
-              - include: "#jsx-spread-attribute"
+              - include: "#spread-attribute"
               - include: $self
-      jsx-entities:
+      entities:
         patterns:
-          - comment: Embedded HTML entities &blah
-            match: (&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)
-            captures:
-              0: {name: constant.character.entity.ig}
-              1: {name: punctuation.definition.entity.ig}
-              2: {name: entity.name.tag.html.ig}
-              3: {name: punctuation.definition.entity.ig}
+          - include: text.xml#entity
           - comment: Entity with & and invalid name
             match: "&\\s*+;"
             name: invalid.illegal.bad-ampersand.ig
@@ -2099,8 +2111,8 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\<>]])#15
-              (?=[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\<>]]*
+              |[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]])#15
+              (?=[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*
               [\p{L}\p{M}\p{N}({\[_,;'"`])
             name: keyword.operator.prefix.ig
             captures:
@@ -2125,7 +2137,7 @@ repository:
             match: |
               (?x)
               (?<=[\p{L}\p{M}\p{N})}\]_,;'"`]
-              [\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\<>]]*)
+              [\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*)
               (?:(\*)#1
               |(\+)#2
               |(\-)#3
@@ -2140,7 +2152,7 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\<>]])#15
+              |[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]])#15
             name: keyword.operator.suffix.ig
             captures:
               1: {name: keyword.operator.module.all.ig}
