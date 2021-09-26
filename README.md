@@ -39,36 +39,26 @@ var Button = {
 exports.Button = Button;
 ```
 
-## Introduction
+## The Language
 
-JavaScript is the world's most popular programming language, by force. It's in every device with a browser, running on backends and now on mobile and IoT. It's constantly growing and evolving, being used for all kinds of things, and we're so used to pushing it to its limits.
+JavaScript is the world's most popular programming language, by force. It's in every device with a browser, running on backends and now on mobile and IoT. It's constantly growing and evolving, being used for all kinds of things, and we're so used to pushing it to its limits. But many people hate on JavaScript for its fundamentally flawed design, and the ecosystem that surrounds it. Bloated projects, type coercion and more.
 
-But many people hate on JavaScript for its fundamentally flawed design, and the ecosystem that surrounds it. Bloated projects, type coercion and more. Many new languages and trans-compilers have been built to try and solve these fundamental problems, but introduce some new problems, such as cryptic stack traces or undebuggable output. This is especially important while learning, where users might want to understand how the code's compiled, and to audit for bugs.
+Many new languages, frameworks and transpilers have been introduced in order to solve some of the more fundamental problems of JavaScript but they too introduce some complexity, some in terms of the generated code, some in terms of dependencies and installations, some related to the compiled output.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 
-Many new languages, frameworks and transpilers have been introduced in order to solve some of the more fundamental problems of JavaScript but they too introduce some complexity, some in terms of the generated code, some in terms of dependencies and installations.
+## Isogram's Origins
 
-### Isogram's Origins
+In March 2020, I had a hobby project which I written in Python that relied on machine learning, cryptography, and translation, that I wanted to port into JavaScript and integrate into a website. Moving over to JavaScript meant having to learn new things, such as writing write `1 < 2 && 2 < 3` instead of `1 < 2 < 3`, or `a[a.length - 1]` instead of `a[-1]`. That sort of thing.
 
-Isogram started out as a holiday project in tinkering with language grammars and writing documentation about them. The name was randomly chosen from the infamous Universal Analytics snippet:
+I had to go and search through libraries in NPM or Stack Overflow to find functions that I developed in my code. Most of which uses highly specialised Python functions and libraries, and the general lack of standard yet practical algorithms.
+
+Additionally, JavaScript did not have the formal tooling needed for such powerful numerical computations, which my Python programs required. So I spent days and weeks re-creating how my program worked for several times in a row, and I eventually gave up on it a few months into the year.
+
+The name was randomly chosen from the infamous Universal Analytics snippet:
 
 ```js
-(function (i, s, o, g, r, a, m) {
-  i["GoogleAnalyticsObject"] = r;
-  (i[r] =
-    i[r] ||
-    function () {
-      (i[r].q = i[r].q || []).push(arguments);
-    }),
-    (i[r].l = 1 * new Date());
-  (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
-  a.async = 1;
-  a.src = g;
-  m.parentNode.insertBefore(a, m);
-})(window, document, "script", "//www.google-analytics.com/analytics.js", "ga");
-ga("create", "UA-123123123", "auto");
-ga("send", "pageview");
+function (i, s, o, g, r, a, m) {};
 ```
 
 I blended different parts of my favorite languages (TypeScript, Python, Rust, Go, Scala, Bash, Haskell, Perl, Ruby and OCaml) to form a new language that balanced functional programming with an object-oriented and imperative style.
