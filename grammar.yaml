@@ -165,34 +165,33 @@ repository:
               - include: "#tag-termination"
               - include: "#tag-attributes"
       tag-termination:
+        comment: uses non consuming search for </ in </tag>
+        contentName: JSXNested
+        begin: (>)
+        end: (</)
+        beginCaptures:
+          0: {name: punctuation.definition.tag.ig}
+          1: {name: JSXStartTagEnd}
+        endCaptures:
+          0: {name: punctuation.definition.tag.ig}
+          1: {name: JSXEndTagStart}
         patterns:
-          - comment: uses non consuming search for </ in </tag>
-            contentName: JSXNested
-            begin: (>)
-            end: (</)
-            beginCaptures:
-              0: {name: punctuation.definition.tag.ig}
-              1: {name: JSXStartTagEnd}
-            endCaptures:
-              0: {name: punctuation.definition.tag.ig}
-              1: {name: JSXEndTagStart}
-            patterns:
-              - include: "#evaluated-code"
-              - include: "#entities"
-              - include: "#tag-element-name"
-              - include: "#string-escapes"
-              - include: markdown.math.block
-              - include: text.html.markdown#inline
+          - include: "#evaluated-code"
+          - include: "#entities"
+          - include: "#tag-element-name"
+          - include: "#string-escapes"
+          - include: markdown.math.block
+          - include: text.html.markdown#inline
       attribute-expression:
         name: meta.embedded.expression.js
-          contentName: source.js
-          begin: \(
-          end: \)
-          captures:
-            0: {name: punctuation.section.embedded.ig}
-          patterns:
-            - include: $self
-        - include: source.yaml#flow-collection
+        contentName: source.js
+        begin: \(
+        end: \)
+        captures:
+          0: {name: punctuation.section.embedded.ig}
+        patterns:
+          - include: $self
+          - include: source.yaml#flow-collection
       tag-attributes:
         patterns:
           - include: "#comments"
@@ -203,10 +202,9 @@ repository:
           - include: "#evaluated-code"
           - include: "#tag-element-name"
       spread-attribute:
-        patterns:
-          - comment: Spread attribute { ... AssignmentExpression }
-            match: (?<!\*)\*(?!\*)
-            name: keyword.operator.spread.ig
+        comment: Spread attribute { ... AssignmentExpression }
+        match: (?<!\*)\*(?!\*)
+        name: keyword.operator.spread.ig
       attribute-name:
         patterns:
           - comment: Style attribute
@@ -243,16 +241,15 @@ repository:
                   - include: "#string-escapes"
                   - include: source.yaml#flow-scalar
       evaluated-code:
+        name: meta.embedded.expression.js
+        contentName: source.js
+        begin: "{"
+        end: "}"
+        captures:
+          0: {name: punctuation.section.embedded.ig}
         patterns:
-          - name: meta.embedded.expression.js
-            contentName: source.js
-            begin: "{"
-            end: "}"
-            captures:
-              0: {name: punctuation.section.embedded.ig}
-            patterns:
-              - include: "#spread-attribute"
-              - include: $self
+          - include: "#spread-attribute"
+          - include: $self
       entities:
         patterns:
           - include: text.xml#entity
