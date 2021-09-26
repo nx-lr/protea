@@ -49,19 +49,29 @@ Many new languages, frameworks and transpilers have been introduced in order to 
 
 ## Isogram's Origins
 
-In March 2020, I had a hobby project which I written in Python that relied on machine learning, cryptography, and translation, that I wanted to port into JavaScript and integrate into a website. Moving over to JavaScript meant having to learn new things, such as writing write `1 < 2 && 2 < 3` instead of `1 < 2 < 3`, or `a[a.length - 1]` instead of `a[-1]`. That sort of thing.
+In March 2020, I had a hobby project which I written in Python that relied on machine learning, cryptography, and translation, that I wanted to port into JavaScript and integrate into a website. Moving over to JavaScript meant having to learn new things, such as writing write. That sort of thing.
 
-I had to go and search through libraries in NPM or Stack Overflow to find functions that I developed in my code. Most of which uses highly specialised Python functions and libraries, and the general lack of standard yet practical algorithms.
+I came into JavaScript from Python when I decided to port my existing Python codebase into JavaScript to be able to use it on the browser. I was initially annoyed over having to write things like `1 < 2 && 2 < 3` instead of `1 < 2 < 3`, or `a[a.length - 1]` instead of `a[-1]`, as well as having to deal with `cannot read property of undefined` errors which pop up all the time, which to me were a "pain in the ass". And I'm sure every single JS developer can relate.
 
-Additionally, JavaScript did not have the formal tooling needed for such powerful numerical computations, which my Python programs required. So I spent days and weeks re-creating how my program worked for several times in a row, and I eventually gave up on it a few months into the year.
+Yes I can get away with having to deal with these errors myself, but the fact that JavaScript did not _originally_ have errors in the first place and they were _really_ trying to steer clear from said errors by introducing weak typing, and implicit "type coercion". Errors that are not caught by the browser.
 
-The name was randomly chosen from the infamous Universal Analytics snippet:
+The real middle finger for me was having a general lack of a standard library. Which means going to StackOverflow and searching for solutions which I must implement and understand myself. I'm an amateur developer developing in JavaScript and also developing applications for my school projects which I must credit. And I can embrace going through the pains of developing in JS, but I admit I'm too tired of it.
+
+And with NPM projects having too many dependencies means a lot of dead, unreachable code and heavily bloated JS projects, many (or most?) of which are just importable [JSON files](https://www.npmjs.com/package/@stdlib/datasets-male-first-names-en) or a simple code snippet such as [checking whether a number is even](https://www.npmjs.com/package/is-even).
+
+---
+
+I did not think much about naming the language, the name itself comes from this snippet that began with something like
 
 ```js
 function (i, s, o, g, r, a, m) {};
 ```
 
-I blended different parts of my favorite languages (TypeScript, Python, Rust, Go, Scala, Bash, Haskell, Perl, Ruby and OCaml) to form a new language that balanced functional programming with an object-oriented and imperative style.
+The arguments to this function spell out the word "**_isogram_**". In wordplay, an **isogram** is really a word that contains unique, non-repeating letters. For example: _isogram_, _wordplay_, _ambidextrously_, _un-copyrightable_ or _dialogue_.
+
+There are several reasons to the name. I love languages, natural and programming alike and I am obsessed with how they work. I played with language grammars and ideas by combining different features, principles and syntactic ideas from my favorite languages. Each contributed equally to the resultant language, hence bringing together balance in a functional, object-oriented or imperative way.
+
+\*(TypeScript, Python, Rust, Go, Scala, Bash, Haskell, Perl, Ruby and OCaml, Flix, YAML, F#, C#, PHP, Perl, CoffeeScript, LiveScript)
 
 ## Language Principles
 
