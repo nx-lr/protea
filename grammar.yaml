@@ -106,7 +106,6 @@ repository:
       - comment: The following are placeholders.
           Will redo embedded HTML and CSS syntax later.
       - include: "#jsx"
-      - include: "#embedded-langs"
       - include: "#clauses"
       - include: "#declarations"
       - include: "#keywords"
@@ -120,143 +119,6 @@ repository:
       - include: "#calls"
       - include: "#variables"
       - include: "#illegal"
-
-  jsx:
-    comment: Avoid < operator expressions as best we can using Zertosh's regex
-    patterns:
-      - begin: (?=<[_\p{L}\p{Nl}])
-        end: (?=.)
-        applyEndPatternLast: 1
-        patterns:
-          - include: "#tag-element-name"
-    repository:
-      tag-element-name:
-        patterns:
-          - comment: JSX Fragment
-            name: meta.tag.ig
-            contentName: JSXAttrs
-            begin: \s*+(<)\s*(?=>)
-            end: (?<=</)(>)
-            beginCaptures:
-              1: {name: punctuation.definition.tag.ig}
-            endCaptures:
-              1: {name: punctuation.definition.tag.ig}
-            patterns:
-              - include: "#tag-termination"
-          - comment: "Tags that end > are trapped in #tag-termination"
-            name: meta.tag.ig
-            contentName: JSXAttrs
-            begin: |
-              (?x)\s*+(<)([_\p{L}\p{Nl}][^\s,;'"`\\</>]*)(?=[\/>\s])(?![:])(?<!\.|:)
-            end: \s*(?<=</)(\2)(>)|(/>)|((?<=</)\O*?)>
-            beginCaptures:
-              1: {name: punctuation.definition.tag.ig}
-              2:
-                patterns: &tag-names
-                  - include: "#type-names"
-                  - include: "#custom-types"
-                  - include: "#function-entities"
-                  - include: "#operators"
-            endCaptures:
-              1: {patterns: *tag-names}
-              2: {name: punctuation.definition.tag.ig}
-              3: {name: punctuation.definition.tag.ig}
-              4: {name: invalid.illegal.termination.ig}
-            patterns:
-              - include: "#tag-termination"
-              - include: "#tag-attributes"
-      tag-termination:
-        comment: uses non consuming search for </ in </tag>
-        contentName: JSXNested
-        begin: (>)
-        end: (</)
-        beginCaptures:
-          0: {name: punctuation.definition.tag.ig}
-          1: {name: JSXStartTagEnd}
-        endCaptures:
-          0: {name: punctuation.definition.tag.ig}
-          1: {name: JSXEndTagStart}
-        patterns:
-          - include: "#evaluated-code"
-          - include: "#entities"
-          - include: "#tag-element-name"
-          - include: "#string-escapes"
-          - include: markdown.math.block
-          - include: text.html.markdown#inline
-      attribute-expression:
-        name: meta.embedded.expression.js
-        contentName: source.js
-        begin: \(
-        end: \)
-        captures:
-          0: {name: punctuation.section.embedded.ig}
-        patterns:
-          - include: $self
-          - include: source.yaml#flow-collection
-      tag-attributes:
-        patterns:
-          - include: "#comments"
-          - include: "#attribute-name"
-          - include: "#spread-attribute"
-          - include: "#attribute-expression"
-          - include: "#literals"
-          - include: "#evaluated-code"
-          - include: "#tag-element-name"
-      spread-attribute:
-        comment: Spread attribute { ... AssignmentExpression }
-        match: (?<!\*)\*(?!\*)
-        name: keyword.operator.spread.ig
-      attribute-name:
-        patterns:
-          - comment: Style attribute
-            begin: (?<!\S)(style)(=)?({)
-            end: \s*(})\s*
-            beginCaptures:
-              1: {name: entity.other.attribute-name.ig}
-              2: {name: punctuation.separator.key-value.ig}
-              3: {name: punctuation.section.embedded.ig}
-            endCaptures:
-              1: {name: punctuation.section.embedded.ig}
-            patterns:
-              - include: source.css.scss#flow_control
-              - include: source.css.scss#rules
-              - include: source.css.scss#properties
-              - include: source.css.scss
-          - comment: Attribute names
-            match: (?<=[)\]}])(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
-            captures:
-              1: {name: punctuation.separator.key-value.ig}
-              2:
-                name: string.unquoted.html.ig
-                patterns:
-                  - include: "#string-escapes"
-                  - include: source.yaml#flow-scalar
-          - comment: Attribute names
-            match: (?<!\S)([_\p{L}\p{Nl}][^\s,;'"`\\/<=>]*)(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
-            captures:
-              1: {name: entity.other.attribute-name.ig}
-              2: {name: punctuation.separator.key-value.ig}
-              3:
-                name: string.unquoted.html.ig
-                patterns:
-                  - include: "#string-escapes"
-                  - include: source.yaml#flow-scalar
-      evaluated-code:
-        name: meta.embedded.expression.js
-        contentName: source.js
-        begin: "{"
-        end: "}"
-        captures:
-          0: {name: punctuation.section.embedded.ig}
-        patterns:
-          - include: "#spread-attribute"
-          - include: $self
-      entities:
-        patterns:
-          - include: text.xml#entity
-          - comment: Entity with & and invalid name
-            match: "&\\s*+;"
-            name: invalid.illegal.bad-ampersand.ig
 
   illegal:
     patterns:
@@ -1404,6 +1266,143 @@ repository:
               - include: "#regexp-char-class"
               - include: "#regexp-char-ops"
               - include: "#regexp-char-set"
+
+  jsx:
+    comment: Avoid < operator expressions as best we can using Zertosh's regex
+    patterns:
+      - begin: (?=<[_\p{L}\p{Nl}])
+        end: (?=.)
+        applyEndPatternLast: 1
+        patterns:
+          - include: "#tag-element-name"
+    repository:
+      tag-element-name:
+        patterns:
+          - comment: JSX Fragment
+            name: meta.tag.ig
+            contentName: JSXAttrs
+            begin: \s*+(<)\s*(?=>)
+            end: (?<=</)(>)
+            beginCaptures:
+              1: {name: punctuation.definition.tag.ig}
+            endCaptures:
+              1: {name: punctuation.definition.tag.ig}
+            patterns:
+              - include: "#tag-termination"
+          - comment: "Tags that end > are trapped in #tag-termination"
+            name: meta.tag.ig
+            contentName: JSXAttrs
+            begin: |
+              (?x)\s*+(<)([_\p{L}\p{Nl}][^\s,;'"`\\</>]*)(?=[\/>\s])(?![:])(?<!\.|:)
+            end: \s*(?<=</)(\2)(>)|(/>)|((?<=</)\O*?)>
+            beginCaptures:
+              1: {name: punctuation.definition.tag.ig}
+              2:
+                patterns: &tag-names
+                  - include: "#type-names"
+                  - include: "#custom-types"
+                  - include: "#function-entities"
+                  - include: "#operators"
+            endCaptures:
+              1: {patterns: *tag-names}
+              2: {name: punctuation.definition.tag.ig}
+              3: {name: punctuation.definition.tag.ig}
+              4: {name: invalid.illegal.termination.ig}
+            patterns:
+              - include: "#tag-termination"
+              - include: "#tag-attributes"
+      tag-termination:
+        comment: uses non consuming search for </ in </tag>
+        contentName: JSXNested
+        begin: (>)
+        end: (</)
+        beginCaptures:
+          0: {name: punctuation.definition.tag.ig}
+          1: {name: JSXStartTagEnd}
+        endCaptures:
+          0: {name: punctuation.definition.tag.ig}
+          1: {name: JSXEndTagStart}
+        patterns:
+          - include: "#evaluated-code"
+          - include: "#entities"
+          - include: "#tag-element-name"
+          - include: "#string-escapes"
+          - include: markdown.math.block
+          - include: text.html.markdown#inline
+      attribute-expression:
+        name: meta.embedded.expression.js
+        contentName: source.js
+        begin: \(
+        end: \)
+        captures:
+          0: {name: punctuation.section.embedded.ig}
+        patterns:
+          - include: $self
+          - include: source.yaml#flow-collection
+      tag-attributes:
+        patterns:
+          - include: "#comments"
+          - include: "#attribute-name"
+          - include: "#spread-attribute"
+          - include: "#attribute-expression"
+          - include: "#literals"
+          - include: "#evaluated-code"
+          - include: "#tag-element-name"
+      spread-attribute:
+        comment: Spread attribute { ... AssignmentExpression }
+        match: (?<!\*)\*(?!\*)
+        name: keyword.operator.spread.ig
+      attribute-name:
+        patterns:
+          - comment: Style attribute
+            begin: (?<!\S)(style)(=)?({)
+            end: \s*(})\s*
+            beginCaptures:
+              1: {name: entity.other.attribute-name.ig}
+              2: {name: punctuation.separator.key-value.ig}
+              3: {name: punctuation.section.embedded.ig}
+            endCaptures:
+              1: {name: punctuation.section.embedded.ig}
+            patterns:
+              - include: source.css.scss#flow_control
+              - include: source.css.scss#rules
+              - include: source.css.scss#properties
+              - include: source.css.scss
+          - comment: Attribute names
+            match: (?<=[)\]}])(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
+            captures:
+              1: {name: punctuation.separator.key-value.ig}
+              2:
+                name: string.unquoted.html.ig
+                patterns:
+                  - include: "#string-escapes"
+                  - include: source.yaml#flow-scalar
+          - comment: Attribute names
+            match: (?<!\S)([_\p{L}\p{Nl}][^\s,;'"`\\/<=>]*)(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
+            captures:
+              1: {name: entity.other.attribute-name.ig}
+              2: {name: punctuation.separator.key-value.ig}
+              3:
+                name: string.unquoted.html.ig
+                patterns:
+                  - include: "#string-escapes"
+                  - include: source.yaml#flow-scalar
+      evaluated-code:
+        name: meta.embedded.expression.js
+        contentName: source.js
+        begin: "{"
+        end: "}"
+        captures:
+          0: {name: punctuation.section.embedded.ig}
+        patterns:
+          - include: "#spread-attribute"
+          - include: $self
+      entities:
+        patterns:
+          - include: text.xml#entity
+          - comment: Entity with & and invalid name
+            match: "&\\s*+;"
+            name: invalid.illegal.bad-ampersand.ig
 
   document:
     patterns:
@@ -3709,260 +3708,4 @@ repository:
           1: {name: punctuation.definition.array.ig}
         patterns:
           - include: "#punctuation"
-          - include: $self
-
-  embedded-langs:
-    patterns:
-      - include: "#raw-haml"
-      - include: "#raw-stylus"
-      - include: "#raw-yaml"
-      - include: "#raw-python"
-      - include: "#raw-ruby"
-      - include: "#raw-pug"
-      - include: "#raw-markdown"
-      - include: "#raw-css"
-      - include: "#raw-scss"
-      - include: "#raw-less"
-      - include: "#raw-html"
-      - include: "#raw-javascript"
-      - include: "#raw-typescript"
-      - include: "#raw-other"
-
-    repository:
-      raw-yaml:
-        begin: \s*\b(raw)\b\s*\b((?i:yaml))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.yaml.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.yaml.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: source.yaml
-          - include: $self
-      raw-python:
-        begin: \s*\b(raw)\b\s*\b((?i:py|python))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.python.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.python.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: source.python
-          - include: $self
-      raw-ruby:
-        begin: \s*\b(raw)\b\s*\b((?i:rb|ruby))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.ruby.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.ruby.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: source.ruby
-          - include: $self
-      raw-css:
-        begin: \s*\b(raw)\b\s*\b((?i:css))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.css.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.css.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: source.css
-          - include: $self
-      raw-javascript:
-        begin: \s*\b(raw)\b\s*\b((?i:js|javascript))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.js.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.js.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: source.js
-          - include: $self
-      raw-typescript:
-        begin: \s*\b(raw)\b\s*\b((?i:ts|typescript))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.ts.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.ts.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: source.ts
-          - include: $self
-      raw-html:
-        begin: \s*\b(raw)\b\s*\b((?i:html))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.html.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.html.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: text.html
-          - include: $self
-      raw-scss:
-        begin: \s*\b(raw)\b\s*\b((?i:s[ca]ss))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.scss.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.scss.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: source.css.scss
-          - include: $self
-      raw-less:
-        begin: \s*\b(raw)\b\s*\b((?i:less))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.less.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.less.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: source.css.less
-          - include: $self
-      raw-pug:
-        begin: \s*\b(raw)\b\s*\b((?i:pug))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.pug.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.pug.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: text.pug
-          - include: $self
-      raw-markdown:
-        begin: \s*\b(raw)\b\s*\b((?i:md|mdown|markdown))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.markdown.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.markdown.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: text.html.markdown
-          - include: $self
-      raw-haml:
-        begin: \s*\b(raw)\b\s*\b((?i:haml))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.haml.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.haml.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: "#embedded-haml"
-          - include: $self
-      raw-stylus:
-        begin: \s*\b(raw)\b\s*\b((?i:styl|stylus))\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.stylus.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: meta.embedded.stylus.ig
-            patterns:
-              - include: "#embedded-raw"
-              - include: "#embedded-stylus"
-          - include: $self
-      raw-other:
-        begin: \s*\b(raw)\b\s*\b([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\b\s*(?:(:?=)|(:))?\s*
-        end: ^(?=\S)|(?!\G)
-        name: meta.embedded.other.ig
-        beginCaptures:
-          1: {name: storage.type.raw.ig}
-          2: {name: entity.name.raw.ig}
-          3: {name: keyword.operator.assignment.ig}
-          4: {name: punctuation.separator.colon.ig}
-        patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: string.unquoted.plain.in.ig
-            patterns:
-              - include: "#embedded-raw"
           - include: $self
