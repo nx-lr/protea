@@ -116,6 +116,7 @@ repository:
       - include: "#type-annotation"
       - include: "#operators"
       - include: "#literals"
+      - include: "#support"
       - include: "#calls"
       - include: "#variables"
       - include: "#illegal"
@@ -1980,13 +1981,13 @@ repository:
             match: (?<=^|['"`\\({\[\s])(:?=)(?=$|['"`\\\s)}\]])
             name: keyword.operator.assignment.ig
           - comment: arithmetic + - * ** *** / // /// % %% *> <*
-            match: (?<=^|['"`\\({\[\s])((?<!<)\+(?!>|\++)|(?<!<)-(?!>|-+)|\*{1,3}|/{1,3}(?!\\)|%%?|\*+>|<\*+)(?=$|['"`\\\s)}\]])
+            match: (?<=^|['"`\\({\[\s])((?<!<)\+(?!>|\++)|(?<!<)-(?!>|-+)|\*{1,3}|/{1,3}|%%?|\*+>|<\*+|<\*>)(?=$|['"`\\\s)}\]])
             name: keyword.operator.arithmetic.ig
           - comment: increment/decrement ++ --
             match: (?<=^|['"`\\({\[\s])((?:[+-])+)(?=$|['"`\\\s)}\]])
             name: keyword.operator.successor.ig
           - comment: logical && || ^^ /\ / \ \\ etc.
-            match: (?<=^|['"`\\({\[\s])((?:[&^]){2,}|\|\|+(?!>)|/\\|\\/|\\+)(?=$|['"`\\\s)}\]])
+            match: (?<=^|['"`\\({\[\s])((?:[&^]){2,}|\|\|+(?!>))(?=$|['"`\\\s)}\]])
             name: keyword.operator.logical.ig
           - comment: bitwise & | ^ ~
             match: (?<=^|['"`\\({\[\s])([&^]|\|(?!>)|~(?![!=<>]))(?=$|['"`\\\s)}\]])
@@ -2590,7 +2591,7 @@ repository:
       \s*(?:
       (?:# Access modifiers
       public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
-      |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
+      |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
       # Function or method modifiers
       |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
       |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
@@ -2644,7 +2645,7 @@ repository:
               (?:
               (# Access modifiers
               public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
-              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
+              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
               )|
               (# Function or method modifiers
               [gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
@@ -2662,9 +2663,25 @@ repository:
 
   support:
     patterns:
-      - include: "#support-constants"
-      - include: "#support-functions"
-      - include: "#type-names"
+      - comment: Python
+      - include: source.python#builtin-functions
+      - include: source.python#builtin-types
+      - include: source.python#magic-function-names
+      - include: source.python#magic-variable-names
+
+      - comment: PHP
+      - include: source.php#support
+      - include: source.php#class-builtin
+
+      - comment: JavaScript
+      - include: source.js#support-objects
+
+      - comment: Swift
+      - include: source.swift#builtin-properties
+      - include: source.swift#builtin-types
+      - include: source.swift#builtin-functions
+
+      - comment: Other
 
   declaration-keywords:
     comment: clause keywords
@@ -3141,7 +3158,7 @@ repository:
 
               (?:(?:# Access modifiers
               public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
-              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
+              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
               # Function or method modifiers
               |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
               |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
@@ -3184,7 +3201,7 @@ repository:
               \s*(?:
               (?:# Access modifiers
               public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
-              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
+              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
               # Function or method modifiers
               |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
               |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
@@ -3219,7 +3236,7 @@ repository:
 
               (?:(?:# Access modifiers
               public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
-              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
+              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
               # Function or method modifiers
               |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
               |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
@@ -3259,7 +3276,7 @@ repository:
               \s*(?:
               (?:# Access modifiers
               public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
-              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|final
+              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
               # Function or method modifiers
               |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
               |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
