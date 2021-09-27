@@ -2,18 +2,16 @@
 
 > Feels like JavaScript, better than JavaScript.
 
-Isogram is an open-source, robustly typed language that compiles to efficient and human-readable JavaScript, enabling you to avoid type-related bugs as your applications grow in complexity. It comes with a huge standard library and a unique combination of features that no other language offers.
+Isogram is an open-source, robustly typed language that compiles to efficient and human-readable JavaScript, enabling you to avoid type-related bugs as your web, mobile and desktop grow in complexity. It comes with a huge standard library and a unique combination of features that work together hand in hand.
 
 ```coffee
-/// Generates a custom Fibonacci sequence
-/// with an arbitrary set of integers
 export module Button {
   @React.Component
   export function make(&number: int): React.HTML = {
     let times: string = switch number {
-      case 1 -> "once"
-      case 2 -> "twice"
-      case n -> "$n times"
+      case (1) "once"
+      case (2) "twice"
+      case (let n) "$n times"
     };
     let msg: string = "Click me $times";
     <button> {msg as React.string} </button>;
@@ -21,22 +19,18 @@ export module Button {
 };
 ```
 
-```js
-var React = require("react");
+```ts
+import React from "react";
 
-function Playground$Button(Props) {
-  var count = Props.count;
-  var times =
-    count !== 1 ? (count !== 2 ? String(count) + " times" : "twice") : "once";
-  var msg = "Click me " + times;
-  return React.createElement("button", undefined, msg);
-}
-
-var Button = {
-  make: Playground$Button,
+/*iso::module*/ const Button = {
+  make({count}) {
+    let times = count == 1 ? "once" : count == 2 ? "twice" : `${count} times`;
+    let msg = `Click me ${times}`;
+    return <button>{msg} x</button>;
+  },
 };
 
-exports.Button = Button;
+export default Button;
 ```
 
 ## The Language
@@ -49,29 +43,37 @@ Many new languages, frameworks and transpilers have been introduced in order to 
 
 ## Isogram's Origins
 
-In March 2020, I had a hobby project which I written in Python that relied on machine learning, cryptography, and translation, that I wanted to port into JavaScript and integrate into a website. Moving over to JavaScript meant having to learn new things, such as writing write. That sort of thing.
+In March 2020, I had a hobby project, a conlang generator, which I written in Python that utilized libraries like NumPy and NLTK that I wanted to port into JavaScript and integrate into a website. I went with the na&iuml;ve approach of transcribing my code from Python to JavaScript by hand. And I'm sure every single JS developer can relate.
 
-I came into JavaScript from Python when I decided to port my existing Python codebase into JavaScript to be able to use it on the browser. I was initially annoyed over having to write things like `1 < 2 && 2 < 3` instead of `1 < 2 < 3`, or `a[a.length - 1]` instead of `a[-1]`, as well as having to deal with `cannot read property of undefined` errors which pop up all the time, which to me were a "pain in the ass". And I'm sure every single JS developer can relate.
+I was initially annoyed over things like no chained comparison or having to write `x[x.length - 1]` but coming from Java I was conditioned to do so. I spend about 30%(?) of my time trying to fix missing brackets, about 10% on semicolons and commas alone (as my editor fills in the semicolons for me). I've had enough of errors or bugs containing `null` or `undefined`, let alone the unknown type coercion.
 
-Yes I can get away with having to deal with these errors myself, but the fact that JavaScript did not _originally_ have errors in the first place and they were _really_ trying to steer clear from said errors by introducing weak typing, and implicit "type coercion". Errors that are not caught by the browser.
-
-The real middle finger for me was having a general lack of a standard library. Which means going to StackOverflow and searching for solutions which I must implement and understand myself. I'm an amateur developer developing in JavaScript and also developing applications for my school projects which I must credit. And I can embrace going through the pains of developing in JS, but I admit I'm too tired of it.
-
-And with NPM projects having too many dependencies means a lot of dead, unreachable code and heavily bloated JS projects, many (or most?) of which are just importable [JSON files](https://www.npmjs.com/package/@stdlib/datasets-male-first-names-en) or a simple code snippet such as [checking whether a number is even](https://www.npmjs.com/package/is-even).
+The real evil part for me was having a general lack of a standard library or anything of the like. This meant having to implement them myself, mainly through Stack Overflow and NPM. My JS projects are gigabytes in size when the JavaScript applications I'm developing were all simple, and I had say a thousand dependencies just for an Angular or Ionic application. Shucks.
 
 ---
 
-I did not think much about naming the language, the name itself comes from this snippet that began with something like
+I went through about several iterations of my language, shifting between C-style curly braces and indentation, as much as a month. The entire time I worked on my own programming languages I was still wearing braces. These are iterations of the _same_ language (the ones that didn't are marked with asterisks).
+
+- Apex `.apx` (Feb 2020)\*
+- Zenith `.ze` (Mar 2020)\*
+- Mirai `.mir` (Sep 2020)
+- Nova `.nova` (Nov-Dec 2020)\*
+- Nyx `.nyx` (Jan-Feb, Aug-Sep 2021)
+- Osom `.osm` (Mar 2021)
+- Perpleks `.pr` (Apr 2021)
+- Som(b)ra `.so` (May-Jul 2021)
+- Saga `.saga` (Jun-Jul 2021)\*
+- SagaScript `.sa` (Aug 2021)
+- Isogram `.iso` (Aug 2021 onwards)
+
+The latest name itself comes from [this snippet](https://developers.google.com/analytics/devguides/collection/analyticsjs) that began with something like
 
 ```js
-function (i, s, o, g, r, a, m) {};
+(function (i, s, o, g, r, a, m) {});
 ```
 
-The arguments to this function spell out the word "**_isogram_**". In wordplay, an **isogram** is really a word that contains unique, non-repeating letters. For example: _isogram_, _wordplay_, _ambidextrously_, _un-copyrightable_ or _dialogue_.
+The arguments to the function above spell out the word **_isogram_**, which, by definition, is a word that contains unique non-repeating letters. For example, _isogram_, _wordplay_, _ambidextrously_, _copyrightable_ or _dialogue_. I developed Isogram as a combination of influences from different languages\*, with each contributing equally to it.
 
-There are several reasons to the name. I love languages, natural and programming alike and I am obsessed with how they work. I played with language grammars and ideas by combining different features, principles and syntactic ideas from my favorite languages. Each contributed equally to the resultant language, hence bringing together balance in a functional, object-oriented or imperative way.
-
-\*(TypeScript, Python, Rust, Go, Scala, Bash, Haskell, Perl, Ruby and OCaml, Flix, YAML, F#, C#, PHP, Perl, CoffeeScript, LiveScript)
+\*(TypeScript, Python, Rust, Go, Scala, C#, Bash, Haskell, Perl, Ruby and OCaml, Flix, YAML, F#, PHP, Perl, CoffeeScript, LiveScript)
 
 ## Language Principles
 
