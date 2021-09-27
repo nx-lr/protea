@@ -9,33 +9,19 @@ use React, Framer.Motion
 
 element Item(&content) {
   const [isOpen, setIsOpen] = useState false;
-  return <motion.div layout>{isOpen !: content}</motion.div>;
+  return <motion.div layout>{isOpen !: content}</>;
 }
 
 element List(&items) {
   return <motion.ul layout>
     {for let ({content}) in items then <Item content=(content)/>}
-  </motion.ul>;
+  </>;
 }
 
 <motion.div
   initial={x: 100%}
   animate={x: calc(100vw - 50%)}
 />;
-```
-
-```ts
-import React from "react";
-
-/*iso::module*/ const Button = {
-  make({count}) {
-    let times = count == 1 ? "once" : count == 2 ? "twice" : `${count} times`;
-    let msg = `Click me ${times}`;
-    return <button>{msg} x</button>;
-  },
-};
-
-export default Button;
 ```
 
 ## The Language
