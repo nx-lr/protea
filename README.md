@@ -5,18 +5,23 @@
 Isogram is an open-source, robustly typed language that compiles to efficient and human-readable JavaScript, enabling you to avoid type-related bugs as your web, mobile and desktop grow in complexity. It comes with a huge standard library and a unique combination of features that work together hand in hand.
 
 ```coffee
-export module Button {
-  @React.Component
-  export function make(&number: int): React.HTML = {
-    let times: string = switch number {
-      case (1) "once"
-      case (2) "twice"
-      case (let n) "$n times"
-    };
-    let msg: string = "Click me $times";
-    <button> {msg as React.string} </button>;
-  };
-};
+use React, Framer.Motion
+
+element Item(&content) {
+  const [isOpen, setIsOpen] = useState false;
+  return <motion.div layout>{isOpen !: content}</motion.div>;
+}
+
+element List(&items) {
+  return <motion.ul layout>
+    {for let ({content}) in items then <Item content=(content)/>}
+  </motion.ul>;
+}
+
+<motion.div
+  initial={x: 100%}
+  animate={x: calc(100vw - 50%)}
+/>;
 ```
 
 ```ts
