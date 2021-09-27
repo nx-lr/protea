@@ -148,7 +148,7 @@ repository:
     patterns:
       - comment: Primitive data types
         match: |
-          (?x)\s*\b(
+          (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(
           bool|u?int|float|natural|ratio|real|imag|complex|number
           |char|rune|string|symbol|regexp?|function|buffer|binary
           |# numeric types
@@ -159,7 +159,7 @@ repository:
         name: support.type.builtin.primitive.iso
       - comment: Constant/algebraic types
         match: |
-          (?x)\s*\b(
+          (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(
           true|false|null|void|nan|infin
           |any|empty|object|record|unit|mixed
           |just|some|none|never|(im)?pure|channel
@@ -167,14 +167,14 @@ repository:
         name: support.type.builtin.iso
       - comment: Data structures
         match: |
-          (?x)\s*\b(
+          (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(
           array|tuple|(?:mut)?(?:list|set|map)|dict|function
           |process|sequence|generator|range|stack|heap|queue|tree|trie
           )\b
         name: support.type.primitive.iso
       - comment: Primitive classes
         match: |
-          (?x)\s*\b(
+          (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(
           Bool|U?Int|Float|Natural|Ratio|Real|Imag|Complex|Number
           |Char|Rune|String|Symbol|RegExp?|Function|Buffer|Binary
           |# Numeric Types
@@ -185,7 +185,7 @@ repository:
         name: support.class.builtin.primitive.iso
       - comment: Constant/algebraic classes
         match: |
-          (?x)\s*\b(
+          (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(
           True|False|Null|Void|NaN|Infin
           |Any|Empty|Object|Record|Unit|Mixed
           |Just|Some|None|Never|(Im)?pure|Channel
@@ -193,7 +193,7 @@ repository:
         name: support.class.builtin.iso
       - comment: Data structure classes
         match: |
-          (?x)\s*\b(
+          (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(
           Array|Tuple|(Mut)?(List|Set|Map)|Dict|Function
           |Process|Sequence|Generator|Range|Stack|Heap|Queue|Tree|Trie
           )\b
@@ -243,7 +243,7 @@ repository:
   constants:
     patterns:
       - match: |
-          (?x)\s*\b(?:
+          (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(?:
           (true)|(false)|(null)|(void)|(nan)|(infin)
           )\b\s*
         captures:
@@ -254,7 +254,7 @@ repository:
           5: {name: constant.language.nan.iso}
           6: {name: constant.language.infinity.iso}
       - match: |
-          (?x)\s*\b(?:
+          (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(?:
           (_|params)|(super|this|self|proto|prototype|constructor|target)
           )\b\s*
         captures:
@@ -688,8 +688,8 @@ repository:
       - match: |
           (?x)
           \s*(\\)
-          ((?:\\.|[^\s,:;])+?)
-          (?=[({\[)}\]\s,:;]|$)\s*
+          ((?:\\.|[^\s.,:;])+?)
+          (?=[({\[)}\]\s.,:;]|$)\s*
         name: string.unquoted.iso
         captures:
           1: {name: punctuation.definition.string.iso}
@@ -794,8 +794,8 @@ repository:
     match: |
       (?x)
       \s*
-      (:)((?:\w|\\.)(?:\\.|[^\s,:;])*?)
-      \b\s*
+      (:)((?:\\.|[^\s.,:;])+?)
+      (?=[({\[)}\]\s.,:;]|$)\s*
     name: meta.symbol.iso
     captures:
       1: {name: punctuation.definition.symbol.iso}
@@ -806,7 +806,7 @@ repository:
       (?x)
       (?<=^|[({\[\s,;*+-])\s*
 
-      (?!
+      (?!(?<!(?<!\.)\.|[?!:]:|->)
       \b(?:# don't match keywords
       in|of|as|is|new|infer|unset
       |typeof|nameof|sizeof|pairof|keyof|valueof
@@ -1719,7 +1719,7 @@ repository:
         match: |
           (?x)\s*\b
           (
-          (?!
+          (?!(?<!(?<!\.)\.|[?!:]:|->)
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
           |typeof|nameof|sizeof|pairof|keyof|valueof
@@ -1748,7 +1748,7 @@ repository:
           )
           \b\s+
           (?=
-          (?!
+          (?!(?<!(?<!\.)\.|[?!:]:|->)
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
           |typeof|nameof|sizeof|pairof|keyof|valueof
@@ -1783,7 +1783,7 @@ repository:
         match: |
           (?x)\s*\b
           (
-          (?!
+          (?!(?<!(?<!\.)\.|[?!:]:|->)
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
           |typeof|nameof|sizeof|pairof|keyof|valueof
@@ -1815,7 +1815,7 @@ repository:
           !(?:\.=?)?\s*|
           \s+[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*
 
-          (?!
+          (?!(?<!(?<!\.)\.|[?!:]:|->)
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
           |typeof|nameof|sizeof|pairof|keyof|valueof
@@ -1842,7 +1842,8 @@ repository:
           )
 
           [_\p{L}\p{M}\p{N}]+|\[<|
-          (?:[!?~]?\.=?|[?!:]:=?|->)?\s*['"`\\({\[&&[^\[{]]
+          (?:[!?~]?\.=?|[?!:]:=?|->)?\s*\(|
+          (?:[!?~]?\.=?|[?!:]:=?|->)?\s+['"`\\\[]
           )
         captures:
           1: {patterns: [{include: "#function-entities"}]}
@@ -2177,7 +2178,7 @@ repository:
               (?x)\s*(?:(\++>)|(\|+>))(?=\s*(
               [\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*# prefix
 
-              (?!
+              (?!(?<!(?<!\.)\.|[?!:]:|->)
               \b(?:# don't match keywords
               in|of|as|is|new|infer|unset
               |typeof|nameof|sizeof|pairof|keyof|valueof
@@ -2216,10 +2217,11 @@ repository:
               - match: |
                   (?x)\s*\b
 
-                  (?!
-                  \s*\b
-                  (?:# don't match keywords
-                  new|unset|length|delete|to|til|thru|at|by
+                  (?!(?<!(?<!\.)\.|[?!:]:|->)
+                  \b(?:# don't match keywords
+                  in|of|as|is|new|infer|unset
+                  |typeof|nameof|sizeof|pairof|keyof|valueof
+                  |length|delete|to|til|thru|at|by
                   |n?and|x?n?or|not|parallel|series|spawn|discard
                   |func?|function|proc|process|macro
                   |let|var|val|const|declare
@@ -2330,9 +2332,8 @@ repository:
     match: |
       (?x)\s*\b
 
-      (?!
-      \s*\b
-      (?:# don't match keywords
+      (?!(?<!(?<!\.)\.|[?!:]:|->)
+      \b(?:# don't match keywords
       new|unset|length|delete|to|til|thru|at|by
       |n?and|x?n?or|not|parallel|series|spawn|discard
       |func?|function|proc|process|macro
@@ -2494,22 +2495,10 @@ repository:
 
   type-keywords:
     patterns:
-      - match: |
-          (?x)\s*\b
-          (extends)\b\s*
-        name: storage.type.extends.iso
-      - match: |
-          (?x)\s*\b
-          (implements)\b\s*
-        name: storage.type.implements.iso
-      - match: |
-          (?x)\s*\b
-          (typeof|nameof|sizeof|keyof|valueof|pairof|infer|in|of|as|is)\b\s*
+      - match: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(extends|implements)\b\s*
+        name: storage.type.$1.iso
+      - match: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(typeof|nameof|sizeof|keyof|valueof|pairof|infer|in|of|as|is)\b\s*
         name: keyword.operator.expression.$1.iso
-      - match: |
-          (?x)\s*\b
-          (valueof)\b\s*
-        name: keyword.operator.expression.valueof.iso
 
   type-operators:
     patterns:
@@ -2688,7 +2677,7 @@ repository:
   declaration-keywords:
     comment: clause keywords
     match: |
-      (?x)\s*\b(?:
+      (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(?:
       (func?|function|proc|process|macro)# function
       |(let|va[rl]|const)# variable
       |(class|extend)# class
@@ -2729,7 +2718,7 @@ repository:
   general-keywords:
     comment: general keywords
     match: |
-      (?x)\s*\b(?:
+      (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(?:
       (if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard)#1
       |(for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat)#2
       |(switch|case|fail|default|fallthru)#3
@@ -2764,7 +2753,7 @@ repository:
   expression-keywords:
     comment: expression keywords
     match: |
-      (?x)\s*\b(?:
+      (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(?:
       (in|of|as|is|new|infer
       |typeof|nameof|sizeof|keyof|pairof|valueof)
       |(length)|(delete)|(to|til|thru|at|by)|(unset)
@@ -2780,9 +2769,9 @@ repository:
 
   keywords:
     patterns:
-      - match: \s*\b(let|va[rl]|const)\b\s*
+      - match: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(let|va[rl]|const)\b\s*
         name: storage.type.iso
-      - match: \s*\b(declare)\b\s*
+      - match: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(declare)\b\s*
         name: keyword.other.$1.iso
       - include: "#modifier-keywords"
       - include: "#declaration-keywords"
@@ -2795,7 +2784,7 @@ repository:
     repository:
       control-expression:
         applyEndPatternLast: 1
-        begin: \s*\b(halt|skip|break|continue|goto|label)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(halt|skip|break|continue|goto|label)\b
         end: (?=\O)|$
         beginCaptures:
           1: {name: keyword.control.flow.iso}
@@ -2806,14 +2795,14 @@ repository:
 
       module-expression:
         applyEndPatternLast: 1
-        begin: \s*\b(import|export|open|close|use|using)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(import|export|open|close|use|using)\b\s*
         end: (?=\O)|$
         beginCaptures:
           1: {name: keyword.control.module.iso}
         patterns:
           - include: "#modifier-keywords"
           - include: "#type-keywords"
-          - match: \s*\b(from|to|as|all|any|show|hide|to|n?and|x?n?or|not)\b\s*
+          - match: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(from|to|as|all|any|show|hide|to|n?and|x?n?or|not)\b\s*
             name: keyword.control.module.iso
           - match: \s*\*
             name: keyword.operator.module.all.iso
@@ -2855,35 +2844,35 @@ repository:
 
       query-expression:
         patterns:
-          - begin: \s*\b(from)\b\s*
-            end: \s*\b(in|of)\b\s*
+          - begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(from)\b\s*
+            end: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(in|of)\b\s*
             captures:
               1: {name: keyword.query.iso}
             patterns:
               - include: $self
-          - match: \s*\b((\b(fold|scan)\b)\s*(\b(left|right)\b)?\s*(\b(by|while|until|with)\b)?)\b\s*
+          - match: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b((\b(fold|scan)\b)\s*(\b(left|right)\b)?\s*(\b(by|while|until|with)\b)?)\b\s*
             name: keyword.query.iso
-          - begin: \s*\b(group)\b\s*
+          - begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(group)\b\s*
             end: \s*\b(by)\b\s*
             captures:
               1: {name: keyword.query.iso}
             patterns:
               - include: $self
-          - begin: \s*\b(join)\b\s*
-            end: \s*\b(in|of)\b\s*
+          - begin: (?x)\s*\b(join)\b\s*
+            end: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(in|of)\b\s*
             captures:
               1: {name: keyword.query.iso}
             patterns:
               - include: $self
-          - match: \s*\b(equals?|[io]nto)\b\s*
+          - match: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(equals?|[io]nto)\b\s*
             name: keyword.query.iso
-          - match: \s*\b((\b(order)\b)\s*(\b((a|de)sc)\b)?\s*(\b(by)\b)?)\b\s*
+          - match: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b((\b(order)\b)\s*(\b((a|de)sc)\b)?\s*(\b(by)\b)?)\b\s*
             name: keyword.query.iso
-          - match: \s*\b(select)\b\s*
+          - match: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(select)\b\s*
             name: keyword.query.iso
-          - match: \s*\b((\b(take|drop)\b)\s*(\b(left|right|init|head|tail|last)\b)?\s*(\b(by|while|until|with)\b)?)\b\s*
+          - match: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b((\b(take|drop)\b)\s*(\b(left|right|init|head|tail|last)\b)?\s*(\b(by|while|until|with)\b)?)\b\s*
             name: keyword.query.iso
-          - match: \s*\b(where)\b\s*
+          - match: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(where)\b\s*
             name: keyword.query.iso
 
   parameter-brackets:
@@ -2955,7 +2944,7 @@ repository:
     repository:
       class:
         applyEndPatternLast: 1
-        begin: \s*\b(class|extend)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(class|extend)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.class.iso}
@@ -2965,7 +2954,7 @@ repository:
             name: entity.name.class.iso
       constraint:
         applyEndPatternLast: 1
-        begin: \s*\b(given|constraint)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(given|constraint)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.constraint.iso}
@@ -2975,7 +2964,7 @@ repository:
             name: entity.name.constraint.iso
       enum:
         applyEndPatternLast: 1
-        begin: \s*\b(enum|relation)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(enum|relation)\b\s*
         end: (?<=})|(?=;)|$
         name: meta.enum.declaration.iso
         beginCaptures:
@@ -2987,7 +2976,7 @@ repository:
             name: entity.name.enum.iso
       fragment:
         applyEndPatternLast: 1
-        begin: \s*\b(fragment|struct)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(fragment|struct)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.fragment.iso}
@@ -2997,7 +2986,7 @@ repository:
             name: entity.name.fragment.iso
       function:
         applyEndPatternLast: 1
-        begin: \s*\b(func?|function|proc|process|macro)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(func?|function|proc|process|macro)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.function.iso}
@@ -3007,7 +2996,7 @@ repository:
             name: entity.name.function.iso
       interface:
         applyEndPatternLast: 1
-        begin: \s*\b(interface|schema)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(interface|schema)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.interface.iso}
@@ -3017,7 +3006,7 @@ repository:
             name: entity.name.interface.iso
       module:
         applyEndPatternLast: 1
-        begin: \s*\b(module|package)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(module|package)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.module.iso}
@@ -3027,7 +3016,7 @@ repository:
             name: entity.name.module.iso
       namespace:
         applyEndPatternLast: 1
-        begin: \s*\b(namespace|lattice)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(namespace|lattice)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.namespace.iso}
@@ -3037,7 +3026,7 @@ repository:
             name: entity.name.namespace.iso
       object:
         applyEndPatternLast: 1
-        begin: \s*\b(object|record)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(object|record)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.object.iso}
@@ -3047,7 +3036,7 @@ repository:
             name: entity.name.object.iso
       protocol:
         applyEndPatternLast: 1
-        begin: \s*\b(protocol|member)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(protocol|member)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.protocol.iso}
@@ -3057,7 +3046,7 @@ repository:
             name: entity.name.protocol.iso
       project:
         applyEndPatternLast: 1
-        begin: \s*\b(project|attribute)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(project|attribute)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.protocol.iso}
@@ -3067,7 +3056,7 @@ repository:
             name: entity.name.project.iso
       raw:
         applyEndPatternLast: 1
-        begin: \s*\b(raw)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(raw)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.raw.iso}
@@ -3077,7 +3066,7 @@ repository:
             name: entity.name.raw.iso
       schema:
         applyEndPatternLast: 1
-        begin: \s*\b(data|query)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(data|query)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.schema.iso}
@@ -3087,7 +3076,7 @@ repository:
             name: entity.name.schema.iso
       style:
         applyEndPatternLast: 1
-        begin: \s*\b(style)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(style)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.style.iso}
@@ -3097,7 +3086,7 @@ repository:
             name: entity.name.style.iso
       trait:
         applyEndPatternLast: 1
-        begin: \s*\b(trait|friend)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(trait|friend)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.trait.iso}
@@ -3308,7 +3297,7 @@ repository:
 
       new-clause:
         applyEndPatternLast: 1
-        begin: \s*\b(new)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(new)\b
         end: (?=\O)|$
         beginCaptures:
           1: {name: keyword.operator.expression.$1.iso}
@@ -3320,14 +3309,14 @@ repository:
       type-clause:
         patterns:
           - applyEndPatternLast: 1
-            begin: \s*\b(as|is)\b
+            begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(as|is)\b
             end: (?=\O)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.iso}
             patterns:
               - include: "#types"
           - applyEndPatternLast: 1
-            begin: \s*\b(type|alias)\b
+            begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(type|alias)\b
             end: (?=\O)|$
             beginCaptures:
               1: {name: keyword.other.typedef.iso}
@@ -3337,7 +3326,7 @@ repository:
                   1: {name: keyword.operator.assignment.iso}
               - include: "#types"
           - applyEndPatternLast: 1
-            begin: (?x)\s*\b((?:return|give|await|yield|throw|raise)s)\b
+            begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b((?:return|give|await|yield|throw|raise)s)\b
             end: (?=\O)|$
             beginCaptures:
               1: {name: keyword.modifier.iso}
@@ -3345,7 +3334,7 @@ repository:
               - include: "#types"
 
       case-clause:
-        begin: \s*\b(case|fail|default)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(case|fail|default)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         beginCaptures:
           1: {name: keyword.control.switch.iso}
@@ -3354,7 +3343,7 @@ repository:
           - include: $self
 
       catch-clause:
-        begin: \s*\b(try|retry|catch|rescue|finally)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(try|retry|catch|rescue|finally)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         name: meta.catch.iso
         beginCaptures:
@@ -3375,7 +3364,7 @@ repository:
           - include: $self
 
       thread-clause:
-        begin: \s*\b(parallel|series|spawn|discard|fixed|lock)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(parallel|series|spawn|discard|fixed|lock)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         name: meta.thread.iso
         beginCaptures:
@@ -3396,7 +3385,7 @@ repository:
           - include: $self
 
       do-clause:
-        begin: \s*\b(do|redo)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(do|redo)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         name: meta.do.iso
         beginCaptures:
@@ -3406,7 +3395,7 @@ repository:
           - include: $self
 
       for-clause:
-        begin: \s*\b(for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         name: meta.for.iso
         beginCaptures:
@@ -3427,7 +3416,7 @@ repository:
           - include: $self
 
       if-clause:
-        begin: \s*\b(if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         name: meta.if.iso
         beginCaptures:
@@ -3437,7 +3426,7 @@ repository:
           - include: $self
 
       match-clause:
-        begin: \s*\b(match)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(match)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         name: meta.match.iso
         beginCaptures:
@@ -3447,7 +3436,7 @@ repository:
           - include: $self
 
       switch-clause:
-        begin: \s*\b(switch)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(switch)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         name: meta.switch.iso
         beginCaptures:
@@ -3457,7 +3446,7 @@ repository:
           - include: $self
 
       when-clause:
-        begin: \s*\b(when)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(when)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         beginCaptures:
           1: {name: keyword.control.match.iso}
@@ -3475,7 +3464,7 @@ repository:
           - include: $self
 
       with-clause:
-        begin: \s*\b(with)\b
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(with)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         name: meta.with.iso
         beginCaptures:
