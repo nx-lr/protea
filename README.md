@@ -8,20 +8,26 @@ Isogram is an open-source, robustly typed language that compiles to efficient an
 use React, Framer.Motion
 
 element Item(&content) {
-  const [isOpen, setIsOpen] = useState false;
-  return <motion.div layout>{isOpen !: content}</>;
+  const [isOpen, setIsOpen] = useState(false);
+  return <motion:div layout>
+    {isOpen !: content}
+  </motion:div>;
 }
 
 element List(&items) {
-  return <motion.ul layout>
+  return <motion:ul x=1>
     {for let ({content}) in items then <Item content=(content)/>}
-  </>;
+  </motion:ul>;
 }
 
-<motion.div
+<motion:div
   initial={x: 100%}
   animate={x: calc(100vw - 50%)}
 />;
+```
+
+```html
+<style></style>
 ```
 
 ## The Language
