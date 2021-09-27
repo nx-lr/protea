@@ -1251,7 +1251,7 @@ repository:
               - include: "#regexp-char-set"
 
   tag-names:
-    patterns: &tag-names
+    patterns:
       - match: (?x)\b([_\p{L}]\w*)\b(?=[.:])
         name: entity.name.tag.namespace.iso
       - match: |
@@ -1304,9 +1304,9 @@ repository:
             end: \s*(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>
             beginCaptures:
               1: {name: punctuation.definition.tag.iso}
-              2: {patterns: *tag-names}
+              2: {patterns: [include: "#tag-names"]}
             endCaptures:
-              1: {patterns: *tag-names}
+              1: {patterns: [include: "#tag-names"]}
               2: {name: punctuation.definition.tag.iso}
               3: {name: punctuation.definition.tag.iso}
               4: {name: invalid.illegal.termination.iso}
