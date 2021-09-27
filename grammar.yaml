@@ -31,16 +31,14 @@ comment: |
     - Locale and Unicode script codes
     - Transformation rules
 
-  - Add standard library functions, types, classes, in this order
-    - PHP (naming conventions use camelCase only)
+  - Add standard library functions, types, classes,
+    modules, properties, variables in this order:
     - JavaScript/TypeScript
-    - Java/Scala/Flix/Kotlin
-    - Swift/C(++) + Objective-C(++)
-    - C#/F#/.NET
-    - Elixir
-    - Perl, Rust, Crystal, Ruby
-    - Python
-    - Haskell, Elm, PureScript etc
+    - PHP
+    - Python (names, methods, etc), Perl, Lua and more
+    - Swift
+    - C, Objective C(++)
+    - R
 
   Done:
   - Standardized modifier and declaration keywords
@@ -95,7 +93,7 @@ repository:
 
   illegal:
     patterns:
-      - match: '\p{N}[\p{L}\p{M}\p{N}_.+-/\\]*?'
+      - match: '\p{N}[_\p{L}\p{M}\p{N}.+-/\\]*?'
         name: invalid.illegal.numeric.other.iso
       - match: '[_\p{L}\p{M}\p{N}]+?'
         name: invalid.illegal.variable.other.iso
@@ -106,7 +104,7 @@ repository:
 
   illegal-keywords:
     match: |
-      \s*\b(
+      \s*(?<!(?<!\.)\.|[?!:]:|->)\b(
       in|of|as|is|new|infer|unset
       |typeof|nameof|sizeof|pairof|keyof|valueof
       |length|delete|to|til|thru|at|by
@@ -2578,7 +2576,7 @@ repository:
       (?x)
       ((?:
       \s*(?:
-      (?:# Access modifiers
+      (?<!(?<!\.)\.|[?!:]:|->)\b(?:# Access modifiers
       public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
       |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
       # Function or method modifiers
