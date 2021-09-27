@@ -42,7 +42,9 @@ comment: |
 
   Done:
   - Standardized modifier and declaration keywords
-  - Syntax changed
+  - Syntax changed, mirrors C# now.
+  - Oniguruma uses \w to refer to _\d\p{L}\p{M}, use character
+    set operations && and ^ to perform set subtractions
 
 define:
   number-literal: &number-literal
@@ -55,7 +57,7 @@ define:
 
   entity-name: &entity-name |
     (?x)\s*\b
-    ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+    ([\w&&[^\d\p{M}]][\w]*)
     \b
 
   posix-class: &posix-class |
@@ -93,9 +95,9 @@ repository:
 
   illegal:
     patterns:
-      - match: '\p{N}[_\p{L}\p{M}\p{N}.+-/\\]*?'
+      - match: '\p{N}[\w.+-/\\]*?'
         name: invalid.illegal.numeric.other.iso
-      - match: '[_\p{L}\p{M}\p{N}]+?'
+      - match: '[\w]+?'
         name: invalid.illegal.variable.other.iso
       - match: '[({\[)}\]]+?'
         name: invalid.illegal.missing-bracket.iso
@@ -114,7 +116,7 @@ repository:
       |class|given|constraint|enum|relation|lattice
       |project|attribute|protocol|member|extend|fragment|interface|struct
       |module|package|namespace|object|record|label
-      |raw|data|query|schema|style|trait|friend|alias|type
+      |raw|data|query|schema|style|component|element|trait|friend|alias|type
       |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
       |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
       |switch|case|fail|default|match|when|pass|fallthru
@@ -273,7 +275,7 @@ repository:
           (?:(\*)\p{Alnum}+(?:(?:,|_+)?*\p{Alnum}+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.iso}
@@ -291,7 +293,7 @@ repository:
           (?:(\*)\p{Alnum}+(?:(?:,|_+)?*\p{Alnum}+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.iso}
@@ -309,7 +311,7 @@ repository:
           (?:(\*)[01]+(?:(?:,|_+)?*[01]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.binary.iso}
@@ -327,7 +329,7 @@ repository:
           (?:(\*)[01]+(?:(?:,|_+)?*[01]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.binary.iso}
@@ -345,7 +347,7 @@ repository:
           (?:(\*)[0-3]+(?:(?:,|_+)?*[0-3]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.iso}
@@ -363,7 +365,7 @@ repository:
           (?:(\*)[0-3]+(?:(?:,|_+)?*[0-3]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.iso}
@@ -381,7 +383,7 @@ repository:
           (?:(\*)[0-5]+(?:(?:,|_+)?*[0-5]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.senary.iso}
@@ -399,7 +401,7 @@ repository:
           (?:(\*)[0-5]+(?:(?:,|_+)?*[0-5]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.senary.iso}
@@ -417,7 +419,7 @@ repository:
           (?:(\*)[0-7]+(?:(?:,|_+)?*[0-7]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.octal.iso}
@@ -435,7 +437,7 @@ repository:
           (?:(\*)[0-7]+(?:(?:,|_+)?*[0-7]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.octal.iso}
@@ -453,7 +455,7 @@ repository:
           (?:(\*)[\dab]+(?:(?:,|_+)?*[\dab]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.iso}
@@ -471,7 +473,7 @@ repository:
           (?:(\*)[\dab]+(?:(?:,|_+)?*[\dab]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.iso}
@@ -489,7 +491,7 @@ repository:
           (?:(\*)\h+(?:(?:,|_+)?*\h+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.iso}
@@ -507,7 +509,7 @@ repository:
           (?:(\*)\h+(?:(?:,|_+)?*\h+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.iso}
@@ -525,7 +527,7 @@ repository:
           (?:(\*)\d+(?:(?:,|_+)?*\d+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.iso}
@@ -543,7 +545,7 @@ repository:
           (?:(\*)\d+(?:(?:,|_+)?*\d+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.iso}
@@ -561,7 +563,7 @@ repository:
           (?:(\*)\w+(?:(?:,|_+)?*\w+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.illegal.iso}
@@ -579,7 +581,7 @@ repository:
           (?:(\*)\w+(?:(?:,|_+)?*\w+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
-          (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
+          (:[\w&&[^\d\p{M}]][\w]*)?
           \b\s*
         captures:
           0: {name: constant.numeric.illegal.iso}
@@ -627,9 +629,9 @@ repository:
           ([-+*/<=>])?\s*
           (?:(\d\w*)|
           (
-          [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+          [\w&&[^\d\p{M}]][\w]*
           (?:(?:[?!~]?\.|[?!:]:|->)
-          (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
+          (?:(?:[\w&&[^\d\p{M}]][\w]*)))*
           )
           )?\s*
           (.*\n?)
@@ -658,9 +660,9 @@ repository:
           ([-+*/<=>])?\s*
           (?:(\d\w*)|
           (
-          [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+          [\w&&[^\d\p{M}]][\w]*
           (?:(?:[?!~]?\.|[?!:]:|->)
-          (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
+          (?:(?:[\w&&[^\d\p{M}]][\w]*)))*
           )
           )?\s*
           (.*\n?)
@@ -722,7 +724,7 @@ repository:
         name: constant.character.escape.iso
       - match: \\[\p{S}\p{P}]
         name: constant.character.escape.symbol.iso
-      - match: \\[\p{L}\p{N}\p{Z}\p{c}]
+      - match: \\[\p{L}\p{N}\p{Z}\p{C}]
         name: constant.character.escape.illegal.iso
       - include: "#embedded"
 
@@ -741,9 +743,9 @@ repository:
           (?#?<!\\)# discard escape prefix
           (\$)# prefix
           (
-          [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+          [\w&&[^\d\p{M}]][\w]*
           (?:(?:[?!~]?\.|[?!:]:|->)
-          (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
+          (?:(?:[\w&&[^\d\p{M}]][\w]*)))*
           )# variable
         captures:
           1: {name: punctuation.section.embedded.iso}
@@ -773,9 +775,9 @@ repository:
           (?<!\$)# discard escape prefix
           (\$)# prefix
           (
-          [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+          [\w&&[^\d\p{M}]][\w]*
           (?:(?:[?!~]?\.|[?!:]:|->)
-          (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
+          (?:(?:[\w&&[^\d\p{M}]][\w]*)))*
           )# variable
         captures:
           1: {name: punctuation.section.embedded.iso}
@@ -803,7 +805,6 @@ repository:
     match: |
       (?x)
       (?<=^|[({\[\s,;*+-])\s*
-
       (?!(?<!(?<!\.)\.|[?!:]:|->)
       \b(?:# don't match keywords
       in|of|as|is|new|infer|unset
@@ -815,7 +816,7 @@ repository:
       |class|given|constraint|enum|relation|lattice
       |project|attribute|protocol|member|extend|fragment|interface|struct
       |module|package|namespace|object|record|label
-      |raw|data|query|schema|style|trait|friend|alias|type
+      |raw|data|query|schema|style|component|element|trait|friend|alias|type
       |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
       |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
       |switch|case|fail|default|match|when|pass|fallthru
@@ -829,7 +830,6 @@ repository:
       |take|drop|fold|scan|select|group|use|using
       )\b
       )
-
       ((?:\w|\\.)(?:\\.|[^\s,:;])*?)
       (?=:\s+)
     name: meta.object-literal.key.iso
@@ -1101,7 +1101,7 @@ repository:
               1: {name: punctuation.definition.group.absent.iso}
             patterns:
               - include: "#regexp-patterns"
-          - begin: \((\?(?:&)(?:([+-]?\d+)|([_\p{L}\p{Nl}][_\\d\p{L}\p{M}\p{N}]*)|([+-]?\d*)))(:)?
+          - begin: \((\?(?:&)(?:([+-]?\d+)|([\w&&[^\d\p{M}]][\w]*)|([+-]?\d*)))(:)?
             end: \s*\)
             name: meta.group.back-reference.iso
             captures:
@@ -1192,7 +1192,7 @@ repository:
             name: constant.character.escape.symbol.iso
           - match: \\\p{Z}
             name: constant.character.escape.symbol.iso
-          - match: \\[\p{L}\p{N}\p{Z}\p{c}]
+          - match: \\[\p{L}\p{N}\p{Z}\p{C}]
             name: constant.character.escape.illegal.iso
           - include: "#embedded"
 
@@ -1271,7 +1271,7 @@ repository:
   jsx:
     comment: Avoid < operator expressions as best we can using Zertosh's regex
     patterns:
-      - begin: (?=<[_\p{L}\p{Nl}])
+      - begin: (?=<[\w&&[^\d\p{M}]])
         end: (?=.)
         applyEndPatternLast: 1
         patterns:
@@ -1294,7 +1294,7 @@ repository:
             name: meta.tag.iso
             contentName: meta.tag.iso
             begin: |
-              (?x)\s*+(<)([_\p{L}\p{Nl}][^\s,;'"`\\</>]*)(?=[\/>\s])(?![:])(?<!\.|:)
+              (?x)\s*+(<)([\w&&[^\d\p{M}]][^\s,;'"`\\</>]*)(?=[\/>\s])(?![:])(?<!\.|:)
             end: \s*(?<=</)(\2)(>)|(/>)|((?<=</)\O*?)>
             beginCaptures:
               1: {name: punctuation.definition.tag.iso}
@@ -1354,7 +1354,7 @@ repository:
       attribute-name:
         patterns:
           - comment: Style attribute
-            begin: (?<!\S)(style)(=)?({)
+            begin: (?<!\S)(style|component|element)(=)?({)
             end: \s*(})\s*
             beginCaptures:
               1: {name: entity.other.attribute-name.iso}
@@ -1377,7 +1377,7 @@ repository:
                   - include: "#string-escapes"
                   - include: source.yaml#flow-scalar-plain-out-implicit-type
           - comment: Attribute names
-            match: (?<!\S)([_\p{L}\p{Nl}][^\s,;'"`\\/<=>]*)(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
+            match: (?<!\S)([\w&&[^\d\p{M}]][^\s,;'"`\\/<=>]*)(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
             captures:
               1: {name: entity.other.attribute-name.iso}
               2: {name: punctuation.separator.key-value.iso}
@@ -1579,7 +1579,7 @@ repository:
           - include: "#markdown-inline"
           - include: "#nested-inline"
       - begin: \s*((/\*\*))
-        end: (\s*(\*\*/))
+        end: (\s*(\*/))
         name: comment.block.documentation.iso
         captures:
           1: {name: comment.block.documentation.iso}
@@ -1728,7 +1728,7 @@ repository:
           |class|given|constraint|enum|relation|lattice
           |project|attribute|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
-          |raw|data|query|schema|style|trait|friend|alias|type
+          |raw|data|query|schema|style|component|element|trait|friend|alias|type
           |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
           |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
           |switch|case|fail|default|match|when|pass|fallthru
@@ -1742,7 +1742,7 @@ repository:
           |take|drop|fold|scan|select|group|use|using
           )\b
           )
-          [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+          [\w&&[^\d\p{M}]][\w]*
           )
           \b\s+
           (?=
@@ -1757,7 +1757,7 @@ repository:
           |class|given|constraint|enum|relation|lattice
           |project|attribute|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
-          |raw|data|query|schema|style|trait|friend|alias|type
+          |raw|data|query|schema|style|component|element|trait|friend|alias|type
           |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
           |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat
           |switch|case|fail|default|match|when|pass|fallthru
@@ -1771,7 +1771,7 @@ repository:
           |take|drop|fold|scan|select|group|use|using
           )\b
           )
-          [_\p{L}\p{M}\p{N}]+|\[(?!<)|<\|(?!>)(?=\|*)|<\+(?!>)(?=\+*))
+          [\w]+|\[(?!<)|<\|(?!>)(?=\|*)|<\+(?!>)(?=\+*))
         captures:
           1: {patterns: [{include: "#function-entities"}]}
       - comment: |
@@ -1792,7 +1792,7 @@ repository:
           |class|given|constraint|enum|relation|lattice
           |project|attribute|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
-          |raw|data|query|schema|style|trait|friend|alias|type
+          |raw|data|query|schema|style|component|element|trait|friend|alias|type
           |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
           |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
           |switch|case|fail|default|match|when|pass|fallthru
@@ -1806,13 +1806,12 @@ repository:
           |take|drop|fold|scan|select|group|use|using
           )\b
           )
-          [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+          [\w&&[^\d\p{M}]][\w]*
           )
           \b
           (?=
           !(?:\.=?)?\s*|
           \s+[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*
-
           (?!(?<!(?<!\.)\.|[?!:]:|->)
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
@@ -1824,7 +1823,7 @@ repository:
           |class|given|constraint|enum|relation|lattice
           |project|attribute|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
-          |raw|data|query|schema|style|trait|friend|alias|type
+          |raw|data|query|schema|style|component|element|trait|friend|alias|type
           |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
           |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
           |switch|case|fail|default|match|when|pass|fallthru
@@ -1839,7 +1838,7 @@ repository:
           )\b
           )
 
-          [_\p{L}\p{M}\p{N}]+|\[<|
+          [\w]+|\[<|
           (?:[!?~]?\.=?|[?!:]:=?|->)?\s*\(|
           (?:[!?~]?\.=?|[?!:]:=?|->)?\s+['"`\\\[]
           )
@@ -1852,27 +1851,25 @@ repository:
           (?x)\b(?:
           (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
           (?:# Properties (note all properties are by default, symbols)
-          (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-          ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-          ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-          ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+          (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+          ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+          ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+          ([\w&&[^\d\p{M}]][\w]*)
           )
-
           |
           (?:# Objects and maps
-          (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-          ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-          ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-          ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+          (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+          ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+          ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+          ([\w&&[^\d\p{M}]][\w]*)
           )
           (?=(?:[?!~]?\.?=?)?\[(?!<)|(?![>.]\.[.<]?)[?!~]?\.=?|[?!:]:|->)
-
           |
           (?:# Regular variables
-          (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-          ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-          ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-          ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+          (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+          ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+          ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+          ([\w&&[^\d\p{M}]][\w]*)
           )
           )\b
         captures:
@@ -1901,31 +1898,28 @@ repository:
       - regular variables: in camelCase
     match: |
       (?x)\s*\b
-
       (?:
       (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
       (?:# Properties (note all properties are by default, symbols)
-      (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-      ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-      ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-      ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+      (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+      ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+      ([\w&&[^\d\p{M}]][\w]*)
       )
-
       |
       (?:# Objects and maps
-      (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-      ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-      ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-      ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+      (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+      ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+      ([\w&&[^\d\p{M}]][\w]*)
       )
       (?=(?:[?!~]?\.?=?)?\[(?!<)|(?![>.]\.[.<]?)[?!~]?\.=?|[?!:]:|->)
-
       |
       (?:# Regular variables
-      (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-      ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-      ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-      ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+      (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+      ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+      ([\w&&[^\d\p{M}]][\w]*)
       )
       )
       \b\s*
@@ -1956,6 +1950,18 @@ repository:
             match: (?<=^|['"`\\({\[\s])([\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+(?<![!:~.<=>])=)(?=$|['"`\\\s)}\]])
             name: keyword.operator.assignment.augmented.iso
 
+            # 1: augmented assignment += -= *= /= etc
+            # 22: custom bitwise (& | ^ ~)
+            # 22: custom arithmetic (+ - * / %)
+            # 23: custom accessor (: .)
+            # 24: custom equality (= !)
+            # 25: custom comparison (< >)
+            # 26: custom private (? #)
+            # 27: custom mathematical (Unicode Sm)
+            # 28: custom currency (Unicode Sc)
+            # 29: custom ASCII (between \x80 and \xff)
+            # 30: custom infix operators (all other chars)
+
           - comment: |
               1: assignment : :=
               2: arithmetic + - * ** *** / // /// % %% *> <*
@@ -1977,18 +1983,6 @@ repository:
               18: compact ternary operator ?:
               19: inverse ternary operator !:
               20: infix function call $:
-
-              1: augmented assignment += -= *= /= etc
-              22: custom bitwise (& | ^ ~)
-              22: custom arithmetic (+ - * / %)
-              23: custom accessor (: .)
-              24: custom equality (= !)
-              25: custom comparison (< >)
-              26: custom private (? #)
-              27: custom mathematical (Unicode Sm)
-              28: custom currency (Unicode Sc)
-              29: custom ASCII (between \x80 and \xff)
-              30: custom infix operators (all other chars)
             captures:
               1: {name: keyword.operator.assignment.iso}
               2: {name: keyword.operator.arithmetic.iso}
@@ -2013,7 +2007,6 @@ repository:
             match: |
               (?x)
               (?<=^|['"`\\({\[\s])# spacing
-
               (?:
               (:?=)#1
               |([+-]|\*{1,3}|~?/|%%?|\#\#?|<?\*>?)#2
@@ -2111,7 +2104,7 @@ repository:
               |(\#)#14
               |[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]])#15
               (?=[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*
-              [\p{L}\p{M}\p{N}({\[_,;'"`])
+              [\w({\[_,;'"`])
             name: keyword.operator.prefix.iso
             captures:
               1: {name: keyword.operator.module.all.iso}
@@ -2134,7 +2127,7 @@ repository:
             comment: suffix operators
             match: |
               (?x)
-              (?<=[\p{L}\p{M}\p{N})}\]_,;'"`]
+              (?<=[\w)}\]_,;'"`]
               [\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*)
               (?:(\*)#1
               |(\+)#2
@@ -2175,7 +2168,6 @@ repository:
             begin: |
               (?x)\s*(?:(\++>)|(\|+>))(?=\s*(
               [\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*# prefix
-
               (?!(?<!(?<!\.)\.|[?!:]:|->)
               \b(?:# don't match keywords
               in|of|as|is|new|infer|unset
@@ -2187,7 +2179,7 @@ repository:
               |class|given|constraint|enum|relation|lattice
               |project|attribute|protocol|member|extend|fragment|interface|struct
               |module|package|namespace|object|record|label
-              |raw|data|query|schema|style|trait|friend|alias|type
+              |raw|data|query|schema|style|component|element|trait|friend|alias|type
               |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
               |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
               |switch|case|fail|default|match|when|pass|fallthru
@@ -2201,10 +2193,9 @@ repository:
               |take|drop|fold|scan|select|group|use|using
               )\b
               )
-
-              [_\p{L}\p{M}\p{N}]+
+              [\w]+
               (?:[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*# transfix
-              [_\p{L}\p{M}\p{N}]+)*
+              [\w]+)*
               [\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*# suffix
               )\s*([^(]|$|;))
             end: (?=\O)|$
@@ -2214,7 +2205,6 @@ repository:
             patterns:
               - match: |
                   (?x)\s*\b
-
                   (?!(?<!(?<!\.)\.|[?!:]:|->)
                   \b(?:# don't match keywords
                   in|of|as|is|new|infer|unset
@@ -2226,7 +2216,7 @@ repository:
                   |class|given|constraint|enum|relation|lattice
                   |project|attribute|protocol|member|extend|fragment|interface|struct
                   |module|package|namespace|object|record|label
-                  |raw|data|query|schema|style|trait|friend|alias|type
+                  |raw|data|query|schema|style|component|element|trait|friend|alias|type
                   |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
                   |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
                   |switch|case|fail|default|match|when|pass|fallthru
@@ -2240,31 +2230,28 @@ repository:
                   |take|drop|fold|scan|select|group|use|using
                   )\b
                   )
-
                   (?:
                   (?:# Objects and maps
-                  (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-                  ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-                  ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-                  ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+                  (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+                  ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+                  ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+                  ([\w&&[^\d\p{M}]][\w]*)
                   )
                   (?=(?:[?!~]?\.?=?)?\[(?!<)|(?![>.]\.[.<]?)[?!~]?\.=?|[?!:]:|->)
-
                   |
                   (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
                   (?:# Properties (note all properties are by default, symbols)
-                  (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-                  ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-                  ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-                  ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+                  (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+                  ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+                  ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+                  ([\w&&[^\d\p{M}]][\w]*)
                   )
-
                   |
                   (?:# Regular variables
-                  (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-                  ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-                  ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-                  ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+                  (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+                  ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+                  ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+                  ([\w&&[^\d\p{M}]][\w]*)
                   )
                   )\b
                 captures:
@@ -2290,7 +2277,7 @@ repository:
             captures:
               1: {name: keyword.operator.conditional.iso}
             patterns:
-              - begin: \s*(?=([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s*:)
+              - begin: \s*(?=([\w&&[^\d\p{M}]][\w]*)\s*:)
                 end: \s*(?=:\s|$)
                 patterns:
                   - include: "#constants"
@@ -2301,7 +2288,7 @@ repository:
             captures:
               1: {name: keyword.operator.ternary.iso}
             patterns:
-              - begin: \s*(?=([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s*:)
+              - begin: \s*(?=([\w&&[^\d\p{M}]][\w]*)\s*:)
                 end: \s*(?=:\s|$)
                 patterns:
                   - include: "#constants"
@@ -2312,7 +2299,7 @@ repository:
             captures:
               1: {name: keyword.operator.macro.dollar.iso}
             patterns:
-              - begin: \s*(?=([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s*:)
+              - begin: \s*(?=([\w&&[^\d\p{M}]][\w]*)\s*:)
                 end: \s*(?=:\s|$)
                 name: entity.name.function.iso
               - include: $self
@@ -2339,7 +2326,7 @@ repository:
       |class|given|constraint|enum|relation|lattice
       |project|attribute|protocol|member|extend|fragment|interface|struct
       |module|package|namespace|object|record|label
-      |raw|data|query|schema|style|trait|friend|alias|type
+      |raw|data|query|schema|style|component|element|trait|friend|alias|type
       |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
       |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
       |switch|case|fail|default|match|when|pass|fallthru
@@ -2353,31 +2340,28 @@ repository:
       |take|drop|fold|scan|select|group|use|using
       )\b
       )
-
       (?:
       (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
       (?:# Properties (note all properties are by default, symbols)
-      (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-      ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-      ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-      ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+      (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+      ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+      ([\w&&[^\d\p{M}]][\w]*)
       )
-
       |
       (?:# Objects and maps
-      (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-      ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-      ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-      ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+      (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+      ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+      ([\w&&[^\d\p{M}]][\w]*)
       )
       (?=(?:[?!~]?\.?=?)?\[(?!<)|(?![>.]\.[.<]?)[?!~]?\.=?|[?!:]:|->)
-
       |
       (?:# Regular variables
-      (_+[\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*(?!_+)|[\p{L}\p{Nl}][\p{L}\p{M}\p{N}]*_+)|
-      ([\p{Lu}\p{Lt}\p{Lo}\p{Nl}][_\p{Lu}\p{Lt}\p{Lo}\p{Nl}\p{N}\p{M}]*)|
-      ((?:[_\p{Lu}\p{Lt}\p{Lo}\p{Nl}]+[_\p{Ll}\p{M}\p{N}]*)+)|
-      ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+      (_+[\w&&[^_\d\p{M}]][\w]*(?!_+)|[\w&&[^_\d\p{M}]][\w&&[^_]]*_+)|
+      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+      ((?:[_\p{L}&&\P{Ll}]+[_\d\p{Ll}\p{M}]*)+)|
+      ([\w&&[^\d\p{M}]][\w]*)
       )
       )\b
     captures: &custom-types
@@ -2502,9 +2486,9 @@ repository:
     patterns:
       - comment: transfix binary operators
         match: |
-          (?x)(?<=^|[)}\]_\p{L}\p{M}\p{N}'"`])
+          (?x)(?<=^|[)}\]\w'"`])
           (?:(\?[:.])|(~[:.])|(![:.])|(::|\.)|(->))
-          (?=$|[({\[_\p{L}\p{M}\p{N}'"`])
+          (?=$|[({\[\w'"`])
         captures:
           1: {name: punctuation.accessor.optional.iso}
           2: {name: punctuation.accessor.cascade.iso}
@@ -2531,7 +2515,7 @@ repository:
           (\#)|
           ([<>])
           )
-          (?=$|[({\[_\p{L}\p{M}\p{N}'"\s])
+          (?=$|[({\[\w'"\s])
         captures:
           1: {name: keyword.operator.sum.iso}
           2: {name: keyword.operator.difference.iso}
@@ -2587,9 +2571,9 @@ repository:
       (?:u|bi|ter|)nary|oper
       |# Decorators
       @(?:
-      [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+      [\w&&[^\d\p{M}]][\w]*
       (?:(?:[?!~]?\.|[?!:]:|->)
-      (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
+      (?:(?:[\w&&[^\d\p{M}]][\w]*)))*
       )
       )
       )
@@ -2621,9 +2605,9 @@ repository:
         patterns: &modifier-keywords
           - match: |
               (?x)\s*@(?:
-              [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+              [\w&&[^\d\p{M}]][\w]*
               (?:(?:[?!~]?\.|[?!:]:|->)
-              (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
+              (?:(?:[\w&&[^\d\p{M}]][\w]*)))*
               )\s*
             name: entity.name.class.decorator.iso
           - match: |
@@ -2689,7 +2673,7 @@ repository:
       |(object|record)# object
       |(raw)# markup
       |(data|query)# indented GraphQL
-      |(style)# inline CSS
+      |(style|component|element)# inline CSS
       |(trait|friend)# trait
       |(type|alias)# type alias
       |(declare)# declaration
@@ -2787,7 +2771,7 @@ repository:
         beginCaptures:
           1: {name: keyword.control.flow.iso}
         patterns:
-          - match: \s*([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s*
+          - match: \s*([\w&&[^\d\p{M}]][\w]*)\s*
             captures:
               1: {name: constant.other.label.iso}
 
@@ -2881,17 +2865,17 @@ repository:
     patterns: &function-params
       - include: "#clauses"
       - include: "#keywords"
-      - match: (?i)\s*\?[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
+      - match: (?i)\s*\?[\w&&[^\d\p{M}]][\w]*\b\s*
         name: variable.parameter.optional.iso
-      - match: (?i)\s*\*[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
+      - match: (?i)\s*\*[\w&&[^\d\p{M}]][\w]*\b\s*
         name: variable.parameter.spread.iso
-      - match: (?i)\s*[&~][_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
+      - match: (?i)\s*[&~][\w&&[^\d\p{M}]][\w]*\b\s*
         name: variable.parameter.name.iso
-      - match: (?i)\s*\%[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
+      - match: (?i)\s*\%[\w&&[^\d\p{M}]][\w]*\b\s*
         name: variable.parameter.reference.iso
-      - match: (?i)\s*\$[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
+      - match: (?i)\s*\$[\w&&[^\d\p{M}]][\w]*\b\s*
         name: variable.parameter.other.iso
-      - match: (?i)\s*\b[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
+      - match: (?i)\s*\b[\w&&[^\d\p{M}]][\w]*\b\s*
         name: variable.parameter.iso
       - include: "$self"
 
@@ -3074,7 +3058,7 @@ repository:
             name: entity.name.schema.iso
       style:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(style)\b\s*
+        begin: (?x)\s*(?<!(?<!\.)\.|[?!:]:|->)\b(style|component|element)\b\s*
         end: (?<=})|(?=;)|$
         beginCaptures:
           1: {name: storage.type.style.iso}
@@ -3144,10 +3128,9 @@ repository:
         patterns:
           - begin: |
               (?x)(?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
-              ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s+
+              ([\w&&[^\d\p{M}]][\w]*)\s+
               ([?:]?=)\s+
               (
-
               (?:(?:# Access modifiers
               public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
               |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
@@ -3159,12 +3142,11 @@ repository:
               (?:u|bi|ter|)nary|oper
               |# Decorators
               @(?:
-              [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+              [\w&&[^\d\p{M}]][\w]*
               (?:(?:[?!~]?\.|[?!:]:|->)
-              (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
+              (?:(?:[\w&&[^\d\p{M}]][\w]*)))*
               )
               )\s*\b)*
-
               )\s*
               (\|)
               (?!\|)
@@ -3183,12 +3165,10 @@ repository:
               x = def()
             match: |
               (?x)(?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
-              ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s+
+              ([\w&&[^\d\p{M}]][\w]*)\s+
               ([?:]?=)\s+
-
-              ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s+
+              ([\w&&[^\d\p{M}]][\w]*)\s+
               ([?:]?=)\s+
-
               ((?:
               \s*(?:
               (?:# Access modifiers
@@ -3202,9 +3182,9 @@ repository:
               (?:u|bi|ter|)nary|oper
               |# Decorators
               @(?:
-              [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+              [\w&&[^\d\p{M}]][\w]*
               (?:(?:[?!~]?\.|[?!:]:|->)
-              (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
+              (?:(?:[\w&&[^\d\p{M}]][\w]*)))*
               )
               ))
               \s*)*)
@@ -3222,10 +3202,9 @@ repository:
         patterns:
           - begin: |
               (?x)\s*
-              ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s+
+              ([\w&&[^\d\p{M}]][\w]*)\s+
               ([?:]?=)\s+
               (
-
               (?:(?:# Access modifiers
               public|private|protected|readonly|a?sync|inline|lazy|eager|transparent|transient|partial|whole
               |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
@@ -3237,12 +3216,11 @@ repository:
               (?:u|bi|ter|)nary|oper
               |# Decorators
               @(?:
-              [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+              [\w&&[^\d\p{M}]][\w]*
               (?:(?:[?!~]?\.|[?!:]:|->)
-              (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
+              (?:(?:[\w&&[^\d\p{M}]][\w]*)))*
               )
               )\s*\b)*
-
               )\s*
               (\|)
               (?!\|)
@@ -3261,9 +3239,8 @@ repository:
               x = def()
             match: |
               (?x)\s*
-              ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s+
+              ([\w&&[^\d\p{M}]][\w]*)\s+
               ([?:]?=)\s+
-
               ((?:
               \s*(?:
               (?:# Access modifiers
@@ -3277,9 +3254,9 @@ repository:
               (?:u|bi|ter|)nary|oper
               |# Decorators
               @(?:
-              [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
+              [\w&&[^\d\p{M}]][\w]*
               (?:(?:[?!~]?\.|[?!:]:|->)
-              (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
+              (?:(?:[\w&&[^\d\p{M}]][\w]*)))*
               )
               ))
               \s*)*)
@@ -3300,7 +3277,7 @@ repository:
         beginCaptures:
           1: {name: keyword.operator.expression.$1.iso}
         patterns:
-          - match: \s*([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
+          - match: \s*([\w&&[^\d\p{M}]][\w]*)
             name: entity.name.instance.iso
           - include: "#block-entities"
 
