@@ -48,42 +48,15 @@ comment: |
 
 define:
   number-literal: &number-literal
-    1: {name: storage.type.numeric.ig}
-    2: {name: punctuation.separator.decimal.period.ig}
-    3: {name: constant.numeric.other.separator.ig}
-    4: {name: constant.numeric.other.exponent.ig}
-    5: {name: constant.numeric.other.density.ig}
-    6: {name: storage.type.numeric.ig}
+    1: {name: storage.type.numeric.iso}
+    2: {name: punctuation.separator.decimal.period.iso}
+    3: {name: constant.numeric.other.separator.iso}
+    4: {name: constant.numeric.other.exponent.iso}
+    5: {name: constant.numeric.other.density.iso}
+    6: {name: storage.type.numeric.iso}
 
   entity-name: &entity-name |
     (?x)\s*\b
-
-    (?!
-    \b(?:# don't match keywords
-    in|of|as|is|new|infer|unset
-    |typeof|nameof|sizeof|pairof|keyof|valueof
-    |length|delete|to|til|thru|at|by
-    |n?and|x?n?or|not|parallel|series|spawn|discard
-    |func?|function|proc|process|macro
-    |let|var|val|const|declare
-    |class|given|constraint|enum|relation|lattice
-    |project|attribute|protocol|member|extend|fragment|interface|struct
-    |module|package|namespace|object|record|label
-    |raw|data|query|schema|style|trait|friend|alias|type
-    |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
-    |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
-    |switch|case|fail|default|match|when|pass|fallthru
-    |try|retry|throw|raise|catch|rescue|finally
-    |with|ref|defer|refer|show|hide|enter|exit
-    |then|begin|end|debug|check|assert
-    |break|continue|halt|skip|fixed|lock
-    |(?:return|give|await|yield|throw|raise)s?
-    |import|export|show|hide|open|close
-    |from|where|join|equals?|[io]nto|order
-    |take|drop|fold|scan|select|group|use|using
-    )\b
-    )
-
     ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
     \b
 
@@ -123,13 +96,40 @@ repository:
   illegal:
     patterns:
       - match: '\p{N}[\p{L}\p{M}\p{N}_.+-/\\]*?'
-        name: invalid.illegal.numeric.other.ig
+        name: invalid.illegal.numeric.other.iso
       - match: '[_\p{L}\p{M}\p{N}]+?'
-        name: invalid.illegal.variable.other.ig
+        name: invalid.illegal.variable.other.iso
       - match: '[({\[)}\]]+?'
-        name: invalid.illegal.missing-bracket.ig
+        name: invalid.illegal.missing-bracket.iso
       - match: '\S+?'
-        name: invalid.illegal.syntax.ig
+        name: invalid.illegal.syntax.iso
+
+  illegal-keywords:
+    match: |
+      \s*\b(
+      in|of|as|is|new|infer|unset
+      |typeof|nameof|sizeof|pairof|keyof|valueof
+      |length|delete|to|til|thru|at|by
+      |n?and|x?n?or|not|parallel|series|spawn|discard
+      |func?|function|proc|process|macro
+      |let|var|val|const|declare
+      |class|given|constraint|enum|relation|lattice
+      |project|attribute|protocol|member|extend|fragment|interface|struct
+      |module|package|namespace|object|record|label
+      |raw|data|query|schema|style|trait|friend|alias|type
+      |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
+      |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
+      |switch|case|fail|default|match|when|pass|fallthru
+      |try|retry|throw|raise|catch|rescue|finally
+      |with|ref|defer|refer|show|hide|enter|exit
+      |then|begin|end|debug|check|assert
+      |break|continue|halt|skip|fixed|lock
+      |(?:return|give|await|yield|throw|raise)s?
+      |import|export|show|hide|open|close
+      |from|where|join|equals?|[io]nto|order
+      |take|drop|fold|scan|select|group|use|using
+      )\b\s*
+    name: invalid.illegal.keyword.iso
 
   entities:
     patterns:
@@ -156,7 +156,7 @@ repository:
           (8|16|32|64|128)
           |[ci](half|float|double|decimal|octuple)
           )\b
-        name: support.type.builtin.primitive.ig
+        name: support.type.builtin.primitive.iso
       - comment: Constant/algebraic types
         match: |
           (?x)\s*\b(
@@ -164,14 +164,14 @@ repository:
           |any|empty|object|record|unit|mixed
           |just|some|none|never|(im)?pure|channel
           )\b
-        name: support.type.builtin.ig
+        name: support.type.builtin.iso
       - comment: Data structures
         match: |
           (?x)\s*\b(
           array|tuple|(?:mut)?(?:list|set|map)|dict|function
           |process|sequence|generator|range|stack|heap|queue|tree|trie
           )\b
-        name: support.type.primitive.ig
+        name: support.type.primitive.iso
       - comment: Primitive classes
         match: |
           (?x)\s*\b(
@@ -182,7 +182,7 @@ repository:
           (8|16|32|64|128)
           |[CI](Half|Float|Double|Decimal|Octuple)
           )\b
-        name: support.class.builtin.primitive.ig
+        name: support.class.builtin.primitive.iso
       - comment: Constant/algebraic classes
         match: |
           (?x)\s*\b(
@@ -190,31 +190,34 @@ repository:
           |Any|Empty|Object|Record|Unit|Mixed
           |Just|Some|None|Never|(Im)?pure|Channel
           )\b
-        name: support.class.builtin.ig
+        name: support.class.builtin.iso
       - comment: Data structure classes
         match: |
           (?x)\s*\b(
           Array|Tuple|(Mut)?(List|Set|Map)|Dict|Function
           |Process|Sequence|Generator|Range|Stack|Heap|Queue|Tree|Trie
           )\b
-        name: support.class.primitive.ig
+        name: support.class.primitive.iso
 
       - comment: Interface classes | IEnumerable, etc
-        match: (?x)\s*\bI((\p{Lu}[\w&&\P{Lu}]*)+)\b
-        name: entity.name.interface.ig
+        match: \s*\bI((\p{Lu}[\w&&\P{Lu}]*)+)\b
+        name: entity.name.interface.iso
       - comment: Namespace classes | NSString, etc
-        match: (?x)\s*\bNS((\p{Lu}[\w&&\P{Lu}]*)+)\b
-        name: entity.name.namespace.ig
+        match: \s*\bNS((\p{Lu}[\w&&\P{Lu}]*)+)\b
+        name: entity.name.namespace.iso
       - comment: Error classes | BaseError, etc
-        match: (?x)\s*\b((\p{Lu}[\w&&\P{Lu}]*)+)?(Error|Exception)\b
-        name: support.class.error.ig
+        match: \s*\b((\p{Lu}[\w&&\P{Lu}]*)+)?(Error|Exception)\b
+        name: support.class.error.iso
       - comment: Trait classes | Serializable, Loggable etc
-        match: (?x)\s*\b((\p{Lu}[\w&&\P{Lu}]*)+)(able)\b
-        name: support.class.trait.ig
+        match: \s*\b((\p{Lu}[\w&&\P{Lu}]*)+)able\b
+        name: support.class.trait.iso
 
   function-names:
     comment: Names for built-in functions (initial dump)
-    patterns: []
+    patterns:
+      - comment: isName functions
+        match: (?x)\s*\bis(\p{Lu}[\w&&\P{Lu}]*)+\b\s*
+        name: support.function.predicate
 
   constant-names:
     comment: Names for constants, symbols and static properties
@@ -244,26 +247,26 @@ repository:
           (true)|(false)|(null)|(void)|(nan)|(infin)
           )\b\s*
         captures:
-          1: {name: constant.language.boolean.true.ig}
-          2: {name: constant.language.boolean.false.ig}
-          3: {name: constant.language.null.ig}
-          4: {name: constant.language.undefined.ig}
-          5: {name: constant.language.nan.ig}
-          6: {name: constant.language.infinity.ig}
+          1: {name: constant.language.boolean.true.iso}
+          2: {name: constant.language.boolean.false.iso}
+          3: {name: constant.language.null.iso}
+          4: {name: constant.language.undefined.iso}
+          5: {name: constant.language.nan.iso}
+          6: {name: constant.language.infinity.iso}
       - match: |
           (?x)\s*\b(?:
           (_|params)|(super|this|self|proto|prototype|constructor|target)
           )\b\s*
         captures:
-          1: {name: variable.language.arguments.ig}
-          2: {name: variable.language.$2.ig}
+          1: {name: variable.language.arguments.iso}
+          2: {name: variable.language.$2.iso}
 
   numbers:
     patterns:
       - match: (?<=(^|[({\[])\s*\d\w*)\.
-        name: punctuation.separator.decimal.period.ig
+        name: punctuation.separator.decimal.period.iso
       - match: (?<=(?:^|[({\[])\s*|\s)\.(?=\d)
-        name: punctuation.separator.decimal.period.ig
+        name: punctuation.separator.decimal.period.iso
       - match: |-
           (?ix)\s*\b
           ((?:[2-9]|[1-9]\d+)b)
@@ -275,13 +278,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.arbitrary-radix.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.arbitrary-radix.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           ((?:[2-9]|[1-9]\d+)b)
@@ -293,13 +296,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.arbitrary-radix.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.arbitrary-radix.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0b)
@@ -311,13 +314,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.binary.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.binary.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0b)
@@ -329,13 +332,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.binary.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.binary.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0q)
@@ -347,13 +350,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.quaternary.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.quaternary.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0q)
@@ -365,13 +368,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.quaternary.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.quaternary.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0s)
@@ -383,13 +386,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.senary.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.senary.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0s)
@@ -401,13 +404,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.senary.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.senary.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0o)
@@ -419,13 +422,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.octal.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.octal.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0o)
@@ -437,13 +440,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.octal.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.octal.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0z)
@@ -455,13 +458,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.duodecimal.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.duodecimal.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0z)
@@ -473,13 +476,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.duodecimal.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.duodecimal.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0x)
@@ -491,13 +494,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.hexadecimal.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.hexadecimal.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (0x)
@@ -509,13 +512,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.hexadecimal.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.hexadecimal.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           ()
@@ -527,13 +530,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.decimal.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.decimal.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           ()
@@ -545,13 +548,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.decimal.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.decimal.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (\d+\w)
@@ -563,13 +566,13 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.illegal.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.illegal.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
       - match: |-
           (?ix)\s*\b
           (\d+\w)
@@ -581,40 +584,40 @@ repository:
           (:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.illegal.ig}
-          1: {name: storage.type.numeric.ig}
-          2: {name: punctuation.separator.decimal.period.ig}
-          3: {name: constant.numeric.other.separator.ig}
-          4: {name: constant.numeric.other.exponent.ig}
-          5: {name: constant.numeric.other.density.ig}
-          6: {name: storage.type.numeric.ig}
+          0: {name: constant.numeric.illegal.iso}
+          1: {name: storage.type.numeric.iso}
+          2: {name: punctuation.separator.decimal.period.iso}
+          3: {name: constant.numeric.other.separator.iso}
+          4: {name: constant.numeric.other.exponent.iso}
+          5: {name: constant.numeric.other.density.iso}
+          6: {name: storage.type.numeric.iso}
 
   strings-quoted:
     patterns:
       - comment: single quoted raw string
         begin: \s*('{3,})
-        contentName: string.quoted.single.ig
+        contentName: string.quoted.single.iso
         end: \s*((\1)(?!\1))
         captures:
-          1: {name: punctuation.definition.string.ig}
+          1: {name: punctuation.definition.string.iso}
         patterns:
           - include: "#embedded-raw"
       - comment: simple single quoted raw string
         begin: \s*(')
-        contentName: string.quoted.single.ig
+        contentName: string.quoted.single.iso
         end: \s*((\1)(?!\1))
         captures:
-          1: {name: punctuation.definition.string.ig}
+          1: {name: punctuation.definition.string.iso}
         patterns:
           - match: "''"
-            name: constant.character.escape.ig
+            name: constant.character.escape.iso
           - include: "#embedded-raw"
       - comment: double quoted standard string
         begin: \s*("{3,}|")
-        contentName: string.quoted.double.ig
+        contentName: string.quoted.double.iso
         end: \s*((\1)(?!\1))
         captures:
-          1: {name: punctuation.definition.string.ig}
+          1: {name: punctuation.definition.string.iso}
         patterns:
           - include: "#string-escapes"
 
@@ -633,20 +636,20 @@ repository:
           )?\s*
           (.*\n?)
         beginCaptures:
-          1: {name: keyword.control.flow.block-scalar.literal.ig}
-          2: {name: storage.modifier.chomping-indicator.ig}
+          1: {name: keyword.control.flow.block-scalar.literal.iso}
+          2: {name: storage.modifier.chomping-indicator.iso}
           3: {patterns: [include: "#numbers"]}
-          4: {name: fenced_code.block.language.ig}
+          4: {name: fenced_code.block.language.iso}
           5:
             patterns:
               - include: "#comments"
               - match: .+
-                name: invalid.illegal.expected-comment-or-newline.ig
+                name: invalid.illegal.expected-comment-or-newline.iso
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\p{Zs})+)(?!\2)
             end: ^(?!\1|\s*$)
-            name: string.unquoted.block.ig
+            name: string.unquoted.block.iso
             patterns:
               - include: "#embedded-raw"
               - include: text.html.markdown#inline
@@ -664,20 +667,20 @@ repository:
           )?\s*
           (.*\n?)
         beginCaptures:
-          1: {name: keyword.control.flow.block-scalar.folded.ig}
-          2: {name: storage.modifier.chomping-indicator.ig}
+          1: {name: keyword.control.flow.block-scalar.folded.iso}
+          2: {name: storage.modifier.chomping-indicator.iso}
           3: {patterns: [include: "#numbers"]}
-          4: {name: fenced_code.block.language.ig}
+          4: {name: fenced_code.block.language.iso}
           5:
             patterns:
               - include: "#comments"
               - match: .+
-                name: invalid.illegal.syntax.ig
+                name: invalid.illegal.syntax.iso
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\p{Zs})+)(?!\2)
             end: ^(?!\1|\s*$)
-            name: string.unquoted.plain.in.ig
+            name: string.unquoted.plain.in.iso
             patterns:
               - include: "#string-escapes"
               - include: text.html.markdown#inline
@@ -687,54 +690,54 @@ repository:
           \s*(\\)
           ((?:\\.|[^\s,:;])+?)
           (?=[({\[)}\]\s,:;]|$)\s*
-        name: string.unquoted.ig
+        name: string.unquoted.iso
         captures:
-          1: {name: punctuation.definition.string.ig}
+          1: {name: punctuation.definition.string.iso}
           2: {patterns: [{include: "#string-escapes"}]}
 
   string-escapes:
     patterns:
       - match: \\(?=\s*$)
-        name: constant.character.escape.newline.ig
+        name: constant.character.escape.newline.iso
       - match: (?i)\\b(?:[01]{1,21}|{[01\s]+?})
-        name: constant.character.escape.binary.ig
+        name: constant.character.escape.binary.iso
       - match: (?i)\\q(?:[0-3]{1,11}|{[0-3\s]+?})
-        name: constant.character.escape.quaternary.ig
+        name: constant.character.escape.quaternary.iso
       - match: (?i)\\s(?:[0-5]{1,8}|{[0-5\s]+?})
-        name: constant.character.escape.senary.ig
+        name: constant.character.escape.senary.iso
       - match: (?i)\\o(?:[0-7]{1,7}|{[0-7\s]+?})
-        name: constant.character.escape.octal.ig
+        name: constant.character.escape.octal.iso
       - match: (?i)\\d?\d{1,7}|\\d{[\d\s]+?}
-        name: constant.character.escape.decimal.ig
+        name: constant.character.escape.decimal.iso
       - match: (?i)\\z(?:[\dab]{1,6}|{[\s\dab]+?})
-        name: constant.character.escape.duodecimal.ig
+        name: constant.character.escape.duodecimal.iso
       - match: (?i)\\x(?:\h{1,6}|{[\h\s]+?})
-        name: constant.character.escape.hexadecimal.ig
+        name: constant.character.escape.hexadecimal.iso
       - match: (?i)\\u(?:\h{1,6}|{[\h\s]+?})
-        name: constant.character.escape.unicode.ig
+        name: constant.character.escape.unicode.iso
       - begin: (?i)\\j{
         end: \s*}
-        name: constant.character.entity.named.ig
+        name: constant.character.entity.named.iso
         patterns:
           - include: "#regexp-patterns"
       - match: (?i)\\[abceflnprtvz]
-        name: constant.character.escape.ig
+        name: constant.character.escape.iso
       - match: \\[\p{S}\p{P}]
-        name: constant.character.escape.symbol.ig
+        name: constant.character.escape.symbol.iso
       - match: \\[\p{L}\p{N}\p{Z}\p{c}]
-        name: constant.character.escape.illegal.ig
+        name: constant.character.escape.illegal.iso
       - include: "#embedded"
 
   embedded:
     patterns:
       - match: (\$)(\d+)
         captures:
-          1: {name: punctuation.quasi.element.ig}
-          2: {name: constant.numeric.decimal.ig}
+          1: {name: punctuation.section.embedded.iso}
+          2: {name: constant.numeric.decimal.iso}
       - match: (%)((['"`])(?:\\\g<-1>|.)*?\g<-1>|\w+(?:[^\s'"`]+\w+)*)
         captures:
-          1: {name: punctuation.separator.key-value.ig}
-          2: {name: storage.type.format.ig}
+          1: {name: punctuation.separator.key-value.iso}
+          2: {name: storage.type.format.iso}
       - match: |
           (?xi)
           (?#?<!\\)# discard escape prefix
@@ -745,13 +748,13 @@ repository:
           (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
           )# variable
         captures:
-          1: {name: punctuation.quasi.element.ig}
+          1: {name: punctuation.section.embedded.iso}
           2: {patterns: [{include: $self}]}
       - begin: (?#?<!\\)(\${)\s*
         end: (})
-        name: entity.quasi.element.ig
+        name: entity.quasi.element.iso
         captures:
-          1: {name: punctuation.quasi.element.ig}
+          1: {name: punctuation.section.embedded.iso}
         patterns:
           - include: $self
 
@@ -759,14 +762,14 @@ repository:
     patterns:
       - match: (\$)(\d+)
         captures:
-          1: {name: punctuation.quasi.element.ig}
-          2: {name: constant.numeric.decimal.ig}
+          1: {name: punctuation.section.embedded.iso}
+          2: {name: constant.numeric.decimal.iso}
       - match: ([$%]){2}
-        name: constant.character.escape.ig
+        name: constant.character.escape.iso
       - match: (%)((['"`])(?:\\\g<-1>|.)*?\g<-1>|\w+(?:[^\s'"`]+\w+)*)
         captures:
-          1: {name: punctuation.separator.key-value.ig}
-          2: {name: storage.type.format.ig}
+          1: {name: punctuation.separator.key-value.iso}
+          2: {name: storage.type.format.iso}
       - match: |
           (?xi)
           (?<!\$)# discard escape prefix
@@ -777,13 +780,13 @@ repository:
           (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
           )# variable
         captures:
-          1: {name: punctuation.quasi.element.ig}
+          1: {name: punctuation.section.embedded.iso}
           2: {patterns: [{include: $self}]}
       - begin: (?<!\$)(\${)\s*
         end: (})
-        name: entity.quasi.element.ig
+        name: entity.quasi.element.iso
         captures:
-          1: {name: punctuation.quasi.element.ig}
+          1: {name: punctuation.section.embedded.iso}
         patterns:
           - include: $self
 
@@ -793,10 +796,10 @@ repository:
       \s*
       (:)((?:\w|\\.)(?:\\.|[^\s,:;])*?)
       \b\s*
-    name: meta.symbol.ig
+    name: meta.symbol.iso
     captures:
-      1: {name: punctuation.definition.symbol.ig}
-      2: {name: constant.other.symbol.ig}
+      1: {name: punctuation.definition.symbol.iso}
+      2: {name: constant.other.symbol.iso}
 
   labels:
     match: |
@@ -831,31 +834,31 @@ repository:
 
       ((?:\w|\\.)(?:\\.|[^\s,:;])*?)
       (?=:\s+)
-    name: meta.object-literal.key.ig
+    name: meta.object-literal.key.iso
     captures:
-      1: {name: constant.other.object.key.ig}
-      2: {name: punctuation.separator.key-value.ig}
+      1: {name: constant.other.object.key.iso}
+      2: {name: punctuation.separator.key-value.iso}
 
   regexps:
     patterns:
       - begin: (\p{Alnum}*)(`)\s*
         end: \s*(?!\\)(`(?!`))(\p{Alnum}*)
-        contentName: string.pattern.regexp.ig
+        contentName: string.pattern.regexp.iso
         beginCaptures:
-          1: {name: keyword.modifier.ig}
-          2: {name: punctuation.section.regexp.begin.ig}
+          1: {name: keyword.modifier.iso}
+          2: {name: punctuation.section.regexp.begin.iso}
         endCaptures:
-          1: {name: punctuation.section.regexp.end.ig}
-          2: {name: keyword.other.flag.ig}
+          1: {name: punctuation.section.regexp.end.iso}
+          2: {name: keyword.other.flag.iso}
         patterns:
           - include: "#comments"
           - include: "#regexp-patterns"
           - begin: (`)(`)\s*\n?
             end: \s*(?=(?!\\)`)
-            contentName: string.replace.regexp.ig
+            contentName: string.replace.regexp.iso
             beginCaptures:
-              1: {name: punctuation.section.regexp.end.ig}
-              2: {name: punctuation.section.regexp.begin.ig}
+              1: {name: punctuation.section.regexp.end.iso}
+              2: {name: punctuation.section.regexp.begin.iso}
             patterns:
               - include: "#back-references"
       - begin: |
@@ -871,20 +874,20 @@ repository:
           )?\s*
           (.*\n?)
         beginCaptures:
-          1: {name: keyword.control.flow.block-scalar.regexp.ig}
-          2: {name: storage.modifier.chomping-indicator.ig}
-          3: {name: keyword.modifier.ig}
-          4: {name: keyword.other.flag.ig}
+          1: {name: keyword.control.flow.block-scalar.regexp.iso}
+          2: {name: storage.modifier.chomping-indicator.iso}
+          3: {name: keyword.modifier.iso}
+          4: {name: keyword.other.flag.iso}
           5:
             patterns:
               - include: "#comments"
               - match: .+
-                name: invalid.illegal.expected-comment-or-newline.ig
+                name: invalid.illegal.expected-comment-or-newline.iso
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\p{Zs})+)(?!\2)
             end: ^(?!\1|\s*$)
-            name: string.unquoted.plain.out.ig
+            name: string.unquoted.plain.out.iso
             patterns:
               - include: "#regexp-patterns"
           - include: $self
@@ -892,16 +895,16 @@ repository:
   back-references:
     patterns:
       - match: \$[&+-]
-        name: keyword.other.back-reference.ig
+        name: keyword.other.back-reference.iso
       - match: \${2}
-        name: constant.character.escape.ig
+        name: constant.character.escape.iso
       - begin: (\$<)
         end: \s*(>)
-        name: keyword.other.back-reference.ig
+        name: keyword.other.back-reference.iso
         beginCaptures:
-          1: {name: keyword.other.back-reference.ig}
+          1: {name: keyword.other.back-reference.iso}
         endCaptures:
-          1: {name: keyword.other.back-reference.ig}
+          1: {name: keyword.other.back-reference.iso}
         patterns:
           - include: "#variables"
           - include: "#operators"
@@ -914,62 +917,62 @@ repository:
       - include: "#comments"
       - include: "#strings-quoted"
       - match: \|
-        name: keyword.operator.or.ig
+        name: keyword.operator.or.iso
       - match: \&
-        name: keyword.operator.match.ig
+        name: keyword.operator.match.iso
       - match: \!
-        name: keyword.operator.disjunction.ig
+        name: keyword.operator.disjunction.iso
       - match: \.
-        name: constant.character.all.ig
+        name: constant.character.all.iso
       - match: (?i)\\[by]({\p{Alpha}+})?
-        name: keyword.control.anchor.ig
+        name: keyword.control.anchor.iso
       - match: (?i)(\^|\\<|\\a(?:{\p{Alpha}+})?)|(\$|\\>|\\z(?:{\p{Alpha}+})?)
         captures:
-          1: {name: keyword.control.begin.ig}
-          2: {name: keyword.control.end.ig}
+          1: {name: keyword.control.begin.iso}
+          2: {name: keyword.control.end.iso}
       - match: (\\\()(?:(\?)|(\+)|(\*))
         captures:
-          1: {name: constant.character.escape.other.ig}
-          2: {name: keyword.operator.quantifier.lazy.ig}
-          3: {name: keyword.operator.quantifier.eager.ig}
-          4: {name: keyword.operator.quantifier.greedy.ig}
+          1: {name: constant.character.escape.other.iso}
+          2: {name: keyword.operator.quantifier.lazy.iso}
+          3: {name: keyword.operator.quantifier.eager.iso}
+          4: {name: keyword.operator.quantifier.greedy.iso}
       - match: \\\d+
-        name: keyword.other.back-reference.ig
+        name: keyword.other.back-reference.iso
       - match: \{(\s*\d*\s*(?:,?\s*\d*\s*)*)\}
-        name: keyword.operator.quantifier.ig
+        name: keyword.operator.quantifier.iso
       - begin: (\\Q)
-        contentName: string.quoted.single.ig
+        contentName: string.quoted.single.iso
         end: (\\E)
-        name: string.quoted.raw.ig
+        name: string.quoted.raw.iso
         captures:
-          1: {name: punctuation.definition.string.ig}
+          1: {name: punctuation.definition.string.iso}
         patterns:
           - include: "#string-escapes"
       - begin: (\\q)
-        contentName: string.quoted.double.ig
+        contentName: string.quoted.double.iso
         end: (\\e)
-        name: string.quoted.ig
+        name: string.quoted.iso
         captures:
-          1: {name: punctuation.definition.string.ig}
+          1: {name: punctuation.definition.string.iso}
         patterns:
           - include: "#embedded-raw"
       - begin: (\\k<)
         end: \s*(>)
-        name: keyword.other.back-reference.ig
+        name: keyword.other.back-reference.iso
         beginCaptures:
-          1: {name: keyword.other.back-reference.ig}
+          1: {name: keyword.other.back-reference.iso}
         endCaptures:
-          1: {name: keyword.other.back-reference.ig}
+          1: {name: keyword.other.back-reference.iso}
         patterns:
           - include: "#variables"
           - include: "#numbers"
       - begin: (\\g<)
         end: \s*(>)
-        name: keyword.other.subroutine.ig
+        name: keyword.other.subroutine.iso
         beginCaptures:
-          1: {name: keyword.other.subroutine.ig}
+          1: {name: keyword.other.subroutine.iso}
         endCaptures:
-          1: {name: keyword.other.subroutine.ig}
+          1: {name: keyword.other.subroutine.iso}
         patterns:
           - include: "#variables"
           - include: "#numbers"
@@ -978,249 +981,249 @@ repository:
       - include: "#regexp-char-class"
       - match: (?i)(?:(\\M)|(\\K)|(\\G)|(\\X))
         captures:
-          1: {name: keyword.control.anchor.ig}
-          2: {name: keyword.control.keepout.ig}
-          3: {name: keyword.control.search.ig}
-          4: {name: constant.character.unicode.ig}
+          1: {name: keyword.control.anchor.iso}
+          2: {name: keyword.control.keepout.iso}
+          3: {name: keyword.control.search.iso}
+          4: {name: constant.character.unicode.iso}
       - match: (?<=[^\\][*+?}])(?:(\?)|(\+)|(\*))
         captures:
-          1: {name: keyword.operator.modifier.lazy.ig}
-          2: {name: keyword.operator.modifier.eager.ig}
-          3: {name: keyword.operator.modifier.greedy.ig}
+          1: {name: keyword.operator.modifier.lazy.iso}
+          2: {name: keyword.operator.modifier.eager.iso}
+          3: {name: keyword.operator.modifier.greedy.iso}
       - match: (\?)|(\+)|(\*)
         captures:
-          1: {name: keyword.operator.quantifier.lazy.ig}
-          2: {name: keyword.operator.quantifier.eager.ig}
-          3: {name: keyword.operator.quantifier.greedy.ig}
+          1: {name: keyword.operator.quantifier.lazy.iso}
+          2: {name: keyword.operator.quantifier.eager.iso}
+          3: {name: keyword.operator.quantifier.greedy.iso}
       - match: \\.
-        name: constant.character.escape.other.ig
+        name: constant.character.escape.other.iso
 
     repository:
       regexp-groups:
         patterns:
           - begin: \(([*+])
             end: \s*(\))
-            name: constant.other.pcre.ig
+            name: constant.other.pcre.iso
             captures:
-              0: {name: punctuation.section.expression.ig}
+              0: {name: punctuation.section.expression.iso}
             patterns:
               - include: source.clojure
           - begin: (\()(\?#)
-            contentName: comment.block.regexp.ig
+            contentName: comment.block.regexp.iso
             end: \s*(\))
-            name: comment.block.regexp.ig
+            name: comment.block.regexp.iso
             captures:
-              1: {name: punctuation.definition.comment.ig}
+              1: {name: punctuation.definition.comment.iso}
             patterns:
               - match: \\.
-                name: comment.block.regexp.ig
+                name: comment.block.regexp.iso
           - begin: (\(\?=)
             end: \s*(\))
-            name: meta.group.look-ahead.ig
+            name: meta.group.look-ahead.iso
             captures:
-              1: {name: punctuation.definition.group.look-ahead.ig}
+              1: {name: punctuation.definition.group.look-ahead.iso}
             patterns:
               - include: "#regexp-patterns"
           - begin: (\(\?<=)
             end: \s*(\))
-            name: meta.group.look-behind.ig
+            name: meta.group.look-behind.iso
             captures:
-              1: {name: punctuation.definition.group.look-behind.ig}
+              1: {name: punctuation.definition.group.look-behind.iso}
             patterns:
               - include: "#regexp-patterns"
           - begin: (\(\?!)
             end: \s*(\))
-            name: meta.group.negative-look-ahead.ig
+            name: meta.group.negative-look-ahead.iso
             captures:
-              1: {name: punctuation.definition.group.negative-look-ahead.ig}
+              1: {name: punctuation.definition.group.negative-look-ahead.iso}
             patterns:
               - include: "#regexp-patterns"
           - begin: (\(\?<!)
             end: \s*(\))
-            name: meta.group.negative-look-behind.ig
+            name: meta.group.negative-look-behind.iso
             captures:
-              1: {name: punctuation.definition.group.negative-look-behind.ig}
+              1: {name: punctuation.definition.group.negative-look-behind.iso}
             patterns:
               - include: "#regexp-patterns"
           - begin: (\(\?(?:([+-]?\d+?)|(\p{upper}+(?:[+-]\p{upper}+)*)|(\p{Lower}+(?:[+-]\p{Lower}+)*)))\s*(:)?
             end: \s*(\))
-            name: meta.group.flag.ig
+            name: meta.group.flag.iso
             captures:
-              0: {name: punctuation.definition.group.flag.ig}
-              1: {name: punctuation.definition.group.flag.ig}
-              2: {name: entity.name.function.method.ig}
-              3: {name: keyword.control.recursion.ig}
-              4: {name: keyword.other.flag.ig}
-              5: {name: punctuation.separator.colon.ig}
+              0: {name: punctuation.definition.group.flag.iso}
+              1: {name: punctuation.definition.group.flag.iso}
+              2: {name: entity.name.function.method.iso}
+              3: {name: keyword.control.recursion.iso}
+              4: {name: keyword.other.flag.iso}
+              5: {name: punctuation.separator.colon.iso}
             patterns:
               - include: "#regexp-patterns"
           - begin: (\(\?)(?={)
             end: \s*(\))
-            name: meta.group.call-out.ig
+            name: meta.group.call-out.iso
             captures:
-              1: {name: punctuation.definition.group.call-out.ig}
+              1: {name: punctuation.definition.group.call-out.iso}
             patterns:
               - begin: (?<=\(\?)({)
                 end: \s*(\})([<*>])?(?:(\[)(.*?)(\]))?
-                name: punctuation.definition.group.call-out.ig
+                name: punctuation.definition.group.call-out.iso
                 captures:
-                  1: {name: punctuation.definition.group.call-out.ig}
-                  2: {name: keyword.operator.range.ig}
-                  3: {name: punctuation.definition.tag.ig}
+                  1: {name: punctuation.definition.group.call-out.iso}
+                  2: {name: keyword.operator.range.iso}
+                  3: {name: punctuation.definition.tag.iso}
                   4: {patterns: [{include: "#function-entities"}]}
-                  5: {name: punctuation.definition.tag.ig}
+                  5: {name: punctuation.definition.tag.iso}
                 patterns:
                   - include: $self
               - include: "#regexp-patterns"
           - begin: (\(\?>)
             end: \s*(\))
-            name: meta.group.atomic.ig
+            name: meta.group.atomic.iso
             captures:
-              1: {name: punctuation.definition.group.atomic.ig}
+              1: {name: punctuation.definition.group.atomic.iso}
             patterns:
               - include: "#regexp-patterns"
           - begin: (\(\?:)
             end: \s*(\))
-            name: meta.group.non-capturing.ig
+            name: meta.group.non-capturing.iso
             captures:
-              1: {name: punctuation.definition.group.non-capturing.ig}
+              1: {name: punctuation.definition.group.non-capturing.iso}
             patterns:
               - include: "#regexp-patterns"
           - begin: (\(\?)(?=[(|])
             end: \s*(\))
-            name: meta.group.branch.ig
+            name: meta.group.branch.iso
             captures:
-              1: {name: punctuation.definition.group.branch.ig}
+              1: {name: punctuation.definition.group.branch.iso}
             patterns:
               - include: "#regexp-patterns"
           - begin: (\(\?~)
             end: \s*(\))
-            name: meta.group.absent.ig
+            name: meta.group.absent.iso
             captures:
-              1: {name: punctuation.definition.group.absent.ig}
+              1: {name: punctuation.definition.group.absent.iso}
             patterns:
               - include: "#regexp-patterns"
           - begin: \((\?(?:&)(?:([+-]?\d+)|([_\p{L}\p{Nl}][_\\d\p{L}\p{M}\p{N}]*)|([+-]?\d*)))(:)?
             end: \s*\)
-            name: meta.group.back-reference.ig
+            name: meta.group.back-reference.iso
             captures:
-              0: {name: punctuation.definition.group.back-reference.ig}
-              1: {name: punctuation.definition.group.back-reference.ig}
-              2: {name: entity.name.function.method.ig}
-              3: {name: variable.other.ig}
-              4: {name: punctuation.separator.colon.ig}
+              0: {name: punctuation.definition.group.back-reference.iso}
+              1: {name: punctuation.definition.group.back-reference.iso}
+              2: {name: entity.name.function.method.iso}
+              3: {name: variable.other.iso}
+              4: {name: punctuation.separator.colon.iso}
             patterns:
               - include: "#regexp-patterns"
           - begin: \(\?(?=<(?![!=]))
             end: \s*(\))
-            name: meta.group.named.ig
+            name: meta.group.named.iso
             beginCaptures:
-              0: {name: punctuation.definition.group.named.ig}
+              0: {name: punctuation.definition.group.named.iso}
               1: {patterns: [{include: "#variables"}]}
             endCaptures:
-              0: {name: punctuation.definition.group.named.ig}
+              0: {name: punctuation.definition.group.named.iso}
             patterns:
               - begin: (?<=\(\?)(<)
                 end: \s*(>)
-                name: punctuation.definition.group.named.ig
+                name: punctuation.definition.group.named.iso
                 beginCaptures:
-                  1: {name: punctuation.definition.group.named.ig}
+                  1: {name: punctuation.definition.group.named.iso}
                 endCaptures:
-                  1: {name: punctuation.definition.group.named.ig}
+                  1: {name: punctuation.definition.group.named.iso}
                 patterns:
                   - include: "#variables"
                   - include: "#numbers"
               - include: "#regexp-patterns"
           - begin: \(
             end: \s*\)
-            name: meta.group.ig
+            name: meta.group.iso
             captures:
-              0: {name: punctuation.definition.group.ig}
+              0: {name: punctuation.definition.group.iso}
             patterns:
               - include: "#regexp-patterns"
 
       regexp-char-class:
         patterns:
           - match: \\(?=\s*$)
-            name: constant.character.escape.newline.ig
+            name: constant.character.escape.newline.iso
           - begin: (?i)\\p{
             end: \s*}
-            name: constant.other.character-class.unicode.ig
+            name: constant.other.character-class.unicode.iso
             patterns:
               - include: "#expression-keywords"
               - include: "#variables"
               - include: "#operators"
           - begin: \\j{
             end: \s*}
-            name: constant.character.entity.named.ig
+            name: constant.character.entity.named.iso
             patterns:
               - include: "#regexp-patterns"
           - match: (?i)\\b(?:[01]{1,21}|{[01\s]+?})
-            name: constant.character.escape.binary.ig
+            name: constant.character.escape.binary.iso
           - match: (?i)\\q(?:[0-3]{1,11}|{[0-3\s]+?})
-            name: constant.character.escape.quaternary.ig
+            name: constant.character.escape.quaternary.iso
           - match: (?i)\\s(?:[0-5]{1,8}|{[0-5\s]+?})
-            name: constant.character.escape.senary.ig
+            name: constant.character.escape.senary.iso
           - match: (?i)\\o(?:[0-7]{1,7}|{[0-7\s]+?})
-            name: constant.character.escape.octal.ig
+            name: constant.character.escape.octal.iso
           - match: (?i)\\d?\d{1,7}|\\d{[\d\s]+?}
-            name: constant.character.escape.decimal.ig
+            name: constant.character.escape.decimal.iso
           - match: (?i)\\z(?:[\dab]{1,6}|{[\s\dab]+?})
-            name: constant.character.escape.duodecimal.ig
+            name: constant.character.escape.duodecimal.iso
           - match: (?i)\\x(?:\h{1,6}|{[\h\s]+?})
-            name: constant.character.escape.hexadecimal.ig
+            name: constant.character.escape.hexadecimal.iso
           - match: (?i)\\u(?:\h{1,6}|{[\h\s]+?})
-            name: constant.character.escape.unicode.ig
+            name: constant.character.escape.unicode.iso
           - match: (?i:\\[cm][a-z])|\\R
-            name: constant.character.control.ig
+            name: constant.character.control.iso
           - match: *posix-class
-            name: constant.other.character-class.posix.ig
+            name: constant.other.character-class.posix.iso
           - match: (?i:\\p(c[cfos]?|l[lmotu]?|m[cen]?|n[dlo]?|p[c-fios]?|s[ckmo]?|z[lps]))
-            name: constant.other.character-class.unicode.ig
+            name: constant.other.character-class.unicode.iso
           - match: (?i)\\[ci]
-            name: constant.other.character-class.xml.ig
+            name: constant.other.character-class.xml.iso
           - match: \.|\\[dhlns-w]
-            name: constant.other.character-class.ig
+            name: constant.other.character-class.iso
           - match: \\[DHLNS-W]
-            name: constant.other.character-class.negated.ig
+            name: constant.other.character-class.negated.iso
           - match: (?i)\\n{[\w\s]+}
-            name: constant.character.escape.unicode.name.ig
+            name: constant.character.escape.unicode.name.iso
           - match: (?i)\\[abceflnprtvz]
-            name: constant.character.escape.ig
+            name: constant.character.escape.iso
           - match: \\[\p{S}\p{P}]
-            name: constant.character.escape.symbol.ig
+            name: constant.character.escape.symbol.iso
           - match: \\\p{Z}
-            name: constant.character.escape.symbol.ig
+            name: constant.character.escape.symbol.iso
           - match: \\[\p{L}\p{N}\p{Z}\p{c}]
-            name: constant.character.escape.illegal.ig
+            name: constant.character.escape.illegal.iso
           - include: "#embedded"
 
       regexp-char-ops:
         patterns:
-          - match: \--
-            name: keyword.operator.optional.ig
-          - match: (?<!\\?[\\\[])-(?![-\[\]])
-            name: keyword.operator.range.ig
-          - match: \|\|
-            name: keyword.operator.union.ig
-          - match: \&&
-            name: keyword.operator.intersection.ig
-          - match: \^\^
-            name: keyword.operator.only.ig
-          - match: ~~
-            name: keyword.operator.maybe.ig
           - match: \.
-            name: constant.other.character-class.range.ig
+            name: constant.other.character-class.range.iso
+          - match: (?<!\|)\|\|(?!\|)
+            name: keyword.operator.union.iso
+          - match: (?<!&)&&(?!&)
+            name: keyword.operator.intersection.iso
+          - match: (?<!\^)\^\^(?!\^)
+            name: keyword.operator.symmetric.iso
+          - match: (?<!~)~~(?!~)
+            name: keyword.operator.negation.iso
+          - match: (?<!-)--(?!-)
+            name: keyword.operator.difference.iso
+          - match: (?<!\\?[\\\[])-(?![-\[\]])
+            name: keyword.operator.range.iso
           - match: \\.
-            name: constant.character.escape.other.ig
+            name: constant.character.escape.other.iso
 
       regexp-char-set:
         patterns:
           - begin: (\[=)
             end: \s*(\])
-            name: constant.other.character-class.posix.ig
+            name: constant.other.character-class.posix.iso
             captures:
-              1: {name: punctuation.definition.character-class.posix.ig}
+              1: {name: punctuation.definition.character-class.posix.iso}
             patterns:
               - include: "#comments"
               - include: "#variables"
@@ -1228,9 +1231,9 @@ repository:
               - include: "#regexp-patterns"
           - begin: (\[\.)
             end: \s*(\])
-            name: constant.other.character-class.posix.ig
+            name: constant.other.character-class.posix.iso
             captures:
-              1: {name: punctuation.definition.character-class.posix.ig}
+              1: {name: punctuation.definition.character-class.posix.iso}
             patterns:
               - include: "#comments"
               - include: "#variables"
@@ -1238,9 +1241,9 @@ repository:
               - include: "#regexp-patterns"
           - begin: (\[:)
             end: \s*(\])
-            name: constant.other.character-class.posix.ig
+            name: constant.other.character-class.posix.iso
             captures:
-              1: {name: punctuation.definition.character-class.posix.ig}
+              1: {name: punctuation.definition.character-class.posix.iso}
             patterns:
               - include: "#comments"
               - include: "#variables"
@@ -1248,9 +1251,9 @@ repository:
               - include: "#regexp-patterns"
           - begin: (\[\^)
             end: \s*(\])
-            name: constant.other.character-class.negated.ig
+            name: constant.other.character-class.negated.iso
             captures:
-              1: {name: punctuation.definition.character-class.negated.ig}
+              1: {name: punctuation.definition.character-class.negated.iso}
             patterns:
               - include: "#comments"
               - include: "#regexp-char-class"
@@ -1258,9 +1261,9 @@ repository:
               - include: "#regexp-char-set"
           - begin: (\[)
             end: \s*(\])
-            name: constant.other.character-class.ig
+            name: constant.other.character-class.iso
             captures:
-              1: {name: punctuation.definition.character-class.ig}
+              1: {name: punctuation.definition.character-class.iso}
             patterns:
               - include: "#comments"
               - include: "#regexp-char-class"
@@ -1279,24 +1282,24 @@ repository:
       tag-element-name:
         patterns:
           - comment: JSX Fragment
-            name: meta.tag.ig
-            contentName: JSXAttrs
+            name: meta.tag.iso
+            contentName: meta.tag.iso
             begin: \s*+(<)\s*(?=>)
             end: (?<=</)(>)
             beginCaptures:
-              1: {name: punctuation.definition.tag.ig}
+              1: {name: punctuation.definition.tag.iso}
             endCaptures:
-              1: {name: punctuation.definition.tag.ig}
+              1: {name: punctuation.definition.tag.iso}
             patterns:
               - include: "#tag-termination"
           - comment: "Tags that end > are trapped in #tag-termination"
-            name: meta.tag.ig
-            contentName: JSXAttrs
+            name: meta.tag.iso
+            contentName: meta.tag.iso
             begin: |
               (?x)\s*+(<)([_\p{L}\p{Nl}][^\s,;'"`\\</>]*)(?=[\/>\s])(?![:])(?<!\.|:)
             end: \s*(?<=</)(\2)(>)|(/>)|((?<=</)\O*?)>
             beginCaptures:
-              1: {name: punctuation.definition.tag.ig}
+              1: {name: punctuation.definition.tag.iso}
               2:
                 patterns: &tag-names
                   - include: "#type-names"
@@ -1305,23 +1308,20 @@ repository:
                   - include: "#operators"
             endCaptures:
               1: {patterns: *tag-names}
-              2: {name: punctuation.definition.tag.ig}
-              3: {name: punctuation.definition.tag.ig}
-              4: {name: invalid.illegal.termination.ig}
+              2: {name: punctuation.definition.tag.iso}
+              3: {name: punctuation.definition.tag.iso}
+              4: {name: invalid.illegal.termination.iso}
             patterns:
               - include: "#tag-termination"
               - include: "#tag-attributes"
       tag-termination:
         comment: uses non consuming search for </ in </tag>
-        contentName: JSXNested
+        contentName: meta.jsx.children.iso
+        name: meta.jsx.children.iso
         begin: (>)
         end: (</)
-        beginCaptures:
-          0: {name: punctuation.definition.tag.ig}
-          1: {name: JSXStartTagEnd}
-        endCaptures:
-          0: {name: punctuation.definition.tag.ig}
-          1: {name: JSXEndTagStart}
+        captures:
+          0: {name: punctuation.definition.tag.iso}
         patterns:
           - include: "#evaluated-code"
           - include: "#entities"
@@ -1330,39 +1330,40 @@ repository:
           - include: markdown.math.block
           - include: text.html.markdown#inline
       attribute-expression:
-        name: meta.embedded.expression.js
-        contentName: source.js
         begin: \(
         end: \)
         captures:
-          0: {name: punctuation.section.embedded.ig}
+          0: {name: punctuation.section.embedded.iso}
         patterns:
           - include: $self
-          - include: source.yaml#flow-collection
       tag-attributes:
         patterns:
-          - include: "#comments"
+          - include: source.yaml#flow-collection
+          - include: "#tag-element-name"
+          - include: "#evaluated-code"
           - include: "#attribute-name"
           - include: "#spread-attribute"
           - include: "#attribute-expression"
-          - include: "#literals"
-          - include: "#evaluated-code"
-          - include: "#tag-element-name"
+          - include: "#strings-unquoted"
+          - include: "#strings-quoted"
+          - include: "#numbers"
+          - include: "#regexps"
+          - include: "#comments"
       spread-attribute:
         comment: Spread attribute { ... AssignmentExpression }
         match: (?<!\*)\*(?!\*)
-        name: keyword.operator.spread.ig
+        name: keyword.operator.spread.iso
       attribute-name:
         patterns:
           - comment: Style attribute
             begin: (?<!\S)(style)(=)?({)
             end: \s*(})\s*
             beginCaptures:
-              1: {name: entity.other.attribute-name.ig}
-              2: {name: punctuation.separator.key-value.ig}
-              3: {name: punctuation.section.embedded.ig}
+              1: {name: entity.other.attribute-name.iso}
+              2: {name: punctuation.separator.key-value.iso}
+              3: {name: punctuation.section.embedded.iso}
             endCaptures:
-              1: {name: punctuation.section.embedded.ig}
+              1: {name: punctuation.section.embedded.iso}
             patterns:
               - include: source.css.scss#flow_control
               - include: source.css.scss#rules
@@ -1371,29 +1372,27 @@ repository:
           - comment: Attribute names
             match: (?<=[)\]}])(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
             captures:
-              1: {name: punctuation.separator.key-value.ig}
+              1: {name: punctuation.separator.key-value.iso}
               2:
-                name: string.unquoted.html.ig
+                name: string.unquoted.html.iso
                 patterns:
                   - include: "#string-escapes"
-                  - include: source.yaml#flow-scalar
+                  - include: source.yaml#flow-scalar-plain-out-implicit-type
           - comment: Attribute names
             match: (?<!\S)([_\p{L}\p{Nl}][^\s,;'"`\\/<=>]*)(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
             captures:
-              1: {name: entity.other.attribute-name.ig}
-              2: {name: punctuation.separator.key-value.ig}
+              1: {name: entity.other.attribute-name.iso}
+              2: {name: punctuation.separator.key-value.iso}
               3:
-                name: string.unquoted.html.ig
+                name: string.unquoted.html.iso
                 patterns:
                   - include: "#string-escapes"
-                  - include: source.yaml#flow-scalar
+                  - include: source.yaml#flow-scalar-plain-out-implicit-type
       evaluated-code:
-        name: meta.embedded.expression.js
-        contentName: source.js
         begin: "{"
         end: "}"
         captures:
-          0: {name: punctuation.section.embedded.ig}
+          0: {name: punctuation.section.embedded.iso}
         patterns:
           - include: "#spread-attribute"
           - include: $self
@@ -1402,264 +1401,271 @@ repository:
           - include: text.xml#entity
           - comment: Entity with & and invalid name
             match: "&\\s*+;"
-            name: invalid.illegal.bad-ampersand.ig
+            name: invalid.illegal.bad-ampersand.iso
 
-  document:
+  jsdoc:
     patterns:
-      - include: "#document-inline-tags"
-      - include: "#document-access"
-      - include: "#document-as-name-path"
-      - include: "#document-simple-name-path"
-      - include: "#document-module"
-      - include: "#document-type-name"
-      - include: "#document-type-no-name"
-      - match: (?<=^|[''"`\\\s({\[])@([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\b
-        name: storage.type.class.ig
+      - include: "#jsdoc-inline-tags"
+      - include: "#jsdoc-access"
+      - include: "#jsdoc-as-namepath"
+      - include: "#jsdoc-simple"
+      - include: "#jsdoc-simple-namepath"
+      - include: "#jsdoc-module"
+      - include: "#jsdoc-type-name"
+      - include: "#jsdoc-type-noname"
+      - comment: additional jsdoc V2 keywords
+        match: (?<!\w)@(add|api|body|codeend|codestart|demo|download|group|hide|iframe|image|inherits|option|outline|page|parent|signature|tag)\b
+        name: storage.type.class.jsdoc
+      - comment: additional jsdoc keywords
+        match:
+          (?<!\w)@(accessor|alternateClassName|aside|cfg|chainable|docauthor|evented|experimental|ftype|hide|inheritable|localdoc|markdown|mixins|new|override|preventable|ptype|removed|scss
+          mixin|singleton|template|uses|xtype)\b
+        name: storage.type.class.jsdoc
 
     repository:
-      document-access:
-        match: |
-          (?x)
-          (@acc)\b\s*\b
-          (?:
-          (?:
-          public|private|protected|read|a?sync|inline|lazy|eager|trans|part
-          |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
-          # Function or method modifiers
-          |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
-          |(?:un)?(?:sign|safe|check|lock|fixed|size)
-          |# Function or method modifiers
-          (?:pre|in|post|suf|af|trans|interface)fix|
-          (?:u|bi|ter|)nary|oper
-          |# Decorators
-          @(?:
-          [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
-          (?:(?:[?!~]?\.|[?!:]:|->)
-          (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
-          )
-          )\s*\b
-          )*
-          (?=\s|$)
+      jsdoc-access:
+        comment: "@tag protected...."
+        match: (@(access))\s*(private|protected|public)?(?=\s|$)
         captures:
-          1: {name: storage.type.class.ig}
-          0: {name: storage.modifier.ig}
-      document-as-name-path:
-        begin: (@(borrows|lends)\b)\s*(?=(?![}\]]\#)\S+(?:(?:\s*\bas\b\s*(?![}\]]\#)\S+)?)?([\S\s]*))
-        end: ^|(?=[}\]]\#)|(?=\3$)
+          1: {name: storage.type.class.jsdoc}
+          3: {name: storage.modifier.jsdoc}
+      jsdoc-module:
+        comment: "@tag {optional type} module:file"
+        begin: (@(exports|module|listens|requires)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(\S*)([\S\s]*))
+        end: ^|(?=\*/)|(?=\5$)
         beginCaptures:
-          1: {name: storage.type.class.ig}
+          1: {name: storage.type.class.jsdoc}
         patterns:
-          - include: "#document-name-path-scopes"
-      document-inline-tags:
+          - include: "#jsdoc-typedef-scopes"
+          - match: (?:(module)(:))?(((?!\*/)\S)+)
+            captures:
+              1: {name: keyword.module.jsdoc}
+              2: {name: punctuation.jsdoc}
+              3: {name: string.modulename.jsdoc}
+      jsdoc-as-namepath:
+        comment: to terminate the block
+        begin: (@(borrows|lends)\b)\s*(?=(?!\*/)\S+(?:(?:\s*\bas\b\s*(?!\*/)\S+)?)?([\S\s]*))
+        end: ^|(?=\*/)|(?=\3$)
+        beginCaptures:
+          1: {name: storage.type.class.jsdoc}
+        patterns:
+          - include: "#jsdoc-namepath-scopes"
+      jsdoc-simple:
+        comment: "@tag"
+        match: (@(abstract|author|classdesc|copyright|default|defaultvalue|deprecated|description|desc|example|external|fileoverview|file|global|host|ignore|inheritdoc|inner|instance|license|override|overview|readonly|see|since|static|summary|todo|tutorial|virtual|variation|version)\b)(?=$|\s)
+        captures:
+          1: {name: storage.type.class.jsdoc}
+      jsdoc-simple-namepath:
+        comment: "@tag {opt type} Class#xxx or Class#Event:aaaa etc"
+        begin: (@(alias|augments|callback|extends|emits|event|fires|interface|memberof|mixes|name|property|prop|this|typedef)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*\S*([\S*\s]*))
+        end: ^|(?=\*/)|(?=\4$)
+        beginCaptures:
+          1: {name: storage.type.class.jsdoc}
+        patterns:
+          - include: "#jsdoc-typedef-scopes"
+          - include: "#jsdoc-namepath-scopes"
+      jsdoc-type-name:
+        comment: "@tag {optional type} name"
+        begin: (@(arg|argument|class|constant|constructor|constructs|const|function|func|kind|member|method|mixin|namespace|param|var)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(((\[(?:(?>[^\[\]]+)|\g<-1>)*\])|\S)+)?([\S\s]*))
+        end: ^|(?=\*/)|(?=\7$)
+        beginCaptures:
+          1: {name: storage.type.class.jsdoc}
+        patterns:
+          - include: "#jsdoc-typedef-scopes"
+          - include: "#jsdoc-name-scopes"
+      jsdoc-type-noname:
+        comment: "@tag {types}"
+        begin: (@(enum|exception|implements|private|protected|public|returns|return|throws|type)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*([\S\s]*))
+        end: ^|(?=\*/)|(?=\4$)
+        beginCaptures:
+          1: {name: storage.type.class.jsdoc}
+        patterns:
+          - include: "#jsdoc-typedef-scopes"
+      jsdoc-inline-tags:
+        name: meta.tag.inline.jsdoc
         begin: (\[(?:(?>[^\[\]]+)|\g<-1>)*\])?({)(?=@)
         end: (})
-        name: meta.tag.inline.ig
         beginCaptures:
-          1: {name: string.linktext.ig}
-          2: {name: meta.brace.curly.ig}
+          1: {name: string.linktext.jsdoc}
+          2: {name: meta.brace.curly.jsdoc}
         endCaptures:
-          1: {name: meta.brace.curly.ig}
+          1: {name: meta.brace.curly.jsdoc}
         patterns:
           - match: (@(link|tutorial))\b([^}]*)
             captures:
-              1: {name: storage.type.class.ig}
-              3: {name: string.ig}
-      document-module:
-        begin: |
-          (?x)(@(
-          (?:(?:im|ex)port|listen|require|use)s?
-          )\b)
-          \s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(\S*)([\S\s]*))
-        end: ^|(?=[}\]]\#)|(?=\5$)
-        beginCaptures:
-          1: {name: storage.type.class.ig}
+              1: {name: storage.type.class.jsdoc}
+              3: {name: string.jsdoc}
+      jsdoc-typedef-scopes:
+        name: entity.name.type.instance.jsdoc
+        begin: "{"
+        end: "}|^"
+        captures:
+          0: {name: meta.brace.curly.jsdoc}
         patterns:
-          - include: "#document-typedef-scopes"
-          - match: (?:(module|package)(:))?(((?![}\]]\#)\S)+)
-            captures:
-              1: {name: keyword.module.ig}
-              2: {name: punctuation.ig}
-              3: {name: string.module-name.ig}
-      document-name-scopes:
+          - include: "#jsdoc-typedef-primitives"
+          - include: "#jsdoc-namepath-scopes"
+          - include: "#jsdoc-typedef-obj"
+      jsdoc-typedef-primitives:
+        match: \b(null|undefined|boolean|string|number)\b
+        captures:
+          1: {name: support.type.builtin.primitive.jsdoc}
+      jsdoc-typedef-obj:
+        comment: typedef object
+        begin: "{"
+        end: "}|^"
+        captures:
+          0: {name: meta.brace.curly.jsdoc}
         patterns:
-          - match: ((?![}\]]\#)[\S&&[^\[\]"']])+
+          - include: "#jsdoc-typedef-primitives"
+          - match: \b([$_A-Za-z][$_A-Za-z0-9]*)\s*(:)
             captures:
-              0: {name: variable.other.ig}
-          - begin: \[
+              1: {name: variable.other.readwrite.jsdoc}
+          - include: "#jsdoc-namepath-scopes"
+          - include: "#jsdoc-typedef-obj"
+      jsdoc-name-scopes:
+        patterns:
+          - match: ((?!\*/)[\S&&[^\[\]"']])+
+            captures:
+              0: {name: variable.other.jsdoc}
+          - name: variable.other.jsdoc
+            begin: \[
             end: \]|^
-            name: variable.other.ig
             patterns:
-              - include: "#document-string"
-              - include: "#document-name-scopes"
-      document-simple-name-path:
-        begin: |
-          (?x)(@(
-          (?:use|call|emit|event|fire)s?|alias|name|mixes|prop
-          |this|that|it|self|super
-          )\b)
-          \s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*\S*([\S*\s]*))
-        end: ^|(?=[}\]]\#)|(?=\4$)
-        beginCaptures:
-          1: {name: storage.type.class.ig}
+              - include: "#jsdoc-string"
+              - include: "#jsdoc-name-scopes"
+      jsdoc-namepath-scopes:
         patterns:
-          - include: "#document-typedef-scopes"
-          - include: "#types"
-      document-string:
-        match: '"(\\"|[^"])*"|''(\\''|[^''])*'''
-        name: string.ig
-      document-type-name:
-        begin: |
-          (?x)(@(
-          func?|function|proc|process|macro|class|given|constraint|const|enum|relation|lattice
-          |project|attribute|protocol|member|extend|fragment|interface|struct|module|package|namespace|object|record|raw
-          |data|query|schema|style|trait|friend|alias|type|declare|let|va[rl]
-          |arg|ctor|member|method|mixin|param
-          )\b)\s*
-          (?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(((\[(?:(?>[^\[\]]+)|\g<-1>)*\])|\S)+)?([\S\s]*))
-        end: ^|(?=[}\]]\#)|(?=\7$)
-        beginCaptures:
-          1: {name: storage.type.class.ig}
-        patterns:
-          - include: "#document-typedef-scopes"
-          - include: "#document-name-scopes"
-      document-type-no-name:
-        begin: |
-          (?x)
-          (@(
-          public|private|protected|read|a?sync|inline|lazy|eager|trans|part
-          |lawful|rogue|early|late|unique|handle|over|abs|vol|stat|dyn|final
-          # Function or method modifiers
-          |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
-          |(?:un)?(?:sign|safe|check|lock|fixed|size)
-          |# Function or method modifiers
-          (?:pre|in|post|suf|af|trans|interface)fix|
-          (?:u|bi|ter|)nary|oper
-          |# Decorators
-          @(?:
-          [_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*
-          (?:(?:[?!~]?\.|[?!:]:|->)
-          (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
-          )
-          )\b)
-          \s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*([\S\s]*))
-        end: ^|(?=[}\]]\#)|(?=\4$)
-        beginCaptures:
-          1: {name: storage.type.class.ig}
-        patterns:
-          - include: "#document-typedef-scopes"
-      document-typedef-obj:
-        begin: "{"
-        end: "}|^"
-        captures:
-          0: {name: meta.brace.curly.ig}
-        patterns:
-          - include: "#types"
-      document-typedef-scopes:
-        begin: "{"
-        end: "}|^"
-        name: entity.name.type.instance.ig
-        captures:
-          0: {name: meta.brace.curly.ig}
-        patterns:
-          - include: "#types"
+          - match: \s*\b(as)\b\s*(?=[$_A-Za-z])
+            captures:
+              1: {name: keyword.as.jsdoc}
+          - match: \s*(?:([A-Z][$_A-Za-z0-9]*)|([$_A-Za-z][$_A-Za-z0-9]*))(?=[\s\-~.#]|$)
+            captures:
+              1: {name: entity.name.class.jsdoc}
+              2: {name: entity.name.function.jsdoc}
+          - match: (\.)([$_A-Za-z][$_A-Za-z0-9]*)(?=\s|$|\")
+            captures:
+              1: {name: keyword.operator.accessor.jsdoc}
+              2: {name: entity.name.function.method.static.jsdoc}
+          - match: (\#)([$_A-Za-z][$_A-Za-z0-9]*)(?=\s|$|\")
+            captures:
+              1: {name: keyword.operator.accessor.jsdoc}
+              2: {name: entity.name.function.method.instance.jsdoc}
+          - match: (~|-)([$_A-Za-z][$_A-Za-z0-9]*)(?=\s|$|\")
+            captures:
+              1: {name: keyword.operator.accessor.jsdoc}
+              2: {name: entity.name.function.method.inner.jsdoc}
+          - match: (\#)(event)(:)
+            captures:
+              1: {name: keyword.operator.accessor.jsdoc}
+              2: {name: keyword.event.jsdoc}
+              3: {name: keyword.operator.jsdoc}
+          - name: string.method.jsdoc
+            begin: \.(?="|')
+            end: (?=.)
+            applyEndPatternLast: 1
+            patterns:
+              - include: "#jsdoc-string"
+      jsdoc-string:
+        name: string.jsdoc
+        match: "\"(\\\\\"|[^\"])*\"|'(\\\\'|[^'])*'"
 
   comments:
     patterns:
       - begin: \s*((/\+))
         end: (\s*(\+/))
-        name: comment.block.inline.ig
+        name: comment.block.inline.iso
         captures:
-          1: {name: comment.block.inline.ig}
-          2: {name: punctuation.definition.comment.ig}
+          1: {name: comment.block.inline.iso}
+          2: {name: punctuation.definition.comment.iso}
         patterns:
           - include: "#markdown-inline"
           - include: "#nested-inline"
       - begin: \s*((/\*\*))
         end: (\s*(\*\*/))
-        name: comment.block.documentation.ig
+        name: comment.block.documentation.iso
         captures:
-          1: {name: comment.block.documentation.ig}
-          2: {name: punctuation.definition.comment.ig}
+          1: {name: comment.block.documentation.iso}
+          2: {name: punctuation.definition.comment.iso}
         patterns:
-          - include: "#document"
+          - include: "#jsdoc"
           - include: "#markdown-inline"
           - include: "#nested-document-block"
       - begin: \s*((/\*))
         end: (\s*(\*/))
-        name: comment.block.ig
+        name: comment.block.iso
         captures:
-          1: {name: comment.block.ig}
-          2: {name: punctuation.definition.comment.ig}
+          1: {name: comment.block.iso}
+          2: {name: punctuation.definition.comment.iso}
         patterns:
           - include: "#markdown-inline"
           - include: "#nested-block"
       - begin: ((^\s*)|\s*)((//=))
         end: \s*$
-        name: comment.line.special.ig
+        name: comment.line.special.iso
         beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.ig}
-          3: {name: comment.line.special.ig}
-          4: {name: punctuation.definition.comment.ig}
+          2: {name: punctuation.whitespace.comment.leading.iso}
+          3: {name: comment.line.special.iso}
+          4: {name: punctuation.definition.comment.iso}
         endCaptures:
-          1: {name: punctuation.definition.comment.ig}
+          1: {name: punctuation.definition.comment.iso}
         patterns:
           - include: "#comment-special"
           - include: "#markdown-inline"
       - begin: ((^\s*)|\s*)((//\+))
         end: \s*$
-        name: comment.line.playground.ig
+        name: comment.line.playground.iso
         beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.ig}
-          3: {name: comment.line.playground.ig}
-          4: {name: punctuation.definition.comment.ig}
+          2: {name: punctuation.whitespace.comment.leading.iso}
+          3: {name: comment.line.playground.iso}
+          4: {name: punctuation.definition.comment.iso}
         endCaptures:
-          0: {name: comment.line.playground.ig}
+          0: {name: comment.line.playground.iso}
         patterns:
-          - include: "#document"
+          - include: "#jsdoc"
           - include: "#markdown-inline"
       - begin: ((^\s*)|\s*)((///))
         end: \s*$
-        name: comment.line.documentation.ig
+        name: comment.line.documentation.iso
         beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.ig}
-          3: {name: comment.line.documentation.ig}
-          4: {name: punctuation.definition.comment.ig}
+          2: {name: punctuation.whitespace.comment.leading.iso}
+          3: {name: comment.line.documentation.iso}
+          4: {name: punctuation.definition.comment.iso}
         endCaptures:
-          0: {name: comment.line.documentation.ig}
+          0: {name: comment.line.documentation.iso}
         patterns:
-          - include: "#document"
+          - include: "#jsdoc"
           - include: "#markdown-inline"
       - begin: ((^\s*)|\s*)((//!|#!))
         end: \s*$
-        name: comment.line.shebang.ig
+        name: comment.line.shebang.iso
         beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.ig}
-          3: {name: comment.line.shebang.ig}
-          4: {name: punctuation.definition.comment.ig}
+          2: {name: punctuation.whitespace.comment.leading.iso}
+          3: {name: comment.line.shebang.iso}
+          4: {name: punctuation.definition.comment.iso}
         endCaptures:
-          0: {name: comment.line.shebang.ig}
+          0: {name: comment.line.shebang.iso}
         patterns:
           - include: "#markdown-inline"
       - begin: ((^\s*)|\s*)((//\*))
         end: \s*$
-        name: comment.line.doctype.ig
+        name: comment.line.doctype.iso
         beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.ig}
-          3: {name: comment.line.doctype.ig}
-          4: {name: punctuation.definition.comment.ig}
+          2: {name: punctuation.whitespace.comment.leading.iso}
+          3: {name: comment.line.doctype.iso}
+          4: {name: punctuation.definition.comment.iso}
         endCaptures:
-          0: {name: comment.line.doctype.ig}
+          0: {name: comment.line.doctype.iso}
         patterns:
           - include: "#markdown-inline"
       - begin: ((^\s*)|\s*)((//))
         end: \s*$
-        name: comment.line.number-sign.ig
+        name: comment.line.number-sign.iso
         beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.ig}
-          3: {name: comment.line.double-slash.ig}
-          4: {name: punctuation.definition.comment.ig}
+          2: {name: punctuation.whitespace.comment.leading.iso}
+          3: {name: comment.line.double-slash.iso}
+          4: {name: punctuation.definition.comment.iso}
         endCaptures:
-          0: {name: comment.line.number-sign.ig}
+          0: {name: comment.line.number-sign.iso}
         patterns:
           - include: "#markdown-inline"
 
@@ -1671,26 +1677,26 @@ repository:
         begin: (/\*)\s*
         end: \s*(\*/)
         captures:
-          1: {name: punctuation.definition.comment.ig}
+          1: {name: punctuation.definition.comment.iso}
         patterns:
-          - include: "#document"
+          - include: "#jsdoc"
           - include: "#markdown-inline"
           - include: "#nested-block"
       nested-document-block:
         begin: (/\*\*?)\s*
         end: \s*(\*/)
         captures:
-          1: {name: punctuation.definition.comment.ig}
+          1: {name: punctuation.definition.comment.iso}
         patterns:
-          - include: "#document"
+          - include: "#jsdoc"
           - include: "#markdown-inline"
           - include: "#nested-document-block"
       nested-inline:
         begin: (/\+)\s*
         end: \s*(\+/)
-        name: comment.block.inline.ig
+        name: comment.block.inline.iso
         captures:
-          1: {name: punctuation.definition.comment.ig}
+          1: {name: punctuation.definition.comment.iso}
         patterns:
           - include: "#markdown-inline"
           - include: "#nested-inline"
@@ -1698,9 +1704,9 @@ repository:
         begin: (/\+)\s*
         end: \s*(\+/)
         captures:
-          1: {name: punctuation.definition.comment.ig}
+          1: {name: punctuation.definition.comment.iso}
         patterns:
-          - include: "#document"
+          - include: "#jsdoc"
           - include: "#markdown-inline"
           - include: "#nested-special"
 
@@ -1807,7 +1813,7 @@ repository:
           \b
           (?=
           !(?:\.=?)?\s*|
-          \s+[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*
+          \s+[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*
 
           (?!
           \b(?:# don't match keywords
@@ -1871,18 +1877,18 @@ repository:
           )
           )\b
         captures:
-          1: {name: entity.name.tag.ig}
-          2: {name: entity.name.tag.ig support.class.component.ig}
-          3: {name: entity.name.class.builtin.ig}
-          4: {name: entity.name.function.method.ig}
-          5: {name: variable.other.global.ig}
-          6: {name: variable.other.constant.object.ig}
-          7: {name: variable.other.conditional.ig}
-          8: {name: variable.other.object.ig}
-          9: {name: entity.name.function.tagged-template.ig}
-          10: {name: entity.name.type.ig}
-          11: {name: entity.name.class.ig}
-          12: {name: entity.name.function.ig}
+          1: {name: entity.name.tag.iso}
+          2: {name: entity.name.tag.iso support.class.component.iso}
+          3: {name: entity.name.class.builtin.iso}
+          4: {name: entity.name.function.method.iso}
+          5: {name: variable.other.global.iso}
+          6: {name: variable.other.constant.object.iso}
+          7: {name: variable.other.conditional.iso}
+          8: {name: variable.other.object.iso}
+          9: {name: entity.name.function.tagged-template.iso}
+          10: {name: entity.name.type.iso}
+          11: {name: entity.name.class.iso}
+          12: {name: entity.name.function.iso}
       - include: $self
 
   variables:
@@ -1896,32 +1902,6 @@ repository:
       - regular variables: in camelCase
     match: |
       (?x)\s*\b
-
-      (?!
-      \b(?:# don't match keywords
-      in|of|as|is|new|infer|unset
-      |typeof|nameof|sizeof|pairof|keyof|valueof
-      |length|delete|to|til|thru|at|by
-      |n?and|x?n?or|not|parallel|series|spawn|discard
-      |func?|function|proc|process|macro
-      |let|var|val|const|declare
-      |class|given|constraint|enum|relation|lattice
-      |project|attribute|protocol|member|extend|fragment|interface|struct
-      |module|package|namespace|object|record|label
-      |raw|data|query|schema|style|trait|friend|alias|type
-      |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
-      |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
-      |switch|case|fail|default|match|when|pass|fallthru
-      |try|retry|throw|raise|catch|rescue|finally
-      |with|ref|defer|refer|show|hide|enter|exit
-      |then|begin|end|debug|check|assert
-      |break|continue|halt|skip|fixed|lock
-      |(?:return|give|await|yield|throw|raise)s?
-      |import|export|show|hide|open|close
-      |from|where|join|equals?|[io]nto|order
-      |take|drop|fold|scan|select|group|use|using
-      )\b
-      )
 
       (?:
       (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
@@ -1951,18 +1931,18 @@ repository:
       )
       \b\s*
     captures:
-      1: {name: variable.other.index.ig}
-      2: {name: variable.other.constant.property.ig}
-      3: {name: variable.other.property.static.ig}
-      4: {name: variable.other.property.ig}
-      5: {name: variable.other.global.ig}
-      6: {name: variable.other.constant.object.ig}
-      7: {name: variable.other.conditional.ig}
-      8: {name: variable.other.object.ig}
-      9: {name: variable.other.dollar.ig}
-      10: {name: variable.other.constant.ig}
-      11: {name: variable.other.class.ig}
-      12: {name: variable.other.readwrite.ig}
+      1: {name: variable.other.index.iso}
+      2: {name: variable.other.constant.property.iso}
+      3: {name: variable.other.property.static.iso}
+      4: {name: variable.other.property.iso}
+      5: {name: variable.other.global.iso}
+      6: {name: variable.other.constant.object.iso}
+      7: {name: variable.other.conditional.iso}
+      8: {name: variable.other.object.iso}
+      9: {name: variable.other.dollar.iso}
+      10: {name: variable.other.constant.iso}
+      11: {name: variable.other.class.iso}
+      12: {name: variable.other.readwrite.iso}
 
   operators:
     patterns:
@@ -1974,104 +1954,125 @@ repository:
       binary-ops-builtin:
         patterns:
           - comment: augmented assignment += -= *= /= etc
-            match: (?<=^|['"`\\({\[\s])([\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]+(?<![!:~.<=>])=)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.assignment.augmented.ig
-          - comment: "assignment : :="
-            match: (?<=^|['"`\\({\[\s])(:?=)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.assignment.ig
-          - comment: arithmetic + - * ** *** / // /// % %% *> <*
-            match: (?<=^|['"`\\({\[\s])((?<!<)\+(?!>|\++)|(?<!<)-(?!>|-+)|\*{1,3}|/{1,3}|%%?|\*+>|<\*+|<\*>)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.arithmetic.ig
-          - comment: increment/decrement ++ --
-            match: (?<=^|['"`\\({\[\s])((?:[+-])+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.successor.ig
-          - comment: logical && || ^^ /\ / \ \\ etc.
-            match: (?<=^|['"`\\({\[\s])((?:[&^]){2,}|\|\|+(?!>))(?=$|['"`\\\s)}\]])
-            name: keyword.operator.logical.ig
-          - comment: bitwise & | ^ ~
-            match: (?<=^|['"`\\({\[\s])([&^]|\|(?!>)|~(?![!=<>]))(?=$|['"`\\\s)}\]])
-            name: keyword.operator.bitwise.ig
-          - comment: shift << >> <<< >>>>
-            match: (?<=^|['"`\\({\[\s])(<{2,}(?![!:=+|*])|(?<![!:=+|*])>{2,})(?=$|['"`\\\s)}\]])
-            name: keyword.operator.bitwise.shift.ig
-          - comment: function composition +> <+
-            match: (?<=^|['"`\\({\[\s])(<\++|\++>)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.compose.ig
-          - comment: pipeline |> <|
-            match: (?<=^|['"`\\({\[\s])(<\|+|\|+>)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.pipeline.ig
-          - comment: "class <: :> :< >: <:< >:> <:> >:< <! !> !< >! <!< >!> <!> >!<"
-            match: (?<=^|['"`\\({\[\s])([<>][!:][<>]?|[!:][<>])(?=$|['"`\\\s)}\]])
-            name: keyword.operator.class.ig
-          - comment: relational < > <= >=
-            match: (?<=^|['"`\\({\[\s])([<>]=?)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.relational.ig
-          - comment: regex =< <> </ /> <$ $> <$> <+> <*> </> <$> $
-            match: (?<=^|['"`\\({\[\s])(<>|=<|<(?:[/*+$])+>?|(?:[/*+$])+>)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.regexp.ig
-          - comment: equality == != === !==
-            match: (?<=^|['"`\\({\[\s])([!=]=+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.comparison.ig
-          - comment: similarity operators
-            match: (?<=^|['"`\\({\[\s])([!=~]+~|~[!=~]+|[<~>]+~[<~>]*|~[<~>]+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.similarity.ig
-          - comment: fat arrow-like => ==> <==
-            match: (?<=^|['"`\\({\[\s])([=>]+|[<=]+|[=>]+[<=]+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.arrow.fat.ig
-          - comment: skinny arrow-like -> <- --> <--
-            match: (?<=^|['"`\\({\[\s])([->]+|[<-]+|[->]+[<-]+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.arrow.skinny.ig
-          - comment: wavy arrow-like ~> <~ ~~> <~~
-            match: (?<=^|['"`\\({\[\s])([~>]+|[<~]+|[~>]+[<~]+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.arrow.wavy.ig
-          - comment: null-coalescing ??
-            match: (?<=^|['"`\\({\[\s])(\?{2,})(?=$|['"`\\\s)}\]])
-            name: keyword.operator.null-coalescing.ig
-          - comment: non-null coalescing !!
-            match: (?<=^|['"`\\({\[\s])(!{2,})(?=$|['"`\\\s)}\]])
-            name: keyword.operator.coalescing.ig
-          - comment: "false coalescing ?:"
-            match: (?<=^|['"`\\({\[\s])(\?+:+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.conditional.ig
-          - comment: "true coalescing !:"
-            match: (?<=^|['"`\\({\[\s])(!+:+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.ternary.ig
-          - comment: "infix function $:"
-            match: (?<=^|['"`\\({\[\s])(\$+:+|\${2,})(?=$|['"`\\\s)}\]])
-            name: keyword.operator.macro.dollar.ig
+            match: (?<=^|['"`\\({\[\s])([\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+(?<![!:~.<=>])=)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.assignment.augmented.iso
+
+          - comment: |
+              1: assignment : :=
+              2: arithmetic + - * ** *** / // /// % %% *> <*
+              3: increment/decrement ++ --
+              4: logical && || ^^ !& !| !^ &| &!
+              5: bitwise & | ^ ~
+              6: bitwise shift << >> <<< >>>
+              7: function composition +> <+ <++ +>>
+              8: function pipeline <| |> <|| ||>
+              9: class <: :> :< >: <:< >:> <:> >:< <! !> !< >! <!< >!> <!> >!<
+              10: relational < > <= >=
+              11: regex =< <> </ /> <$ $> <$> <+> <*> </> <$> $
+              12: equality == != === !==
+              13: wavy operators ~> <~ ~~> <~~
+              14: fat arrow-like => ==> <==
+              15: skinny arrow-like -> --> <- <--
+              16: null-coalescing ??
+              17: non-null coalescing !!
+              18: compact ternary operator ?:
+              19: inverse ternary operator !:
+              20: infix function call $:
+
+              1: augmented assignment += -= *= /= etc
+              22: custom bitwise (& | ^ ~)
+              22: custom arithmetic (+ - * / %)
+              23: custom accessor (: .)
+              24: custom equality (= !)
+              25: custom comparison (< >)
+              26: custom private (? #)
+              27: custom mathematical (Unicode Sm)
+              28: custom currency (Unicode Sc)
+              29: custom ASCII (between \x80 and \xff)
+              30: custom infix operators (all other chars)
+            captures:
+              1: {name: keyword.operator.assignment.iso}
+              2: {name: keyword.operator.arithmetic.iso}
+              3: {name: keyword.operator.successor.iso}
+              4: {name: keyword.operator.logical.iso}
+              5: {name: keyword.operator.bitwise.iso}
+              6: {name: keyword.operator.bitwise.shift.iso}
+              7: {name: keyword.operator.compose.iso}
+              8: {name: keyword.operator.pipeline.iso}
+              9: {name: keyword.operator.class.iso}
+              10: {name: keyword.operator.relational.iso}
+              11: {name: keyword.operator.regexp.iso}
+              12: {name: keyword.operator.comparison.iso}
+              13: {name: keyword.operator.similarity.iso}
+              14: {name: keyword.operator.arrow.fat.iso}
+              15: {name: keyword.operator.arrow.skinny.iso}
+              16: {name: keyword.operator.null-coalescing.iso}
+              17: {name: keyword.operator.coalescing.iso}
+              18: {name: keyword.operator.conditional.iso}
+              19: {name: keyword.operator.ternary.iso}
+              20: {name: keyword.operator.macro.dollar.iso}
+            match: |
+              (?x)
+              (?<=^|['"`\\({\[\s])# spacing
+
+              (?:
+              (:?=)#1
+              |([+-]|\*{1,3}|~?/|%%?|\#\#?|<?\*>?)#2
+              |(\+\+|--)#3
+              |([&|^~]{2})#4
+              |([&|^~])#5
+              |(<<<?|>>>?)#6
+              |(\|{1,3}>|<\|{1,3})#7
+              |(\+>|<\+)#8
+              |([<>]?[!:][<>]?)#9
+              |([<>]=?)#10
+              |(<>|=<|<?[/*+$]>?)#11
+              |([!=]==?)#12
+              |(~>|<~|~~>|<~~)#13
+              |(<==+|=+>)#14
+              |(-+>|<-+)#15
+              |(\?\?)#16
+              |(!!)#17
+              |(\?:)#18
+              |(!:)#19
+              |(\$:)#20
+              )
+
+              (?=$|['"`\\\s)}\]])
+
           - comment: custom bitwise (leading &|^ ~)
-            match: (?<=^|['"`\\({\[\s])([&|^~][\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.bitwise.ig
+            match: (?<=^|['"`\\({\[\s])([&|^~][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.bitwise.iso
           - comment: custom arithmetic (leading + - * / %)
-            match: (?<=^|['"`\\({\[\s])([+\-*/%][\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.arithmetic.ig
+            match: (?<=^|['"`\\({\[\s])([+\-*/%][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.arithmetic.iso
           - comment: "custom accessor (leading : .)"
-            match: (?<=^|['"`\\({\[\s])([:.][\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.prototype.ig
+            match: (?<=^|['"`\\({\[\s])([:.][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.prototype.iso
           - comment: custom equality (leading = !)
-            match: (?<=^|['"`\\({\[\s])([!=][\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.comparison.ig
+            match: (?<=^|['"`\\({\[\s])([!=][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.comparison.iso
           - comment: custom comparison (leading < >)
-            match: (?<=^|['"`\\({\[\s])([<>][\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.relational.ig
+            match: (?<=^|['"`\\({\[\s])([<>][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.relational.iso
           - comment: custom optional (leading ?)
-            match: (?<=^|['"`\\({\[\s])(\?[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.private.ig
+            match: (?<=^|['"`\\({\[\s])(\?[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.private.iso
           - comment: custom mathematical (leading Unicode category Sm)
-            match: (?<=^|['"`\\({\[\s])([\p{Sm}&&[\x{80}-\x{10ffff}]][\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.math.ig
+            match: (?<=^|['"`\\({\[\s])([\p{Sm}&&[\x{80}-\x{10ffff}]][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.math.iso
           - comment: custom currency-based (leading Unicode category Sc)
-            match: (?<=^|['"`\\({\[\s])([\p{Sc}&&[^$]][\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.currency.ig
+            match: (?<=^|['"`\\({\[\s])([\p{Sc}&&[^$]][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.currency.iso
           - comment: custom ASCII (leading Unicode 0x80 to 0xFF)
-            match: (?<=^|['"`\\({\[\s])([\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[\x{80}-\x{ff}]][\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.ascii.ig
+            match: (?<=^|['"`\\({\[\s])([\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[\x{80}-\x{ff}]][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.ascii.iso
           - comment: other custom (leading anything not covered above)
-            match: (?<=^|['"`\\({\[\s])([\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]+)(?=$|['"`\\\s)}\]])
-            name: keyword.operator.infix.ig
+            match: (?<=^|['"`\\({\[\s])([\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.infix.iso
 
       binary-ops:
-        match: (?<=^|['"`\\\s({\[])([\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]+)(?=$|['"`\\\s)}\]])
+        match: (?<=^|['"`\\\s({\[])([\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)(?=$|['"`\\\s)}\]])
         captures:
           0: {patterns: [{include: "#binary-ops-builtin"}]}
 
@@ -2084,12 +2085,12 @@ repository:
               (?:([>.]\.[.<])|(\?\.=?)|(~\.=?)|(!\.=?)|((?:::|\.)=?)|(->))
               (?=\b|$|[({\['"`\\\s])
             captures:
-              1: {name: keyword.operator.range.ig}
-              2: {name: punctuation.accessor.optional.ig}
-              3: {name: punctuation.accessor.cascade.ig}
-              4: {name: punctuation.accessor.call.ig}
-              5: {name: punctuation.accessor.ig}
-              6: {name: punctuation.accessor.module.ig}
+              1: {name: keyword.operator.range.iso}
+              2: {name: punctuation.accessor.optional.iso}
+              3: {name: punctuation.accessor.cascade.iso}
+              4: {name: punctuation.accessor.call.iso}
+              5: {name: punctuation.accessor.iso}
+              6: {name: punctuation.accessor.module.iso}
 
           - &prefix-operators
             comment: prefix operators
@@ -2109,33 +2110,33 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]])#15
-              (?=[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*
+              |[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]])#15
+              (?=[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*
               [\p{L}\p{M}\p{N}({\[_,;'"`])
-            name: keyword.operator.prefix.ig
+            name: keyword.operator.prefix.iso
             captures:
-              1: {name: keyword.operator.module.all.ig}
-              2: {name: keyword.operator.increment.ig}
-              3: {name: keyword.operator.decrement.ig}
-              4: {name: keyword.operator.intersection.ig}
-              5: {name: keyword.operator.union.ig}
-              6: {name: keyword.operator.sym-diff.ig}
-              7: {name: keyword.operator.logical.ig}
-              8: {name: keyword.operator.private.ig}
-              9: {name: keyword.operator.decorator.ig}
-              10: {name: keyword.operator.bitwise.not.ig}
-              11: {name: keyword.operator.existential.ig}
-              12: {name: keyword.operator.assignment.ig}
-              13: {name: keyword.operator.pipeline.ig}
-              14: {name: keyword.operator.private.ig}
-              15: {name: keyword.operator.prefix.ig}
+              1: {name: keyword.operator.module.all.iso}
+              2: {name: keyword.operator.increment.iso}
+              3: {name: keyword.operator.decrement.iso}
+              4: {name: keyword.operator.intersection.iso}
+              5: {name: keyword.operator.union.iso}
+              6: {name: keyword.operator.symmetric.iso}
+              7: {name: keyword.operator.logical.iso}
+              8: {name: keyword.operator.private.iso}
+              9: {name: keyword.operator.decorator.iso}
+              10: {name: keyword.operator.bitwise.not.iso}
+              11: {name: keyword.operator.existential.iso}
+              12: {name: keyword.operator.assignment.iso}
+              13: {name: keyword.operator.pipeline.iso}
+              14: {name: keyword.operator.private.iso}
+              15: {name: keyword.operator.prefix.iso}
 
           - &suffix-operators
             comment: suffix operators
             match: |
               (?x)
               (?<=[\p{L}\p{M}\p{N})}\]_,;'"`]
-              [\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*)
+              [\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*)
               (?:(\*)#1
               |(\+)#2
               |(\-)#3
@@ -2150,31 +2151,31 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]])#15
-            name: keyword.operator.suffix.ig
+              |[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]])#15
+            name: keyword.operator.suffix.iso
             captures:
-              1: {name: keyword.operator.module.all.ig}
-              2: {name: keyword.operator.increment.ig}
-              3: {name: keyword.operator.decrement.ig}
-              4: {name: keyword.operator.intersection.ig}
-              5: {name: keyword.operator.union.ig}
-              6: {name: keyword.operator.sym-diff.ig}
-              7: {name: punctuation.accessor.call.ig}
-              8: {name: keyword.operator.private.ig}
-              9: {name: keyword.operator.decorator.ig}
-              10: {name: keyword.operator.bitwise.ig}
-              11: {name: punctuation.accessor.optional.ig}
-              12: {name: keyword.operator.assignment.ig}
-              13: {name: keyword.operator.pipeline.ig}
-              14: {name: keyword.operator.private.ig}
-              15: {name: keyword.operator.suffix.ig}
+              1: {name: keyword.operator.module.all.iso}
+              2: {name: keyword.operator.increment.iso}
+              3: {name: keyword.operator.decrement.iso}
+              4: {name: keyword.operator.intersection.iso}
+              5: {name: keyword.operator.union.iso}
+              6: {name: keyword.operator.symmetric.iso}
+              7: {name: punctuation.accessor.call.iso}
+              8: {name: keyword.operator.private.iso}
+              9: {name: keyword.operator.decorator.iso}
+              10: {name: keyword.operator.bitwise.iso}
+              11: {name: punctuation.accessor.optional.iso}
+              12: {name: keyword.operator.assignment.iso}
+              13: {name: keyword.operator.pipeline.iso}
+              14: {name: keyword.operator.private.iso}
+              15: {name: keyword.operator.suffix.iso}
 
       pipeline-operator:
         patterns:
           - applyEndPatternLast: 1
             begin: |
               (?x)\s*(?:(\++>)|(\|+>))(?=\s*(
-              [\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*# prefix
+              [\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*# prefix
 
               (?!
               \b(?:# don't match keywords
@@ -2203,14 +2204,14 @@ repository:
               )
 
               [_\p{L}\p{M}\p{N}]+
-              (?:[\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*# transfix
+              (?:[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*# transfix
               [_\p{L}\p{M}\p{N}]+)*
-              [\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]*# suffix
+              [\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*# suffix
               )\s*([^(]|$|;))
             end: (?=\O)|$
             beginCaptures:
-              1: {name: keyword.operator.compose.ig}
-              2: {name: keyword.operator.pipeline.ig}
+              1: {name: keyword.operator.compose.iso}
+              2: {name: keyword.operator.pipeline.iso}
             patterns:
               - match: |
                   (?x)\s*\b
@@ -2267,18 +2268,18 @@ repository:
                   )
                   )\b
                 captures:
-                  1: {name: variable.other.global.ig}
-                  2: {name: variable.other.constant.object.ig}
-                  3: {name: variable.other.conditional.ig}
-                  4: {name: variable.other.object.ig}
-                  5: {name: entity.name.tag.ig}
-                  6: {name: entity.name.tag.ig support.class.component.ig}
-                  7: {name: entity.name.class.builtin.ig}
-                  8: {name: entity.name.function.method.ig}
-                  9: {name: entity.name.function.tagged-template.ig}
-                  10: {name: entity.name.type.ig}
-                  11: {name: entity.name.class.ig}
-                  12: {name: entity.name.function.ig}
+                  1: {name: variable.other.global.iso}
+                  2: {name: variable.other.constant.object.iso}
+                  3: {name: variable.other.conditional.iso}
+                  4: {name: variable.other.object.iso}
+                  5: {name: entity.name.tag.iso}
+                  6: {name: entity.name.tag.iso support.class.component.iso}
+                  7: {name: entity.name.class.builtin.iso}
+                  8: {name: entity.name.function.method.iso}
+                  9: {name: entity.name.function.tagged-template.iso}
+                  10: {name: entity.name.type.iso}
+                  11: {name: entity.name.class.iso}
+                  12: {name: entity.name.function.iso}
               - *transfix-operators
 
       special-operators:
@@ -2287,7 +2288,7 @@ repository:
           - begin: (?<=\s)(\?)(?=\s)
             end: (?<=^|\s)(:)(?=\s|$)
             captures:
-              1: {name: keyword.operator.conditional.ig}
+              1: {name: keyword.operator.conditional.iso}
             patterns:
               - begin: \s*(?=([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s*:)
                 end: \s*(?=:\s|$)
@@ -2298,7 +2299,7 @@ repository:
           - begin: (?<=\s)(\!)(?=\s)
             end: (?<=^|\s)(:)(?=\s|$)
             captures:
-              1: {name: keyword.operator.ternary.ig}
+              1: {name: keyword.operator.ternary.iso}
             patterns:
               - begin: \s*(?=([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s*:)
                 end: \s*(?=:\s|$)
@@ -2309,11 +2310,11 @@ repository:
           - begin: (?<=\s)(\$)(?=\s)
             end: (?<=^|\s)(:)(?=\s|$)
             captures:
-              1: {name: keyword.operator.macro.dollar.ig}
+              1: {name: keyword.operator.macro.dollar.iso}
             patterns:
               - begin: \s*(?=([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s*:)
                 end: \s*(?=:\s|$)
-                name: entity.name.function.ig
+                name: entity.name.function.iso
               - include: $self
 
   custom-types:
@@ -2381,18 +2382,18 @@ repository:
       )
       )\b
     captures: &custom-types
-      1: {name: entity.name.module.ig}
-      2: {name: entity.name.tag.ig}
-      3: {name: entity.name.namespace.ig}
-      4: {name: entity.name.interface.ig}
-      5: {name: entity.name.tag.block.ig}
-      6: {name: entity.name.tag.script.ig}
-      7: {name: entity.name.tag.style.ig}
-      8: {name: entity.name.tag.inline.ig}
-      9: {name: entity.name.label.ig}
-      10: {name: entity.name.project.ig}
-      11: {name: entity.name.class.ig}
-      12: {name: entity.name.type.ig}
+      1: {name: entity.name.module.iso}
+      2: {name: entity.name.tag.iso}
+      3: {name: entity.name.namespace.iso}
+      4: {name: entity.name.interface.iso}
+      5: {name: entity.name.tag.block.iso}
+      6: {name: entity.name.tag.script.iso}
+      7: {name: entity.name.tag.style.iso}
+      8: {name: entity.name.tag.inline.iso}
+      9: {name: entity.name.label.iso}
+      10: {name: entity.name.project.iso}
+      11: {name: entity.name.class.iso}
+      12: {name: entity.name.type.iso}
 
   type-brackets:
     patterns:
@@ -2406,9 +2407,9 @@ repository:
           punctuation:
             patterns:
               - match: ","
-                name: punctuation.separator.mapping.ig
+                name: punctuation.separator.mapping.iso
               - match: (?<!\s):(?!:)
-                name: punctuation.separator.key-value.ig
+                name: punctuation.separator.key-value.iso
               - match: (?<=^|[({\[])\s*([*+-](?:\s+[*+-])*)
                 name: punctuation.definition.block.sequence.item.saga
 
@@ -2416,7 +2417,7 @@ repository:
           - begin: \s*(\{\|)
             end: \s*(\|\})
             captures:
-              1: {name: punctuation.definition.mapping.ig}
+              1: {name: punctuation.definition.mapping.iso}
             patterns:
               - include: "#labels"
               - include: "#punctuation"
@@ -2425,7 +2426,7 @@ repository:
           - begin: \s*(\{)
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.dictionary.ig}
+              1: {name: punctuation.definition.dictionary.iso}
             patterns:
               - include: "#labels"
               - include: "#punctuation"
@@ -2437,12 +2438,12 @@ repository:
           punctuation:
             patterns:
               - match: ","
-                name: punctuation.separator.arguments.ig
+                name: punctuation.separator.arguments.iso
         patterns:
           - begin: \s*(\(\|)
             end: \s*(\|\))
             captures:
-              1: {name: punctuation.definition.parameters.ig}
+              1: {name: punctuation.definition.parameters.iso}
             patterns:
               - include: "#punctuation"
               - include: "#types"
@@ -2450,7 +2451,7 @@ repository:
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.ig}
+              1: {name: punctuation.definition.expression.iso}
             patterns:
               - include: "#punctuation"
               - include: "#types"
@@ -2462,14 +2463,14 @@ repository:
             patterns:
               - match: (?<=\b|^|[)}\]'"`\\\s])(:)(?=\b|$|[({\['"`\\\s])
                 captures:
-                  1: {name: punctuation.separator.slice.ig}
+                  1: {name: punctuation.separator.slice.iso}
               - match: ","
-                name: punctuation.separator.sequence.ig
+                name: punctuation.separator.sequence.iso
         patterns:
           - begin: \s*(\[<)
             end: \s*(>\])
             captures:
-              1: {name: punctuation.definition.typeparameters.ig}
+              1: {name: punctuation.definition.typeparameters.iso}
             patterns:
               - include: "#punctuation"
               - include: "#types"
@@ -2477,7 +2478,7 @@ repository:
           - begin: \s*(\[\|)
             end: \s*(\|\])
             captures:
-              1: {name: punctuation.definition.sequence.ig}
+              1: {name: punctuation.definition.sequence.iso}
             patterns:
               - include: "#punctuation"
               - include: "#types"
@@ -2485,7 +2486,7 @@ repository:
           - begin: \s*(\[)
             end: \s*(\])
             captures:
-              1: {name: punctuation.definition.array.ig}
+              1: {name: punctuation.definition.array.iso}
             patterns:
               - include: "#punctuation"
               - include: "#types"
@@ -2496,19 +2497,19 @@ repository:
       - match: |
           (?x)\s*\b
           (extends)\b\s*
-        name: storage.type.extends.ig
+        name: storage.type.extends.iso
       - match: |
           (?x)\s*\b
           (implements)\b\s*
-        name: storage.type.implements.ig
+        name: storage.type.implements.iso
       - match: |
           (?x)\s*\b
-          ((?:type|name|size|key)of|only|infer|in|of|as|is)\b\s*
-        name: keyword.operator.expression.$1.ig
+          (typeof|nameof|sizeof|keyof|valueof|pairof|infer|in|of|as|is)\b\s*
+        name: keyword.operator.expression.$1.iso
       - match: |
           (?x)\s*\b
           (valueof)\b\s*
-        name: keyword.operator.expression.valueof.ig
+        name: keyword.operator.expression.valueof.iso
 
   type-operators:
     patterns:
@@ -2518,11 +2519,11 @@ repository:
           (?:(\?[:.])|(~[:.])|(![:.])|(::|\.)|(->))
           (?=$|[({\[_\p{L}\p{M}\p{N}'"`])
         captures:
-          1: {name: punctuation.accessor.optional.ig}
-          2: {name: punctuation.accessor.cascade.ig}
-          3: {name: punctuation.accessor.call.ig}
-          4: {name: punctuation.accessor.ig}
-          5: {name: punctuation.accessor.module.ig}
+          1: {name: punctuation.accessor.optional.iso}
+          2: {name: punctuation.accessor.cascade.iso}
+          3: {name: punctuation.accessor.call.iso}
+          4: {name: punctuation.accessor.iso}
+          5: {name: punctuation.accessor.module.iso}
 
       - comment: type operators
         match: |
@@ -2545,43 +2546,43 @@ repository:
           )
           (?=$|[({\[_\p{L}\p{M}\p{N}'"\s])
         captures:
-          1: {name: keyword.operator.sum.ig}
-          2: {name: keyword.operator.difference.ig}
-          3: {name: keyword.operator.product.ig}
-          4: {name: keyword.operator.quotient.ig}
-          5: {name: keyword.operator.remainder.ig}
-          6: {name: keyword.operator.only.ig}
-          7: {name: keyword.operator.maybe.ig}
-          8: {name: keyword.operator.intersection.ig}
-          9: {name: keyword.operator.union.ig}
-          10: {name: keyword.operator.sym-diff.ig}
-          11: {name: keyword.operator.negation.ig}
-          12: {name: keyword.operator.macro.dollar.ig}
-          13: {name: keyword.operator.private.ig}
-          14: {name: keyword.operator.class.ig}
+          1: {name: keyword.operator.sum.iso}
+          2: {name: keyword.operator.difference.iso}
+          3: {name: keyword.operator.product.iso}
+          4: {name: keyword.operator.quotient.iso}
+          5: {name: keyword.operator.remainder.iso}
+          6: {name: keyword.operator.only.iso}
+          7: {name: keyword.operator.maybe.iso}
+          8: {name: keyword.operator.intersection.iso}
+          9: {name: keyword.operator.union.iso}
+          10: {name: keyword.operator.symmetric.iso}
+          11: {name: keyword.operator.negation.iso}
+          12: {name: keyword.operator.macro.dollar.iso}
+          13: {name: keyword.operator.private.iso}
+          14: {name: keyword.operator.class.iso}
 
   type-annotation:
     applyEndPatternLast: 1
     begin: (:)(?=\s|$)
     end: (?=\O)|$
     beginCaptures:
-      1: {name: punctuation.definition.annotation.ig}
+      1: {name: punctuation.definition.annotation.iso}
     patterns:
       - include: "#types"
 
   types:
     patterns:
       - match: \s*(=>|==>|->|-->|~>|~~>)
-        name: keyword.operator.type.function.ig
+        name: keyword.operator.type.function.iso
       - match: \s*(<=|<==|<-|<--|<~|<~~)
-        name: keyword.operator.type.channel.ig
+        name: keyword.operator.type.channel.iso
       - include: "#type-keywords"
       - include: "#modifier-keywords"
-      - include: "#literals"
       - include: "#type-names"
       - include: "#custom-types"
       - include: "#type-brackets"
       - include: "#type-operators"
+      - include: "#literals"
 
   modifier-keywords:
     match: |
@@ -2637,7 +2638,7 @@ repository:
               (?:(?:[?!~]?\.|[?!:]:|->)
               (?:(?:[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)))*
               )\s*
-            name: entity.name.class.decorator.ig
+            name: entity.name.class.decorator.iso
           - match: |
               (?x)\s*
               \s*\b
@@ -2656,9 +2657,9 @@ repository:
               )
               )\b\s*
             captures:
-              1: {name: storage.modifier.ig}
-              2: {name: storage.type.accessor.ig}
-              3: {name: storage.type.property.ig}
+              1: {name: storage.modifier.iso}
+              2: {name: storage.type.accessor.iso}
+              3: {name: storage.type.property.iso}
 
   support:
     patterns:
@@ -2707,23 +2708,23 @@ repository:
       |(declare)# declaration
       )\b\s*
     captures:
-      1: {name: storage.type.function.ig}
-      2: {name: storage.type.ig}
-      3: {name: storage.type.class.ig}
-      4: {name: storage.type.constraint.ig}
-      5: {name: storage.type.enum.ig}
-      6: {name: storage.type.project.ig}
-      7: {name: storage.type.fragment.ig}
-      8: {name: storage.type.interface.ig}
-      9: {name: storage.type.module.ig}
-      10: {name: storage.type.namespace.ig}
-      11: {name: storage.type.object.ig}
-      12: {name: storage.type.raw.ig}
-      13: {name: storage.type.schema.ig}
-      14: {name: storage.type.style.ig}
-      15: {name: storage.type.trait.ig}
-      16: {name: keyword.other.typedef.ig}
-      17: {name: keyword.other.declare.ig}
+      1: {name: storage.type.function.iso}
+      2: {name: storage.type.iso}
+      3: {name: storage.type.class.iso}
+      4: {name: storage.type.constraint.iso}
+      5: {name: storage.type.enum.iso}
+      6: {name: storage.type.project.iso}
+      7: {name: storage.type.fragment.iso}
+      8: {name: storage.type.interface.iso}
+      9: {name: storage.type.module.iso}
+      10: {name: storage.type.namespace.iso}
+      11: {name: storage.type.object.iso}
+      12: {name: storage.type.raw.iso}
+      13: {name: storage.type.schema.iso}
+      14: {name: storage.type.style.iso}
+      15: {name: storage.type.trait.iso}
+      16: {name: keyword.other.typedef.iso}
+      17: {name: keyword.other.declare.iso}
 
   general-keywords:
     comment: general keywords
@@ -2745,20 +2746,20 @@ repository:
       |(begin|end)#14
       )\b\s*
     captures:
-      1: {name: keyword.control.conditional.ig}
-      2: {name: keyword.control.loop.ig}
-      3: {name: keyword.control.switch.ig}
-      4: {name: keyword.control.match.ig}
-      5: {name: keyword.control.error.ig}
-      6: {name: keyword.control.with.ig}
-      7: {name: keyword.control.ig}
-      8: {name: keyword.control.then.ig}
-      9: {name: keyword.other.$10.ig}
-      10: {name: keyword.control.flow.ig}
-      11: {name: keyword.control.module.ig}
-      12: {name: keyword.control.thread.ig}
-      13: {name: keyword.control.do.ig}
-      14: {name: keyword.control.$14.ig}
+      1: {name: keyword.control.conditional.iso}
+      2: {name: keyword.control.loop.iso}
+      3: {name: keyword.control.switch.iso}
+      4: {name: keyword.control.match.iso}
+      5: {name: keyword.control.error.iso}
+      6: {name: keyword.control.with.iso}
+      7: {name: keyword.control.iso}
+      8: {name: keyword.control.then.iso}
+      9: {name: keyword.other.$10.iso}
+      10: {name: keyword.control.flow.iso}
+      11: {name: keyword.control.module.iso}
+      12: {name: keyword.control.thread.iso}
+      13: {name: keyword.control.do.iso}
+      14: {name: keyword.control.$14.iso}
 
   expression-keywords:
     comment: expression keywords
@@ -2770,17 +2771,19 @@ repository:
       |(n?and|x?n?or|not)
       )\b\s*
     captures:
-      1: {name: keyword.operator.expression.$1.ig}
-      2: {name: keyword.operator.expression.length.ig}
-      3: {name: keyword.operator.expression.delete.ig}
-      4: {name: keyword.operator.expression.range.ig}
-      5: {name: keyword.operator.expression.void.ig}
-      6: {name: keyword.operator.expression.logical.ig}
+      1: {name: keyword.operator.expression.$1.iso}
+      2: {name: keyword.operator.expression.length.iso}
+      3: {name: keyword.operator.expression.delete.iso}
+      4: {name: keyword.operator.expression.range.iso}
+      5: {name: keyword.operator.expression.void.iso}
+      6: {name: keyword.operator.expression.logical.iso}
 
   keywords:
     patterns:
       - match: \s*\b(let|va[rl]|const)\b\s*
-        name: storage.type.ig
+        name: storage.type.iso
+      - match: \s*\b(declare)\b\s*
+        name: keyword.other.$1.iso
       - include: "#modifier-keywords"
       - include: "#declaration-keywords"
       - include: "#expression-keywords"
@@ -2795,25 +2798,25 @@ repository:
         begin: \s*\b(halt|skip|break|continue|goto|label)\b
         end: (?=\O)|$
         beginCaptures:
-          1: {name: keyword.control.flow.ig}
+          1: {name: keyword.control.flow.iso}
         patterns:
           - match: \s*([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s*
             captures:
-              1: {name: constant.other.label.ig}
+              1: {name: constant.other.label.iso}
 
       module-expression:
         applyEndPatternLast: 1
         begin: \s*\b(import|export|open|close|use|using)\b\s*
         end: (?=\O)|$
         beginCaptures:
-          1: {name: keyword.control.module.ig}
+          1: {name: keyword.control.module.iso}
         patterns:
           - include: "#modifier-keywords"
           - include: "#type-keywords"
           - match: \s*\b(from|to|as|all|any|show|hide|to|n?and|x?n?or|not)\b\s*
-            name: keyword.control.module.ig
+            name: keyword.control.module.iso
           - match: \s*\*
-            name: keyword.operator.module.all.ig
+            name: keyword.operator.module.all.iso
           - include: "#module-string"
           - include: "#type-names"
           - include: "#custom-types"
@@ -2825,28 +2828,28 @@ repository:
             patterns:
               - comment: single quoted raw string
                 begin: \s*('{3,})
-                contentName: string.quoted.template.ig
+                contentName: string.quoted.template.iso
                 end: \s*((\1)(?!\1))
                 captures:
-                  1: {name: punctuation.definition.string.ig}
+                  1: {name: punctuation.definition.string.iso}
                 patterns:
                   - include: "#embedded-raw"
               - comment: simple single quoted raw string
                 begin: \s*(')
-                contentName: string.quoted.template.ig
+                contentName: string.quoted.template.iso
                 end: \s*((\1)(?!\1))
                 captures:
-                  1: {name: punctuation.definition.string.ig}
+                  1: {name: punctuation.definition.string.iso}
                 patterns:
                   - match: "''"
-                    name: constant.character.escape.ig
+                    name: constant.character.escape.iso
                   - include: "#embedded-raw"
               - comment: double quoted standard string
                 begin: \s*("{3,}|")
-                contentName: string.quoted.module.ig
+                contentName: string.quoted.module.iso
                 end: \s*((\1)(?!\1))
                 captures:
-                  1: {name: punctuation.definition.string.ig}
+                  1: {name: punctuation.definition.string.iso}
                 patterns:
                   - include: "#string-escapes"
 
@@ -2855,54 +2858,54 @@ repository:
           - begin: \s*\b(from)\b\s*
             end: \s*\b(in|of)\b\s*
             captures:
-              1: {name: keyword.query.ig}
+              1: {name: keyword.query.iso}
             patterns:
               - include: $self
           - match: \s*\b((\b(fold|scan)\b)\s*(\b(left|right)\b)?\s*(\b(by|while|until|with)\b)?)\b\s*
-            name: keyword.query.ig
+            name: keyword.query.iso
           - begin: \s*\b(group)\b\s*
             end: \s*\b(by)\b\s*
             captures:
-              1: {name: keyword.query.ig}
+              1: {name: keyword.query.iso}
             patterns:
               - include: $self
           - begin: \s*\b(join)\b\s*
             end: \s*\b(in|of)\b\s*
             captures:
-              1: {name: keyword.query.ig}
+              1: {name: keyword.query.iso}
             patterns:
               - include: $self
           - match: \s*\b(equals?|[io]nto)\b\s*
-            name: keyword.query.ig
+            name: keyword.query.iso
           - match: \s*\b((\b(order)\b)\s*(\b((a|de)sc)\b)?\s*(\b(by)\b)?)\b\s*
-            name: keyword.query.ig
+            name: keyword.query.iso
           - match: \s*\b(select)\b\s*
-            name: keyword.query.ig
+            name: keyword.query.iso
           - match: \s*\b((\b(take|drop)\b)\s*(\b(left|right|init|head|tail|last)\b)?\s*(\b(by|while|until|with)\b)?)\b\s*
-            name: keyword.query.ig
+            name: keyword.query.iso
           - match: \s*\b(where)\b\s*
-            name: keyword.query.ig
+            name: keyword.query.iso
 
   parameter-brackets:
     begin: \s*(\()
     end: \s*(\))
     captures:
-      1: {name: punctuation.definition.parameters.ig}
+      1: {name: punctuation.definition.parameters.iso}
     patterns: &function-params
       - include: "#clauses"
       - include: "#keywords"
       - match: (?i)\s*\?[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
-        name: variable.parameter.optional.ig
+        name: variable.parameter.optional.iso
       - match: (?i)\s*\*[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
-        name: variable.parameter.spread.ig
+        name: variable.parameter.spread.iso
       - match: (?i)\s*[&~][_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
-        name: variable.parameter.name.ig
+        name: variable.parameter.name.iso
       - match: (?i)\s*\%[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
-        name: variable.parameter.reference.ig
+        name: variable.parameter.reference.iso
       - match: (?i)\s*\$[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
-        name: variable.parameter.other.ig
+        name: variable.parameter.other.iso
       - match: (?i)\s*\b[_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*\b\s*
-        name: variable.parameter.ig
+        name: variable.parameter.iso
       - include: "$self"
 
   block-entities:
@@ -2915,18 +2918,19 @@ repository:
       - include: "#definition-keywords"
       - include: "#code-block"
       - include: "#type-keywords"
+      - include: "#illegal-keywords"
       - include: "#type-square-brackets"
       - include: "#parameter-brackets"
       - include: "#round-brackets"
       - include: "#type-annotation"
       - match: \s*(?<!\*)\*(?!\*)\s*
-        name: keyword.generator.asterisk.ig
+        name: keyword.generator.asterisk.iso
       - include: "#operators"
       - applyEndPatternLast: 1
-        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{Po}\p{Pd}\p{Pi}\p{Pf}\p{Pc}&&[^_,;'"`\\]]))
+        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]))
         end: (?=\O)|$
         beginCaptures:
-          1: {name: punctuation.definition.annotation.ig}
+          1: {name: punctuation.definition.annotation.iso}
         patterns:
           - include: "#types"
 
@@ -2952,155 +2956,155 @@ repository:
       class:
         applyEndPatternLast: 1
         begin: \s*\b(class|extend)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.class.ig}
+          1: {name: storage.type.class.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.class.ig
+            name: entity.name.class.iso
       constraint:
         applyEndPatternLast: 1
         begin: \s*\b(given|constraint)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.constraint.ig}
+          1: {name: storage.type.constraint.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.constraint.ig
+            name: entity.name.constraint.iso
       enum:
         applyEndPatternLast: 1
         begin: \s*\b(enum|relation)\b\s*
-        end: (?<=})|(?=;)|$|^
-        name: meta.enum.declaration.ig
+        end: (?<=})|(?=;)|$
+        name: meta.enum.declaration.iso
         beginCaptures:
-          1: {name: storage.type.enum.ig}
-          2: {name: entity.name.enum.ig}
+          1: {name: storage.type.enum.iso}
+          2: {name: entity.name.enum.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.enum.ig
+            name: entity.name.enum.iso
       fragment:
         applyEndPatternLast: 1
         begin: \s*\b(fragment|struct)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.fragment.ig}
+          1: {name: storage.type.fragment.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.fragment.ig
+            name: entity.name.fragment.iso
       function:
         applyEndPatternLast: 1
         begin: \s*\b(func?|function|proc|process|macro)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.function.ig}
+          1: {name: storage.type.function.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.function.ig
+            name: entity.name.function.iso
       interface:
         applyEndPatternLast: 1
         begin: \s*\b(interface|schema)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.interface.ig}
+          1: {name: storage.type.interface.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.interface.ig
+            name: entity.name.interface.iso
       module:
         applyEndPatternLast: 1
         begin: \s*\b(module|package)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.module.ig}
+          1: {name: storage.type.module.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.module.ig
+            name: entity.name.module.iso
       namespace:
         applyEndPatternLast: 1
         begin: \s*\b(namespace|lattice)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.namespace.ig}
+          1: {name: storage.type.namespace.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.namespace.ig
+            name: entity.name.namespace.iso
       object:
         applyEndPatternLast: 1
         begin: \s*\b(object|record)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.object.ig}
+          1: {name: storage.type.object.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.object.ig
+            name: entity.name.object.iso
       protocol:
         applyEndPatternLast: 1
         begin: \s*\b(protocol|member)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.protocol.ig}
+          1: {name: storage.type.protocol.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.protocol.ig
+            name: entity.name.protocol.iso
       project:
         applyEndPatternLast: 1
         begin: \s*\b(project|attribute)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.protocol.ig}
+          1: {name: storage.type.protocol.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.project.ig
+            name: entity.name.project.iso
       raw:
         applyEndPatternLast: 1
         begin: \s*\b(raw)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.raw.ig}
+          1: {name: storage.type.raw.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.raw.ig
+            name: entity.name.raw.iso
       schema:
         applyEndPatternLast: 1
         begin: \s*\b(data|query)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.schema.ig}
+          1: {name: storage.type.schema.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.schema.ig
+            name: entity.name.schema.iso
       style:
         applyEndPatternLast: 1
         begin: \s*\b(style)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.style.ig}
+          1: {name: storage.type.style.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.style.ig
+            name: entity.name.style.iso
       trait:
         applyEndPatternLast: 1
         begin: \s*\b(trait|friend)\b\s*
-        end: (?<=})|(?=;)|$|^
+        end: (?<=})|(?=;)|$
         beginCaptures:
-          1: {name: storage.type.trait.ig}
+          1: {name: storage.type.trait.iso}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.trait.ig
+            name: entity.name.trait.iso
 
   clauses:
     patterns:
@@ -3136,7 +3140,7 @@ repository:
               (\|)
               (?!\|)
             captures:
-              1: {name: punctuation.separator.arguments.ig}
+              1: {name: punctuation.separator.arguments.iso}
             end: (?<!\|)(\|)(?!\|)
             patterns:
               - include: "#function-params"
@@ -3145,7 +3149,7 @@ repository:
         begin: \s*(\()
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.parameters.ig}
+          1: {name: punctuation.definition.parameters.iso}
         patterns:
           - include: "#function-params"
 
@@ -3154,7 +3158,7 @@ repository:
           - begin: |
               (?x)(?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
               ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s+
-              (:?=)\s+
+              ([?:]?=)\s+
               (
 
               (?:(?:# Access modifiers
@@ -3179,12 +3183,12 @@ repository:
               (?!\|)
             end: (?<!\|)(\|)(?!\|)
             beginCaptures:
-              1: {name: entity.name.function.method.ig}
-              2: {name: keyword.operator.assignment.ig}
+              1: {name: entity.name.function.method.iso}
+              2: {name: keyword.operator.assignment.iso}
               3: {patterns: *modifier-keywords}
-              4: {name: punctuation.separator.arguments.ig}
+              4: {name: punctuation.separator.arguments.iso}
             endCaptures:
-              1: {name: punctuation.separator.arguments.ig}
+              1: {name: punctuation.separator.arguments.iso}
             patterns:
               - include: "#function-params"
           - comment: |
@@ -3193,10 +3197,10 @@ repository:
             match: |
               (?x)(?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
               ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s+
-              (:?=)\s+
+              ([?:]?=)\s+
 
               ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s+
-              (:?=)\s+
+              ([?:]?=)\s+
 
               ((?:
               \s*(?:
@@ -3223,8 +3227,8 @@ repository:
               )\b
               )
             captures:
-              1: {name: entity.name.function.method.ig}
-              2: {name: keyword.operator.assignment.ig}
+              1: {name: entity.name.function.method.iso}
+              2: {name: keyword.operator.assignment.iso}
               3: {patterns: *modifier-keywords}
 
       function-clause:
@@ -3232,7 +3236,7 @@ repository:
           - begin: |
               (?x)\s*
               ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s+
-              (:?=)\s+
+              ([?:]?=)\s+
               (
 
               (?:(?:# Access modifiers
@@ -3257,12 +3261,12 @@ repository:
               (?!\|)
             end: (?<!\|)(\|)(?!\|)
             beginCaptures:
-              1: {name: entity.name.function.ig}
-              2: {name: keyword.operator.assignment.ig}
+              1: {name: entity.name.function.iso}
+              2: {name: keyword.operator.assignment.iso}
               3: {patterns: *modifier-keywords}
-              4: {name: punctuation.separator.arguments.ig}
+              4: {name: punctuation.separator.arguments.iso}
             endCaptures:
-              1: {name: punctuation.separator.arguments.ig}
+              1: {name: punctuation.separator.arguments.iso}
             patterns:
               - include: "#function-params"
           - comment: |
@@ -3271,7 +3275,7 @@ repository:
             match: |
               (?x)\s*
               ([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\s+
-              (:?=)\s+
+              ([?:]?=)\s+
 
               ((?:
               \s*(?:
@@ -3298,8 +3302,8 @@ repository:
               )\b
               )
             captures:
-              1: {name: entity.name.function.ig}
-              2: {name: keyword.operator.assignment.ig}
+              1: {name: entity.name.function.iso}
+              2: {name: keyword.operator.assignment.iso}
               3: {patterns: *modifier-keywords}
 
       new-clause:
@@ -3307,10 +3311,10 @@ repository:
         begin: \s*\b(new)\b
         end: (?=\O)|$
         beginCaptures:
-          1: {name: keyword.operator.expression.$1.ig}
+          1: {name: keyword.operator.expression.$1.iso}
         patterns:
           - match: \s*([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)
-            name: entity.name.instance.ig
+            name: entity.name.instance.iso
           - include: "#block-entities"
 
       type-clause:
@@ -3319,139 +3323,104 @@ repository:
             begin: \s*\b(as|is)\b
             end: (?=\O)|$
             beginCaptures:
-              1: {name: keyword.operator.expression.$1.ig}
+              1: {name: keyword.operator.expression.$1.iso}
             patterns:
               - include: "#types"
-          - begin: \s*\b(type|alias)\b\s*\b([_\p{L}\p{Nl}][_\p{L}\p{M}\p{N}]*)\b\s*(?:(:?=)|(:))?\s*
-            end: ^(?=\S)|(?!\G)
-            name: meta.type-alias.ig
-            beginCaptures:
-              1: {name: keyword.other.typedef.ig}
-              2: {patterns: [{include: "#types"}]}
-              3: {name: keyword.operator.assignment.ig}
-              4: {name: punctuation.separator.colon.ig}
-            patterns:
-              - begin: ^((\p{Zs})+)(?!\2)
-                end: ^(?!\1|\s*$)
-                name: meta.type-alias.ig
-                patterns:
-                  - include: "#types"
-              - include: $self
           - applyEndPatternLast: 1
             begin: \s*\b(type|alias)\b
             end: (?=\O)|$
             beginCaptures:
-              1: {name: keyword.other.typedef.ig}
+              1: {name: keyword.other.typedef.iso}
             patterns:
-              - match: \s*(:?=)\s*
+              - match: \s*([?:]?=)\s*
                 captures:
-                  1: {name: keyword.operator.assignment.ig}
-              - include: "#types"
-          - applyEndPatternLast: 1
-            begin: \s*\b(declare)\b
-            end: (?=\O)|$
-            beginCaptures:
-              1: {name: keyword.other.declare.ig}
-            patterns:
-              - match: \s*(:?=)\s*
-                captures:
-                  1: {name: keyword.operator.assignment.ig}
+                  1: {name: keyword.operator.assignment.iso}
               - include: "#types"
           - applyEndPatternLast: 1
             begin: (?x)\s*\b((?:return|give|await|yield|throw|raise)s)\b
             end: (?=\O)|$
             beginCaptures:
-              1: {name: keyword.modifier.ig}
+              1: {name: keyword.modifier.iso}
             patterns:
               - include: "#types"
 
       case-clause:
         begin: \s*\b(case|fail|default)\b
-        end: (?<=})|(?=;|(?<=\s)(?:->|\b(?:begin|then))|$)
-        endCaptures:
-          0: {name: punctuation.separator.colon.ig}
+        end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         beginCaptures:
-          1: {name: keyword.control.switch.ig}
+          1: {name: keyword.control.switch.iso}
         patterns:
           - include: "#code-block"
           - include: $self
 
       catch-clause:
         begin: \s*\b(try|retry|catch|rescue|finally)\b
-        end: (?<=})|(?=;|(?<=\s)(?:->|\b(?:begin|then))|$)
-        endCaptures:
-          0: {name: punctuation.separator.colon.ig}
-        name: meta.catch.ig
+        end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
+        name: meta.catch.iso
         beginCaptures:
-          1: {name: keyword.control.error.ig}
+          1: {name: keyword.control.error.iso}
         patterns:
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: meta.brace.round.ig}
+              1: {name: punctuation.definition.expression.iso}
             patterns:
               - match: \s*\b(as)\b
-                name: keyword.control.error.ig
+                name: keyword.control.error.iso
               - include: "#code-block"
               - include: $self
           - match: \s*\b(as)\b
-            name: keyword.control.error.ig
+            name: keyword.control.error.iso
           - include: "#code-block"
           - include: $self
 
       thread-clause:
         begin: \s*\b(parallel|series|spawn|discard|fixed|lock)\b
-        end: (?<=})|(?=;|(?<=\s)(?:->|\b(?:begin|then))|$)
-        endCaptures:
-          0: {name: punctuation.separator.colon.ig}
-        name: meta.thread.ig
+        end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
+        name: meta.thread.iso
         beginCaptures:
-          1: {name: keyword.control.thread.ig}
+          1: {name: keyword.control.thread.iso}
         patterns:
           - begin: \s*(\()
             end: \s*(\))
-            beginCaptures:
-              1: {name: meta.brace.round.ig}
+            captures:
+              1: {name: punctuation.definition.expression.iso}
             patterns:
               - match: \s*\b(as)\b
-                name: keyword.control.thread.ig
+                name: keyword.control.thread.iso
               - include: "#code-block"
               - include: $self
           - match: \s*\b(as)\b
-            name: keyword.control.thread.ig
+            name: keyword.control.thread.iso
           - include: "#code-block"
           - include: $self
 
       do-clause:
         begin: \s*\b(do|redo)\b
-        end: (?<=})|(?=;|(?<=\s)(?:->|\b(?:begin|then))|$)
-        endCaptures:
-          0: {name: punctuation.separator.colon.ig}
-        name: meta.do.ig
+        end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
+        name: meta.do.iso
         beginCaptures:
-          1: {name: keyword.control.do.ig}
+          1: {name: keyword.control.do.iso}
         patterns:
           - include: "#code-block"
           - include: $self
 
       for-clause:
         begin: \s*\b(for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat)\b
-        end: (?<=})|(?=;|(?<=\s)(?:->|\b(?:begin|then))|$)
-        endCaptures:
-          0: {name: punctuation.separator.colon.ig}
-        name: meta.for.ig
+        end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
+        name: meta.for.iso
         beginCaptures:
-          1: {name: keyword.control.loop.ig}
+          1: {name: keyword.control.loop.iso}
         patterns:
-          - match: \s*\b(in|of|to|til|thru|at|by)\b
-            name: keyword.control.loop.ig
+          - &for-clause-keywords
+            match: \s*\b(in|of|to|til|thru|at|by)\b
+            name: keyword.control.loop.iso
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: meta.brace.round.ig}
+              1: {name: punctuation.definition.expression.iso}
             patterns:
-              - match: \s*\b(in|of|to|til|thru|at|by)\b
-                name: keyword.control.loop.ig
+              - *for-clause-keywords
               - include: "#code-block"
               - include: $self
           - include: "#code-block"
@@ -3459,69 +3428,46 @@ repository:
 
       if-clause:
         begin: \s*\b(if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard)\b
-        end: (?<=})|(?=;|(?<=\s)(?:->|\b(?:begin|then))|$)
-        endCaptures:
-          0: {name: punctuation.separator.colon.ig}
-        name: meta.if.ig
+        end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
+        name: meta.if.iso
         beginCaptures:
-          1: {name: keyword.control.conditional.ig}
+          1: {name: keyword.control.conditional.iso}
         patterns:
           - include: "#code-block"
           - include: $self
 
       match-clause:
         begin: \s*\b(match)\b
-        end: (?<=})|(?=;|(?<=\s)(?:->|\b(?:begin|then))|$)
-        endCaptures:
-          0: {name: punctuation.separator.colon.ig}
-        name: meta.match.ig
+        end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
+        name: meta.match.iso
         beginCaptures:
-          1: {name: keyword.control.match.ig}
+          1: {name: keyword.control.match.iso}
         patterns:
           - include: "#code-block"
           - include: $self
 
       switch-clause:
         begin: \s*\b(switch)\b
-        end: (?<=})|(?=;|(?<=\s)(?:->|\b(?:begin|then))|$)
-        endCaptures:
-          0: {name: punctuation.separator.colon.ig}
-        name: meta.switch.ig
+        end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
+        name: meta.switch.iso
         beginCaptures:
-          1: {name: keyword.control.switch.ig}
+          1: {name: keyword.control.switch.iso}
         patterns:
           - include: "#code-block"
           - include: $self
 
       when-clause:
         begin: \s*\b(when)\b
-        end: (?<=})|(?=;|(?<=\s)(?:->|\b(?:begin|then))|$)
-        endCaptures:
-          0: {name: punctuation.separator.colon.ig}
+        end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
         beginCaptures:
-          1: {name: keyword.control.match.ig}
+          1: {name: keyword.control.match.iso}
         patterns:
-          - applyEndPatternLast: 1
-            begin: \s*\b(as|is)\b
-            end: (?=\O)|$
-            beginCaptures:
-              1: {name: keyword.control.match.ig}
+          - begin: \s*(\()
+            end: \s*(\))
+            captures:
+              1: {name: punctuation.definition.expression.iso}
             patterns:
-              - include: "#types"
-          - applyEndPatternLast: 1
-            begin: (?x)\s*\b((?:return|give|await|yield|throw|raise)s?)\b
-            end: (?=\O)|$
-            beginCaptures:
-              1: {name: keyword.control.match.ig}
-            patterns:
-              - include: "#types"
-          - begin: \s*\b(if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard)\b
-            end: (?<=})|(?=;|(?<=\s)(?:->|\b(?:begin|then))|$)
-            endCaptures:
-              0: {name: punctuation.separator.colon.ig}
-            beginCaptures:
-              1: {name: keyword.control.match.ig}
-            patterns:
+              - include: "#type-operators"
               - include: "#code-block"
               - include: $self
           - include: "#type-operators"
@@ -3530,27 +3476,20 @@ repository:
 
       with-clause:
         begin: \s*\b(with)\b
-        end: (?<=})|(?=;|(?<=\s)(?:->|\b(?:begin|then))|$)
-        endCaptures:
-          0: {name: punctuation.separator.colon.ig}
-        name: meta.with.ig
+        end: (?<=})|(?=;|(?<=\s)(?:->|\bthen\b)|$)
+        name: meta.with.iso
         beginCaptures:
-          1: {name: keyword.control.with.ig}
+          1: {name: keyword.control.with.iso}
         patterns:
-          - begin: \s*
-            end: \s*(?=[{,])
-            patterns:
-              - match: \s*\b(as)\b
-                name: keyword.control.with.ig
-              - include: "#code-block"
-              - include: $self
+          - &with-clause-keywords
+            match: \s*\b(as)\b
+            name: keyword.control.with.iso
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: meta.brace.round.ig}
+              1: {name: punctuation.definition.expression.iso}
             patterns:
-              - match: \s*\b(as)\b
-                name: keyword.control.with.ig
+              - *with-clause-keywords
               - include: "#code-block"
               - include: $self
           - include: "#code-block"
@@ -3568,23 +3507,23 @@ repository:
       line-continuation:
         match: (\\)\s*(?=#|$)
         captures:
-          1: {name: punctuation.separator.continuation.line.ig}
+          1: {name: punctuation.separator.continuation.line.iso}
       comma:
         match: \s*(,)
         captures:
-          1: {name: punctuation.separator.comma.ig}
+          1: {name: punctuation.separator.comma.iso}
       right-arrow:
         match: (?:^|['"`\\({\[\s]*)(->)(?:$|['"`\\\s)}\]])
         captures:
-          1: {name: punctuation.definition.arrow.ig}
+          1: {name: punctuation.definition.arrow.iso}
       double-semi:
         match: \s*(;;)
         captures:
-          1: {name: punctuation.terminator.statement.ig}
+          1: {name: punctuation.terminator.statement.iso}
       semicolon:
         match: \s*(;)(?!;)
         captures:
-          1: {name: punctuation.terminator.expression.ig}
+          1: {name: punctuation.terminator.expression.iso}
 
   brackets:
     patterns:
@@ -3597,13 +3536,13 @@ repository:
       - begin: (\{\|)\s*
         end: \s*(\|\})
         captures:
-          1: {name: punctuation.definition.function.ig}
+          1: {name: punctuation.definition.function.iso}
         patterns:
           - include: $self
       - begin: (\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.block.ig}
+          1: {name: punctuation.definition.block.iso}
         patterns:
           - include: $self
 
@@ -3612,9 +3551,9 @@ repository:
       punctuation:
         patterns:
           - match: ","
-            name: punctuation.separator.mapping.ig
+            name: punctuation.separator.mapping.iso
           - match: (?<!\s):(?!:)
-            name: punctuation.separator.key-value.ig
+            name: punctuation.separator.key-value.iso
           - match: (?<=^|[({\[])\s*([*+-](?:\s+[*+-])*)
             name: punctuation.definition.block.sequence.item.saga
 
@@ -3622,7 +3561,7 @@ repository:
       - begin: (\{\|)\s*
         end: \s*(\|\})
         captures:
-          1: {name: punctuation.definition.mapping.ig}
+          1: {name: punctuation.definition.mapping.iso}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -3630,7 +3569,7 @@ repository:
       - begin: (\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.dictionary.ig}
+          1: {name: punctuation.definition.dictionary.iso}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -3641,20 +3580,20 @@ repository:
       punctuation:
         patterns:
           - match: ","
-            name: punctuation.separator.arguments.ig
+            name: punctuation.separator.arguments.iso
 
     patterns:
       - begin: (\(\|)\s*
         end: \s*(\|\))
         captures:
-          1: {name: punctuation.definition.parameters.ig}
+          1: {name: punctuation.definition.parameters.iso}
         patterns:
           - include: "#punctuation"
           - include: $self
       - begin: (\()\s*
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.expression.ig}
+          1: {name: punctuation.definition.expression.iso}
         patterns:
           - include: "#punctuation"
           - include: $self
@@ -3665,29 +3604,29 @@ repository:
         patterns:
           - match: (?<=\b|^|[)}\]'"`\\\s])(:)(?=\b|$|[({\['"`\\\s])
             captures:
-              1: {name: punctuation.separator.slice.ig}
+              1: {name: punctuation.separator.slice.iso}
           - match: ","
-            name: punctuation.separator.sequence.ig
+            name: punctuation.separator.sequence.iso
 
     patterns:
       - begin: (\[<)\s*
         end: \s*(>\])
         captures:
-          1: {name: punctuation.definition.typeparameters.ig}
+          1: {name: punctuation.definition.typeparameters.iso}
         patterns:
           - include: "#types"
           - include: $self
       - begin: (\[\|)\s*
         end: \s*(\|\])
         captures:
-          1: {name: punctuation.definition.sequence.ig}
+          1: {name: punctuation.definition.sequence.iso}
         patterns:
           - include: "#punctuation"
           - include: $self
       - begin: (\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.array.ig}
+          1: {name: punctuation.definition.array.iso}
         patterns:
           - include: "#punctuation"
           - include: $self
