@@ -33,11 +33,14 @@ comment: |
   - Add standard library functions, types, classes,
     modules, properties, variables in this order:
     - JavaScript/TypeScript
-    - PHP
-    - Python (names, methods, etc), Perl, Lua and more
     - Swift
-    - C, Objective C(++)
+    - Java, Scala, Kotlin, Flix
+    - Haskell, OCaml
+    - Go, Rust
     - R
+    - Python (names, methods, etc), Perl, Ruby, Lua
+    - C, Objective C(++)
+    - PHP (needs a bit of cleanup)
 
   Done:
   - Standardized modifier and declaration keywords
@@ -57,6 +60,31 @@ define:
 
   entity-name: &entity-name |
     (?x)\s*\b
+    (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
+    \b(?:# don't match keywords
+    in|of|as|is|new|infer|unset
+    |typeof|nameof|sizeof|pairof|keyof|valueof
+    |length|delete|to|til|thru|at|by
+    |n?and|x?n?or|not|parallel|series|spawn|discard
+    |func?|function|proc|process|macro
+    |let|var|val|const|declare
+    |class|given|constraint|enum|relation|lattice
+    |project|attribute|protocol|member|extend|fragment|interface|struct
+    |module|package|namespace|object|record|label
+    |raw|data|query|schema|style|component|element|trait|friend|alias|type
+    |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
+    |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
+    |switch|case|fail|default|match|when|pass|fallthru
+    |try|retry|throw|raise|catch|rescue|finally
+    |with|ref|defer|refer|show|hide|enter|exit
+    |then|begin|end|debug|check|assert
+    |break|continue|halt|skip|fixed|lock
+    |(?:return|give|await|yield|throw|raise)s?
+    |import|export|show|hide|open|close
+    |from|where|join|equals?|[io]nto|order
+    |take|drop|fold|scan|select|group|use|using
+    )\b
+    )
     ([\p{Pc}\p{L}]\w*)
     \b
 
@@ -261,11 +289,10 @@ repository:
           6: {name: constant.language.infinity.so}
       - match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:
-          (_|params)|(super|this|self|proto|prototype|constructor|target)
+          (it|that|arguments|super|this|self|proto|prototype|constructor|target)
           )\b\s*
         captures:
-          1: {name: variable.language.arguments.so}
-          2: {name: variable.language.$2.so}
+          1: {name: variable.language.$1.so}
 
   numbers:
     patterns:
@@ -1573,19 +1600,29 @@ repository:
               - include: "#jsdoc-string"
       jsdoc-string:
         name: string.jsdoc
-        match: "\"(\\\\\"|[^\"])*\"|'(\\\\'|[^'])*'"
+        match: \"(\\"|[^"])*"|'(\\'|[^'])*'
 
   comments:
     patterns:
-      - begin: \s*((/\+))
+      - begin: \s*((/\+\+))
         end: (\s*(\+/))
-        name: comment.block.inline.so
+        name: comment.block.documentation.nested.so
         captures:
-          1: {name: comment.block.inline.so}
+          1: {name: comment.block.documentation.so}
           2: {name: punctuation.definition.comment.so}
         patterns:
-          - include: "#markdown-inline"
-          - include: "#nested-inline"
+          - include: "#jsdoc"
+          - include: text.html.markdown#inline
+          - include: "#nested-block-jsdoc"
+      - begin: \s*((/\+))
+        end: (\s*(\+/))
+        name: comment.block.nested.so
+        captures:
+          1: {name: comment.block.nested.so}
+          2: {name: punctuation.definition.comment.so}
+        patterns:
+          - include: text.html.markdown#inline
+          - include: "#nested-jsdoc"
       - begin: \s*((/\*\*))
         end: (\s*(\*/))
         name: comment.block.documentation.so
@@ -1594,8 +1631,7 @@ repository:
           2: {name: punctuation.definition.comment.so}
         patterns:
           - include: "#jsdoc"
-          - include: "#markdown-inline"
-          - include: "#nested-document-block"
+          - include: text.html.markdown#inline
       - begin: \s*((/\*))
         end: (\s*(\*/))
         name: comment.block.so
@@ -1603,8 +1639,7 @@ repository:
           1: {name: comment.block.so}
           2: {name: punctuation.definition.comment.so}
         patterns:
-          - include: "#markdown-inline"
-          - include: "#nested-block"
+          - include: text.html.markdown#inline
       - begin: ((^\s*)|\s*)((//=))
         end: \s*$
         name: comment.line.special.so
@@ -1616,7 +1651,7 @@ repository:
           1: {name: punctuation.definition.comment.so}
         patterns:
           - include: "#comment-special"
-          - include: "#markdown-inline"
+          - include: text.html.markdown#inline
       - begin: ((^\s*)|\s*)((//\+))
         end: \s*$
         name: comment.line.playground.so
@@ -1628,7 +1663,7 @@ repository:
           0: {name: comment.line.playground.so}
         patterns:
           - include: "#jsdoc"
-          - include: "#markdown-inline"
+          - include: text.html.markdown#inline
       - begin: ((^\s*)|\s*)((///))
         end: \s*$
         name: comment.line.documentation.so
@@ -1640,7 +1675,7 @@ repository:
           0: {name: comment.line.documentation.so}
         patterns:
           - include: "#jsdoc"
-          - include: "#markdown-inline"
+          - include: text.html.markdown#inline
       - begin: ((^\s*)|\s*)((//!|\A#!))
         end: \s*$
         name: comment.line.shebang.so
@@ -1651,7 +1686,7 @@ repository:
         endCaptures:
           0: {name: comment.line.shebang.so}
         patterns:
-          - include: "#markdown-inline"
+          - include: text.html.markdown#inline
       - begin: ((^\s*)|\s*)((//\*))
         end: \s*$
         name: comment.line.doctype.so
@@ -1662,7 +1697,7 @@ repository:
         endCaptures:
           0: {name: comment.line.doctype.so}
         patterns:
-          - include: "#markdown-inline"
+          - include: text.html.markdown#inline
       - begin: ((^\s*)|\s*)((//))
         end: \s*$
         name: comment.line.number-sign.so
@@ -1673,39 +1708,28 @@ repository:
         endCaptures:
           0: {name: comment.line.number-sign.so}
         patterns:
-          - include: "#markdown-inline"
+          - include: text.html.markdown#inline
 
     repository:
-      markdown-inline:
+      nested-block-jsdoc:
+        begin: (/\+\+)\s*
+        end: \s*(\+/)
+        name: comment.block.documentation.nested.so
+        captures:
+          1: {name: punctuation.definition.comment.so}
         patterns:
+          - include: "#jsdoc"
           - include: text.html.markdown#inline
+          - include: "#nested-block-jsdoc"
       nested-block:
-        begin: (/\*)\s*
-        end: \s*(\*/)
-        captures:
-          1: {name: punctuation.definition.comment.so}
-        patterns:
-          - include: "#jsdoc"
-          - include: "#markdown-inline"
-          - include: "#nested-block"
-      nested-document-block:
-        begin: (/\*\*?)\s*
-        end: \s*(\*/)
-        captures:
-          1: {name: punctuation.definition.comment.so}
-        patterns:
-          - include: "#jsdoc"
-          - include: "#markdown-inline"
-          - include: "#nested-document-block"
-      nested-inline:
         begin: (/\+)\s*
         end: \s*(\+/)
-        name: comment.block.inline.so
+        name: comment.block.nested.so
         captures:
           1: {name: punctuation.definition.comment.so}
         patterns:
-          - include: "#markdown-inline"
-          - include: "#nested-inline"
+          - include: text.html.markdown#inline
+          - include: "#nested-block"
       nested-special:
         begin: (/\+)\s*
         end: \s*(\+/)
@@ -1713,7 +1737,7 @@ repository:
           1: {name: punctuation.definition.comment.so}
         patterns:
           - include: "#jsdoc"
-          - include: "#markdown-inline"
+          - include: text.html.markdown#inline
           - include: "#nested-special"
 
   calls:
@@ -2770,6 +2794,7 @@ repository:
 
   keywords:
     patterns:
+      - include: "#sql-expression"
       - include: "#module-expression"
       - include: "#control-expression"
       - include: "#query-expression"
@@ -2783,6 +2808,38 @@ repository:
       - include: "#general-keywords"
 
     repository:
+      sql-expression:
+        patterns:
+          - captures:
+              1: {name: keyword.other.create.so}
+              2: {name: keyword.other.table.so}
+              5: {name: entity.name.function.so}
+            match:
+              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(create(?:\s+or\s+replace)?|replace)\s+(aggregate|conversion|database|domain|function|group|(unique\s+)?index|language|operator
+              class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)(['"`]?)(\w+)\4
+            name: meta.create.so
+          - captures:
+              1: {name: keyword.other.drop.so}
+              2: {name: keyword.other.table.so}
+            match:
+              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
+              class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view))
+            name: meta.drop.so
+          - captures:
+              1: {name: keyword.other.drop.so}
+              2: {name: keyword.other.table.so}
+              3: {name: entity.name.function.so}
+              4: {name: keyword.other.cascade.so}
+            match: (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(table)\s+(\w+)(\s+cascade)?\b)
+            name: meta.drop.so
+          - captures:
+              1: {name: keyword.other.alter.so}
+              2: {name: keyword.other.table.so}
+            match:
+              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(alter|update)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
+              class|operator|proc(edure)?|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)
+            name: meta.alter.so
+
       control-expression:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(halt|skip|break|continue|goto|label)\b
@@ -2791,8 +2848,7 @@ repository:
           1: {name: keyword.control.flow.so}
         patterns:
           - match: \s*([\p{Pc}\p{L}]\w*)\s*
-            captures:
-              1: {name: constant.other.label.so}
+            name: constant.other.label.so
 
       module-expression:
         patterns:
@@ -3097,7 +3153,7 @@ repository:
           - begin: |
               (?x)
               (?<=(?:[({\[]\|?|\b(?:#keywords
-              (?:re)?do|equals?|[io]nto|select|where
+              (?:re)?do|equals?|[io]nto|select|where|when|case
               |(?:\b(?:fold|scan)\b)\s*(?:\b(?:left|right)\b)?\s*(?:\b(?:by|while|until|with)\b)?
               |(?:\b(?:take|drop)\b)\s*(?:\b(?:left|right|init|head|tail|last)\b)?\s*(?:\b(?:by|while|until|with)\b)?
               )\b)\s*)
