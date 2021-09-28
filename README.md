@@ -54,8 +54,6 @@ I actually went through several iterations for my desired programming language. 
 
 The name Sombra comes from an Overwatch (even though I've never played the game) hacker character of the same name. _Sombra_ is Spanish for "shadow".
 
-![](https://cdn1.dotesports.com/wp-content/uploads/2021/06/10141100/sombraskin.png)
-
 Sombra, the language, started out as a dialect of TypeScript, researching about other languages and the syntax them employ by making incremental changes, adding new features to the language by editing the JavaScript (Babel) grammar file with find and replace. Over the months of iteration, Sombra has pulled in influence from more than a dozen other languages: Python, C#, Ruby, Rust, Go, Scala, Kotlin, Haskell, Elm, Perl, OCaml, Flix, F#, and PHP.
 
 This document is currently in the works and is my largest project to date. Some things are going to change. I will be posting a Trello on Sombra very, very soon, for all of you to see.
