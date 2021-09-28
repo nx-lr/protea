@@ -1,5 +1,11 @@
 # Sombra
 
+<div align=center>
+
+![](logo.png)
+
+</div>
+
 > Feels like JavaScript, better than JavaScript.
 
 Sombra is an in-progress programming language that aims to compile to both JavaScript and WebAssembly in a language with a syntax that feels like JavaScript. It's got a great type system, a huge standard library and a unique combination of powerful features that support object-oriented, imperative, and functional programming.
