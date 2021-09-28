@@ -14,7 +14,7 @@ public element Item(&content) {
   </motion:div>;
 }
 
-element List(&items) {
+public element List(&items) {
   return <motion:ul>
     {for let ({content}) in items then <Item content=$content/>}
   </motion:ul>;
@@ -34,7 +34,7 @@ element List(&items) {
 
 ## The Language
 
-JavaScript is the world's most popular programming language, by force. It's in every device with a browser, running on backends and now on mobile and IoT. It's constantly growing and evolving, being used for all kinds of things, and we're so used to pushing it to its limits. But many people hate on JavaScript for its "fundamentally flawed" design, and the ecosystem that surrounds it. Bloated projects with hundreds of thousands of dependencies, type coercion and more.
+JavaScript is the world's most popular programming language, but many people still hate it for its weird runtime behavior or ecosystem that we still have to deal with today. Bloated projects with hundreds of dependencies, unwanted type coercion and more.
 
 Many new languages, frameworks and transpilers have been introduced to try and solve some of the more fundamental problems of JavaScript but they too introduce some complexity, some in terms of the generated code, and some in terms of dependencies and toolchains which need to be installed in order for the application to function.
 
@@ -42,39 +42,29 @@ Many new languages, frameworks and transpilers have been introduced to try and s
 
 ## Sombra's Origins
 
-In March 2020, I had a hobby project, a conlang generator, which I written in Python that utilized libraries like NumPy and NLTK that I wanted to port into JavaScript and integrate into a website. I went with the na&iuml;ve approach of transcribing my code from Python to JavaScript by hand. And I'm sure every single JS developer can relate.
+In March 2020, I had a hobby project, a conlang generator, which I written in Python that utilized libraries like NumPy and NLTK that I wanted to port into JavaScript and integrate into a website. So I went with the naïve approach of transcribing my code from Python to JavaScript by hand.
 
-I was initially annoyed over things like no chained comparison or having to write `x[x.length - 1]` but coming from Java I was conditioned to do so. I spend about 30%(?) of my time trying to fix missing brackets, about 10% on semicolons and commas alone (as my editor fills in the semicolons for me). I've had enough of errors or bugs containing `null` or `undefined`, let alone the unknown type coercion.
+I was constantly too annoyed over the little things such as missing or ambiguous semicolons, commas or even misplaced brackets, most of which [my formatter](https://prettier.io/) would handle for me. But the real pain in the ass were errors containing `undefined` or `null` (because I never knew TypeScript existed), let alone the unknown type coercion.
 
 The real evil part for me was having a general lack of a standard library or anything of the like. This meant having to implement them myself, mainly through Stack Overflow and NPM. My JS projects are gigabytes in size when the JavaScript applications I'm developing were all simple, and I had say a thousand dependencies just for an Angular or Ionic application. Shucks.
 
 ---
 
-I actually went through several iterations for my desired programming language. I was mainly focused on C or Java-style curly braces rather than Python indentation. And I came up with vastly different languages some with very different features and syntax, as well as names for each of them: Apex, Zenith, Nova, Nyx, Mirai, Osom (aka Awesome), Perplex, Sombra, Saga, Isogram and finally back to Sombra.
+I actually went through several iterations for my desired programming language. I was mainly focused on C or Java-style curly braces rather than Python indentation. And I came up with vastly different languages some with very different features and syntax, as well as names for each of them: Apex, Zenith, Nova, Nyx, Mirai, Ozom (from the word _awesome_/_ozone_), Perplex, **Sombra**, Trinity, Neo, Morpheus, Saga and Isogram.
 
-The latest name itself comes from [this snippet](https://developers.google.com/analytics/devguides/collection/analyticsjs) that began with something like
+The name Sombra comes from an Overwatch (even though I've never played the game) hacker character of the same name. _Sombra_ is Spanish for "shadow".
 
-```js
-(function (i, s, o, g, r, a, m) {});
-```
+![](https://cdn1.dotesports.com/wp-content/uploads/2021/06/10141100/sombraskin.png)
 
-The arguments to the function above spell out the word **_Sombra_**, which, by definition, is a word that contains unique non-repeating letters. For example, _Sombra_, _wordplay_, _ambidextrously_, _copyrightable_ or _dialogue_. I developed Sombra as a combination of influences from different languages\*, with each contributing equally to it.
-
-\*(TypeScript, Python, Rust, Go, Scala, C#, Bash, Haskell, Perl, Ruby and OCaml, Flix, YAML, F#, PHP, Perl, CoffeeScript, LiveScript)
-
-## Language Principles
-
-Sombra will have a large standard library inspired by those languages, covering many domains all the way from primitive operations in **/Core** to advanced such as:
-
----
+Sombra, the language, started out as a dialect of TypeScript, researching about other languages and the syntax them employ by making incremental changes, adding new features to the language by editing the JavaScript (Babel) grammar file with find and replace. Over the months of iteration, Sombra has pulled in influence from more than a dozen other languages: Python, C#, Ruby, Rust, Go, Scala, Kotlin, Haskell, Elm, Perl, OCaml, Flix, F#, and PHP.
 
 This document is currently in the works and is my largest project to date. Some things are going to change. I will be posting a Trello on Sombra very, very soon, for all of you to see.
 
-Feel free to open or contribute to the project on this GitHub repository: http://github.com/nxltm/Sombra/.
+Feel free to open or contribute to the project on this GitHub repository: http://github.com/nxltm/sombra-lang/.
 
 ### Version Name Lists
 
-- 1.0 Don QuickSorte
+- 1.0 Shut the Lights
 - 2.0 Lord of Recursion
 - 3.0 Pride and Processing
 - 4.0 Frankenstack
