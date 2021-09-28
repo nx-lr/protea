@@ -155,7 +155,7 @@ repository:
       - comment: Primitive data types
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
-          bool|u?int|float|natural|ratio|real|imag|complex|number
+          bool(ean)?|u?int|float|natural|ratio|real|imag|complex|number
           |char|rune|string|symbol|regexp?|function|buffer|binary
           |# numeric types
           ([cifsun]|natural|ratio|u?int|real|imag|complex)
@@ -181,7 +181,7 @@ repository:
       - comment: Primitive classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
-          Bool|U?Int|Float|Natural|Ratio|Real|Imag|Complex|Number
+          Bool(ean)?|U?Int|Float|Natural|Ratio|Real|Imag|Complex|Number
           |Char|Rune|String|Symbol|RegExp?|Function|Buffer|Binary
           |# Numeric Types
           ([CIFSUN]|Natural|Ratio|U?Int|Real|Imag|Complex)
@@ -2393,7 +2393,7 @@ repository:
 
   type-brackets:
     patterns:
-      - include: "#curly-brackets"
+      - include: "#code-block"
       - include: "#square-brackets"
       - include: "#round-brackets"
 
@@ -2442,6 +2442,7 @@ repository:
               1: {name: punctuation.definition.parameters.so}
             patterns:
               - include: "#punctuation"
+              - include: "#curly-brackets"
               - include: "#types"
               - include: $self
           - begin: \s*(\()
@@ -2450,6 +2451,7 @@ repository:
               1: {name: punctuation.definition.expression.so}
             patterns:
               - include: "#punctuation"
+              - include: "#curly-brackets"
               - include: "#types"
               - include: $self
 
@@ -2469,6 +2471,7 @@ repository:
               1: {name: punctuation.definition.typeparameters.so}
             patterns:
               - include: "#punctuation"
+              - include: "#curly-brackets"
               - include: "#types"
               - include: $self
           - begin: \s*(\[\|)
@@ -2477,6 +2480,7 @@ repository:
               1: {name: punctuation.definition.sequence.so}
             patterns:
               - include: "#punctuation"
+              - include: "#curly-brackets"
               - include: "#types"
               - include: $self
           - begin: \s*(\[)
@@ -2485,6 +2489,7 @@ repository:
               1: {name: punctuation.definition.array.so}
             patterns:
               - include: "#punctuation"
+              - include: "#curly-brackets"
               - include: "#types"
               - include: $self
 
@@ -2578,7 +2583,7 @@ repository:
       |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
       # Function or method modifiers
       |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
-      |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
+      |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
       |# Function or method modifiers
       (?:pre|in|post|suf|af|trans|interface)fix|
       (?:u|bi|ter|)nary|oper
@@ -2630,7 +2635,7 @@ repository:
               )|
               (# Function or method modifiers
               [gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
-              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
+              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
               )|
               (# Property modifiers
               (?:pre|in|post|suf|af|trans|interface)fix|
@@ -3129,7 +3134,7 @@ repository:
               |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
               # Function or method modifiers
               |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
-              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
+              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
               |# Function or method modifiers
               (?:pre|in|post|suf|af|trans|interface)fix|
               (?:u|bi|ter|)nary|oper
@@ -3169,7 +3174,7 @@ repository:
               |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
               # Function or method modifiers
               |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
-              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
+              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
               |# Function or method modifiers
               (?:pre|in|post|suf|af|trans|interface)fix|
               (?:u|bi|ter|)nary|oper
@@ -3203,7 +3208,7 @@ repository:
               |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
               # Function or method modifiers
               |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
-              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
+              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
               |# Function or method modifiers
               (?:pre|in|post|suf|af|trans|interface)fix|
               (?:u|bi|ter|)nary|oper
@@ -3241,7 +3246,7 @@ repository:
               |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final
               # Function or method modifiers
               |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mut|pure)|local|global|native|opaque
-              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound)
+              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
               |# Function or method modifiers
               (?:pre|in|post|suf|af|trans|interface)fix|
               (?:u|bi|ter|)nary|oper
