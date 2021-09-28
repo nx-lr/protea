@@ -2034,32 +2034,35 @@ repository:
 
               1: custom bitwise (& | ^ ~)
               2: custom arithmetic (+ - * / %)
-              3: custom accessor (: .)
-              4: custom equality (= !)
-              5: custom comparison (< >)
-              6: custom private (? #)
-              7: custom mathematical (Unicode Sm)
-              8: custom currency (Unicode Sc)
-              9: custom ASCII (between \x80 and \xff)
-              10: custom infix operators (all other chars)
+              3: custom prototype (:)
+              4: custom accessor (.)
+              5: custom equality (= !)
+              6: custom comparison (< >)
+              7: custom private (? #)
+              8: custom mathematical (Unicode Sm)
+              9: custom currency (Unicode Sc)
+              10: custom ASCII (between \x80 and \xff)
+              11: custom infix operators (all other chars)
             captures:
               1: {name: keyword.operator.bitwise.custom.so}
               2: {name: keyword.operator.arithmetic.custom.so}
               3: {name: keyword.operator.prototype.custom.so}
-              4: {name: keyword.operator.comparison.custom.so}
-              5: {name: keyword.operator.relational.custom.so}
-              6: {name: keyword.operator.private.custom.so}
-              7: {name: keyword.operator.math.custom.so}
-              8: {name: keyword.operator.currency.custom.so}
-              9: {name: keyword.operator.ascii.custom.so}
-              10: {name: keyword.operator.infix.custom.so}
+              4: {name: keyword.operator.accessor.custom.so}
+              5: {name: keyword.operator.comparison.custom.so}
+              6: {name: keyword.operator.relational.custom.so}
+              7: {name: keyword.operator.private.custom.so}
+              8: {name: keyword.operator.math.custom.so}
+              9: {name: keyword.operator.currency.custom.so}
+              10: {name: keyword.operator.ascii.custom.so}
+              11: {name: keyword.operator.infix.custom.so}
             match: |
               (?x)
               (?<=^|['"`\\({\[\s])# spacing
               (?:
               ([&|^~][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#1
               |([+\-*/%][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#2
-              |([:.][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#3
+              |(:[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#3
+              |(\.[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#3
               |([!=][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#4
               |([<>][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#5
               |([?\#][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#6
@@ -2766,6 +2769,9 @@ repository:
 
   keywords:
     patterns:
+      - include: "#module-expression"
+      - include: "#control-expression"
+      - include: "#query-expression"
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(let|va[rl]|const)\b\s*
         name: storage.type.so
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(declare)\b\s*
@@ -2774,9 +2780,6 @@ repository:
       - include: "#declaration-keywords"
       - include: "#expression-keywords"
       - include: "#general-keywords"
-      - include: "#query-expression"
-      - include: "#module-expression"
-      - include: "#control-expression"
 
     repository:
       control-expression:
@@ -2791,15 +2794,6 @@ repository:
               1: {name: constant.other.label.so}
 
       module-expression:
-        repository:
-          module-string:
-            patterns:
-
-          module-name:
-
-          module-brackets:
-            patterns:
-
         patterns:
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(import|export|open|close|use|using)\b\s*
@@ -2925,7 +2919,7 @@ repository:
       class:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(class|extend)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.class.so}
         patterns:
@@ -2935,7 +2929,7 @@ repository:
       constraint:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(given|constraint)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.constraint.so}
         patterns:
@@ -2945,7 +2939,7 @@ repository:
       enum:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(enum|relation)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         name: meta.enum.declaration.so
         beginCaptures:
           1: {name: storage.type.enum.so}
@@ -2957,7 +2951,7 @@ repository:
       fragment:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(fragment|struct)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.fragment.so}
         patterns:
@@ -2967,7 +2961,7 @@ repository:
       function:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(func?|function|proc|process|macro)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.function.so}
         patterns:
@@ -2977,7 +2971,7 @@ repository:
       interface:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(interface|schema)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.interface.so}
         patterns:
@@ -2987,7 +2981,7 @@ repository:
       module:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(module|package)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.module.so}
         patterns:
@@ -2997,7 +2991,7 @@ repository:
       namespace:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(namespace|lattice)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.namespace.so}
         patterns:
@@ -3007,7 +3001,7 @@ repository:
       object:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(object|record)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.object.so}
         patterns:
@@ -3017,7 +3011,7 @@ repository:
       protocol:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(protocol|member)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.protocol.so}
         patterns:
@@ -3027,7 +3021,7 @@ repository:
       project:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(project|attribute)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.protocol.so}
         patterns:
@@ -3037,7 +3031,7 @@ repository:
       raw:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(raw)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.raw.so}
         patterns:
@@ -3047,7 +3041,7 @@ repository:
       schema:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(data|query)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.schema.so}
         patterns:
@@ -3057,7 +3051,7 @@ repository:
       style:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(style|component|element)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.style.so}
         patterns:
@@ -3067,7 +3061,7 @@ repository:
       trait:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(trait|friend)\b\s*
-        end: (?<=})|(?=;)|$
+        end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.trait.so}
         patterns:
@@ -3490,6 +3484,7 @@ repository:
   brackets:
     patterns:
       - include: "#curly-brackets"
+      - include: "#code-block"
       - include: "#square-brackets"
       - include: "#round-brackets"
 
@@ -3520,7 +3515,7 @@ repository:
             name: punctuation.definition.block.sequence.item.so
 
     patterns:
-      - begin: (\{\|)\s*
+      - begin: (?<=(?::?=|->)\s+|[({\[]\s*)(\{\|)\s*
         end: \s*(\|\})
         captures:
           1: {name: punctuation.definition.mapping.so}
@@ -3528,7 +3523,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: (\{)\s*
+      - begin: (?<=(?::?=|->)\s+|[({\[]\s*)(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.so}
