@@ -1,13 +1,13 @@
-# Isogram
+# Sombra
 
 > Feels like JavaScript, better than JavaScript.
 
-Isogram is an open-source, robustly typed language that compiles to efficient and human-readable JavaScript, enabling you to avoid type-related bugs as your web, mobile and desktop grow in complexity. It comes with a huge standard library and a unique combination of features that work together hand in hand.
+Sombra is an in-progress programming language that aims to compile to both JavaScript and WebAssembly in a language with a syntax that feels like JavaScript. It's got a great type system, a huge standard library and a unique combination of powerful features that support object-oriented, imperative, and functional programming.
 
 ```coffee
-use React, Framer.Motion
+use React, Framer.[Motion]
 
-element Item(&content) {
+public element Item(&content) {
   const [isOpen, setIsOpen] = useState(false);
   return <motion:div layout>
     {isOpen !: content}
@@ -15,8 +15,8 @@ element Item(&content) {
 }
 
 element List(&items) {
-  return <motion:ul x=1>
-    {for let ({content}) in items then <Item content=(content)/>}
+  return <motion:ul>
+    {for let ({content}) in items then <Item content=$content/>}
   </motion:ul>;
 }
 
@@ -27,18 +27,20 @@ element List(&items) {
 ```
 
 ```html
-<style></style>
+<script>
+  import X from X;
+</script>
 ```
 
 ## The Language
 
-JavaScript is the world's most popular programming language, by force. It's in every device with a browser, running on backends and now on mobile and IoT. It's constantly growing and evolving, being used for all kinds of things, and we're so used to pushing it to its limits. But many people hate on JavaScript for its fundamentally flawed design, and the ecosystem that surrounds it. Bloated projects, type coercion and more.
+JavaScript is the world's most popular programming language, by force. It's in every device with a browser, running on backends and now on mobile and IoT. It's constantly growing and evolving, being used for all kinds of things, and we're so used to pushing it to its limits. But many people hate on JavaScript for its "fundamentally flawed" design, and the ecosystem that surrounds it. Bloated projects with hundreds of thousands of dependencies, type coercion and more.
 
-Many new languages, frameworks and transpilers have been introduced in order to solve some of the more fundamental problems of JavaScript but they too introduce some complexity, some in terms of the generated code, some in terms of dependencies and installations, some related to the compiled output.
+Many new languages, frameworks and transpilers have been introduced to try and solve some of the more fundamental problems of JavaScript but they too introduce some complexity, some in terms of the generated code, and some in terms of dependencies and toolchains which need to be installed in order for the application to function.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 
-## Isogram's Origins
+## Sombra's Origins
 
 In March 2020, I had a hobby project, a conlang generator, which I written in Python that utilized libraries like NumPy and NLTK that I wanted to port into JavaScript and integrate into a website. I went with the na&iuml;ve approach of transcribing my code from Python to JavaScript by hand. And I'm sure every single JS developer can relate.
 
@@ -48,19 +50,7 @@ The real evil part for me was having a general lack of a standard library or any
 
 ---
 
-I went through about several iterations of my language, shifting between C-style curly braces and indentation, as much as a month. The entire time I worked on my own programming languages I was still wearing braces. These are iterations of the _same_ language (the ones that didn't are marked with asterisks).
-
-- Apex `.apx` (Feb 2020)\*
-- Zenith `.ze` (Mar 2020)\*
-- Mirai `.mir` (Sep 2020)
-- Nova `.nova` (Nov-Dec 2020)\*
-- Nyx `.nyx` (Jan-Feb, Aug-Sep 2021)
-- Osom `.osm` (Mar 2021)
-- Perpleks `.pr` (Apr 2021)
-- Som(b)ra `.so` (May-Jul 2021)
-- Saga `.saga` (Jun-Jul 2021)\*
-- SagaScript `.sa` (Aug 2021)
-- Isogram `.iso` (Aug 2021 onwards)
+I actually went through several iterations for my desired programming language. I was mainly focused on C or Java-style curly braces rather than Python indentation. And I came up with vastly different languages some with very different features and syntax, as well as names for each of them: Apex, Zenith, Nova, Nyx, Mirai, Osom (aka Awesome), Perplex, Sombra, Saga, Isogram and finally back to Sombra.
 
 The latest name itself comes from [this snippet](https://developers.google.com/analytics/devguides/collection/analyticsjs) that began with something like
 
@@ -68,19 +58,19 @@ The latest name itself comes from [this snippet](https://developers.google.com/a
 (function (i, s, o, g, r, a, m) {});
 ```
 
-The arguments to the function above spell out the word **_isogram_**, which, by definition, is a word that contains unique non-repeating letters. For example, _isogram_, _wordplay_, _ambidextrously_, _copyrightable_ or _dialogue_. I developed Isogram as a combination of influences from different languages\*, with each contributing equally to it.
+The arguments to the function above spell out the word **_Sombra_**, which, by definition, is a word that contains unique non-repeating letters. For example, _Sombra_, _wordplay_, _ambidextrously_, _copyrightable_ or _dialogue_. I developed Sombra as a combination of influences from different languages\*, with each contributing equally to it.
 
 \*(TypeScript, Python, Rust, Go, Scala, C#, Bash, Haskell, Perl, Ruby and OCaml, Flix, YAML, F#, PHP, Perl, CoffeeScript, LiveScript)
 
 ## Language Principles
 
-Isogram will have a large standard library inspired by those languages, covering many domains all the way from primitive operations in **/Core** to advanced such as:
+Sombra will have a large standard library inspired by those languages, covering many domains all the way from primitive operations in **/Core** to advanced such as:
 
 ---
 
-This document is currently in the works and is my largest project to date. Some things are going to change. I will be posting a Trello on Isogram very, very soon, for all of you to see.
+This document is currently in the works and is my largest project to date. Some things are going to change. I will be posting a Trello on Sombra very, very soon, for all of you to see.
 
-Feel free to open or contribute to the project on this GitHub repository: http://github.com/nxltm/isogram/.
+Feel free to open or contribute to the project on this GitHub repository: http://github.com/nxltm/Sombra/.
 
 ### Version Name Lists
 
@@ -108,11 +98,11 @@ Feel free to open or contribute to the project on this GitHub repository: http:/
 - JavaScript with Babel: compiler and standard library
   - Lodash: Core libraries
 
-<!-- TODO: List more libraries here as modules for Isogram's standard library -->
+<!-- TODO: List more libraries here as modules for Sombra's standard library -->
 
 ## Guidelines and Principles
 
-The development of a programming language should follow a set of principles, each with their own rationale behind them. Many of these ideas and principles come from languages that have inspired Isogram, including TypeScript, Python, Ruby, Elixir, Nim, Rust, Scala, Haskell, and OCaml.
+The development of a programming language should follow a set of principles, each with their own rationale behind them. Many of these ideas and principles come from languages that have inspired Sombra, including TypeScript, Python, Ruby, Elixir, Nim, Rust, Scala, Haskell, and OCaml.
 
 - Significant whitespace.
 - Everything is an expression.
@@ -133,9 +123,9 @@ The development of a programming language should follow a set of principles, eac
 
 ### Libraries
 
-Isogram has a core library of modules completely implemented in JavaScript that contains a wide variety of types, each with tons of functionality and algorithms that work with them. These modules cover primitive data types and structures, documents and files, APIs, sites and more.
+Sombra has a core library of modules completely implemented in JavaScript that contains a wide variety of types, each with tons of functionality and algorithms that work with them. These modules cover primitive data types and structures, documents and files, APIs, sites and more.
 
-Isogram has a core library implemented in JavaScript that contains types, data structures, and tons of functions/algorithms that work with them.
+Sombra has a core library implemented in JavaScript that contains types, data structures, and tons of functions/algorithms that work with them.
 
 ## Language Ideas
 
