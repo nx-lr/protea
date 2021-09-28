@@ -1819,7 +1819,7 @@ repository:
           \b
           (?=
           !(?:\.=?)?\s*|
-          \s+[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*
+          \s+[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
           \b(?:# don't match keywords
           in|of|as|is|new|infer|unset
@@ -1955,7 +1955,7 @@ repository:
       binary-ops-builtin:
         patterns:
           - comment: augmented assignment += -= *= /= etc
-            match: (?<=^|['"`\\({\[\s])([\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+(?<![!:~.<=>])=)(?=$|['"`\\\s)}\]])
+            match: (?<=^|['"`\\({\[\s])([\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+(?<![!:~.<=>])=)(?=$|['"`\\\s)}\]])
             name: keyword.operator.assignment.augmented.so
 
           - comment: |
@@ -2059,22 +2059,22 @@ repository:
               (?x)
               (?<=^|['"`\\({\[\s])# spacing
               (?:
-              ([&|^~][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#1
-              |([+\-*/%][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#2
-              |(:[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#3
-              |(\.[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#3
-              |([!=][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#4
-              |([<>][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#5
-              |([?\#][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#6
-              |(\p{Sm}[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#7
-              |(\p{Sc}[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#8
-              |([\p{S}\p{P}&&[\x80-\xff]][\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#9
-              |([\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)#10
+              ([&|^~][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#1
+              |([+\-*/%][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#2
+              |(:[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#3
+              |(\.[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#3
+              |([!=][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#4
+              |([<>][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#5
+              |([?\#][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#6
+              |(\p{Sm}[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#7
+              |(\p{Sc}[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#8
+              |([\p{S}\p{P}&&[\x80-\xff]][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#9
+              |([\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#10
               )
               (?=$|['"`\\\s)}\]])
 
       binary-ops:
-        match: (?<=^|['"`\\\s({\[])([\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]+)(?=$|['"`\\\s)}\]])
+        match: (?<=^|['"`\\\s({\[])([\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)(?=$|['"`\\\s)}\]])
         captures:
           0: {patterns: [include: "#binary-ops-builtin"]}
 
@@ -2118,8 +2118,8 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]])#15
-              (?=[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*
+              |[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]])#15
+              (?=[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*
               [\w({\[_,;'"`])
             name: keyword.operator.prefix.so
             captures:
@@ -2144,7 +2144,7 @@ repository:
             match: |
               (?x)
               (?<=[\w)}\]_,;'"`]
-              [\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*)
+              [\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*)
               (?:(\*)#1
               |(\+)#2
               |(\-)#3
@@ -2159,7 +2159,7 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]])#15
+              |[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]])#15
             name: keyword.operator.suffix.so
             captures:
               1: {name: keyword.operator.module.all.so}
@@ -2183,7 +2183,7 @@ repository:
           - applyEndPatternLast: 1
             begin: |
               (?x)\s*(?:(\++>)|(\|+>))(?=\s*(
-              [\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*# prefix
+              [\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*# prefix
               (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
               \b(?:# don't match keywords
               in|of|as|is|new|infer|unset
@@ -2210,9 +2210,9 @@ repository:
               )\b
               )
               [\w]+
-              (?:[\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*# transfix
+              (?:[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*# transfix
               [\w]+)*
-              [\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]*# suffix
+              [\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*# suffix
               )\s*([^(]|$|;))
             end: (?=\O)|$
             beginCaptures:
@@ -2335,7 +2335,7 @@ repository:
 
       (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
       \b(?:# don't match keywords
-      new|unset|length|delete|to|til|thru|at|by
+      in|of|new|unset|length|delete|to|til|thru|at|by
       |n?and|x?n?or|not|parallel|series|spawn|discard
       |func?|function|proc|process|macro
       |let|var|val|const|declare
@@ -2500,7 +2500,7 @@ repository:
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(extends|implements)\b\s*
         name: storage.type.$1.so
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(typeof|nameof|sizeof|keyof|valueof|pairof|infer|in|of|as|is)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(typeof|nameof|sizeof|keyof|valueof|pairof|infer|as|is)\b\s*
         name: keyword.operator.expression.$1.so
 
   type-operators:
@@ -2568,6 +2568,7 @@ repository:
         name: keyword.operator.type.function.so
       - match: \s*(<==|<--?|<~~?)
         name: keyword.operator.type.channel.so
+      - include: "#declarations"
       - include: "#type-keywords"
       - include: "#modifier-keywords"
       - include: "#type-names"
@@ -2890,7 +2891,7 @@ repository:
         name: keyword.generator.asterisk.so
       - include: "#operators"
       - applyEndPatternLast: 1
-        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^_,;'"`\\({\[)}\]]]))
+        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]))
         end: (?=\O)|$
         beginCaptures:
           1: {name: punctuation.definition.annotation.so}
@@ -3461,7 +3462,7 @@ repository:
 
     repository:
       line-continuation:
-        match: (\\)\s*(?=#|$)
+        match: (\\)\s*(?=/[/*+]|$)
         captures:
           1: {name: punctuation.separator.continuation.line.so}
       comma:
@@ -3515,7 +3516,7 @@ repository:
             name: punctuation.definition.block.sequence.item.so
 
     patterns:
-      - begin: (?<=(?::?=|->)\s+|[({\[]\s*)(\{\|)\s*
+      - begin: (?<=(?::?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{\|)\s*
         end: \s*(\|\})
         captures:
           1: {name: punctuation.definition.mapping.so}
@@ -3523,7 +3524,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: (?<=(?::?=|->)\s+|[({\[]\s*)(\{)\s*
+      - begin: (?<=(?::?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.so}
