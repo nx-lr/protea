@@ -114,11 +114,11 @@ repository:
       - include: "#brackets"
       - include: "#punctuation"
       - include: "#type-annotation"
-      - include: "#operators"
       - include: "#literals"
       - include: "#support"
       - include: "#calls"
       - include: "#variables"
+      - include: "#operators"
       - include: "#illegal"
 
   illegal:
@@ -915,7 +915,7 @@ repository:
       - match: |
           (?x)
           \s*(\\)
-          ((?:\\.|[^\s.,:;])+?)
+          ((?:\\.|[^({\[)}\]\s.,:;])+?)
           (?=[({\[)}\]\s.,:;]|$)\s*
         name: string.unquoted.so
         captures:
@@ -1026,7 +1026,7 @@ repository:
     match: |
       (?x)
       \s*
-      (:)((?:\\.|[^\s.,:;])+?)
+      (:)((?:\\.|[^({\[)}\]\s.,:;])+?)
       (?=[({\[)}\]\s.,:;]|$)\s*
     name: meta.symbol.so
     captures:
@@ -1037,7 +1037,7 @@ repository:
     match: |
       (?x)
       (?<=^|[({\[\s,;*+-])\s*
-      ((?:\w|\\.)(?:\\.|[^\s,:;])*?)
+      ((?:\w|\\.)(?:\\.|[^({\[)}\]\s.,:;])*?)
       (:)\s+
     name: meta.object-literal.key.so
     captures:
@@ -2633,7 +2633,7 @@ repository:
                 name: punctuation.definition.block.sequence.item.so
 
         patterns:
-          - begin: \s*(\{\|)
+          - begin: (?<=(?::|:?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{\|)\s*
             end: \s*(\|\})
             captures:
               1: {name: punctuation.definition.mapping.so}
@@ -2642,7 +2642,7 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(\{)
+          - begin: (?<=(?::|:?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.dictionary.so}
@@ -2665,7 +2665,6 @@ repository:
               1: {name: punctuation.definition.parameters.so}
             patterns:
               - include: "#punctuation"
-              - include: "#curly-brackets"
               - include: "#types"
               - include: $self
           - begin: \s*(\()
@@ -2674,7 +2673,6 @@ repository:
               1: {name: punctuation.definition.expression.so}
             patterns:
               - include: "#punctuation"
-              - include: "#curly-brackets"
               - include: "#types"
               - include: $self
 
@@ -2694,7 +2692,6 @@ repository:
               1: {name: punctuation.definition.typeparameters.so}
             patterns:
               - include: "#punctuation"
-              - include: "#curly-brackets"
               - include: "#types"
               - include: $self
           - begin: \s*(\[\|)
@@ -2703,7 +2700,6 @@ repository:
               1: {name: punctuation.definition.sequence.so}
             patterns:
               - include: "#punctuation"
-              - include: "#curly-brackets"
               - include: "#types"
               - include: $self
           - begin: \s*(\[)
@@ -2712,7 +2708,6 @@ repository:
               1: {name: punctuation.definition.array.so}
             patterns:
               - include: "#punctuation"
-              - include: "#curly-brackets"
               - include: "#types"
               - include: $self
 
@@ -3768,7 +3763,7 @@ repository:
             name: punctuation.definition.block.sequence.item.so
 
     patterns:
-      - begin: (?<=(?::?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{\|)\s*
+      - begin: (?<=(?::|:?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{\|)\s*
         end: \s*(\|\})
         captures:
           1: {name: punctuation.definition.mapping.so}
@@ -3776,7 +3771,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: (?<=(?::?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{)\s*
+      - begin: (?<=(?::|:?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.so}
