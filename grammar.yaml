@@ -4,26 +4,25 @@ fileTypes: [so, sombra, coffee]
 patterns: [include: "#core"]
 
 information_for_contributors: |
-  Sombra is a modern functional, imperative and object-oriented programming language
-  with a syntax inspired by Python, and compile(s) to JavaScript and WebAssembly.
+  Sombra is a modern programming language inspired by JavaScript and compiles to JavaScript.
+  It's got a great type system, a huge standard library and a unique combination of powerful features 
+  that support object-oriented, imperative, and functional programming.
 
-  Sombra is additionally inspired by Ruby, Elixir, Clojure, LiveScript, Haskell, OCaml, Go,
-  Scala, Flix, Nim, Bash and YAML.
-
-  Should you want to provide a fix or improvement, or even a new feature,
-  please create a pull request against this repo: https://github.com/nxltm/sombra-lang
+  Should you want to provide a fix or improvement, a new grammar feature, or even some constructive 
+  feedback, head to my repo and make a pull request: https://github.com/nxltm/sombra-lang
   and I will be very happy to receive them.
-
-  Once accepted, I am happy to receive your request and feedback.
 
   This document is always under construction, and there's still a couple of things that
   need to be fixed. All this info would be on my Trello which I will be posting very soon.
   I will come back to fix them if I have the time.
 
+  Some parts such as numeric literals, HTML character entities and more are partially or entirely generated 
+  through code by means of compressed tries and DFA minimization.
+
 comment: |
   To-Do:
 
-  - Add function labels
+  - Add function labels (map keys)
   - Add keywords for types from SQL
   - Add grammars for Unicode character entities
     - HTML5, AGL and LaTeX
@@ -179,7 +178,7 @@ repository:
                     name: support.type.locale.so
                   - match: \b\w+([\p{Pc}-]\w+)*\b
                     name: support.type.locale.custom.so
-          - begin: (\(#)\s*(\p{L}+)\s*(:)?
+          - begin: (\($)\s*(\p{L}+)\s*(:)?
             end: \s*(\))
             name: meta.group.script.so
             captures:
@@ -2627,7 +2626,7 @@ repository:
 
   type-brackets:
     patterns:
-      - include: "#code-block"
+      - include: "#curly-brackets"
       - include: "#square-brackets"
       - include: "#round-brackets"
 
@@ -2759,7 +2758,6 @@ repository:
           (\^)|
           (\~)|
           (\$)|
-          (\#)|
           ([<>])
           )
           (?=$|[({\[\w'"\s])
@@ -2776,8 +2774,7 @@ repository:
           10: {name: keyword.operator.symmetric.so}
           11: {name: keyword.operator.negation.so}
           12: {name: keyword.operator.macro.dollar.so}
-          13: {name: keyword.operator.private.so}
-          14: {name: keyword.operator.class.so}
+          13: {name: keyword.operator.class.so}
 
   type-annotation:
     applyEndPatternLast: 1
@@ -2794,6 +2791,7 @@ repository:
         name: keyword.operator.type.function.so
       - match: \s*(<==|<--?|<~~?)
         name: keyword.operator.type.channel.so
+      - include: "#arguments-clause"
       - include: "#declarations"
       - include: "#type-keywords"
       - include: "#modifier-keywords"
@@ -3328,6 +3326,22 @@ repository:
           - match: *entity-name
             name: entity.name.trait.so
 
+  arguments-clause:
+    begin: |
+      (?x)
+      (?<=(?:\#?[({\[]|:\s+|\b(?:#keywords
+      (?:re)?do|equals?|[io]nto|select|where|when|case
+      |(?:\b(?:fold|scan)\b)\s*(?:\b(?:left|right)\b)?\s*(?:\b(?:by|while|until|with)\b)?
+      |(?:\b(?:take|drop)\b)\s*(?:\b(?:left|right|init|head|tail|last)\b)?\s*(?:\b(?:by|while|until|with)\b)?
+      )\b)\s*)
+      (\|)
+      (?!\|)
+    captures:
+      1: {name: punctuation.separator.arguments.so}
+    end: (?<!\|)(\|)(?!\|)
+    patterns:
+      - include: "#function-params"
+
   clauses:
     patterns:
       - include: "#arguments-clause"
@@ -3349,23 +3363,6 @@ repository:
     repository:
       function-params:
         patterns: *function-params
-
-      arguments-clause:
-        patterns:
-          - begin: |
-              (?x)
-              (?<=(?:[({\[]\|?|\b(?:#keywords
-              (?:re)?do|equals?|[io]nto|select|where|when|case
-              |(?:\b(?:fold|scan)\b)\s*(?:\b(?:left|right)\b)?\s*(?:\b(?:by|while|until|with)\b)?
-              |(?:\b(?:take|drop)\b)\s*(?:\b(?:left|right|init|head|tail|last)\b)?\s*(?:\b(?:by|while|until|with)\b)?
-              )\b)\s*)
-              (\|)
-              (?!\|)
-            captures:
-              1: {name: punctuation.separator.arguments.so}
-            end: (?<!\|)(\|)(?!\|)
-            patterns:
-              - include: "#function-params"
 
       pattern-brackets:
         begin: \s*(\()
