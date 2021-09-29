@@ -1,19 +1,19 @@
-# Sombra
+# Trinity
 
 > Feels like JavaScript, better than JavaScript.
 
-Sombra is an in-progress programming language that aims to compile to both JavaScript and WebAssembly in a language with a syntax that feels like JavaScript. It's got a great type system, a huge standard library and a unique combination of powerful features that support object-oriented, imperative, and functional programming.
+Trinity is an in-progress programming language that aims to compile to both JavaScript and WebAssembly in a language with a syntax that feels like JavaScript. It's got a great type system, a huge standard library and a unique combination of powerful features that support object-oriented, imperative, and functional programming.
 
 ```coffee
-use React, Framer.Motion
+use Js::Strict, React, 'motion' as motion
 
-public element Item(&content) {
+public weak class Item(&content) {
   const [isOpen, setIsOpen] = useState(false);
   return <motion:div layout>{isOpen !: content}</motion:div>;
 }
 
 public element List(&items) {
-  return <motion:ul> &uni; \j{aacute}
+  return <motion:ul>
     {for let ({content}) in items -> <Item $content/>}
   </motion:ul>;
 }
@@ -30,11 +30,11 @@ public element List(&items) {
 
 JavaScript is the world's most popular programming language, but many people still hate it for its problems which we still have to deal with today. JavaScript usage has changed drastically, and the language ever continues to evolve, but it struggles to deliver the capabilities required for the complex applications that are being developed these days.
 
-Many new languages, frameworks and transpilers of existing languages, such as ReScript and TypeScript fill in the gaps that exist in JavaScript, so to help web developers build complex web applications that can be transpiled into JavaScript and run in the browser. Sombra is one of them.
+Many new languages, frameworks and transpilers of existing languages, such as ReScript and TypeScript fill in the gaps that exist in JavaScript, so to help web developers build complex web applications that can be transpiled into JavaScript and run in the browser. Trinity is one of them.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 
-## Sombra's Origins
+## Trinity's Origins
 
 In March 2020, I had a hobby project, a conlang generator, which I written in Python that utilized libraries like NumPy and NLTK that I wanted to port into JavaScript and integrate into a website. So I went with the naïve approach of transcribing my code from Python to JavaScript by hand.
 
@@ -44,13 +44,13 @@ The real evil part for me was having a general lack of a standard library or any
 
 ---
 
-I actually went through several iterations for my desired programming language, centered around either curly braces or significant whitespace. I also chose names for each of them, some after random dictionary words, others from mythology and game characters. Some include Nova, Nyx, Perplex, Saga or Sombra.
+I actually went through several iterations for my desired programming language, centered around either curly braces or significant whitespace. I also chose names for each of them, some after random dictionary words, others from mythology and game characters. Some include Nova, Nyx, Perplex, Saga or Trinity.
 
-The language Sombra started out as a dialect of TypeScript with hints of Python, Ruby and OCaml thrown in. The language has since undergone many additions from more than a dozen languages, including some "derivative" languages like Elixir, Scala, Kotlin, Flix and even some old ones like C# or PHP.
+The language Trinity started out as a dialect of TypeScript with hints of Python, Ruby and OCaml thrown in. The language has since undergone many additions from more than a dozen languages, including some "derivative" languages like Elixir, Scala, Kotlin, Flix and even some old ones like C# or PHP.
 
-The name Sombra comes from an Overwatch (even though I've never played the game) hacker character of the same name. _Sombra_ is Spanish for "shadow".
+The name Trinity comes from an Overwatch (even though I've never played the game) hacker character of the same name. _Trinity_ is Spanish for "shadow".
 
-This project is currently in the works and would be my largest project to date. I will be posting a Trello on my development of Sombra very soon, and I'm looking forward for anyone out there to contribute: http://github.com/nxltm/sombra-lang/.
+This project is currently in the works and would be my largest project to date. I will be posting a Trello on my development of Trinity very soon, and I'm looking forward for anyone out there to contribute: http://github.com/nxltm/trinity-lang/.
 
 ### Roadmap
 
@@ -67,11 +67,11 @@ This project is currently in the works and would be my largest project to date. 
 - JavaScript with Babel: compiler and standard library
   - Lodash: Core libraries
 
-<!-- TODO: List more libraries here as modules for Sombra's standard library -->
+<!-- TODO: List more libraries here as modules for Trinity's standard library -->
 
 ## Guidelines and Principles
 
-The development of a programming language should follow a set of principles, each with their own rationale behind them. Many of these ideas and principles come from languages that have inspired Sombra.
+The development of a programming language should follow a set of principles, each with their own rationale behind them. Many of these ideas and principles come from languages that have inspired Trinity.
 
 - Significant whitespace
 - Everything is an expression
@@ -91,22 +91,22 @@ The development of a programming language should follow a set of principles, eac
 
 ### Libraries
 
-Sombra has a core library of modules completely implemented in JavaScript that contains a wide variety of types, each with tons of functionality and algorithms that work with them. These modules cover primitive data types and structures, documents and files, APIs, sites and more.
+Trinity has a core library of modules completely implemented in JavaScript that contains a wide variety of types, each with tons of functionality and algorithms that work with them. These modules cover primitive data types and structures, documents and files, APIs, sites and more.
 
 ## Language Ideas
 
 #### Syntax
 
-Sombra is a curly-brace language, like JavaScript. It may look vaguely similar to JavaScript, but it is clearly inspired by other curly-bracket languages, like Swift, Scala, Kotlin, Go and Rust.
+Trinity is a curly-brace language, like JavaScript. It may look vaguely similar to JavaScript, but it is clearly inspired by other curly-bracket languages, like Swift, Scala, Kotlin, Go and Rust.
 
 ```coffee
-func l: list[int] {
+def l: list[int] {
   let l1 = 1 :: 2 :: 3 :: null
   let l2 = 4 :: 5 :: 6 :: null
   l1 ::: l2
 }
 
-func len(l: {x: y, z: 1}): int = switch l {
+def len(l: {x: y, z: 1}): int = switch l {
   case null -> 0
   case _ :: xs -> 1 + len xs
 }
@@ -140,32 +140,32 @@ Line comments start with `//` and go until the end of the line. Special comments
 
 The following regular expression denotes all the keywords of the language, including those used for declarations, such as `var`. Some keywords such as `repeat until` or `else if` are considered a single keyword.
 
-```coffee
-`
-  \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
-  in|of|as|is|new|infer|unset
-  |typeof|nameof|sizeof|pairof|keyof|valueof
-  |length|delete|to|til|thru|at|by
-  |n?and|x?n?or|not|parallel|series|spawn|discard
-  |func?|function|proc|process|macro
-  |let|var|val|const|declare
-  |class|given|constraint|enum|relation|lattice
-  |project|attribute|protocol|member|extend|fragment|interface|struct
-  |module|package|namespace|object|record|label
-  |raw|data|query|schema|style|component|element|trait|friend|alias|type
-  |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
-  |for|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
-  |switch|case|fail|default|match|when|pass|fallthru
-  |try|retry|throw|raise|catch|rescue|finally
-  |with|ref|defer|refer|show|hide|enter|exit
-  |then|begin|end|debug|check|assert
-  |break|continue|halt|skip|fixed|lock
-  |(?:return|give|await|yield|throw|raise)s?
-  |import|export|show|hide|open|close
-  |from|where|join|equals?|[io]nto|order
-  |take|drop|fold|scan|select|group|use|using
-  )\b\s*
-`
+```txt
+in of as is new infer unset
+typeof nameof sizeof pairof keyof valueof
+length delete to til thru at by
+and nand or nor xor xnor not
+
+def fun func proc process procedure macro
+class given constraint enum relation lattice
+project attribute protocol member extend
+fragment interface struct module package
+namespace object record label raw data query
+schema style component element trait friend
+type alias let var val const declare
+
+if else (else if) (else unless) elif elsif eless elless unless guard
+for foreach (for each) repeat while until (repeat while) (repeat until)
+do redo
+try retry throw raise catch rescue finally
+parallel series spawn discard
+with ref defer refer show hide enter exit
+then begin end debug check assert
+break continue halt skip fixed lock
+return give await yield
+returns gives awaits yields throws raises
+from where join equal equals into onto order
+take drop fold scan select group use using
 ```
 
 #### Identifiers
