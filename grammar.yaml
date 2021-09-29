@@ -66,8 +66,8 @@ define:
     |typeof|nameof|sizeof|pairof|keyof|valueof
     |length|delete|to|til|thru|at|by
     |n?and|x?n?or|not|parallel|series|spawn|discard
-    |func?|function|proc|process|macro
-    |let|var|val|const|declare
+    |def|func?|function|proc|process|macro
+    |let|va[rl]|const|declare
     |class|given|constraint|enum|relation|lattice
     |project|attribute|protocol|member|extend|fragment|interface|struct
     |module|package|namespace|object|record|label
@@ -115,6 +115,7 @@ repository:
       - include: "#punctuation"
       - include: "#type-annotation"
       - include: "#literals"
+      - include: "#entities"
       - include: "#support"
       - include: "#calls"
       - include: "#variables"
@@ -139,8 +140,8 @@ repository:
       |typeof|nameof|sizeof|pairof|keyof|valueof
       |length|delete|to|til|thru|at|by
       |n?and|x?n?or|not|parallel|series|spawn|discard
-      |func?|function|proc|process|macro
-      |let|var|val|const|declare
+      |def|func?|function|proc|process|macro
+      |let|va[rl]|const|declare
       |class|given|constraint|enum|relation|lattice
       |project|attribute|protocol|member|extend|fragment|interface|struct
       |module|package|namespace|object|record|label
@@ -728,23 +729,101 @@ repository:
     patterns:
       - match: \\(?=\s*$)
         name: constant.character.escape.newline.so
-      - match: (?i)\\b(?:[01]{1,21}|{[01\s]+?})
+      - comment: Binary escape sequences
+        match: (?i)\\b0*(1(0(0(0(0[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01]|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1(0(0(0(0([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1)?|1[01][01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]|1)?|0)
         name: constant.character.escape.binary.so
-      - match: (?i)\\q(?:[0-3]{1,11}|{[0-3\s]+?})
+      - comment: Binary escape sequences
+        begin: (?i)\\b{
+        end: '}'
+        name: constant.character.escape.binary.so
+        patterns:
+          - match: \b0*(1(0(0(0(0[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01]|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1(0(0(0(0([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1)?|1[01][01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]|1)?|0)\b
+            name: constant.character.escape.binary.so
+          - match: \w+
+            name: invalid.illegal.unrecognized-string-escape.so
+      - comment: Quaternary escape sequences
+        match: (?i)\\q0*(1(0(0[0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|1(0(0([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?)?|[23][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[23][0-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[23]|0)
         name: constant.character.escape.quaternary.so
-      - match: (?i)\\s(?:[0-5]{1,8}|{[0-5\s]+?})
+      - comment: Quaternary escape sequences
+        begin: (?i)\\q{
+        end: '}'
+        name: constant.character.escape.quaternary.so
+        patterns:
+          - match: \b0*(1(0(0[0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|1(0(0([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?)?|[23][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[23][0-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[23]|0)\b
+            name: constant.character.escape.quaternary.so
+          - match: \w+
+            name: invalid.illegal.unrecognized-string-escape.so
+      - comment: Senary escape sequences
+        match: (?i)\\s0*(355135(3[01]|[45])|355135[0-2][0-5]|3551(3[0-4]|[45])[0-5][0-5]|355(1[0-2]|[2-5])[0-5][0-5][0-5]|3550[0-5][0-5][0-5][0-5]|35[0-4][0-5][0-5][0-5][0-5][0-5]|(3[0-4]|[45])[0-5][0-5][0-5][0-5][0-5][0-5]|[12][0-5][0-5][0-5][0-5][0-5][0-5][0-5]|3(5(5(1(3(53?)?)?)?)?|55135[0-2]|551(3[0-4]|[45])[0-5]?|55(1[0-2]|[2-5])([0-5][0-5]?)?|550([0-5]([0-5][0-5]?)?)?|5[0-4]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|(3[0-4]|[45])([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|[12]([0-5]([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?)?|0)
         name: constant.character.escape.senary.so
-      - match: (?i)\\o(?:[0-7]{1,7}|{[0-7\s]+?})
+      - comment: Senary escape sequences
+        begin: (?i)\\s{
+        end: '}'
+        name: constant.character.escape.senary.so
+        patterns:
+          - match: \b0*(355135(3[01]|[45])|355135[0-2][0-5]|3551(3[0-4]|[45])[0-5][0-5]|355(1[0-2]|[2-5])[0-5][0-5][0-5]|3550[0-5][0-5][0-5][0-5]|35[0-4][0-5][0-5][0-5][0-5][0-5]|(3[0-4]|[45])[0-5][0-5][0-5][0-5][0-5][0-5]|[12][0-5][0-5][0-5][0-5][0-5][0-5][0-5]|3(5(5(1(3(53?)?)?)?)?|55135[0-2]|551(3[0-4]|[45])[0-5]?|55(1[0-2]|[2-5])([0-5][0-5]?)?|550([0-5]([0-5][0-5]?)?)?|5[0-4]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|(3[0-4]|[45])([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|[12]([0-5]([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?)?|0)\b
+            name: constant.character.escape.senary.so
+          - match: \w+
+            name: invalid.illegal.unrecognized-string-escape.so
+      - comment: Octal escape sequences
+        match: (?i)\\o0*((4[01]|[5-7])[0-7][0-7][0-7][0-7][0-7]|[1-3][0-7][0-7][0-7][0-7][0-7][0-7]|(4[01]|[5-7])([0-7]([0-7]([0-7][0-7]?)?)?)?|[1-3]([0-7]([0-7]([0-7]([0-7][0-7]?)?)?)?)?|4[2-7][0-7][0-7][0-7][0-7]|4([2-7]([0-7]([0-7][0-7]?)?)?)?|0)
         name: constant.character.escape.octal.so
-      - match: (?i)\\d?\d{1,7}|\\d{[\d\s]+?}
+      - comment: Octal escape sequences
+        begin: (?i)\\o{
+        end: '}'
+        name: constant.character.escape.octal.so
+        patterns:
+          - match: \b0*((4[01]|[5-7])[0-7][0-7][0-7][0-7][0-7]|[1-3][0-7][0-7][0-7][0-7][0-7][0-7]|(4[01]|[5-7])([0-7]([0-7]([0-7][0-7]?)?)?)?|[1-3]([0-7]([0-7]([0-7]([0-7][0-7]?)?)?)?)?|4[2-7][0-7][0-7][0-7][0-7]|4([2-7]([0-7]([0-7][0-7]?)?)?)?|0)\b
+            name: constant.character.escape.octal.so
+          - match: \w+
+            name: invalid.illegal.unrecognized-string-escape.so
+      - comment: Decimal escape sequences
+        match: (?i)\\d?0*(1(1(1(4(1(1[01]|[2-9])|(10|[2-9])\d)|(40|[5-9])\d\d)|(1[0-3]|[2-9])\d\d\d)|(10|[2-9])\d\d\d\d|0\d\d\d\d\d)|1(1(1(4(11?)?)?)?|114(10|[2-9])|11(40|[5-9])\d?|1(1[0-3]|[2-9])(\d\d?)?|(10|[2-9])(\d(\d\d?)?)?|0(\d(\d(\d\d?)?)?)?)?|[2-9]\d\d\d\d\d|[2-9](\d(\d(\d\d?)?)?)?|0)
         name: constant.character.escape.decimal.so
-      - match: (?i)\\z(?:[\dab]{1,6}|{[\s\dab]+?})
+      - comment: Decimal escape sequences
+        begin: (?i)\\d?{
+        end: '}'
+        name: constant.character.escape.decimal.so
+        patterns:
+          - match: \b0*(1(1(1(4(1(1[01]|[2-9])|(10|[2-9])\d)|(40|[5-9])\d\d)|(1[0-3]|[2-9])\d\d\d)|(10|[2-9])\d\d\d\d|0\d\d\d\d\d)|1(1(1(4(11?)?)?)?|114(10|[2-9])|11(40|[5-9])\d?|1(1[0-3]|[2-9])(\d\d?)?|(10|[2-9])(\d(\d\d?)?)?|0(\d(\d(\d\d?)?)?)?)?|[2-9]\d\d\d\d\d|[2-9](\d(\d(\d\d?)?)?)?|0)\b
+            name: constant.character.escape.decimal.so
+          - match: \w+
+            name: invalid.illegal.unrecognized-string-escape.so
+      - comment: Duodecimal escape sequences
+        match: (?i)\\z0*(4588(a[0-7]|b)|458(8\d|[9ab])[\dab]|45(8[0-7]|[9ab])[\dab][\dab]|4(5[0-7]|[6-9ab])[\dab][\dab][\dab]|(4[0-4]|[5-9ab])[\dab][\dab][\dab][\dab]|[1-3][\dab][\dab][\dab][\dab][\dab]|4(5(8(8a?)?)?|58(8\d|[9ab])|5(8[0-7]|[9ab])[\dab]?|(5[0-7]|[6-9ab])([\dab][\dab]?)?)?|(4[0-4]|[5-9ab])([\dab]([\dab][\dab]?)?)?|[1-3]([\dab]([\dab]([\dab][\dab]?)?)?)?|0)
         name: constant.character.escape.duodecimal.so
-      - match: (?i)\\x(?:\h{1,6}|{[\h\s]+?})
+      - comment: Duodecimal escape sequences
+        begin: (?i)\\z{
+        end: '}'
+        name: constant.character.escape.duodecimal.so
+        patterns:
+          - match: \b0*(4588(a[0-7]|b)|458(8\d|[9ab])[\dab]|45(8[0-7]|[9ab])[\dab][\dab]|4(5[0-7]|[6-9ab])[\dab][\dab][\dab]|(4[0-4]|[5-9ab])[\dab][\dab][\dab][\dab]|[1-3][\dab][\dab][\dab][\dab][\dab]|4(5(8(8a?)?)?|58(8\d|[9ab])|5(8[0-7]|[9ab])[\dab]?|(5[0-7]|[6-9ab])([\dab][\dab]?)?)?|(4[0-4]|[5-9ab])([\dab]([\dab][\dab]?)?)?|[1-3]([\dab]([\dab]([\dab][\dab]?)?)?)?|0)\b
+            name: constant.character.escape.duodecimal.so
+          - match: \w+
+            name: invalid.illegal.unrecognized-string-escape.so
+      - comment: Hexadecimal escape sequences
+        match: (?i)\\x0*(1(0\h\h\h\h|[1-9a-f]\h\h\h)|1(0(\h(\h\h?)?)?|[1-9a-f](\h\h?)?)?|[2-9a-f]\h\h\h\h|[2-9a-f](\h(\h\h?)?)?|0)
         name: constant.character.escape.hexadecimal.so
-      - match: (?i)\\u(?:\h{1,6}|{[\h\s]+?})
+      - comment: Hexadecimal escape sequences
+        begin: (?i)\\x{
+        end: '}'
+        name: constant.character.escape.hexadecimal.so
+        patterns:
+          - match: \b0*(1(0\h\h\h\h|[1-9a-f]\h\h\h)|1(0(\h(\h\h?)?)?|[1-9a-f](\h\h?)?)?|[2-9a-f]\h\h\h\h|[2-9a-f](\h(\h\h?)?)?|0)\b
+            name: constant.character.escape.hexadecimal.so
+          - match: \w+
+            name: invalid.illegal.unrecognized-string-escape.so
+      - match: (?i)\\u\h{0,8}
         name: constant.character.escape.unicode.so
-      - begin: \\j{
+      - begin: (?i)\\u{
+        end: \s*}
+        name: constant.character.escape.unicode.so
+        patterns:
+          - match: \b\h{0,8}\b
+            name: constant.character.escape.unicode.so
+          - match: \w+
+            name: invalid.illegal.unrecognized-string-escape.so
+      - begin: (?i)\\j{
         end: \s*}
         name: constant.character.entity.named.so
         patterns:
@@ -823,7 +902,7 @@ repository:
     match: |
       (?x)
       \s*
-      (:)((?:\\.|[^({\[)}\]\s.,:;])+?)
+      (:)((?:\w|\\.)(?:\\.|[^({\[)}\]\s.,:;])*?)
       (?=[({\[)}\]\s.,:;]|$)\s*
     name: meta.symbol.so
     captures:
@@ -1163,22 +1242,100 @@ repository:
             patterns:
               - include: "#unicode-named-chars"
               - include: "#regexp-patterns"
-          - match: (?i)\\b(?:[01]{1,21}|{[01\s]+?})
+          - comment: Binary escape sequences
+            match: (?i)\\b0*(1(0(0(0(0[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01]|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1(0(0(0(0([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1)?|1[01][01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]|1)?|0)
             name: constant.character.escape.binary.so
-          - match: (?i)\\q(?:[0-3]{1,11}|{[0-3\s]+?})
+          - comment: Binary escape sequences
+            begin: (?i)\\b{
+            end: '}'
+            name: constant.character.escape.binary.so
+            patterns:
+              - match: \b0*(1(0(0(0(0[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01]|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1(0(0(0(0([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1)?|1[01][01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]|1)?|0)\b
+                name: constant.character.escape.binary.so
+              - match: \w+
+                name: invalid.illegal.unrecognized-string-escape.so
+          - comment: Quaternary escape sequences
+            match: (?i)\\q0*(1(0(0[0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|1(0(0([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?)?|[23][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[23][0-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[23]|0)
             name: constant.character.escape.quaternary.so
-          - match: (?i)\\s(?:[0-5]{1,8}|{[0-5\s]+?})
+          - comment: Quaternary escape sequences
+            begin: (?i)\\q{
+            end: '}'
+            name: constant.character.escape.quaternary.so
+            patterns:
+              - match: \b0*(1(0(0[0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|1(0(0([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?)?|[23][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[23][0-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[23]|0)\b
+                name: constant.character.escape.quaternary.so
+              - match: \w+
+                name: invalid.illegal.unrecognized-string-escape.so
+          - comment: Senary escape sequences
+            match: (?i)\\s0*(355135(3[01]|[45])|355135[0-2][0-5]|3551(3[0-4]|[45])[0-5][0-5]|355(1[0-2]|[2-5])[0-5][0-5][0-5]|3550[0-5][0-5][0-5][0-5]|35[0-4][0-5][0-5][0-5][0-5][0-5]|(3[0-4]|[45])[0-5][0-5][0-5][0-5][0-5][0-5]|[12][0-5][0-5][0-5][0-5][0-5][0-5][0-5]|3(5(5(1(3(53?)?)?)?)?|55135[0-2]|551(3[0-4]|[45])[0-5]?|55(1[0-2]|[2-5])([0-5][0-5]?)?|550([0-5]([0-5][0-5]?)?)?|5[0-4]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|(3[0-4]|[45])([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|[12]([0-5]([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?)?|0)
             name: constant.character.escape.senary.so
-          - match: (?i)\\o(?:[0-7]{1,7}|{[0-7\s]+?})
+          - comment: Senary escape sequences
+            begin: (?i)\\s{
+            end: '}'
+            name: constant.character.escape.senary.so
+            patterns:
+              - match: \b0*(355135(3[01]|[45])|355135[0-2][0-5]|3551(3[0-4]|[45])[0-5][0-5]|355(1[0-2]|[2-5])[0-5][0-5][0-5]|3550[0-5][0-5][0-5][0-5]|35[0-4][0-5][0-5][0-5][0-5][0-5]|(3[0-4]|[45])[0-5][0-5][0-5][0-5][0-5][0-5]|[12][0-5][0-5][0-5][0-5][0-5][0-5][0-5]|3(5(5(1(3(53?)?)?)?)?|55135[0-2]|551(3[0-4]|[45])[0-5]?|55(1[0-2]|[2-5])([0-5][0-5]?)?|550([0-5]([0-5][0-5]?)?)?|5[0-4]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|(3[0-4]|[45])([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|[12]([0-5]([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?)?|0)\b
+                name: constant.character.escape.senary.so
+              - match: \w+
+                name: invalid.illegal.unrecognized-string-escape.so
+          - comment: Octal escape sequences
+            match: (?i)\\o0*((4[01]|[5-7])[0-7][0-7][0-7][0-7][0-7]|[1-3][0-7][0-7][0-7][0-7][0-7][0-7]|(4[01]|[5-7])([0-7]([0-7]([0-7][0-7]?)?)?)?|[1-3]([0-7]([0-7]([0-7]([0-7][0-7]?)?)?)?)?|4[2-7][0-7][0-7][0-7][0-7]|4([2-7]([0-7]([0-7][0-7]?)?)?)?|0)
             name: constant.character.escape.octal.so
-          - match: (?i)\\d?\d{1,7}|\\d{[\d\s]+?}
+          - comment: Octal escape sequences
+            begin: (?i)\\o{
+            end: '}'
+            name: constant.character.escape.octal.so
+            patterns:
+              - match: \b0*((4[01]|[5-7])[0-7][0-7][0-7][0-7][0-7]|[1-3][0-7][0-7][0-7][0-7][0-7][0-7]|(4[01]|[5-7])([0-7]([0-7]([0-7][0-7]?)?)?)?|[1-3]([0-7]([0-7]([0-7]([0-7][0-7]?)?)?)?)?|4[2-7][0-7][0-7][0-7][0-7]|4([2-7]([0-7]([0-7][0-7]?)?)?)?|0)\b
+                name: constant.character.escape.octal.so
+              - match: \w+
+                name: invalid.illegal.unrecognized-string-escape.so
+          - comment: Decimal escape sequences
+            match: (?i)\\d?0*(1(1(1(4(1(1[01]|[2-9])|(10|[2-9])\d)|(40|[5-9])\d\d)|(1[0-3]|[2-9])\d\d\d)|(10|[2-9])\d\d\d\d|0\d\d\d\d\d)|1(1(1(4(11?)?)?)?|114(10|[2-9])|11(40|[5-9])\d?|1(1[0-3]|[2-9])(\d\d?)?|(10|[2-9])(\d(\d\d?)?)?|0(\d(\d(\d\d?)?)?)?)?|[2-9]\d\d\d\d\d|[2-9](\d(\d(\d\d?)?)?)?|0)
             name: constant.character.escape.decimal.so
-          - match: (?i)\\z(?:[\dab]{1,6}|{[\s\dab]+?})
+          - comment: Decimal escape sequences
+            begin: (?i)\\d?{
+            end: '}'
+            name: constant.character.escape.decimal.so
+            patterns:
+              - match: \b0*(1(1(1(4(1(1[01]|[2-9])|(10|[2-9])\d)|(40|[5-9])\d\d)|(1[0-3]|[2-9])\d\d\d)|(10|[2-9])\d\d\d\d|0\d\d\d\d\d)|1(1(1(4(11?)?)?)?|114(10|[2-9])|11(40|[5-9])\d?|1(1[0-3]|[2-9])(\d\d?)?|(10|[2-9])(\d(\d\d?)?)?|0(\d(\d(\d\d?)?)?)?)?|[2-9]\d\d\d\d\d|[2-9](\d(\d(\d\d?)?)?)?|0)\b
+                name: constant.character.escape.decimal.so
+              - match: \w+
+                name: invalid.illegal.unrecognized-string-escape.so
+          - comment: Duodecimal escape sequences
+            match: (?i)\\z0*(4588(a[0-7]|b)|458(8\d|[9ab])[\dab]|45(8[0-7]|[9ab])[\dab][\dab]|4(5[0-7]|[6-9ab])[\dab][\dab][\dab]|(4[0-4]|[5-9ab])[\dab][\dab][\dab][\dab]|[1-3][\dab][\dab][\dab][\dab][\dab]|4(5(8(8a?)?)?|58(8\d|[9ab])|5(8[0-7]|[9ab])[\dab]?|(5[0-7]|[6-9ab])([\dab][\dab]?)?)?|(4[0-4]|[5-9ab])([\dab]([\dab][\dab]?)?)?|[1-3]([\dab]([\dab]([\dab][\dab]?)?)?)?|0)
             name: constant.character.escape.duodecimal.so
-          - match: (?i)\\x(?:\h{1,6}|{[\h\s]+?})
+          - comment: Duodecimal escape sequences
+            begin: (?i)\\z{
+            end: '}'
+            name: constant.character.escape.duodecimal.so
+            patterns:
+              - match: \b0*(4588(a[0-7]|b)|458(8\d|[9ab])[\dab]|45(8[0-7]|[9ab])[\dab][\dab]|4(5[0-7]|[6-9ab])[\dab][\dab][\dab]|(4[0-4]|[5-9ab])[\dab][\dab][\dab][\dab]|[1-3][\dab][\dab][\dab][\dab][\dab]|4(5(8(8a?)?)?|58(8\d|[9ab])|5(8[0-7]|[9ab])[\dab]?|(5[0-7]|[6-9ab])([\dab][\dab]?)?)?|(4[0-4]|[5-9ab])([\dab]([\dab][\dab]?)?)?|[1-3]([\dab]([\dab]([\dab][\dab]?)?)?)?|0)\b
+                name: constant.character.escape.duodecimal.so
+              - match: \w+
+                name: invalid.illegal.unrecognized-string-escape.so
+          - comment: Hexadecimal escape sequences
+            match: (?i)\\x0*(1(0\h\h\h\h|[1-9a-f]\h\h\h)|1(0(\h(\h\h?)?)?|[1-9a-f](\h\h?)?)?|[2-9a-f]\h\h\h\h|[2-9a-f](\h(\h\h?)?)?|0)
             name: constant.character.escape.hexadecimal.so
-          - match: (?i)\\u(?:\h{1,6}|{[\h\s]+?})
+          - comment: Hexadecimal escape sequences
+            begin: (?i)\\x{
+            end: '}'
+            name: constant.character.escape.hexadecimal.so
+            patterns:
+              - match: \b0*(1(0\h\h\h\h|[1-9a-f]\h\h\h)|1(0(\h(\h\h?)?)?|[1-9a-f](\h\h?)?)?|[2-9a-f]\h\h\h\h|[2-9a-f](\h(\h\h?)?)?|0)\b
+                name: constant.character.escape.hexadecimal.so
+              - match: \w+
+                name: invalid.illegal.unrecognized-string-escape.so
+          - match: (?i)\\u\h{0,8}
             name: constant.character.escape.unicode.so
+          - begin: (?i)\\u{
+            end: \s*}
+            name: constant.character.escape.unicode.so
+            patterns:
+              - match: \b\h{0,8}\b
+                name: constant.character.escape.unicode.so
+              - match: \w+
+                name: invalid.illegal.unrecognized-string-escape.so
           - match: (?i:\\[cm][a-z])|\\R
             name: constant.character.control.so
           - match: *posix-class
@@ -1282,7 +1439,7 @@ repository:
       - match: |
           (?x)\b
           (?:# Regular variables
-          (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
           ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}]\w*)
@@ -1388,6 +1545,16 @@ repository:
               2: {name: punctuation.separator.key-value.so}
               3: {name: punctuation.section.embedded.so}
             endCaptures:
+              1: {name: punctuation.section.embedded.so}
+            patterns:
+              - include: source.css.scss#flow_control
+              - include: source.css.scss#rules
+              - include: source.css.scss#properties
+              - include: source.css.scss
+          - comment: Style attribute
+            begin: (?<!\S)(#{)
+            end: \s*(})\s*
+            captures:
               1: {name: punctuation.section.embedded.so}
             patterns:
               - include: source.css.scss#flow_control
@@ -1572,7 +1739,7 @@ repository:
           0: {name: meta.brace.curly.jsdoc}
         patterns:
           - include: "#jsdoc-typedef-primitives"
-          - match: \b([$_A-Za-z][$_A-Za-z0-9]*)\s*(:)
+          - match: \b([\p{Pc}\p{L}]\w*)\s*(:)
             captures:
               1: {name: variable.other.readwrite.jsdoc}
           - include: "#jsdoc-namepath-scopes"
@@ -1590,22 +1757,22 @@ repository:
               - include: "#jsdoc-name-scopes"
       jsdoc-namepath-scopes:
         patterns:
-          - match: \s*\b(as)\b\s*(?=[$_A-Za-z])
+          - match: \s*\b(as)\b\s*(?=[\p{Pc}\p{L}])
             captures:
               1: {name: keyword.as.jsdoc}
-          - match: \s*(?:([A-Z][$_A-Za-z0-9]*)|([$_A-Za-z][$_A-Za-z0-9]*))(?=[\s\-~.#]|$)
+          - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}]\w*))(?=[\s\-~.#]|$)
             captures:
               1: {name: entity.name.class.jsdoc}
               2: {name: entity.name.function.jsdoc}
-          - match: (\.)([$_A-Za-z][$_A-Za-z0-9]*)(?=\s|$|\")
+          - match: (\.)([\p{Pc}\p{L}]\w*)(?=\s|$|\")
             captures:
               1: {name: keyword.operator.accessor.jsdoc}
               2: {name: entity.name.function.method.static.jsdoc}
-          - match: (\#)([$_A-Za-z][$_A-Za-z0-9]*)(?=\s|$|\")
+          - match: (\#)([\p{Pc}\p{L}]\w*)(?=\s|$|\")
             captures:
               1: {name: keyword.operator.accessor.jsdoc}
               2: {name: entity.name.function.method.instance.jsdoc}
-          - match: (~|-)([$_A-Za-z][$_A-Za-z0-9]*)(?=\s|$|\")
+          - match: (~|-)([\p{Pc}\p{L}]\w*)(?=\s|$|\")
             captures:
               1: {name: keyword.operator.accessor.jsdoc}
               2: {name: entity.name.function.method.inner.jsdoc}
@@ -1777,8 +1944,8 @@ repository:
           |typeof|nameof|sizeof|pairof|keyof|valueof
           |length|delete|to|til|thru|at|by
           |n?and|x?n?or|not|parallel|series|spawn|discard
-          |func?|function|proc|process|macro
-          |let|var|val|const|declare
+          |def|func?|function|proc|process|macro
+          |let|va[rl]|const|declare
           |class|given|constraint|enum|relation|lattice
           |project|attribute|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
@@ -1806,8 +1973,8 @@ repository:
           |typeof|nameof|sizeof|pairof|keyof|valueof
           |length|delete|to|til|thru|at|by
           |n?and|x?n?or|not|parallel|series|spawn|discard
-          |func?|function|proc|process|macro
-          |let|var|val|const|declare
+          |def|func?|function|proc|process|macro
+          |let|va[rl]|const|declare
           |class|given|constraint|enum|relation|lattice
           |project|attribute|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
@@ -1841,8 +2008,8 @@ repository:
           |typeof|nameof|sizeof|pairof|keyof|valueof
           |length|delete|to|til|thru|at|by
           |n?and|x?n?or|not|parallel|series|spawn|discard
-          |func?|function|proc|process|macro
-          |let|var|val|const|declare
+          |def|func?|function|proc|process|macro
+          |let|va[rl]|const|declare
           |class|given|constraint|enum|relation|lattice
           |project|attribute|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
@@ -1872,8 +2039,8 @@ repository:
           |typeof|nameof|sizeof|pairof|keyof|valueof
           |length|delete|to|til|thru|at|by
           |n?and|x?n?or|not|parallel|series|spawn|discard
-          |func?|function|proc|process|macro
-          |let|var|val|const|declare
+          |def|func?|function|proc|process|macro
+          |let|va[rl]|const|declare
           |class|given|constraint|enum|relation|lattice
           |project|attribute|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
@@ -1891,7 +2058,6 @@ repository:
           |take|drop|fold|scan|select|group|use|using
           )\b
           )
-
           [\w]+|\[<|
           (?:[!?~]?\.=?|[?!:]:=?|->)?\s*\(|
           (?:[!?~]?\.=?|[?!:]:=?|->)?\s+['"`\\\[]
@@ -1905,14 +2071,14 @@ repository:
           (?x)\b(?:
           (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
           (?:# Properties (note all properties are by default, symbols)
-          (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
           ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}]\w*)
           )
           |
           (?:# Objects and maps
-          (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
           ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}]\w*)
@@ -1920,7 +2086,7 @@ repository:
           (?=(?:[?!~]?\.?=?)?\[(?!<)|(?![>.]\.[.<]?)[?!~]?\.=?|[?!:]:|->)
           |
           (?:# Regular variables
-          (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
           ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}]\w*)
@@ -1955,14 +2121,14 @@ repository:
       (?:
       (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
       (?:# Properties (note all properties are by default, symbols)
-      (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
       )
       |
       (?:# Objects and maps
-      (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
@@ -1970,7 +2136,7 @@ repository:
       (?=(?:[?!~]?\.?=?)?\[(?!<)|(?![>.]\.[.<]?)[?!~]?\.=?|[?!:]:|->)
       |
       (?:# Regular variables
-      (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
@@ -2236,8 +2402,8 @@ repository:
               |typeof|nameof|sizeof|pairof|keyof|valueof
               |length|delete|to|til|thru|at|by
               |n?and|x?n?or|not|parallel|series|spawn|discard
-              |func?|function|proc|process|macro
-              |let|var|val|const|declare
+              |def|func?|function|proc|process|macro
+              |let|va[rl]|const|declare
               |class|given|constraint|enum|relation|lattice
               |project|attribute|protocol|member|extend|fragment|interface|struct
               |module|package|namespace|object|record|label
@@ -2273,8 +2439,8 @@ repository:
                   |typeof|nameof|sizeof|pairof|keyof|valueof
                   |length|delete|to|til|thru|at|by
                   |n?and|x?n?or|not|parallel|series|spawn|discard
-                  |func?|function|proc|process|macro
-                  |let|var|val|const|declare
+                  |def|func?|function|proc|process|macro
+                  |let|va[rl]|const|declare
                   |class|given|constraint|enum|relation|lattice
                   |project|attribute|protocol|member|extend|fragment|interface|struct
                   |module|package|namespace|object|record|label
@@ -2294,7 +2460,7 @@ repository:
                   )
                   (?:
                   (?:# Objects and maps
-                  (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+                  (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
                   ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
                   ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
                   ([\p{Pc}\p{L}]\w*)
@@ -2303,14 +2469,14 @@ repository:
                   |
                   (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
                   (?:# Properties (note all properties are by default, symbols)
-                  (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+                  (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
                   ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
                   ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
                   ([\p{Pc}\p{L}]\w*)
                   )
                   |
                   (?:# Regular variables
-                  (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+                  (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
                   ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
                   ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
                   ([\p{Pc}\p{L}]\w*)
@@ -2383,8 +2549,8 @@ repository:
       \b(?:# don't match keywords
       in|of|new|unset|length|delete|to|til|thru|at|by
       |n?and|x?n?or|not|parallel|series|spawn|discard
-      |func?|function|proc|process|macro
-      |let|var|val|const|declare
+      |def|func?|function|proc|process|macro
+      |let|va[rl]|const|declare
       |class|given|constraint|enum|relation|lattice
       |project|attribute|protocol|member|extend|fragment|interface|struct
       |module|package|namespace|object|record|label
@@ -2405,14 +2571,14 @@ repository:
       (?:
       (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
       (?:# Properties (note all properties are by default, symbols)
-      (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
       )
       |
       (?:# Objects and maps
-      (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
@@ -2420,7 +2586,7 @@ repository:
       (?=(?:[?!~]?\.?=?)?\[(?!<)|(?![>.]\.[.<]?)[?!~]?\.=?|[?!:]:|->)
       |
       (?:# Regular variables
-      (_+[\p{Pc}\p{L}]\w*(?!_+)|[\p{Pc}\p{L}][\w&&[^_]]*_+)|
+      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
@@ -2647,7 +2813,7 @@ repository:
       |given|constraint
       |enum|relation
       |fragment|struct
-      |func?|function|proc|process|macro
+      |def|func?|function|proc|process|macro
       |interface|schema
       |module|package
       |namespace|lattice
@@ -2720,7 +2886,7 @@ repository:
     comment: clause keywords
     match: |
       (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:
-      (func?|function|proc|process|macro)# function
+      (def|func?|function|proc|process|macro)# function
       |(let|va[rl]|const)# variable
       |(class|extend)# class
       |(given|constraint)# constraint
@@ -3034,7 +3200,7 @@ repository:
             name: entity.name.fragment.so
       function:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(func?|function|proc|process|macro)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(def|func?|function|proc|process|macro)\b\s*
         end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.function.so}
@@ -3256,7 +3422,7 @@ repository:
               \s*)*)
               (?=\s*\b
               (?:
-              func?|function|proc|process|macro
+              def|func?|function|proc|process|macro
               )\b
               )
             captures:
@@ -3328,7 +3494,7 @@ repository:
               \s*)*)
               (?=\s*\b
               (?:
-              func?|function|proc|process|macro
+              def|func?|function|proc|process|macro
               )\b
               )
             captures:
