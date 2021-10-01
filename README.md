@@ -11,9 +11,8 @@ using React, Framer.Motion
 object HelloWorld extends ReactApp {
   static var name: string = 'world'
 
-  static def render(props.&name: int): Component {
+  static def render(props::&name: int): Component {
     return <Motion:div
-      style={background-color: blue}
       initial=#{x: 100%}
       animate=#{x: calc(100vw - 50%)}
     >
