@@ -1579,19 +1579,11 @@ repository:
       - include: "#string-content"
       - include: markdown.math.block
       - include: text.html.markdown#inline
-  attribute-expression:
-    begin: (?<==)\(
-    end: \)
-    captures:
-      0: {name: punctuation.section.embedded.trin}
-    patterns:
-      - include: $self
   tag-attributes:
     patterns:
-      - include: source.yaml#flow-collection
       - include: "#evaluated-code"
       - include: "#attribute-name"
-      - include: "#attribute-expression"
+      - include: source.yaml#flow-collection
       - include: "#spread-attribute"
       - include: "#strings-unquoted"
       - include: "#strings-quoted"
@@ -1620,16 +1612,6 @@ repository:
           - include: source.css.scss#rules
           - include: source.css.scss#properties
           - include: source.css.scss
-      - comment: Style attribute
-        begin: (?<!\S)(#{)
-        end: \s*(})\s*
-        captures:
-          1: {name: punctuation.section.embedded.trin}
-        patterns:
-          - include: source.css.scss#flow_control
-          - include: source.css.scss#rules
-          - include: source.css.scss#properties
-          - include: source.css.scss
       - comment: Attribute names
         match: (?<=[)\]}])(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
         captures:
@@ -1650,13 +1632,24 @@ repository:
               - include: "#string-content"
               - include: source.yaml#flow-scalar-plain-out-implicit-type
   evaluated-code:
-    begin: "{"
-    end: "}"
-    captures:
-      0: {name: punctuation.section.embedded.trin}
     patterns:
-      - include: "#spread-attribute"
-      - include: $self
+    - comment: Style attribute
+      begin: \s*#{\s*
+      end: \s*}\s*
+      captures:
+        0: {name: punctuation.section.embedded.trin}
+      patterns:
+        - include: source.css.scss#flow_control
+        - include: source.css.scss#rules
+        - include: source.css.scss#properties
+        - include: source.css.scss
+    - begin: \s*\${\s*
+      end: \s*}\s*
+      captures:
+        0: {name: punctuation.section.embedded.trin}
+      patterns:
+        - include: "#spread-attribute"
+        - include: $self
   jsx-entities:
     patterns:
       - captures: &jsx-entities
@@ -3202,7 +3195,7 @@ repository:
       - include: "#type-annotation"
       - match: \s*(?<!\*)\*(?!\*)\s*
         name: keyword.generator.asterisk.trin
-      - include: "#operators"
+      - include: "#type-operators"
       - include: "#support"
       - applyEndPatternLast: 1
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]))

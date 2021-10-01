@@ -2,40 +2,26 @@
 
 > One language, three aspects.
 
-Trinity is my own programming language targeting the JavaScript, Python and Java runtimes, offering a familiar, though concise and simplified syntax than its competition. It's got a robust type system, a huge standard library and a unique combination of powerful features for imperative, declarative and meta-programming.
+Trinity is a portable, multi-paradigm and multi-faceted programming language I created that aims to run on the JVM and modern web browsers. It features a familiar JavaScript-like syntax, static (and dynamic) typing, a robust standard library and a unique combination of powerful features for imperative, declarative and meta-programming.
 
 ```dart
-using UnityEngine;
+// Variations of Hello World!
+using React, Framer.Motion
 
-func choose(prob: []f32): f32 {
-  var total := 0:f32
-  for val elem in prob -> total += elem
+object HelloWorld extends ReactApp {
+  static var name: string = 'world'
 
-  var randomPoint := random.value * total
-  for val i in 0 to prob.length {
-    if (randomPoint < prob[i]) return i
-    else randomPoint -= prob[i]
+  static def render(props.&name: int): Component {
+    return <Motion:div
+      style={background-color: blue}
+      initial=#{x: 100%}
+      animate=#{x: calc(100vw - 50%)}
+    >
+      <Motion:h1> Hello, $name%s! </>
+    </>;
   }
-
-  return prob.length - 1
 }
 ```
-
-## Overview
-
-The name Trinity is named after the Matrix character of the same name, and also means "to be three in one". True to that name, that's reflected in three\* paradigms (imperative, declarative and meta-programming), three platforms (web, desktop and mobile) and the three layers of the tech stack: frontend, API, and backend.
-
-Similar to languages like Rust, Haxe, Scala and Fantom, Trinity's primary goal was to build a portable language targeting multiple runtimes, with a clean, consistent and comprehensive set of APIs and core libraries to abstract away the lower level runtimes. Trinity is heavily influenced by most curly-bracket languages like Scala, Kotlin, Swift, C#, Rust, Go, Swift, Fantom, and to a lesser extent, Perl, PHP, Java, PowerShell, Haxe and Groovy.
-
-[wtfjs]: https://github.com/denysdovhan/wtfjs/
-
-## Trinity's Origins
-
-Switching over to JavaScript to Python, it pained me to deal with null or type-related errors, coercion, and missing brackets. And the bare-bones nature of JavaScript meant I had to implement myself or find some obscure library on NPM to find just the exact functionality I needed, which could take hours or even days. Not quite my tempo.
-
-Trinity started out as a simple concept to bridge the gap between Python and JavaScript by combining the features and APIs from either language. Now over almost a year of iteration and tinkering the language had poured in tons of influence from different languages. I spent four months working on the TextMate regular expression grammar for the language and to this day it's still exploding with new features.
-
-This project is currently in the works and would be my largest project to date. I will be posting a Trello on my development of Trinity very soon, and I'm looking forward for anyone out there to contribute: http://github.com/nxltm/trinity-lang/.
 
 ### Roadmap
 
@@ -47,36 +33,31 @@ This project is currently in the works and would be my largest project to date. 
 - Tooling (VSCode, Atom and Nova)
 - Theme, branding and website
 
-### Architecture
+## Overview
 
-- JavaScript with Babel: compiler and standard library
-  - Lodash: Core libraries
+The name Trinity is named after the Matrix character of the same name, and also means "to be three in one". True to that name, that's reflected in three\* paradigms (imperative, declarative and meta-programming), three platforms (web, desktop and mobile) and the three layers of the tech stack: frontend, API, and backend.
 
-<!-- TODO: List more libraries here as modules for Trinity's standard library -->
+Similar to languages like Rust, Haxe, Scala and Fantom, Trinity's primary goal was to build a portable language targeting multiple runtimes, with a clean, consistent and comprehensive set of APIs and core libraries to abstract away the lower level runtimes. Trinity is heavily influenced by most curly-bracket languages such as Scala, Kotlin, Go, Rust and Swift.
 
-## Guidelines and Principles
+[wtfjs]: https://github.com/denysdovhan/wtfjs/
 
-The development of a programming language should follow a set of principles, each with their own rationale behind them. Many of these ideas and principles come from languages that have inspired Trinity.
+## Trinity's Origins
 
-- Significant whitespace
-- Everything is an expression
-- Pure and impure should be distinguished
-- Types are also expressions
-- Small but comprehensive
-- One language, one version
-- No undeclared or unwanted variables
-- No repetitive boilerplate
-- No implicit coercions
-- No warnings, just errors
-- Human-readable errors
-- No implicit global state
-- Everything is private by default
-- Exhaustive pattern matches
-- Closed world assumption
+Switching over to JavaScript to Python, it pained me to deal with null or type-related errors, coercion, and missing brackets. And the bare-bones nature of JavaScript meant I had to implement myself or find some obscure library on NPM to find just the exact functionality I needed, which could take hours or even days. Not quite my tempo.
 
-### Libraries
+Trinity started out as a simple concept to bridge the gap between Python and JavaScript by combining the features and APIs from either language. Now over almost a year of iteration and tinkering the language had poured in tons of influence, mainly from Java and JavaScript alternatives, and even some independent languages like C#, Rust and Go.
 
-Trinity has a core library of modules completely implemented in JavaScript that contains a wide variety of types, each with tons of functionality and algorithms that work with them. These modules cover primitive data types and structures, documents and files, APIs, sites and more.
+This project is currently in the works and would be my largest project to date. I spent four months working on the TextMate regular expression grammar for the language, and it's constantly being updated with new edits and features. I will be posting a Trello on my development of Trinity very soon, and I'm looking forward for anyone out there to contribute; fork this repo, and pull your changes to this repository: https://github.com/nxltm/trinity-lang.
+
+### Elegant libraries
+
+The Java and .NET APIs have developed over the years into a somewhat tangled mess, with Both platforms tend toward APIs using a proliferation of small classes that are over abstracted and under powered. There's too many classes to use, with even basic functionality such as parsing a file into individual lines which require hundreds of lines of code at the bare minimum.
+
+Meanwhile, JavaScript lies on the other extreme. JS requires the developer to go and implement their functionality themselves, thereby wasting more than tens of hours trying to find the right library or function to use on Stack Overflow or even on NPM. And when installing a library on NPM, sometimes said library may drag in between hundreds to thousands of dependencies, resulting in bloated projects and tons upon tons of unreachable, dead code.
+
+Fantom follows a very different philosophy - we believe in having very few types and classes, but each having tons of functionality to work with them. You don't need a `DateFormatter` to format a date string, when you could use the `format` method of the `Date` class to format it yourself.
+
+You can use other modules by simply `import`ing or `open`ing them inside your project, as you wish, to allow you to work easily with the OS, file system, apps, APIs, media, protocols, servers and databases.
 
 ## A Tour
 
@@ -85,19 +66,19 @@ Trinity has a core library of modules completely implemented in JavaScript that 
 We start our whirlwind tour of Trinity's features, with the quintessential hello world:
 
 ```dart
-class HelloWorld {
-  static def main(*args: []string): void -> print X
+class App {
+  static func main(*args: []string): void -> print 'Hello World!'
 }
 ```
 
-Minor differences from Java or C# include:
+Minor differences from TypeScript include:
 
-- Class names are distinguished from type names.
-- Class and method protection scope are default to public.
+- Class names must be written in `PascalCase`, while function/method, property and variable names are written either in `camelCase` or `snake_case`.
+- Class and method protection scope are private by default.
 - Use the `print` method to write to the console. Alternatives include `echo` and `puts`.
-- If the function has a singular statement, you can use `->` to separate the expression.
+- If a clause, such as `func` or `for` are followed by a single statement, you can use `->` instead of a block.
 - Statements can be terminated with a newline (you can use a semicolon too)
-- You can declare `*args: []string` or access them from Env.args
+- You can declare `*args: []string` or access them from `Process.argv`.
 
 ## Language Ideas
 
@@ -108,7 +89,7 @@ null; void // aliases for each other
 true; false // boolean
 
 /* INTEGERS */
-nan infinity // special float constants
+nan; infinity // special float constants
 
 16777216 // integer
 1^+40 // integer with exponential part
@@ -136,6 +117,7 @@ block-string
 """""
 
 // double quoted strings allow escapes, single ones do not
+// escapes are case-insensitive
 "hello\nworld"
 // to escape "'" in a "'"-quoted string, double it
 'x''x'
@@ -143,30 +125,14 @@ block-string
 // backslash unquoted strings (YAML inspired)
 \ // empty string
 [\this, \is, \cool]
-\spaces\ must\ be\ escaped
+\spaces\ must\ be\ escaped // with a backslash
 \|
   block strings are so cool
 \>
   this one allows escapes
 
-// Escape sequences for double-quoted or \> strings
-// any character including spaces or tabs can be escaped
-"\a"       // alert
-"\c"       // space
-"\e"       // escape
-"\f"       // form feed
-"\n"       // newline
-"\r"       // carriage return
-"\t"       // tab
-"\v"       // vertical tab
-"\p"       // backspace
-
 // same as numeric prefixes above, but substituting initial 0 with \
-"\o377"    // base 8 Unicode character
-"\255"     // decimal Unicode character
-"\s1104"   // base 6 Unicode character
-
-"\x{48 45 4C 4C 4F}" //= "HELLO"
+"\o377\255\s1104\z194" == "\xff\xff\xff\xff"
 
 // string interpolation / format specifiers
 "$x + $y = ${x ++ y}%d"
