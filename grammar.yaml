@@ -1,6 +1,6 @@
 name: Trinity
-scopeName: source.coffee
-fileTypes: [tr, trinity, coffee]
+scopeName: source.dart
+fileTypes: [dart, trin]
 patterns: [include: "#core"]
 
 information_for_contributors: |
@@ -58,6 +58,38 @@ define:
     5: {name: constant.numeric.other.density.trin}
     6: {name: storage.type.numeric.trin}
 
+  entity-name-clause: &entity-name-clause |
+    (?x)\s*\b
+    (?<=(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:extends|implements)\b|\s*[<>]\s+)\s*
+
+    (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
+    \b(?:# don't match keywords
+    in|of|as|is|new|infer|unset
+    |typeof|nameof|sizeof|pairof|keyof|valueof|instanceof
+    |length|delete|to|til|thru|at|by
+    |n?and|x?n?or|not|parallel|series|spawn|discard
+    |def|func?|function|proc|process|macro
+    |let|va[rl]|const|declare
+    |class|given|enum|procedure
+    |project|describe|protocol|member|extend|fragment|interface|struct
+    |module|package|namespace|object|record|label
+    |raw|data|query|schema|style|component|trait|element|alias|type
+    |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
+    |for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
+    |switch|case|fail|default|match|when|pass|fallthru
+    |try|retry|throw|raise|catch|rescue|finally
+    |with|ref|[dr]efer|show|hide|enter|exit
+    |then|begin|end|debug|check|assert
+    |break|continue|halt|skip|fixed|lock
+    |(?:return|give|await|yield|throw|raise)s?
+    |(?:im|ex)port|show|hide|open|close
+    |from|where|join|equals?|[io]nto|order
+    |take|drop|fold|scan|select|group|use|using
+    )\b
+    )
+    ([\p{Pc}\p{L}]\w*)
+    \b
+
   entity-name: &entity-name |
     (?x)\s*\b
     (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
@@ -68,10 +100,10 @@ define:
     |n?and|x?n?or|not|parallel|series|spawn|discard
     |def|func?|function|proc|process|macro
     |let|va[rl]|const|declare
-    |class|given|constraint|enum|relation|lattice
-    |project|attribute|protocol|member|extend|fragment|interface|struct
+    |class|given|enum|procedure
+    |project|describe|protocol|member|extend|fragment|interface|struct
     |module|package|namespace|object|record|label
-    |raw|data|query|schema|style|component|element|trait|friend|alias|type
+    |raw|data|query|schema|style|component|trait|element|alias|type
     |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
     |for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
     |switch|case|fail|default|match|when|pass|fallthru
@@ -142,10 +174,10 @@ repository:
       |n?and|x?n?or|not|parallel|series|spawn|discard
       |def|func?|function|proc|process|macro
       |let|va[rl]|const|declare
-      |class|given|constraint|enum|relation|lattice
-      |project|attribute|protocol|member|extend|fragment|interface|struct
+      |class|given|enum|procedure
+      |project|describe|protocol|member|extend|fragment|interface|struct
       |module|package|namespace|object|record|label
-      |raw|data|query|schema|style|component|element|trait|friend|alias|type
+      |raw|data|query|schema|style|component|trait|element|alias|type
       |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
       |for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
       |switch|case|fail|default|match|when|pass|fallthru
@@ -225,7 +257,7 @@ repository:
       - comment: Constant/algebraic types
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
-          true|false|null|void|nan|infin
+          true|false|null|void|nan|infinity
           |any|empty|object|record|unit|mixed
           |just|some|none|never|(im)?pure|channel
           )\b
@@ -251,7 +283,7 @@ repository:
       - comment: Constant/algebraic classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
-          True|False|Null|Void|NaN|Infin
+          True|False|Null|Void|NaN|Infinity
           |Any|Empty|Object|Record|Unit|Mixed
           |Just|Some|None|Never|(Im)?pure|Channel
           )\b
@@ -282,7 +314,10 @@ repository:
     patterns:
       - comment: isName functions
         match: (?x)\s*\bis(\p{Lu}[\w&&\P{Lu}]*)+\b\s*
-        name: support.function.predicate
+        name: support.function.predicate.trin
+      - comment: magic functions
+        match: (?x)\s*\b_+([\p{Pc}\p{L}]\w*)+_+\b\s*
+        name: support.function.magic.trin
 
   constant-names:
     comment: Names for constants, symbols and static properties
@@ -309,7 +344,7 @@ repository:
     patterns:
       - match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:
-          (true)|(false)|(null)|(void)|(nan)|(infin)
+          (true)|(false)|(null)|(void)|(nan)|(infinity)
           )\b\s*
         captures:
           1: {name: constant.language.boolean.true.trin}
@@ -335,7 +370,7 @@ repository:
           ((?:[2-9]|[1-9]\d+)b)
           (?:\p{Alnum}+(?:_*\p{Alnum}+)*)
           (?:(\.)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)?)?
-          (?:(\*)\p{Alnum}+(?:_*\p{Alnum}+)*)?
+          (?:([*/])\p{Alnum}+(?:_*\p{Alnum}+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -352,7 +387,7 @@ repository:
           ((?:[2-9]|[1-9]\d+)b)
           (?:\p{Alnum}+(?:_*\p{Alnum}+)*)?
           (?:(\.)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)?)
-          (?:(\*)\p{Alnum}+(?:_*\p{Alnum}+)*)?
+          (?:([*/])\p{Alnum}+(?:_*\p{Alnum}+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -369,7 +404,7 @@ repository:
           (0b)
           (?:[01]+(?:_*[01]+)*)
           (?:(\.)(?:[01]+(?:_*[01]+)*)?)?
-          (?:(\*)[01]+(?:_*[01]+)*)?
+          (?:([*/])[01]+(?:_*[01]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -386,7 +421,7 @@ repository:
           (0b)
           (?:[01]+(?:_*[01]+)*)?
           (?:(\.)(?:[01]+(?:_*[01]+)*)?)
-          (?:(\*)[01]+(?:_*[01]+)*)?
+          (?:([*/])[01]+(?:_*[01]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -403,7 +438,7 @@ repository:
           (0q)
           (?:[0-3]+(?:_*[0-3]+)*)
           (?:(\.)(?:[0-3]+(?:_*[0-3]+)*)?)?
-          (?:(\*)[0-3]+(?:_*[0-3]+)*)?
+          (?:([*/])[0-3]+(?:_*[0-3]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -420,7 +455,7 @@ repository:
           (0q)
           (?:[0-3]+(?:_*[0-3]+)*)?
           (?:(\.)(?:[0-3]+(?:_*[0-3]+)*)?)
-          (?:(\*)[0-3]+(?:_*[0-3]+)*)?
+          (?:([*/])[0-3]+(?:_*[0-3]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -437,7 +472,7 @@ repository:
           (0s)
           (?:[0-5]+(?:_*[0-5]+)*)
           (?:(\.)(?:[0-5]+(?:_*[0-5]+)*)?)?
-          (?:(\*)[0-5]+(?:_*[0-5]+)*)?
+          (?:([*/])[0-5]+(?:_*[0-5]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -454,7 +489,7 @@ repository:
           (0s)
           (?:[0-5]+(?:_*[0-5]+)*)?
           (?:(\.)(?:[0-5]+(?:_*[0-5]+)*)?)
-          (?:(\*)[0-5]+(?:_*[0-5]+)*)?
+          (?:([*/])[0-5]+(?:_*[0-5]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -471,7 +506,7 @@ repository:
           (0o)
           (?:[0-7]+(?:_*[0-7]+)*)
           (?:(\.)(?:[0-7]+(?:_*[0-7]+)*)?)?
-          (?:(\*)[0-7]+(?:_*[0-7]+)*)?
+          (?:([*/])[0-7]+(?:_*[0-7]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -488,7 +523,7 @@ repository:
           (0o)
           (?:[0-7]+(?:_*[0-7]+)*)?
           (?:(\.)(?:[0-7]+(?:_*[0-7]+)*)?)
-          (?:(\*)[0-7]+(?:_*[0-7]+)*)?
+          (?:([*/])[0-7]+(?:_*[0-7]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -505,7 +540,7 @@ repository:
           (0z)
           (?:[\dab]+(?:_*[\dab]+)*)
           (?:(\.)(?:[\dab]+(?:_*[\dab]+)*)?)?
-          (?:(\*)[\dab]+(?:_*[\dab]+)*)?
+          (?:([*/])[\dab]+(?:_*[\dab]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -522,7 +557,7 @@ repository:
           (0z)
           (?:[\dab]+(?:_*[\dab]+)*)?
           (?:(\.)(?:[\dab]+(?:_*[\dab]+)*)?)
-          (?:(\*)[\dab]+(?:_*[\dab]+)*)?
+          (?:([*/])[\dab]+(?:_*[\dab]+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -539,7 +574,7 @@ repository:
           (0x)
           (?:\h+(?:_*\h+)*)
           (?:(\.)(?:\h+(?:_*\h+)*)?)?
-          (?:(\*)\h+(?:_*\h+)*)?
+          (?:([*/])\h+(?:_*\h+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -556,7 +591,7 @@ repository:
           (0x)
           (?:\h+(?:_*\h+)*)?
           (?:(\.)(?:\h+(?:_*\h+)*)?)
-          (?:(\*)\h+(?:_*\h+)*)?
+          (?:([*/])\h+(?:_*\h+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -573,7 +608,7 @@ repository:
           ()
           (?:\d+(?:_*\d+)*)
           (?:(\.)(?:\d+(?:_*\d+)*)?)?
-          (?:(\*)\d+(?:_*\d+)*)?
+          (?:([*/])\d+(?:_*\d+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -590,7 +625,7 @@ repository:
           ()
           (?:\d+(?:_*\d+)*)?
           (?:(\.)(?:\d+(?:_*\d+)*)?)
-          (?:(\*)\d+(?:_*\d+)*)?
+          (?:([*/])\d+(?:_*\d+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -607,7 +642,7 @@ repository:
           (\d+\w)
           (?:\w+(?:_*\w+)*)
           (?:(\.)(?:\w+(?:_*\w+)*)?)?
-          (?:(\*)\w+(?:_*\w+)*)?
+          (?:([*/])\w+(?:_*\w+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -624,7 +659,7 @@ repository:
           (\d+\w)
           (?:\w+(?:_*\w+)*)?
           (?:(\.)(?:\w+(?:_*\w+)*)?)
-          (?:(\*)\w+(?:_*\w+)*)?
+          (?:([*/])\w+(?:_*\w+)*)?
           (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
           (=(?:\d|[1-9]\d+))?
           (:[\p{Pc}\p{L}]\w*)?
@@ -641,7 +676,7 @@ repository:
   strings-quoted:
     patterns:
       - comment: single quoted raw string
-        begin: \s*('{3,})
+        begin: (?<!'+)\s*('''+)
         contentName: string.quoted.single.trin
         end: \s*((\1)(?!\1))
         captures:
@@ -649,7 +684,7 @@ repository:
         patterns:
           - include: "#embedded-raw"
       - comment: simple single quoted raw string
-        begin: \s*(')
+        begin: (?<!'+)\s*(')
         contentName: string.quoted.single.trin
         end: \s*((\1)(?!\1))
         captures:
@@ -659,7 +694,7 @@ repository:
             name: constant.character.escape.trin
           - include: "#embedded-raw"
       - comment: double quoted standard string
-        begin: \s*("{3,}|")
+        begin: (?<!"+)\s*("""+|")
         contentName: string.quoted.double.trin
         end: \s*((\1)(?!\1))
         captures:
@@ -672,7 +707,7 @@ repository:
       - begin: |
           (?x)\s*
           (\\\|)\s*
-          ([-+*/<=>])?\s*
+          ([-+*<=>])?\s*
           (?:(\d\w*)|
           (
           [\p{Pc}\p{L}]\w*
@@ -703,7 +738,7 @@ repository:
       - begin: |
           (?x)\s*
           (\\\>)\s*
-          ([-+*/<=>])?\s*
+          ([-+*<=>])?\s*
           (?:(\d\w*)|
           (
           [\p{Pc}\p{L}]\w*
@@ -734,7 +769,7 @@ repository:
       - match: |
           (?x)
           \s*(\\)
-          ((?:\\.|[^({\[)}\]\s.,:;])+?)
+          ((?:\\.|[^({\[)}\]\s.,:;])*?)
           (?=[({\[)}\]\s.,:;]|$)\s*
         name: string.unquoted.trin
         captures:
@@ -849,7 +884,7 @@ repository:
         name: constant.character.entity.named.trin
         patterns:
           - include: "#unicode-named-chars"
-      - match: (?i)\\[abceflnprtvz]
+      - match: (?i)\\[a-z&&[^bqsodzxu]]
         name: constant.character.escape.trin
       - match: \\[\p{S}\p{P}]
         name: constant.character.escape.symbol.trin
@@ -885,6 +920,14 @@ repository:
           1: {name: punctuation.section.embedded.trin}
         patterns:
           - include: $self
+      - begin: (?#?<!\\)(\$<)\s*
+        end: (>)
+        name: entity.quasi.element.trin
+        captures:
+          1: {name: punctuation.section.embedded.trin}
+        patterns:
+          - include: "#tag-attributes"
+          - include: "#tag-names"
 
   embedded-raw:
     patterns:
@@ -917,6 +960,14 @@ repository:
           1: {name: punctuation.section.embedded.trin}
         patterns:
           - include: $self
+      - begin: (?<!\$)(\$<)\s*
+        end: (>)
+        name: entity.quasi.element.trin
+        captures:
+          1: {name: punctuation.section.embedded.trin}
+        patterns:
+          - include: "#tag-attributes"
+          - include: "#tag-names"
 
   symbols:
     match: |
@@ -967,7 +1018,7 @@ repository:
       - begin: |
           (?x)\s*
           (\\\<)\s*
-          ([-+*/<=>])?\s*
+          ([-+*<=>])?\s*
           (?:(\w+)?\b\s*\b
           (
           \w+\s*
@@ -1033,7 +1084,7 @@ repository:
         captures:
           1: {name: keyword.control.begin.trin}
           2: {name: keyword.control.end.trin}
-      - match: (\\\()(?:(\?)|(\+)|(\*))
+      - match: (\\\()(?:(\?)|(\+)|([*/]))
         captures:
           1: {name: constant.character.escape.other.trin}
           2: {name: keyword.operator.quantifier.lazy.trin}
@@ -1088,12 +1139,12 @@ repository:
           2: {name: keyword.control.keepout.trin}
           3: {name: keyword.control.search.trin}
           4: {name: constant.character.unicode.trin}
-      - match: (?<=[^\\][*+?}])(?:(\?)|(\+)|(\*))
+      - match: (?<=[^\\][*+?}])(?:(\?)|(\+)|([*/]))
         captures:
           1: {name: keyword.operator.modifier.lazy.trin}
           2: {name: keyword.operator.modifier.eager.trin}
           3: {name: keyword.operator.modifier.greedy.trin}
-      - match: (\?)|(\+)|(\*)
+      - match: (\?)|(\+)|([*/])
         captures:
           1: {name: keyword.operator.quantifier.lazy.trin}
           2: {name: keyword.operator.quantifier.eager.trin}
@@ -1369,7 +1420,7 @@ repository:
             name: constant.other.character-class.negated.trin
           - match: (?i)\\n{[\w\s]+}
             name: constant.character.escape.unicode.name.trin
-          - match: (?i)\\[abceflnprtvz]
+          - match: (?i)\\[a-z&&[^bqsodzxu]]
             name: constant.character.escape.trin
           - match: \\[\p{S}\p{P}]
             name: constant.character.escape.symbol.trin
@@ -1475,174 +1526,174 @@ repository:
 
   jsx:
     comment: Avoid < operator expressions as best we can using Zertosh's regex
+    begin: (?=<[\p{Pc}\p{L}])
+    end: (?=.)
+    applyEndPatternLast: 1
     patterns:
-      - begin: (?=<[\p{Pc}\p{L}])
-        end: (?=.)
-        applyEndPatternLast: 1
+      - include: "#tag-element-name"
+      - include: "#illegal"
+
+  tag-element-name:
+    patterns:
+      - comment: JSX Fragment
+        name: meta.tag.trin
+        contentName: meta.tag.trin
+        begin: \s*+(<)\s*(?=>)
+        end: (?<=</)(>)
+        beginCaptures:
+          1: {name: punctuation.definition.tag.trin}
+        endCaptures:
+          1: {name: punctuation.definition.tag.trin}
         patterns:
-          - include: "#tag-element-name"
-    repository:
-      tag-element-name:
+          - include: "#tag-termination"
+      - comment: "Tags that end > are trapped in #tag-termination"
+        name: meta.tag.trin
+        contentName: meta.tag.trin
+        begin: |
+          (?x)\s*+(<)#start tag begin
+          ([\p{Pc}\p{L}]\w*(?:[:.][\p{Pc}\p{L}]\w*)*)#tag name
+          (?=[\/>\s])(?![:])(?<!\.|:)
+        end: \s*(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>
+        beginCaptures:
+          1: {name: punctuation.definition.tag.trin}
+          2: {patterns: [include: "#tag-names"]}
+        endCaptures:
+          1: {patterns: [include: "#tag-names"]}
+          2: {name: punctuation.definition.tag.trin}
+          3: {name: punctuation.definition.tag.trin}
+          4: {name: invalid.illegal.termination.trin}
         patterns:
-          - comment: JSX Fragment
-            name: meta.tag.trin
-            contentName: meta.tag.trin
-            begin: \s*+(<)\s*(?=>)
-            end: (?<=</)(>)
-            beginCaptures:
-              1: {name: punctuation.definition.tag.trin}
-            endCaptures:
-              1: {name: punctuation.definition.tag.trin}
-            patterns:
-              - include: "#tag-termination"
-          - comment: "Tags that end > are trapped in #tag-termination"
-            name: meta.tag.trin
-            contentName: meta.tag.trin
-            begin: |
-              (?x)\s*+(<)#start tag begin
-              ([\p{Pc}\p{L}]\w*(?:[:.][\p{Pc}\p{L}]\w*)*)#tag name
-              (?=[\/>\s])(?![:])(?<!\.|:)
-            end: \s*(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>
-            beginCaptures:
-              1: {name: punctuation.definition.tag.trin}
-              2: {patterns: [include: "#tag-names"]}
-            endCaptures:
-              1: {patterns: [include: "#tag-names"]}
-              2: {name: punctuation.definition.tag.trin}
-              3: {name: punctuation.definition.tag.trin}
-              4: {name: invalid.illegal.termination.trin}
-            patterns:
-              - include: "#tag-termination"
-              - include: "#tag-attributes"
-      tag-termination:
-        comment: uses non consuming search for </ in </tag>
-        contentName: meta.jsx.children.trin
-        name: meta.jsx.children.trin
-        begin: (>)
-        end: (</)
+          - include: "#tag-termination"
+          - include: "#tag-attributes"
+  tag-termination:
+    comment: uses non consuming search for </ in </tag>
+    contentName: meta.jsx.children.trin
+    name: meta.jsx.children.trin
+    begin: (>)
+    end: (</)
+    captures:
+      0: {name: punctuation.definition.tag.trin}
+    patterns:
+      - include: "#evaluated-code"
+      - include: "#jsx-entities"
+      - include: "#tag-element-name"
+      - include: "#string-content"
+      - include: markdown.math.block
+      - include: text.html.markdown#inline
+  attribute-expression:
+    begin: (?<==)\(
+    end: \)
+    captures:
+      0: {name: punctuation.section.embedded.trin}
+    patterns:
+      - include: $self
+  tag-attributes:
+    patterns:
+      - include: source.yaml#flow-collection
+      - include: "#evaluated-code"
+      - include: "#attribute-name"
+      - include: "#attribute-expression"
+      - include: "#spread-attribute"
+      - include: "#strings-unquoted"
+      - include: "#strings-quoted"
+      - include: "#numbers"
+      - include: "#regexps"
+      - include: "#string-content"
+      - include: "#tag-element-name"
+      - include: "#comments"
+  spread-attribute:
+    comment: Spread attribute { ... AssignmentExpression }
+    match: (?<!\*)\*(?!\*)
+    name: keyword.operator.spread.trin
+  attribute-name:
+    patterns:
+      - comment: Style attribute
+        begin: (?<!\S)(style)(=)?({)
+        end: \s*(})\s*
+        beginCaptures:
+          1: {name: entity.other.attribute-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+          3: {name: punctuation.section.embedded.trin}
+        endCaptures:
+          1: {name: punctuation.section.embedded.trin}
+        patterns:
+          - include: source.css.scss#flow_control
+          - include: source.css.scss#rules
+          - include: source.css.scss#properties
+          - include: source.css.scss
+      - comment: Style attribute
+        begin: (?<!\S)(#{)
+        end: \s*(})\s*
         captures:
-          0: {name: punctuation.definition.tag.trin}
+          1: {name: punctuation.section.embedded.trin}
         patterns:
-          - include: "#evaluated-code"
-          - include: "#entities"
-          - include: "#tag-element-name"
-          - include: "#string-content"
-          - include: markdown.math.block
-          - include: text.html.markdown#inline
-      attribute-expression:
-        begin: (?<==)\(
-        end: \)
+          - include: source.css.scss#flow_control
+          - include: source.css.scss#rules
+          - include: source.css.scss#properties
+          - include: source.css.scss
+      - comment: Attribute names
+        match: (?<=[)\]}])(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
         captures:
-          0: {name: punctuation.section.embedded.trin}
-        patterns:
-          - include: $self
-      tag-attributes:
-        patterns:
-          - include: source.yaml#flow-collection
-          - include: "#evaluated-code"
-          - include: "#attribute-name"
-          - include: "#attribute-expression"
-          - include: "#spread-attribute"
-          - include: "#strings-unquoted"
-          - include: "#strings-quoted"
-          - include: "#numbers"
-          - include: "#regexps"
-          - include: "#string-content"
-          - include: "#tag-element-name"
-          - include: "#comments"
-      spread-attribute:
-        comment: Spread attribute { ... AssignmentExpression }
-        match: (?<!\*)\*(?!\*)
-        name: keyword.operator.spread.trin
-      attribute-name:
-        patterns:
-          - comment: Style attribute
-            begin: (?<!\S)(style)(=)?({)
-            end: \s*(})\s*
-            beginCaptures:
-              1: {name: entity.other.attribute-name.trin}
-              2: {name: punctuation.separator.key-value.trin}
-              3: {name: punctuation.section.embedded.trin}
-            endCaptures:
-              1: {name: punctuation.section.embedded.trin}
+          1: {name: punctuation.separator.key-value.trin}
+          2:
+            name: string.unquoted.html.trin
             patterns:
-              - include: source.css.scss#flow_control
-              - include: source.css.scss#rules
-              - include: source.css.scss#properties
-              - include: source.css.scss
-          - comment: Style attribute
-            begin: (?<!\S)(#{)
-            end: \s*(})\s*
-            captures:
-              1: {name: punctuation.section.embedded.trin}
-            patterns:
-              - include: source.css.scss#flow_control
-              - include: source.css.scss#rules
-              - include: source.css.scss#properties
-              - include: source.css.scss
-          - comment: Attribute names
-            match: (?<=[)\]}])(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
-            captures:
-              1: {name: punctuation.separator.key-value.trin}
-              2:
-                name: string.unquoted.html.trin
-                patterns:
-                  - include: "#string-content"
-                  - include: source.yaml#flow-scalar-plain-out-implicit-type
-          - comment: Attribute names
-            match: (?<!\S)([\p{Pc}\p{L}]\w*)(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
-            captures:
-              1: {name: entity.other.attribute-name.trin}
-              2: {name: punctuation.separator.key-value.trin}
-              3:
-                name: string.unquoted.html.trin
-                patterns:
-                  - include: "#string-content"
-                  - include: source.yaml#flow-scalar-plain-out-implicit-type
-      evaluated-code:
-        begin: "{"
-        end: "}"
+              - include: "#string-content"
+              - include: source.yaml#flow-scalar-plain-out-implicit-type
+      - comment: Attribute names
+        match: (?<![^\s<])([\p{Pc}\p{L}]\w*)(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
         captures:
-          0: {name: punctuation.section.embedded.trin}
-        patterns:
-          - include: "#spread-attribute"
-          - include: $self
-      entities:
-        patterns:
-          - captures: &jsx-entities
-              1: {name: punctuation.definition.entity.trin}
-              2: {name: punctuation.definition.entity.trin}
-            match: (&)#\d+(;)
-            name: constant.character.escape.decimal.trin
-          - captures: *jsx-entities
-            match: (?i)(&)#x\h+(;)
-            name: constant.character.escape.hexadecimal.trin
-          - captures: *jsx-entities
-            match: (?i)(&)#b[01]+(;)
-            name: constant.character.escape.binary.trin
-          - captures: *jsx-entities
-            match: (?i)(&)#q[0-3]\h+(;)
-            name: constant.character.escape.quaternary.trin
-          - captures: *jsx-entities
-            match: (?i)(&)#s[0-5]\h+(;)
-            name: constant.character.escape.senary.trin
-          - captures: *jsx-entities
-            match: (?i)(&)#o[0-7]\h+(;)
-            name: constant.character.escape.octal.trin
-          - captures: *jsx-entities
-            match: (?i)(&)#o[0-7]\h+(;)
-            name: constant.character.escape.octal.trin
-          - captures: *jsx-entities
-            match: (?i)(&)#z[\dab]\h+(;)
-            name: constant.character.escape.duodecimal.trin
-          - captures: *jsx-entities
-            match: (&)(?:\\.|[^(){}\[\]\s;])+?(;)
-            name: constant.character.entity.xml
-          - match: '&(?=\w*;)'
-            name: invalid.illegal.ambiguous-ampersand.trin
-          - comment: Entity with & and invalid name
-            match: '&\s*+;'
-            name: invalid.illegal.bad-ampersand.trin
+          1: {name: entity.other.attribute-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+          3:
+            name: string.unquoted.html.trin
+            patterns:
+              - include: "#string-content"
+              - include: source.yaml#flow-scalar-plain-out-implicit-type
+  evaluated-code:
+    begin: "{"
+    end: "}"
+    captures:
+      0: {name: punctuation.section.embedded.trin}
+    patterns:
+      - include: "#spread-attribute"
+      - include: $self
+  jsx-entities:
+    patterns:
+      - captures: &jsx-entities
+          1: {name: punctuation.definition.entity.trin}
+          2: {name: punctuation.definition.entity.trin}
+        match: (&)#\d+(;)
+        name: constant.character.escape.decimal.trin
+      - captures: *jsx-entities
+        match: (?i)(&)#x\h+(;)
+        name: constant.character.escape.hexadecimal.trin
+      - captures: *jsx-entities
+        match: (?i)(&)#b[01]+(;)
+        name: constant.character.escape.binary.trin
+      - captures: *jsx-entities
+        match: (?i)(&)#q[0-3]\h+(;)
+        name: constant.character.escape.quaternary.trin
+      - captures: *jsx-entities
+        match: (?i)(&)#s[0-5]\h+(;)
+        name: constant.character.escape.senary.trin
+      - captures: *jsx-entities
+        match: (?i)(&)#o[0-7]\h+(;)
+        name: constant.character.escape.octal.trin
+      - captures: *jsx-entities
+        match: (?i)(&)#o[0-7]\h+(;)
+        name: constant.character.escape.octal.trin
+      - captures: *jsx-entities
+        match: (?i)(&)#z[\dab]\h+(;)
+        name: constant.character.escape.duodecimal.trin
+      - captures: *jsx-entities
+        match: (&)(?:\\.|[^(){}\[\]\s;])+?(;)
+        name: constant.character.entity.xml
+      - match: '&(?=\w*;)'
+        name: invalid.illegal.ambiguous-ampersand.trin
+      - comment: Entity with & and invalid name
+        match: '&\s*+;'
+        name: invalid.illegal.bad-ampersand.trin
 
   jsdoc:
     patterns:
@@ -1965,10 +2016,10 @@ repository:
           |n?and|x?n?or|not|parallel|series|spawn|discard
           |def|func?|function|proc|process|macro
           |let|va[rl]|const|declare
-          |class|given|constraint|enum|relation|lattice
-          |project|attribute|protocol|member|extend|fragment|interface|struct
+          |class|given|enum|procedure
+          |project|describe|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
-          |raw|data|query|schema|style|component|element|trait|friend|alias|type
+          |raw|data|query|schema|style|component|trait|element|alias|type
           |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
           |for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
           |switch|case|fail|default|match|when|pass|fallthru
@@ -1994,10 +2045,10 @@ repository:
           |n?and|x?n?or|not|parallel|series|spawn|discard
           |def|func?|function|proc|process|macro
           |let|va[rl]|const|declare
-          |class|given|constraint|enum|relation|lattice
-          |project|attribute|protocol|member|extend|fragment|interface|struct
+          |class|given|enum|procedure
+          |project|describe|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
-          |raw|data|query|schema|style|component|element|trait|friend|alias|type
+          |raw|data|query|schema|style|component|trait|element|alias|type
           |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
           |for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat
           |switch|case|fail|default|match|when|pass|fallthru
@@ -2029,10 +2080,10 @@ repository:
           |n?and|x?n?or|not|parallel|series|spawn|discard
           |def|func?|function|proc|process|macro
           |let|va[rl]|const|declare
-          |class|given|constraint|enum|relation|lattice
-          |project|attribute|protocol|member|extend|fragment|interface|struct
+          |class|given|enum|procedure
+          |project|describe|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
-          |raw|data|query|schema|style|component|element|trait|friend|alias|type
+          |raw|data|query|schema|style|component|trait|element|alias|type
           |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
           |for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
           |switch|case|fail|default|match|when|pass|fallthru
@@ -2060,10 +2111,10 @@ repository:
           |n?and|x?n?or|not|parallel|series|spawn|discard
           |def|func?|function|proc|process|macro
           |let|va[rl]|const|declare
-          |class|given|constraint|enum|relation|lattice
-          |project|attribute|protocol|member|extend|fragment|interface|struct
+          |class|given|enum|procedure
+          |project|describe|protocol|member|extend|fragment|interface|struct
           |module|package|namespace|object|record|label
-          |raw|data|query|schema|style|component|element|trait|friend|alias|type
+          |raw|data|query|schema|style|component|trait|element|alias|type
           |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
           |for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
           |switch|case|fail|default|match|when|pass|fallthru
@@ -2317,11 +2368,12 @@ repository:
               (?x)(?<=\b|^|[)}\]'"`\\])
               (?:
               ([>.]\.[.<])
-              |(\?\.=?)
-              |(~\.=?)
-              |(!\.=?)
+              |(\?[.:]=?)
+              |(~[.:]=?)
+              |(![.:]=?)
               |((?:::|\.)=?)
-              |(->))
+              |(->)
+              )
               (?=\b|$|[({\['"`\\])
             captures:
               1: {name: keyword.operator.range.trin}
@@ -2335,7 +2387,7 @@ repository:
             comment: Prefix operators
             match: |
               (?x)
-              (?:(\*)#1
+              (?:([*/])#1
               |(\+)#2
               |(\-)#3
               |(\&)#4
@@ -2376,7 +2428,7 @@ repository:
               (?x)
               (?<=[\w)}\]_,;'"`]
               [\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*)
-              (?:(\*)#1
+              (?:([*/])#1
               |(\+)#2
               |(\-)#3
               |(\&)#4
@@ -2423,10 +2475,10 @@ repository:
               |n?and|x?n?or|not|parallel|series|spawn|discard
               |def|func?|function|proc|process|macro
               |let|va[rl]|const|declare
-              |class|given|constraint|enum|relation|lattice
-              |project|attribute|protocol|member|extend|fragment|interface|struct
+              |class|given|enum|procedure
+              |project|describe|protocol|member|extend|fragment|interface|struct
               |module|package|namespace|object|record|label
-              |raw|data|query|schema|style|component|element|trait|friend|alias|type
+              |raw|data|query|schema|style|component|trait|element|alias|type
               |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
               |for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
               |switch|case|fail|default|match|when|pass|fallthru
@@ -2460,10 +2512,10 @@ repository:
                   |n?and|x?n?or|not|parallel|series|spawn|discard
                   |def|func?|function|proc|process|macro
                   |let|va[rl]|const|declare
-                  |class|given|constraint|enum|relation|lattice
-                  |project|attribute|protocol|member|extend|fragment|interface|struct
+                  |class|given|enum|procedure
+                  |project|describe|protocol|member|extend|fragment|interface|struct
                   |module|package|namespace|object|record|label
-                  |raw|data|query|schema|style|component|element|trait|friend|alias|type
+                  |raw|data|query|schema|style|component|trait|element|alias|type
                   |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
                   |for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
                   |switch|case|fail|default|match|when|pass|fallthru
@@ -2570,10 +2622,10 @@ repository:
       |n?and|x?n?or|not|parallel|series|spawn|discard
       |def|func?|function|proc|process|macro
       |let|va[rl]|const|declare
-      |class|given|constraint|enum|relation|lattice
-      |project|attribute|protocol|member|extend|fragment|interface|struct
+      |class|given|enum|procedure
+      |project|describe|protocol|member|extend|fragment|interface|struct
       |module|package|namespace|object|record|label
-      |raw|data|query|schema|style|component|element|trait|friend|alias|type
+      |raw|data|query|schema|style|component|trait|element|alias|type
       |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
       |for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
       |switch|case|fail|default|match|when|pass|fallthru
@@ -2644,7 +2696,7 @@ repository:
                 name: punctuation.definition.block.sequence.item.trin
 
         patterns:
-          - begin: (?<=(?::|:?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\#\{)\s*
+          - begin: (?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\#\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.mapping.trin}
@@ -2653,7 +2705,7 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: (?<=(?::|:?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{)\s*
+          - begin: (?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.dictionary.trin}
@@ -2697,8 +2749,8 @@ repository:
               - match: ","
                 name: punctuation.separator.sequence.trin
         patterns:
-          - begin: \s*(\[<)
-            end: \s*(>\])
+          - begin: \s*(@\[)
+            end: \s*(\])
             captures:
               1: {name: punctuation.definition.typeparameters.trin}
             patterns:
@@ -2749,7 +2801,7 @@ repository:
           (?:
           (\+)|
           (\-)|
-          (\*)|
+          ([*/])|
           (\/)|
           (\%)|
           (\!)|
@@ -2759,6 +2811,7 @@ repository:
           (\^)|
           (\~)|
           (\$)|
+          (\#)|
           ([<>])
           )
           (?=$|[({\[\w'"\s])
@@ -2775,7 +2828,8 @@ repository:
           10: {name: keyword.operator.symmetric.trin}
           11: {name: keyword.operator.negation.trin}
           12: {name: keyword.operator.macro.dollar.trin}
-          13: {name: keyword.operator.class.trin}
+          13: {name: keyword.operator.private.trin}
+          14: {name: keyword.operator.class.trin}
 
   type-annotation:
     applyEndPatternLast: 1
@@ -2792,7 +2846,7 @@ repository:
         name: keyword.operator.type.function.trin
       - match: \s*(<==|<--?|<~~?)
         name: keyword.operator.type.channel.trin
-      - include: "#arguments-clause"
+      - include: "#params-clause"
       - include: "#declarations"
       - include: "#type-keywords"
       - include: "#modifier-keywords"
@@ -2830,20 +2884,20 @@ repository:
       (?:
       va[rl]|let|const
       |class|extend
-      |given|constraint
-      |enum|relation
+      |given
+      |enum|procedure
       |fragment|struct
       |def|func?|function|proc|process|macro
       |interface|schema
       |module|package
-      |namespace|lattice
+      |namespace
       |object|record
       |protocol|member
       |project|attribute
       |raw
       |data|query
-      |style|component|element
-      |trait|friend
+      |style|component
+      |trait|element
       )\b
       )
     captures:
@@ -2909,18 +2963,18 @@ repository:
       (def|func?|function|proc|process|macro)# function
       |(let|va[rl]|const)# variable
       |(class|extend)# class
-      |(given|constraint)# constraint
-      |(enum|relation)# enumeration
-      |(project|attribute)# project
+      |(given)# constraint
+      |(enum|procedure)# enumeration
+      |(project|describe)# project
       |(fragment|struct)# fragment
       |(interface|schema)# interface
       |(module|package)# module
-      |(namespace|lattice)# function
+      |(namespace)# function
       |(object|record)# object
       |(raw)# markup
       |(data|query)# indented GraphQL
-      |(style|component|element)# inline CSS
-      |(trait|friend)# trait
+      |(style|component)# inline CSS
+      |(trait|element)# trait
       |(type|alias)# type alias
       |(declare)# declaration
       )\b\s*
@@ -3149,6 +3203,7 @@ repository:
       - match: \s*(?<!\*)\*(?!\*)\s*
         name: keyword.generator.asterisk.trin
       - include: "#operators"
+      - include: "#support"
       - applyEndPatternLast: 1
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]))
         end: (?=\O)|$
@@ -3188,7 +3243,7 @@ repository:
             name: entity.name.class.trin
       constraint:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(given|constraint)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(given)\b\s*
         end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.constraint.trin}
@@ -3198,12 +3253,11 @@ repository:
             name: entity.name.constraint.trin
       enum:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(enum|relation)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(enum|procedure)\b\s*
         end: (?<=})|(?=\O)|$
         name: meta.enum.declaration.trin
         beginCaptures:
           1: {name: storage.type.enum.trin}
-          2: {name: entity.name.enum.trin}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
@@ -3250,7 +3304,7 @@ repository:
             name: entity.name.module.trin
       namespace:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(namespace|lattice)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(namespace)\b\s*
         end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.namespace.trin}
@@ -3280,10 +3334,10 @@ repository:
             name: entity.name.protocol.trin
       project:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(project|attribute)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(project|describe)\b\s*
         end: (?<=})|(?=\O)|$
         beginCaptures:
-          1: {name: storage.type.protocol.trin}
+          1: {name: storage.type.project.trin}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
@@ -3310,7 +3364,7 @@ repository:
             name: entity.name.schema.trin
       style:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(style|component|element)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(style|component)\b\s*
         end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.style.trin}
@@ -3320,7 +3374,7 @@ repository:
             name: entity.name.style.trin
       trait:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(trait|friend)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(trait|element)\b\s*
         end: (?<=})|(?=\O)|$
         beginCaptures:
           1: {name: storage.type.trait.trin}
@@ -3329,7 +3383,7 @@ repository:
           - match: *entity-name
             name: entity.name.trait.trin
 
-  arguments-clause:
+  params-clause:
     begin: |
       (?x)
       (?<=(?:\#?[({\[]|:\s+|\b(?:#keywords
@@ -3347,7 +3401,8 @@ repository:
 
   clauses:
     patterns:
-      - include: "#arguments-clause"
+      - include: "#macro-call"
+      - include: "#params-clause"
       - include: "#for-clause"
       - include: "#if-clause"
       - include: "#switch-clause"
@@ -3366,6 +3421,10 @@ repository:
     repository:
       function-params:
         patterns: *function-params
+
+      macro-call:
+        match: (?x)\s*\b([\p{Pc}\p{L}]\w*)\b(?=['"])
+        name: entity.name.function.tagged-template.trin
 
       pattern-brackets:
         begin: \s*(\()
@@ -3774,7 +3833,7 @@ repository:
             name: punctuation.definition.block.sequence.item.trin
 
     patterns:
-      - begin: (?<=(?::|:?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\#\{)\s*
+      - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.trin}
@@ -3782,7 +3841,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: (?<=(?::|:?=|->)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{)\s*
+      - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
@@ -3799,14 +3858,14 @@ repository:
             name: punctuation.separator.arguments.trin
 
     patterns:
-      - begin: (\#\()\s*
+      - begin: \s*(\#\()\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.parameters.trin}
         patterns:
           - include: "#punctuation"
           - include: $self
-      - begin: (\()\s*
+      - begin: \s*(\()\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.expression.trin}
@@ -3825,21 +3884,21 @@ repository:
             name: punctuation.separator.sequence.trin
 
     patterns:
-      - begin: (\[<)\s*
-        end: \s*(>\])
+      - begin: \s*(@\[)\s*
+        end: \s*(\])
         captures:
           1: {name: punctuation.definition.typeparameters.trin}
         patterns:
           - include: "#types"
           - include: $self
-      - begin: (\#\[)\s*
+      - begin: \s*(\#\[)\s*
         end: \s*(\])
         captures:
           1: {name: punctuation.definition.sequence.trin}
         patterns:
           - include: "#punctuation"
           - include: $self
-      - begin: (\[)\s*
+      - begin: \s*(\[)\s*
         end: \s*(\])
         captures:
           1: {name: punctuation.definition.array.trin}
@@ -3942,6 +4001,45 @@ repository:
           1: {name: support.class.node.js}
         patterns:
           - include: "#round-brackets"
+      - match: |-
+          (?<=\.|::)\s*\b
+          (ATTRIBUTE_NODE|CDATA_SECTION_NODE|COMMENT_NODE|DOCUMENT_FRAGMENT_NODE|DOCUMENT_NODE|DOCUMENT_TYPE_NODE
+          |DOMSTRING_SIZE_ERR|ELEMENT_NODE|ENTITY_NODE|ENTITY_REFERENCE_NODE|HIERARCHY_REQUEST_ERR|INDEX_SIZE_ERR
+          |INUSE_ATTRIBUTE_ERR|INVALID_CHARACTER_ERR|NO_DATA_ALLOWED_ERR|NO_MODIFICATION_ALLOWED_ERR|NOT_FOUND_ERR
+          |NOT_SUPPORTED_ERR|NOTATION_NODE|PROCESSING_INSTRUCTION_NODE|TEXT_NODE|WRONG_DOCUMENT_ERR)
+          \b\s*
+        name: support.variable.property.dom.js
+      - match: |-
+          (?x)(?<=\.|::)\s*\b (_content|[xyz]|abbr|above|accept|acceptCharset|accessKey|action|align|[av]Link(?:color)?|all|alt|anchors|appCodeName
+          |appCore|applets|appMinorVersion|appName|appVersion|archive|areas|arguments|attributes|availHeight|availLeft|availTop
+          |availWidth|axis|background|backgroundColor|backgroundImage|below|bgColor|body|border|borderBottomWidth|borderColor
+          |borderLeftWidth|borderRightWidth|borderStyle|borderTopWidth|borderWidth|bottom|bufferDepth|callee|caller|caption
+          |cellPadding|cells|cellSpacing|ch|characterSet|charset|checked|childNodes|chOff|cite|classes|className|clear
+          |clientInformation|clip|clipBoardData|closed|code|codeBase|codeType|color|colorDepth|cols|colSpan|compact|complete
+          |components|content|controllers|cookie|cookieEnabled|cords|cpuClass|crypto|current|data|dateTime|declare|defaultCharset
+          |defaultChecked|defaultSelected|defaultStatus|defaultValue|defaultView|defer|description|dialogArguments|dialogHeight
+          |dialogLeft|dialogTop|dialogWidth|dir|directories|disabled|display|docmain|doctype|documentElement|elements|embeds
+          |enabledPlugin|encoding|enctype|entities|event|expando|external|face|fgColor|filename|firstChild|fontFamily|fontSize
+          |fontWeight|form|formName|forms|frame|frameBorder|frameElement|frames|hasFocus|hash|headers|height|history|host
+          |hostname|href|hreflang|hspace|htmlFor|httpEquiv|id|ids|ignoreCase|images|implementation|index|innerHeight|innerWidth
+          |input|isMap|label|lang|language|lastChild|lastIndex|lastMatch|lastModified|lastParen|layer[sXY]|left|leftContext
+          |lineHeight|link|linkColor|links|listStyleType|localName|location|locationbar|longDesc|lowsrc|lowSrc|marginBottom
+          |marginHeight|marginLeft|marginRight|marginTop|marginWidth|maxLength|media|menubar|method|mimeTypes|multiline|multiple
+          |name|nameProp|namespaces|namespaceURI|next|nextSibling|nodeName|nodeType|nodeValue|noHref|noResize|noShade|notationName
+          |notations|noWrap|object|offscreenBuffering|onLine|onreadystatechange|opener|opsProfile|options|oscpu|outerHeight
+          |outerWidth|ownerDocument|paddingBottom|paddingLeft|paddingRight|paddingTop|page[XY]|page[XY]Offset|parent|parentLayer
+          |parentNode|parentWindow|pathname|personalbar|pixelDepth|pkcs11|platform|plugins|port|prefix|previous|previousDibling
+          |product|productSub|profile|profileend|prompt|prompter|protocol|publicId|readOnly|readyState|referrer|rel|responseText
+          |responseXML|rev|right|rightContext|rowIndex|rows|rowSpan|rules|scheme|scope|screen[XY]|screenLeft|screenTop|scripts
+          |scrollbars|scrolling|sectionRowIndex|security|securityPolicy|selected|selectedIndex|selection|self|shape|siblingAbove
+          |siblingBelow|size|source|specified|standby|start|status|statusbar|statusText|style|styleSheets|suffixes|summary
+          |systemId|systemLanguage|tagName|tags|target|tBodies|text|textAlign|textDecoration|textIndent|textTransform|tFoot|tHead
+          |title|toolbar|top|type|undefined|uniqueID|updateInterval|URL|URLUnencoded|useMap|userAgent|userLanguage|userProfile
+          |vAlign|value|valueType|vendor|vendorSub|version|visibility|vspace|whiteSpace|width|X[MS]LDocument|zIndex)
+          \b\s*
+        name: support.variable.property.dom.js
+      - match: (?x)(?<=\.|::)\s*\b (module|exports|id|filename|loaded|parent|children) \b\s*
+        name: support.type.object.module.js
 
   named-chars-database:
     patterns:

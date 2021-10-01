@@ -1,54 +1,39 @@
 # Trinity
 
-> Feels like JavaScript, better than JavaScript.
+> One language, three aspects.
 
-Trinity is an in-progress programming language that aims to compile to both JavaScript and WebAssembly in a language with a syntax that feels like JavaScript. It's got a great type system, a huge standard library and a unique combination of powerful features that support object-oriented, imperative, and functional programming.
+Trinity is my own programming language targeting the JavaScript, Python and Java runtimes, offering a familiar, though concise and simplified syntax than its competition. It's got a robust type system, a huge standard library and a unique combination of powerful features for imperative, declarative and meta-programming.
 
-```coffee
-use Js::Strict, React, 'motion' as motion
+```dart
+using UnityEngine;
 
-public weak class Item(&content) {
-  const [isOpen, setIsOpen] = useState(false);
-  return <motion:div layout>{isOpen !: content}</motion:div>;
-}
+func choose(prob: []f32): f32 {
+  var total := 0:f32
+  for val elem in prob -> total += elem
 
-public element List(&items) {
-  return <motion:ul>
-    {for let ({content}) in items -> <Item $content/>}
-  </motion:ul>;
+  var randomPoint := random.value * total
+  for val i in 0 to prob.length {
+    if (randomPoint < prob[i]) return i
+    else randomPoint -= prob[i]
+  }
+
+  return prob.length - 1
 }
 ```
 
-```html
-<script>
-  import X from X;
-</script>
-&amp;
-```
+## Overview
 
-## The Language
+The name Trinity is named after the Matrix character of the same name, and also means "to be three in one". True to that name, that's reflected in three\* paradigms (imperative, declarative and meta-programming), three platforms (web, desktop and mobile) and the three layers of the tech stack: frontend, API, and backend.
 
-JavaScript is the world's most popular programming language, but many people still hate it for its problems which we still have to deal with today. JavaScript usage has changed drastically, and the language ever continues to evolve, but it struggles to deliver the capabilities required for the complex applications that are being developed these days.
-
-Many new languages, frameworks and transpilers of existing languages, such as ReScript and TypeScript fill in the gaps that exist in JavaScript, so to help web developers build complex web applications that can be transpiled into JavaScript and run in the browser. Trinity is one of them.
+Similar to languages like Rust, Haxe, Scala and Fantom, Trinity's primary goal was to build a portable language targeting multiple runtimes, with a clean, consistent and comprehensive set of APIs and core libraries to abstract away the lower level runtimes. Trinity is heavily influenced by most curly-bracket languages like Scala, Kotlin, Swift, C#, Rust, Go, Swift, Fantom, and to a lesser extent, Perl, PHP, Java, PowerShell, Haxe and Groovy.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 
 ## Trinity's Origins
 
-In March 2020, I had a hobby project, a conlang generator, which I written in Python that utilized libraries like NumPy and NLTK that I wanted to port into JavaScript and integrate into a website. So I went with the naïve approach of transcribing my code from Python to JavaScript by hand.
+Switching over to JavaScript to Python, it pained me to deal with null or type-related errors, coercion, and missing brackets. And the bare-bones nature of JavaScript meant I had to implement myself or find some obscure library on NPM to find just the exact functionality I needed, which could take hours or even days. Not quite my tempo.
 
-I was constantly too annoyed over the little things such as missing or ambiguous semicolons, commas or even misplaced brackets, most of which [my formatter](https://prettier.io/) would handle for me. But the real pain in the ass were errors containing `undefined` or `null` (because I never knew TypeScript existed), let alone the unknown type coercion.
-
-The real evil part for me was having a general lack of a standard library or anything of the like. This meant having to implement them myself, mainly through Stack Overflow and NPM. My JS projects are gigabytes in size when the JavaScript applications I'm developing were all simple, and I had say a thousand dependencies just for an Angular or Ionic application. Shucks.
-
----
-
-I actually went through several iterations for my desired programming language, centered around either curly braces or significant whitespace. I also chose names for each of them, some after random dictionary words, others from mythology and game characters. Some include Nova, Nyx, Perplex, Saga or Trinity.
-
-The language Trinity started out as a dialect of TypeScript with hints of Python, Ruby and OCaml thrown in. The language has since undergone many additions from more than a dozen languages, including some "derivative" languages like Elixir, Scala, Kotlin, Flix and even some old ones like C# or PHP.
-
-The name Trinity comes from an Overwatch (even though I've never played the game) hacker character of the same name. _Trinity_ is Spanish for "shadow".
+Trinity started out as a simple concept to bridge the gap between Python and JavaScript by combining the features and APIs from either language. Now over almost a year of iteration and tinkering the language had poured in tons of influence from different languages. I spent four months working on the TextMate regular expression grammar for the language and to this day it's still exploding with new features.
 
 This project is currently in the works and would be my largest project to date. I will be posting a Trello on my development of Trinity very soon, and I'm looking forward for anyone out there to contribute: http://github.com/nxltm/trinity-lang/.
 
@@ -93,28 +78,124 @@ The development of a programming language should follow a set of principles, eac
 
 Trinity has a core library of modules completely implemented in JavaScript that contains a wide variety of types, each with tons of functionality and algorithms that work with them. These modules cover primitive data types and structures, documents and files, APIs, sites and more.
 
+## A Tour
+
+### Hello World
+
+We start our whirlwind tour of Trinity's features, with the quintessential hello world:
+
+```dart
+class HelloWorld {
+  static def main(*args: []string): void -> print X
+}
+```
+
+Minor differences from Java or C# include:
+
+- Class names are distinguished from type names.
+- Class and method protection scope are default to public.
+- Use the `print` method to write to the console. Alternatives include `echo` and `puts`.
+- If the function has a singular statement, you can use `->` to separate the expression.
+- Statements can be terminated with a newline (you can use a semicolon too)
+- You can declare `*args: []string` or access them from Env.args
+
 ## Language Ideas
 
-#### Syntax
+Fantom supports the same primitive literals as Java or C#, plus some that are typically found in higher level scripting languages:
 
-Trinity is a curly-brace language, like JavaScript. It may look vaguely similar to JavaScript, but it is clearly inspired by other curly-bracket languages, like Swift, Scala, Kotlin, Go and Rust.
+```dart
+null; void // aliases for each other
+true; false // boolean
 
-```coffee
-def l: list[int] {
-  let l1 = 1 :: 2 :: 3 :: null
-  let l2 = 4 :: 5 :: 6 :: null
-  l1 ::: l2
-}
+/* INTEGERS */
+nan infinity // special float constants
 
-def len(l: {x: y, z: 1}): int = switch l {
-  case null -> 0
-  case _ :: xs -> 1 + len xs
-}
+16777216 // integer
+1^+40 // integer with exponential part
+1_10011_101 // integer, can use _ as separator
+1:u // unsigned integer
+1.1 // floating point
+1.1:f32 // float with type suffix
+1.1*3 // float with repeating digit
+1.1=1 // float with significant figures
+
+40b10_10_10 // arbitrary base
+
+// base 2, 4, 6, 8, 12, 16
+0b10; 0q10; 0s10; 0o10; 0z10; 0x10
+
+/* STRINGS */
+// empty string
+'', ""
+
+// strings can be surrounded by as many quotes
+// of the same type as possible
+'''block string'''
+"""""
+block-string
+"""""
+
+// double quoted strings allow escapes, single ones do not
+"hello\nworld"
+// to escape "'" in a "'"-quoted string, double it
+'x''x'
+
+// backslash unquoted strings (YAML inspired)
+\ // empty string
+[\this, \is, \cool]
+\spaces\ must\ be\ escaped
+\|
+  block strings are so cool
+\>
+  this one allows escapes
+
+// Escape sequences for double-quoted or \> strings
+// any character including spaces or tabs can be escaped
+"\a"       // alert
+"\c"       // space
+"\e"       // escape
+"\f"       // form feed
+"\n"       // newline
+"\r"       // carriage return
+"\t"       // tab
+"\v"       // vertical tab
+"\p"       // backspace
+
+// same as numeric prefixes above, but substituting initial 0 with \
+"\o377"    // base 8 Unicode character
+"\255"     // decimal Unicode character
+"\s1104"   // base 6 Unicode character
+
+"\x{48 45 4C 4C 4F}" //= "HELLO"
+
+// string interpolation / format specifiers
+"$x + $y = ${x + y}%d"
+// longhand for above
+x.__str__! + " + " + y.__str__! + " = " + (x + y).__str__!
+
+// Experimental: locale interpolation
+"$<fwt::err.name>"
+"$<fileNotFound='The file was not found'>"
+
+// All versions
+`regular expression
+  (?i: PCRE compliant)
+  // can allow comments and free spacing
+`flag
+
+\< // block regex
+  ^ (?<scheme> [^:/?]+ ) :\// // aka protocol
+    (?<host>   [^/?]+  )      // domain name/IP
+    (?<path>   [^?]*   ) \\?? // optional path
+    (?<query>  .*      )      // optional query
+
+<div></div> // JSX
+<div x=x y=10></div> // JSX
 ```
 
 You would not need to use semicolons to terminate statements, or commas to separate statements when the next statement is on the following line. Lines are joined if the first token of the next l is a keyword or infix operator.
 
-```coffee
+```dart
 [1
 2
 3] == [1, 2, 3] //= true
@@ -124,7 +205,7 @@ You would not need to use semicolons to terminate statements, or commas to separ
 
 Line comments start with `//` and go until the end of the line. Special comments include documentation, to-do/fix-me, pre-processor comments and more, which are recognized by the compiler.
 
-```coffee
+```dart
 /// JSDoc line comment
 //= assertion comment
 //+ testing comment
@@ -143,20 +224,19 @@ The following regular expression denotes all the keywords of the language, inclu
 ```txt
 in of as is new infer unset
 typeof nameof sizeof pairof keyof valueof
-length delete to til thru at by
+length delete create update to til thru at by
 and nand or nor xor xnor not
 
-def fun func proc process procedure macro
-class given constraint enum relation lattice
-project attribute protocol member extend
+def fun func proc process macro
+type alias let var val const declare
+class given enum project protocol procedure
 fragment interface struct module package
 namespace object record label raw data query
-schema style component element trait friend
-type alias let var val const declare
+schema style component element trait
 
 if else (else if) (else unless) elif elsif eless elless unless guard
 for foreach (for each) repeat while until (repeat while) (repeat until)
-do redo
+do redo use using
 try retry throw raise catch rescue finally
 parallel series spawn discard
 with ref defer refer show hide enter exit
@@ -165,14 +245,14 @@ break continue halt skip fixed lock
 return give await yield
 returns gives awaits yields throws raises
 from where join equal equals into onto order
-take drop fold scan select group use using
+take drop fold scan select group
 ```
 
 #### Identifiers
 
 Identifiers begin with a letter `L`, or combining punctuation `Pc`, which includes underscores. Later characters can include any digit `Nd` or combining marks `M` in addition to said characters.
 
-```coffee
+```dart
 дpдgдпdф(lдs, lцcёs);
 ```
 
