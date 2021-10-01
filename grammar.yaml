@@ -1527,7 +1527,7 @@ repository:
   jsx:
     comment: Avoid < operator expressions as best we can using Zertosh's regex
     begin: (?=<[\p{Pc}\p{L}])
-    end: (?=.)
+    end: (?=.)|$
     applyEndPatternLast: 1
     patterns:
       - include: "#tag-element-name"
@@ -1619,23 +1619,23 @@ repository:
               - include: source.yaml#flow-scalar-plain-out-implicit-type
   evaluated-code:
     patterns:
-    - comment: Style attribute
-      begin: \s*#{\s*
-      end: \s*}\s*
-      captures:
-        0: {name: punctuation.section.embedded.trin}
-      patterns:
-        - include: source.css.scss#flow_control
-        - include: source.css.scss#rules
-        - include: source.css.scss#properties
-        - include: source.css.scss
-    - begin: \s*\${\s*
-      end: \s*}\s*
-      captures:
-        0: {name: punctuation.section.embedded.trin}
-      patterns:
-        - include: "#spread-attribute"
-        - include: $self
+      - comment: Style attribute
+        begin: \s*#{\s*
+        end: \s*}\s*
+        captures:
+          0: {name: punctuation.section.embedded.trin}
+        patterns:
+          - include: source.css.scss#flow_control
+          - include: source.css.scss#rules
+          - include: source.css.scss#properties
+          - include: source.css.scss
+      - begin: \s*\${\s*
+        end: \s*}\s*
+        captures:
+          0: {name: punctuation.section.embedded.trin}
+        patterns:
+          - include: "#spread-attribute"
+          - include: $self
   jsx-entities:
     patterns:
       - captures: &jsx-entities
@@ -2475,7 +2475,7 @@ repository:
               [\w]+)*
               [\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*# suffix
               )\s*([^(]|$|;))
-            end: (?=\O)|$
+            end: (?=.)|$
             beginCaptures:
               1: {name: keyword.operator.compose.trin}
               2: {name: keyword.operator.pipeline.trin}
@@ -2812,7 +2812,7 @@ repository:
   type-annotation:
     applyEndPatternLast: 1
     begin: (:)(?=\s|$)
-    end: (?=\O)|$
+    end: (?=.)|$
     beginCaptures:
       1: {name: punctuation.definition.annotation.trin}
     patterns:
@@ -2936,45 +2936,46 @@ repository:
       - comment: Other
 
   declaration-keywords:
-    comment: clause keywords
-    match: |
-      (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:
-      (def|func?|function|proc|process|macro)# function
-      |(let|va[rl]|const)# variable
-      |(class|extend)# class
-      |(given)# constraint
-      |(enum|procedure)# enumeration
-      |(project|describe)# project
-      |(fragment|struct)# fragment
-      |(interface|schema)# interface
-      |(module|package)# module
-      |(namespace)# function
-      |(object|record)# object
-      |(raw)# markup
-      |(data|query)# indented GraphQL
-      |(style|component)# inline CSS
-      |(trait|element)# trait
-      |(type|alias)# type alias
-      |(declare)# declaration
-      )\b\s*
-    captures:
-      1: {name: storage.type.function.trin}
-      2: {name: storage.type.trin}
-      3: {name: storage.type.class.trin}
-      4: {name: storage.type.constraint.trin}
-      5: {name: storage.type.enum.trin}
-      6: {name: storage.type.project.trin}
-      7: {name: storage.type.fragment.trin}
-      8: {name: storage.type.interface.trin}
-      9: {name: storage.type.module.trin}
-      10: {name: storage.type.namespace.trin}
-      11: {name: storage.type.object.trin}
-      12: {name: storage.type.raw.trin}
-      13: {name: storage.type.schema.trin}
-      14: {name: storage.type.style.trin}
-      15: {name: storage.type.trait.trin}
-      16: {name: keyword.other.typedef.trin}
-      17: {name: keyword.other.declare.trin}
+    patterns:
+      - comment: clause keywords
+        match: |
+          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:
+          (def|func?|function|proc|process|macro)# function
+          |(let|va[rl]|const)# variable
+          |(class|extend)# class
+          |(given)# constraint
+          |(enum|procedure)# enumeration
+          |(project|describe)# project
+          |(fragment|struct)# fragment
+          |(interface|schema)# interface
+          |(module|package)# module
+          |(namespace)# function
+          |(object|record)# object
+          |(raw)# markup
+          |(data|query)# indented GraphQL
+          |(style|component)# inline CSS
+          |(trait|element)# trait
+          |(type|alias)# type alias
+          |(declare)# declaration
+          )\b\s*
+        captures:
+          1: {name: storage.type.function.trin}
+          2: {name: storage.type.trin}
+          3: {name: storage.type.class.trin}
+          4: {name: storage.type.constraint.trin}
+          5: {name: storage.type.enum.trin}
+          6: {name: storage.type.project.trin}
+          7: {name: storage.type.fragment.trin}
+          8: {name: storage.type.interface.trin}
+          9: {name: storage.type.module.trin}
+          10: {name: storage.type.namespace.trin}
+          11: {name: storage.type.object.trin}
+          12: {name: storage.type.raw.trin}
+          13: {name: storage.type.schema.trin}
+          14: {name: storage.type.style.trin}
+          15: {name: storage.type.trait.trin}
+          16: {name: keyword.other.typedef.trin}
+          17: {name: keyword.other.declare.trin}
 
   general-keywords:
     comment: general keywords
@@ -3079,7 +3080,7 @@ repository:
       control-expression:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(halt|skip|break|continue|goto|label)\b
-        end: (?=\O)|$
+        end: (?=.)|$
         beginCaptures:
           1: {name: keyword.control.flow.trin}
         patterns:
@@ -3090,24 +3091,23 @@ repository:
         patterns:
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b((?:im|ex)port|open|close|use|using)\b\s*
-            end: (?=\O)|$
+            end: (?<=})|(?=.)|$
             beginCaptures:
               1: {name: keyword.control.module.trin}
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(from|to|as|all|any|show|hide|to|n?and|x?n?or|not)\b\s*
                 name: keyword.control.module.trin
+              - include: source.yaml#flow-collection
+              - include: "#type-keywords"
+              - include: "#strings-quoted"
+              - include: "#type-operators"
+              - match: ","
+                name: punctuation.separator.comma.trin
               - match: \s*\*
                 name: keyword.operator.module.all.trin
-              - include: "#modifier-keywords"
-              - include: "#declaration-keywords"
-              - include: "#type-keywords"
               - match: *entity-name
                 name: variable.other.readwrite.alias.trin
-              - include: "#strings-unquoted"
-              - include: "#strings-quoted"
-              - include: "#operators"
-              - include: "#punctuation"
-              - include: source.yaml#flow-collection
+              - include: $self
 
       query-expression:
         patterns:
@@ -3185,7 +3185,7 @@ repository:
       - include: "#support"
       - applyEndPatternLast: 1
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]))
-        end: (?=\O)|$
+        end: (?=.)|$
         beginCaptures:
           1: {name: punctuation.definition.annotation.trin}
         patterns:
@@ -3213,7 +3213,7 @@ repository:
       class:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(class|extend)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.class.trin}
         patterns:
@@ -3223,7 +3223,7 @@ repository:
       constraint:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(given)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.constraint.trin}
         patterns:
@@ -3233,7 +3233,7 @@ repository:
       enum:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(enum|procedure)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         name: meta.enum.declaration.trin
         beginCaptures:
           1: {name: storage.type.enum.trin}
@@ -3244,7 +3244,7 @@ repository:
       fragment:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(fragment|struct)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.fragment.trin}
         patterns:
@@ -3254,7 +3254,7 @@ repository:
       function:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(def|func?|function|proc|process|macro)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.function.trin}
         patterns:
@@ -3264,7 +3264,7 @@ repository:
       interface:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(interface|schema)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.interface.trin}
         patterns:
@@ -3274,7 +3274,7 @@ repository:
       module:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(module|package)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.module.trin}
         patterns:
@@ -3284,7 +3284,7 @@ repository:
       namespace:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(namespace)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.namespace.trin}
         patterns:
@@ -3294,7 +3294,7 @@ repository:
       object:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(object|record)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.object.trin}
         patterns:
@@ -3304,7 +3304,7 @@ repository:
       protocol:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(protocol|member)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.protocol.trin}
         patterns:
@@ -3314,7 +3314,7 @@ repository:
       project:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(project|describe)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.project.trin}
         patterns:
@@ -3324,7 +3324,7 @@ repository:
       raw:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(raw)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.raw.trin}
         patterns:
@@ -3334,7 +3334,7 @@ repository:
       schema:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(data|query)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.schema.trin}
         patterns:
@@ -3344,7 +3344,7 @@ repository:
       style:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(style|component)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.style.trin}
         patterns:
@@ -3354,7 +3354,7 @@ repository:
       trait:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(trait|element)\b\s*
-        end: (?<=})|(?=\O)|$
+        end: (?<=})|(?=.)|$
         beginCaptures:
           1: {name: storage.type.trait.trin}
         patterns:
@@ -3562,7 +3562,7 @@ repository:
       new-clause:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(new)\b
-        end: (?=\O)|$
+        end: (?=.)|$
         beginCaptures:
           1: {name: keyword.operator.expression.$1.trin}
         patterns:
@@ -3574,14 +3574,14 @@ repository:
         patterns:
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b([ia]s|instanceof)\b
-            end: (?=\O)|$
+            end: (?=.)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.trin}
             patterns:
               - include: "#types"
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(type|alias)\b
-            end: (?=\O)|$
+            end: (?=.)|$
             beginCaptures:
               1: {name: keyword.other.typedef.trin}
             patterns:
@@ -3591,7 +3591,7 @@ repository:
               - include: "#types"
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b((?:return|give|await|yield|throw|raise)s)\b
-            end: (?=\O)|$
+            end: (?=.)|$
             beginCaptures:
               1: {name: keyword.modifier.trin}
             patterns:
