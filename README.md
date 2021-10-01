@@ -6,7 +6,7 @@ Trinity is a portable, multi-paradigm and multi-faceted programming language I c
 
 ```dart
 // Variations of Hello World!
-import \react as React;
+using \react.React;
 import \react-native only { StyleSheet, Text, View };
 
 const styles = <style #{
