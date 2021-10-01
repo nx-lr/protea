@@ -11,12 +11,12 @@ using React, Framer.Motion
 object HelloWorld extends ReactApp {
   static var name: string = 'world'
 
-  static def render(props::&name: int): Component {
+  public def render(name: string = @name): Component {
     return <Motion:div
       initial=#{x: 100%}
       animate=#{x: calc(100vw - 50%)}
     >
-      <Motion:h1> Hello, $name%s! </>
+      <Motion:h1>Hello, $name%s!</>
     </>;
   }
 }
