@@ -18,8 +18,8 @@ const styles = <style #{
   }
 }/>;
 
-export default object App {
-  return (
+export default element App {
+  def main -> (
     <View style=$styles.container>
       <Text>To share a photo from your phone with a friend, just press the button below!</Text>
     </View>
