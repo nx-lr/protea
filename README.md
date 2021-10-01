@@ -6,20 +6,26 @@ Trinity is a portable, multi-paradigm and multi-faceted programming language I c
 
 ```dart
 // Variations of Hello World!
-using React, Framer.Motion
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-object HelloWorld extends ReactApp {
-  static var name: string = 'world'
-
-  public def render(name: string = @name): Component {
-    return <Motion:div
-      initial=#{x: 100%}
-      animate=#{x: calc(100vw - 50%)}
-    >
-      <Motion:h1>Hello, $name%s!</>
-    </>;
+const styles = <StyleSheet.create #{
+  .container {
+    flex: 1
+    background-color: '#fff'
+    align-items: 'center'
+    justify-content: 'center'
   }
+}/>
+
+export default function App() {
+  return (
+    <View style=$styles.container>
+      <Text>To share a photo from your phone with a friend, just press the button below!</Text>
+    </View>
+  );
 }
+
 ```
 
 ### Roadmap
