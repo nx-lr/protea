@@ -169,9 +169,9 @@ block-string
 "\x{48 45 4C 4C 4F}" //= "HELLO"
 
 // string interpolation / format specifiers
-"$x + $y = ${x + y}%d"
+"$x + $y = ${x ++ y}%d"
 // longhand for above
-x.__str__! + " + " + y.__str__! + " = " + (x + y).__str__!
+x.string! ++ " + " ++ y.string! ++ " = " ++ (x ++ y).string!
 
 // Experimental: locale interpolation
 "$<fwt::err.name>"
