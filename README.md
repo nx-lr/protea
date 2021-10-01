@@ -5,23 +5,24 @@
 Trinity is a portable, multi-paradigm and multi-faceted programming language I created that aims to run on the JVM and modern web browsers. It features a familiar JavaScript-like syntax, static (and dynamic) typing, a robust standard library and a unique combination of powerful features for imperative, declarative and meta-programming.
 
 ```dart
-// Variations of Hello World!
+// Say hello to the world!
 using \react.React;
 import \react-native only { StyleSheet, Text, View };
 
-const styles = <style #{
+const styles = <StyleSheet #{
   .container {
-    flex: 1
-    background-color: '#fff'
-    align-items: 'center'
-    justify-content: 'center'
+    flex: 1;
+    background-color: #fff;
+    align-items: center;
+    justify-content: center;
   }
 }/>;
 
 export default element App {
   def main -> (
     <View style=$styles.container>
-      <Text>To share a photo from your phone with a friend, just press the button below!</Text>
+      <Text>To share a photo from your phone with a friend,
+      just press the button below!</Text>
     </View>
   );
 };
