@@ -60,13 +60,13 @@ define:
 
   entity-name-clause: &entity-name-clause |
     (?x)\s*\b
-    (?<=(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:ext|impl)\b|\s*[<>]\s+)\s*
+    (?<=(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:extends|implements)\b|\s*[<>]\s+)\s*
 
     (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
     \b(?:# don't match keywords
     in|of|as|is|out|new|infer|unset
     |typeof|nameof|sizeof
-    |keyof|valof|itemof|instof
+    |keyof|valof|pairof|instof
     |len|del|add|push|select
     |to|til|till|thru|by
 
@@ -94,7 +94,7 @@ define:
     \b(?:# don't match keywords
     in|of|as|is|out|new|infer|unset
     |typeof|nameof|sizeof
-    |keyof|valof|itemof|instof
+    |keyof|valof|pairof|instof
     |len|del|add|push|select
     |to|til|till|thru|by
 
@@ -164,7 +164,7 @@ repository:
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
       in|of|as|is|out|new|infer|unset
       |typeof|nameof|sizeof
-      |keyof|valof|itemof|instof
+      |keyof|valof|pairof|instof
       |len|del|add|push|select
       |to|til|till|thru|by
 
@@ -1995,7 +1995,7 @@ repository:
           \b(?:# don't match keywords
           in|of|as|is|out|new|infer|unset
           |typeof|nameof|sizeof
-          |keyof|valof|itemof|instof
+          |keyof|valof|pairof|instof
           |len|del|add|push|select
           |to|til|till|thru|by
 
@@ -2022,7 +2022,7 @@ repository:
           \b(?:# don't match keywords
           in|of|as|is|out|new|infer|unset
           |typeof|nameof|sizeof
-          |keyof|valof|itemof|instof
+          |keyof|valof|pairof|instof
           |len|del|add|push|select
           |to|til|till|thru|by
 
@@ -2055,7 +2055,7 @@ repository:
           \b(?:# don't match keywords
           in|of|as|is|out|new|infer|unset
           |typeof|nameof|sizeof
-          |keyof|valof|itemof|instof
+          |keyof|valof|pairof|instof
           |len|del|add|push|select
           |to|til|till|thru|by
 
@@ -2084,7 +2084,7 @@ repository:
           \b(?:# don't match keywords
           in|of|as|is|out|new|infer|unset
           |typeof|nameof|sizeof
-          |keyof|valof|itemof|instof
+          |keyof|valof|pairof|instof
           |len|del|add|push|select
           |to|til|till|thru|by
 
@@ -2446,7 +2446,7 @@ repository:
               \b(?:# don't match keywords
               in|of|as|is|out|new|infer|unset
               |typeof|nameof|sizeof
-              |keyof|valof|itemof|instof
+              |keyof|valof|pairof|instof
               |len|del|add|push|select
               |to|til|till|thru|by
 
@@ -2481,7 +2481,7 @@ repository:
                   \b(?:# don't match keywords
                   in|of|as|is|out|new|infer|unset
                   |typeof|nameof|sizeof
-                  |keyof|valof|itemof|instof
+                  |keyof|valof|pairof|instof
                   |len|del|add|push|select
                   |to|til|till|thru|by
 
@@ -2591,7 +2591,7 @@ repository:
       \b(?:# don't match keywords
       in|of|as|is|out|new|infer|unset
       |typeof|nameof|sizeof
-      |keyof|valof|itemof|instof
+      |keyof|valof|pairof|instof
       |len|del|add|push|select
       |to|til|till|thru|by
 
@@ -3049,7 +3049,7 @@ repository:
     comment: expression keywords
     match: |
       (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:
-      (in|of|as|is(in|of|as|is|new|infer|instanceof
+      (in|of|as|is|new|infer|instanceof
       |typeof|nameof|sizeof|keyof|pairof|valueof)
       |(length)|(delete)|(to|til|thru|at|by)|(unset)
       |(n?and|x?n?or|not)
@@ -3064,6 +3064,7 @@ repository:
 
   keywords:
     patterns:
+      - include: "#sql-expression"
       - include: "#module-expression"
       - include: "#control-expression"
       - include: "#query-expression"
@@ -3077,37 +3078,37 @@ repository:
       - include: "#general-keywords"
 
     repository:
-      sql-expression:
-        patterns:
-          - captures:
-              1: {name: keyword.other.create.trin}
-              2: {name: keyword.other.table.trin}
-              5: {name: entity.name.function.trin}
-            match:
-              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(create(?:\s+or\s+replace)?|replace)\s+(aggregate|conversion|database|domain|function|group|(unique\s+)?index|language|operator
-              class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)(['"`]?)(\w+)\4
-            name: meta.create.trin
-          - captures:
-              1: {name: keyword.other.drop.trin}
-              2: {name: keyword.other.table.trin}
-            match:
-              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
-              class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view))
-            name: meta.drop.trin
-          - captures:
-              1: {name: keyword.other.drop.trin}
-              2: {name: keyword.other.table.trin}
-              3: {name: entity.name.function.trin}
-              4: {name: keyword.other.cascade.trin}
-            match: (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(table)\s+(\w+)(\s+cascade)?\b)
-            name: meta.drop.trin
-          - captures:
-              1: {name: keyword.other.alter.trin}
-              2: {name: keyword.other.table.trin}
-            match:
-              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(alter|update)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
-              class|operator|proc(edure)?|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)
-            name: meta.alter.trin
+      # sql-expression:
+      #   patterns:
+      #     - captures:
+      #         1: {name: keyword.other.create.trin}
+      #         2: {name: keyword.other.table.trin}
+      #         5: {name: entity.name.function.trin}
+      #       match:
+      #         (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(create(?:\s+or\s+replace)?|replace)\s+(aggregate|conversion|database|domain|function|group|(unique\s+)?index|language|operator
+      #         class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)(['"`]?)(\w+)\4
+      #       name: meta.create.trin
+      #     - captures:
+      #         1: {name: keyword.other.drop.trin}
+      #         2: {name: keyword.other.table.trin}
+      #       match:
+      #         (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
+      #         class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view))
+      #       name: meta.drop.trin
+      #     - captures:
+      #         1: {name: keyword.other.drop.trin}
+      #         2: {name: keyword.other.table.trin}
+      #         3: {name: entity.name.function.trin}
+      #         4: {name: keyword.other.cascade.trin}
+      #       match: (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(table)\s+(\w+)(\s+cascade)?\b)
+      #       name: meta.drop.trin
+      #     - captures:
+      #         1: {name: keyword.other.alter.trin}
+      #         2: {name: keyword.other.table.trin}
+      #       match:
+      #         (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(alter|update)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
+      #         class|operator|proc(edure)?|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)
+      #       name: meta.alter.trin
 
       control-expression:
         applyEndPatternLast: 1
@@ -3179,6 +3180,7 @@ repository:
   declarations:
     patterns:
       - include: "#function"
+      - include: "#definition"
       - include: "#class"
       - include: "#enumeration"
       - include: "#module"
@@ -3199,21 +3201,30 @@ repository:
       - include: "#style"
       - include: "#component"
       - include: "#element"
-      - include: "#extension"
-      - include: "#implementation"
 
     repository:
       function:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(func?|def)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(func?)\b\s*
         end: (?=.)|$
         beginCaptures:
           "1":
             name: storage.type.function.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.function.trin
+      definition:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(def)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          "1":
+            name: storage.type.definition.trin
+        patterns:
+          - include: "#block-entities"
+          - match: *entity-name
+            name: entity.name.definition.trin
       class:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(class)\b\s*
@@ -3223,7 +3234,7 @@ repository:
             name: storage.type.class.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.class.trin
       enumeration:
         applyEndPatternLast: 1
@@ -3234,7 +3245,7 @@ repository:
             name: storage.type.enumeration.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.enumeration.trin
       module:
         applyEndPatternLast: 1
@@ -3245,7 +3256,7 @@ repository:
             name: storage.type.module.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.module.trin
       package:
         applyEndPatternLast: 1
@@ -3256,7 +3267,7 @@ repository:
             name: storage.type.package.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.package.trin
       interface:
         applyEndPatternLast: 1
@@ -3267,7 +3278,7 @@ repository:
             name: storage.type.interface.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.interface.trin
       structure:
         applyEndPatternLast: 1
@@ -3278,7 +3289,7 @@ repository:
             name: storage.type.structure.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.structure.trin
       object:
         applyEndPatternLast: 1
@@ -3289,7 +3300,7 @@ repository:
             name: storage.type.object.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.object.trin
       record:
         applyEndPatternLast: 1
@@ -3300,7 +3311,7 @@ repository:
             name: storage.type.record.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.record.trin
       fragment:
         applyEndPatternLast: 1
@@ -3311,7 +3322,7 @@ repository:
             name: storage.type.fragment.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.fragment.trin
       data:
         applyEndPatternLast: 1
@@ -3322,7 +3333,7 @@ repository:
             name: storage.type.data.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.data.trin
       trait:
         applyEndPatternLast: 1
@@ -3333,7 +3344,7 @@ repository:
             name: storage.type.trait.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.trait.trin
       protocol:
         applyEndPatternLast: 1
@@ -3344,7 +3355,7 @@ repository:
             name: storage.type.protocol.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.protocol.trin
       procedure:
         applyEndPatternLast: 1
@@ -3355,7 +3366,7 @@ repository:
             name: storage.type.procedure.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.procedure.trin
       macro:
         applyEndPatternLast: 1
@@ -3366,7 +3377,7 @@ repository:
             name: storage.type.macro.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.macro.trin
       type:
         applyEndPatternLast: 1
@@ -3377,7 +3388,7 @@ repository:
             name: storage.type.type.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.type.trin
       constraint:
         applyEndPatternLast: 1
@@ -3388,7 +3399,7 @@ repository:
             name: storage.type.constraint.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.constraint.trin
       raw:
         applyEndPatternLast: 1
@@ -3399,7 +3410,7 @@ repository:
             name: storage.type.raw.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.raw.trin
       style:
         applyEndPatternLast: 1
@@ -3410,7 +3421,7 @@ repository:
             name: storage.type.style.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.style.trin
       component:
         applyEndPatternLast: 1
@@ -3421,7 +3432,7 @@ repository:
             name: storage.type.component.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.component.trin
       element:
         applyEndPatternLast: 1
@@ -3432,30 +3443,8 @@ repository:
             name: storage.type.element.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.element.trin
-      extension:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(ext)\b\s*
-        end: (?=.)|$
-        beginCaptures:
-          "1":
-            name: storage.type.extension.trin
-        patterns:
-          - include: "#block-entities"
-          - match: "*entity-name"
-            name: entity.name.extension.trin
-      implementation:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(impl)\b\s*
-        end: (?=.)|$
-        beginCaptures:
-          "1":
-            name: storage.type.implementation.trin
-        patterns:
-          - include: "#block-entities"
-          - match: "*entity-name"
-            name: entity.name.implementation.trin
 
   params-clause:
     begin: |
@@ -3463,7 +3452,7 @@ repository:
       (?<=(?:^\s*|\#?[({\[]\s*|(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s+|\b(?:#keywords
       in|of|as|is|out|new|infer|unset
       |typeof|nameof|sizeof
-      |keyof|valof|itemof|instof
+      |keyof|valof|pairof|instof
       |len|del|add|push|select
       |to|til|till|thru|by
 
