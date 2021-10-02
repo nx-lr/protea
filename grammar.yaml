@@ -3652,14 +3652,14 @@ repository:
       type-clause:
         patterns:
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(is|as)\b
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(is|as)\b\s*
             end: (?=.)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.trin}
             patterns:
               - include: "#types"
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(type)\b
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(type)\b\s*
             end: (?=.)|$
             beginCaptures:
               1: {name: keyword.other.typedef.trin}
@@ -3670,7 +3670,7 @@ repository:
               - include: "#types"
 
       case-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(case|default)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(case|default)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         beginCaptures:
           1: {name: keyword.control.switch.trin}
@@ -3711,17 +3711,17 @@ repository:
             captures:
               1: {name: punctuation.definition.expression.trin}
             patterns:
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b\s*
                 name: keyword.control.thread.trin
               - include: "#code-block"
               - include: $self
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b\s*
             name: keyword.control.thread.trin
           - include: "#code-block"
           - include: $self
 
       do-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(do|redo)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(do|redo)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         name: meta.do.trin
         beginCaptures:
@@ -3762,7 +3762,7 @@ repository:
           - include: $self
 
       match-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(match|otherwise)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(match|otherwise)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         name: meta.match.trin
         beginCaptures:
@@ -3772,7 +3772,7 @@ repository:
           - include: $self
 
       switch-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(switch)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(switch)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         name: meta.switch.trin
         beginCaptures:
@@ -3782,7 +3782,7 @@ repository:
           - include: $self
 
       when-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(when)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(when)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         beginCaptures:
           1: {name: keyword.control.match.trin}
@@ -3800,7 +3800,7 @@ repository:
           - include: $self
 
       with-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(with)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(with)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         name: meta.with.trin
         beginCaptures:
