@@ -1594,7 +1594,7 @@ repository:
   attribute-name:
     patterns:
       - comment: Attribute names
-        match: (?<=[)\]}])(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
+        match: (?<=[)}\]])(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
         captures:
           1: {name: punctuation.separator.key-value.trin}
           2:
@@ -3040,7 +3040,7 @@ repository:
           1: {name: keyword.query.trin}
           2: {patterns: [include: $self]}
           3: {name: keyword.query.trin}
-        end: (?=[,;)\]}])
+        end: (?=[,;)}\]])
         patterns:
           - include: "#query-body"
           - include: $self
@@ -3052,12 +3052,14 @@ repository:
           - include: "#order-by-clause"
           - include: "#select-clause"
           - include: "#group-clause"
+          - include: "#limit-clause"
+          - include: "#reduce-clause"
 
       where-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(where)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(where|having)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
-        end: (?=[,;)\]}])
+        end: (?=[,;)}\]])
         patterns:
           - include: "#query-body"
           - include: $self
@@ -3065,14 +3067,14 @@ repository:
       join-clause:
         begin: |
           (?x)
-          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(join)\b\s*
+          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b((?:inner|(?:full)\b\s*\bouter|left|right)?\b\s*\bjoin)\b\s*
           (.*?)
           \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(in|of)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
           2: {patterns: [include: $self]}
           3: {name: keyword.query.trin}
-        end: (?=[,;)\]}])
+        end: (?=[,;)}\]])
         patterns:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(on|equals|into)\b\s*
             name: keyword.query.trin
@@ -3083,7 +3085,7 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(order|sort)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
-        end: (?=[,;)\]}])
+        end: (?=[,;)}\]])
         patterns:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(asc|desc|by)\b\s*
             name: keyword.query.trin
@@ -3091,11 +3093,35 @@ repository:
           - include: $self
 
       select-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(select)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(select\b\s*\b(?:unique|any|all)?)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
-        end: (?=[,;)\]}])
+        end: (?=[,;)}\]])
         patterns:
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(by|while|until|with)\b\s*
+            name: keyword.query.trin
+          - include: "#query-body"
+          - include: $self
+
+      limit-clause:
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b((?:take|drop|limit)\b\s*\b(?:first|last|head|tail)?)\b\s*
+        beginCaptures:
+          1: {name: keyword.query.trin}
+        end: (?=[,;)}\]])
+        patterns:
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(by|while|until|with)\b\s*
+            name: keyword.query.trin
+          - include: "#query-body"
+          - include: $self
+
+      reduce-clause:
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b((?:fold|reduce|scan)\b\s*\b(?:left|right)?)\b\s*
+        beginCaptures:
+          1: {name: keyword.query.trin}
+        end: (?=[,;)}\]])
+        patterns:
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(by|while|until|with)\b\s*
+            name: keyword.query.trin
           - include: "#query-body"
           - include: $self
 
@@ -3103,7 +3129,7 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(group)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
-        end: (?=[,;)\]}])
+        end: (?=[,;)}\]])
         patterns:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(by|into)\b\s*
             name: keyword.query.trin
@@ -3390,8 +3416,6 @@ repository:
       |break|continue|return|await|label|yield|goto
       |import|export|expose|using
       |debug|check|assert
-      |(?:\b(?:fold|scan)\b)\s*(?:\b(?:left|right)\b)?\s*(?:\b(?:by|while|until|with)\b)?
-      |(?:\b(?:take|drop)\b)\s*(?:\b(?:left|right|init|head|tail|last)\b)?\s*(?:\b(?:by|while|until|with)\b)?
       )\b)\s*)
       (\|)
       (?!\|)
