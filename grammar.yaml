@@ -78,8 +78,9 @@ define:
     |if|lest|then|elif|eles|else
     |for|each|loop|while|until|from
     |do|redo|try|retry|throw|catch|after
-    |para|series|spawn|disc|fixed|lock
-    |break|skip|return|await|label|yield|goto
+    |switch|case|default|match|when|otherwise
+    |parallel|series|spawn|discard|fixed|lock
+    |break|continue|return|await|label|yield|goto
     |import|export|expose|using
     |debug|check|assert
     )\b
@@ -105,8 +106,9 @@ define:
     |if|lest|then|elif|eles|else
     |for|each|loop|while|until|from
     |do|redo|try|retry|throw|catch|after
-    |para|series|spawn|disc|fixed|lock
-    |break|skip|return|await|label|yield|goto
+    |switch|case|default|match|when|otherwise
+    |parallel|series|spawn|discard|fixed|lock
+    |break|continue|return|await|label|yield|goto
     |import|export|expose|using
     |debug|check|assert
     )\b
@@ -174,8 +176,9 @@ repository:
       |if|lest|then|elif|eles|else
       |for|each|loop|while|until|from
       |do|redo|try|retry|throw|catch|after
-      |para|series|spawn|disc|fixed|lock
-      |break|skip|return|await|label|yield|goto
+      |switch|case|default|match|when|otherwise
+      |parallel|series|spawn|discard|fixed|lock
+      |break|continue|return|await|label|yield|goto
       |import|export|expose|using
       |debug|check|assert
       )\b\s*
@@ -2004,8 +2007,9 @@ repository:
           |if|lest|then|elif|eles|else
           |for|each|loop|while|until|from
           |do|redo|try|retry|throw|catch|after
-          |para|series|spawn|disc|fixed|lock
-          |break|skip|return|await|label|yield|goto
+          |switch|case|default|match|when|otherwise
+          |parallel|series|spawn|discard|fixed|lock
+          |break|continue|return|await|label|yield|goto
           |import|export|expose|using
           |debug|check|assert
           )\b
@@ -2030,8 +2034,9 @@ repository:
           |if|lest|then|elif|eles|else
           |for|each|loop|while|until|from
           |do|redo|try|retry|throw|catch|after
-          |para|series|spawn|disc|fixed|lock
-          |break|skip|return|await|label|yield|goto
+          |switch|case|default|match|when|otherwise
+          |parallel|series|spawn|discard|fixed|lock
+          |break|continue|return|await|label|yield|goto
           |import|export|expose|using
           |debug|check|assert
           )\b
@@ -2062,8 +2067,9 @@ repository:
           |if|lest|then|elif|eles|else
           |for|each|loop|while|until|from
           |do|redo|try|retry|throw|catch|after
-          |para|series|spawn|disc|fixed|lock
-          |break|skip|return|await|label|yield|goto
+          |switch|case|default|match|when|otherwise
+          |parallel|series|spawn|discard|fixed|lock
+          |break|continue|return|await|label|yield|goto
           |import|export|expose|using
           |debug|check|assert
           )\b
@@ -2090,8 +2096,9 @@ repository:
           |if|lest|then|elif|eles|else
           |for|each|loop|while|until|from
           |do|redo|try|retry|throw|catch|after
-          |para|series|spawn|disc|fixed|lock
-          |break|skip|return|await|label|yield|goto
+          |switch|case|default|match|when|otherwise
+          |parallel|series|spawn|discard|fixed|lock
+          |break|continue|return|await|label|yield|goto
           |import|export|expose|using
           |debug|check|assert
           )\b
@@ -2451,8 +2458,9 @@ repository:
               |if|lest|then|elif|eles|else
               |for|each|loop|while|until|from
               |do|redo|try|retry|throw|catch|after
-              |para|series|spawn|disc|fixed|lock
-              |break|skip|return|await|label|yield|goto
+              |switch|case|default|match|when|otherwise
+              |parallel|series|spawn|discard|fixed|lock
+              |break|continue|return|await|label|yield|goto
               |import|export|expose|using
               |debug|check|assert
               )\b
@@ -2485,8 +2493,9 @@ repository:
                   |if|lest|then|elif|eles|else
                   |for|each|loop|while|until|from
                   |do|redo|try|retry|throw|catch|after
-                  |para|series|spawn|disc|fixed|lock
-                  |break|skip|return|await|label|yield|goto
+                  |switch|case|default|match|when|otherwise
+                  |parallel|series|spawn|discard|fixed|lock
+                  |break|continue|return|await|label|yield|goto
                   |import|export|expose|using
                   |debug|check|assert
                   )\b
@@ -2594,8 +2603,9 @@ repository:
       |if|lest|then|elif|eles|else
       |for|each|loop|while|until|from
       |do|redo|try|retry|throw|catch|after
-      |para|series|spawn|disc|fixed|lock
-      |break|skip|return|await|label|yield|goto
+      |switch|case|default|match|when|otherwise
+      |parallel|series|spawn|discard|fixed|lock
+      |break|continue|return|await|label|yield|goto
       |import|export|expose|using
       |debug|check|assert
       )\b
@@ -3068,37 +3078,37 @@ repository:
       - include: "#general-keywords"
 
     repository:
-      sql-expression:
-        patterns:
-          - captures:
-              1: {name: keyword.other.create.trin}
-              2: {name: keyword.other.table.trin}
-              5: {name: entity.name.function.trin}
-            match:
-              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(create(?:\s+or\s+replace)?|replace)\s+(aggregate|conversion|database|domain|function|group|(unique\s+)?index|language|operator
-              class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)(['"`]?)(\w+)\4
-            name: meta.create.trin
-          - captures:
-              1: {name: keyword.other.drop.trin}
-              2: {name: keyword.other.table.trin}
-            match:
-              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
-              class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view))
-            name: meta.drop.trin
-          - captures:
-              1: {name: keyword.other.drop.trin}
-              2: {name: keyword.other.table.trin}
-              3: {name: entity.name.function.trin}
-              4: {name: keyword.other.cascade.trin}
-            match: (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(table)\s+(\w+)(\s+cascade)?\b)
-            name: meta.drop.trin
-          - captures:
-              1: {name: keyword.other.alter.trin}
-              2: {name: keyword.other.table.trin}
-            match:
-              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(alter|update)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
-              class|operator|proc(edure)?|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)
-            name: meta.alter.trin
+      # sql-expression:
+      #   patterns:
+      #     - captures:
+      #         1: {name: keyword.other.create.trin}
+      #         2: {name: keyword.other.table.trin}
+      #         5: {name: entity.name.function.trin}
+      #       match:
+      #         (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(create(?:\s+or\s+replace)?|replace)\s+(aggregate|conversion|database|domain|function|group|(unique\s+)?index|language|operator
+      #         class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)(['"`]?)(\w+)\4
+      #       name: meta.create.trin
+      #     - captures:
+      #         1: {name: keyword.other.drop.trin}
+      #         2: {name: keyword.other.table.trin}
+      #       match:
+      #         (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
+      #         class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view))
+      #       name: meta.drop.trin
+      #     - captures:
+      #         1: {name: keyword.other.drop.trin}
+      #         2: {name: keyword.other.table.trin}
+      #         3: {name: entity.name.function.trin}
+      #         4: {name: keyword.other.cascade.trin}
+      #       match: (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(table)\s+(\w+)(\s+cascade)?\b)
+      #       name: meta.drop.trin
+      #     - captures:
+      #         1: {name: keyword.other.alter.trin}
+      #         2: {name: keyword.other.table.trin}
+      #       match:
+      #         (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(alter|update)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
+      #         class|operator|proc(edure)?|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)
+      #       name: meta.alter.trin
 
       control-expression:
         applyEndPatternLast: 1
@@ -3454,8 +3464,9 @@ repository:
       |if|lest|then|elif|eles|else
       |for|each|loop|while|until|from
       |do|redo|try|retry|throw|catch|after
-      |para|series|spawn|disc|fixed|lock
-      |break|skip|return|await|label|yield|goto
+      |switch|case|default|match|when|otherwise
+      |parallel|series|spawn|discard|fixed|lock
+      |break|continue|return|await|label|yield|goto
       |import|export|expose|using
       |debug|check|assert
       |(?:\b(?:fold|scan)\b)\s*(?:\b(?:left|right)\b)?\s*(?:\b(?:by|while|until|with)\b)?
