@@ -136,8 +136,6 @@ define:
 repository:
   core:
     patterns:
-      - comment: The following are placeholders.
-          Will redo embedded HTML and CSS syntax later.
       - include: "#jsx"
       - include: "#clauses"
       - include: "#declarations"
@@ -678,7 +676,7 @@ repository:
       - comment: single quoted raw string
         begin: (?<!'+)\s*('''+)
         contentName: string.quoted.single.trin
-        end: \s*((\1)(?!\1))
+        end: \s*((\1)(?!'+))
         captures:
           1: {name: punctuation.definition.string.trin}
         patterns:
@@ -686,7 +684,7 @@ repository:
       - comment: simple single quoted raw string
         begin: (?<!'+)\s*(')
         contentName: string.quoted.single.trin
-        end: \s*((\1)(?!\1))
+        end: \s*((\1)(?!'+))
         captures:
           1: {name: punctuation.definition.string.trin}
         patterns:
@@ -696,7 +694,7 @@ repository:
       - comment: double quoted standard string
         begin: (?<!"+)\s*("""+|")
         contentName: string.quoted.double.trin
-        end: \s*((\1)(?!\1))
+        end: \s*((\1)(?!"+))
         captures:
           1: {name: punctuation.definition.string.trin}
         patterns:
@@ -723,12 +721,12 @@ repository:
           4: {name: fenced_code.block.language.trin}
           5:
             patterns:
-              - include: "#comments"
+              - include: "#line-comments"
               - match: .+
                 name: invalid.illegal.expected-comment-or-newline.trin
         end: ^(?=\S)|(?!\G)
         patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
+          - begin: ^((\s)+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.unquoted.block.trin
             patterns:
@@ -754,12 +752,12 @@ repository:
           4: {name: fenced_code.block.language.trin}
           5:
             patterns:
-              - include: "#comments"
+              - include: "#line-comments"
               - match: .+
                 name: invalid.illegal.syntax.trin
         end: ^(?=\S)|(?!\G)
         patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
+          - begin: ^((\s)+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.unquoted.plain.in.trin
             patterns:
@@ -1034,12 +1032,12 @@ repository:
           4: {name: keyword.other.flag.trin}
           5:
             patterns:
-              - include: "#comments"
+              - include: "#line-comments"
               - match: .+
                 name: invalid.illegal.expected-comment-or-newline.trin
         end: ^(?=\S)|(?!\G)
         patterns:
-          - begin: ^((\p{Zs})+)(?!\2)
+          - begin: ^((\s)+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.unquoted.plain.out.trin
             patterns:
@@ -1841,6 +1839,11 @@ repository:
 
   comments:
     patterns:
+      - include: "#block-comments"
+      - include: "#line-comments"
+
+  block-comments:
+    patterns:
       - begin: \s*((/\+\+))
         end: (\s*(\+/))
         name: comment.block.documentation.nested.trin
@@ -1877,6 +1880,9 @@ repository:
           2: {name: punctuation.definition.comment.trin}
         patterns:
           - include: text.html.markdown#inline
+
+  line-comments:
+    patterns:
       - begin: ((^\s*)|\s*)((//=))
         end: \s*$
         name: comment.line.special.trin
@@ -1947,35 +1953,34 @@ repository:
         patterns:
           - include: text.html.markdown#inline
 
-    repository:
-      nested-block-jsdoc:
-        begin: (/\+\+)\s*
-        end: \s*(\+/)
-        name: comment.block.documentation.nested.trin
-        captures:
-          1: {name: punctuation.definition.comment.trin}
-        patterns:
-          - include: "#jsdoc"
-          - include: text.html.markdown#inline
-          - include: "#nested-block-jsdoc"
-      nested-block:
-        begin: (/\+)\s*
-        end: \s*(\+/)
-        name: comment.block.nested.trin
-        captures:
-          1: {name: punctuation.definition.comment.trin}
-        patterns:
-          - include: text.html.markdown#inline
-          - include: "#nested-block"
-      nested-special:
-        begin: (/\+)\s*
-        end: \s*(\+/)
-        captures:
-          1: {name: punctuation.definition.comment.trin}
-        patterns:
-          - include: "#jsdoc"
-          - include: text.html.markdown#inline
-          - include: "#nested-special"
+  nested-block-jsdoc:
+    begin: (/\+\+)\s*
+    end: \s*(\+/)
+    name: comment.block.documentation.nested.trin
+    captures:
+      1: {name: punctuation.definition.comment.trin}
+    patterns:
+      - include: "#jsdoc"
+      - include: text.html.markdown#inline
+      - include: "#nested-block-jsdoc"
+  nested-block:
+    begin: (/\+)\s*
+    end: \s*(\+/)
+    name: comment.block.nested.trin
+    captures:
+      1: {name: punctuation.definition.comment.trin}
+    patterns:
+      - include: text.html.markdown#inline
+      - include: "#nested-block"
+  nested-special:
+    begin: (/\+)\s*
+    end: \s*(\+/)
+    captures:
+      1: {name: punctuation.definition.comment.trin}
+    patterns:
+      - include: "#jsdoc"
+      - include: text.html.markdown#inline
+      - include: "#nested-special"
 
   calls:
     patterns:
@@ -2674,7 +2679,15 @@ repository:
                 name: punctuation.definition.block.sequence.item.trin
 
         patterns:
-          - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s*|[({\[]\s*|\b(?:var|let|const)\b\s*)(\#\{)\s*
+          - begin: |
+              (?x)
+              \s*(?<=
+              |^\s*
+              |[({\[.,:;]\s*
+              |[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+\s*
+              |\b(?:var|let|const)\b\s*
+              )
+              (\#\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.mapping.trin}
@@ -2683,7 +2696,15 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s*|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{)\s*
+          - begin: |
+              (?x)
+              \s*(?<=
+              |^\s*
+              |[({\[.,:;]\s*
+              |[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+\s*
+              |\b(?:var|let|const)\b\s*
+              )
+              (\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.dictionary.trin}
@@ -2827,7 +2848,6 @@ repository:
       - include: "#params-clause"
       - include: "#declarations"
       - include: "#type-keywords"
-      - include: "#modifier-keywords"
       - include: "#type-names"
       - include: "#custom-types"
       - include: "#type-brackets"
@@ -3367,8 +3387,28 @@ repository:
   params-clause:
     begin: |
       (?x)
-      (?<=(?:\#?[({\[]|:\s+|\b(?:#keywords
-      (?:re)?do|equals?|[io]nto|select|where|when|case
+      (?<=(?:^\s*|\#?[({\[]\s*|(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s+|\b(?:#keywords
+      in|of|as|is|new|infer|unset
+      |typeof|nameof|sizeof|pairof|keyof|valueof|instanceof
+      |length|delete|to|til|thru|at|by
+      |n?and|x?n?or|not|parallel|series|spawn|discard
+      |def|func?|function|proc|process|macro
+      |let|va[rl]|const|declare
+      |class|given|enum|procedure
+      |project|describe|protocol|member|extend|fragment|interface|struct
+      |module|package|namespace|object|record|label
+      |raw|data|query|schema|style|component|trait|element|alias|type
+      |if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard
+      |for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat|do|redo
+      |switch|case|fail|default|match|when|pass|fallthru
+      |try|retry|throw|raise|catch|except|rescue|finally
+      |with|ref|[dr]efer|show|hide|enter|exit
+      |then|begin|end|debug|check|assert
+      |break|continue|halt|skip|fixed|lock
+      |(?:return|give|await|yield|throw|raise)s?
+      |(?:im|ex)port|show|hide|open|close
+      |from|where|join|equals?|[io]nto|order
+      |select|group|use|using
       |(?:\b(?:fold|scan)\b)\s*(?:\b(?:left|right)\b)?\s*(?:\b(?:by|while|until|with)\b)?
       |(?:\b(?:take|drop)\b)\s*(?:\b(?:left|right|init|head|tail|last)\b)?\s*(?:\b(?:by|while|until|with)\b)?
       )\b)\s*)
@@ -3814,7 +3854,7 @@ repository:
             name: punctuation.definition.block.sequence.item.trin
 
     patterns:
-      - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s*|[({\[]\s*|\b(?:var|let|const)\b\s*)(\#\{)\s*
+      - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s*|[({\[]\s*|^\s*|\b(?:var|let|const)\b\s*)(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.trin}
@@ -3822,7 +3862,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s+|[({\[]\s*|\b(?:var|let|const)\b\s*)(\{)\s*
+      - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s*|[({\[]\s*|^\s*|\b(?:var|let|const)\b\s*)(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
@@ -4020,7 +4060,7 @@ repository:
           |vAlign|value|valueType|vendor|vendorSub|version|visibility|vspace|whiteSpace|width|X[MS]LDocument|zIndex)
           \b\s*
         name: support.variable.property.dom.js
-      - match: (?x)(?<=\.|::)\s*\b (module|exports|id|filename|loaded|parent|children) \b\s*
+      - match: (?x)(?<=\.|::)\s*\b(module|exports|id|filename|loaded|parent|children)\b\s*
         name: support.type.object.module.js
 
   named-chars-database:
