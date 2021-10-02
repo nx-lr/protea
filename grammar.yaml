@@ -66,7 +66,7 @@ define:
     \b(?:# don't match keywords
     in|of|as|is|out|new|infer|unset
     |typeof|nameof|sizeof
-    |keyof|valof|pairof|instof
+    |keyof|valueof|pairof|instof
     |len|del|to|til|till|thru|by
 
     |var|val|let|glo|loc|const|def|fun|func
@@ -93,7 +93,7 @@ define:
     \b(?:# don't match keywords
     in|of|as|is|out|new|infer|unset
     |typeof|nameof|sizeof
-    |keyof|valof|pairof|instof
+    |keyof|valueof|pairof|instof
     |len|del|to|til|till|thru|by
 
     |var|val|let|glo|loc|const|def|fun|func
@@ -162,7 +162,7 @@ repository:
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
       in|of|as|is|out|new|infer|unset
       |typeof|nameof|sizeof
-      |keyof|valof|pairof|instof
+      |keyof|valueof|pairof|instof
       |len|del|to|til|till|thru|by
 
       |var|val|let|glo|loc|const|def|fun|func
@@ -1800,7 +1800,7 @@ repository:
               - include: "#jsdoc-name-scopes"
       jsdoc-namepath-scopes:
         patterns:
-          - match: \s*\b(as)\b\s*(?=[\p{Pc}\p{L}])
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b\s*(?=[\p{Pc}\p{L}])
             captures:
               1: {name: keyword.as.jsdoc}
           - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}]\w*))(?=[\s\-~.#]|$)
@@ -1992,7 +1992,7 @@ repository:
           \b(?:# don't match keywords
           in|of|as|is|out|new|infer|unset
           |typeof|nameof|sizeof
-          |keyof|valof|pairof|instof
+          |keyof|valueof|pairof|instof
           |len|del|to|til|till|thru|by
 
           |var|val|let|glo|loc|const|def|fun|func
@@ -2018,7 +2018,7 @@ repository:
           \b(?:# don't match keywords
           in|of|as|is|out|new|infer|unset
           |typeof|nameof|sizeof
-          |keyof|valof|pairof|instof
+          |keyof|valueof|pairof|instof
           |len|del|to|til|till|thru|by
 
           |var|val|let|glo|loc|const|def|fun|func
@@ -2050,7 +2050,7 @@ repository:
           \b(?:# don't match keywords
           in|of|as|is|out|new|infer|unset
           |typeof|nameof|sizeof
-          |keyof|valof|pairof|instof
+          |keyof|valueof|pairof|instof
           |len|del|to|til|till|thru|by
 
           |var|val|let|glo|loc|const|def|fun|func
@@ -2078,7 +2078,7 @@ repository:
           \b(?:# don't match keywords
           in|of|as|is|out|new|infer|unset
           |typeof|nameof|sizeof
-          |keyof|valof|pairof|instof
+          |keyof|valueof|pairof|instof
           |len|del|to|til|till|thru|by
 
           |var|val|let|glo|loc|const|def|fun|func
@@ -2439,7 +2439,7 @@ repository:
               \b(?:# don't match keywords
               in|of|as|is|out|new|infer|unset
               |typeof|nameof|sizeof
-              |keyof|valof|pairof|instof
+              |keyof|valueof|pairof|instof
               |len|del|to|til|till|thru|by
 
               |var|val|let|glo|loc|const|def|fun|func
@@ -2473,7 +2473,7 @@ repository:
                   \b(?:# don't match keywords
                   in|of|as|is|out|new|infer|unset
                   |typeof|nameof|sizeof
-                  |keyof|valof|pairof|instof
+                  |keyof|valueof|pairof|instof
                   |len|del|to|til|till|thru|by
 
                   |var|val|let|glo|loc|const|def|fun|func
@@ -2582,7 +2582,7 @@ repository:
       \b(?:# don't match keywords
       in|of|as|is|out|new|infer|unset
       |typeof|nameof|sizeof
-      |keyof|valof|pairof|instof
+      |keyof|valueof|pairof|instof
       |len|del|to|til|till|thru|by
 
       |var|val|let|glo|loc|const|def|fun|func
@@ -3430,7 +3430,7 @@ repository:
       (?<=(?:^\s*|\#?[({\[]\s*|(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s+|\b(?:#keywords
       in|of|as|is|out|new|infer|unset
       |typeof|nameof|sizeof
-      |keyof|valof|pairof|instof
+      |keyof|valueof|pairof|instof
       |len|del|to|til|till|thru|by
 
       |var|val|let|glo|loc|const|def|fun|func
@@ -3645,21 +3645,21 @@ repository:
         beginCaptures:
           1: {name: keyword.operator.expression.$1.trin}
         patterns:
-          - match: \s*([\p{Pc}\p{L}]\w*)
+          - match: *entity-name
             name: entity.name.instance.trin
           - include: "#block-entities"
 
       type-clause:
         patterns:
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b([ia]s|instanceof)\b
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(is|as)\b
             end: (?=.)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.trin}
             patterns:
               - include: "#types"
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(type|alias)\b
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(type)\b
             end: (?=.)|$
             beginCaptures:
               1: {name: keyword.other.typedef.trin}
@@ -3668,16 +3668,9 @@ repository:
                 captures:
                   1: {name: keyword.operator.assignment.trin}
               - include: "#types"
-          - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b((?:return|give|await|yield|throw|raise)s)\b
-            end: (?=.)|$
-            beginCaptures:
-              1: {name: keyword.modifier.trin}
-            patterns:
-              - include: "#types"
 
       case-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(case|fail|default)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(case|default)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         beginCaptures:
           1: {name: keyword.control.switch.trin}
@@ -3686,7 +3679,7 @@ repository:
           - include: $self
 
       catch-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(try|retry|catch|except|rescue|finally)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(try|retry|throw|catch|finally)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         name: meta.catch.trin
         beginCaptures:
@@ -3697,17 +3690,17 @@ repository:
             captures:
               1: {name: punctuation.definition.expression.trin}
             patterns:
-              - match: \s*\b(as)\b
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b
                 name: keyword.control.error.trin
               - include: "#code-block"
               - include: $self
-          - match: \s*\b(as)\b
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b
             name: keyword.control.error.trin
           - include: "#code-block"
           - include: $self
 
       thread-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(parallel|series|spawn|discard|fixed|lock)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(parallel|series|spawn|discard|fixed|lock)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         name: meta.thread.trin
         beginCaptures:
@@ -3718,11 +3711,11 @@ repository:
             captures:
               1: {name: punctuation.definition.expression.trin}
             patterns:
-              - match: \s*\b(as)\b
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b
                 name: keyword.control.thread.trin
               - include: "#code-block"
               - include: $self
-          - match: \s*\b(as)\b
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b
             name: keyword.control.thread.trin
           - include: "#code-block"
           - include: $self
@@ -3738,7 +3731,7 @@ repository:
           - include: $self
 
       for-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(for\s*(?:each)?|each|repeat\s*\b\s*(?:while|until)?|while|until|repeat)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(for|each|loop|while|until|from)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         name: meta.for.trin
         beginCaptures:
@@ -3759,7 +3752,7 @@ repository:
           - include: $self
 
       if-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(if|else\s*(?:if|unless)?|els?if|ell?ess|unless|guard)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(if|lest|then|elif|eles|else)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         name: meta.if.trin
         beginCaptures:
@@ -3769,7 +3762,7 @@ repository:
           - include: $self
 
       match-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(match)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(match|otherwise)\b
         end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
         name: meta.match.trin
         beginCaptures:
@@ -3814,7 +3807,7 @@ repository:
           1: {name: keyword.control.with.trin}
         patterns:
           - &with-clause-keywords
-            match: \s*\b(as)\b
+            match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b
             name: keyword.control.with.trin
           - begin: \s*(\()
             end: \s*(\))
