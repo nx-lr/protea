@@ -21,9 +21,11 @@ const styles = <StyleSheet #{
 export default element App {
   def main -> (
     <View style=$styles.container>
-      <Text>To share a photo from your phone with a friend,
-      just press the button below!</Text>
-    </View>
+      <Text>
+        To share a photo from your phone with a friend,
+        just press the button below!
+      </>
+    </>
   );
 };
 ```
@@ -76,6 +78,14 @@ class App {
 }
 ```
 
+You would not need to use semicolons to terminate statements, or commas to separate statements when the next statement is on the following line. Lines are joined if the first token of the next l is a keyword or infix operator.
+
+```dart
+[1
+2
+3] == [1, 2, 3] //= true
+```
+
 Minor differences from TypeScript include:
 
 - Class names must be written in `PascalCase`, while function/method, property and variable names are written either in `camelCase` or `snake_case`.
@@ -87,89 +97,46 @@ Minor differences from TypeScript include:
 
 ## Language Ideas
 
-Fantom supports the same primitive literals as Java or C#, plus some that are typically found in higher level scripting languages:
+Trinity supports the same primitive literals as most other languages, including those from higher-level scripting languages:
 
 ```dart
-null; void // aliases for each other
+null; void // null and undefined
 true; false // boolean
-
-/* INTEGERS */
-nan; infinity // special float constants
-
 16777216 // integer
 1^+40 // integer with exponential part
 1_10011_101 // integer, can use _ as separator
 1:u // unsigned integer
-1.1 // floating point
-1.1:f32 // float with type suffix
-1.1*3 // float with repeating digit
-1.1=1 // float with significant figures
-
-40b10_10_10 // arbitrary base
-
-// base 2, 4, 6, 8, 12, 16
-0b10; 0q10; 0s10; 0o10; 0z10; 0x10
-
-/* STRINGS */
-// empty string
-'', ""
-
-// strings can be surrounded by as many quotes
-// of the same type as possible
-'''block string'''
-"""""
-block-string
-"""""
-
-// double quoted strings allow escapes, single ones do not
-// escapes are case-insensitive
-"hello\nworld"
-// to escape "'" in a "'"-quoted string, double it
-'x''x'
-
-// backslash unquoted strings (YAML inspired)
-\ // empty string
-[\this, \is, \cool]
-\spaces\ must\ be\ escaped // with a backslash
-\|
-  block strings are so cool
-\>
-  this one allows escapes
-
-// same as numeric prefixes above, but substituting initial 0 with \
-"\o377\255\s1104\z194" == "\xff\xff\xff\xff"
-
-// string interpolation / format specifiers
-"$x + $y = ${x ++ y}%d"
-// longhand for above
-x.string! ++ " + " ++ y.string! ++ " = " ++ (x ++ y).string!
-
-// Experimental: locale interpolation
-"$<fwt::err.name>"
-"$<fileNotFound='The file was not found'>"
-
-// All versions
-`regular expression
-  (?i: PCRE compliant)
-  // can allow comments and free spacing
-`flag
-
+0b0; 0q0; 0s0; 0o0; 0z0; 0x0 // base 2, 4, 6, 8, 12, 16
+1.1:i32 // with type suffix
+1.1*1 // with repeating block
+1.1=1 // with significant figures
+nan; infinity // special float constants
+"Hello\nWorld" // escaped string
+'C:\Windows' // raw string
+\string // backslash string
+\| // raw block string
+\> // escaped block string
+''; ""; \ // empty string
+`(?:)` // regular expression
 \< // block regex
-  ^ (?<scheme> [^:/?]+ ) :\// // aka protocol
-    (?<host>   [^/?]+  )      // domain name/IP
-    (?<path>   [^?]*   ) \\?? // optional path
-    (?<query>  .*      )      // optional query
-
-<div></div> // JSX
-<div x=x y=10></div> // JSX
+<div>Hello World!</div> // JSX
+[0, 1, 2] // list
+{1: "one", 2: "two"} // map
+:symbol // symbol
+: Type // type
+: Slot[Literal] // slot
+set [x]; [x] as set // set
+|x, y| x + y // function
 ```
 
-You would not need to use semicolons to terminate statements, or commas to separate statements when the next statement is on the following line. Lines are joined if the first token of the next l is a keyword or infix operator.
+There is no need to put `()` on a map literal unless it is
+
+Blocks are literal too, are they?
 
 ```dart
-[1
-2
-3] == [1, 2, 3] //= true
+do {}
+def() {}
+class {}
 ```
 
 #### Comments
