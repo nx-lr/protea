@@ -2012,93 +2012,11 @@ repository:
           )
           [\p{Pc}\p{L}]\w*
           )
-          \b\s+
-          (?=
-          (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
-          \b(?:# don't match keywords
-          in|of|as|is|out|new|infer|unset
-          |typeof|nameof|sizeof
-          |keyof|valueof|pairof|instof
-          |len|del|to|til|till|thru|by
-
-          |var|val|let|glo|loc|const|def|fun|func
-          |class|enum|mod|pkg|inter|struct|obj|rec
-          |frag|data|trait|proto|proc|macro|type|given
-          |raw|style|comp|elem|decl
-
-          |if|lest|then|elif|eles|else
-          |for|each|loop|while|until|from
-          |do|redo|try|retry|throw|catch|finally
-          |switch|case|default|match|when|otherwise
-          |parallel|series|spawn|destroy|fixed|lock
-          |break|continue|return|await|label|yield|goto
-          |import|export|expose|using
-          |debug|check|assert
-          )\b
-          )
-          [\w]+|\[(?!<)|<\|(?!>)(?=\|*)|<\+(?!>)(?=\+*))
-        captures:
-          1: {patterns: [include: "#function-entities"]}
-      - comment: |
-          Function calls
-          For testing only:
-          for let x int|str, y int in list arr 'json' if x % 2 < 3
-        match: |
-          (?x)\s*\b
-          (
-          (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
-          \b(?:# don't match keywords
-          in|of|as|is|out|new|infer|unset
-          |typeof|nameof|sizeof
-          |keyof|valueof|pairof|instof
-          |len|del|to|til|till|thru|by
-
-          |var|val|let|glo|loc|const|def|fun|func
-          |class|enum|mod|pkg|inter|struct|obj|rec
-          |frag|data|trait|proto|proc|macro|type|given
-          |raw|style|comp|elem|decl
-
-          |if|lest|then|elif|eles|else
-          |for|each|loop|while|until|from
-          |do|redo|try|retry|throw|catch|finally
-          |switch|case|default|match|when|otherwise
-          |parallel|series|spawn|destroy|fixed|lock
-          |break|continue|return|await|label|yield|goto
-          |import|export|expose|using
-          |debug|check|assert
-          )\b
-          )
-          [\p{Pc}\p{L}]\w*
-          )
           \b
           (?=
-          !(?:\.=?)?\s*|
-          \s+[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*
-          (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
-          \b(?:# don't match keywords
-          in|of|as|is|out|new|infer|unset
-          |typeof|nameof|sizeof
-          |keyof|valueof|pairof|instof
-          |len|del|to|til|till|thru|by
-
-          |var|val|let|glo|loc|const|def|fun|func
-          |class|enum|mod|pkg|inter|struct|obj|rec
-          |frag|data|trait|proto|proc|macro|type|given
-          |raw|style|comp|elem|decl
-
-          |if|lest|then|elif|eles|else
-          |for|each|loop|while|until|from
-          |do|redo|try|retry|throw|catch|finally
-          |switch|case|default|match|when|otherwise
-          |parallel|series|spawn|destroy|fixed|lock
-          |break|continue|return|await|label|yield|goto
-          |import|export|expose|using
-          |debug|check|assert
-          )\b
-          )
-          [\w]+|\[<|
           (?:[!?~]?\.=?|[?!:]:=?|->)?\s*\(|
-          (?:[!?~]?\.=?|[?!:]:=?|->)?\s+['"`\\\[]
+          (?:[!?~]?\.=?|[?!:]:=?|->)?\s+['"`\\\[]|
+          (?:[!?~]?\.=?|[?!:]:=?|->)?\s+<[\p{Pc}\p{L}]
           )
         captures:
           1: {patterns: [include: "#function-entities"]}
@@ -3113,188 +3031,99 @@ repository:
               - include: $self
 
       query-expression:
-        begin: >-
+        begin: |
           (?x)
-
-          \b(from)\b\s*
-
-          (?<type_name>
-            (?:
-              (?:
-                (?:(?<identifier>@?[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)? # alias-qualification
-                (?<name_and_type_args> # identifier + type arguments (if any)
-                  \g<identifier>\s*
-                  (?<type_args>\s*<(?:[^<>]|\g<type_args>)+>\s*)?
-                )
-                (?:\s*\.\s*\g<name_and_type_args>)* | # Are there any more names being dotted into?
-                (?<tuple>\s*\((?:[^\(\)]|\g<tuple>)+\))
-              )
-              (?:\s*\?\s*)? # nullable suffix?
-              (?:\s* # array suffix?
-                \[
-                  (?:\s*,\s*)* # commata for multi-dimensional arrays
-                \]
-                \s*
-                (?:\?)? # arrays can be nullable reference types
-                \s*
-              )*
-            )
-          )?
-
-          \s+(\g<identifier>)\b\s*
-
-          \b(in)\b\s*
+          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(from)\b\s*
+          (.*?)
+          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(in|of)\b\s*
         beginCaptures:
-          1: {name: keyword.query.from.cs}
-          2:
-            patterns:
-              - include: "#type"
-          7: {name: entity.name.variable.range-variable.cs}
-          8: {name: keyword.query.in.cs}
-        end: (?=;|\))
+          1: {name: keyword.query.trin}
+          2: {patterns: [include: $self]}
+          3: {name: keyword.query.trin}
+        end: (?=.)|$
         patterns:
           - include: "#query-body"
           - include: $self
 
       query-body:
         patterns:
-          - include: "#let-clause"
           - include: "#where-clause"
           - include: "#join-clause"
           - include: "#orderby-clause"
           - include: "#select-clause"
           - include: "#group-clause"
-      let-clause:
-        begin: |-
-          (?x)
-          \b(let)\b\s*
-          (@?[_[:alpha:]][_[:alnum:]]*)\b\s*
-          (=)\s*
-        beginCaptures:
-          1: {name: keyword.query.let.cs}
-          2: {name: entity.name.variable.range-variable.cs}
-          3: {name: keyword.operator.assignment.cs}
-        end: (?=;|\))
-        patterns:
-          - include: "#query-body"
-          - include: $self
+
       where-clause:
-        begin: |-
-          (?x)
-          \b(where)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(where)\b\s*
         beginCaptures:
-          1: {name: keyword.query.where.cs}
-        end: (?=;|\))
+          1: {name: keyword.query.trin}
+        end: (?=.)|$
         patterns:
           - include: "#query-body"
           - include: $self
+
       join-clause:
-        begin: >-
+        begin: |
           (?x)
-
-          \b(join)\b\s*
-
-          (?<type_name>
-            (?:
-              (?:
-                (?:(?<identifier>@?[_[:alpha:]][_[:alnum:]]*)\s*\:\:\s*)? # alias-qualification
-                (?<name_and_type_args> # identifier + type arguments (if any)
-                  \g<identifier>\s*
-                  (?<type_args>\s*<(?:[^<>]|\g<type_args>)+>\s*)?
-                )
-                (?:\s*\.\s*\g<name_and_type_args>)* | # Are there any more names being dotted into?
-                (?<tuple>\s*\((?:[^\(\)]|\g<tuple>)+\))
-              )
-              (?:\s*\?\s*)? # nullable suffix?
-              (?:\s* # array suffix?
-                \[
-                  (?:\s*,\s*)* # commata for multi-dimensional arrays
-                \]
-                \s*
-                (?:\?)? # arrays can be nullable reference types
-                \s*
-              )*
-            )
-          )?
-
-          \s+(\g<identifier>)\b\s*
-
-          \b(in)\b\s*
+          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(join)\b\s*
+          (.*?)
+          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(in|of)\b\s*
         beginCaptures:
-          1: {name: keyword.query.join.cs}
-          2:
-            patterns:
-              - include: "#type"
-          7: {name: entity.name.variable.range-variable.cs}
-          8: {name: keyword.query.in.cs}
-        end: (?=;|\))
+          1: {name: keyword.query.trin}
+          2: {patterns: [include: $self]}
+          3: {name: keyword.query.trin}
+        end: (?=.)|$
         patterns:
-          - include: "#join-on"
-          - include: "#join-equals"
-          - include: "#join-into"
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(on|equals|into)\b\s*
+            name: keyword.query.trin
           - include: "#query-body"
           - include: $self
-      join-on:
-        match: \b(on)\b\s*
-        captures:
-          1: {name: keyword.query.on.cs}
-      join-equals:
-        match: \b(equals)\b\s*
-        captures:
-          1: {name: keyword.query.equals.cs}
-      join-into:
-        match: |-
-          (?x)
-          \b(into)\b\s*
-          (@?[_[:alpha:]][_[:alnum:]]*)\b\s*
-        captures:
-          1: {name: keyword.query.into.cs}
-          2: {name: entity.name.variable.range-variable.cs}
+
       orderby-clause:
-        begin: \b(orderby)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(orderby)\b\s*
         beginCaptures:
-          1: {name: keyword.query.orderby.cs}
-        end: (?=;|\))
+          1: {name: keyword.query.trin}
+        end: (?=.)|$
         patterns:
           - include: "#ordering-direction"
           - include: "#query-body"
           - include: $self
-          - include: "#punctuation-comma"
+
       ordering-direction:
-        match: \b(?:(ascending)|(descending))\b
+        match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:(ascending)|(descending))\b
         captures:
-          1: {name: keyword.query.ascending.cs}
-          2: {name: keyword.query.descending.cs}
+          1: {name: keyword.query.trin}
+          2: {name: keyword.query.trin}
       select-clause:
-        begin: \b(select)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(select)\b\s*
         beginCaptures:
-          1: {name: keyword.query.select.cs}
-        end: (?=;|\))
+          1: {name: keyword.query.trin}
+        end: (?=.)|$
         patterns:
           - include: "#query-body"
           - include: $self
+
       group-clause:
-        begin: \b(group)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(group)\b\s*
         beginCaptures:
-          1: {name: keyword.query.group.cs}
-        end: (?=;|\))
+          1: {name: keyword.query.trin}
+        end: (?=.)|$
         patterns:
           - include: "#group-by"
           - include: "#group-into"
           - include: "#query-body"
           - include: $self
+
       group-by:
-        match: \b(by)\b\s*
+        match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(by)\b\s*
         captures:
-          1: {name: keyword.query.by.cs}
+          1: {name: keyword.query.trin}
       group-into:
         match: |-
           (?x)
-          \b(into)\b\s*
-          (@?[_[:alpha:]][_[:alnum:]]*)\b\s*
+          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(into)\b\s*
         captures:
-          1: {name: keyword.query.into.cs}
-          2: {name: entity.name.variable.range-variable.cs}
+          1: {name: keyword.query.trin}
 
   declarations:
     patterns:
