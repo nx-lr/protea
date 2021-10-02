@@ -2922,22 +2922,10 @@ repository:
       \s*)*)
       (?=\s*\b
       (?:
-      va[rl]|let|const
-      |class|extend
-      |given
-      |enum|procedure
-      |fragment|struct
-      |def|func?|function|proc|process|macro
-      |interface|schema
-      |module|package
-      |namespace
-      |object|record
-      |protocol|member
-      |project|attribute
-      |raw
-      |data|query
-      |style|component
-      |trait|element
+      var|val|let|glo|loc|const|def|fun|func
+      |class|enum|mod|pkg|inter|struct|obj|rec
+      |frag|data|trait|proto|proc|macro|type|given
+      |raw|style|comp|elem|decl
       )\b
       )
     captures:
@@ -3116,7 +3104,7 @@ repository:
         beginCaptures:
           1: {name: keyword.control.flow.trin}
         patterns:
-          - match: \s*([\p{Pc}\p{L}]\w*)\s*
+          - match: *entity-name
             name: constant.other.label.trin
 
       module-expression:
@@ -3212,7 +3200,7 @@ repository:
             name: storage.type.function.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.function.trin
       class:
         applyEndPatternLast: 1
@@ -3223,7 +3211,7 @@ repository:
             name: storage.type.class.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.class.trin
       enumeration:
         applyEndPatternLast: 1
@@ -3234,7 +3222,7 @@ repository:
             name: storage.type.enumeration.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.enumeration.trin
       module:
         applyEndPatternLast: 1
@@ -3245,7 +3233,7 @@ repository:
             name: storage.type.module.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.module.trin
       package:
         applyEndPatternLast: 1
@@ -3256,7 +3244,7 @@ repository:
             name: storage.type.package.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.package.trin
       interface:
         applyEndPatternLast: 1
@@ -3267,7 +3255,7 @@ repository:
             name: storage.type.interface.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.interface.trin
       structure:
         applyEndPatternLast: 1
@@ -3278,7 +3266,7 @@ repository:
             name: storage.type.structure.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.structure.trin
       object:
         applyEndPatternLast: 1
@@ -3289,7 +3277,7 @@ repository:
             name: storage.type.object.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.object.trin
       record:
         applyEndPatternLast: 1
@@ -3300,7 +3288,7 @@ repository:
             name: storage.type.record.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.record.trin
       fragment:
         applyEndPatternLast: 1
@@ -3311,7 +3299,7 @@ repository:
             name: storage.type.fragment.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.fragment.trin
       data:
         applyEndPatternLast: 1
@@ -3322,7 +3310,7 @@ repository:
             name: storage.type.data.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.data.trin
       trait:
         applyEndPatternLast: 1
@@ -3333,7 +3321,7 @@ repository:
             name: storage.type.trait.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.trait.trin
       protocol:
         applyEndPatternLast: 1
@@ -3344,7 +3332,7 @@ repository:
             name: storage.type.protocol.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.protocol.trin
       procedure:
         applyEndPatternLast: 1
@@ -3355,7 +3343,7 @@ repository:
             name: storage.type.procedure.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.procedure.trin
       macro:
         applyEndPatternLast: 1
@@ -3366,7 +3354,7 @@ repository:
             name: storage.type.macro.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.macro.trin
       type:
         applyEndPatternLast: 1
@@ -3377,7 +3365,7 @@ repository:
             name: storage.type.type.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.type.trin
       constraint:
         applyEndPatternLast: 1
@@ -3388,7 +3376,7 @@ repository:
             name: storage.type.constraint.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.constraint.trin
       raw:
         applyEndPatternLast: 1
@@ -3399,7 +3387,7 @@ repository:
             name: storage.type.raw.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.raw.trin
       style:
         applyEndPatternLast: 1
@@ -3410,7 +3398,7 @@ repository:
             name: storage.type.style.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.style.trin
       component:
         applyEndPatternLast: 1
@@ -3421,7 +3409,7 @@ repository:
             name: storage.type.component.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.component.trin
       element:
         applyEndPatternLast: 1
@@ -3432,7 +3420,7 @@ repository:
             name: storage.type.element.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.element.trin
       extension:
         applyEndPatternLast: 1
@@ -3443,7 +3431,7 @@ repository:
             name: storage.type.extension.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.extension.trin
       implementation:
         applyEndPatternLast: 1
@@ -3454,7 +3442,7 @@ repository:
             name: storage.type.implementation.trin
         patterns:
           - include: "#block-entities"
-          - match: "*entity-name"
+          - match: *entity-name
             name: entity.name.implementation.trin
 
   params-clause:
