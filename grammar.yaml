@@ -3040,7 +3040,7 @@ repository:
           1: {name: keyword.query.trin}
           2: {patterns: [include: $self]}
           3: {name: keyword.query.trin}
-        end: (?=.)|$
+        end: (?=[,;)\]}])
         patterns:
           - include: "#query-body"
           - include: $self
@@ -3049,7 +3049,7 @@ repository:
         patterns:
           - include: "#where-clause"
           - include: "#join-clause"
-          - include: "#orderby-clause"
+          - include: "#order-by-clause"
           - include: "#select-clause"
           - include: "#group-clause"
 
@@ -3057,7 +3057,7 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(where)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
-        end: (?=.)|$
+        end: (?=[,;)\]}])
         patterns:
           - include: "#query-body"
           - include: $self
@@ -3072,33 +3072,29 @@ repository:
           1: {name: keyword.query.trin}
           2: {patterns: [include: $self]}
           3: {name: keyword.query.trin}
-        end: (?=.)|$
+        end: (?=[,;)\]}])
         patterns:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(on|equals|into)\b\s*
             name: keyword.query.trin
           - include: "#query-body"
           - include: $self
 
-      orderby-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(orderby)\b\s*
+      order-by-clause:
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(order|sort)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
-        end: (?=.)|$
+        end: (?=[,;)\]}])
         patterns:
-          - include: "#ordering-direction"
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(asc|desc|by)\b\s*
+            name: keyword.query.trin
           - include: "#query-body"
           - include: $self
 
-      ordering-direction:
-        match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:(ascending)|(descending))\b
-        captures:
-          1: {name: keyword.query.trin}
-          2: {name: keyword.query.trin}
       select-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(select)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
-        end: (?=.)|$
+        end: (?=[,;)\]}])
         patterns:
           - include: "#query-body"
           - include: $self
@@ -3107,23 +3103,12 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(group)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
-        end: (?=.)|$
+        end: (?=[,;)\]}])
         patterns:
-          - include: "#group-by"
-          - include: "#group-into"
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(by|into)\b\s*
+            name: keyword.query.trin
           - include: "#query-body"
           - include: $self
-
-      group-by:
-        match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(by)\b\s*
-        captures:
-          1: {name: keyword.query.trin}
-      group-into:
-        match: |-
-          (?x)
-          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(into)\b\s*
-        captures:
-          1: {name: keyword.query.trin}
 
   declarations:
     patterns:
