@@ -81,7 +81,7 @@ define:
     |parallel|series|spawn|destroy|fixed|lock
     |break|continue|return|await|label|yield|goto
     |import|export|impose|expose|using
-    |debug|check|assert
+    |debug|check|assert|fallthru
     )\b
     )
     ([\p{Pc}\p{L}]\w*)
@@ -108,7 +108,7 @@ define:
     |parallel|series|spawn|destroy|fixed|lock
     |break|continue|return|await|label|yield|goto
     |import|export|impose|expose|using
-    |debug|check|assert
+    |debug|check|assert|fallthru
     )\b
     )
     ([\p{Pc}\p{L}]\w*)
@@ -176,7 +176,7 @@ repository:
       |parallel|series|spawn|destroy|fixed|lock
       |break|continue|return|await|label|yield|goto
       |import|export|impose|expose|using
-      |debug|check|assert
+      |debug|check|assert|fallthru
       )\b\s*
     name: invalid.illegal.keyword.trin
 
@@ -234,53 +234,53 @@ repository:
       - comment: Primitive data types
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          bool(ean)?|u?int|float|natural|ratio|real|imag|complex|number
-          |char|rune|string|symbol|regexp?|function|buffer|binary
+          bool|u?int|float|nat|rat|real|imag|comp|num
+          |char|rune|str|sym|regexp?|func|buf|bin
           |# numeric types
-          ([cifsun]|natural|ratio|u?int|real|imag|complex)
+          ([cifsun]|nat|rat|u?int|real|imag|comp)
           (8|16|32|64|128)
-          |[ci](half|float|double|decimal|octuple)
+          |[ci](half|float|double|deci|oct)
           )\b
         name: support.type.builtin.primitive.trin
       - comment: Constant/algebraic types
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          true|false|null|void|nan|infinity
+          true|false|null|void|nan|infin
           |any|empty|object|record|unit|mixed
-          |just|some|none|never|(im)?pure|channel
+          |just|some|none|never|(im)?pure|chan
           )\b
         name: support.type.builtin.trin
       - comment: Data structures
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          array|tuple|(?:mut)?(?:list|set|map)|dict|function
-          |process|sequence|generator|range|stack|heap|queue|tree|trie
+          array|tuple|(?:mut)?(?:list|set|map)|dict|func
+          |proc|seq|gen|range|stack|heap|queue|tree|trie
           )\b
         name: support.type.primitive.trin
       - comment: Primitive classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          Bool(ean)?|U?Int|Float|Natural|Ratio|Real|Imag|Complex|Number
-          |Char|Rune|String|Symbol|RegExp?|Function|Buffer|Binary
+          Bool|U?Int|Float|Nat|Rat|Real|Imag|Comp|Num
+          |Char|Rune|Str|Sym|RegExp?|Func|Buf|Bin
           |# Numeric Types
-          ([CIFSUN]|Natural|Ratio|U?Int|Real|Imag|Complex)
+          ([CIFSUN]|Nat|Rat|U?Int|Real|Imag|Comp)
           (8|16|32|64|128)
-          |[CI](Half|Float|Double|Decimal|Octuple)
+          |[CI](Half|Float|Double|Deci|Oct)
           )\b
         name: support.class.builtin.primitive.trin
       - comment: Constant/algebraic classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          True|False|Null|Void|NaN|Infinity
+          True|False|Null|Void|NaN|Infin
           |Any|Empty|Object|Record|Unit|Mixed
-          |Just|Some|None|Never|(Im)?pure|Channel
+          |Just|Some|None|Never|(Im)?pure|Chan
           )\b
         name: support.class.builtin.trin
       - comment: Data structure classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          Array|Tuple|(Mut)?(List|Set|Map)|Dict|Function
-          |Process|Sequence|Generator|Range|Stack|Heap|Queue|Tree|Trie
+          Array|Tuple|(Mut)?(List|Set|Map)|Dict|Func
+          |Proc|Seq|Gen|Range|Stack|Heap|Queue|Tree|Trie
           )\b
         name: support.class.primitive.trin
 
@@ -1994,7 +1994,7 @@ repository:
           |parallel|series|spawn|destroy|fixed|lock
           |break|continue|return|await|label|yield|goto
           |import|export|impose|expose|using
-          |debug|check|assert
+          |debug|check|assert|fallthru
           )\b
           )
           [\p{Pc}\p{L}]\w*
@@ -2357,7 +2357,7 @@ repository:
               |parallel|series|spawn|destroy|fixed|lock
               |break|continue|return|await|label|yield|goto
               |import|export|impose|expose|using
-              |debug|check|assert
+              |debug|check|assert|fallthru
               )\b
               )
               [\w]+
@@ -2391,7 +2391,7 @@ repository:
                   |parallel|series|spawn|destroy|fixed|lock
                   |break|continue|return|await|label|yield|goto
                   |import|export|impose|expose|using
-                  |debug|check|assert
+                  |debug|check|assert|fallthru
                   )\b
                   )
                   (?:
@@ -2500,7 +2500,7 @@ repository:
       |parallel|series|spawn|destroy|fixed|lock
       |break|continue|return|await|label|yield|goto
       |import|export|impose|expose|using
-      |debug|check|assert
+      |debug|check|assert|fallthru
       )\b
       )
       (?:
@@ -2707,7 +2707,7 @@ repository:
 
   types:
     patterns:
-      - match: \s*(==?>|--?>|~~?>)
+      - match: \s*(==>|--?>|~~?>)
         name: keyword.operator.type.function.trin
       - match: \s*(<==|<--?|<~~?)
         name: keyword.operator.type.channel.trin
@@ -2931,18 +2931,19 @@ repository:
 
   expression-keywords:
     comment: expression keywords
-    match: |
-      (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(?:
-      (in|of|as|is|new|infer|typeof|nameof|sizeof|keyof|pairof|valueof)
-      |(len)|(del)|(to|til|thru|at|by)|(unset)|(instof)
-      )\b\s*
-    captures:
-      1: {name: keyword.operator.expression.$1.trin}
-      2: {name: keyword.operator.expression.length.trin}
-      3: {name: keyword.operator.expression.delete.trin}
-      4: {name: keyword.operator.expression.range.trin}
-      5: {name: keyword.operator.expression.void.trin}
-      6: {name: keyword.operator.expression.instanceof.trin}
+    patterns:
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of|as|is|new|infer|typeof|nameof|sizeof|keyof|pairof|valueof)\b\s*
+        name: keyword.operator.expression.$1.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(len)\b\s*
+        name: keyword.operator.expression.length.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(del)\b\s*
+        name: keyword.operator.expression.delete.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(to|til|till|thru|by)\b\s*
+        name: keyword.operator.expression.range.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unset)\b\s*
+        name: keyword.operator.expression.void.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(instof)\b\s*
+        name: keyword.operator.expression.instanceof.trin
 
   keywords:
     patterns:
@@ -2993,7 +2994,7 @@ repository:
 
       control-expression:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(halt|skip|break|continue|goto|label)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|continue|fallthru|label|goto)\b
         end: (?=.)|$
         beginCaptures:
           1: {name: keyword.control.flow.trin}
@@ -3404,7 +3405,7 @@ repository:
       |parallel|series|spawn|destroy|fixed|lock
       |break|continue|return|await|label|yield|goto
       |import|export|impose|expose|using
-      |debug|check|assert
+      |debug|check|assert|fallthru
       )\b)\s*)
       (\|)
       (?!\|)
