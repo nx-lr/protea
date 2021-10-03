@@ -2956,7 +2956,7 @@ repository:
       - include: "#module-expression"
       - include: "#control-expression"
       - include: "#query-expression"
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(let|va[rl]|const)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const|glo|loc)\b\s*
         name: storage.type.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(declare)\b\s*
         name: keyword.other.$1.trin
@@ -3030,11 +3030,7 @@ repository:
                 name: variable.other.readwrite.alias.trin
 
       query-expression:
-        begin: |
-          (?x)
-          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)\b\s*
-          (.*?)
-          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)\b\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
           2: {patterns: [include: $self]}
@@ -3055,11 +3051,7 @@ repository:
           - include: "#reduce-clause"
 
       join-clause:
-        begin: |
-          (?x)
-          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:inner|(?:full)\b\s*\bouter|left|right)?\b\s*\bjoin)\b\s*
-          (.*?)
-          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:inner|(?:full)\b\s*\bouter|left|right)?\b\s*\bjoin)\b\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
           2: {patterns: [include: $self]}
@@ -3519,7 +3511,7 @@ repository:
               \s*)*)
               (?=\s*\b
               (?:
-              def|func?|function|proc|process|macro
+              def|func?
               )\b
               )
             captures:
@@ -3591,7 +3583,7 @@ repository:
               \s*)*)
               (?=\s*\b
               (?:
-              def|func?|function|proc|process|macro
+              def|func?
               )\b
               )
             captures:
@@ -3840,10 +3832,16 @@ repository:
             name: punctuation.separator.mapping.trin
           - match: (?<!\s):(?!:)
             name: punctuation.separator.key-value.trin
-          - match: (?<=^|[({\[])\s*([*+-](?:\s+[*+-])*)
-            name: punctuation.definition.block.sequence.item.trin
     patterns:
-      - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s*|[({\[]\s*|^\s*|\b(?:var|let|const)\b\s*)(\#\{)\s*
+      - begin: \s*(?<=\b(?:var|val|let|const|glo|loc)\b\s*)(\#?\{)\s*
+        end: \s*(\})
+        captures:
+          1: {name: punctuation.definition.binding-pattern.object.trin}
+        patterns:
+          - include: "#labels"
+          - include: "#punctuation"
+          - include: $self
+      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+|^|[({\[])(?!=>)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.trin}
@@ -3851,7 +3849,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s*|[({\[]\s*|^\s*|\b(?:var|let|const)\b\s*)(\{)\s*
+      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+|^|[({\[])(?!=>)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
@@ -3886,7 +3884,7 @@ repository:
     repository:
       punctuation:
         patterns:
-          - match: (?<!:)(:)(?!:)
+          - match: (?<![\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)(:)(?![\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)
             captures:
               1: {name: punctuation.separator.slice.trin}
           - match: ","
