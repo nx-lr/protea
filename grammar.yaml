@@ -69,7 +69,7 @@ define:
     |keyof|valueof|pairof|instof
     |len|del|to|til|till|thru|by
 
-    |var|val|let|glo|loc|const|def|fun|func
+    |var|val|let|glo|loc|const|def|fn|fun|func
     |class|enum|mod|pkg|inter|struct|obj|rec
     |frag|data|trait|proto|proc|macro|type|given
     |raw|style|comp|elem|decl
@@ -96,7 +96,7 @@ define:
     |keyof|valueof|pairof|instof
     |len|del|to|til|till|thru|by
 
-    |var|val|let|glo|loc|const|def|fun|func
+    |var|val|let|glo|loc|const|def|fn|fun|func
     |class|enum|mod|pkg|inter|struct|obj|rec
     |frag|data|trait|proto|proc|macro|type|given
     |raw|style|comp|elem|decl
@@ -165,7 +165,7 @@ repository:
       |keyof|valueof|pairof|instof
       |len|del|to|til|till|thru|by
 
-      |var|val|let|glo|loc|const|def|fun|func
+      |var|val|let|glo|loc|const|def|fn|fun|func
       |class|enum|mod|pkg|inter|struct|obj|rec
       |frag|data|trait|proto|proc|macro|type|given
       |raw|style|comp|elem|decl
@@ -1995,7 +1995,7 @@ repository:
           |keyof|valueof|pairof|instof
           |len|del|to|til|till|thru|by
 
-          |var|val|let|glo|loc|const|def|fun|func
+          |var|val|let|glo|loc|const|def|fn|fun|func
           |class|enum|mod|pkg|inter|struct|obj|rec
           |frag|data|trait|proto|proc|macro|type|given
           |raw|style|comp|elem|decl
@@ -2039,7 +2039,7 @@ repository:
           ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}]\w*)
           )
-          (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
+          (?!\.\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
           |
           (?:# Regular variables
           (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
@@ -2089,7 +2089,7 @@ repository:
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
       )
-      (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
+      (?!\.\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
       |
       (?:# Regular variables
       (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
@@ -2358,7 +2358,7 @@ repository:
               |keyof|valueof|pairof|instof
               |len|del|to|til|till|thru|by
 
-              |var|val|let|glo|loc|const|def|fun|func
+              |var|val|let|glo|loc|const|def|fn|fun|func
               |class|enum|mod|pkg|inter|struct|obj|rec
               |frag|data|trait|proto|proc|macro|type|given
               |raw|style|comp|elem|decl
@@ -2392,7 +2392,7 @@ repository:
                   |keyof|valueof|pairof|instof
                   |len|del|to|til|till|thru|by
 
-                  |var|val|let|glo|loc|const|def|fun|func
+                  |var|val|let|glo|loc|const|def|fn|fun|func
                   |class|enum|mod|pkg|inter|struct|obj|rec
                   |frag|data|trait|proto|proc|macro|type|given
                   |raw|style|comp|elem|decl
@@ -2414,7 +2414,7 @@ repository:
                   ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
                   ([\p{Pc}\p{L}]\w*)
                   )
-                  (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
+                  (?!\.\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
                   |
                   (?<=[!?~]?\.=?|[?!:]:=?)(?<!\.+)
                   (?:# Properties (note all properties are by default, symbols)
@@ -2501,7 +2501,7 @@ repository:
       |keyof|valueof|pairof|instof
       |len|del|to|til|till|thru|by
 
-      |var|val|let|glo|loc|const|def|fun|func
+      |var|val|let|glo|loc|const|def|fn|fun|func
       |class|enum|mod|pkg|inter|struct|obj|rec
       |frag|data|trait|proto|proc|macro|type|given
       |raw|style|comp|elem|decl
@@ -2531,7 +2531,7 @@ repository:
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
       )
-      (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
+      (?!\.\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
       |
       (?:# Regular variables
       (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
@@ -2766,17 +2766,17 @@ repository:
     patterns: &function-params
       - include: "#clauses"
       - include: "#keywords"
-      - match: (?i)\s*\?[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
+      - match: (?i)\s*\?[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)]|\s*\|(?!\|))
         name: variable.parameter.optional.trin
-      - match: (?i)\s*\*[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
+      - match: (?i)\s*\*[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)]|\s*\|(?!\|))
         name: variable.parameter.spread.trin
-      - match: (?i)\s*[&~][\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
+      - match: (?i)\s*[&~][\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)]|\s*\|(?!\|))
         name: variable.parameter.name.trin
-      - match: (?i)\s*\%[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
+      - match: (?i)\s*\%[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)]|\s*\|(?!\|))
         name: variable.parameter.reference.trin
-      - match: (?i)\s*\$[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
+      - match: (?i)\s*\$[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)]|\s*\|(?!\|))
         name: variable.parameter.other.trin
-      - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
+      - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)]|\s*\|(?!\|))
         name: variable.parameter.trin
       - include: "$self"
 
@@ -2810,26 +2810,32 @@ repository:
   modifier-keywords:
     match: |
       (?x)
-      ((?:
-      \s*(?:
-      (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-      (?:# Access modifiers
-      public|private|protected|readonly|a?sync|inline|lazy|eager|weak|strong|transparent|transient|partial|whole
-      |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final|(?:im|ex)plicit|(?:in|ex)tern(?:al)?
-      # Function or method modifiers
-      |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mutable|pure)|local|global|native|opaque
-      |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
-      |# Function or method modifiers
-      (?:pre|in|post|suf|af|trans|interface)fix|
-      (?:u|bi|ter|)nary|oper
+      (
+      (?:
+      (?:
+      \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+      (?:
+      # access modifiers
+      pub|priv|prot|inline|final|mut|immut
+      |seal|abs|intern|extern|imp|exp
+
+      # concurrency modifiers
+      |a?sync|stat|dyn|lazy|eager|strong|weak
+      |vola|unsafe|unfix|bound|free
+
+      # property or method modifiers
+      |re|gen|oper|get|set
+      |prefix|suffix|infix|primary|unary
+      )
+      )\b\s*
       |# Decorators
-      @[\p{Pc}\p{L}]\w*
+      @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}])*\s*
+      )*
       )
-      )
-      \s*)*)
+
       (?=\s*\b
       (?:
-      var|val|let|glo|loc|const|def|fun|func
+      var|val|let|glo|loc|const|def|fn|fun|func
       |class|enum|mod|pkg|inter|struct|obj|rec
       |frag|data|trait|proto|proc|macro|type|given
       |raw|style|comp|elem|decl
@@ -2839,23 +2845,23 @@ repository:
       1:
         patterns: &modifier-keywords
           - match: |
-              (?x)\s*@[\p{Pc}\p{L}]\w*\s*
+              (?x)\s*@[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}])*\s*
             name: entity.name.class.decorator.trin
           - match: |
               (?x)\s*
               \s*\b
               (?:
               (# Access modifiers
-              public|private|protected|readonly|a?sync|inline|lazy|eager|weak|strong|transparent|transient|partial|whole
-              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final|(?:im|ex)plicit|(?:in|ex)tern(?:al)?
+              pub|priv|prot|inline|final|mut|immut
+              |seal|abs|intern|extern|imp|exp
               )|
               (# Function or method modifiers
-              [gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mutable|pure)|local|global|native|opaque
-              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
+              a?sync|stat|dyn|lazy|eager|strong|weak
+              |vola|unsafe|unfix|bound|free
               )|
               (# Property modifiers
-              (?:pre|in|post|suf|af|trans|interface)fix|
-              (?:u|bi|ter|)nary|oper
+              re|gen|oper|get|set
+              |prefix|suffix|infix|primary|unary
               )
               )\b\s*
             captures:
@@ -2865,7 +2871,7 @@ repository:
 
   declaration-keywords:
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func?|def)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def|fn|fun|func)\b\s*
         name: storage.type.function.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
         name: storage.type.class.trin
@@ -3150,7 +3156,7 @@ repository:
     repository:
       function:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func?|def)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def|fn|fun|func)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.function.trin}
@@ -3388,7 +3394,7 @@ repository:
       |keyof|valueof|pairof|instof
       |len|del|to|til|till|thru|by
 
-      |var|val|let|glo|loc|const|def|fun|func
+      |var|val|let|glo|loc|const|def|fn|fun|func
       |class|enum|mod|pkg|inter|struct|obj|rec
       |frag|data|trait|proto|proc|macro|type|given
       |raw|style|comp|elem|decl
@@ -3452,21 +3458,20 @@ repository:
               ([\p{Pc}\p{L}]\w*)\s+
               ([?:]?=)\s+
               (
-              (?:(?:# Access modifiers
-              public|private|protected|readonly|a?sync|inline|lazy|eager|weak|strong|transparent|transient|partial|whole
-              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final|(?:im|ex)plicit|(?:in|ex)tern(?:al)?
-              # Function or method modifiers
-              |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mutable|pure)|local|global|native|opaque
-              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
-              |# Function or method modifiers
-              (?:pre|in|post|suf|af|trans|interface)fix|
-              (?:u|bi|ter|)nary|oper
+              (?:
+              (?:# access modifiers
+              pub|priv|prot|inline|final|mut|immut
+              |seal|abs|intern|extern|imp|exp
+
+              # concurrency modifiers
+              |a?sync|stat|dyn|lazy|eager|strong|weak
+              |vola|unsafe|unfix|bound|free
+
+              # property or method modifiers
+              |re|gen|oper|get|set
+              |prefix|suffix|infix|primary|unary
               |# Decorators
-              @(?:
-              [\p{Pc}\p{L}]\w*
-              (?:(?:[?!]?\.|[?!:]:)
-              (?:(?:[\p{Pc}\p{L}]\w*)))*
-              )
+              @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}])*\s*
               )\s*\b)*
               )\s*
               (\|)
@@ -3485,28 +3490,24 @@ repository:
               Method def before function keyword
               x = def()
             match: |
-              (?x)(?<=[!?~]?\.=?|[?!:]:=?)(?<!\.+)
-              ([\p{Pc}\p{L}]\w*)\s+
-              ([?:]?=)\s+
+              (?x)\s*(?<=[!?~]?\.=?|[?!:]:=?)(?<!\.+)
               ([\p{Pc}\p{L}]\w*)\s+
               ([?:]?=)\s+
               ((?:
               \s*(?:
-              (?:# Access modifiers
-              public|private|protected|readonly|a?sync|inline|lazy|eager|weak|strong|transparent|transient|partial|whole
-              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final|(?:im|ex)plicit|(?:in|ex)tern(?:al)?
-              # Function or method modifiers
-              |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mutable|pure)|local|global|native|opaque
-              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
-              |# Function or method modifiers
-              (?:pre|in|post|suf|af|trans|interface)fix|
-              (?:u|bi|ter|)nary|oper
+              (?:# access modifiers
+              pub|priv|prot|inline|final|mut|immut
+              |seal|abs|intern|extern|imp|exp
+
+              # concurrency modifiers
+              |a?sync|stat|dyn|lazy|eager|strong|weak
+              |vola|unsafe|unfix|bound|free
+
+              # property or method modifiers
+              |re|gen|oper|get|set
+              |prefix|suffix|infix|primary|unary
               |# Decorators
-              @(?:
-              [\p{Pc}\p{L}]\w*
-              (?:(?:[?!]?\.|[?!:]:)
-              (?:(?:[\p{Pc}\p{L}]\w*)))*
-              )
+              @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}])*\s*
               ))
               \s*)*)
               (?=\s*\b
@@ -3526,21 +3527,20 @@ repository:
               ([\p{Pc}\p{L}]\w*)\s+
               ([?:]?=)\s+
               (
-              (?:(?:# Access modifiers
-              public|private|protected|readonly|a?sync|inline|lazy|eager|weak|strong|transparent|transient|partial|whole
-              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final|(?:im|ex)plicit|(?:in|ex)tern(?:al)?
-              # Function or method modifiers
-              |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mutable|pure)|local|global|native|opaque
-              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
-              |# Function or method modifiers
-              (?:pre|in|post|suf|af|trans|interface)fix|
-              (?:u|bi|ter|)nary|oper
+              (?:
+              (?:# access modifiers
+              pub|priv|prot|inline|final|mut|immut
+              |seal|abs|intern|extern|imp|exp
+
+              # concurrency modifiers
+              |a?sync|stat|dyn|lazy|eager|strong|weak
+              |vola|unsafe|unfix|bound|free
+
+              # property or method modifiers
+              |re|gen|oper|get|set
+              |prefix|suffix|infix|primary|unary
               |# Decorators
-              @(?:
-              [\p{Pc}\p{L}]\w*
-              (?:(?:[?!]?\.|[?!:]:)
-              (?:(?:[\p{Pc}\p{L}]\w*)))*
-              )
+              @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}])*\s*
               )\s*\b)*
               )\s*
               (\|)
@@ -3564,21 +3564,19 @@ repository:
               ([?:]?=)\s+
               ((?:
               \s*(?:
-              (?:# Access modifiers
-              public|private|protected|readonly|a?sync|inline|lazy|eager|weak|strong|transparent|transient|partial|whole
-              |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final|(?:im|ex)plicit|(?:in|ex)tern(?:al)?
-              # Function or method modifiers
-              |[gs]etter|[dr]efer|recursive|generator|operator|(?:im)?(?:mutable|pure)|local|global|native|opaque
-              |(?:un)?(?:signed|safe|checked|locked|fixed|sized|bound|sealed)
-              |# Function or method modifiers
-              (?:pre|in|post|suf|af|trans|interface)fix|
-              (?:u|bi|ter|)nary|oper
+              (?:# access modifiers
+              pub|priv|prot|inline|final|mut|immut
+              |seal|abs|intern|extern|imp|exp
+
+              # concurrency modifiers
+              |a?sync|stat|dyn|lazy|eager|strong|weak
+              |vola|unsafe|unfix|bound|free
+
+              # property or method modifiers
+              |re|gen|oper|get|set
+              |prefix|suffix|infix|primary|unary
               |# Decorators
-              @(?:
-              [\p{Pc}\p{L}]\w*
-              (?:(?:[?!]?\.|[?!:]:)
-              (?:(?:[\p{Pc}\p{L}]\w*)))*
-              )
+              @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}])*\s*
               ))
               \s*)*)
               (?=\s*\b
