@@ -51,7 +51,7 @@ def convertBase(str, fromBase, toBase) {
   }
 
   val digits = parseToDigitsArray(str, fromBase)
-  if digits === null => return null
+  if digits == null => return null
 
   var outArray = []
   var power = [1]
