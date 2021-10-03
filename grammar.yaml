@@ -343,16 +343,18 @@ repository:
           6: {name: constant.language.infinity.trin}
       - match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(?:
-          (it|this|that|super|self|proto|target)
+          (it|this|that|super|self|target)
           |(params)
           |(ctor)
-          |(main|init)
+          |(prot)
+          |(pro)
           )\b\s*
         captures:
           1: {name: variable.language.$1.trin}
           2: {name: variable.language.arguments.trin}
           3: {name: variable.language.constructor.trin}
           4: {name: variable.language.prototype.trin}
+          5: {name: variable.language.proto.trin}
 
   numbers:
     patterns:
@@ -1975,6 +1977,64 @@ repository:
         match: |
           (?x)\s*\b
           (
+          (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
+          \b(?:# don't match keywords
+          in|of|as|is|out|new|infer|unset
+          |typeof|nameof|sizeof
+          |keyof|valueof|pairof|instof
+          |len|del|to|til|till|thru|by
+
+          |var|val|let|glo|loc|const|def|fn|fun|func
+          |class|enum|mod|pkg|inter|struct|obj|rec
+          |frag|nspace|data|trait|proto|proc|macro|type|given
+          |raw|style|comp|elem|decl|ext|impl
+
+          |if|lest|elif|elest|else|then
+          |for|each|loop|while|until|from
+          |do|redo|try|retry|throw|catch|finally
+          |switch|case|default|match|when|otherwise
+          |parallel|series|spawn|destroy|fixed|lock
+          |break|continue|return|await|label|yield|goto
+          |import|export|impose|expose|using
+          |debug|check|assert|fallthru
+          )\b
+          )
+          [\p{Pc}\p{L}]\w*
+          )
+          \b\s+
+          (?=
+          (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
+          \b(?:# don't match keywords
+          in|of|as|is|out|new|infer|unset
+          |typeof|nameof|sizeof
+          |keyof|valueof|pairof|instof
+          |len|del|to|til|till|thru|by
+
+          |var|val|let|glo|loc|const|def|fn|fun|func
+          |class|enum|mod|pkg|inter|struct|obj|rec
+          |frag|nspace|data|trait|proto|proc|macro|type|given
+          |raw|style|comp|elem|decl|ext|impl
+
+          |if|lest|elif|elest|else|then
+          |for|each|loop|while|until|from
+          |do|redo|try|retry|throw|catch|finally
+          |switch|case|default|match|when|otherwise
+          |parallel|series|spawn|destroy|fixed|lock
+          |break|continue|return|await|label|yield|goto
+          |import|export|impose|expose|using
+          |debug|check|assert|fallthru
+          )\b
+          )
+          [\w]+|\[(?!<)|<\|(?!>)(?=\|*)|<\+(?!>)(?=\+*))
+        captures:
+          1: {patterns: [include: "#function-entities"]}
+      - comment: |
+          Function calls
+          For testing only:
+          for let x int|str, y int in list arr 'json' if x % 2 < 3
+        match: |
+          (?x)\s*\b
+          (
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
           \b(?:# don't match keywords
           in|of|as|is|out|new|infer|unset
@@ -3011,13 +3071,13 @@ repository:
               1: {name: keyword.control.module.trin}
             patterns:
               - include: source.yaml#flow-collection
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|or|not|as|all|any|some|none|in|of)\b\s*
+                name: keyword.control.module.trin
               - include: "#type-keywords"
               - include: "#strings-quoted"
               - include: "#strings-unquoted"
               - include: "#symbols"
               - include: "#type-operators"
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|as|all|any|but|just|only|alt)\b\s*
-                name: keyword.control.module.trin
               - match: ","
                 name: punctuation.separator.comma.trin
               - match: *entity-name

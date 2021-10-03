@@ -11,7 +11,7 @@ let [x, y] = 1;
 ```dart
 // Say hello to the world!
 using \react.React;
-import \react-native{StyleSheet, Text, View};
+import \react-native.{StyleSheet, Text, View};
 
 const styles = <StyleSheet #{
   .container {
@@ -44,166 +44,21 @@ export just elem App {
 
 ## Overview
 
-The name Trinity is named after the Matrix character of the same name, and also means "to be three in one". True to that name, that's reflected in three\* paradigms (imperative, declarative and meta-programming), three platforms (web, desktop and mobile) and the three layers of the tech stack: frontend, API, and backend.
+Trinity is a statically typed compiled programming language designed to build reliable software for the frontend, backend and middle-end; for the web, desktop and mobile. It's very similar to Rust, Go and Swift, and also influenced by Flix, TypeScript, ReScript, Fantom, Kotlin and Scala.
 
-Similar to languages like Rust, Haxe, Scala and Fantom, Trinity's primary goal was to build a portable language targeting multiple runtimes, with a clean, consistent and comprehensive set of APIs and core libraries to abstract away the lower level runtimes. Trinity is heavily influenced by most curly-bracket languages such as Scala, Kotlin, Go, Rust and Swift.
+Trinity gives the developer a lot of power, all with an easy syntax, and a clean, consistent and comprehensive API. The language promotes writing simple and clear code with minimal abstraction. Anything you can do in other languages, you can do in Trinity.
+
+V is a very simple language. Going through this documentation will take you about an hour, and by the end of it you will have pretty much learned the entire language.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 
 ## Trinity's Origins
 
-Switching over to JavaScript to Python, it pained me to deal with null or type-related errors, coercion, and missing brackets. And the bare-bones nature of JavaScript meant I had to implement myself or find some obscure library on NPM to find just the exact functionality I needed, which could take hours or even days. Not quite my tempo.
+Trinity started out as a simple concept to bridge the gap between Python and JavaScript in a hybrid language, though sharing most of the concepts from modern JavaScript. Now over almost a year of iteration and tinkering the language had poured in tons of influence from other languages like Scala and Kotlin.
 
-Trinity started out as a simple concept to bridge the gap between Python and JavaScript by combining the features and APIs from either language. Now over almost a year of iteration and tinkering the language had poured in tons of influence, mainly from Java and JavaScript alternatives, and even some independent languages like C#, Rust and Go.
+This project is currently in the works and would be my largest project to date. I will be posting a Trello on my development of Trinity very soon, and I'm looking forward for anyone out there to contribute; fork this repo, and pull your changes to this repository: https://github.com/nxltm/trinity-lang.
 
-This project is currently in the works and would be my largest project to date. I spent four months working on the TextMate regular expression grammar for the language, and it's constantly being updated with new edits and features. I will be posting a Trello on my development of Trinity very soon, and I'm looking forward for anyone out there to contribute; fork this repo, and pull your changes to this repository: https://github.com/nxltm/trinity-lang.
-
-### Elegant libraries
-
-The Java and .NET APIs have developed over the years into a somewhat tangled mess, with Both platforms tend toward APIs using a proliferation of small classes that are over abstracted and under powered. There's too many classes to use, with even basic functionality such as parsing a file into individual lines which require hundreds of lines of code at the bare minimum.
-
-Meanwhile, JavaScript lies on the other extreme. JS requires the developer to go and implement their functionality themselves, thereby wasting more than tens of hours trying to find the right library or function to use on Stack Overflow or even on NPM. And when installing a library on NPM, sometimes said library may drag in between hundreds to thousands of dependencies, resulting in bloated projects and tons upon tons of unreachable, dead code.
-
-Fantom follows a very different philosophy - we believe in having very few types and classes, but each having tons of functionality to work with them. You don't need a `DateFormatter` to format a date string, when you could use the `format` method of the `Date` class to format it yourself.
-
-You can use other modules by simply `import`ing or `open`ing them inside your project, as you wish, to allow you to work easily with the OS, file system, apps, APIs, media, protocols, servers and databases.
-
-## A Tour
-
-### Hello World
-
-This reference is structured so you can read it from top to bottom. Later sections use ideas and syntax previously introduced.
-
-The basics:
-First, the basics: CoffeeScript uses significant whitespace to delimit blocks of code. You don’t need to use semicolons ; to terminate expressions, ending the line will do just as well (although semicolons can still be used to fit multiple expressions onto a single line). Instead of using curly braces { } to surround blocks of code in functions, if-statements, switch, and try/catch, use indentation.
-
-We start our whirlwind tour of Trinity's features, with the quintessential hello world:
-
-```dart
-class App {
-  stat func main(*args: []str): void => print 'Hello World!'
-}
-```
-
-You would not need to use semicolons to terminate statements, or commas to separate statements when the next statement is on the following line. Lines are joined if the first token of the next l is a keyword or infix operator.
-
-```dart
-[1
-2
-3] == [1, 2, 3] //= true
-```
-
-Minor differences from TypeScript include:
-
-- Class names must be written in `PascalCase`, while function/method, property and variable names are written either in `camelCase` or `snake_case`.
-- Class and method protection scope are private by default.
-- Use the `print` method to write to the console. Alternatives include `echo` and `puts`.
-- If a clause is followed by a single statement, you can use `->` instead of a block.
-- Statements can be terminated with a newline (you can use a semicolon too)
-- You can declare `*args: []string` or access them from `Process.argv`.
-
-## Language Ideas
-
-Trinity supports the same primitive literals as most other languages, including those from higher-level scripting languages:
-
-```dart
-null; void // null and undefined
-true; false // boolean
-16777216 // integer
-1^+40 // integer with exponential part
-1_10011_101 // integer, can use _ as separator
-1:u // unsigned integer
-0b0; 0q0; 0s0; 0o0; 0z0; 0x0 // base 2, 4, 6, 8, 12, 16
-1.1:i32 // with type suffix
-1.1*1 // with repeating block
-1.1=1 // with significant figures
-nan; infin // special float constants
-"Hello\nWorld" // escaped string
-'C:\Windows' // raw string
-\string // backslash string
-\| // raw block string
-\> // escaped block string
-''; ""; \ // empty string
-`(?:)` // regular expression
-\< // block regex
-<div>Hello World!</div> // JSX
-[0, 1, 2] // list
-{1: "one", 2: "two"} // map
-:symbol // symbol
-: Type // type
-: Slot[Literal] // slot
-set [x]; [x] as set // set
-|x, y| x + y // function
-```
-
-There is no need to put `()` on a map literal unless it is
-
-Blocks are literal too, are they?
-
-```dart
-do {}
-def() {}
-class {}
-```
-
-#### Comments
-
-Line comments start with `//` and go until the end of the line. Special comments include documentation, to-do/fix-me, pre-processor comments and more, which are recognized by the compiler.
-
-```dart
-/// JSDoc line comment
-//= assertion comment
-//+ testing comment
-//! fixme/todo comment
-//* pre-processing/linter comment
-// line comment
-
-/* block comment */ /+ nested block comment +/
-/** JSDoc comment */ /++ nested JSDoc comment +/
-```
-
-#### Keywords
-
-The following regular expression denotes all the keywords of the language, including those used for declarations, such as `var`. Some keywords such as `repeat until` or `else if` are considered a single keyword.
-
-```txt
-in of as is out new infer unset
-typeof nameof sizeof
-keyof valueof pairof instof
-len del to til till thru by
-var val let glo loc const def fn fun func
-class enum mod pkg inter struct obj rec
-frag nspace data trait proto proc macro type given
-raw style comp elem decl ext impl
-if lest elif elest else then
-for each loop while until from
-do redo try retry throw catch finally
-switch case default match when otherwise
-parallel series spawn destroy fixed lock
-break continue return await label yield goto
-import export impose expose using
-debug check assert
-```
-
-#### Identifiers
-
-Identifiers begin with a letter `L`, or combining punctuation `Pc`, which includes underscores. Later characters can include any digit `Nd` or combining marks `M` in addition to said characters.
-
-```dart
-дpдgдпdф(lдs, lцcёs);
-```
-
-Two or more identifiers placed in a row
-
-#### Operators
-
-There are
-
-#### Numbers
-
-This would only be a textual overview of the Saga programming language, as the grammar is having a hiatus at this point.
-
-### Syntax
+## Table of Contents
 
 <table><tr><td width=25% valign=top>
 
@@ -375,6 +230,155 @@ This would only be a textual overview of the Saga programming language, as the g
 - [CLI Reference](#)
 
 </td></tr></table>
+
+## A Tour
+
+### Hello World
+
+```dart
+fn main => print 'Hello World!'
+```
+
+Save this snippet into a file named `hello.tr`. Now do: `trin r hello`. You don't need the file extension `tr`.
+
+Congratulations - you just wrote and executed your first Trinity program!
+
+You can compile a program without execution with `trin c hello`. See `trin h` for all supported commands.
+
+From the example above, you can see that functions are declared with the `fn` keyword. The return type is specified after the function name. In this case `main` doesn't return anything, so there is no return type. Also keep in mind, `=>` opens a block if it is followed by a single statement.
+
+As in many other languages (such as C, Go, and Rust), `main` is the entry point of your program. `print` is one of the few built-in functions. It prints the value passed to it to standard output.
+
+`fn main` declaration can be skipped in one file programs. This is useful when writing small programs, "scripts", or just learning the language. For brevity, `fn main` will be skipped in this tutorial.
+
+This means that a "hello world" program in Trinity is as simple as
+
+```dart
+print 'Hello World!'
+```
+
+---
+
+### Conventions
+
+Naming conventions follow Java or JavaScript. Identifiers, which includes variables, properties, methods, classes and functions, always must begin with a letter or underscore. The rest of the characters may also include digits and combining marks.
+
+You would not need to use semicolons to terminate expressions, or commas to separate expressions when the next expression is on the following line. Lines are joined if the first token of the next line is a keyword or infix operator.
+
+```dart
+print 'Hello World!'
+
+[1
+2
+3] == [1, 2, 3]
+
+x := 1; x = 10 // this code is valid
+```
+
+Functions are private (not exported) by default. To allow other modules to use them, prepend `export`. The same applies to constants and types.
+
+## Language Ideas
+
+Trinity supports the same primitive literals as most other languages, including those from higher-level scripting languages:
+
+```dart
+null; void // null and undefined
+true; false // boolean
+16777216 // integer
+1^+40 // integer with exponential part
+1_10011_101 // integer, can use _ as separator
+1:u // unsigned integer
+0b0; 0q0; 0s0; 0o0; 0z0; 0x0 // base 2, 4, 6, 8, 12, 16
+1.1:i32 // with type suffix
+1.1*1 // with repeating block
+1.1=1 // with significant figures
+nan; infin // special float constants
+"Hello\nWorld" // escaped string
+'C:\Windows' // raw string
+\string // backslash string
+\| // raw block string
+\> // escaped block string
+''; ""; \ // empty string
+`(?:)` // regular expression
+\< // block regex
+<div>Hello World!</div> // JSX
+[0, 1, 2] // list
+{1: "one", 2: "two"} // map
+:symbol // symbol
+: Type // type
+: Slot[Literal] // slot
+set [x]; [x] as set // set
+|x, y| x + y // function
+```
+
+There is no need to put `()` on a map literal unless it is
+
+Blocks are literal too, are they?
+
+```dart
+do {}
+def() {}
+class {}
+```
+
+#### Comments
+
+Line comments start with `//` and go until the end of the line. Special comments include documentation, to-do/fix-me, pre-processor comments and more, which are recognized by the compiler.
+
+```dart
+/// JSDoc line comment
+//= assertion comment
+//+ testing comment
+//! fixme/todo comment
+//* pre-processing/linter comment
+// line comment
+
+/* block comment */ /+ nested block comment +/
+/** JSDoc comment */ /++ nested JSDoc comment +/
+```
+
+#### Keywords
+
+The following regular expression denotes all the keywords of the language, including those used for declarations, such as `var`. Some keywords such as `repeat until` or `else if` are considered a single keyword.
+
+```txt
+in of as is out new infer unset
+typeof nameof sizeof
+keyof valueof pairof instof
+len del to til till thru by
+var val let glo loc const def fn fun func
+class enum mod pkg inter struct obj rec
+frag nspace data trait proto proc macro type given
+raw style comp elem decl ext impl
+if lest elif elest else then
+for each loop while until from
+do redo try retry throw catch finally
+switch case default match when otherwise
+parallel series spawn destroy fixed lock
+break continue return await label yield goto
+import export impose expose using
+debug check assert
+```
+
+#### Identifiers
+
+Identifiers begin with a letter `L`, or combining punctuation `Pc`, which includes underscores. Later characters can include any digit `Nd` or combining marks `M` in addition to said characters.
+
+```dart
+дpдgдпdф(lдs, lцcёs);
+```
+
+Two or more identifiers placed in a row
+
+#### Operators
+
+There are
+
+#### Numbers
+
+This would only be a textual overview of the Saga programming language, as the grammar is having a hiatus at this point.
+
+### Syntax
 
 - **To-Do:**
 
