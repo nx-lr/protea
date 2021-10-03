@@ -4,10 +4,14 @@
 
 Trinity is a portable, multi-paradigm and multi-faceted programming language I created that aims to run on the JVM and modern web browsers. It features a familiar JavaScript-like syntax, static (and dynamic) typing, a robust standard library and a unique combination of powerful features for imperative, declarative and meta-programming.
 
+```js
+let [x, y] = 1;
+```
+
 ```dart
 // Say hello to the world!
 using \react.React;
-import \react-native only { StyleSheet, Text, View };
+import \react-native{StyleSheet, Text, View};
 
 const styles = <StyleSheet #{
   .container {
@@ -18,15 +22,13 @@ const styles = <StyleSheet #{
   }
 }/>;
 
-export default element App {
-  def main -> (
-    <View style=$styles.container>
-      <Text>
-        To share a photo from your phone with a friend,
-        just press the button below!
-      </>
-    </>
-  );
+export just elem App {
+  func main => <View style=$styles.container>
+    <Text>
+      To share a photo from your phone with a friend,
+      just press the button below!
+    </Text>
+  </View>
 };
 ```
 
@@ -70,11 +72,16 @@ You can use other modules by simply `import`ing or `open`ing them inside your pr
 
 ### Hello World
 
+This reference is structured so you can read it from top to bottom. Later sections use ideas and syntax previously introduced.
+
+The basics:
+First, the basics: CoffeeScript uses significant whitespace to delimit blocks of code. You don’t need to use semicolons ; to terminate expressions, ending the line will do just as well (although semicolons can still be used to fit multiple expressions onto a single line). Instead of using curly braces { } to surround blocks of code in functions, if-statements, switch, and try/catch, use indentation.
+
 We start our whirlwind tour of Trinity's features, with the quintessential hello world:
 
 ```dart
 class App {
-  static func main(*args: []string): void -> print 'Hello World!'
+  stat func main(*args: []str): void => print 'Hello World!'
 }
 ```
 
@@ -91,7 +98,7 @@ Minor differences from TypeScript include:
 - Class names must be written in `PascalCase`, while function/method, property and variable names are written either in `camelCase` or `snake_case`.
 - Class and method protection scope are private by default.
 - Use the `print` method to write to the console. Alternatives include `echo` and `puts`.
-- If a clause, such as `func` or `for` are followed by a single statement, you can use `->` instead of a block.
+- If a clause is followed by a single statement, you can use `->` instead of a block.
 - Statements can be terminated with a newline (you can use a semicolon too)
 - You can declare `*args: []string` or access them from `Process.argv`.
 
@@ -110,7 +117,7 @@ true; false // boolean
 1.1:i32 // with type suffix
 1.1*1 // with repeating block
 1.1=1 // with significant figures
-nan; infinity // special float constants
+nan; infin // special float constants
 "Hello\nWorld" // escaped string
 'C:\Windows' // raw string
 \string // backslash string
@@ -160,30 +167,22 @@ Line comments start with `//` and go until the end of the line. Special comments
 The following regular expression denotes all the keywords of the language, including those used for declarations, such as `var`. Some keywords such as `repeat until` or `else if` are considered a single keyword.
 
 ```txt
-in of as is new infer unset
-typeof nameof sizeof pairof keyof valueof
-length delete create update to til thru at by
-and nand or nor xor xnor not
-
-def fun func proc process macro
-type alias let var val const declare
-class given enum project protocol procedure
-fragment interface struct module package
-namespace object record label raw data query
-schema style component element trait
-
-if else (else if) (else unless) elif elsif eless elless unless guard
-for foreach (for each) repeat while until (repeat while) (repeat until)
-do redo use using
-try retry throw raise catch rescue finally
-parallel series spawn discard
-with ref defer refer show hide enter exit
-then begin end debug check assert
-break continue halt skip fixed lock
-return give await yield
-returns gives awaits yields throws raises
-from where join equal equals into onto order
-take drop fold scan select group
+in of as is out new infer unset
+typeof nameof sizeof
+keyof valueof pairof instof
+len del to til till thru by
+var val let glo loc const def fn fun func
+class enum mod pkg inter struct obj rec
+frag nspace data trait proto proc macro type given
+raw style comp elem decl ext impl
+if lest elif elest else then
+for each loop while until from
+do redo try retry throw catch finally
+switch case default match when otherwise
+parallel series spawn destroy fixed lock
+break continue return await label yield goto
+import export impose expose using
+debug check assert
 ```
 
 #### Identifiers
