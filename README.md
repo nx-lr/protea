@@ -2,7 +2,7 @@
 
 > One language, three aspects.
 
-Trinity is a portable, multi-paradigm and multi-faceted programming language I created that aims to run on the JVM and modern web browsers. It features a familiar JavaScript-like syntax, static (and dynamic) typing, a robust standard library and a unique combination of powerful features for imperative, declarative and meta-programming.
+Trinity is a portable, multi-paradigm and multi-faceted programming language I created that aims to run on the JavaScript and Node.JS runtimes, and also on the . It features a familiar JavaScript-like syntax, static (and dynamic) typing, a robust standard library and a unique combination of powerful features for imperative, declarative and meta-programming.
 
 ```js
 let [x, y] = 1;
@@ -13,7 +13,7 @@ let [x, y] = 1;
 using \react.React;
 import \react-native.{StyleSheet, Text, View};
 
-const styles = <StyleSheet #{
+pub var styles = <StyleSheet #{
   .container {
     flex: 1;
     background-color: #fff;
@@ -22,7 +22,7 @@ const styles = <StyleSheet #{
   }
 }/>;
 
-export just elem App {
+export elem App {
   func main => <View style=$styles.container>
     <Text>
       To share a photo from your phone with a friend,
@@ -47,8 +47,6 @@ export just elem App {
 Trinity is a statically typed compiled programming language designed to build reliable software for the frontend, backend and middle-end; for the web, desktop and mobile. It's very similar to Rust, Go and Swift, and also influenced by Flix, TypeScript, ReScript, Fantom, Kotlin and Scala.
 
 Trinity gives the developer a lot of power, all with an easy syntax, and a clean, consistent and comprehensive API. The language promotes writing simple and clear code with minimal abstraction. Anything you can do in other languages, you can do in Trinity.
-
-V is a very simple language. Going through this documentation will take you about an hour, and by the end of it you will have pretty much learned the entire language.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 
@@ -81,7 +79,7 @@ This project is currently in the works and would be my largest project to date. 
   - [Raw Strings](#)
   - [Slicing and Splicing](#)
 - [Booleans](#)
-- [Nil or Undefined](#)
+- [Null and Void](#)
 - [Collections](#)
   - [Lists/Tuples](#)
   - [Sets](#)
@@ -173,7 +171,7 @@ This project is currently in the works and would be my largest project to date. 
   - [Inline and Using Modifiers](#)
   - [Operators and Overriding](#)
   - [Control Flow](#)
-  - [Proxies and Reflectors](#)
+  - [Reflection API](#)
   - [Extending Built-Ins](#)
 - [Text Processing](#)
   - [String Library](#)
@@ -233,21 +231,73 @@ This project is currently in the works and would be my largest project to date. 
 
 ## A Tour
 
-### Hello World
+Trinity is a relatively new programming language which allows users to write easy-to-read high-performance code. After skimming through the documentation, chances are you're getting started with coding in Trinity.
+
+This is a work-in-progress: if you spot any errors and/or you have an idea how to make this tutorial better, please report it as an issue on GitHub at [this repository](https://github.com/nxltm/trinity-lang).
+
+### Overview
+
+This tutorial introduces you informally to the concepts and features in Saga, as well as a comprehensive guide to the modules in Saga's Standard Library.
+
+The first step is to install Rust. We'll download Trinity through NPM: `npm i -g @trinity-lang/core`. That way, you'll have access to all of Trinity's APIs and standard libraries.
+
+### Hello World!
+
+But before we begin, let's start with a tradition. Let's print "Hello World!" into the console.
 
 ```dart
-fn main => print 'Hello World!'
+def main => print 'Hello World!'
 ```
 
-Save this snippet into a file named `hello.tr`. Now do: `trin r hello`. You don't need the file extension `tr`.
+Save this snippet into a file. Open your terminal in VS Code and run it.
 
-Congratulations - you just wrote and executed your first Trinity program!
+```sh
+trin r hello-world.trin
+```
 
-You can compile a program without execution with `trin c hello`. See `trin h` for all supported commands.
+You can leave out the `r` or the file extension.
 
-From the example above, you can see that functions are declared with the `fn` keyword. The return type is specified after the function name. In this case `main` doesn't return anything, so there is no return type. Also keep in mind, `=>` opens a block if it is followed by a single statement.
+```sh
+trin hello-world
+```
 
-As in many other languages (such as C, Go, and Rust), `main` is the entry point of your program. `print` is one of the few built-in functions. It prints the value passed to it to standard output.
+Or we can print the output JavaScript code, which we'll do it right away here.
+
+```ts
+function main(args: string[] = process.argv) {
+  console.log("Hello World!");
+}
+```
+
+There is a possibility that you would also want to compile but not run your said code. Use c instead.
+
+```sh
+trin c hello-world.saga
+```
+
+To see all commands available, type `trin h` in the terminal, `h` being "help".
+
+If you're using Visual Studio Code with the _Code Runner_ extension, all you have to do is navigate to the top right hand side of your window and click on the "play" button. A command would appear in your window.
+
+Whichever way you chose to run your program, you should see
+
+```
+Hello World!
+```
+
+in your terminal.
+
+**_You have successfully run your first Trinity program!_**
+
+---
+
+Okay, now let's see what happened.
+
+Functions are declared with the `fn` keyword. The return type is specified after the function name.
+
+In this case `main` doesn't return anything, so there is no return type. Also keep in mind, `=>` opens a block if it is followed by a single statement.
+
+As in many other languages, `main` is the entry point of your program. You all know what `print` does.
 
 `fn main` declaration can be skipped in one file programs. This is useful when writing small programs, "scripts", or just learning the language. For brevity, `fn main` will be skipped in this tutorial.
 
@@ -257,11 +307,80 @@ This means that a "hello world" program in Trinity is as simple as
 print 'Hello World!'
 ```
 
----
+### Syntax
 
-### Conventions
+As you may know, Trinity uses a curly-bracket syntax much like other languages like JavaScript, PHP, C# and Java. You would use curly brackets to delimit things like if-statements, or even functions and classes.
 
-Naming conventions follow Java or JavaScript. Identifiers, which includes variables, properties, methods, classes and functions, always must begin with a letter or underscore. The rest of the characters may also include digits and combining marks.
+```dart
+class Person(val firstName: String, val lastName: String) {
+  def printFullName() { print "$firstName $lastName" }
+}
+```
+
+#### Comments
+
+Line comments start with `//` and go until the end of the line. Comments beginning with `/+` or `/++` can be nested.
+
+```dart
+// line comment
+/// JSDoc comment
+/* block comment */
+/+ nested block comment /+ +/ +/
+/** JSDoc comment */
+/++ nested JSDoc comment /++ +/ +/
+```
+
+Special, reserved line comments include documentation, to-do and compiler comments, which are recognized by several aspects of the compiler.
+
+```dart
+//= assertion comment
+//+ testing comment
+//! fixme/todo comment
+//* compiler comment
+```
+
+#### Keywords
+
+The following regular expression denotes all the keywords of the language, including those used for declarations, such as `var`. Some keywords such as `repeat until` or `else if` are considered a single keyword.
+
+```txt
+in of as is out new infer unset
+typeof nameof sizeof
+keyof valueof pairof instof
+len del to til till thru by
+
+var val let dim const def fn fun func
+class enum mod pkg inter struct obj rec
+frag nspace data trait proto proc macro type given
+raw style comp elem decl ext impl sub
+
+if lest elif elest else then
+for each loop while until from
+do redo try retry throw catch finally
+switch case default match when otherwise
+parallel series spawn destroy fixed lock
+break continue return await label yield goto
+import export impose expose using
+debug check assert
+```
+
+#### Identifiers
+
+Identifiers, which name program entities like variables or functions, always begin with a letter or underscore. The rest of the characters may also include digits and combining marks.
+
+Naming conventions follow Java or JavaScript. There are four types of identifiers which Trinity recognizes and highlight accordingly:
+
+- `SHOUT_SNAKE_CASE`, used for declaring constants,
+- `PascalCase` used for declaring classes, modules and types,
+- `camelCase` or `snake_case` used for variables, functions, methods, etc.
+- `_leading` or `trailing_` underscores used to escape keywords.
+
+Because of something called partial case insensitivity, variables are compared using their first character, leaving everything else to be compared case-insensitively and without diacritics or delimiters. This makes it easier to identify variables across different conventions without having to know the exact spelling of an identifier.
+
+```dart
+proc sameIdentifier(a, b: string): bool = a[0] == b[0] &&
+    a.replace("_", "").toLowerAscii == b.replace("_", "").toLowerAscii
+```
 
 You would not need to use semicolons to terminate expressions, or commas to separate expressions when the next expression is on the following line. Lines are joined if the first token of the next line is a keyword or infix operator.
 
@@ -275,9 +394,78 @@ print 'Hello World!'
 x := 1; x = 10 // this code is valid
 ```
 
-Functions are private (not exported) by default. To allow other modules to use them, prepend `export`. The same applies to constants and types.
+## Variables
 
-## Language Ideas
+In JavaScript you would declare new variables like this:
+
+```js
+var s = "hello"; // mutable
+let i = 42; // mutable
+const p = new Person("Joel Fleischman"); // immutable
+```
+
+By contrast, Trinity has two types of variables:
+
+- `val` creates an immutable variable (like `const` in JavaScript)
+- `var` creates a mutable variable (like `let`)
+
+This is what variable declaration looks like in Trinity:
+
+```dart
+val s = "hello" // immutable
+var i = 42 // mutable
+val p = new Person("Joel Fleischman")
+```
+
+You don't need to explicitly specify the types of each variable, the compiler is smart enough to infer them for you:
+
+```dart
+val s = 'Hello World!' // s is a `str`
+```
+
+You can also explicitly declare the variable type if you think it makes your code easier to read.
+
+```dart
+val s: str = "hello"
+var i: int = 42
+```
+
+As a practical matter it can help to explicitly show the type when you're working with third-party libraries, especially if you don't use the library often, or if their method names don't make the type clear.
+
+Reassigning a `val` would throw an error:
+
+```dart
+val a = \a
+a = \b; //! Error: reassignment to constant a
+```
+
+Conversely, you _can_ reassign a `var`:
+
+```dart
+var a = \a
+a = \b
+```
+
+A new `var` or `val` in a closure declares a new variable temporarily in that closure, _shadowing_ it.
+
+```dart
+var a = 1
+do {
+  var a = 2
+  print a //= 2
+}
+print a //= 1
+```
+
+### Let and Const
+
+The keywords `dim` and `let` behave like `var` and `val` respectively, but you can redefine fields in the same block.
+
+```dart
+dim a = \a
+dim a = \b // a is now \a
+let a = \c // a is now \c
+```
 
 Trinity supports the same primitive literals as most other languages, including those from higher-level scripting languages:
 
@@ -311,7 +499,7 @@ set [x]; [x] as set // set
 |x, y| x + y // function
 ```
 
-There is no need to put `()` on a map literal unless it is
+There is no need to surround `()` with a map literal unless iheihw vsi erhith wih
 
 Blocks are literal too, are they?
 
@@ -319,45 +507,6 @@ Blocks are literal too, are they?
 do {}
 def() {}
 class {}
-```
-
-#### Comments
-
-Line comments start with `//` and go until the end of the line. Special comments include documentation, to-do/fix-me, pre-processor comments and more, which are recognized by the compiler.
-
-```dart
-/// JSDoc line comment
-//= assertion comment
-//+ testing comment
-//! fixme/todo comment
-//* pre-processing/linter comment
-// line comment
-
-/* block comment */ /+ nested block comment +/
-/** JSDoc comment */ /++ nested JSDoc comment +/
-```
-
-#### Keywords
-
-The following regular expression denotes all the keywords of the language, including those used for declarations, such as `var`. Some keywords such as `repeat until` or `else if` are considered a single keyword.
-
-```txt
-in of as is out new infer unset
-typeof nameof sizeof
-keyof valueof pairof instof
-len del to til till thru by
-var val let glo loc const def fn fun func
-class enum mod pkg inter struct obj rec
-frag nspace data trait proto proc macro type given
-raw style comp elem decl ext impl
-if lest elif elest else then
-for each loop while until from
-do redo try retry throw catch finally
-switch case default match when otherwise
-parallel series spawn destroy fixed lock
-break continue return await label yield goto
-import export impose expose using
-debug check assert
 ```
 
 #### Identifiers
