@@ -4,32 +4,74 @@
 
 Trinity is a portable, multi-paradigm and multi-faceted programming language I created that aims to run on the JavaScript and Node.JS runtimes, and also on the . It features a familiar JavaScript-like syntax, static (and dynamic) typing, a robust standard library and a unique combination of powerful features for imperative, declarative and meta-programming.
 
-```js
-let [x, y] = 1;
-```
-
 ```dart
-// Say hello to the world!
-using \react.React;
-import \react-native.{StyleSheet, Text, View};
+def convertBase(str, fromBase, toBase) {
+  val DIGITS =
+    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/"
 
-pub var styles = <StyleSheet #{
-  .container {
-    flex: 1;
-    background-color: #fff;
-    align-items: center;
-    justify-content: center;
+  val add = |x, y, base| => {
+    var z = []
+    val n = Math.max(len x, len y)
+    var carry = 0
+    var i = 0
+    while i < n ?: carry {
+      val xi = i < len x ? x[i] : 0
+      val yi = i < len y ? y[i] : 0
+      val zi = carry + xi + yi
+      z.push(zi % base)
+      carry = Math.floor(zi / base)
+      i += 1
+    }
+    z
   }
-}/>;
 
-export elem App {
-  func main => <View style=$styles.container>
-    <Text>
-      To share a photo from your phone with a friend,
-      just press the button below!
-    </Text>
-  </View>
-};
+  val multiplyByNumber = |num, x, base| => {
+    if num < 0 => return null
+    if num == 0 => return []
+    var result = []
+    var power = x
+    label x: loop {
+      num & 1 !: (result = add(result, power, base))
+      num = num >> 1
+      if num == 0 => break x
+      power = add(power, power, base)
+    }
+    result
+  }
+
+  val parseToDigitsArray = |str, base| => {
+    val digits = str.split ""
+    var arr = []
+    for var i in len digits till 0 {
+      val n = DIGITS.indexOf digits[i]
+      if n == -1 => return null
+      arr.push n
+    }
+    arr
+  }
+
+  val digits = parseToDigitsArray(str, fromBase)
+  if digits === null => return null
+
+  var outArray = []
+  var power = [1]
+  for var i in 0 til len digits {
+    digits[i] !: (
+      outArray = add(
+        outArray,
+        multiplyByNumber(digits[i], power, toBase),
+        toBase
+      )
+    )
+    power = multiplyByNumber(fromBase, power, toBase)
+  }
+
+  var out = ""
+  for var i in len outArray till 0 =>
+    out += DIGITS[outArray[i]]
+
+  out
+}
 ```
 
 ### Roadmap
@@ -457,7 +499,7 @@ do {
 print a //= 1
 ```
 
-### Let and Const
+### Let and Dim
 
 The keywords `dim` and `let` behave like `var` and `val` respectively, but you can redefine fields in the same block.
 
@@ -496,7 +538,7 @@ nan; infin // special float constants
 : Type // type
 : Slot[Literal] // slot
 set [x]; [x] as set // set
-|x, y| x + y // function
+do |x, y| x + y // function
 ```
 
 There is no need to surround `()` with a map literal unless iheihw vsi erhith wih
