@@ -2039,7 +2039,7 @@ repository:
           ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}]\w*)
           )
-          (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\[)
+          (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
           |
           (?:# Regular variables
           (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
@@ -2089,7 +2089,7 @@ repository:
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
       )
-      (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\[)
+      (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
       |
       (?:# Regular variables
       (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
@@ -2414,7 +2414,7 @@ repository:
                   ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
                   ([\p{Pc}\p{L}]\w*)
                   )
-                  (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\[)
+                  (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
                   |
                   (?<=[!?~]?\.=?|[?!:]:=?)(?<!\.+)
                   (?:# Properties (note all properties are by default, symbols)
@@ -2531,7 +2531,7 @@ repository:
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
       )
-      (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\[)
+      (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
       |
       (?:# Regular variables
       (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
@@ -2766,17 +2766,17 @@ repository:
     patterns: &function-params
       - include: "#clauses"
       - include: "#keywords"
-      - match: (?i)\s*\?[\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*\?[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
         name: variable.parameter.optional.trin
-      - match: (?i)\s*\*[\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*\*[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
         name: variable.parameter.spread.trin
-      - match: (?i)\s*[&~][\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*[&~][\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
         name: variable.parameter.name.trin
-      - match: (?i)\s*\%[\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*\%[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
         name: variable.parameter.reference.trin
-      - match: (?i)\s*\$[\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*\$[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
         name: variable.parameter.other.trin
-      - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)])
         name: variable.parameter.trin
       - include: "$self"
 
@@ -3783,24 +3783,19 @@ repository:
     repository:
       line-continuation:
         match: (\\)\s*(?=/[/*+]|$)
-        captures:
-          1: {name: punctuation.separator.continuation.line.trin}
+        name: punctuation.separator.continuation.line.trin
       comma:
         match: \s*(,)
-        captures:
-          1: {name: punctuation.separator.comma.trin}
+        name: punctuation.separator.comma.trin
       right-arrow:
         match: (?:^|['"`\\({\[\s]*)(=>)(?:$|['"`\\\s)}\]])
-        captures:
-          1: {name: punctuation.definition.arrow.trin}
+        name: punctuation.definition.arrow.trin}
       double-semi:
         match: \s*(;;)
-        captures:
-          1: {name: punctuation.terminator.statement.trin}
+        name: punctuation.terminator.expression.trin
       semicolon:
         match: \s*(;)
-        captures:
-          1: {name: punctuation.terminator.statement.trin}
+        name: punctuation.terminator.statement.trin
 
   brackets:
     patterns:
@@ -3833,6 +3828,13 @@ repository:
           - match: (?<!\s):(?!:)
             name: punctuation.separator.key-value.trin
     patterns:
+      - begin: \s*(?<=[\w'"`)}\]]|[^.]\.)(\#?\{)\s*
+        end: \s*(\})
+        captures:
+          1: {name: punctuation.definition.typeparameters.trin}
+        patterns:
+          - include: "#types"
+          - include: $self
       - begin: \s*(?<=\b(?:var|val|let|const|glo|loc)\b\s*)(\#?\{)\s*
         end: \s*(\})
         captures:
@@ -3864,15 +3866,18 @@ repository:
         patterns:
           - match: ","
             name: punctuation.separator.arguments.trin
+      function-params:
+        patterns: *function-params
     patterns:
-      - begin: \s*(\#\()\s*
+      - begin: \s*(?<=[\w'"`)}\]]|[^.]\.)(\#?\()\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.parameters.trin}
         patterns:
           - include: "#punctuation"
+          - include: "#function-params"
           - include: $self
-      - begin: \s*(\()\s*
+      - begin: \s*(\#?\()\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.expression.trin}
@@ -3890,19 +3895,20 @@ repository:
           - match: ","
             name: punctuation.separator.sequence.trin
     patterns:
-      - begin: \s*(?<=[\w'"`)}\]]|[^.]\.)(\[)\s*
+      - begin: \s*(?<=\b(?:var|val|let|const|glo|loc)\b\s*)(\#?\[)\s*
+        end: \s*(\])
+        captures:
+          1: {name: punctuation.definition.binding-pattern.array.trin}
+        patterns:
+          - include: "#labels"
+          - include: "#punctuation"
+          - include: $self
+      - begin: \s*(?<=[\w'"`)}\]]|[^.]\.)(\#?\[)\s*
         end: \s*(\])
         captures:
           1: {name: punctuation.definition.attribute-selector.trin}
         patterns:
           - include: "#punctuation"
-          - include: $self
-      - begin: \s*(@\[)\s*
-        end: \s*(\])
-        captures:
-          1: {name: punctuation.definition.typeparameters.trin}
-        patterns:
-          - include: "#types"
           - include: $self
       - begin: \s*(\#\[)\s*
         end: \s*(\])
