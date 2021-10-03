@@ -1660,12 +1660,12 @@ repository:
     patterns:
       - include: "#jsdoc-inline-tags"
       - include: "#jsdoc-access"
-      - include: "#jsdoc-as-namepath"
+      - include: "#jsdoc-as-name-path"
       - include: "#jsdoc-simple"
-      - include: "#jsdoc-simple-namepath"
+      - include: "#jsdoc-simple-name-path"
       - include: "#jsdoc-module"
       - include: "#jsdoc-type-name"
-      - include: "#jsdoc-type-noname"
+      - include: "#jsdoc-type-no-name"
       - comment: additional jsdoc V2 keywords
         match: (?<!\w)@(add|api|body|codeend|codestart|demo|download|group|hide|iframe|image|inherits|option|outline|page|parent|signature|tag)\b
         name: storage.type.class.jsdoc
@@ -1695,20 +1695,20 @@ repository:
               1: {name: keyword.module.jsdoc}
               2: {name: punctuation.jsdoc}
               3: {name: string.modulename.jsdoc}
-      jsdoc-as-namepath:
+      jsdoc-as-name-path:
         comment: to terminate the block
         begin: (@(borrows|lends)\b)\s*(?=(?!\*/)\S+(?:(?:\s*\bas\b\s*(?!\*/)\S+)?)?([\S\s]*))
         end: ^|(?=\*/)|(?=\3$)
         beginCaptures:
           1: {name: storage.type.class.jsdoc}
         patterns:
-          - include: "#jsdoc-namepath-scopes"
+          - include: "#jsdoc-name-path-scopes"
       jsdoc-simple:
         comment: "@tag"
         match: (@(abstract|author|classdesc|copyright|default|defaultvalue|deprecated|description|desc|example|external|fileoverview|file|global|host|ignore|inheritdoc|inner|instance|license|override|overview|readonly|see|since|static|summary|todo|tutorial|virtual|variation|version)\b)(?=$|\s)
         captures:
           1: {name: storage.type.class.jsdoc}
-      jsdoc-simple-namepath:
+      jsdoc-simple-name-path:
         comment: "@tag {opt type} Class#xxx or Class#Event:aaaa etc"
         begin: (@(alias|augments|callback|extends|emits|event|fires|interface|memberof|mixes|name|property|prop|this|typedef)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*\S*([\S*\s]*))
         end: ^|(?=\*/)|(?=\4$)
@@ -1716,7 +1716,7 @@ repository:
           1: {name: storage.type.class.jsdoc}
         patterns:
           - include: "#jsdoc-typedef-scopes"
-          - include: "#jsdoc-namepath-scopes"
+          - include: "#jsdoc-name-path-scopes"
       jsdoc-type-name:
         comment: "@tag {optional type} name"
         begin: (@(arg|argument|class|constant|constructor|constructs|const|function|func|kind|member|method|mixin|namespace|param|var)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(((\[(?:(?>[^\[\]]+)|\g<-1>)*\])|\S)+)?([\S\s]*))
@@ -1726,7 +1726,7 @@ repository:
         patterns:
           - include: "#jsdoc-typedef-scopes"
           - include: "#jsdoc-name-scopes"
-      jsdoc-type-noname:
+      jsdoc-type-no-name:
         comment: "@tag {types}"
         begin: (@(enum|exception|implements|private|protected|public|returns|return|throws|type)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*([\S\s]*))
         end: ^|(?=\*/)|(?=\4$)
@@ -1756,7 +1756,7 @@ repository:
           0: {name: meta.brace.curly.jsdoc}
         patterns:
           - include: "#jsdoc-typedef-primitives"
-          - include: "#jsdoc-namepath-scopes"
+          - include: "#jsdoc-name-path-scopes"
           - include: "#jsdoc-typedef-obj"
       jsdoc-typedef-primitives:
         match: \b(null|undefined|boolean|string|number)\b
@@ -1773,7 +1773,7 @@ repository:
           - match: \b([\p{Pc}\p{L}]\w*)\s*(:)
             captures:
               1: {name: variable.other.readwrite.jsdoc}
-          - include: "#jsdoc-namepath-scopes"
+          - include: "#jsdoc-name-path-scopes"
           - include: "#jsdoc-typedef-obj"
       jsdoc-name-scopes:
         patterns:
@@ -1786,7 +1786,7 @@ repository:
             patterns:
               - include: "#jsdoc-string"
               - include: "#jsdoc-name-scopes"
-      jsdoc-namepath-scopes:
+      jsdoc-name-path-scopes:
         patterns:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*(?=[\p{Pc}\p{L}])
             captures:
@@ -2809,7 +2809,7 @@ repository:
 
       # concurrency modifiers
       |a?sync|stat|dyn|lazy|eager|strong|weak
-      |vola|unsafe|unfix|bound|free
+      |vola|unsafe|unfix|bound|free|opaque|trans
 
       # property or method modifiers
       |re|gen|oper|get|set
@@ -2845,7 +2845,7 @@ repository:
               )|
               (# Function or method modifiers
               a?sync|stat|dyn|lazy|eager|strong|weak
-              |vola|unsafe|unfix|bound|free
+              |vola|unsafe|unfix|bound|free|opaque|trans
               )|
               (# Property modifiers
               re|gen|oper|get|set
@@ -2952,7 +2952,7 @@ repository:
       - include: "#query-expression"
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const|glo|loc)\b\s*
         name: storage.type.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(declare)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)\b\s*
         name: keyword.other.$1.trin
       - include: "#modifier-keywords"
       - include: "#declaration-keywords"
@@ -3016,7 +3016,7 @@ repository:
               - include: "#strings-unquoted"
               - include: "#symbols"
               - include: "#type-operators"
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|only|but|as|all|any)\b\s*
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|as|all|any|but|just|only|alt)\b\s*
                 name: keyword.control.module.trin
               - match: ","
                 name: punctuation.separator.comma.trin
@@ -3453,7 +3453,7 @@ repository:
 
               # concurrency modifiers
               |a?sync|stat|dyn|lazy|eager|strong|weak
-              |vola|unsafe|unfix|bound|free
+              |vola|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
               |re|gen|oper|get|set
@@ -3489,7 +3489,7 @@ repository:
 
               # concurrency modifiers
               |a?sync|stat|dyn|lazy|eager|strong|weak
-              |vola|unsafe|unfix|bound|free
+              |vola|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
               |re|gen|oper|get|set
@@ -3522,7 +3522,7 @@ repository:
 
               # concurrency modifiers
               |a?sync|stat|dyn|lazy|eager|strong|weak
-              |vola|unsafe|unfix|bound|free
+              |vola|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
               |re|gen|oper|get|set
@@ -3558,7 +3558,7 @@ repository:
 
               # concurrency modifiers
               |a?sync|stat|dyn|lazy|eager|strong|weak
-              |vola|unsafe|unfix|bound|free
+              |vola|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
               |re|gen|oper|get|set
