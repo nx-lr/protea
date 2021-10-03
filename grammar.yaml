@@ -60,9 +60,9 @@ define:
 
   entity-name-clause: &entity-name-clause |
     (?x)\s*\b
-    (?<=(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:extends|implements)\b|\s*[<>]\s+)\s*
+    (?<=(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(?:extends|implements)\b|\s*[<>]\s+)\s*
 
-    (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
+    (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
     \b(?:# don't match keywords
     in|of|as|is|out|new|infer|unset
     |typeof|nameof|sizeof
@@ -80,7 +80,7 @@ define:
     |switch|case|default|match|when|otherwise
     |parallel|series|spawn|destroy|fixed|lock
     |break|continue|return|await|label|yield|goto
-    |import|export|expose|using
+    |import|export|impose|expose|using
     |debug|check|assert
     )\b
     )
@@ -89,7 +89,7 @@ define:
 
   entity-name: &entity-name |
     (?x)\s*\b
-    (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
+    (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
     \b(?:# don't match keywords
     in|of|as|is|out|new|infer|unset
     |typeof|nameof|sizeof
@@ -107,7 +107,7 @@ define:
     |switch|case|default|match|when|otherwise
     |parallel|series|spawn|destroy|fixed|lock
     |break|continue|return|await|label|yield|goto
-    |import|export|expose|using
+    |import|export|impose|expose|using
     |debug|check|assert
     )\b
     )
@@ -159,7 +159,7 @@ repository:
 
   illegal-keywords:
     match: |
-      \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
+      \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
       in|of|as|is|out|new|infer|unset
       |typeof|nameof|sizeof
       |keyof|valueof|pairof|instof
@@ -176,7 +176,7 @@ repository:
       |switch|case|default|match|when|otherwise
       |parallel|series|spawn|destroy|fixed|lock
       |break|continue|return|await|label|yield|goto
-      |import|export|expose|using
+      |import|export|impose|expose|using
       |debug|check|assert
       )\b\s*
     name: invalid.illegal.keyword.trin
@@ -234,7 +234,7 @@ repository:
     patterns:
       - comment: Primitive data types
         match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
+          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
           bool(ean)?|u?int|float|natural|ratio|real|imag|complex|number
           |char|rune|string|symbol|regexp?|function|buffer|binary
           |# numeric types
@@ -245,7 +245,7 @@ repository:
         name: support.type.builtin.primitive.trin
       - comment: Constant/algebraic types
         match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
+          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
           true|false|null|void|nan|infinity
           |any|empty|object|record|unit|mixed
           |just|some|none|never|(im)?pure|channel
@@ -253,14 +253,14 @@ repository:
         name: support.type.builtin.trin
       - comment: Data structures
         match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
+          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
           array|tuple|(?:mut)?(?:list|set|map)|dict|function
           |process|sequence|generator|range|stack|heap|queue|tree|trie
           )\b
         name: support.type.primitive.trin
       - comment: Primitive classes
         match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
+          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
           Bool(ean)?|U?Int|Float|Natural|Ratio|Real|Imag|Complex|Number
           |Char|Rune|String|Symbol|RegExp?|Function|Buffer|Binary
           |# Numeric Types
@@ -271,7 +271,7 @@ repository:
         name: support.class.builtin.primitive.trin
       - comment: Constant/algebraic classes
         match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
+          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
           True|False|Null|Void|NaN|Infinity
           |Any|Empty|Object|Record|Unit|Mixed
           |Just|Some|None|Never|(Im)?pure|Channel
@@ -279,7 +279,7 @@ repository:
         name: support.class.builtin.trin
       - comment: Data structure classes
         match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(
+          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
           Array|Tuple|(Mut)?(List|Set|Map)|Dict|Function
           |Process|Sequence|Generator|Range|Stack|Heap|Queue|Tree|Trie
           )\b
@@ -332,7 +332,7 @@ repository:
   constants:
     patterns:
       - match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:
+          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(?:
           (true)|(false)|(null)|(void)|(nan)|(infin)
           )\b\s*
         captures:
@@ -343,7 +343,7 @@ repository:
           5: {name: constant.language.nan.trin}
           6: {name: constant.language.infinity.trin}
       - match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:
+          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(?:
           (it|this|that|super|self|proto|target)
           |(params)
           |(ctor)
@@ -706,7 +706,7 @@ repository:
           (?:(\d\w*)|
           (
           [\p{Pc}\p{L}]\w*
-          (?:(?:[?!]?\.|[?!:]:|->)
+          (?:(?:[?!]?\.|[?!:]:)
           (?:(?:[\p{Pc}\p{L}]\w*)))*
           )
           )?\s*
@@ -737,7 +737,7 @@ repository:
           (?:(\d\w*)|
           (
           [\p{Pc}\p{L}]\w*
-          (?:(?:[?!]?\.|[?!:]:|->)
+          (?:(?:[?!]?\.|[?!:]:)
           (?:(?:[\p{Pc}\p{L}]\w*)))*
           )
           )?\s*
@@ -902,7 +902,7 @@ repository:
           (\$)# prefix
           (
           [\p{Pc}\p{L}]\w*
-          (?:(?:[?!]?\.|[?!:]:|->)
+          (?:(?:[?!]?\.|[?!:]:)
           (?:(?:[\p{Pc}\p{L}]\w*)))*
           )# variable
         captures:
@@ -942,7 +942,7 @@ repository:
           (\$)# prefix
           (
           [\p{Pc}\p{L}]\w*
-          (?:(?:[?!]?\.|[?!:]:|->)
+          (?:(?:[?!]?\.|[?!:]:)
           (?:(?:[\p{Pc}\p{L}]\w*)))*
           )# variable
         captures:
@@ -1800,7 +1800,7 @@ repository:
               - include: "#jsdoc-name-scopes"
       jsdoc-namepath-scopes:
         patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b\s*(?=[\p{Pc}\p{L}])
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*(?=[\p{Pc}\p{L}])
             captures:
               1: {name: keyword.as.jsdoc}
           - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}]\w*))(?=[\s\-~.#]|$)
@@ -1988,7 +1988,7 @@ repository:
         match: |
           (?x)\s*\b
           (
-          (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
+          (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
           \b(?:# don't match keywords
           in|of|as|is|out|new|infer|unset
           |typeof|nameof|sizeof
@@ -2006,7 +2006,7 @@ repository:
           |switch|case|default|match|when|otherwise
           |parallel|series|spawn|destroy|fixed|lock
           |break|continue|return|await|label|yield|goto
-          |import|export|expose|using
+          |import|export|impose|expose|using
           |debug|check|assert
           )\b
           )
@@ -2014,9 +2014,9 @@ repository:
           )
           \b
           (?=
-          (?:[!?~]?\.=?|[?!:]:=?|->)?\s*\(|
-          (?:[!?~]?\.=?|[?!:]:=?|->)?\s+['"`\\\[]|
-          (?:[!?~]?\.=?|[?!:]:=?|->)?\s+<[\p{Pc}\p{L}]
+          (?:[!?~]?\.=?|[?!:]:=?)?\s*\#?\(|
+          (?:[!?~]?\.=?|[?!:]:=?)?\s+['"`\\\[]|
+          (?:[!?~]?\.=?|[?!:]:=?)?\s+<[\p{Pc}\p{L}]
           )
         captures:
           1: {patterns: [include: "#function-entities"]}
@@ -2025,7 +2025,7 @@ repository:
     patterns:
       - match: |
           (?x)\b(?:
-          (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
+          (?<=[!?~]?\.=?|[?!:]:=?)(?<!\.+)
           (?:# Properties (note all properties are by default, symbols)
           (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
           ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
@@ -2039,7 +2039,7 @@ repository:
           ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}]\w*)
           )
-          (?=(?:[?!~]?\.?=?)?\[(?!<)|(?![>.]\.[.<]?)[?!~]?\.=?|[?!:]:|->)
+          (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\[)
           |
           (?:# Regular variables
           (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
@@ -2075,7 +2075,7 @@ repository:
     match: |
       (?x)\s*\b
       (?:
-      (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
+      (?<=[!?~]?\.=?|[?!:]:=?)(?<!\.+)
       (?:# Properties (note all properties are by default, symbols)
       (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
@@ -2089,7 +2089,7 @@ repository:
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
       )
-      (?=(?:[?!~]?\.?=?)?\[(?!<)|(?![>.]\.[.<]?)[?!~]?\.=?|[?!:]:|->)
+      (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\[)
       |
       (?:# Regular variables
       (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
@@ -2246,8 +2246,8 @@ repository:
 
       unary-ops:
         patterns:
-          - &transfix-operators
-            comment: Transfix binary operators
+          - &primary-operators
+            comment: Primary binary operators
             match: |
               (?x)(?<=\b|^|[)}\]'"`\\])
               (?:
@@ -2351,7 +2351,7 @@ repository:
             begin: |
               (?x)\s*(?:(\++>)|(\|+>))(?=\s*(
               [\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*# prefix
-              (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
+              (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
               \b(?:# don't match keywords
               in|of|as|is|out|new|infer|unset
               |typeof|nameof|sizeof
@@ -2369,12 +2369,12 @@ repository:
               |switch|case|default|match|when|otherwise
               |parallel|series|spawn|destroy|fixed|lock
               |break|continue|return|await|label|yield|goto
-              |import|export|expose|using
+              |import|export|impose|expose|using
               |debug|check|assert
               )\b
               )
               [\w]+
-              (?:[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*# transfix
+              (?:[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*# primary
               [\w]+)*
               [\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*# suffix
               )\s*([^(]|$|;))
@@ -2385,7 +2385,7 @@ repository:
             patterns:
               - match: |
                   (?x)\s*\b
-                  (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
+                  (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
                   \b(?:# don't match keywords
                   in|of|as|is|out|new|infer|unset
                   |typeof|nameof|sizeof
@@ -2403,7 +2403,7 @@ repository:
                   |switch|case|default|match|when|otherwise
                   |parallel|series|spawn|destroy|fixed|lock
                   |break|continue|return|await|label|yield|goto
-                  |import|export|expose|using
+                  |import|export|impose|expose|using
                   |debug|check|assert
                   )\b
                   )
@@ -2414,9 +2414,9 @@ repository:
                   ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
                   ([\p{Pc}\p{L}]\w*)
                   )
-                  (?=(?:[?!~]?\.?=?)?\[(?!<)|(?![>.]\.[.<]?)[?!~]?\.=?|[?!:]:|->)
+                  (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\[)
                   |
-                  (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
+                  (?<=[!?~]?\.=?|[?!:]:=?)(?<!\.+)
                   (?:# Properties (note all properties are by default, symbols)
                   (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
                   ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
@@ -2444,7 +2444,7 @@ repository:
                   10: {name: entity.name.type.trin}
                   11: {name: entity.name.class.trin}
                   12: {name: entity.name.function.trin}
-              - *transfix-operators
+              - *primary-operators
 
       special-operators:
         patterns:
@@ -2494,7 +2494,7 @@ repository:
     match: |
       (?x)\s*\b
 
-      (?!(?<!(?:(?<!\.)\.|[?!:]:)=?|->)
+      (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
       \b(?:# don't match keywords
       in|of|as|is|out|new|infer|unset
       |typeof|nameof|sizeof
@@ -2512,12 +2512,12 @@ repository:
       |switch|case|default|match|when|otherwise
       |parallel|series|spawn|destroy|fixed|lock
       |break|continue|return|await|label|yield|goto
-      |import|export|expose|using
+      |import|export|impose|expose|using
       |debug|check|assert
       )\b
       )
       (?:
-      (?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
+      (?<=[!?~]?\.=?|[?!:]:=?)(?<!\.+)
       (?:# Properties (note all properties are by default, symbols)
       (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
@@ -2531,7 +2531,7 @@ repository:
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}]\w*)
       )
-      (?=(?:[?!~]?\.?=?)?\[(?!<)|(?![>.]\.[.<]?)[?!~]?\.=?|[?!:]:|->)
+      (?!\.+)(?=[!?~]?\.=?|[?!:]:=?|\[)
       |
       (?:# Regular variables
       (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
@@ -2652,14 +2652,16 @@ repository:
 
   type-keywords:
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(extends|implements)\b\s*
-        name: storage.type.$1.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(typeof|nameof|sizeof|keyof|valueof|pairof|infer|as|is)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)\b\s*
+        name: storage.type.extends.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(impl)\b\s*
+        name: storage.type.implements.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(typeof|nameof|sizeof|keyof|valueof|pairof|infer|as|is)\b\s*
         name: keyword.operator.expression.$1.trin
 
   type-operators:
     patterns:
-      - comment: transfix binary operators
+      - comment: primary binary operators
         match: |
           (?x)(?<=^|[)}\]\w'"`])
           (?:(\?[:.])|(~[:.])|(![:.])|(::|\.)|(->))
@@ -2718,7 +2720,7 @@ repository:
 
   types:
     patterns:
-      - match: \s*(==?>|-->|~~?>)
+      - match: \s*(==?>|--?>|~~?>)
         name: keyword.operator.type.function.trin
       - match: \s*(<==|<--?|<~~?)
         name: keyword.operator.type.channel.trin
@@ -2810,7 +2812,7 @@ repository:
       (?x)
       ((?:
       \s*(?:
-      (?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b
+      (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:# Access modifiers
       public|private|protected|readonly|a?sync|inline|lazy|eager|weak|strong|transparent|transient|partial|whole
       |lawful|rogue|early|late|unique|handle|override|abstract|volatile|static|dynamic|threadsafe|final|(?:im|ex)plicit|(?:in|ex)tern(?:al)?
@@ -2863,81 +2865,81 @@ repository:
 
   declaration-keywords:
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(func?|def)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func?|def)\b\s*
         name: storage.type.function.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(class)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
         name: storage.type.class.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(enum)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)\b\s*
         name: storage.type.enumeration.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(mod)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(mod)\b\s*
         name: storage.type.module.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(pkg)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pkg)\b\s*
         name: storage.type.package.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(inter)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inter)\b\s*
         name: storage.type.interface.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(struct)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
         name: storage.type.structure.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(obj)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(obj)\b\s*
         name: storage.type.object.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(rec)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(rec)\b\s*
         name: storage.type.record.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(frag)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(frag)\b\s*
         name: storage.type.fragment.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(data)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)\b\s*
         name: storage.type.data.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(trait)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)\b\s*
         name: storage.type.trait.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(proto)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)\b\s*
         name: storage.type.protocol.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(proc)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)\b\s*
         name: storage.type.procedure.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(macro)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
         name: storage.type.macro.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(type)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)\b\s*
         name: storage.type.type.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(given)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)\b\s*
         name: storage.type.constraint.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(raw)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(raw)\b\s*
         name: storage.type.raw.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(style)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
         name: storage.type.style.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(comp)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(comp)\b\s*
         name: storage.type.component.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(elem)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)\b\s*
         name: storage.type.element.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(ext)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)\b\s*
         name: storage.type.extension.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(impl)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(impl)\b\s*
         name: storage.type.implementation.trin
 
   general-keywords:
     comment: general keywords
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(if|lest|then|elif|eles|else)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|then|elif|eles|else)\b\s*
         name: keyword.control.conditional.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(for|each|loop|while|until)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)\b\s*
         name: keyword.control.loop.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(do|redo)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do|redo)\b\s*
         name: keyword.control.do.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(try|retry|throw|catch|finally)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|retry|throw|catch|finally)\b\s*
         name: keyword.control.trycatch.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(switch|case|default)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch|case|default)\b\s*
         name: keyword.control.switch.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(match|when|otherwise)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|when|otherwise)\b\s*
         name: keyword.control.match.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(parallel|series|spawn|destroy|fixed|lock)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(parallel|series|spawn|destroy|fixed|lock)\b\s*
         name: keyword.control.thread.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(break|skip|return|await|label|yield|goto|pass)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|skip|return|await|label|yield|goto|pass)\b\s*
         name: keyword.control.flow.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(import|export|expose|using)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|impose|expose|using)\b\s*
         name: keyword.control.module.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(with)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)\b\s*
         name: keyword.control.with.trin
 
   expression-keywords:
     comment: expression keywords
     match: |
-      (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(?:
+      (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(?:
       (in|of|as|is|new|infer|typeof|nameof|sizeof|keyof|pairof|valueof)
       |(len)|(del)|(to|til|thru|at|by)|(unset)|(instof)
       )\b\s*
@@ -2954,9 +2956,9 @@ repository:
       - include: "#module-expression"
       - include: "#control-expression"
       - include: "#query-expression"
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(let|va[rl]|const)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(let|va[rl]|const)\b\s*
         name: storage.type.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(declare)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(declare)\b\s*
         name: keyword.other.$1.trin
       - include: "#modifier-keywords"
       - include: "#declaration-keywords"
@@ -2971,14 +2973,14 @@ repository:
               2: {name: keyword.other.table.trin}
               5: {name: entity.name.function.trin}
             match:
-              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(create(?:\s+or\s+replace)?|replace)\s+(aggregate|conversion|database|domain|function|group|(unique\s+)?index|language|operator
+              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(create(?:\s+or\s+replace)?|replace)\s+(aggregate|conversion|database|domain|function|group|(unique\s+)?index|language|operator
               class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)(['"`]?)(\w+)\4
             name: meta.create.trin
           - captures:
               1: {name: keyword.other.drop.trin}
               2: {name: keyword.other.table.trin}
             match:
-              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
+              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(drop|delete)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
               class|operator|rule|schema|sequence|table|tablespace|trigger|type|user|view))
             name: meta.drop.trin
           - captures:
@@ -2986,19 +2988,19 @@ repository:
               2: {name: keyword.other.table.trin}
               3: {name: entity.name.function.trin}
               4: {name: keyword.other.cascade.trin}
-            match: (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(drop|delete)\s+(table)\s+(\w+)(\s+cascade)?\b)
+            match: (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(drop|delete)\s+(table)\s+(\w+)(\s+cascade)?\b)
             name: meta.drop.trin
           - captures:
               1: {name: keyword.other.alter.trin}
               2: {name: keyword.other.table.trin}
             match:
-              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(alter|update)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
+              (?:\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(alter|update)\s+(aggregate|conversion|database|domain|function|group|index|language|operator
               class|operator|proc(edure)?|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)
             name: meta.alter.trin
 
       control-expression:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(halt|skip|break|continue|goto|label)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(halt|skip|break|continue|goto|label)\b
         end: (?=.)|$
         beginCaptures:
           1: {name: keyword.control.flow.trin}
@@ -3009,33 +3011,30 @@ repository:
       module-expression:
         patterns:
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b((?:im|ex)port|open|close|use|using)\b\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|impose|expose|using)\b\s*
             end: (?=.)|$
             beginCaptures:
               1: {name: keyword.control.module.trin}
             patterns:
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(from|to|default|only|except|as|all|any|show|hide)\b\s*
-                name: keyword.control.module.trin
               - include: source.yaml#flow-collection
               - include: "#type-keywords"
               - include: "#strings-quoted"
               - include: "#strings-unquoted"
               - include: "#symbols"
               - include: "#type-operators"
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|only|but|as|all|any)\b\s*
+                name: keyword.control.module.trin
               - match: ","
                 name: punctuation.separator.comma.trin
-              - match: \s*\*
-                name: keyword.operator.module.all.trin
               - match: *entity-name
                 name: variable.other.readwrite.alias.trin
-              - include: $self
 
       query-expression:
         begin: |
           (?x)
-          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(from)\b\s*
+          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)\b\s*
           (.*?)
-          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(in|of)\b\s*
+          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
           2: {patterns: [include: $self]}
@@ -3049,89 +3048,83 @@ repository:
         patterns:
           - include: "#where-clause"
           - include: "#join-clause"
-          - include: "#order-by-clause"
+          - include: "#sort-clause"
           - include: "#select-clause"
           - include: "#group-clause"
           - include: "#limit-clause"
           - include: "#reduce-clause"
 
-      where-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(where|having)\b\s*
-        beginCaptures:
-          1: {name: keyword.query.trin}
-        end: (?=[,;)}\]])
-        patterns:
-          - include: "#query-body"
-          - include: $self
-
       join-clause:
         begin: |
           (?x)
-          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b((?:inner|(?:full)\b\s*\bouter|left|right)?\b\s*\bjoin)\b\s*
+          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:inner|(?:full)\b\s*\bouter|left|right)?\b\s*\bjoin)\b\s*
           (.*?)
-          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(in|of)\b\s*
+          \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
           2: {patterns: [include: $self]}
           3: {name: keyword.query.trin}
         end: (?=[,;)}\]])
         patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(on|equals|into)\b\s*
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(on|equals|into)\b\s*
             name: keyword.query.trin
           - include: "#query-body"
           - include: $self
-
-      order-by-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(order|sort)\b\s*
+      where-clause:
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where|having)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
         end: (?=[,;)}\]])
         patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(asc|desc|by)\b\s*
+          - include: "#query-body"
+          - include: $self
+      sort-clause:
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(order|sort)\b\s*
+        beginCaptures:
+          1: {name: keyword.query.trin}
+        end: (?=[,;)}\]])
+        patterns:
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(asc|desc|by)\b\s*
             name: keyword.query.trin
           - include: "#query-body"
           - include: $self
-
       select-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(select\b\s*\b(?:unique|any|all)?)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(select\b\s*\b(?:unique|any|all)?)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
         end: (?=[,;)}\]])
         patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(by|while|until|with)\b\s*
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
             name: keyword.query.trin
           - include: "#query-body"
           - include: $self
-
       limit-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b((?:take|drop|limit)\b\s*\b(?:first|last|head|tail)?)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit)\b\s*\b(?:first|last|head|tail)?)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
         end: (?=[,;)}\]])
         patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(by|while|until|with)\b\s*
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
             name: keyword.query.trin
           - include: "#query-body"
           - include: $self
-
       reduce-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b((?:fold|reduce|scan)\b\s*\b(?:left|right)?)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)\b\s*\b(?:left|right)?)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
         end: (?=[,;)}\]])
         patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(by|while|until|with)\b\s*
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
             name: keyword.query.trin
           - include: "#query-body"
           - include: $self
-
       group-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(group)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(group)\b\s*
         beginCaptures:
           1: {name: keyword.query.trin}
         end: (?=[,;)}\]])
         patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(by|into)\b\s*
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|into)\b\s*
             name: keyword.query.trin
           - include: "#query-body"
           - include: $self
@@ -3165,7 +3158,7 @@ repository:
     repository:
       function:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(func?|def)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func?|def)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.function.trin}
@@ -3175,7 +3168,7 @@ repository:
             name: entity.name.function.trin
       class:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(class)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.class.trin}
@@ -3185,7 +3178,7 @@ repository:
             name: entity.name.class.trin
       enumeration:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(enum)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.enumeration.trin}
@@ -3195,7 +3188,7 @@ repository:
             name: entity.name.enumeration.trin
       module:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(mod)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(mod)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.module.trin}
@@ -3205,7 +3198,7 @@ repository:
             name: entity.name.module.trin
       package:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(pkg)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pkg)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.package.trin}
@@ -3215,7 +3208,7 @@ repository:
             name: entity.name.package.trin
       interface:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(inter)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inter)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.interface.trin}
@@ -3225,7 +3218,7 @@ repository:
             name: entity.name.interface.trin
       structure:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(struct)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.structure.trin}
@@ -3235,7 +3228,7 @@ repository:
             name: entity.name.structure.trin
       object:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(obj)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(obj)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.object.trin}
@@ -3245,7 +3238,7 @@ repository:
             name: entity.name.object.trin
       record:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(rec)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(rec)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.record.trin}
@@ -3255,7 +3248,7 @@ repository:
             name: entity.name.record.trin
       fragment:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(frag)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(frag)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.fragment.trin}
@@ -3265,7 +3258,7 @@ repository:
             name: entity.name.fragment.trin
       data:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(data)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.data.trin}
@@ -3275,7 +3268,7 @@ repository:
             name: entity.name.data.trin
       trait:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(trait)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.trait.trin}
@@ -3285,7 +3278,7 @@ repository:
             name: entity.name.trait.trin
       protocol:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(proto)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.protocol.trin}
@@ -3295,7 +3288,7 @@ repository:
             name: entity.name.protocol.trin
       procedure:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(proc)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.procedure.trin}
@@ -3305,7 +3298,7 @@ repository:
             name: entity.name.procedure.trin
       macro:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(macro)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.macro.trin}
@@ -3315,7 +3308,7 @@ repository:
             name: entity.name.macro.trin
       type:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(type)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.type.trin}
@@ -3325,7 +3318,7 @@ repository:
             name: entity.name.type.trin
       constraint:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(given)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.constraint.trin}
@@ -3335,7 +3328,7 @@ repository:
             name: entity.name.constraint.trin
       raw:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(raw)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(raw)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.raw.trin}
@@ -3345,7 +3338,7 @@ repository:
             name: entity.name.raw.trin
       style:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(style)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.style.trin}
@@ -3355,7 +3348,7 @@ repository:
             name: entity.name.style.trin
       component:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(comp)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(comp)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.component.trin}
@@ -3365,7 +3358,7 @@ repository:
             name: entity.name.component.trin
       element:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(elem)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.element.trin}
@@ -3375,7 +3368,7 @@ repository:
             name: entity.name.element.trin
       extension:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(ext)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.extension.trin}
@@ -3385,7 +3378,7 @@ repository:
             name: entity.name.extension.trin
       implementation:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(impl)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(impl)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.implementation.trin}
@@ -3414,7 +3407,7 @@ repository:
       |switch|case|default|match|when|otherwise
       |parallel|series|spawn|destroy|fixed|lock
       |break|continue|return|await|label|yield|goto
-      |import|export|expose|using
+      |import|export|impose|expose|using
       |debug|check|assert
       )\b)\s*)
       (\|)
@@ -3463,7 +3456,7 @@ repository:
       method-clause:
         patterns:
           - begin: |
-              (?x)(?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
+              (?x)(?<=[!?~]?\.=?|[?!:]:=?)(?<!\.+)
               ([\p{Pc}\p{L}]\w*)\s+
               ([?:]?=)\s+
               (
@@ -3479,7 +3472,7 @@ repository:
               |# Decorators
               @(?:
               [\p{Pc}\p{L}]\w*
-              (?:(?:[?!]?\.|[?!:]:|->)
+              (?:(?:[?!]?\.|[?!:]:)
               (?:(?:[\p{Pc}\p{L}]\w*)))*
               )
               )\s*\b)*
@@ -3500,7 +3493,7 @@ repository:
               Method def before function keyword
               x = def()
             match: |
-              (?x)(?<!\.\.+)(?<=[!?~]?\.=?|[?!:]:=?|->)
+              (?x)(?<=[!?~]?\.=?|[?!:]:=?)(?<!\.+)
               ([\p{Pc}\p{L}]\w*)\s+
               ([?:]?=)\s+
               ([\p{Pc}\p{L}]\w*)\s+
@@ -3519,7 +3512,7 @@ repository:
               |# Decorators
               @(?:
               [\p{Pc}\p{L}]\w*
-              (?:(?:[?!]?\.|[?!:]:|->)
+              (?:(?:[?!]?\.|[?!:]:)
               (?:(?:[\p{Pc}\p{L}]\w*)))*
               )
               ))
@@ -3553,7 +3546,7 @@ repository:
               |# Decorators
               @(?:
               [\p{Pc}\p{L}]\w*
-              (?:(?:[?!]?\.|[?!:]:|->)
+              (?:(?:[?!]?\.|[?!:]:)
               (?:(?:[\p{Pc}\p{L}]\w*)))*
               )
               )\s*\b)*
@@ -3591,7 +3584,7 @@ repository:
               |# Decorators
               @(?:
               [\p{Pc}\p{L}]\w*
-              (?:(?:[?!]?\.|[?!:]:|->)
+              (?:(?:[?!]?\.|[?!:]:)
               (?:(?:[\p{Pc}\p{L}]\w*)))*
               )
               ))
@@ -3608,7 +3601,7 @@ repository:
 
       new-clause:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(new)\b
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(new)\b
         end: (?=.)|$
         beginCaptures:
           1: {name: keyword.operator.expression.$1.trin}
@@ -3620,14 +3613,14 @@ repository:
       type-clause:
         patterns:
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(is|as)\b\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
             end: (?=.)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.trin}
             patterns:
               - include: "#types"
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(type)\b\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)\b\s*
             end: (?=.)|$
             beginCaptures:
               1: {name: keyword.other.typedef.trin}
@@ -3638,8 +3631,8 @@ repository:
               - include: "#types"
 
       case-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(case|default)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case|default)\b\s*
+        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
         beginCaptures:
           1: {name: keyword.control.switch.trin}
         patterns:
@@ -3647,8 +3640,8 @@ repository:
           - include: $self
 
       catch-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(try|retry|throw|catch|finally)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|retry|throw|catch|finally)\b\s*
+        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
         name: meta.catch.trin
         beginCaptures:
           1: {name: keyword.control.error.trin}
@@ -3658,24 +3651,24 @@ repository:
             captures:
               1: {name: punctuation.definition.expression.trin}
             patterns:
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b
                 name: keyword.control.error.trin
               - include: "#code-block"
               - include: $self
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b
             name: keyword.control.error.trin
           - include: "#code-block"
           - include: $self
 
       thread-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(parallel|series|spawn|destroy|fixed|lock)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(parallel|series|spawn|destroy|fixed|lock)\b\s*
+        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
         name: meta.thread.trin
         beginCaptures:
           1: {name: keyword.control.thread.trin}
         patterns:
           - &thread-clause-keywords
-            match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b\s*
+            match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
             name: keyword.control.thread.trin
           - begin: \s*(\()
             end: \s*(\))
@@ -3689,8 +3682,8 @@ repository:
           - include: $self
 
       do-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(do|redo)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do|redo)\b\s*
+        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
         name: meta.do.trin
         beginCaptures:
           1: {name: keyword.control.do.trin}
@@ -3699,8 +3692,8 @@ repository:
           - include: $self
 
       for-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(for|each|loop|while|until)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)\b\s*
+        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
         name: meta.for.trin
         beginCaptures:
           1: {name: keyword.control.loop.trin}
@@ -3720,8 +3713,8 @@ repository:
           - include: $self
 
       if-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(if|lest|then|elif|eles|else)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|then|elif|eles|else)\b\s*
+        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
         name: meta.if.trin
         beginCaptures:
           1: {name: keyword.control.conditional.trin}
@@ -3730,8 +3723,8 @@ repository:
           - include: $self
 
       match-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(match|otherwise)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|otherwise)\b\s*
+        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
         name: meta.match.trin
         beginCaptures:
           1: {name: keyword.control.match.trin}
@@ -3740,8 +3733,8 @@ repository:
           - include: $self
 
       switch-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(switch)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)\b\s*
+        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
         name: meta.switch.trin
         beginCaptures:
           1: {name: keyword.control.switch.trin}
@@ -3750,8 +3743,8 @@ repository:
           - include: $self
 
       when-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(when)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when)\b\s*
+        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
         beginCaptures:
           1: {name: keyword.control.match.trin}
         patterns:
@@ -3768,14 +3761,14 @@ repository:
           - include: $self
 
       with-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(with)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:->|(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\bthen\b)|$)
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)\b\s*
+        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
         name: meta.with.trin
         beginCaptures:
           1: {name: keyword.control.with.trin}
         patterns:
           - &with-clause-keywords
-            match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(as)\b\s*
+            match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
             name: keyword.control.with.trin
           - begin: \s*(\()
             end: \s*(\))
@@ -3805,7 +3798,7 @@ repository:
         captures:
           1: {name: punctuation.separator.comma.trin}
       right-arrow:
-        match: (?:^|['"`\\({\[\s]*)(->)(?:$|['"`\\\s)}\]])
+        match: (?:^|['"`\\({\[\s]*)(=>)(?:$|['"`\\\s)}\]])
         captures:
           1: {name: punctuation.definition.arrow.trin}
       double-semi:
@@ -3893,12 +3886,19 @@ repository:
     repository:
       punctuation:
         patterns:
-          - match: (?<=\b|^|[)}\]'"`\\\s])(:)(?=\b|$|[({\['"`\\\s])
+          - match: (?<!:)(:)(?!:)
             captures:
               1: {name: punctuation.separator.slice.trin}
           - match: ","
             name: punctuation.separator.sequence.trin
     patterns:
+      - begin: \s*(?<=[\w'"`)}\]]|[^.]\.)(\[)\s*
+        end: \s*(\])
+        captures:
+          1: {name: punctuation.definition.attribute-selector.trin}
+        patterns:
+          - include: "#punctuation"
+          - include: $self
       - begin: \s*(@\[)\s*
         end: \s*(\])
         captures:
