@@ -74,7 +74,7 @@ define:
     |frag|data|trait|proto|proc|macro|type|given
     |raw|style|comp|elem|decl
 
-    |if|lest|then|elif|eles|else
+    |if|lest|elif|elest|else
     |for|each|loop|while|until|from
     |do|redo|try|retry|throw|catch|finally
     |switch|case|default|match|when|otherwise
@@ -101,7 +101,7 @@ define:
     |frag|data|trait|proto|proc|macro|type|given
     |raw|style|comp|elem|decl
 
-    |if|lest|then|elif|eles|else
+    |if|lest|elif|elest|else
     |for|each|loop|while|until|from
     |do|redo|try|retry|throw|catch|finally
     |switch|case|default|match|when|otherwise
@@ -170,7 +170,7 @@ repository:
       |frag|data|trait|proto|proc|macro|type|given
       |raw|style|comp|elem|decl
 
-      |if|lest|then|elif|eles|else
+      |if|lest|elif|elest|else
       |for|each|loop|while|until|from
       |do|redo|try|retry|throw|catch|finally
       |switch|case|default|match|when|otherwise
@@ -643,13 +643,7 @@ repository:
           (:[\p{Pc}\p{L}]\w*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.illegal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
+          0: {name: invalid.illegal.numeric.trin}
       - match: (?ix)\s*\b
           (\d+\w)
           (?:\w+(?:_*\w+)*)?
@@ -660,13 +654,7 @@ repository:
           (:[\p{Pc}\p{L}]\w*)?
           \b\s*
         captures:
-          0: {name: constant.numeric.illegal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
+          0: {name: invalid.illegal.numeric.trin}
 
   strings-quoted:
     patterns:
@@ -791,7 +779,7 @@ repository:
           - match: \b0*(1(0(0(0(0[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01]|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1(0(0(0(0([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1)?|1[01][01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]|1)?|0)\b
             name: constant.character.escape.binary.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unknown-escape.trin
       - comment: Quaternary escape sequences
         match: (?i)\\q0*(1(0(0[0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|1(0(0([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?)?|[23][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[23][0-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[23]|0)
         name: constant.character.escape.quaternary.trin
@@ -803,7 +791,7 @@ repository:
           - match: \b0*(1(0(0[0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|1(0(0([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?)?|[23][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[23][0-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[23]|0)\b
             name: constant.character.escape.quaternary.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unknown-escape.trin
       - comment: Senary escape sequences
         match: (?i)\\s0*(355135(3[01]|[45])|355135[0-2][0-5]|3551(3[0-4]|[45])[0-5][0-5]|355(1[0-2]|[2-5])[0-5][0-5][0-5]|3550[0-5][0-5][0-5][0-5]|35[0-4][0-5][0-5][0-5][0-5][0-5]|(3[0-4]|[45])[0-5][0-5][0-5][0-5][0-5][0-5]|[12][0-5][0-5][0-5][0-5][0-5][0-5][0-5]|3(5(5(1(3(53?)?)?)?)?|55135[0-2]|551(3[0-4]|[45])[0-5]?|55(1[0-2]|[2-5])([0-5][0-5]?)?|550([0-5]([0-5][0-5]?)?)?|5[0-4]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|(3[0-4]|[45])([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|[12]([0-5]([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?)?|0)
         name: constant.character.escape.senary.trin
@@ -815,7 +803,7 @@ repository:
           - match: \b0*(355135(3[01]|[45])|355135[0-2][0-5]|3551(3[0-4]|[45])[0-5][0-5]|355(1[0-2]|[2-5])[0-5][0-5][0-5]|3550[0-5][0-5][0-5][0-5]|35[0-4][0-5][0-5][0-5][0-5][0-5]|(3[0-4]|[45])[0-5][0-5][0-5][0-5][0-5][0-5]|[12][0-5][0-5][0-5][0-5][0-5][0-5][0-5]|3(5(5(1(3(53?)?)?)?)?|55135[0-2]|551(3[0-4]|[45])[0-5]?|55(1[0-2]|[2-5])([0-5][0-5]?)?|550([0-5]([0-5][0-5]?)?)?|5[0-4]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|(3[0-4]|[45])([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|[12]([0-5]([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?)?|0)\b
             name: constant.character.escape.senary.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unknown-escape.trin
       - comment: Octal escape sequences
         match: (?i)\\o0*((4[01]|[5-7])[0-7][0-7][0-7][0-7][0-7]|[1-3][0-7][0-7][0-7][0-7][0-7][0-7]|(4[01]|[5-7])([0-7]([0-7]([0-7][0-7]?)?)?)?|[1-3]([0-7]([0-7]([0-7]([0-7][0-7]?)?)?)?)?|4[2-7][0-7][0-7][0-7][0-7]|4([2-7]([0-7]([0-7][0-7]?)?)?)?|0)
         name: constant.character.escape.octal.trin
@@ -827,7 +815,7 @@ repository:
           - match: \b0*((4[01]|[5-7])[0-7][0-7][0-7][0-7][0-7]|[1-3][0-7][0-7][0-7][0-7][0-7][0-7]|(4[01]|[5-7])([0-7]([0-7]([0-7][0-7]?)?)?)?|[1-3]([0-7]([0-7]([0-7]([0-7][0-7]?)?)?)?)?|4[2-7][0-7][0-7][0-7][0-7]|4([2-7]([0-7]([0-7][0-7]?)?)?)?|0)\b
             name: constant.character.escape.octal.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unknown-escape.trin
       - comment: Decimal escape sequences
         match: (?i)\\d?0*(1(1(1(4(1(1[01]|[2-9])|(10|[2-9])\d)|(40|[5-9])\d\d)|(1[0-3]|[2-9])\d\d\d)|(10|[2-9])\d\d\d\d|0\d\d\d\d\d)|1(1(1(4(11?)?)?)?|114(10|[2-9])|11(40|[5-9])\d?|1(1[0-3]|[2-9])(\d\d?)?|(10|[2-9])(\d(\d\d?)?)?|0(\d(\d(\d\d?)?)?)?)?|[2-9]\d\d\d\d\d|[2-9](\d(\d(\d\d?)?)?)?|0)
         name: constant.character.escape.decimal.trin
@@ -839,7 +827,7 @@ repository:
           - match: \b0*(1(1(1(4(1(1[01]|[2-9])|(10|[2-9])\d)|(40|[5-9])\d\d)|(1[0-3]|[2-9])\d\d\d)|(10|[2-9])\d\d\d\d|0\d\d\d\d\d)|1(1(1(4(11?)?)?)?|114(10|[2-9])|11(40|[5-9])\d?|1(1[0-3]|[2-9])(\d\d?)?|(10|[2-9])(\d(\d\d?)?)?|0(\d(\d(\d\d?)?)?)?)?|[2-9]\d\d\d\d\d|[2-9](\d(\d(\d\d?)?)?)?|0)\b
             name: constant.character.escape.decimal.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unknown-escape.trin
       - comment: Duodecimal escape sequences
         match: (?i)\\z0*(4588(a[0-7]|b)|458(8\d|[9ab])[\dab]|45(8[0-7]|[9ab])[\dab][\dab]|4(5[0-7]|[6-9ab])[\dab][\dab][\dab]|(4[0-4]|[5-9ab])[\dab][\dab][\dab][\dab]|[1-3][\dab][\dab][\dab][\dab][\dab]|4(5(8(8a?)?)?|58(8\d|[9ab])|5(8[0-7]|[9ab])[\dab]?|(5[0-7]|[6-9ab])([\dab][\dab]?)?)?|(4[0-4]|[5-9ab])([\dab]([\dab][\dab]?)?)?|[1-3]([\dab]([\dab]([\dab][\dab]?)?)?)?|0)
         name: constant.character.escape.duodecimal.trin
@@ -851,7 +839,7 @@ repository:
           - match: \b0*(4588(a[0-7]|b)|458(8\d|[9ab])[\dab]|45(8[0-7]|[9ab])[\dab][\dab]|4(5[0-7]|[6-9ab])[\dab][\dab][\dab]|(4[0-4]|[5-9ab])[\dab][\dab][\dab][\dab]|[1-3][\dab][\dab][\dab][\dab][\dab]|4(5(8(8a?)?)?|58(8\d|[9ab])|5(8[0-7]|[9ab])[\dab]?|(5[0-7]|[6-9ab])([\dab][\dab]?)?)?|(4[0-4]|[5-9ab])([\dab]([\dab][\dab]?)?)?|[1-3]([\dab]([\dab]([\dab][\dab]?)?)?)?|0)\b
             name: constant.character.escape.duodecimal.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unknown-escape.trin
       - comment: Hexadecimal escape sequences
         match: (?i)\\x0*(1(0\h\h\h\h|[1-9a-f]\h\h\h)|1(0(\h(\h\h?)?)?|[1-9a-f](\h\h?)?)?|[2-9a-f]\h\h\h\h|[2-9a-f](\h(\h\h?)?)?|0)
         name: constant.character.escape.hexadecimal.trin
@@ -863,7 +851,7 @@ repository:
           - match: \b0*(1(0\h\h\h\h|[1-9a-f]\h\h\h)|1(0(\h(\h\h?)?)?|[1-9a-f](\h\h?)?)?|[2-9a-f]\h\h\h\h|[2-9a-f](\h(\h\h?)?)?|0)\b
             name: constant.character.escape.hexadecimal.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unknown-escape.trin
       - match: (?i)\\u\h{0,8}
         name: constant.character.escape.unicode.trin
       - begin: (?i)\\u{
@@ -873,7 +861,7 @@ repository:
           - match: \b\h{0,8}\b
             name: constant.character.escape.unicode.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unknown-escape.trin
       - begin: (?i)\\j{
         end: \s*}
         name: constant.character.entity.named.trin
@@ -884,7 +872,7 @@ repository:
       - match: \\[\p{S}\p{P}]
         name: constant.character.escape.symbol.trin
       - match: \\[\p{L}\p{N}\p{Z}\p{C}]
-        name: constant.character.escape.illegal.trin
+        name: invalid.illegal.unknown-escape.trin
 
   embedded:
     patterns:
@@ -1318,7 +1306,7 @@ repository:
               - match: \b0*(1(0(0(0(0[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01]|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1[01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01][01])|1(0(0(0(0([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1)?|1[01][01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01]([01][01]?)?)?)?)?)?)?)?)?)?)?)?)?)?)?|1[01]|1)?|0)\b
                 name: constant.character.escape.binary.trin
               - match: \w+
-                name: invalid.illegal.unrecognized-string-escape.trin
+                name: invalid.illegal.unknown-escape.trin
           - comment: Quaternary escape sequences
             match: (?i)\\q0*(1(0(0[0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|1(0(0([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?)?|[23][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[23][0-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[23]|0)
             name: constant.character.escape.quaternary.trin
@@ -1330,7 +1318,7 @@ repository:
               - match: \b0*(1(0(0[0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|[1-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3])|1(0(0([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[1-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?)?|[23][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3][0-3]|[23][0-3]([0-3]([0-3]([0-3]([0-3]([0-3]([0-3][0-3]?)?)?)?)?)?)?|[23]|0)\b
                 name: constant.character.escape.quaternary.trin
               - match: \w+
-                name: invalid.illegal.unrecognized-string-escape.trin
+                name: invalid.illegal.unknown-escape.trin
           - comment: Senary escape sequences
             match: (?i)\\s0*(355135(3[01]|[45])|355135[0-2][0-5]|3551(3[0-4]|[45])[0-5][0-5]|355(1[0-2]|[2-5])[0-5][0-5][0-5]|3550[0-5][0-5][0-5][0-5]|35[0-4][0-5][0-5][0-5][0-5][0-5]|(3[0-4]|[45])[0-5][0-5][0-5][0-5][0-5][0-5]|[12][0-5][0-5][0-5][0-5][0-5][0-5][0-5]|3(5(5(1(3(53?)?)?)?)?|55135[0-2]|551(3[0-4]|[45])[0-5]?|55(1[0-2]|[2-5])([0-5][0-5]?)?|550([0-5]([0-5][0-5]?)?)?|5[0-4]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|(3[0-4]|[45])([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|[12]([0-5]([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?)?|0)
             name: constant.character.escape.senary.trin
@@ -1342,7 +1330,7 @@ repository:
               - match: \b0*(355135(3[01]|[45])|355135[0-2][0-5]|3551(3[0-4]|[45])[0-5][0-5]|355(1[0-2]|[2-5])[0-5][0-5][0-5]|3550[0-5][0-5][0-5][0-5]|35[0-4][0-5][0-5][0-5][0-5][0-5]|(3[0-4]|[45])[0-5][0-5][0-5][0-5][0-5][0-5]|[12][0-5][0-5][0-5][0-5][0-5][0-5][0-5]|3(5(5(1(3(53?)?)?)?)?|55135[0-2]|551(3[0-4]|[45])[0-5]?|55(1[0-2]|[2-5])([0-5][0-5]?)?|550([0-5]([0-5][0-5]?)?)?|5[0-4]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|(3[0-4]|[45])([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?|[12]([0-5]([0-5]([0-5]([0-5]([0-5][0-5]?)?)?)?)?)?|0)\b
                 name: constant.character.escape.senary.trin
               - match: \w+
-                name: invalid.illegal.unrecognized-string-escape.trin
+                name: invalid.illegal.unknown-escape.trin
           - comment: Octal escape sequences
             match: (?i)\\o0*((4[01]|[5-7])[0-7][0-7][0-7][0-7][0-7]|[1-3][0-7][0-7][0-7][0-7][0-7][0-7]|(4[01]|[5-7])([0-7]([0-7]([0-7][0-7]?)?)?)?|[1-3]([0-7]([0-7]([0-7]([0-7][0-7]?)?)?)?)?|4[2-7][0-7][0-7][0-7][0-7]|4([2-7]([0-7]([0-7][0-7]?)?)?)?|0)
             name: constant.character.escape.octal.trin
@@ -1354,7 +1342,7 @@ repository:
               - match: \b0*((4[01]|[5-7])[0-7][0-7][0-7][0-7][0-7]|[1-3][0-7][0-7][0-7][0-7][0-7][0-7]|(4[01]|[5-7])([0-7]([0-7]([0-7][0-7]?)?)?)?|[1-3]([0-7]([0-7]([0-7]([0-7][0-7]?)?)?)?)?|4[2-7][0-7][0-7][0-7][0-7]|4([2-7]([0-7]([0-7][0-7]?)?)?)?|0)\b
                 name: constant.character.escape.octal.trin
               - match: \w+
-                name: invalid.illegal.unrecognized-string-escape.trin
+                name: invalid.illegal.unknown-escape.trin
           - comment: Decimal escape sequences
             match: (?i)\\d?0*(1(1(1(4(1(1[01]|[2-9])|(10|[2-9])\d)|(40|[5-9])\d\d)|(1[0-3]|[2-9])\d\d\d)|(10|[2-9])\d\d\d\d|0\d\d\d\d\d)|1(1(1(4(11?)?)?)?|114(10|[2-9])|11(40|[5-9])\d?|1(1[0-3]|[2-9])(\d\d?)?|(10|[2-9])(\d(\d\d?)?)?|0(\d(\d(\d\d?)?)?)?)?|[2-9]\d\d\d\d\d|[2-9](\d(\d(\d\d?)?)?)?|0)
             name: constant.character.escape.decimal.trin
@@ -1366,7 +1354,7 @@ repository:
               - match: \b0*(1(1(1(4(1(1[01]|[2-9])|(10|[2-9])\d)|(40|[5-9])\d\d)|(1[0-3]|[2-9])\d\d\d)|(10|[2-9])\d\d\d\d|0\d\d\d\d\d)|1(1(1(4(11?)?)?)?|114(10|[2-9])|11(40|[5-9])\d?|1(1[0-3]|[2-9])(\d\d?)?|(10|[2-9])(\d(\d\d?)?)?|0(\d(\d(\d\d?)?)?)?)?|[2-9]\d\d\d\d\d|[2-9](\d(\d(\d\d?)?)?)?|0)\b
                 name: constant.character.escape.decimal.trin
               - match: \w+
-                name: invalid.illegal.unrecognized-string-escape.trin
+                name: invalid.illegal.unknown-escape.trin
           - comment: Duodecimal escape sequences
             match: (?i)\\z0*(4588(a[0-7]|b)|458(8\d|[9ab])[\dab]|45(8[0-7]|[9ab])[\dab][\dab]|4(5[0-7]|[6-9ab])[\dab][\dab][\dab]|(4[0-4]|[5-9ab])[\dab][\dab][\dab][\dab]|[1-3][\dab][\dab][\dab][\dab][\dab]|4(5(8(8a?)?)?|58(8\d|[9ab])|5(8[0-7]|[9ab])[\dab]?|(5[0-7]|[6-9ab])([\dab][\dab]?)?)?|(4[0-4]|[5-9ab])([\dab]([\dab][\dab]?)?)?|[1-3]([\dab]([\dab]([\dab][\dab]?)?)?)?|0)
             name: constant.character.escape.duodecimal.trin
@@ -1378,7 +1366,7 @@ repository:
               - match: \b0*(4588(a[0-7]|b)|458(8\d|[9ab])[\dab]|45(8[0-7]|[9ab])[\dab][\dab]|4(5[0-7]|[6-9ab])[\dab][\dab][\dab]|(4[0-4]|[5-9ab])[\dab][\dab][\dab][\dab]|[1-3][\dab][\dab][\dab][\dab][\dab]|4(5(8(8a?)?)?|58(8\d|[9ab])|5(8[0-7]|[9ab])[\dab]?|(5[0-7]|[6-9ab])([\dab][\dab]?)?)?|(4[0-4]|[5-9ab])([\dab]([\dab][\dab]?)?)?|[1-3]([\dab]([\dab]([\dab][\dab]?)?)?)?|0)\b
                 name: constant.character.escape.duodecimal.trin
               - match: \w+
-                name: invalid.illegal.unrecognized-string-escape.trin
+                name: invalid.illegal.unknown-escape.trin
           - comment: Hexadecimal escape sequences
             match: (?i)\\x0*(1(0\h\h\h\h|[1-9a-f]\h\h\h)|1(0(\h(\h\h?)?)?|[1-9a-f](\h\h?)?)?|[2-9a-f]\h\h\h\h|[2-9a-f](\h(\h\h?)?)?|0)
             name: constant.character.escape.hexadecimal.trin
@@ -1390,7 +1378,7 @@ repository:
               - match: \b0*(1(0\h\h\h\h|[1-9a-f]\h\h\h)|1(0(\h(\h\h?)?)?|[1-9a-f](\h\h?)?)?|[2-9a-f]\h\h\h\h|[2-9a-f](\h(\h\h?)?)?|0)\b
                 name: constant.character.escape.hexadecimal.trin
               - match: \w+
-                name: invalid.illegal.unrecognized-string-escape.trin
+                name: invalid.illegal.unknown-escape.trin
           - match: (?i)\\u\h{0,8}
             name: constant.character.escape.unicode.trin
           - begin: (?i)\\u{
@@ -1400,7 +1388,7 @@ repository:
               - match: \b\h{0,8}\b
                 name: constant.character.escape.unicode.trin
               - match: \w+
-                name: invalid.illegal.unrecognized-string-escape.trin
+                name: invalid.illegal.unknown-escape.trin
           - match: (?i:\\[cm][a-z])|\\R
             name: constant.character.control.trin
           - match: *posix-class
@@ -1422,7 +1410,7 @@ repository:
           - match: \\\p{Z}
             name: constant.character.escape.symbol.trin
           - match: \\[\p{L}\p{N}\p{Z}\p{C}]
-            name: constant.character.escape.illegal.trin
+            name: invalid.illegal.unknown-escape.trin
           - include: "#embedded"
 
       regexp-char-ops:
@@ -2000,7 +1988,7 @@ repository:
           |frag|data|trait|proto|proc|macro|type|given
           |raw|style|comp|elem|decl
 
-          |if|lest|then|elif|eles|else
+          |if|lest|elif|elest|else
           |for|each|loop|while|until|from
           |do|redo|try|retry|throw|catch|finally
           |switch|case|default|match|when|otherwise
@@ -2363,7 +2351,7 @@ repository:
               |frag|data|trait|proto|proc|macro|type|given
               |raw|style|comp|elem|decl
 
-              |if|lest|then|elif|eles|else
+              |if|lest|elif|elest|else
               |for|each|loop|while|until|from
               |do|redo|try|retry|throw|catch|finally
               |switch|case|default|match|when|otherwise
@@ -2397,7 +2385,7 @@ repository:
                   |frag|data|trait|proto|proc|macro|type|given
                   |raw|style|comp|elem|decl
 
-                  |if|lest|then|elif|eles|else
+                  |if|lest|elif|elest|else
                   |for|each|loop|while|until|from
                   |do|redo|try|retry|throw|catch|finally
                   |switch|case|default|match|when|otherwise
@@ -2506,7 +2494,7 @@ repository:
       |frag|data|trait|proto|proc|macro|type|given
       |raw|style|comp|elem|decl
 
-      |if|lest|then|elif|eles|else
+      |if|lest|elif|elest|else
       |for|each|loop|while|until|from
       |do|redo|try|retry|throw|catch|finally
       |switch|case|default|match|when|otherwise
@@ -2921,7 +2909,7 @@ repository:
   general-keywords:
     comment: general keywords
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|then|elif|eles|else)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)\b\s*
         name: keyword.control.conditional.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)\b\s*
         name: keyword.control.loop.trin
@@ -2939,8 +2927,8 @@ repository:
         name: keyword.control.flow.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|impose|expose|using)\b\s*
         name: keyword.control.module.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)\b\s*
-        name: keyword.control.with.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then)\b\s*
+        name: keyword.control.$1.trin
 
   expression-keywords:
     comment: expression keywords
@@ -3399,7 +3387,7 @@ repository:
       |frag|data|trait|proto|proc|macro|type|given
       |raw|style|comp|elem|decl
 
-      |if|lest|then|elif|eles|else
+      |if|lest|elif|elest|else
       |for|each|loop|while|until|from
       |do|redo|try|retry|throw|catch|finally
       |switch|case|default|match|when|otherwise
@@ -3703,7 +3691,7 @@ repository:
           - include: $self
 
       if-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|then|elif|eles|else)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
         name: meta.if.trin
         beginCaptures:
