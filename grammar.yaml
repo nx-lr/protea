@@ -3692,7 +3692,7 @@ repository:
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)\b\s*
             end: (?=.)|$
-            beginCaptures:
+            captures:
               1: {name: keyword.other.typedef.trin}
             patterns:
               - match: \s*([?:]?=)\s*
@@ -3702,9 +3702,9 @@ repository:
 
       catch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|retry|throw|catch|finally)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+        end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
         name: meta.catch.trin
-        beginCaptures:
+        captures:
           1: {name: keyword.control.error.trin}
         patterns:
           - begin: \s*(\()
@@ -3723,9 +3723,9 @@ repository:
 
       thread-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unison|series|spawn|kill|fix|lock)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+        end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
         name: meta.thread.trin
-        beginCaptures:
+        captures:
           1: {name: keyword.control.thread.trin}
         patterns:
           - &thread-clause-keywords
@@ -3744,9 +3744,9 @@ repository:
 
       do-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do|redo)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+        end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
         name: meta.do.trin
-        beginCaptures:
+        captures:
           1: {name: keyword.control.do.trin}
         patterns:
           - include: "#code-block"
@@ -3754,9 +3754,9 @@ repository:
 
       for-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+        end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
         name: meta.for.trin
-        beginCaptures:
+        captures:
           1: {name: keyword.control.loop.trin}
         patterns:
           - &for-clause-keywords
@@ -3775,9 +3775,9 @@ repository:
 
       if-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+        end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
         name: meta.if.trin
-        beginCaptures:
+        captures:
           1: {name: keyword.control.conditional.trin}
         patterns:
           - include: "#code-block"
@@ -3785,9 +3785,9 @@ repository:
 
       match-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+        end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
         name: meta.match.trin
-        beginCaptures:
+        captures:
           1: {name: keyword.control.match.trin}
         patterns:
           - begin: (\#\{)\s*
@@ -3797,8 +3797,8 @@ repository:
             patterns:
               - &when-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)\b\s*
-                end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
-                beginCaptures:
+                end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
+                captures:
                   1: {name: keyword.control.match.trin}
                 patterns:
                   - include: "#type-operators"
@@ -3816,8 +3816,8 @@ repository:
                   - include: $self
               - &else-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(else|default)\b\s*
-                end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
-                beginCaptures:
+                end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
+                captures:
                   1: {name: keyword.control.match.trin}
                 patterns:
                   - include: $self
@@ -3834,9 +3834,9 @@ repository:
 
       switch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+        end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
         name: meta.switch.trin
-        beginCaptures:
+        captures:
           1: {name: keyword.control.switch.trin}
         patterns:
           - begin: (\#\{)\s*
@@ -3846,8 +3846,8 @@ repository:
             patterns:
               - &case-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)\b\s*
-                end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
-                beginCaptures:
+                end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
+                captures:
                   1: {name: keyword.control.switch.trin}
                 patterns:
                   - include: "#type-operators"
@@ -3865,8 +3865,8 @@ repository:
                   - include: $self
               - &default-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(else|default)\b\s*
-                end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
-                beginCaptures:
+                end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
+                captures:
                   1: {name: keyword.control.switch.trin}
                 patterns:
                   - include: $self
@@ -3883,9 +3883,9 @@ repository:
 
       with-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+        end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
         name: meta.with.trin
-        beginCaptures:
+        captures:
           1: {name: keyword.control.with.trin}
         patterns:
           - &with-clause-keywords
