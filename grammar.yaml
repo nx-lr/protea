@@ -156,6 +156,21 @@ repository:
       - match: \S+?
         name: invalid.illegal.syntax.trin
 
+  placeholder-variables:
+    patterns:
+      - match: (?i)\s*\?[\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.optional.trin
+      - match: (?i)\s*\*[\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.spread.trin
+      - match: (?i)\s*[&~][\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.name.trin
+      - match: (?i)\s*\%[\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.reference.trin
+      - match: (?i)\s*\$[\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.other.trin
+      - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.trin
+
   illegal-keywords:
     match: |
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
@@ -856,17 +871,20 @@ repository:
 
   embedded:
     patterns:
-      - match: (\$)(\d+)
+      - match: (\#)([+-]?\d+)
         captures:
-          1: {name: punctuation.section.embedded.trin}
+          1: {name: punctuation.definition.anchor.trin}
           2: {name: constant.numeric.decimal.trin}
+      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}]\w*)
+        captures:
+          1: {name: punctuation.definition.anchor.trin}
+          2: {patterns: [include: "#placeholder-variables"]}
       - match: (%)((\w|\\.)+(([^\s'"`\\\[\](){}<>]|\\.)*(\w|\\.)+)?)
         captures:
-          1: {name: punctuation.separator.key-value.trin}
+          1: {name: punctuation.definition.directive.trin}
           2: {name: storage.type.format.trin}
       - match: |
           (?xi)
-          (?#?<!\\)# destroy escape prefix
           (\$)# prefix
           (
           [\p{Pc}\p{L}]\w*
@@ -876,14 +894,14 @@ repository:
         captures:
           1: {name: punctuation.section.embedded.trin}
           2: {patterns: [include: $self]}
-      - begin: (?#?<!\\)(\${)\s*
+      - begin: (\${)\s*
         end: (})
         name: entity.quasi.element.trin
         captures:
           1: {name: punctuation.section.embedded.trin}
         patterns:
           - include: $self
-      - begin: (?#?<!\\)(\$<)\s*
+      - begin: (\$<)\s*
         end: (>)
         name: entity.quasi.element.trin
         captures:
@@ -894,19 +912,22 @@ repository:
 
   embedded-raw:
     patterns:
-      - match: (\$)(\d+)
-        captures:
-          1: {name: punctuation.section.embedded.trin}
-          2: {name: constant.numeric.decimal.trin}
-      - match: ([$%]){2}
+      - match: ([$%#])\1
         name: constant.character.escape.trin
+      - match: (\#)([+-]?\d+)
+        captures:
+          1: {name: punctuation.definition.anchor.trin}
+          2: {name: constant.numeric.decimal.trin}
+      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}]\w*)
+        captures:
+          1: {name: punctuation.definition.anchor.trin}
+          2: {patterns: [include: "#placeholder-variables"]}
       - match: (%)((\w|\\.)+(([^\s'"`\\\[\](){}<>]|\\.)*(\w|\\.)+)?)
         captures:
-          1: {name: punctuation.separator.key-value.trin}
+          1: {name: punctuation.definition.directive.trin}
           2: {name: storage.type.format.trin}
       - match: |
           (?xi)
-          (?<!\$)# destroy escape prefix
           (\$)# prefix
           (
           [\p{Pc}\p{L}]\w*
@@ -916,14 +937,14 @@ repository:
         captures:
           1: {name: punctuation.section.embedded.trin}
           2: {patterns: [include: $self]}
-      - begin: (?<!\$)(\${)\s*
+      - begin: (\${)\s*
         end: (})
         name: entity.quasi.element.trin
         captures:
           1: {name: punctuation.section.embedded.trin}
         patterns:
           - include: $self
-      - begin: (?<!\$)(\$<)\s*
+      - begin: (\$<)\s*
         end: (>)
         name: entity.quasi.element.trin
         captures:
