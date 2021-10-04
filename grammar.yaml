@@ -3700,15 +3700,6 @@ repository:
                   1: {name: keyword.operator.assignment.trin}
               - include: "#types"
 
-      case-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case|default)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
-        beginCaptures:
-          1: {name: keyword.control.switch.trin}
-        patterns:
-          - include: "#code-block"
-          - include: $self
-
       catch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|retry|throw|catch|finally)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
@@ -3792,6 +3783,20 @@ repository:
           - include: "#code-block"
           - include: $self
 
+      pattern-matching:
+        patterns:
+          - applyEndPatternLast: 1
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
+            end: (?=.)|$
+            beginCaptures:
+              1: {name: keyword.control.match.trin}
+            patterns:
+              - include: "#types"
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)\b\s*
+            name: keyword.control.match.trin
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get)\b\s*
+            name: keyword.control.match.trin
+
       match-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
@@ -3799,7 +3804,28 @@ repository:
         beginCaptures:
           1: {name: keyword.control.match.trin}
         patterns:
-          - include: "#code-block"
+          - begin: (\#\{)\s*
+            end: \s*(\})
+            captures:
+              1: {name: punctuation.section.class.trin}
+            patterns:
+              - &when-clause
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case|default|else)\b\s*
+                end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+                beginCaptures:
+                  1: {name: keyword.control.match.trin}
+                patterns:
+                  - include: "#type-operators"
+                  - include: "#pattern-matching"
+                  - include: $self
+              - include: $self
+          - begin: (\{)\s*
+            end: \s*(\})
+            captures:
+              1: {name: punctuation.definition.block.trin}
+            patterns:
+              - *when-clause
+              - include: $self
           - include: $self
 
       switch-clause:
@@ -3809,24 +3835,27 @@ repository:
         beginCaptures:
           1: {name: keyword.control.switch.trin}
         patterns:
-          - include: "#code-block"
-          - include: $self
-
-      when-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|otherwise)\b\s*
-        end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
-        beginCaptures:
-          1: {name: keyword.control.match.trin}
-        patterns:
-          - begin: \s*(\()
-            end: \s*(\))
+          - begin: (\#\{)\s*
+            end: \s*(\})
             captures:
-              1: {name: punctuation.definition.expression.trin}
+              1: {name: punctuation.section.class.trin}
             patterns:
-              - include: "#type-operators"
-              - include: "#code-block"
+              - &case-clause
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case|default)\b\s*
+                end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+                beginCaptures:
+                  1: {name: keyword.control.switch.trin}
+                patterns:
+                  - include: "#code-block"
+                  - include: $self
               - include: $self
-          - include: "#type-operators"
+          - begin: (\{)\s*
+            end: \s*(\})
+            captures:
+              1: {name: punctuation.definition.block.trin}
+            patterns:
+              - *case-clause
+              - include: $self
           - include: "#code-block"
           - include: $self
 
