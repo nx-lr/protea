@@ -762,7 +762,9 @@ Strings can also begin with _three or more_ quotes of the same type, provided th
 assert """ "multiline string"""" == '"multiline string"'
 ```
 
-Str literals may span multiple lines in which case the newlines are always normalized to `\n` regardless of how newlines were encoded in the source code text. The first non-whitespace character of each line should be aligned to the first line, or else it is a compile time error:
+Strings may span multiple lines in which case the newlines are always normalized to `\n` regardless of how newlines were encoded in the source code text.
+
+The first non-whitespace character of each line should be aligned to the first line of text in the string, or else it is a compile time error.
 
 ```dart
 x = "
