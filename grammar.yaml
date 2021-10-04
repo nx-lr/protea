@@ -3783,20 +3783,6 @@ repository:
           - include: "#code-block"
           - include: $self
 
-      pattern-matching:
-        patterns:
-          - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
-            end: (?=.)|$
-            beginCaptures:
-              1: {name: keyword.control.match.trin}
-            patterns:
-              - include: "#types"
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)\b\s*
-            name: keyword.control.match.trin
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get)\b\s*
-            name: keyword.control.match.trin
-
       match-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)\b\s*
         end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
@@ -3810,13 +3796,30 @@ repository:
               1: {name: punctuation.section.class.trin}
             patterns:
               - &when-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case|default|else)\b\s*
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)\b\s*
                 end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
                 beginCaptures:
                   1: {name: keyword.control.match.trin}
                 patterns:
                   - include: "#type-operators"
-                  - include: "#pattern-matching"
+                  - applyEndPatternLast: 1
+                    begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
+                    end: (?=.)|$
+                    beginCaptures:
+                      1: {name: keyword.control.match.trin}
+                    patterns:
+                      - include: "#types"
+                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)\b\s*
+                    name: keyword.control.match.trin
+                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get)\b\s*
+                    name: keyword.control.match.trin
+                  - include: $self
+              - &else-clause
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(else|default)\b\s*
+                end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+                beginCaptures:
+                  1: {name: keyword.control.match.trin}
+                patterns:
                   - include: $self
               - include: $self
           - begin: (\{)\s*
@@ -3825,6 +3828,7 @@ repository:
               1: {name: punctuation.definition.block.trin}
             patterns:
               - *when-clause
+              - *else-clause
               - include: $self
           - include: $self
 
@@ -3841,12 +3845,30 @@ repository:
               1: {name: punctuation.section.class.trin}
             patterns:
               - &case-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case|default)\b\s*
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)\b\s*
                 end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
                 beginCaptures:
                   1: {name: keyword.control.switch.trin}
                 patterns:
-                  - include: "#code-block"
+                  - include: "#type-operators"
+                  - applyEndPatternLast: 1
+                    begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
+                    end: (?=.)|$
+                    beginCaptures:
+                      1: {name: keyword.control.switch.trin}
+                    patterns:
+                      - include: "#types"
+                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)\b\s*
+                    name: keyword.control.switch.trin
+                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get)\b\s*
+                    name: keyword.control.switch.trin
+                  - include: $self
+              - &default-clause
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(else|default)\b\s*
+                end: (?<=})|(?=;|(?<=\s)(?:=>|(?<!(?:(?<!\.)\.|[?!:]:)=?)\bthen\b)|$)
+                beginCaptures:
+                  1: {name: keyword.control.switch.trin}
+                patterns:
                   - include: $self
               - include: $self
           - begin: (\{)\s*
@@ -3855,8 +3877,8 @@ repository:
               1: {name: punctuation.definition.block.trin}
             patterns:
               - *case-clause
+              - *default-clause
               - include: $self
-          - include: "#code-block"
           - include: $self
 
       with-clause:
