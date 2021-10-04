@@ -69,7 +69,7 @@ define:
     |keyof|valueof|pairof|instof
     |len|del|to|til|till|thru|by
 
-    |var|val|let|dim|def|fn|fun|func
+    |va[rl]|[lsg]et|def|fn|func?
     |class|enum|mod|pkg|inter|struct|obj|rec
     |frag|nspace|data|trait|proto|proc|macro|type|given
     |raw|style|comp|elem|decl|ext|impl|sub
@@ -96,7 +96,7 @@ define:
     |keyof|valueof|pairof|instof
     |len|del|to|til|till|thru|by
 
-    |var|val|let|dim|def|fn|fun|func
+    |va[rl]|[lsg]et|def|fn|func?
     |class|enum|mod|pkg|inter|struct|obj|rec
     |frag|nspace|data|trait|proto|proc|macro|type|given
     |raw|style|comp|elem|decl|ext|impl|sub
@@ -147,13 +147,13 @@ repository:
 
   illegal:
     patterns:
-      - match: '\p{N}[\w.+-/\\]*?'
+      - match: \p{N}[\w.+-/\\]*?
         name: invalid.illegal.numeric.other.trin
       - match: '[\w]+?'
         name: invalid.illegal.variable.other.trin
       - match: '[({\[)}\]]+?'
         name: invalid.illegal.missing-bracket.trin
-      - match: '\S+?'
+      - match: \S+?
         name: invalid.illegal.syntax.trin
 
   illegal-keywords:
@@ -164,7 +164,7 @@ repository:
       |keyof|valueof|pairof|instof
       |len|del|to|til|till|thru|by
 
-      |var|val|let|dim|def|fn|fun|func
+      |va[rl]|[lsg]et|def|fn|func?
       |class|enum|mod|pkg|inter|struct|obj|rec
       |frag|nspace|data|trait|proto|proc|macro|type|given
       |raw|style|comp|elem|decl|ext|impl|sub
@@ -231,58 +231,35 @@ repository:
   type-names:
     comment: Names for built-in types
     patterns:
-      - comment: Primitive data types
-        match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          bool|u?int|float|nat|rat|real|imag|comp|num
-          |char|rune|str|sym|regexp?|func|buf|bin
-          |# numeric types
-          ([cifsun]|nat|rat|u?int|real|imag|comp)
-          (8|16|32|64|128)
-          |[ci](half|float|double|deci|oct)
-          )\b
-        name: support.type.builtin.primitive.trin
-      - comment: Constant/algebraic types
-        match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          true|false|null|void|nan|infin
-          |any|empty|object|record|unit|mixed
-          |just|some|none|never|(im)?pure|chan|const
-          )\b
-        name: support.type.builtin.trin
-      - comment: Data structures
-        match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          array|tuple|(?:mut)?(?:list|set|map)|dict|func
-          |proc|seq|gen|range|stack|heap|queue|tree|trie
-          )\b
-        name: support.type.primitive.trin
       - comment: Primitive classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          Bool|U?Int|Float|Nat|Rat|Real|Imag|Comp|Num
-          |Char|Rune|Str|Sym|RegExp?|Func|Buf|Bin
-          |# Numeric Types
-          ([CIFSUN]|Nat|Rat|U?Int|Real|Imag|Comp)
-          (8|16|32|64|128)
-          |[CI](Half|Float|Double|Deci|Oct)
+          Bool|[NR]at|Real|Num|(Big)?(U?Int|Float|Nat)
+          |Imaginary|Complex|Char|Rune|Str|Sym
+          |U?Int(8|16|32|64|128)
+          |[CI]?Float(16|32|64|128)
+          |[UI](8|16|32|64|128)
+          |[CI]?F(16|32|64|128)
           )\b
-        name: support.class.builtin.primitive.trin
-      - comment: Constant/algebraic classes
-        match: |
-          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          True|False|Null|Void|NaN|Infin
-          |Any|Empty|Object|Record|Unit|Mixed
-          |Just|Some|None|Never|(Im)?pure|Chan|Const
-          )\b
-        name: support.class.builtin.trin
+        name: support.type.builtin.primitive.trin
       - comment: Data structure classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          Array|Tuple|(Mut)?(List|Set|Map)|Dict|Func
+          Array|Tuple|(Mut)?(List|Set|Map)|Dict|Func|Iter
           |Proc|Seq|Gen|Range|Stack|Heap|Queue|Tree|Trie
+          |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
           )\b
-        name: support.class.primitive.trin
+        name: support.type.builtin.trin
+      - comment: Constant/algebraic classes
+        match: |
+          (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
+          True|False|Null|Void|NaN|Infin|Empty|Unit
+          |Any|Mixed|Just|Some|None|Never|Const|(Im)?pure
+          |Class|Enum|Mod|Pkg|Inter|Struct|Obj|Rec
+          |Frag|Nspace|Data|Trait|Proto|Proc|Macro|Type|Given
+          |Raw|Style|Comp|Elem|Decl|Ext|Impl|Sub|Chan
+          )\b
+        name: support.type.primitive.trin
 
       - comment: Interface classes | IEnumerable, etc
         match: \s*\bI((\p{Lu}[\w&&\P{Lu}]*)+)\b
@@ -870,9 +847,11 @@ repository:
           - include: "#unicode-named-chars"
       - match: (?i)\\[a-z&&[^bqsodzxu]]
         name: constant.character.escape.trin
-      - match: \\[\p{S}\p{P}]
+      - match: (?x)\\[\p{S}\p{P}]
         name: constant.character.escape.symbol.trin
-      - match: \\[\p{L}\p{N}\p{Z}\p{C}]
+      - match: (?x)\\\p{Z}
+        name: constant.character.escape.other.trin
+      - match: (?x)\\[\p{L}\p{N}\p{C}]
         name: invalid.illegal.unknown-escape.trin
 
   embedded:
@@ -1390,34 +1369,32 @@ repository:
                 name: constant.character.escape.unicode.trin
               - match: \w+
                 name: invalid.illegal.unknown-escape.trin
-          - match: (?i:\\[cm][a-z])|\\R
+          - match: (?i)\\([cm][a-z]|r)
             name: constant.character.control.trin
           - match: *posix-class
             name: constant.other.character-class.posix.trin
-          - match: (?i:\\p(c[cfos]?|l[lmotu]?|m[cen]?|n[dlo]?|p[c-fios]?|s[ckmo]?|z[lps]))
+          - match: (?i)\\p(c[cfos]?|l[lmotu]?|m[cen]?|n[dlo]?|p[c-fios]?|s[ckmo]?|z[lps])
             name: constant.other.character-class.unicode.trin
           - match: (?i)\\[ci]
             name: constant.other.character-class.xml.trin
-          - match: \.|\\[dhlns-w]
+          - match: (?x)\\[dhlns-w]
             name: constant.other.character-class.trin
-          - match: \\[DHLNS-W]
+          - match: (?x)\\[DHLNS-W]
             name: constant.other.character-class.negated.trin
           - match: (?i)\\n{[\w\s]+}
             name: constant.character.escape.unicode.name.trin
           - match: (?i)\\[a-z&&[^bqsodzxu]]
             name: constant.character.escape.trin
-          - match: \\[\p{S}\p{P}]
+          - match: (?x)\\[\p{S}\p{P}]
             name: constant.character.escape.symbol.trin
-          - match: \\\p{Z}
-            name: constant.character.escape.symbol.trin
-          - match: \\[\p{L}\p{N}\p{Z}\p{C}]
+          - match: (?x)\\\p{Z}
+            name: constant.character.escape.other.trin
+          - match: (?x)\\[\p{L}\p{N}\p{C}]
             name: invalid.illegal.unknown-escape.trin
           - include: "#embedded"
 
       regexp-char-ops:
         patterns:
-          - match: \.
-            name: constant.other.character-class.range.trin
           - match: (?<!\|)\|\|(?!\|)
             name: keyword.operator.union.trin
           - match: (?<!&)&&(?!&)
@@ -1984,7 +1961,7 @@ repository:
           |keyof|valueof|pairof|instof
           |len|del|to|til|till|thru|by
 
-          |var|val|let|dim|def|fn|fun|func
+          |va[rl]|[lsg]et|def|fn|func?
           |class|enum|mod|pkg|inter|struct|obj|rec
           |frag|nspace|data|trait|proto|proc|macro|type|given
           |raw|style|comp|elem|decl|ext|impl|sub
@@ -2010,7 +1987,7 @@ repository:
           |keyof|valueof|pairof|instof
           |len|del|to|til|till|thru|by
 
-          |var|val|let|dim|def|fn|fun|func
+          |va[rl]|[lsg]et|def|fn|func?
           |class|enum|mod|pkg|inter|struct|obj|rec
           |frag|nspace|data|trait|proto|proc|macro|type|given
           |raw|style|comp|elem|decl|ext|impl|sub
@@ -2042,7 +2019,7 @@ repository:
           |keyof|valueof|pairof|instof
           |len|del|to|til|till|thru|by
 
-          |var|val|let|dim|def|fn|fun|func
+          |va[rl]|[lsg]et|def|fn|func?
           |class|enum|mod|pkg|inter|struct|obj|rec
           |frag|nspace|data|trait|proto|proc|macro|type|given
           |raw|style|comp|elem|decl|ext|impl|sub
@@ -2405,7 +2382,7 @@ repository:
               |keyof|valueof|pairof|instof
               |len|del|to|til|till|thru|by
 
-              |var|val|let|dim|def|fn|fun|func
+              |va[rl]|[lsg]et|def|fn|func?
               |class|enum|mod|pkg|inter|struct|obj|rec
               |frag|nspace|data|trait|proto|proc|macro|type|given
               |raw|style|comp|elem|decl|ext|impl|sub
@@ -2439,7 +2416,7 @@ repository:
                   |keyof|valueof|pairof|instof
                   |len|del|to|til|till|thru|by
 
-                  |var|val|let|dim|def|fn|fun|func
+                  |va[rl]|[lsg]et|def|fn|func?
                   |class|enum|mod|pkg|inter|struct|obj|rec
                   |frag|nspace|data|trait|proto|proc|macro|type|given
                   |raw|style|comp|elem|decl|ext|impl|sub
@@ -2548,7 +2525,7 @@ repository:
       |keyof|valueof|pairof|instof
       |len|del|to|til|till|thru|by
 
-      |var|val|let|dim|def|fn|fun|func
+      |va[rl]|[lsg]et|def|fn|func?
       |class|enum|mod|pkg|inter|struct|obj|rec
       |frag|nspace|data|trait|proto|proc|macro|type|given
       |raw|style|comp|elem|decl|ext|impl|sub
@@ -2872,7 +2849,7 @@ repository:
       |vola|unsafe|unfix|bound|free|opaque|trans
 
       # property or method modifiers
-      |re|gen|oper|get|set
+      |re|gen|oper|[gs]et|early|late
       |prefix|suffix|infix|primary|unary
       )
       )\b\s*
@@ -2884,7 +2861,7 @@ repository:
       (?=
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:
-      var|val|let|dim|def|fn|fun|func
+      va[rl]|[lsg]et|def|fn|func?
       |class|enum|mod|pkg|inter|struct|obj|rec
       |frag|nspace|data|trait|proto|proc|macro|type|given
       |raw|style|comp|elem|decl|ext|impl|sub
@@ -2910,7 +2887,7 @@ repository:
               |vola|unsafe|unfix|bound|free|opaque|trans
               )|
               (# Property modifiers
-              re|gen|oper|get|set
+              re|gen|oper|[gs]et|early|late
               |prefix|suffix|infix|primary|unary
               )
               )\b\s*
@@ -2921,11 +2898,11 @@ repository:
 
   declaration-keywords:
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|dim)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(va[rl]|[lsg]et)\b\s*
         name: storage.type.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)\b\s*
         name: keyword.other.declare.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def|fn|fun|func)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def|fn|func?)\b\s*
         name: storage.type.function.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
         name: storage.type.class.trin
@@ -2997,6 +2974,8 @@ repository:
         name: keyword.control.module.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then)\b\s*
         name: keyword.control.$1.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|check|assert)\b\s*
+        name: keyword.other.$1.trin
 
   expression-keywords:
     comment: expression keywords
@@ -3211,13 +3190,13 @@ repository:
     repository:
       variable:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|dim)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(va[rl]|[lsg]et)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.trin}
       function:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def|fn|fun|func)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def|fn|func?)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.function.trin}
@@ -3475,7 +3454,7 @@ repository:
       |keyof|valueof|pairof|instof
       |len|del|to|til|till|thru|by
 
-      |var|val|let|dim|def|fn|fun|func
+      |va[rl]|[lsg]et|def|fn|func?
       |class|enum|mod|pkg|inter|struct|obj|rec
       |frag|nspace|data|trait|proto|proc|macro|type|given
       |raw|style|comp|elem|decl|ext|impl|sub
@@ -3549,7 +3528,7 @@ repository:
               |vola|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
-              |re|gen|oper|get|set
+              |re|gen|oper|[gs]et|early|late
               |prefix|suffix|infix|primary|unary
               |# Decorators
               @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}])*\s*
@@ -3585,7 +3564,7 @@ repository:
               |vola|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
-              |re|gen|oper|get|set
+              |re|gen|oper|[gs]et|early|late
               |prefix|suffix|infix|primary|unary
               |# Decorators
               @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}])*\s*
@@ -3618,7 +3597,7 @@ repository:
               |vola|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
-              |re|gen|oper|get|set
+              |re|gen|oper|[gs]et|early|late
               |prefix|suffix|infix|primary|unary
               |# Decorators
               @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}])*\s*
@@ -3654,7 +3633,7 @@ repository:
               |vola|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
-              |re|gen|oper|get|set
+              |re|gen|oper|[gs]et|early|late
               |prefix|suffix|infix|primary|unary
               |# Decorators
               @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}])*\s*
@@ -3914,7 +3893,7 @@ repository:
         patterns:
           - include: "#types"
           - include: $self
-      - begin: \s*(?<=\b(?:var|val|let|dim)\b\s*)(\#?\{)\s*
+      - begin: \s*(?<=\b(?:va[rl]|[lsg]et)\b\s*)(\#?\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.binding-pattern.object.trin}
@@ -3922,7 +3901,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+|^|[({\[])(?!=>)\s*(\#\{)\s*
+      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+|^|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.trin}
@@ -3930,7 +3909,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+|^|[({\[])(?!=>)\s*(\{)\s*
+      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+|^|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
@@ -3974,7 +3953,7 @@ repository:
           - match: ","
             name: punctuation.separator.sequence.trin
     patterns:
-      - begin: \s*(?<=\b(?:var|val|let|dim)\b\s*)(\#?\[)\s*
+      - begin: \s*(?<=\b(?:va[rl]|[lsg]et)\b\s*)(\#?\[)\s*
         end: \s*(\])
         captures:
           1: {name: punctuation.definition.binding-pattern.array.trin}
