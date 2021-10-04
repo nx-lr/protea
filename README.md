@@ -9,7 +9,7 @@ def convertBase(str, fromBase, toBase) {
   val DIGITS =
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/"
 
-  val add = |x, y, base| => {
+  val add = |x, y, base| {
     var z = []
     val n = Math.max(len x, len y)
     var carry = 0
@@ -18,19 +18,19 @@ def convertBase(str, fromBase, toBase) {
       val xi = i < len x ? x[i] : 0
       val yi = i < len y ? y[i] : 0
       val zi = carry + xi + yi
-      z.push(zi % base)
+      z.=push(zi % base)
       carry = Math.floor(zi / base)
       i += 1
     }
     z
   }
 
-  val multiplyByNumber = |num, x, base| => {
+  val multiplyByNumber = |num, x, base| {
     if num < 0 => return null
     if num == 0 => return []
     var result = []
     var power = x
-    label x: loop {
+    label x loop {
       num & 1 !: (result = add(result, power, base))
       num = num >> 1
       if num == 0 => break x
@@ -39,13 +39,13 @@ def convertBase(str, fromBase, toBase) {
     result
   }
 
-  val parseToDigitsArray = |str, base| => {
+  val parseToDigitsArray = |str, base| {
     val digits = str.split ""
     var arr = []
     for var i in len digits till 0 {
       val n = DIGITS.indexOf digits[i]
       if n == -1 => return null
-      arr.push n
+      arr.=push n
     }
     arr
   }
@@ -58,19 +58,19 @@ def convertBase(str, fromBase, toBase) {
   for var i in 0 til len digits {
     digits[i] !: (
       outArray = add(
-        outArray,
-        multiplyByNumber(digits[i], power, toBase),
+        outArray
+        multiplyByNumber(digits[i], power, toBase)
         toBase
       )
     )
     power = multiplyByNumber(fromBase, power, toBase)
   }
 
-  var out = ""
+  var output = ""
   for var i in len outArray till 0 =>
-    out += DIGITS[outArray[i]]
+    output += DIGITS[outArray[i]]
 
-  out
+  output
 }
 ```
 
@@ -108,7 +108,6 @@ This project is currently in the works and would be my largest project to date. 
 - [Installation](#)
 - [The Basics](#)
   - [Variables](#)
-  - [Annotations](#)
   - [Syntax](#)
   - [Comments](#)
   - [Keywords](#)
@@ -354,9 +353,23 @@ print 'Hello World!'
 As you may know, Trinity uses a curly-bracket syntax much like other languages like JavaScript, PHP, C# and Java. You would use curly brackets to delimit things like if-statements, or even functions and classes.
 
 ```dart
-class Person(val firstName: String, val lastName: String) {
+class Person(val firstName: Str, val lastName: Str) {
   def printFullName() { print "$firstName $lastName" }
 }
+```
+
+#### Semicolons and Commas
+
+You would not need to use semicolons to terminate expressions, or commas to separate expressions when the next expression is on the following line. Lines are joined if the first token of the next line is a keyword or infix operator.
+
+```dart
+print 'Hello World!'
+
+[1
+2
+3] == [1, 2, 3]
+
+x := 1; x = 10 // this code is valid
 ```
 
 #### Comments
@@ -379,6 +392,26 @@ Special, reserved line comments include documentation, to-do and compiler commen
 //+ testing comment
 //! fixme/todo comment
 //* compiler comment
+```
+
+#### Identifiers
+
+Identifiers, which name program entities like variables or functions, always begin with a letter or underscore (Unicode `Pc`). The rest of the characters may also include digits (`Nd`) and combining marks (`M`).
+
+Naming conventions follow Java or JavaScript. There are four types of identifiers which Trinity recognizes and highlights:
+
+- `SHOUT_SNAKE_CASE`, used for declaring constants,
+- `PascalCase` used for declaring classes, modules and types,
+- `camelCase` or `snake_case` used for variables, functions and methods.
+- `_leading` or `trailing_` underscores used for special methods.
+
+Variables are compared using their first character, then comparing further characters case-insensitively, ignoring all delimiters.
+This makes it easier to identify identifier without having to know its exact spelling.
+
+```dart
+fn cmpIdent(a: Str, b: Str): Bool =
+  a[0] == b[0] &&
+  a.sub(`[^\pL\d]+`g, '').lower() = b.sub(`[^\pL\d]+`g, '').lower()
 ```
 
 #### Keywords
@@ -406,36 +439,6 @@ import export impose expose using
 debug check assert
 ```
 
-#### Identifiers
-
-Identifiers, which name program entities like variables or functions, always begin with a letter or underscore. The rest of the characters may also include digits and combining marks.
-
-Naming conventions follow Java or JavaScript. There are four types of identifiers which Trinity recognizes and highlight accordingly:
-
-- `SHOUT_SNAKE_CASE`, used for declaring constants,
-- `PascalCase` used for declaring classes, modules and types,
-- `camelCase` or `snake_case` used for variables, functions, methods, etc.
-- `_leading` or `trailing_` underscores used to escape keywords.
-
-Because of something called partial case insensitivity, variables are compared using their first character, leaving everything else to be compared case-insensitively and without diacritics or delimiters. This makes it easier to identify variables across different conventions without having to know the exact spelling of an identifier.
-
-```dart
-proc sameIdentifier(a, b: string): bool = a[0] == b[0] &&
-    a.replace("_", "").toLowerAscii == b.replace("_", "").toLowerAscii
-```
-
-You would not need to use semicolons to terminate expressions, or commas to separate expressions when the next expression is on the following line. Lines are joined if the first token of the next line is a keyword or infix operator.
-
-```dart
-print 'Hello World!'
-
-[1
-2
-3] == [1, 2, 3]
-
-x := 1; x = 10 // this code is valid
-```
-
 ## Variables
 
 In JavaScript you would declare new variables like this:
@@ -443,7 +446,7 @@ In JavaScript you would declare new variables like this:
 ```js
 var s = "hello"; // mutable
 let i = 42; // mutable
-const p = new Person("Joel Fleischman"); // immutable
+const c = new Character("Akali Jhomen Tethi"); // immutable
 ```
 
 By contrast, Trinity has two types of variables:
@@ -456,7 +459,7 @@ This is what variable declaration looks like in Trinity:
 ```dart
 val s = "hello" // immutable
 var i = 42 // mutable
-val p = new Person("Joel Fleischman")
+val c = new RpgChar("Riven Konte")
 ```
 
 You don't need to explicitly specify the types of each variable, the compiler is smart enough to infer them for you:
@@ -467,18 +470,23 @@ val s = 'Hello World!' // s is a `str`
 
 You can also explicitly declare the variable type if you think it makes your code easier to read.
 
+Note all types are declared in PascalCase, similar to classes.
+
 ```dart
-val s: str = "hello"
-var i: int = 42
+val s: Str = "hello"
+var i: Int = 42
+val c: RpgChar = new RpgChar("Riven Konte")
 ```
 
 As a practical matter it can help to explicitly show the type when you're working with third-party libraries, especially if you don't use the library often, or if their method names don't make the type clear.
+
+#### Reassignment
 
 Reassigning a `val` would throw an error:
 
 ```dart
 val a = \a
-a = \b; //! Error: reassignment to constant a
+a = \b; //! Error: a const variable can only be set once.
 ```
 
 Conversely, you _can_ reassign a `var`:
@@ -488,28 +496,156 @@ var a = \a
 a = \b
 ```
 
+#### Scope
+
 A new `var` or `val` in a closure declares a new variable temporarily in that closure, _shadowing_ it.
 
 ```dart
-var a = 1
+val a = 1
 do {
-  var a = 2
+  val a = 2
   print a //= 2
 }
 print a //= 1
 ```
 
-### Let and Dim
+#### Set and Let
 
-The keywords `dim` and `let` behave like `var` and `val` respectively, but you can redefine fields in the same block.
+The keywords `set` and `let` behave like `var` and `val` respectively, but you can redefine fields in the same block, overshadowing them. So you can write this too:
 
 ```dart
-dim a = \a
-dim a = \b // a is now \a
+set a = \a
+set a = \b // a is now \a
 let a = \c // a is now \c
 ```
 
+Uninitialized variables that have a nullable type have an initial value of `null`. Even variables with numeric types are initially null, because numbers—like everything else in Dart—are objects.
+
+```dart
+var lineCount: Int
+assert lineCount == null
+```
+
+Note: Production code ignores the `assert` statement. During development, on the other hand, `assert condition` throws an exception if condition is false. For details, see Assert.
+
+If you enable null safety, then you must initialize the values of non-nullable variables before you use them:
+
+```dart
+var lineCount: Int = 0
+```
+
+You don't have to initialize a local variable where it's declared, but you do need to assign it a value before it's used. For example, the following code is valid as `lineCount` is non-null by the time it’s passed to `print()`:
+
+```dart
+import FS
+def countLines: Int =
+  FS::read(file + , 'utf8') |> |x| len x.lines()
+
+var lineCount: Int, weLikeToCount = true
+if weLikeToCount {
+  lineCount = countLines()
+} else {
+  lineCount = 0
+}
+
+print lineCount
+```
+
+Top-level and class variables are lazily initialized; the initialization code runs the first time the variable is used.
+
+The binding you refer to is whatever's the closest upward.
+
+### Type Annotations
+
+You can also wrap any expression in parentheses and annotate it:
+
+```dart
+let myInt = 5
+let myInt: Int = 5
+let myInt = (5: Int) + (4: Int)
+let add = |x: Int, y: Int| : Int => x + y
+let drawCircle = |&radius r: Int|: Circle => /* code here */
+```
+
+You can refer to a type by a different name. They'll be equivalent:
+
+```dart
+type Second = Int
+let totalTime: Second = 10
+```
+
+Types can accept parameters, akin to generics in other languages. The parameters' names are defined in square brackets. The use-case of a parameterized type is to kill duplications. Before:
+
+```dart
+type Coords[A] = [A, A, A] // [] is a tuple literal
+let a: Coords[Int] = [10, 20, 20]
+let b: Coords[Float] = [10.5, 20.5, 20.5]
+```
+
+Note that the above codes are just contrived examples for illustration purposes. Since the types are inferred, you could have just written:
+
+```dart
+let buddy = [10, 20, 20]
+```
+
+The type system infers that it's a `#[Int, Int, Int]`; nothing else had to be written down.
+
+#### Recursive Types
+
+Just like a functions, a type can reference itself within itself using `re`:
+
+```dart
+re type Person = {
+  name: Str
+  friends: Array[Person]
+}
+```
+
+Types can also be mutually recursive.
+
+```dart
+re type Student = {taughtBy: Teacher}
+re type Teacher = {students: Array[Student]}
+```
+
 Trinity supports the same primitive literals as most other languages, including those from higher-level scripting languages:
+
+### Data Types
+
+Trinity comes with the familiar primitive types like string, int, float, etc.
+
+- Numbers (`Int`, `Float`)
+- Strings (`Str`)
+- Booleans (`Bool`)
+- Lists (`List`)
+- Sets (`Set`)
+- Maps (`Map`)
+- Runes (`Rune`)
+- Symbols (`Symbol`)
+- The value `null` (`Null`)
+
+This support includes the ability to create objects using literals. For example, `'string'` is a string literal, and `true` is a boolean literal.
+
+Several classes also have literals:
+
+- Duration (`Duration`)
+- Date and time (`DateTime`)
+- Regular expression (`RegExp`)
+- Function (`Func`)
+- Mutable lists, sets, and maps (`MutList`, `MutSet`, `MutMap`)
+
+Because every variable in Trinity refers to an object (an instance of a class) you can use constructors to initialize variables. All of the types have their own constructors. For example, you can use the `Map()` constructor to create a map.
+
+Some other types also have special roles in the Saga language:
+
+- `Mixed`: The superset of all value classes, except `Null`.
+- `Object`: The negation of `Mixed`.
+- `Any`: The top class; the superset of all classes including `Null`.
+- `Never`: Indicates that an expression can never successfully finish evaluating. The bottom type.
+- `Void`: Indicates that a value is never used. Used in place of `Null` to indicate a function or method never returns.
+- `Future` and `Stream`: Used in asynchrony support.
+- `Iterable`: Used in `for-in` loops and in synchronous generator functions.
+- `Pure` or `Impure`: Indicates a function is pure or impure, meaning it has or does not have any [side effects](<https://en.wikipedia.org/wiki/Side_effect_(computer_science)>).
 
 ```dart
 null; void // null and undefined
@@ -533,33 +669,273 @@ nan; infin // special float constants
 \< // block regex
 <div>Hello World!</div> // JSX
 [0, 1, 2] // list
-{1: "one", 2: "two"} // map
+{1, 2, 3} // set
+{1: "one", 2: "two", 3: "three"} // map
 :symbol // symbol
 : Type // type
-: Slot[Literal] // slot
-set [x]; [x] as set // set
-do |x, y| x + y // function
+: Type.Slot // slot
+|x, y| x + y // function
 ```
 
-There is no need to surround `()` with a map literal unless iheihw vsi erhith wih
+### Null
 
-Blocks are literal too, are they?
+`Null` is a single value used to represent the absence of a value.
+Same for `void`. Both compile to JS `undefined`.
 
 ```dart
-do {}
-def() {}
-class {}
+null == void //= true
 ```
 
-#### Identifiers
+### Booleans
 
-Identifiers begin with a letter `L`, or combining punctuation `Pc`, which includes underscores. Later characters can include any digit `Nd` or combining marks `M` in addition to said characters.
+A boolean (type `bool`) can only have two values: `true` or `false`. Booleans are mainly used for control flow, and there are a lot of operators that return boolean values.
 
 ```dart
-дpдgдпdф(lдs, lцcёs);
+true
+false
 ```
 
-Two or more identifiers placed in a row
+### Numbers
+
+Trinity supports both integers, signed and unsigned, as well as floating-point numbers in various sizes (default being 64 bits). Floating-points are distinguished from integers by a decimal point. Unsigned integers are distinguished with the `:u` suffix.
+
+All numeric literals are case-insensitive and unlike a lot of other languages, numbers can include underscores or leading zeroes.
+
+```dart
+val myInt: Int = 123
+val myNat: Nat = 123:u
+val myFloat: Float = 0x.1
+```
+
+Different radix literals can be created using prefixes `0b` (base 2), `0q` (base 4), `0s` (base 6), `0o` (base 8), `0z` (base 12) and `0x` (base 16).
+
+```dart
+val base2 = 0b101010111100000100100011
+val base4 = 0q320210213202
+val base6 = 0s125423
+val base8 = 0o52740443
+val base10 = 0011256099
+val base12 = 0z10a37b547ab97
+val base16 = 0xabcdef123
+```
+
+Again, unlike other languages, exponents are delimited with a caret `^` and are relative to the base, which means that `1^10` is equal to `1 * 10 ** 10`.
+
+```dart
+assert 0x1^10 == 1 * (16 ** 10)
+```
+
+Repeating digits are specified with the `*` sign, followed by the number of digits after the decimal point with `=`.
+
+Floats also can be made in a compact way with an improper "fractional" style, meaning the numerator goes on the left and the denominator on the right, with the numerator taking on the prefix.
+
+```dart
+assert 1.*3 == 4/3
+```
+
+Numbers can also be suffixed with a suitable type, after the colon `:`, and it would be cast to the appropriate type.
+
+```dart
+assert 4.0:F32 is F32
+```
+
+We also provide a multi-base numeric literal, where the digits themselves are separated with underscores.
+
+```dart
+assert 0xdead_beef == 16b13_14_10_13__11_14_14_15
+```
+
+### Strings
+
+Strings are delimited by matching single or double quotes, and can span multiple lines. Double quoted strings can have escape sequences precede by a backslash, while single quoted strings are _"raw"_, meaning any escapes are not parsed.
+
+```dart
+var s1 = 'Single quotes work well for string literals.';
+var s2 = "Double quotes work just as well.";
+var s3 = 'It''s easy to escape the string delimiter.';
+var s4 = "It's even easier to use the other delimiter.";
+```
+
+Strings can also begin with _three or more_ quotes of the same type, provided they end with _at least_ the same number of quotes of the same type. In these types of literals, leading and trailing whitespace, as well as newlines are ignored.
+
+```dart
+assert """ "multiline string"""" == '"multiline string"'
+```
+
+Str literals may span multiple lines in which case the newlines are always normalized to `\n` regardless of how newlines were encoded in the source code text. The first non-whitespace character of each line should be aligned to the first line, or else it is a compile time error:
+
+```dart
+x = "
+line1
+  line2
+  line3
+"
+
+x = """
+    line 1
+      line 2
+      line 3
+"""
+```
+
+Both examples compile into `"line1\n line2\n line3"`. Note that spacing to the right of the leading line is maintained, but spacing to the left is stripped off in the string literal.
+
+Double-quoted strings can contain the following escape sequences, as shown in the table below. All escape sequences are case-insensitive.
+
+Escaped symbols and punctuation are interpreted without the leading backslash.
+
+```dart
+assert "multiline string" == "multiline string"
+```
+
+| Escape Sequence | Meaning                                                                      |
+| --------------- | ---------------------------------------------------------------------------- |
+| `\p`            | platform specific newline<br> CRLF (`\x9\xA`) on Windows, LF on Unix (`\x9`) |
+| `\r`            | carriage return (`\x9`)                                                      |
+| `\n`            | line feed (or newline) (`\xA`)                                               |
+| `\f`            | form feed (`\xC`)                                                            |
+| `\t`            | horizontal tabulator (`\x9`)                                                 |
+| `\v`            | vertical tabulator (`\xB`)                                                   |
+| `\a`            | alert (`\x7`)                                                                |
+| `\c`            | backspace (`\x8`)                                                            |
+| `\e`            | escape (`\xB`)                                                               |
+| `\l`            | space (`\x20`)                                                               |
+
+A backslash joins the next line, ignoring any trailing whitespace and beginning indentation.
+
+Trinity also supports escapes in many bases. The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
+
+```dart
+// "HELLO"
+"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
+"\d{72 69 76 76 69}" == "\72\69\76\76\79"
+```
+
+| Escape      | Meaning                                        |
+| ----------- | ---------------------------------------------- |
+| `\b`        | _Base 2_ - from `0` to `100001111111111111111` |
+| `\q`        | _Base 4_ - from `0` to `10033333333`           |
+| `\s`        | _Base 6_ - from `0` to `35513531`              |
+| `\o`        | _Base 8_ - from `0` to `4177777`               |
+| `\d` or `\` | _Base 10_ - from `0` to `1114111`              |
+| `\z`        | _Base 12_ - from `0` to `4588A7`               |
+| `\x`        | _Base 16_ - from `0` to `10FFFF`               |
+| `\u`        | UTF-8, 16 or 32 code units only                |
+| `\j`        | Named Unicode characters (more later)          |
+
+### String Interpolation
+
+You can put the value of an expression inside a string by using `${expression}`. If the value refers to an identifier like `foo`, or a sequence of identifiers like `foo::bar.baz?.qux`, you can skip over the `{}`.
+
+To get the string corresponding to an object, Trinity calls the object's `_str()` method.
+
+> **Note**: Methods beginning with a single underscore are special methods defined on objects.
+
+```dart
+"x is $x, in hex $foo.x._hex, and x+8 is ${x + 8}"
+```
+
+is the short form for
+
+```dart
+"x is " ++
+x._str() ++
+", in hex " ++
+x._hex._str() ++
+", and x+8 is " ++
+(x + 8)._str()
+```
+
+Most of the time, use the `\$` escape sequence in double-quoted strings or `$$` in single-quoted strings if you wish to express the dollar sign itself.
+
+#### Backslash Strings
+
+Trinity is the only language that provides backslash strings as an alternative to quoted strings, however they come with their limitations.
+
+Backslash strings can contain any character except `.,:;(){}[]` or whitespace, and do not begin with `<|>`. If you want them to include these characters in a string, escape them with a backslash as you would in double quoted strings.
+
+```dart
+assert \just-a-string == 'just-a-string'
+assert \just\ a\ string == 'just a string'
+assert \\  == ' ' // the space is escaped!
+```
+
+Block strings start with either `\|` or `\>` and work very similar to their YAML counterparts. The same rules apply to block strings, but require that every line after it be indented by at least a single whitespace character, maintaining that indentation throughout.
+
+```yaml
+x: |
+  line 1
+    line 2
+    line 3
+x: |
+    line 1
+      line 2
+      line 3
+```
+
+```dart
+let string1 = \|
+  line1
+    line2
+    line3
+let string2 = \|
+  line 1
+    line 2
+    line 3
+++ string1
+```
+
+Again, spacing to the right of the leading line is maintained, but spacing to the left is stripped off in the string literal.
+
+#### Format Strings
+
+Formatting placeholders begin with the hash sign `#`, and directives begin with a percentage sign `%`. Format specifiers allow greater control over how the value is formatted.
+
+> **Note**: We will go through the Format Directive Mini-Language in a later chapter.
+
+The following example rounds pi to three places after the decimal:
+
+```dart
+print('The value of Pi is approximately $Math.PI%3f.')
+//= The value of Pi is approximately 3.142.
+```
+
+The brackets and characters within them (called format fields) are replaced with the objects passed into the `Str.format()` method. A number in the brackets can be used to refer to the position of the object passed into the `Str.format()` method.
+
+```dart
+'#0 and #1'.format('spam', 'eggs') // spam and eggs
+'#1 and #0'.format('spam', 'eggs') // eggs and spam
+```
+
+If keyword arguments are used in the `Str.format()` method, their values are referred to by using the name of the argument.
+
+```dart
+'This #food is #adjective.'.format(
+  food = 'spam'
+  adjective = 'absolutely horrible'
+) //= This spam is absolutely horrible.
+```
+
+Positional and keyword arguments can be arbitrarily combined:
+
+```dart
+'The story of #0, #1, and #other.'.format(
+  'Bill'
+  'Manfred'
+  other = 'Georg'
+) //= The story of Bill, Manfred, and Georg.
+```
+
+This could also be done by passing the table as keyword arguments with the ‘\*\*’ notation.
+
+```dart
+table = {Alex: 1974,
+         Diana: 2390,
+         Scott: 4903}
+" Alex: #Alex%d \nDiana: #Diana%d \nScott: #Scott%d".format(%table)
+```
+
+This is particularly useful in combination with the built-in function vars(), which returns a dictionary containing all local variables.
 
 #### Operators
 
