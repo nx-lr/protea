@@ -5,73 +5,7 @@
 Trinity is a portable, multi-paradigm and multi-faceted programming language I created that aims to run on the JavaScript and Node.JS runtimes. It features a familiar JavaScript-like syntax, static (and dynamic) typing, a robust standard library and a unique combination of powerful features for imperative, declarative and meta-programming.
 
 ```dart
-def convertBase(str, fromBase, toBase) {
-  val DIGITS =
-    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/"
 
-  val add = |x, y, base| {
-    var z = []
-    val n = Math.max(len x, len y)
-    var carry = 0
-    var i = 0
-    while i < n ?: carry {
-      val xi = i < len x ? x[i] : 0
-      val yi = i < len y ? y[i] : 0
-      val zi = carry + xi + yi
-      z.=push(zi % base)
-      carry = Math.floor(zi / base)
-      i += 1
-    }
-    z
-  }
-
-  val multiplyByNumber = |num, x, base| {
-    if num < 0 => return null
-    if num == 0 => return []
-    var result = []
-    var power = x
-    label x loop {
-      num & 1 !: (result = add(result, power, base))
-      num = num >> 1
-      if num == 0 => break x
-      power = add(power, power, base)
-    }
-    result
-  }
-
-  val parseToDigitsArray = |str, base| {
-    val digits = str.split ""
-    var arr = []
-    for var i in len digits till 0 {
-      val n = DIGITS.indexOf digits[i]
-      if n == -1 => return null
-      arr.=push n
-    }
-    arr
-  }
-
-  val digits = parseToDigitsArray(str, fromBase)
-  if digits == null => return null
-
-  var outArray = []
-  var power = [1]
-  for var i in 0 til len digits {
-    digits[i] !: (
-      outArray = add(
-        outArray
-        multiplyByNumber(digits[i], power, toBase)
-        toBase
-      )
-    )
-    power = multiplyByNumber(fromBase, power, toBase)
-  }
-
-  var output = ""
-  for var i in len outArray till 0 =>
-    output += DIGITS[outArray[i]]
-
-  output
-}
 ```
 
 ### Roadmap
@@ -97,6 +31,14 @@ Trinity gives the developer a lot of power, all with an easy syntax, and a clean
 Trinity started out as a simple concept to bridge the gap between Python and JavaScript in a hybrid language, though sharing most of the concepts from modern JavaScript. Now over almost a year of iteration and tinkering the language had poured in tons of influence from other languages like Scala and Kotlin.
 
 This project is currently in the works and would be my largest project to date. I will be posting a Trello on my development of Trinity very soon, and I'm looking forward for anyone out there to contribute; fork this repo, and pull your changes to this repository: https://github.com/nxltm/trinity-lang.
+
+## Standard Library
+
+<table><tr><td width=33.333% valign=top>
+
+#### [Introduction](./Introduction.md)
+
+</td></tr></table>
 
 ## Table of Contents
 
@@ -398,18 +340,18 @@ Special, reserved line comments include documentation, to-do and compiler commen
 
 Identifiers, which name program entities like variables or functions, always begin with a letter or underscore (Unicode `Pc`). The rest of the characters may also include digits (`Nd`) and combining marks (`M`).
 
-Naming conventions follow Java or JavaScript. There are four types of identifiers which Trinity recognizes and highlights:
+Naming conventions follow Java or JavaScript. There are four types of identifiers which Trinity recognizes and highlights accordingly:
 
-- `SHOUT_SNAKE_CASE`, used for declaring constants,
-- `PascalCase` used for declaring classes, modules and types,
+- `SHOUT_SNAKE_CASE`, used for constants,
+- `PascalCase` used for classes, modules and types,
 - `camelCase` or `snake_case` used for variables, functions and methods.
-- `_leading` or `trailing_` underscores used for special methods.
+- `_leading`/`trailing_` underscores for special methods and keywords.
 
 Variables are compared using their first character, then comparing further characters case-insensitively, ignoring all delimiters.
 This makes it easier to identify identifier without having to know its exact spelling.
 
 ```dart
-fn cmpIdent(a: Str, b: Str): Bool =
+def cmpIdent(a: Str, b: Str): Bool =
   a[0] == b[0] &&
   a.sub(`[^\pL\d]+`g, '').lower() = b.sub(`[^\pL\d]+`g, '').lower()
 ```
@@ -424,42 +366,48 @@ typeof nameof sizeof
 keyof valueof pairof instof
 len del to til till thru by
 
-var val let dim const def fn fun func
-class enum mod pkg inter struct obj rec
-frag nspace data trait proto proc macro type given
-raw style comp elem decl ext impl sub
+var val let set get def fn fun func
+class enum module package inter struct object record
+frag space data trait proto proc macro type given
+raw style compo element decl ext impl sub
 
 if lest elif elest else then
-for each loop while until from
+for each loop while until from with
 do redo try retry throw catch finally
 switch case default match when otherwise
-parallel series spawn destroy fixed lock
+unison series spawn kill fix lock
 break continue return await label yield goto
 import export impose expose using
-debug check assert
+debug check assert fallthru
 ```
 
 ## Variables
 
-In JavaScript you would declare new variables like this:
-
-```js
-var s = "hello"; // mutable
-let i = 42; // mutable
-const c = new Character("Akali Jhomen Tethi"); // immutable
-```
-
-By contrast, Trinity has two types of variables:
-
-- `val` creates an immutable variable (like `const` in JavaScript)
-- `var` creates a mutable variable (like `let`)
-
-This is what variable declaration looks like in Trinity:
+Trinity has four types of variables, all of which are block-scoped; the immutable `val` and `set`, and the mutable `var` and `let`. `let` and `set` definitions can be overridden in the same scope.
 
 ```dart
-val s = "hello" // immutable
-var i = 42 // mutable
-val c = new RpgChar("Riven Konte")
+val _val = "hello"
+set _val = 'hello'
+var _val = 42
+let _val = 'hello'
+```
+
+As for `set` and `let`, the binding you refer to is whatever's the closest upward.
+
+Reassigning a `val`/`set` would throw an error:
+
+```dart
+val a = \a
+set a = a // a == \a
+a = \b; //! Error: a const variable can only be set once.
+```
+
+Conversely, you _can_ reassign a `var`/`let`:
+
+```dart
+var a = \a
+let a = a // a == \a
+a = \b
 ```
 
 You don't need to explicitly specify the types of each variable, the compiler is smart enough to infer them for you:
@@ -468,9 +416,7 @@ You don't need to explicitly specify the types of each variable, the compiler is
 val s = 'Hello World!' // s is a `str`
 ```
 
-You can also explicitly declare the variable type if you think it makes your code easier to read.
-
-Note all types are declared in PascalCase, similar to classes.
+You can also explicitly declare the variable type if you think it makes your code easier to read. All types are declared in `PascalCase`, as each type is an instance of a class.
 
 ```dart
 val s: Str = "hello"
@@ -479,24 +425,6 @@ val c: RpgChar = new RpgChar("Riven Konte")
 ```
 
 As a practical matter it can help to explicitly show the type when you're working with third-party libraries, especially if you don't use the library often, or if their method names don't make the type clear.
-
-#### Reassignment
-
-Reassigning a `val` would throw an error:
-
-```dart
-val a = \a
-a = \b; //! Error: a const variable can only be set once.
-```
-
-Conversely, you _can_ reassign a `var`:
-
-```dart
-var a = \a
-a = \b
-```
-
-#### Scope
 
 A new `var` or `val` in a closure declares a new variable temporarily in that closure, _shadowing_ it.
 
@@ -509,15 +437,15 @@ do {
 print a //= 1
 ```
 
-#### Set and Let
-
-The keywords `set` and `let` behave like `var` and `val` respectively, but you can redefine fields in the same block, overshadowing them. So you can write this too:
+The keywords `set` and `let` behave like `var` and `val` respectively, but you can redefine `set` and `let` fields in the same block, overshadowing them. So you can write this too:
 
 ```dart
 set a = \a
 set a = \b // a is now \a
 let a = \c // a is now \c
 ```
+
+The binding you refer to is whatever's the closest upward.
 
 Uninitialized variables that have a nullable type have an initial value of `null`. Even variables with numeric types are initially null, because numbers—like everything else in Dart—are objects.
 
@@ -534,37 +462,26 @@ If you enable null safety, then you must initialize the values of non-nullable v
 var lineCount: Int = 0
 ```
 
-You don't have to initialize a local variable where it's declared, but you do need to assign it a value before it's used. For example, the following code is valid as `lineCount` is non-null by the time it’s passed to `print()`:
+You don't have to initialize a local variable where it's declared, but you do need to assign it a value before it's used.
 
 ```dart
-import FS
-def countLines: Int =
-  FS::read(file + , 'utf8') |> |x| len x.lines()
-
-var lineCount: Int, weLikeToCount = true
-if weLikeToCount {
-  lineCount = countLines()
-} else {
-  lineCount = 0
-}
-
-print lineCount
+let ct
+for x in 1 to 10 then ct = x
+print ct
 ```
 
 Top-level and class variables are lazily initialized; the initialization code runs the first time the variable is used.
 
-The binding you refer to is whatever's the closest upward.
-
 ### Type Annotations
 
-You can also wrap any expression in parentheses and annotate it:
+You can wrap any expression in parentheses and annotate it:
 
 ```dart
 let myInt = 5
 let myInt: Int = 5
 let myInt = (5: Int) + (4: Int)
-let add = |x: Int, y: Int| : Int => x + y
-let drawCircle = |&radius r: Int|: Circle => /* code here */
+let add = |x: Int, y: Int|: Int = x + y
+let drawCircle = |&radius = r: Int|: Circle = /* code here */
 ```
 
 You can refer to a type by a different name. They'll be equivalent:
@@ -592,27 +509,51 @@ The type system infers that it's a `#[Int, Int, Int]`; nothing else had to be wr
 
 #### Recursive Types
 
-Just like a functions, a type can reference itself within itself using `re`:
+A type can reference itself within itself using `re`:
 
 ```dart
-re type Person = {
+rec type Person = {
   name: Str
-  friends: Array[Person]
+  friends: List[Person]
 }
 ```
 
 Types can also be mutually recursive.
 
 ```dart
-re type Student = {taughtBy: Teacher}
-re type Teacher = {students: Array[Student]}
+rec type Student = {taughtBy: Teacher}
+rec type Teacher = {students: List[Student]}
 ```
 
-Trinity supports the same primitive literals as most other languages, including those from higher-level scripting languages:
+### Type Operators
 
-### Data Types
+You can make new types by combining or manipulating existing ones. The table below lists the type operators of the language.
 
-Trinity comes with the familiar primitive types like string, int, float, etc.
+| Operator                   | Example     | Returns                                                                   |
+| -------------------------- | ----------- | ------------------------------------------------------------------------- |
+| `+` (sum)                  | `a + b`     | The sum type of `a` and `b`                                               |
+| `*` (product)              | `a * b`     | The product type of `a` and `b`                                           |
+| `-` (difference)           | `a - b`     | An object which has the keys of `a`, but _not_ `b`                        |
+| `&` (intersection)         | `a & b`     | An object which has the keys of `a` _and_ b                               |
+| `\|` (union)               | `a \| b`    | An object which has the keys of `a` _or_ `b`                              |
+| `^` (symmetric difference) | `a ^ b`     | An object which has the keys of `a` _or_ `b` _but not both_               |
+| `~` (complement)           | `~a`        | Any type that is _not_ `a`                                                |
+| `?` (nullable)             | `?a`        | The union of `null` with `a`                                              |
+| `!` (result)               | `!a`        | The return type of function `a`                                           |
+| `$` (parameters)           | `$a`        | A tuple of the parameters of function `a`                                 |
+| `typeof`                   | `typeof a`  | Returns the base type(s) of `a`                                           |
+| `keyof`                    | `keyof a`   | A tuple of all the key types of the object `a`                            |
+| `valueof`                  | `valueof a` | A tuple of all the value types of the object `a`                          |
+| `pairof`                   | `pairof a`  | Equivalent to `[keyof a, valueof a]`                                      |
+| `infer`                    | `infer a`   | Validates that type `a` exists, otherwise short-circuits                  |
+| `as`                       | `a as b`    | Casts `a` to the type `b`                                                 |
+| `is`                       | `infer a`   | Ensures that the type `a` is the same as the type `b` provided `b` exists |
+| `ext` (extends)            | `a ext b`   | Ensures that the type `a` extends the type `b`                            |
+| `impl` (implements)        | `a impl b`  | Ensures that the type `a` implements the type `b`                         |
+
+## Data Types
+
+Trinity supports the same primitive literals as most other languages, including those from higher-level scripting languages such as lists, sets, maps and strings. For example, `'string'` is a string literal, and `true` is a boolean literal.
 
 - Numbers (`Int`, `Float`)
 - Strings (`Str`)
@@ -622,9 +563,8 @@ Trinity comes with the familiar primitive types like string, int, float, etc.
 - Maps (`Map`)
 - Runes (`Rune`)
 - Symbols (`Symbol`)
-- The value `null` (`Null`)
-
-This support includes the ability to create objects using literals. For example, `'string'` is a string literal, and `true` is a boolean literal.
+- Types (`Type`) and slots (`Slot`)
+- The value null (`Null`)
 
 Several classes also have literals:
 
@@ -680,7 +620,7 @@ nan; infin // special float constants
 ### Null
 
 `Null` is a single value used to represent the absence of a value.
-Same for `void`. Both compile to JS `undefined`.
+Same for `void`. `null` is equal to void by value, but not by reference. `void` compiles to JS `undefined`, `null` compiles to its JS counterpart.
 
 ```dart
 null == void //= true
@@ -852,11 +792,12 @@ Most of the time, use the `\$` escape sequence in double-quoted strings or `$$` 
 
 #### Backslash Strings
 
-Trinity is the only language that provides backslash strings as an alternative to quoted strings, however they come with their limitations.
+Trinity is the only language that provides backslash strings as an alternative to quoted strings, however they come with some limitations.
 
-Backslash strings can contain any character except `.,:;(){}[]` or whitespace, and do not begin with `<|>`. If you want them to include these characters in a string, escape them with a backslash as you would in double quoted strings.
+Single-line backslash strings can contain any character except `.,:;(){}[]` or whitespace, and do not begin with any of `<|>`. If you want them to include any of these inside a string, escape them with a backslash as you would in double quoted strings.
 
 ```dart
+assert \ == '' // A single backslash is an empty string
 assert \just-a-string == 'just-a-string'
 assert \just\ a\ string == 'just a string'
 assert \\  == ' ' // the space is escaped!
@@ -884,7 +825,6 @@ let string2 = \|
   line 1
     line 2
     line 3
-++ string1
 ```
 
 Again, spacing to the right of the leading line is maintained, but spacing to the left is stripped off in the string literal.
@@ -937,9 +877,7 @@ table = {Alex: 1974,
 " Alex: #Alex%d \nDiana: #Diana%d \nScott: #Scott%d".format(%table)
 ```
 
-This is particularly useful in combination with the built-in function vars(), which returns a dictionary containing all local variables.
-
-#### Operators
+#### Regular expressions
 
 There are
 
@@ -948,45 +886,3 @@ There are
 This would only be a textual overview of the Saga programming language, as the grammar is having a hiatus at this point.
 
 ### Syntax
-
-- **To-Do:**
-
-  - Add support to the first set of embedded languages:
-    - YAML
-    - Stylus/SASS
-    - HAML, Pug or Slim
-    - JavaScript, Ruby, CoffeeScript and Python
-  - Use Oniguruma to figure out how to validate arbitrary-radix numeric literals and highlight them.
-  - Rework query syntax, which is inspired by SQL.
-    - Query syntax begins with `from`.
-    - Ends in a `select` or `fold` statement.
-  - Add standard library stuff (the bulk of this grammar)
-    - (https://github.com/nxltm/cspell-dicts)
-      - JS, TS, R, C#, Go, PHP, Perl, Scala, Flix, Java, Kotlin, Rust, Python, Swift, Ruby, Elixir, Haskell
-      - CSS, HTML, SVG and LaTeX
-      - Selected third-party libraries above
-      - R, Matlab, C, C++, SQL, Bash, PowerShell and Command Prompt
-    - [Awesome JS](https://github.com/sorrycc/awesome-javascript)
-    - [Awesome Node](https://github.com/sindresorhus/awesome-nodejs)
-    - [Awesome Python](https://github.com/vinta/awesome-python)
-
-<!--  -->
-
-- Numeric literals follow this template:
-  - An optional base prefix starting with `0`, `2` or higher.
-  - 0 is reserved for even bases 2, 4, 6, 8, 10, 12 or 16.
-- Add YAML unquoted string literals
-  - `\|`: raw string `\>`: escaped string `\<`: regular expression `\`: unquoted string
-
-<!--  -->
-
-- **Bugs:**
-  - Fix list/set/item highlighting in function calls
-  - In backslash string literals, `\:` only the last `:` should not be parsed in type annotations such as `(3 + 4): int` or object keys such as `int:`
-- **Doing:**
-- **Done:**
-  - Revamp string, number, symbol and regex literals
-  - Sometimes some function
-  - Rework regex syntax (brackets):
-  - Different types of groups and character sets are highlighted in different colors as most of them begin the same way. e.g `(?:)` - non-capturing is different from `(?!)` - negative look-ahead. Quantifiers are highlighted differently than quantifier modifiers. Different types of groups and character sets are highlighted in different colors as most of them begin the same way.
-  - <!-- TODO: Work on this -->
