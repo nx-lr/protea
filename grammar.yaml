@@ -1428,13 +1428,17 @@ repository:
             name: keyword.operator.difference.trin
           - match: (?<!\\?[\\\[])-(?![-\[\]])
             name: keyword.operator.range.trin
+          - match: ([^-\\\[\]]|\\.)(?<!-+)(?=(?<!\\)-)
+            name: constant.other.character-class.range.from.trin
+          - match: (?<=[^\\]-)(?!-+)([^-\\\[\]]|\\.)
+            name: constant.other.character-class.range.to.trin
           - match: \\.
             name: constant.character.escape.other.trin
 
       regexp-char-set:
         patterns:
           - begin: (\[=)
-            end: \s*(\])
+            end: (\])
             name: constant.other.character-class.posix.trin
             captures:
               1: {name: punctuation.definition.character-class.posix.trin}
@@ -1444,7 +1448,7 @@ repository:
               - include: "#operators"
               - include: "#regexp-patterns"
           - begin: (\[\.)
-            end: \s*(\])
+            end: (\])
             name: constant.other.character-class.posix.trin
             captures:
               1: {name: punctuation.definition.character-class.posix.trin}
@@ -1454,7 +1458,7 @@ repository:
               - include: "#operators"
               - include: "#regexp-patterns"
           - begin: (\[:)
-            end: \s*(\])
+            end: (\])
             name: constant.other.character-class.posix.trin
             captures:
               1: {name: punctuation.definition.character-class.posix.trin}
@@ -1464,7 +1468,7 @@ repository:
               - include: "#operators"
               - include: "#regexp-patterns"
           - begin: (\[\^)
-            end: \s*(\])
+            end: (\])
             name: constant.other.character-class.negated.trin
             captures:
               1: {name: punctuation.definition.character-class.negated.trin}
@@ -1474,7 +1478,7 @@ repository:
               - include: "#regexp-char-ops"
               - include: "#regexp-char-set"
           - begin: (\[)
-            end: \s*(\])
+            end: (\])
             name: constant.other.character-class.trin
             captures:
               1: {name: punctuation.definition.character-class.trin}
@@ -3712,11 +3716,11 @@ repository:
             captures:
               1: {name: punctuation.definition.expression.trin}
             patterns:
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
                 name: keyword.control.error.trin
               - include: "#code-block"
               - include: $self
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
             name: keyword.control.error.trin
           - include: "#code-block"
           - include: $self
