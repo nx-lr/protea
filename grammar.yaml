@@ -354,300 +354,402 @@ repository:
         name: punctuation.separator.decimal.period.trin
       - match: (?<=(?:^|[({\[])\s*|\s)\.(?=\d)
         name: punctuation.separator.decimal.period.trin
-      - match: (?ix)\s*\b
-          ((?:[2-9]|[1-9]\d+)b)
-          (?:\p{Alnum}+(?:_*\p{Alnum}+)*)
-          (?:(\.)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)?)?
-          (?:([*/])\p{Alnum}+(?:_*\p{Alnum}+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+      - match: |
+          (?ix)\s*\b
+          ((?:[2-9]|[1-9]\d+)b)# radix prefix
+          (?:\w+(?:_*\w+)*)# integer/denominator
+          (?:
+          (\.)(?:\w+(?:_*\w+)*)?(?:# fractional
+          (\*)(?:\w+(?:_*\w+)*))?|# repeating
+          (\/)(?:\w+(?:_*\w+)*)# denominator
+          )?
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          ((?:[2-9]|[1-9]\d+)b)
-          (?:\p{Alnum}+(?:_*\p{Alnum}+)*)?
-          (?:(\.)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)?)
-          (?:([*/])\p{Alnum}+(?:_*\p{Alnum}+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          ((?:[2-9]|[1-9]\d+)b)# radix prefix
+          (?:\w+(?:_*\w+)*)?# integer/denominator
+          (?:
+          (\.)(?:\w+(?:_*\w+)*)?(?:# fractional
+          (\*)(?:\w+(?:_*\w+)*))?# repeating
+          ()# denominator
+          )
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0b)
-          (?:[01]+(?:_*[01]+)*)
-          (?:(\.)(?:[01]+(?:_*[01]+)*)?)?
-          (?:([*/])[01]+(?:_*[01]+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0b)# radix prefix
+          (?:[01]+(?:_*[01]+)*)# integer/denominator
+          (?:
+          (\.)(?:[01]+(?:_*[01]+)*)?(?:# fractional
+          (\*)(?:[01]+(?:_*[01]+)*))?|# repeating
+          (\/)(?:[01]+(?:_*[01]+)*)# denominator
+          )?
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.binary.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0b)
-          (?:[01]+(?:_*[01]+)*)?
-          (?:(\.)(?:[01]+(?:_*[01]+)*)?)
-          (?:([*/])[01]+(?:_*[01]+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0b)# radix prefix
+          (?:[01]+(?:_*[01]+)*)?# integer/denominator
+          (?:
+          (\.)(?:[01]+(?:_*[01]+)*)?(?:# fractional
+          (\*)(?:[01]+(?:_*[01]+)*))?# repeating
+          ()# denominator
+          )
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.binary.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0q)
-          (?:[0-3]+(?:_*[0-3]+)*)
-          (?:(\.)(?:[0-3]+(?:_*[0-3]+)*)?)?
-          (?:([*/])[0-3]+(?:_*[0-3]+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0q)# radix prefix
+          (?:[0-3]+(?:_*[0-3]+)*)# integer/denominator
+          (?:
+          (\.)(?:[0-3]+(?:_*[0-3]+)*)?(?:# fractional
+          (\*)(?:[0-3]+(?:_*[0-3]+)*))?|# repeating
+          (\/)(?:[0-3]+(?:_*[0-3]+)*)# denominator
+          )?
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0q)
-          (?:[0-3]+(?:_*[0-3]+)*)?
-          (?:(\.)(?:[0-3]+(?:_*[0-3]+)*)?)
-          (?:([*/])[0-3]+(?:_*[0-3]+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0q)# radix prefix
+          (?:[0-3]+(?:_*[0-3]+)*)?# integer/denominator
+          (?:
+          (\.)(?:[0-3]+(?:_*[0-3]+)*)?(?:# fractional
+          (\*)(?:[0-3]+(?:_*[0-3]+)*))?# repeating
+          ()# denominator
+          )
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0s)
-          (?:[0-5]+(?:_*[0-5]+)*)
-          (?:(\.)(?:[0-5]+(?:_*[0-5]+)*)?)?
-          (?:([*/])[0-5]+(?:_*[0-5]+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0s)# radix prefix
+          (?:[0-5]+(?:_*[0-5]+)*)# integer/denominator
+          (?:
+          (\.)(?:[0-5]+(?:_*[0-5]+)*)?(?:# fractional
+          (\*)(?:[0-5]+(?:_*[0-5]+)*))?|# repeating
+          (\/)(?:[0-5]+(?:_*[0-5]+)*)# denominator
+          )?
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.senary.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0s)
-          (?:[0-5]+(?:_*[0-5]+)*)?
-          (?:(\.)(?:[0-5]+(?:_*[0-5]+)*)?)
-          (?:([*/])[0-5]+(?:_*[0-5]+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0s)# radix prefix
+          (?:[0-5]+(?:_*[0-5]+)*)?# integer/denominator
+          (?:
+          (\.)(?:[0-5]+(?:_*[0-5]+)*)?(?:# fractional
+          (\*)(?:[0-5]+(?:_*[0-5]+)*))?# repeating
+          ()# denominator
+          )
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.senary.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0o)
-          (?:[0-7]+(?:_*[0-7]+)*)
-          (?:(\.)(?:[0-7]+(?:_*[0-7]+)*)?)?
-          (?:([*/])[0-7]+(?:_*[0-7]+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0o)# radix prefix
+          (?:[0-7]+(?:_*[0-7]+)*)# integer/denominator
+          (?:
+          (\.)(?:[0-7]+(?:_*[0-7]+)*)?(?:# fractional
+          (\*)(?:[0-7]+(?:_*[0-7]+)*))?|# repeating
+          (\/)(?:[0-7]+(?:_*[0-7]+)*)# denominator
+          )?
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.octal.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0o)
-          (?:[0-7]+(?:_*[0-7]+)*)?
-          (?:(\.)(?:[0-7]+(?:_*[0-7]+)*)?)
-          (?:([*/])[0-7]+(?:_*[0-7]+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0o)# radix prefix
+          (?:[0-7]+(?:_*[0-7]+)*)?# integer/denominator
+          (?:
+          (\.)(?:[0-7]+(?:_*[0-7]+)*)?(?:# fractional
+          (\*)(?:[0-7]+(?:_*[0-7]+)*))?# repeating
+          ()# denominator
+          )
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.octal.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0z)
-          (?:[\dab]+(?:_*[\dab]+)*)
-          (?:(\.)(?:[\dab]+(?:_*[\dab]+)*)?)?
-          (?:([*/])[\dab]+(?:_*[\dab]+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0z)# radix prefix
+          (?:[\dab]+(?:_*[\dab]+)*)# integer/denominator
+          (?:
+          (\.)(?:[\dab]+(?:_*[\dab]+)*)?(?:# fractional
+          (\*)(?:[\dab]+(?:_*[\dab]+)*))?|# repeating
+          (\/)(?:[\dab]+(?:_*[\dab]+)*)# denominator
+          )?
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0z)
-          (?:[\dab]+(?:_*[\dab]+)*)?
-          (?:(\.)(?:[\dab]+(?:_*[\dab]+)*)?)
-          (?:([*/])[\dab]+(?:_*[\dab]+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0z)# radix prefix
+          (?:[\dab]+(?:_*[\dab]+)*)?# integer/denominator
+          (?:
+          (\.)(?:[\dab]+(?:_*[\dab]+)*)?(?:# fractional
+          (\*)(?:[\dab]+(?:_*[\dab]+)*))?# repeating
+          ()# denominator
+          )
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0x)
-          (?:\h+(?:_*\h+)*)
-          (?:(\.)(?:\h+(?:_*\h+)*)?)?
-          (?:([*/])\h+(?:_*\h+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0x)# radix prefix
+          (?:\h+(?:_*\h+)*)# integer/denominator
+          (?:
+          (\.)(?:\h+(?:_*\h+)*)?(?:# fractional
+          (\*)(?:\h+(?:_*\h+)*))?|# repeating
+          (\/)(?:\h+(?:_*\h+)*)# denominator
+          )?
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (0x)
-          (?:\h+(?:_*\h+)*)?
-          (?:(\.)(?:\h+(?:_*\h+)*)?)
-          (?:([*/])\h+(?:_*\h+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (0x)# radix prefix
+          (?:\h+(?:_*\h+)*)?# integer/denominator
+          (?:
+          (\.)(?:\h+(?:_*\h+)*)?(?:# fractional
+          (\*)(?:\h+(?:_*\h+)*))?# repeating
+          ()# denominator
+          )
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          ()
-          (?:\d+(?:_*\d+)*)
-          (?:(\.)(?:\d+(?:_*\d+)*)?)?
-          (?:([*/])\d+(?:_*\d+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          ()# radix prefix
+          (?:\d+(?:_*\d+)*)# integer/denominator
+          (?:
+          (\.)(?:\d+(?:_*\d+)*)?(?:# fractional
+          (\*)(?:\d+(?:_*\d+)*))?|# repeating
+          (\/)(?:\d+(?:_*\d+)*)# denominator
+          )?
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          ()
-          (?:\d+(?:_*\d+)*)?
-          (?:(\.)(?:\d+(?:_*\d+)*)?)
-          (?:([*/])\d+(?:_*\d+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          ()# radix prefix
+          (?:\d+(?:_*\d+)*)?# integer/denominator
+          (?:
+          (\.)(?:\d+(?:_*\d+)*)?(?:# fractional
+          (\*)(?:\d+(?:_*\d+)*))?# repeating
+          ()# denominator
+          )
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: constant.numeric.other.separator.trin}
-          4: {name: constant.numeric.other.exponent.trin}
-          5: {name: constant.numeric.other.density.trin}
-          6: {name: storage.type.numeric.trin}
-      - match: (?ix)\s*\b
-          (\d+\w)
-          (?:\w+(?:_*\w+)*)
-          (?:(\.)(?:\w+(?:_*\w+)*)?)?
-          (?:([*/])\w+(?:_*\w+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (\d+\w+)# radix prefix
+          (?:\p{Alnum}+(?:_*\p{Alnum}+)*)# integer/denominator
+          (?:
+          (\.)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)?(?:# fractional
+          (\*)(?:\p{Alnum}+(?:_*\p{Alnum}+)*))?|# repeating
+          (\/)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)# denominator
+          )?
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
-          0: {name: invalid.illegal.numeric.trin}
-      - match: (?ix)\s*\b
-          (\d+\w)
-          (?:\w+(?:_*\w+)*)?
-          (?:(\.)(?:\w+(?:_*\w+)*)?)
-          (?:([*/])\w+(?:_*\w+)*)?
-          (\^(?:\d|[1-9]\d+)?[+-]?\d+)?
-          (=(?:\d|[1-9]\d+))?
-          (:[\p{Pc}\p{L}]\w*)?
+          0: {name: constant.numeric.illegal.trin}
+          1: {name: storage.type.numeric.trin}
+          2: {name: punctuation.separator.decimal.period.trin}
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
+      - match: |
+          (?ix)\s*\b
+          (\d+\w+)# radix prefix
+          (?:\p{Alnum}+(?:_*\p{Alnum}+)*)?# integer/denominator
+          (?:
+          (\.)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)?(?:# fractional
+          (\*)(?:\p{Alnum}+(?:_*\p{Alnum}+)*))?# repeating
+          ()# denominator
+          )
+          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
+          (=(?:\d|[1-9]\d+))?# significant
+          (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
-          0: {name: invalid.illegal.numeric.trin}
+          0: {name: constant.numeric.illegal.trin}
+          1: {name: storage.type.numeric.trin}
+          2: {name: punctuation.separator.decimal.period.trin}
+          3: {name: constant.numeric.other.repeating.trin}
+          4: {name: constant.numeric.other.separator.trin}
+          5: {name: constant.numeric.other.exponent.trin}
+          6: {name: constant.numeric.other.precision.trin}
+          7: {name: storage.type.numeric.trin}
 
   strings-quoted:
     patterns:

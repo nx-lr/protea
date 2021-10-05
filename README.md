@@ -481,7 +481,7 @@ let myInt = 5
 let myInt: Int = 5
 let myInt = (5: Int) + (4: Int)
 let add = |x: Int, y: Int|: Int = x + y
-let drawCircle = |&radius = r: Int|: Circle = /* code here */
+let drawCircle = |&radius := r: Int|: Circle = /* code here */
 ```
 
 You can refer to a type by a different name. They'll be equivalent:
@@ -529,31 +529,42 @@ rec type Teacher = {students: List[Student]}
 
 You can make new types by combining or manipulating existing ones. The table below lists the type operators of the language.
 
-| Operator                   | Example     | Returns                                                     |
-| -------------------------- | ----------- | ----------------------------------------------------------- |
-| `+` (sum)                  | `a + b`     | The sum type of `a` and `b`                                 |
-| `*` (product)              | `a * b`     | The product type of `a` and `b`                             |
-| `-` (difference)           | `a - b`     | An object which has the keys of `a`, but _not_ `b`          |
-| `&` (intersection)         | `a & b`     | An object which has the keys of `a` _and_ b                 |
-| `\|` (union)               | `a \| b`    | An object which has the keys of `a` _or_ `b`                |
-| `^` (symmetric difference) | `a ^ b`     | An object which has the keys of `a` _or_ `b` _but not both_ |
-| `~` (complement)           | `~a`        | Any type that is _not_ `a`                                  |
-| `?` (nullable)             | `?a`        | The union of `null` with `a`                                |
-| `!` (result)               | `!a`        | The return type of function `a`                             |
-| `$` (parameters)           | `$a`        | A tuple of the parameters of function `a`                   |
-| `typeof`                   | `typeof a`  | Returns the base type(s) of `a`                             |
-| `keyof`                    | `keyof a`   | A tuple of all the key types of the object `a`              |
-| `valueof`                  | `valueof a` | A tuple of all the value types of the object `a`            |
-| `pairof`                   | `pairof a`  | Equivalent to `[keyof a, valueof a]`                        |
-| `infer`                    | `infer a`   | Validates that type `a` exists                              |
-| `as`                       | `a as b`    | Casts `a` to the type `b`                                   |
-| `is`                       | `infer a`   | Type `a` is the same as the type `b`                        |
-| `ext` (extends)            | `a ext b`   | Type `a` is a subtype of `b`                                |
-| `impl` (implements)        | `a impl b`  | Type `a` is part of type `b`                                |
+| Operator                   | Example     | Returns                                                |
+| -------------------------- | ----------- | ------------------------------------------------------ |
+| `+` (sum)                  | `a + b`     | The sum type of `a` and `b`                            |
+| `*` (product)              | `a * b`     | The product type of `a` and `b`                        |
+| `-` (difference)           | `a - b`     | An object with the keys of `a`, but _not_ `b`          |
+| `&` (intersection)         | `a & b`     | An object with the keys of `a` _and_ b                 |
+| `\|` (union)               | `a \| b`    | An object with the keys of `a` _or_ `b`                |
+| `^` (symmetric difference) | `a ^ b`     | An object with the keys of `a` _or_ `b` _but not both_ |
+| `~` (complement)           | `~a`        | Any type that is _not_ `a`                             |
+| `?` (nullable)             | `?a`        | The union of `null` with `a`                           |
+| `!` (result)               | `!a`        | The return type of function `a`                        |
+| `$` (parameters)           | `$a`        | A tuple of the parameters of function `a`              |
+| `typeof`                   | `typeof a`  | Returns the base type(s) of `a`                        |
+| `keyof`                    | `keyof a`   | A union of all the key types of the object `a`         |
+| `valueof`                  | `valueof a` | A union of all the value types of the object `a`       |
+| `pairof`                   | `pairof a`  | Equivalent to `[keyof a, valueof a]`                   |
+| `infer`                    | `infer a`   | Validates that type `a` exists                         |
+| `as`                       | `a as b`    | Casts `a` to the type `b`                              |
+| `is`                       | `infer a`   | Type `a` is the same as the type `b`                   |
+| `ext` (extends)            | `a ext b`   | Type `a` is a subtype of `b`                           |
+| `impl` (implements)        | `a impl b`  | Type `a` is part of type `b`                           |
+
+Some types also have special roles in the Trinity language, and you'll see said code everywhere.
+
+- `Mixed`: The superset of all value classes, except `Null`.
+- `Object`: The negation of `Mixed`.
+- `Any`: The top class; the superset of all classes including `Null`.
+- `Never`: Indicates that an expression can never successfully finish evaluating. The bottom type.
+- `Void`: Indicates that a value is never used. Used in place of `Null` to indicate a function or method never returns.
+- `Future` and `Stream`: Used in asynchrony support.
+- `Iterable`: Used in `for-in` loops and in synchronous generator functions.
+- `Pure` or `Impure`: Indicates a function is pure or impure, meaning it has or does not have any [side effects](<https://en.wikipedia.org/wiki/Side_effect_(computer_science)>).
 
 ## Data Types
 
-Trinity supports the same primitive literals as most other languages, including those from higher-level scripting languages such as lists, sets, maps and strings. For example, `'string'` is a string literal, and `true` is a boolean literal.
+Trinity supports the same primitive literals as most other languages, including those from higher-level scripting languages.
 
 - Numbers (`Int`, `Float`)
 - Strings (`Str`)
@@ -566,7 +577,7 @@ Trinity supports the same primitive literals as most other languages, including 
 - Types (`Type`) and slots (`Slot`)
 - The value null (`Null`)
 
-Several classes also have literals:
+Several non-primitives also have literals:
 
 - Duration (`Duration`)
 - Date and time (`DateTime`)
@@ -574,18 +585,9 @@ Several classes also have literals:
 - Function (`Func`)
 - Mutable lists, sets, and maps (`MutList`, `MutSet`, `MutMap`)
 
-Because every variable in Trinity refers to an object (an instance of a class) you can use constructors to initialize variables. All of the types have their own constructors. For example, you can use the `Map()` constructor to create a map.
+Because everything is an object, you can use constructors to initialize variables. You can also use these built-in constructors to cast things from one type to another.
 
-Some other types also have special roles in the Saga language:
-
-- `Mixed`: The superset of all value classes, except `Null`.
-- `Object`: The negation of `Mixed`.
-- `Any`: The top class; the superset of all classes including `Null`.
-- `Never`: Indicates that an expression can never successfully finish evaluating. The bottom type.
-- `Void`: Indicates that a value is never used. Used in place of `Null` to indicate a function or method never returns.
-- `Future` and `Stream`: Used in asynchrony support.
-- `Iterable`: Used in `for-in` loops and in synchronous generator functions.
-- `Pure` or `Impure`: Indicates a function is pure or impure, meaning it has or does not have any [side effects](<https://en.wikipedia.org/wiki/Side_effect_(computer_science)>).
+For example, you can use the `Map()` constructor to construct a map from a string .
 
 ```dart
 null; void // null and undefined
@@ -642,9 +644,9 @@ Trinity supports both integers, signed and unsigned, as well as floating-point n
 All numeric literals are case-insensitive and unlike a lot of other languages, numbers can include underscores or leading zeroes.
 
 ```dart
-val myInt: Int = 123
+val myInt: Int = 123 // or +123
 val myNat: Nat = 123:u
-val myFloat: Float = 0x.1
+val myFloat: Float = 1.0
 ```
 
 Different radix literals can be created using prefixes `0b` (base 2), `0q` (base 4), `0s` (base 6), `0o` (base 8), `0z` (base 12) and `0x` (base 16).
@@ -659,7 +661,7 @@ val base12 = 0z10a37b547ab97
 val base16 = 0xabcdef123
 ```
 
-Again, unlike other languages, exponents are delimited with a caret `^` and are relative to the base, which means that `1^10` is equal to `1 * 10 ** 10`.
+Exponents are delimited with a caret `^` and are relative to the base, which means that `1^10` is equal to `1 * 10 ** 10`.
 
 ```dart
 assert 0x1^10 == 1 * (16 ** 10)
@@ -667,10 +669,10 @@ assert 0x1^10 == 1 * (16 ** 10)
 
 Repeating digits are specified with the `*` sign, followed by the number of digits after the decimal point with `=`.
 
-Floats also can be made in a compact way with an improper "fractional" style, meaning the numerator goes on the left and the denominator on the right, with the numerator taking on the prefix.
+Floats can also be created from special 'fractional' literals, meaning the numerator goes on the left and the denominator on the right, with the numerator taking on the prefix. Both the numerator and denominator should be integers; `4.1/4` is invalid.
 
 ```dart
-assert 1.*3 == 4/3
+assert 1.*3 == 4/4
 ```
 
 Numbers can also be suffixed with a suitable type, after the colon `:`, and it would be cast to the appropriate type.
