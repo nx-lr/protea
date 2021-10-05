@@ -5,7 +5,7 @@
 Trinity is a portable, multi-paradigm and multi-faceted programming language I created that aims to run on the JavaScript and Node.JS runtimes. It features a familiar JavaScript-like syntax, static (and dynamic) typing, a robust standard library and a unique combination of powerful features for imperative, declarative and meta-programming.
 
 ```dart
-
+x: valof y = 10
 ```
 
 ### Roadmap
@@ -529,27 +529,27 @@ rec type Teacher = {students: List[Student]}
 
 You can make new types by combining or manipulating existing ones. The table below lists the type operators of the language.
 
-| Operator                   | Example     | Returns                                                                   |
-| -------------------------- | ----------- | ------------------------------------------------------------------------- |
-| `+` (sum)                  | `a + b`     | The sum type of `a` and `b`                                               |
-| `*` (product)              | `a * b`     | The product type of `a` and `b`                                           |
-| `-` (difference)           | `a - b`     | An object which has the keys of `a`, but _not_ `b`                        |
-| `&` (intersection)         | `a & b`     | An object which has the keys of `a` _and_ b                               |
-| `\|` (union)               | `a \| b`    | An object which has the keys of `a` _or_ `b`                              |
-| `^` (symmetric difference) | `a ^ b`     | An object which has the keys of `a` _or_ `b` _but not both_               |
-| `~` (complement)           | `~a`        | Any type that is _not_ `a`                                                |
-| `?` (nullable)             | `?a`        | The union of `null` with `a`                                              |
-| `!` (result)               | `!a`        | The return type of function `a`                                           |
-| `$` (parameters)           | `$a`        | A tuple of the parameters of function `a`                                 |
-| `typeof`                   | `typeof a`  | Returns the base type(s) of `a`                                           |
-| `keyof`                    | `keyof a`   | A tuple of all the key types of the object `a`                            |
-| `valueof`                  | `valueof a` | A tuple of all the value types of the object `a`                          |
-| `pairof`                   | `pairof a`  | Equivalent to `[keyof a, valueof a]`                                      |
-| `infer`                    | `infer a`   | Validates that type `a` exists, otherwise short-circuits                  |
-| `as`                       | `a as b`    | Casts `a` to the type `b`                                                 |
-| `is`                       | `infer a`   | Ensures that the type `a` is the same as the type `b` provided `b` exists |
-| `ext` (extends)            | `a ext b`   | Ensures that the type `a` extends the type `b`                            |
-| `impl` (implements)        | `a impl b`  | Ensures that the type `a` implements the type `b`                         |
+| Operator                   | Example     | Returns                                                     |
+| -------------------------- | ----------- | ----------------------------------------------------------- |
+| `+` (sum)                  | `a + b`     | The sum type of `a` and `b`                                 |
+| `*` (product)              | `a * b`     | The product type of `a` and `b`                             |
+| `-` (difference)           | `a - b`     | An object which has the keys of `a`, but _not_ `b`          |
+| `&` (intersection)         | `a & b`     | An object which has the keys of `a` _and_ b                 |
+| `\|` (union)               | `a \| b`    | An object which has the keys of `a` _or_ `b`                |
+| `^` (symmetric difference) | `a ^ b`     | An object which has the keys of `a` _or_ `b` _but not both_ |
+| `~` (complement)           | `~a`        | Any type that is _not_ `a`                                  |
+| `?` (nullable)             | `?a`        | The union of `null` with `a`                                |
+| `!` (result)               | `!a`        | The return type of function `a`                             |
+| `$` (parameters)           | `$a`        | A tuple of the parameters of function `a`                   |
+| `typeof`                   | `typeof a`  | Returns the base type(s) of `a`                             |
+| `keyof`                    | `keyof a`   | A tuple of all the key types of the object `a`              |
+| `valueof`                  | `valueof a` | A tuple of all the value types of the object `a`            |
+| `pairof`                   | `pairof a`  | Equivalent to `[keyof a, valueof a]`                        |
+| `infer`                    | `infer a`   | Validates that type `a` exists                              |
+| `as`                       | `a as b`    | Casts `a` to the type `b`                                   |
+| `is`                       | `infer a`   | Type `a` is the same as the type `b`                        |
+| `ext` (extends)            | `a ext b`   | Type `a` is a subtype of `b`                                |
+| `impl` (implements)        | `a impl b`  | Type `a` is part of type `b`                                |
 
 ## Data Types
 
