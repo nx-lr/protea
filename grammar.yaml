@@ -183,6 +183,8 @@ repository:
       )\b\s*
     name: invalid.illegal.keyword.trin
 
+  # Support
+
   entities:
     patterns:
       - include: "#function-names"
@@ -1077,7 +1079,6 @@ repository:
           - include: "#tag-attributes"
           - include: "#tag-names"
 
-
   unicode-named-chars:
     comment: Support for the Unicode Named Character encoding, inspired
       by LaTeX, HTML, AGL, Unicode and regular expressions.
@@ -1135,7 +1136,7 @@ repository:
           - include: "#numbers"
           - include: "#string-content"
 
-  # Label keys 
+  # Object labels
   # TODO: Add function labels too
 
   labels:
@@ -1160,7 +1161,7 @@ repository:
           2: {name: punctuation.separator.key-value.trin}
 
   # Regular expressions
-  
+
   regexps:
     patterns:
       - begin: (\p{Alnum}*)(`)\s*
@@ -1672,27 +1673,7 @@ repository:
               - include: "#regexp-char-ops"
               - include: "#regexp-char-set"
 
-  tag-names:
-    patterns:
-      - match: (?x)\b([\p{Pc}\p{L}][\p{Pd}\w]*)\b(?=[.:])
-        name: entity.name.tag.namespace.trin
-      - match: |
-          (?x)\b
-          (?:# Regular variables
-          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\p{Pd}\w&&\P{Pc}]*\p{Pc}+)|
-          ([\p{L}&&\P{Ll}][\p{Pd}\w&&\P{Ll}]*)|
-          ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\p{Pd}\w&&\P{Lu}]*)+)|
-          ([\p{Pc}\p{L}][\p{Pd}\w]*)
-          )\b
-        captures:
-          1: {name: entity.name.tag.style.trin}
-          2: {name: entity.name.tag.script.trin}
-          3: {name: entity.name.tag.trin support.class.component.trin}
-          4: {name: entity.name.tag.trin}
-      - match: ":"
-        name: punctuation.separator.namespace.trin
-      - match: \.
-        name: punctuation.accessor.trin
+  # JSX
 
   jsx:
     comment: Avoid < operator expressions as best we can using Zertosh's regex
@@ -1717,6 +1698,28 @@ repository:
       - include: source.css.scss#constant_important
       - include: source.css.scss#constant_default
       - include: source.css.scss#constant_optional
+
+  tag-names:
+    patterns:
+      - match: (?x)\b([\p{Pc}\p{L}][\p{Pd}\w]*)\b(?=[.:])
+        name: entity.name.tag.namespace.trin
+      - match: |
+          (?x)\b
+          (?:# Regular variables
+          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\p{Pd}\w&&\P{Pc}]*\p{Pc}+)|
+          ([\p{L}&&\P{Ll}][\p{Pd}\w&&\P{Ll}]*)|
+          ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\p{Pd}\w&&\P{Lu}]*)+)|
+          ([\p{Pc}\p{L}][\p{Pd}\w]*)
+          )\b
+        captures:
+          1: {name: entity.name.tag.style.trin}
+          2: {name: entity.name.tag.script.trin}
+          3: {name: entity.name.tag.trin support.class.component.trin}
+          4: {name: entity.name.tag.trin}
+      - match: ":"
+        name: punctuation.separator.namespace.trin
+      - match: \.
+        name: punctuation.accessor.trin
 
   tag-element-name:
     patterns:
@@ -2278,6 +2281,8 @@ repository:
         captures:
           1: {patterns: [include: "#function-names"]}
 
+  # Variables
+
   placeholder-variables:
     patterns:
       - match: (?i)\s*\?[\p{Pc}\p{L}]\w*\b\s*
@@ -2342,6 +2347,8 @@ repository:
       10: {name: variable.other.constant.trin}
       11: {name: variable.other.class.trin}
       12: {name: variable.other.readwrite.trin}
+
+  # Operators
 
   operators:
     patterns:
@@ -2711,6 +2718,17 @@ repository:
                 name: entity.name.function.trin
               - include: $self
 
+  # Types
+
+  type-annotation:
+    applyEndPatternLast: 1
+    begin: (:)(?=\s|$)
+    end: (?=.)|$
+    beginCaptures:
+      1: {name: punctuation.definition.annotation.trin}
+    patterns:
+      - include: "#types"
+
   custom-types:
     comment: |
       For testing only
@@ -2880,6 +2898,10 @@ repository:
               - include: "#types"
               - include: $self
 
+  type-strings:
+    comment: coming soon
+    patterns: []
+
   type-keywords:
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)\b\s*
@@ -2943,15 +2965,6 @@ repository:
           13: {name: keyword.operator.private.trin}
           14: {name: keyword.operator.class.trin}
 
-  type-annotation:
-    applyEndPatternLast: 1
-    begin: (:)(?=\s|$)
-    end: (?=.)|$
-    beginCaptures:
-      1: {name: punctuation.definition.annotation.trin}
-    patterns:
-      - include: "#types"
-
   types:
     patterns:
       - match: \s*(==>|--?>|~~?>)
@@ -2993,6 +3006,8 @@ repository:
       - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)]|\s*\|(?!\|))
         name: variable.parameter.trin
       - include: "$self"
+
+  # Clauses and Keywords
 
   block-entities:
     repository:
@@ -4070,6 +4085,8 @@ repository:
           - include: "#code-block"
           - include: $self
 
+  # Punctuation
+
   punctuation:
     patterns:
       - include: "#line-continuation"
@@ -4357,6 +4374,8 @@ repository:
         name: support.variable.property.dom.js
       - match: (?x)(?<=\.|::)\s*\b(module|exports|id|filename|loaded|parent|children)\b\s*
         name: support.type.object.module.js
+
+  # Databases / Extra Stuff
 
   named-chars-database:
     patterns:
