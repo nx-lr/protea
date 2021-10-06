@@ -286,7 +286,7 @@ print 'Hello World!'
 
 ### Syntax
 
-As you may know, Trinity uses a curly-bracket syntax much like other languages like JavaScript, PHP, C# and Java. You would use curly brackets to delimit things like if-statements, or even functions and classes.
+As you may know, Trinity uses a curly-bracket syntax, sharing similarities with other languages like TypeScript, Scala, Kotlin, Go and Rust among others. You would use curly brackets to delimit things like if-statements, or even functions and classes.
 
 ```dart
 class Person(val firstName: Str, val lastName: Str) {
@@ -492,7 +492,7 @@ type Second = Int
 let totalTime: Second = 10
 ```
 
-Types can accept parameters, akin to generics in other languages. The parameters' names are defined in square brackets. The use-case of a parameterized type is to kill duplications. Before:
+Types can accept parameters, akin to generics in other languages. The parameters' names are defined in square brackets. The use-case of a parameterized type is to kill duplications.
 
 ```dart
 type Coords[A] = [A, A, A] // [] is a tuple literal
@@ -508,9 +508,7 @@ let buddy = [10, 20, 20]
 
 The type system infers that it's a `#[Int, Int, Int]`; nothing else had to be written down.
 
-#### Recursive Types
-
-A type can reference itself within itself using `re`:
+A type can reference itself within itself using `rec`:
 
 ```dart
 rec type Student = {
@@ -525,6 +523,8 @@ Types can also be mutually recursive.
 rec type Student = {taughtBy: Teacher}
 rec type Teacher = {students: List[Student]}
 ```
+
+> `rec` above is an example of a modifier. You can also use `rec` to mark functions and methods as recursive.
 
 ### Type Operators
 
@@ -562,7 +562,7 @@ assert 3 is Numeric
 
 `?` marks a type as nullable (which you've seen before).
 
-Some types also have special roles in the Trinity language, and you'll see said code everywhere.
+Some types also have special roles in the Trinity language.
 
 - `Mixed`: The superset of all value classes, except `Null`.
 - `Object`: The negation of `Mixed`.
@@ -577,24 +577,21 @@ Some types also have special roles in the Trinity language, and you'll see said 
 
 Trinity supports the same primitive literals as most other languages, including those from higher-level scripting languages.
 
-- Numbers (`Int`, `Float`)
-- Strings (`Str`)
+- Numbers (`Int`, `Nat`, `Float`)
+- Strings (`Str`) and Runes (`Rune`)
 - Booleans (`Bool`)
-- Lists (`List`)
-- Sets (`Set`)
-- Maps (`Map`)
-- Runes (`Rune`)
+- Lists (`List`), Sets (`Set`) and Maps (`Map`)
 - Symbols (`Symbol`)
 - Types (`Type`)
 - The value null (`Null`)
 
 Several non-primitives also have literals:
 
-- Duration (`Duration`)
-- Date and time (`DateTime`)
+- Arbitrary precision numbers: `BigInt`, `BigNat`, `BigFloat`
+- Duration (`Duration`); date and time (`DateTime`)
 - Regular expression (`RegExp`)
 - Function (`Func`)
-- Mutable lists, sets, and maps (`MutList`, `MutSet`, `MutMap`)
+- Mutable lists/sets/maps (`MutList`, `MutSet`, `MutMap`)
 
 Because everything is an object, you can use constructors to initialize variables. You can also use these built-in constructors to cast things from one type to another.
 
@@ -953,7 +950,7 @@ Because of this conflict with both set and map literals, empty map literals have
 ```dart
 [] // empty list
 {} // empty set
-{x: 1} // empty map
+{:} // empty map
 ```
 
 You can query lists or sets by using angle brackets.
@@ -963,14 +960,23 @@ You can query lists or sets by using angle brackets.
 [1, 2, 3][-1] // last element
 [1, 2, 3][1:] // elements from index 1 to end of list
 [1, 2, 3][< 3] // elements less than 3
+
+// Strings
+{x: \a}.x == {x: \a}.'x' == {x: \a}.\x == {x: \a}[\x]
+{+x: a}.\+x == {'+x': a}; {tr: false}
+{1: \a}.1 == {1: \a}[1]
+{true: \a}[true]
+
+// Expressions
+{(+x): a}[+x] == {[+x]: a}[+x]
 ```
 
 > `< 3` is an example of a _partial expression_, which would be discussed later soon.
 
-You can use any value as the key of a map, but variables are not expressed.
+You can use any value or expression except strings beginning with underscores or letters, which would be parsed as an unquoted string. The same rules with unquoted strings and symbols apply for map keys.
 
 ```dart
-assert "a" == { a: "a" }.a
+assert "a" == { \a\: "a" }.a
 ```
 
 You can access properties on maps and objects by using angle-bracket or dot-notation; you can do this with regular string literals numbers, and even more.
@@ -980,7 +986,7 @@ x.'text-align' = 'right'
 x['text-align'] = 'center'
 
 assert x?.'font-size' // Optional chaining
-x!.'font-size'! // Raises an error since x.'font-size' is null
+x!.'font-size'! // Assertion chaining
 
 // Use angle brackets for property expressions
 x['font' ++ '-' ++ 'size'] = Web.Css.px 30
