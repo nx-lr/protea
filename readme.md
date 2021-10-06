@@ -481,8 +481,8 @@ You can wrap any expression in parentheses and annotate it:
 let myInt = 5
 let myInt: Int = 5
 let myInt = (5: Int) + (4: Int)
-let add = |x: Int, y: Int|: Int = x + y
-let drawCircle = |&radius = r: Int|: Circle {/+ code here +/}
+let add(x: Int, y: Int): Int = x + y
+let drawCircle = |&radius = r: Int|: Circle {}
 ```
 
 You can refer to a type by a different name. They'll be equivalent:
@@ -530,6 +530,14 @@ rec type Teacher = {students: List[Student]}
 
 You can make new types by combining or manipulating existing ones. Here's some examples:
 
+`?` marks a type as nullable (which you've seen before).
+
+```dart
+type Nullable = Null | Void
+assert null is Nullable
+assert false is ?Bool !: false is Bool | Nullable
+```
+
 Use `+` to combine any type to make a new hybrid type.
 
 ```dart
@@ -540,27 +548,27 @@ assert 3 is Numeric
 Use `*` to form a compound (tuple) type, whose members are specific instances of the same type.
 
 ```dart
-var Red = Green = Blue = type |x|: Int => 0 <= x <= 255
+var Red = Green = Blue = type Int when 0x00 <= <= 0xff
 type Color = Red * Green * Blue
-type Color = [Red * Green * Blue]
-assert (245, 232, 134) is Color
+type Color = [Red, Green, Blue]
+assert [245, 232, 134] is Color
 ```
 
 A type complement `~` accepts any type except for its specified type.
 
 ```dart
-type NotAnInt = ~Int
-assert '3' is NotAnInt
+type NotInt = ~Int
+assert '3' is NotInt
 ```
 
 Use set operations `&` (intersection), `|` (union), `^` (symmetric difference) and `-` (difference) to form new object types.
 
 ```dart
-type A = {A}
-assert 3 is Numeric
+type Z = {X: Int}
+type X = {Y: Int}
+type Y = {Z: Int}
+assert ({X: 3, Y: 4, Z: 10}) is! Z ^ Y | X
 ```
-
-`?` marks a type as nullable (which you've seen before).
 
 Some types also have special roles in the Trinity language.
 
