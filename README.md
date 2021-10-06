@@ -10,6 +10,8 @@ x: valof y = 10
 
 ### Roadmap
 
+> Update: I have a [Trello](https://trello.com/b/A3NDX7qY/trinity-programming-language) now!
+
 - **Grammar** (see [`grammar.yaml`]())
 - Documentation (language and API)
 - Language reference
