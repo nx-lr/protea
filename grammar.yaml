@@ -141,7 +141,6 @@ repository:
       - include: "#symbols"
       - include: "#operators"
       - include: "#literals"
-      - include: "#support"
       - include: "#calls"
       - include: "#variables"
       - include: "#illegal"
@@ -262,19 +261,14 @@ repository:
 
       - comment: Swift
       - include: source.swift#builtin-functions
-
       - comment: JavaScript
       - include: source.js#support-objects
-
       - comment: Python
       - include: source.python#builtin-functions
-
       - comment: PHP
       - include: source.php#support
-
       - comment: SASS
       - include: source.css.sass#constant_sass_functions
-
       - comment: Other (coming soon!)
 
       - match: |
@@ -2729,79 +2723,6 @@ repository:
     patterns:
       - include: "#types"
 
-  custom-types:
-    comment: |
-      For testing only
-      _int int_ _int._int INT INT.INT Int Int.Int int int.int
-
-      Four types of variables:
-      - underscore variables (either surrounded by _ on one end or both)
-      - constant variables: in SHOUT_SNAKE_CASE
-      - class variables: in PascalCase
-      - regular variables: in camelCase
-    match: |
-      (?x)\s*\b
-
-      (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
-      \b(?:# don't match keywords
-      in|of|as|is|out|new|infer|unset
-      |typeof|nameof|sizeof
-      |keyof|valof|pairof|instof
-      |len|del|to|til|till|thru|by
-
-      |var|val|let|set|get|const|def|fn|fun|func
-      |class|enum|module|package|inter|struct|object|record
-      |frag|space|data|trait|proto|proc|macro|type|given
-      |raw|style|compo|element|decl|ext|impl|sub
-
-      |if|lest|elif|elest|else|then
-      |for|each|loop|while|until|from|with
-      |do|redo|try|retry|throw|catch|finally
-      |switch|case|default|match|when|pass
-      |unison|series|spawn|kill|fix|lock
-      |break|continue|return|await|label|yield|goto
-      |import|export|impose|expose|using
-      |debug|check|assert|fallthru
-      )\b
-      )
-      (?:
-      (?<=[!?~]?\.=?|[?!:]:=?)(?<!\.\.+)
-      (?:# Properties (note all properties are by default, symbols)
-      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
-      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
-      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-      ([\p{Pc}\p{L}]\w*)
-      )
-      |
-      (?:# Objects and maps
-      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
-      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
-      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-      ([\p{Pc}\p{L}]\w*)
-      )
-      (?!\.\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
-      |
-      (?:# Regular variables
-      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
-      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
-      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-      ([\p{Pc}\p{L}]\w*)
-      )
-      )\b
-    captures: &custom-types
-      1: {name: entity.name.module.trin}
-      2: {name: entity.name.tag.trin}
-      3: {name: entity.name.namespace.trin}
-      4: {name: entity.name.interface.trin}
-      5: {name: entity.name.tag.block.trin}
-      6: {name: entity.name.tag.script.trin}
-      7: {name: entity.name.tag.style.trin}
-      8: {name: entity.name.tag.inline.trin}
-      9: {name: entity.name.label.trin}
-      10: {name: entity.name.project.trin}
-      11: {name: entity.name.class.trin}
-      12: {name: entity.name.type.trin}
-
   type-brackets:
     patterns:
       - include: "#curly-brackets"
@@ -2981,9 +2902,6 @@ repository:
       - include: "#type-operators"
       - include: "#literals"
 
-  support:
-    patterns:
-
   parameter-brackets:
     begin: \s*(\()
     end: \s*(\))
@@ -3006,6 +2924,79 @@ repository:
       - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*(?=\s+:?=|\s*[,:;)]|\s*\|(?!\|))
         name: variable.parameter.trin
       - include: "$self"
+
+  custom-types:
+    comment: |
+      For testing only
+      _int int_ _int._int INT INT.INT Int Int.Int int int.int
+
+      Four types of variables:
+      - underscore variables (either surrounded by _ on one end or both)
+      - constant variables: in SHOUT_SNAKE_CASE
+      - class variables: in PascalCase
+      - regular variables: in camelCase
+    match: |
+      (?x)\s*\b
+
+      (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
+      \b(?:# don't match keywords
+      in|of|as|is|out|new|infer|unset
+      |typeof|nameof|sizeof
+      |keyof|valof|pairof|instof
+      |len|del|to|til|till|thru|by
+
+      |var|val|let|set|get|const|def|fn|fun|func
+      |class|enum|module|package|inter|struct|object|record
+      |frag|space|data|trait|proto|proc|macro|type|given
+      |raw|style|compo|element|decl|ext|impl|sub
+
+      |if|lest|elif|elest|else|then
+      |for|each|loop|while|until|from|with
+      |do|redo|try|retry|throw|catch|finally
+      |switch|case|default|match|when|pass
+      |unison|series|spawn|kill|fix|lock
+      |break|continue|return|await|label|yield|goto
+      |import|export|impose|expose|using
+      |debug|check|assert|fallthru
+      )\b
+      )
+      (?:
+      (?<=[!?~]?\.=?|[?!:]:=?)(?<!\.\.+)
+      (?:# Properties (note all properties are by default, symbols)
+      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
+      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
+      ([\p{Pc}\p{L}]\w*)
+      )
+      |
+      (?:# Objects and maps
+      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
+      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
+      ([\p{Pc}\p{L}]\w*)
+      )
+      (?!\.\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
+      |
+      (?:# Regular variables
+      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
+      ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
+      ([\p{Pc}\p{L}]\w*)
+      )
+      )\b
+    captures: &custom-types
+      1: {name: entity.name.module.trin}
+      2: {name: entity.name.tag.trin}
+      3: {name: entity.name.namespace.trin}
+      4: {name: entity.name.interface.trin}
+      5: {name: entity.name.tag.block.trin}
+      6: {name: entity.name.tag.script.trin}
+      7: {name: entity.name.tag.style.trin}
+      8: {name: entity.name.tag.inline.trin}
+      9: {name: entity.name.label.trin}
+      10: {name: entity.name.project.trin}
+      11: {name: entity.name.class.trin}
+      12: {name: entity.name.type.trin}
 
   # Clauses and Keywords
 
@@ -3175,7 +3166,7 @@ repository:
         name: keyword.control.flow.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|impose|expose|using)\b\s*
         name: keyword.control.module.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|from)\b\s*
         name: keyword.control.$1.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|check|assert)\b\s*
         name: keyword.other.$1.trin
