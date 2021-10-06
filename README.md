@@ -170,15 +170,15 @@ This project is currently in the works and would be my largest project to date. 
 - [Debugging and TDD](#)
 - [Conditional Compilation](#)
 - [Language Interop](#)
-  - [Translating Python/JS to Saga](#)
-  - [Translating Saga to Python](#)
+  - [Translating Python/JS to Trinity](#)
+  - [Translating Trinity to Python](#)
 - [Documentation](#)
 
 </td><td width=25% valign=top>
 
 #### [Tools](#)
 
-- [Nifty, Saga's Formatter](#)
+- [Nifty, Trinity's Formatter](#)
 
 #### [Standard Library](#)
 
@@ -220,7 +220,7 @@ This is a work-in-progress: if you spot any errors and/or you have an idea how t
 
 ### Overview
 
-This tutorial introduces you informally to the concepts and features in Saga, as well as a comprehensive guide to the modules in Saga's Standard Library.
+This tutorial introduces you informally to the concepts and features in Trinity, as well as a comprehensive guide to the modules in Trinity's Standard Library.
 
 The first step is to install Rust. We'll download Trinity through NPM: `npm i -g @trinity-lang/core`. That way, you'll have access to all of Trinity's APIs and standard libraries.
 
@@ -252,15 +252,7 @@ function main(args: string[] = process.argv) {
 }
 ```
 
-There is a possibility that you would also want to compile but not run your said code. Use c instead.
-
-```sh
-trin c hello-world.saga
-```
-
-To see all commands available, type `trin h` in the terminal, `h` being "help".
-
-If you're using Visual Studio Code with the _Code Runner_ extension, all you have to do is navigate to the top right hand side of your window and click on the "play" button. A command would appear in your window.
+There is a possibility that you would also want to compile but not run your said code. Use `trin c` instead. To see all commands available, type `trin h` in the terminal, `h` being "help".
 
 Whichever way you chose to run your program, you should see
 
@@ -274,15 +266,15 @@ in your terminal.
 
 ---
 
-Okay, now let's see what happened.
+Now, an explanation.
 
-Functions are declared with the `fn` keyword. The return type is specified after the function name.
+Functions are declared with the `def` keyword (alternatively, you can use `fn`, they're the same). The return type is specified after the function name.
 
 In this case `main` doesn't return anything, so there is no return type. Also keep in mind, `=>` opens a block if it is followed by a single statement.
 
 As in many other languages, `main` is the entry point of your program. You all know what `print` does.
 
-`fn main` declaration can be skipped in one file programs. This is useful when writing small programs, "scripts", or just learning the language. For brevity, `fn main` will be skipped in this tutorial.
+The `main()` function declaration can be skipped in one file programs. This is useful when writing small programs, "scripts", or just learning the language. For brevity, `main` will be skipped in this tutorial.
 
 This means that a "hello world" program in Trinity is as simple as
 
@@ -296,7 +288,7 @@ As you may know, Trinity uses a curly-bracket syntax much like other languages l
 
 ```dart
 class Person(val firstName: Str, val lastName: Str) {
-  def printFullName() { print "$firstName $lastName" }
+  def printFullName => print "$firstName $lastName"
 }
 ```
 
@@ -351,7 +343,7 @@ Variables are compared using their first character, then comparing further chara
 This makes it easier to identify identifier without having to know its exact spelling.
 
 ```dart
-def cmpIdent(a: Str, b: Str): Bool =
+def cmpIdent(a: Str, b: Str): Bool =>
   a[0] == b[0] &&
   a.sub(`[^\pL\d]+`g, '').lower() = b.sub(`[^\pL\d]+`g, '').lower()
 ```
@@ -445,18 +437,25 @@ set a = \b // a is now \a
 let a = \c // a is now \c
 ```
 
-The binding you refer to is whatever's the closest upward.
-
-Uninitialized variables that have a nullable type have an initial value of `null`. Even variables with numeric types are initially null, because numbers—like everything else in Dart—are objects.
+Use `:=` instead to set a property on an object or data structure as opposed to a variable.
 
 ```dart
-var lineCount: Int
+let ct = #{} // A mutable map
+ct.foo := 42 // ct == {foo: 42}
+```
+
+The binding you refer to is whatever's the closest upward.
+
+Uninitialized variables that have a nullable type (`?x`) have an initial value of `null` and are explicitly stated. Even variables with numeric types are initially null, because numbers, like everything else, are objects.
+
+```dart
+var lineCount: ?Int
 assert lineCount == null
 ```
 
-Note: Production code ignores the `assert` statement. During development, on the other hand, `assert condition` throws an exception if condition is false. For details, see Assert.
+The assert statement in production code is generally ignored, but would throw an error during development if its condition is not satisfied.
 
-If you enable null safety, then you must initialize the values of non-nullable variables before you use them:
+You must initialize the values of non-nullable variables before you use them:
 
 ```dart
 var lineCount: Int = 0
@@ -481,7 +480,7 @@ let myInt = 5
 let myInt: Int = 5
 let myInt = (5: Int) + (4: Int)
 let add = |x: Int, y: Int|: Int = x + y
-let drawCircle = |&radius := r: Int|: Circle = /* code here */
+let drawCircle = |&radius = r: Int|: Circle {/+ code here +/}
 ```
 
 You can refer to a type by a different name. They'll be equivalent:
@@ -512,9 +511,9 @@ The type system infers that it's a `#[Int, Int, Int]`; nothing else had to be wr
 A type can reference itself within itself using `re`:
 
 ```dart
-rec type Person = {
+rec type Student = {
   name: Str
-  friends: List[Person]
+  classmates: List[Student]
 }
 ```
 
@@ -527,29 +526,39 @@ rec type Teacher = {students: List[Student]}
 
 ### Type Operators
 
-You can make new types by combining or manipulating existing ones. The table below lists the type operators of the language.
+You can make new types by combining or manipulating existing ones. Here's some examples:
 
-| Operator                   | Example     | Returns                                                |
-| -------------------------- | ----------- | ------------------------------------------------------ |
-| `+` (sum)                  | `a + b`     | The sum type of `a` and `b`                            |
-| `*` (product)              | `a * b`     | The product type of `a` and `b`                        |
-| `-` (difference)           | `a - b`     | An object with the keys of `a`, but _not_ `b`          |
-| `&` (intersection)         | `a & b`     | An object with the keys of `a` _and_ b                 |
-| `\|` (union)               | `a \| b`    | An object with the keys of `a` _or_ `b`                |
-| `^` (symmetric difference) | `a ^ b`     | An object with the keys of `a` _or_ `b` _but not both_ |
-| `~` (complement)           | `~a`        | Any type that is _not_ `a`                             |
-| `?` (nullable)             | `?a`        | The union of `null` with `a`                           |
-| `!` (result)               | `!a`        | The return type of function `a`                        |
-| `$` (parameters)           | `$a`        | A tuple of the parameters of function `a`              |
-| `typeof`                   | `typeof a`  | Returns the base type(s) of `a`                        |
-| `keyof`                    | `keyof a`   | A union of all the key types of the object `a`         |
-| `valueof`                  | `valueof a` | A union of all the value types of the object `a`       |
-| `pairof`                   | `pairof a`  | Equivalent to `[keyof a, valueof a]`                   |
-| `infer`                    | `infer a`   | Validates that type `a` exists                         |
-| `as`                       | `a as b`    | Casts `a` to the type `b`                              |
-| `is`                       | `infer a`   | Type `a` is the same as the type `b`                   |
-| `ext` (extends)            | `a ext b`   | Type `a` is a subtype of `b`                           |
-| `impl` (implements)        | `a impl b`  | Type `a` is part of type `b`                           |
+Use `+` to combine any type to make a new hybrid type.
+
+```dart
+type Numeric = Int + Str
+assert 3 is Numeric
+```
+
+Use `*` to form a compound (tuple) type, whose members are specific instances of the same type.
+
+```dart
+var Red = Green = Blue = type |x|: Int => 0 <= x <= 255
+type Color = Red * Green * Blue
+type Color = [Red * Green * Blue]
+assert (245, 232, 134) is Color
+```
+
+A type complement `~` accepts any type except for its specified type.
+
+```dart
+type NotAnInt = ~Int
+assert '3' is NotAnInt
+```
+
+Use set operations `&` (intersection), `|` (union), `^` (symmetric difference) and `-` (difference) to form new object types.
+
+```dart
+type A = {A}
+assert 3 is Numeric
+```
+
+`?` marks a type as nullable (which you've seen before).
 
 Some types also have special roles in the Trinity language, and you'll see said code everywhere.
 
@@ -574,7 +583,7 @@ Trinity supports the same primitive literals as most other languages, including 
 - Maps (`Map`)
 - Runes (`Rune`)
 - Symbols (`Symbol`)
-- Types (`Type`) and slots (`Slot`)
+- Types (`Type`)
 - The value null (`Null`)
 
 Several non-primitives also have literals:
@@ -587,7 +596,7 @@ Several non-primitives also have literals:
 
 Because everything is an object, you can use constructors to initialize variables. You can also use these built-in constructors to cast things from one type to another.
 
-For example, you can use the `Map()` constructor to construct a map from a string .
+For example, you can use the `Map()` constructor to construct a map from a string.
 
 ```dart
 null; void // null and undefined
@@ -615,7 +624,6 @@ nan; infin // special float constants
 {1: "one", 2: "two", 3: "three"} // map
 :symbol // symbol
 : Type // type
-: Type.Slot // slot
 |x, y| x + y // function
 ```
 
@@ -639,14 +647,20 @@ false
 
 ### Numbers
 
-Trinity supports both integers, signed and unsigned, as well as floating-point numbers in various sizes (default being 64 bits). Floating-points are distinguished from integers by a decimal point. Unsigned integers are distinguished with the `:u` suffix.
+Trinity supports both integers, signed and unsigned, as well as floating-point numbers in various sizes (default being 64 bits). Unsigned integers have the `:u` or `:U` suffix (note the colon) while floating point numbers have a decimal point.
 
 All numeric literals are case-insensitive and unlike a lot of other languages, numbers can include underscores or leading zeroes.
 
 ```dart
 val myInt: Int = 123 // or +123
-val myNat: Nat = 123:u
+val myNat: Nat = 123:U
 val myFloat: Float = 1.0
+```
+
+Numbers can also be suffixed with a suitable type, after the colon `:`, and it would be cast to the appropriate type. The type suffix itself is case-insensitive.
+
+```dart
+assert 4.0:f32 is F32
 ```
 
 Different radix literals can be created using prefixes `0b` (base 2), `0q` (base 4), `0s` (base 6), `0o` (base 8), `0z` (base 12) and `0x` (base 16).
@@ -656,7 +670,7 @@ val base2 = 0b101010111100000100100011
 val base4 = 0q320210213202
 val base6 = 0s125423
 val base8 = 0o52740443
-val base10 = 0011256099
+val base10 = 11256099
 val base12 = 0z10a37b547ab97
 val base16 = 0xabcdef123
 ```
@@ -675,11 +689,7 @@ Floats can also be created from special 'fractional' literals, meaning the numer
 assert 1.*3 == 4/4
 ```
 
-Numbers can also be suffixed with a suitable type, after the colon `:`, and it would be cast to the appropriate type.
-
-```dart
-assert 4.0:F32 is F32
-```
+Any numeric literal containing `/`, `*`, `=` or `.` in any combination is considered a floating point.
 
 We also provide a multi-base numeric literal, where the digits themselves are separated with underscores.
 
@@ -706,7 +716,7 @@ assert """ "multiline string"""" == '"multiline string"'
 
 Strings may span multiple lines in which case the newlines are always normalized to `\n` regardless of how newlines were encoded in the source code text.
 
-The first non-whitespace character of each line should be aligned to the first line of text in the string, or else it is a compile time error.
+The first non-whitespace character of each line should be aligned to the first line of text in the string.
 
 ```dart
 x = "
@@ -722,7 +732,7 @@ x = """
 """
 ```
 
-Both examples compile into `"line1\n line2\n line3"`. Note that spacing to the right of the leading line is maintained, but spacing to the left is stripped off in the string literal.
+Both examples compile into `"line1\n line2\n line3"`. Spacing to the right of the leading line is maintained but spacing to the left is stripped.
 
 Double-quoted strings can contain the following escape sequences, as shown in the table below. All escape sequences are case-insensitive.
 
@@ -812,18 +822,10 @@ x: |
   line 1
     line 2
     line 3
-x: |
-    line 1
-      line 2
-      line 3
 ```
 
 ```dart
-let string1 = \|
-  line1
-    line2
-    line3
-let string2 = \|
+let string = \|
   line 1
     line 2
     line 3
@@ -860,31 +862,181 @@ If keyword arguments are used in the `Str.format()` method, their values are ref
 ) //= This spam is absolutely horrible.
 ```
 
-Positional and keyword arguments can be arbitrarily combined:
+Positional and keyword arguments can be arbitrarily combined.
 
 ```dart
-'The story of #0, #1, and #other.'.format(
-  'Bill'
-  'Manfred'
-  other = 'Georg'
-) //= The story of Bill, Manfred, and Georg.
-```
-
-This could also be done by passing the table as keyword arguments with the ‘\*\*’ notation.
-
-```dart
-table = {Alex: 1974,
-         Diana: 2390,
-         Scott: 4903}
-" Alex: #Alex%d \nDiana: #Diana%d \nScott: #Scott%d".format(%table)
+'The story of #0, #1, and #sideCharacter.'.format(
+  'Alex'
+  'Diana'
+  sideCharacter = 'Georg'
+) //= The story of Alex, Diana and Scott.
 ```
 
 #### Regular expressions
 
-There are
+Trinity's regular expressions are delimited in between backticks much like Go. By default, regular expressions are free-space, global and support comments and embedded code, similar to strings.
 
-#### Numbers
+```dart
+`\b{wb}(fee|fie|foe|fum)\b{wb}`
+`[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] ]`x
 
-This would only be a textual overview of the Saga programming language, as the grammar is having a hiatus at this point.
+`
+  /\* // Match the opening delimiter.
+  .*? // Match a minimal number of characters.
+  \*/ // Match the closing delimiter.
+`
+```
 
-### Syntax
+> **Note**: Stick around for a full guide on how to write and manipulate regular expressions.
+
+Modifiers go on either side of the back-ticks; the left hand side toggles the scope of different character sets, while the right hand side toggles the overall mode of the regex.
+
+> `<>` is the match operator.
+
+```dart
+assert "TRUE" <> `true`i
+assert "TRUE" <> `(?i:true)`
+assert "TRUE" <> `(?i)true`
+```
+
+Regexes can also include a right hand, substitution template string, beginning with two backticks ` `` ` immediately following the pattern. Here, `=<` substitutes a string with another.
+
+````dart
+val str = 'James Bond'
+assert (newStr = str =< `(\w+)\W+(\w+)```) == 'Bond, James'
+assert (newStr = str =< `(\w+)\W+(\w+)``My name is $2, $0!`) ==
+  'My name is Bond, James Bond'
+````
+
+Interpolation works in regex literals just as it does in strings, if you want to create dynamic regexes. By default, all interpolations are escaped after they are evaluated. Use the `e` flag to suppress this behavior.
+
+```dart
+let x = '[\da-z'
+let invalidRe = `($x)`e //! Error: Invalid regex: unterminated character set
+let validRe = `($x)`
+assert validRe == `(\[\\da-z)`
+```
+
+### Collections: Lists, Maps and Sets
+
+Collections in Trinity are very similar to JavaScript, but they are immutable, meaning they have fixed fields and those fields do not change. All collections are homogeneous.
+
+- Lists are indexed finite sequences of values (arrays in other languages).
+- Sets are unordered collections of unique values.
+- Maps are unordered collections of unique keys assigned to their own values (also called dictionaries).
+
+```dart
+val myList: List[Int] = [1, 2, 3, 4]
+val mySet: Set[Int] = {1, 2, 3, 4}
+val myMap: Map[Int, Int] = {1: 1, 2: 2, 3: 3, 4: 4}
+```
+
+The type of a list, set or map is inferred from its elements.
+
+```dart
+val myMap = {a: x, b: x, 10: 2, :a: 2}
+assert myMap is Map[Int | Str, Int]
+```
+
+Prefix a list, map or set literal with a `#` to make the collection mutable. Mutable collections are prefixed with `Mut` to distinguish themselves from regular collections.
+
+```dart
+val myList: MutList[Int + Str] = #[1, \2, 3, \4]
+```
+
+Not much to say about lists and sets other than their elements are separated by commas (or even newlines). However, sets unlike lists are delimited between curly brackets `{}` as opposed to square `[]` ones.
+
+Because of this conflict with both set and map literals, empty map literals have a compulsory colon to distinguish an empty set from an empty map.
+
+```dart
+[] // empty list
+{} // empty set
+{x: 1} // empty map
+```
+
+You can query lists or sets by using angle brackets.
+
+```dart
+[1, 2, 3][1] // second element
+[1, 2, 3][-1] // last element
+[1, 2, 3][1:] // elements from index 1 to end of list
+[1, 2, 3][< 3] // elements less than 3
+```
+
+> `< 3` is an example of a _partial expression_, which would be discussed later soon.
+
+You can use any value as the key of a map, but variables are not expressed.
+
+```dart
+assert "a" == { a: "a" }.a
+```
+
+You can access properties on maps by using dot notation for most cases, as with regular strings and more.
+You can access properties on maps by using dots or angle brackets.
+
+```dart
+map.'text-align' = 'right'
+map['text-align'] = 'center'
+
+assert map?.'font-size'
+
+// Use angle brackets for property expressions
+map['font' ++ '-' ++ 'size'] = (import Web.CSS)?:px(30)
+```
+
+### Symbols
+
+In Trinity, symbols are basically an object representation of either an identifier or operator. They begin with `:` and are otherwise the same as backslash string literals except that they begin with a colon instead of a backslash.
+
+```dart
+const aSymbol: Sym['aSymbol'] = :aSymbol
+assert aSymbol = Sym'aSymbol'
+```
+
+Symbols are opaque and dynamic string names that cannot be changed and remains constant throughout compile time. It can be used for reflecting the metadata on a type, such as a library or class.
+
+### 3ML.
+
+Trinity supports an inline version of HTML markup called _3ML_. It's slightly different than JSX, ERB, HAML. It's a templating language built into Trinity, and like many of Trinity's DSLs it comes with the full power of Trinity.
+
+We recommend using TrinML with React, Angular or Vue to describe what the UI in your application should look like.
+
+But first, here's something you need to know.
+
+Here's a sample HTML snippet.
+
+```html
+<h1 class="blue-heading" style="color:blue;">A Blue Heading</h1>
+```
+
+CSS selectors such as `.class` and `#id` are first-class.
+
+```dart
+<div body:class #id>${child1} ${child2}</div>
+```
+
+## Operators
+
+## Control Flow
+
+### Ranges and Generators
+
+Ranges expand to sequences of numbers in an arithmetic progression, from start to end. The `to` clause includes the end of the range, while `til` or `till` excludes it.
+
+```dart
+0 to 5 == [0, 1, 2, 3, 4, 5]
+0 til 5 == [0, 1, 2, 3, 4]
+```
+
+In addition, `thru` skips the start of the range.
+
+```dart
+thru 0 to 5 == [1, 2, 3, 4, 5]
+thru 0 til 5 == [1, 2, 3, 4]
+```
+
+You can also specify an additional increment/decrement parameter after the range with the `by` clause. Use `by -1` to count downward. If the range is invalid, an error is raised.
+
+```dart
+1 to 10 by 2 == [1, 3, 5, 7, 9]
+```

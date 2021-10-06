@@ -138,11 +138,12 @@ repository:
       - include: "#brackets"
       - include: "#punctuation"
       - include: "#type-annotation"
+      - include: "#symbols"
+      - include: "#operators"
       - include: "#literals"
       - include: "#support"
       - include: "#calls"
       - include: "#variables"
-      - include: "#operators"
       - include: "#illegal"
 
   illegal:
@@ -151,7 +152,7 @@ repository:
         name: invalid.illegal.numeric.other.trin
       - match: '[\w]+?'
         name: invalid.illegal.variable.other.trin
-      - match: '[({\[)}\]]+?'
+      - match: '[(){}\[\]]+?'
         name: invalid.illegal.missing-bracket.trin
       - match: \S+?
         name: invalid.illegal.syntax.trin
@@ -363,8 +364,8 @@ repository:
           (\*)(?:\p{Alnum}+(?:_*\p{Alnum}+)*))?|# repeating
           (\/)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)# denominator
           )?
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -385,8 +386,8 @@ repository:
           (\*)(?:\p{Alnum}+(?:_*\p{Alnum}+)*))?# repeating
           ()# denominator
           )
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -407,8 +408,8 @@ repository:
           (\*)(?:[01]+(?:_*[01]+)*))?|# repeating
           (\/)(?:[01]+(?:_*[01]+)*)# denominator
           )?
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -429,8 +430,8 @@ repository:
           (\*)(?:[01]+(?:_*[01]+)*))?# repeating
           ()# denominator
           )
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -451,8 +452,8 @@ repository:
           (\*)(?:[0-3]+(?:_*[0-3]+)*))?|# repeating
           (\/)(?:[0-3]+(?:_*[0-3]+)*)# denominator
           )?
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -473,8 +474,8 @@ repository:
           (\*)(?:[0-3]+(?:_*[0-3]+)*))?# repeating
           ()# denominator
           )
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -495,8 +496,8 @@ repository:
           (\*)(?:[0-5]+(?:_*[0-5]+)*))?|# repeating
           (\/)(?:[0-5]+(?:_*[0-5]+)*)# denominator
           )?
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -517,8 +518,8 @@ repository:
           (\*)(?:[0-5]+(?:_*[0-5]+)*))?# repeating
           ()# denominator
           )
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -539,8 +540,8 @@ repository:
           (\*)(?:[0-7]+(?:_*[0-7]+)*))?|# repeating
           (\/)(?:[0-7]+(?:_*[0-7]+)*)# denominator
           )?
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -561,8 +562,8 @@ repository:
           (\*)(?:[0-7]+(?:_*[0-7]+)*))?# repeating
           ()# denominator
           )
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -583,8 +584,8 @@ repository:
           (\*)(?:[\dab]+(?:_*[\dab]+)*))?|# repeating
           (\/)(?:[\dab]+(?:_*[\dab]+)*)# denominator
           )?
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -605,8 +606,8 @@ repository:
           (\*)(?:[\dab]+(?:_*[\dab]+)*))?# repeating
           ()# denominator
           )
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -627,8 +628,8 @@ repository:
           (\*)(?:\h+(?:_*\h+)*))?|# repeating
           (\/)(?:\h+(?:_*\h+)*)# denominator
           )?
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -649,8 +650,8 @@ repository:
           (\*)(?:\h+(?:_*\h+)*))?# repeating
           ()# denominator
           )
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -671,8 +672,8 @@ repository:
           (\*)(?:\d+(?:_*\d+)*))?|# repeating
           (\/)(?:\d+(?:_*\d+)*)# denominator
           )?
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -693,8 +694,8 @@ repository:
           (\*)(?:\d+(?:_*\d+)*))?# repeating
           ()# denominator
           )
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -715,8 +716,8 @@ repository:
           (\*)(?:\w+(?:_*\w+)*))?|# repeating
           (\/)(?:\w+(?:_*\w+)*)# denominator
           )?
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -737,8 +738,8 @@ repository:
           (\*)(?:\w+(?:_*\w+)*))?# repeating
           ()# denominator
           )
-          (\^(?:\d|[1-9]\d+)?[+-]?(?:\d|[1-9]\d+))?# exponent
-          (=(?:\d|[1-9]\d+))?# significant
+          (\^\d*[+-]?\d+)?# exponent
+          (=\d+)?# significant
           (:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
@@ -847,8 +848,8 @@ repository:
       - match: |
           (?x)
           \s*(\\)
-          ((?:\\.|[^({\[)}\]\s.,:;])*?)
-          (?=[({\[)}\]\s.,:;]|$)\s*
+          ((?:[^\s(){}\[\]<>.,:;]|\\.)*?)
+          (?=[\s(){}\[\]<>.,:;]|$)\s*
         name: string.unquoted.trin
         captures:
           1: {name: punctuation.definition.string.trin}
@@ -1059,25 +1060,41 @@ repository:
     match: |
       (?x)
       \s*
-      (:)((?:\w|\\.)(?:\\.|[^({\[)}\]\s.,:;])*?)
-      (?=[({\[)}\]\s.,:;]|$)\s*
+      (:)(
+      (?:\w|\\.)# identifier
+      (?:[^\s(){}\[\]<>.,:;]|\\.)*?# remainder
+      )
+      (?=[\s(){}\[\].,:;]|$)\s*
     name: meta.symbol.trin
     captures:
       1: {name: punctuation.definition.symbol.trin}
-      2: {name: constant.other.symbol.trin}
+      2:
+        name: constant.other.symbol.trin
+        patterns:
+          - include: "#constants"
+          - include: "#numbers"
+          - include: "#string-content"
 
   labels:
-    match: |
-      (?x)
-      (?<=^|[({\[\s,;*+-])\s*
-      ((?:\w|\\.)(?:\\.|[^({\[)}\]\s.,:;])*?)
-      (:)\s+
-    name: meta.object-literal.key.trin
-    captures:
-      1:
-        name: constant.other.object.key.trin
-        patterns: [include: "#string-escapes"]
-      2: {name: punctuation.separator.key-value.trin}
+    patterns:
+      - match: |
+          (?x)
+          (?<=^|{|;|,|\s)\s*
+          (
+          |[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]*# prefix
+          (?:\w|\\.)# identifier
+          (?:[^\s(){}\[\]<>.,:;]|\\.)*?# remainder
+          )
+          (:)\s*
+        name: meta.object-literal.key.trin
+        captures:
+          1:
+            name: constant.other.object.key.trin
+            patterns:
+              - include: "#constants"
+              - include: "#numbers"
+              - include: "#string-content"
+          2: {name: punctuation.separator.key-value.trin}
 
   regexps:
     patterns:
@@ -1671,14 +1688,11 @@ repository:
     patterns:
       - include: "#evaluated-code"
       - include: "#attribute-name"
+      - include: source.css.scss#selectors
       - include: source.yaml#flow-collection
+      - include: "#literals"
       - include: "#spread-attribute"
-      - include: "#strings-unquoted"
-      - include: "#strings-quoted"
-      - include: "#numbers"
-      - include: "#regexps"
       - include: "#string-content"
-      - include: "#tag-element-name"
       - include: "#comments"
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
@@ -1693,8 +1707,9 @@ repository:
           2:
             name: string.unquoted.html.trin
             patterns:
+              - include: "#constants"
+              - include: "#numbers"
               - include: "#string-content"
-              - include: source.yaml#flow-scalar-plain-out-implicit-type
       - comment: Attribute names
         match: (?<![^\s<])([\p{Pc}\p{L}][\p{Pd}\w]*)(=)?((?:\w|\\.)(?:\\.|[^\s</>])*)?\s*
         captures:
@@ -1703,8 +1718,9 @@ repository:
           3:
             name: string.unquoted.html.trin
             patterns:
+              - include: "#constants"
+              - include: "#numbers"
               - include: "#string-content"
-              - include: source.yaml#flow-scalar-plain-out-implicit-type
   evaluated-code:
     patterns:
       - comment: Style attribute
@@ -2272,12 +2288,12 @@ repository:
 
     repository:
       binary-ops:
-        match: (?<=^|['"`\\\s({\[])([\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)(?=$|['"`\\\s)}\]])
+        match: (?<=^|['"`\\\s({\[])([\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)(?=$|['"`\\\s)}\]])
         captures:
           0:
             patterns:
               - comment: augmented assignment += -= *= /= etc
-                match: (?<=^|['"`\\({\[\s])([\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+(?<![!:~.<=>])=)(?=$|['"`\\\s)}\]])
+                match: (?<=^|['"`\\({\[\s])([\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+(?<![!:~.<=>])=)(?=$|['"`\\\s)}\]])
                 name: keyword.operator.assignment.augmented.trin
 
               - comment: |
@@ -2381,17 +2397,17 @@ repository:
                   (?x)
                   (?<=^|['"`\\({\[\s])# spacing
                   (?:
-                  ([&|^~][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#1
-                  |([+\-*/%][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#2
-                  |(:[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#3
-                  |(\.[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#3
-                  |([!=][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#4
-                  |([<>][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#5
-                  |([?\#][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#6
-                  |(\p{Sm}[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#7
-                  |(\p{Sc}[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#8
-                  |([\p{S}\p{P}&&[\x80-\xff]][\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#9
-                  |([\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)#10
+                  ([&|^~][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#1
+                  |([+\-*/%][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#2
+                  |(:[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#3
+                  |(\.[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#3
+                  |([!=][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#4
+                  |([<>][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#5
+                  |([?\#][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#6
+                  |(\p{Sm}[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#7
+                  |(\p{Sc}[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#8
+                  |([\p{S}\p{P}&&[\x80-\xff]][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#9
+                  |([\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#10
                   )
                   (?=$|['"`\\\s)}\]])
 
@@ -2436,8 +2452,8 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]])#15
-              (?=[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*
+              |[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]])#15
+              (?=[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]*
               [\w({\[_,;'"`])
             name: keyword.operator.prefix.trin
             captures:
@@ -2462,7 +2478,7 @@ repository:
             match: |
               (?x)
               (?<=[\w)}\]_,;'"`]
-              [\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*)
+              [\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]*)
               (?:([*/])#1
               |(\+)#2
               |(\-)#3
@@ -2477,7 +2493,7 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]])#15
+              |[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]])#15
             name: keyword.operator.suffix.trin
             captures:
               1: {name: keyword.operator.module.all.trin}
@@ -2501,7 +2517,7 @@ repository:
           - applyEndPatternLast: 1
             begin: |
               (?x)\s*(?:(\++>)|(\|+>))(?=\s*(
-              [\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*# prefix
+              [\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]*# prefix
               (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
               \b(?:# don't match keywords
               in|of|as|is|out|new|infer|unset
@@ -2525,9 +2541,9 @@ repository:
               )\b
               )
               [\w]+
-              (?:[\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*# primary
+              (?:[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]*# primary
               [\w]+)*
-              [\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]*# suffix
+              [\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]*# suffix
               )\s*([^(]|$|;))
             end: (?=.)|$
             beginCaptures:
@@ -2723,7 +2739,7 @@ repository:
               - match: (?<=^|[({\[])\s*([*+-](?:\s+[*+-])*)
                 name: punctuation.definition.block.sequence.item.trin
         patterns:
-          - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s*|[({\[]\s*|^\s*|\b(?:var|let|const)\b\s*)(\#\{)\s*
+          - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+)\s*|[({\[]\s*|^\s*|\b(?:var|let|const)\b\s*)(\#\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.mapping.trin}
@@ -2732,7 +2748,7 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s*|[({\[]\s*|^\s*|\b(?:var|let|const)\b\s*)(\{)\s*
+          - begin: \s*(?<=(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+)\s*|[({\[]\s*|^\s*|\b(?:var|let|const)\b\s*)(\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.dictionary.trin}
@@ -2955,7 +2971,7 @@ repository:
         name: keyword.generator.asterisk.trin
       - include: "#type-operators"
       - applyEndPatternLast: 1
-        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]))
+        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]))
         end: (?=.)|$
         beginCaptures:
           1: {name: punctuation.definition.annotation.trin}
@@ -3028,7 +3044,7 @@ repository:
 
   declaration-keywords:
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(va[rl]|[lsg]et)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)\b\s*
         name: storage.type.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)\b\s*
         name: keyword.other.declare.trin
@@ -3124,7 +3140,6 @@ repository:
         name: keyword.operator.expression.range.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unset)\b\s*
         name: keyword.operator.expression.void.trin
-      
 
   keywords:
     patterns:
@@ -3321,13 +3336,13 @@ repository:
     repository:
       variable:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(va[rl]|[lsg]et)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.trin}
       function:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def|fn|func?)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def|fn|fun|func)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.function.trin}
@@ -3579,7 +3594,7 @@ repository:
   params-clause:
     begin: |
       (?x)
-      (?<=(?:^\s*|\#?[({\[]\s*|(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+)\s+|\b(?:#keywords
+      (?<=(?:^\s*|\#?[({\[]\s*|(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+)\s+|\b(?:#keywords
       in|of|as|is|out|new|infer|unset
       |typeof|nameof|sizeof
       |keyof|valof|pairof|instof
@@ -4083,7 +4098,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+|^|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\#\{)\s*
+      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|^|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.trin}
@@ -4091,7 +4106,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}({\[)}\]]]+|^|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\{)\s*
+      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|^|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
@@ -4129,7 +4144,7 @@ repository:
     repository:
       punctuation:
         patterns:
-          - match: (?<![\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)(:)(?![\p{S}\p{P}&&[^,;'"`\\\p{Pc}({\[)}\]]]+)
+          - match: (?<![\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)(:)(?![\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)
             captures:
               1: {name: punctuation.separator.slice.trin}
           - match: ","
