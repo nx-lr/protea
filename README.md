@@ -962,8 +962,9 @@ You can query lists or sets by using angle brackets.
 [1, 2, 3][< 3] // elements less than 3
 
 // Strings
-{x: \a}.x == {x: \a}.'x' == {x: \a}.\x == {x: \a}[\x]
-{+x: a}.\+x == {'+x': a}; {tr: false}
+{x: \a}.x == {x: \a}.'x' == {x: \a}.\x == {x: \a}[\x] == {x: \a}.[\x]
+{+x: a}.\+x == {'+x': a}
+{\t\r: false}.\\t\r == {"\t\r": false}["\t\r"]
 {1: \a}.1 == {1: \a}[1]
 {true: \a}[true]
 
