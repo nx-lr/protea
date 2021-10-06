@@ -865,8 +865,8 @@ repository:
       - match: |
           (?x)
           \s*(\\)
-          ((?:[^\s(){}\[\]<>.,:;]|\\.)*?)
-          (?=[\s(){}\[\]<>.,:;]|$)\s*
+          ((?:[^\s\\(){}\[\]<>.,:;]|\\.)*)
+          \s*
         name: string.unquoted.trin
         captures:
           1: {name: punctuation.definition.string.trin}
@@ -1117,7 +1117,7 @@ repository:
       \s*
       (:)(
       (?:\w|\\.)# identifier
-      (?:[^\s(){}\[\]<>.,:;]|\\.)*?# remainder
+      (?:[^\s\\(){}\[\]<>.,:;]|\\.)*?# remainder
       )
       (?=[\s(){}\[\].,:;]|$)\s*
     name: meta.symbol.trin
@@ -1141,7 +1141,7 @@ repository:
           (
           |[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]*# prefix
           (?:\w|\\.)# identifier
-          (?:[^\s(){}\[\]<>.,:;]|\\.)*?# remainder
+          (?:[^\s\\(){}\[\]<>.,:;]|\\.)*?# remainder
           )
           (:)\s+
         name: meta.object-literal.key.trin
@@ -4148,7 +4148,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|^|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\#\{)\s*
+      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|^|;|,|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.trin}
@@ -4156,7 +4156,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|^|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\{)\s*
+      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|^|;|,|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
