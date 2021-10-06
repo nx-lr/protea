@@ -920,9 +920,9 @@ assert validRe == `(\[\\da-z)`
 
 Collections in Trinity are very similar to JavaScript, but they are immutable, meaning they have fixed fields and those fields do not change. All collections are homogeneous.
 
-- Lists are indexed finite sequences of values (arrays in other languages).
-- Sets are unordered collections of unique values.
-- Maps are unordered collections of unique keys assigned to their own values (also called dictionaries).
+- Lists are _zero-indexed_, finite sequences of values (arrays in other languages).
+- Sets are _ordered_, finite collections of unique values.
+- Maps are _ordered_, finite collections of unique keys assigned to their own values (also called dictionaries).
 
 ```dart
 val myList: List[Int] = [1, 2, 3, 4]
@@ -940,20 +940,20 @@ assert myMap is Map[Int | Str, Int]
 Prefix a list, map or set literal with a `#` to make the collection mutable. Mutable collections are prefixed with `Mut` to distinguish themselves from regular collections.
 
 ```dart
-val myList: MutList[Int + Str] = #[1, \2, 3, \4]
+val myList: MutList[Int | Str] = #[1, \2, 3, \4]
 ```
 
 Not much to say about lists and sets other than their elements are separated by commas (or even newlines). However, sets unlike lists are delimited between curly brackets `{}` as opposed to square `[]` ones.
 
-Because of this conflict with both set and map literals, empty map literals have a compulsory colon to distinguish an empty set from an empty map.
+Because of this conflict with both set and map literals, empty map literals have a compulsory colon to distinguish itself from an empty set. Alternatively, we can use trailing commas, which like JavaScript are ignored.
 
 ```dart
-[] // empty list
-{} // empty set
+[]; [,] // empty list
+{}; {,} // empty set
 {:} // empty map
 ```
 
-You can query lists or sets by using angle brackets.
+You can query (filter) lists or sets by using angle brackets. Python-style negative array indexing and extended slicing are completely supported.
 
 ```dart
 [1, 2, 3][1] // second element
@@ -980,7 +980,7 @@ You can use any value or expression except strings beginning with underscores or
 assert "a" == { \a\: "a" }.a
 ```
 
-You can access properties on maps and objects by using angle-bracket or dot-notation; you can do this with regular string literals numbers, and even more.
+You can access properties on maps and objects by using angle-bracket or dot-notation; you can do this with quoted strings, numbers, symbols, regular expressions, and even more.
 
 ```dart
 x.'text-align' = 'right'
