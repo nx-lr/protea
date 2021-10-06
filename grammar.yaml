@@ -77,7 +77,7 @@ define:
     |if|lest|elif|elest|else|then
     |for|each|loop|while|until|from|with
     |do|redo|try|retry|throw|catch|finally
-    |switch|case|default|match|when|otherwise
+    |switch|case|default|match|when|pass
     |unison|series|spawn|kill|fix|lock
     |break|continue|return|await|label|yield|goto
     |import|export|impose|expose|using
@@ -104,7 +104,7 @@ define:
     |if|lest|elif|elest|else|then
     |for|each|loop|while|until|from|with
     |do|redo|try|retry|throw|catch|finally
-    |switch|case|default|match|when|otherwise
+    |switch|case|default|match|when|pass
     |unison|series|spawn|kill|fix|lock
     |break|continue|return|await|label|yield|goto
     |import|export|impose|expose|using
@@ -146,6 +146,8 @@ repository:
       - include: "#variables"
       - include: "#illegal"
 
+  # Illegal Syntax
+
   illegal:
     patterns:
       - match: \p{N}[\w.+-/\\]*?
@@ -156,21 +158,6 @@ repository:
         name: invalid.illegal.missing-bracket.trin
       - match: \S+?
         name: invalid.illegal.syntax.trin
-
-  placeholder-variables:
-    patterns:
-      - match: (?i)\s*\?[\p{Pc}\p{L}]\w*\b\s*
-        name: variable.parameter.optional.trin
-      - match: (?i)\s*\*[\p{Pc}\p{L}]\w*\b\s*
-        name: variable.parameter.spread.trin
-      - match: (?i)\s*[&~][\p{Pc}\p{L}]\w*\b\s*
-        name: variable.parameter.name.trin
-      - match: (?i)\s*\%[\p{Pc}\p{L}]\w*\b\s*
-        name: variable.parameter.reference.trin
-      - match: (?i)\s*\$[\p{Pc}\p{L}]\w*\b\s*
-        name: variable.parameter.other.trin
-      - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*
-        name: variable.parameter.trin
 
   illegal-keywords:
     match: |
@@ -188,7 +175,7 @@ repository:
       |if|lest|elif|elest|else|then
       |for|each|loop|while|until|from|with
       |do|redo|try|retry|throw|catch|finally
-      |switch|case|default|match|when|otherwise
+      |switch|case|default|match|when|pass
       |unison|series|spawn|kill|fix|lock
       |break|continue|return|await|label|yield|goto
       |import|export|impose|expose|using
@@ -196,53 +183,12 @@ repository:
       )\b\s*
     name: invalid.illegal.keyword.trin
 
-  unicode-named-chars:
-    comment: Support for the Unicode Named Character encoding, inspired
-      by LaTeX, HTML, AGL, Unicode and regular expressions.
-    repository:
-      latex:
-      unicode-scripts:
-        patterns:
-          - begin: (\(@)\s*(\w+(?:[\p{Pc}\p{Pd}]\w+)*)\s*(:)?
-            end: \s*(\))
-            name: meta.group.locale.trin
-            captures:
-              1: {name: punctuation.definition.group.flag.trin}
-              3: {name: punctuation.separator.colon.trin}
-              2:
-                patterns:
-                  - match: (?i)\b(((yue[\p{Pc}\p{Pd}]Hant|zh[\p{Pc}\p{Pd}]Han[st])[\p{Pc}\p{Pd}]H|pa[\p{Pc}\p{Pd}]Arab[\p{Pc}\p{Pd}]P|ur[\p{Pc}\p{Pd}]P|ta[\p{Pc}\p{Pd}]L|s(k[\p{Pc}\p{Pd}]S|i[\p{Pc}\p{Pd}]L)|mk[\p{Pc}\p{Pd}]M|en[\p{Pc}\p{Pd}]H)K|(tzm[\p{Pc}\p{Pd}]Latn[\p{Pc}\p{Pd}]M|s(hi[\p{Pc}\p{Pd}](Tfng|Latn)[\p{Pc}\p{Pd}]M|r[\p{Pc}\p{Pd}](Latn|Cyrl)[\p{Pc}\p{Pd}]B)|naq[\p{Pc}\p{Pd}]N|zu[\p{Pc}\p{Pd}]Z|uk[\p{Pc}\p{Pd}]U|ru[\p{Pc}\p{Pd}]U|en[\p{Pc}\p{Pd}]C|bs[\p{Pc}\p{Pd}]B)A|ha[\p{Pc}\p{Pd}]Latn[\p{Pc}\p{Pd}]N[EG]|(uz[\p{Pc}\p{Pd}]Arab[\p{Pc}\p{Pd}]A|sg[\p{Pc}\p{Pd}]C|ps[\p{Pc}\p{Pd}]A)F|(sr[\p{Pc}\p{Pd}](Latn|Cyrl)[\p{Pc}\p{Pd}]R|haw[\p{Pc}\p{Pd}]U|is[\p{Pc}\p{Pd}]I)S|(zh[\p{Pc}\p{Pd}]Hans[\p{Pc}\p{Pd}]C|(pa[\p{Pc}\p{Pd}]Guru|k(ok|n)|te|or|m[lr]|hi|gu)[\p{Pc}\p{Pd}]I|vi[\p{Pc}\p{Pd}]V|ur[\p{Pc}\p{Pd}]I|ta[\p{Pc}\p{Pd}]I|ne[\p{Pc}\p{Pd}]I|ms[\p{Pc}\p{Pd}]B|ii[\p{Pc}\p{Pd}]C|f[fr][\p{Pc}\p{Pd}]S|es[\p{Pc}\p{Pd}]H|b(o[\p{Pc}\p{Pd}][CI]|n[\p{Pc}\p{Pd}]I))N|(zh[\p{Pc}\p{Pd}]Hant[\p{Pc}\p{Pd}]T|rw[\p{Pc}\p{Pd}]R|pt[\p{Pc}\p{Pd}]G|sn[\p{Pc}\p{Pd}]Z|nd[\p{Pc}\p{Pd}]Z)W|(zh[\p{Pc}\p{Pd}]Han[st][\p{Pc}\p{Pd}]M|to[\p{Pc}\p{Pd}]T|so[\p{Pc}\p{Pd}]S|ro[\p{Pc}\p{Pd}]R|n[bn][\p{Pc}\p{Pd}]N|fo[\p{Pc}\p{Pd}]F|es[\p{Pc}\p{Pd}][BD])O|(zh[\p{Pc}\p{Pd}]Hans[\p{Pc}\p{Pd}]S|teo[\p{Pc}\p{Pd}]U|(nyn|lg)[\p{Pc}\p{Pd}]U|xog[\p{Pc}\p{Pd}]U|cgg[\p{Pc}\p{Pd}]U|mg[\p{Pc}\p{Pd}]M|yo[\p{Pc}\p{Pd}]N|ig[\p{Pc}\p{Pd}]N|e(n[\p{Pc}\p{Pd}]S|e[\p{Pc}\p{Pd}]T)|bg[\p{Pc}\p{Pd}]B)G|(uz[\p{Pc}\p{Pd}](Latn|Cyrl)[\p{Pc}\p{Pd}]U|k(k[\p{Pc}\p{Pd}]Cyrl[\p{Pc}\p{Pd}]K|ab[\p{Pc}\p{Pd}]D)|seh[\p{Pc}\p{Pd}]M|mas[\p{Pc}\p{Pd}]T|(vun|r(wk|of)|lag|kde|jmc|bez)[\p{Pc}\p{Pd}]T|pt[\p{Pc}\p{Pd}]M|sw[\p{Pc}\p{Pd}]T|cs[\p{Pc}\p{Pd}]C)Z|(s(r[\p{Pc}\p{Pd}](Latn|Cyrl)[\p{Pc}\p{Pd}]M|v[\p{Pc}\p{Pd}]S|o[\p{Pc}\p{Pd}]K)|teo[\p{Pc}\p{Pd}]K|mas[\p{Pc}\p{Pd}]K|(saq|mer|lu[oy]|k(ln|am|i)|guz|ebu)[\p{Pc}\p{Pd}]K|d(av[\p{Pc}\p{Pd}]K|e[\p{Pc}\p{Pd}][BD])|om[\p{Pc}\p{Pd}]K|nl[\p{Pc}\p{Pd}]B|sw[\p{Pc}\p{Pd}]K|ka[\p{Pc}\p{Pd}]G|ga[\p{Pc}\p{Pd}]I|fr[\p{Pc}\p{Pd}]N|e(t[\p{Pc}\p{Pd}]E|s[\p{Pc}\p{Pd}]V))E|(ha[\p{Pc}\p{Pd}]Latn[\p{Pc}\p{Pd}]G|gsw[\p{Pc}\p{Pd}]C|fil[\p{Pc}\p{Pd}]P|th[\p{Pc}\p{Pd}]T|km[\p{Pc}\p{Pd}]K|it[\p{Pc}\p{Pd}]C|rm[\p{Pc}\p{Pd}]C|ee[\p{Pc}\p{Pd}]G|de[\p{Pc}\p{Pd}]C)H|a((z[\p{Pc}\p{Pd}](Latn|Cyrl)[\p{Pc}\p{Pd}]A|sa[\p{Pc}\p{Pd}]T)Z|z([\p{Pc}\p{Pd}](Latn|Cyrl))?|s[\p{Pc}\p{Pd}]IN|r[\p{Pc}\p{Pd}](TN|S[ADY]|OM|L[BY]|KW|JO|IQ|EG|DZ|[AY]E)|m[\p{Pc}\p{Pd}]ET|r[\p{Pc}\p{Pd}]BH|k[\p{Pc}\p{Pd}]GH|r[\p{Pc}\p{Pd}][MQ]A|f([\p{Pc}\p{Pd}][NZ]A)?|sa?|r|m|k)|tzm[\p{Pc}\p{Pd}]Latn|s(hi([\p{Pc}\p{Pd}](Tfng|Latn))?|r([\p{Pc}\p{Pd}](Latn|Cyrl))?|eh|v|q|o|l|k|i|g)|z(h([\p{Pc}\p{Pd}]Han[st])?|u)|u(z([\p{Pc}\p{Pd}](Latn|Cyrl))?|r|k)|uz[\p{Pc}\p{Pd}]Arab|p(a([\p{Pc}\p{Pd}]Arab)?|[lst])|k(k([\p{Pc}\p{Pd}]Cyrl)?|ea|ab?|[lmo])|pa[\p{Pc}\p{Pd}]Guru|h(a([\p{Pc}\p{Pd}]Latn)?|[eiruy])|(mfe[\p{Pc}\p{Pd}]M|ru[\p{Pc}\p{Pd}]R|hu[\p{Pc}\p{Pd}]H)U|(kea[\p{Pc}\p{Pd}]C|lv[\p{Pc}\p{Pd}]L)V|e(s[\p{Pc}\p{Pd}](419|U[SY]|SV|P[AERY]|MX|G[QT]|E[CS]|C[LOR])|s[\p{Pc}\p{Pd}]NI|n[\p{Pc}\p{Pd}](Z[AW]|VI|U[MS]|P[HK]|N[AZ]|M[HPTU]|I[ELN]|G[BU]|B[EWZ]|A[SU])|s[\p{Pc}\p{Pd}]AR|l[\p{Pc}\p{Pd}]GR|o)|c(hr[\p{Pc}\p{Pd}]US|y[\p{Pc}\p{Pd}]GB|a[\p{Pc}\p{Pd}]ES)|(ses|khq)[\p{Pc}\p{Pd}]ML|(bem[\p{Pc}\p{Pd}]Z|my[\p{Pc}\p{Pd}]M|hy[\p{Pc}\p{Pd}]A|fr[\p{Pc}\p{Pd}]K|en[\p{Pc}\p{Pd}]J)M|ti[\p{Pc}\p{Pd}]E[RT]|ne[\p{Pc}\p{Pd}]NP|ja[\p{Pc}\p{Pd}]JP|so[\p{Pc}\p{Pd}]DJ|f(r[\p{Pc}\p{Pd}](T[DG]|R[EW]|M[CFGLQ]|LU|G[ANPQ]|DJ|C[ADF-IM]|B[EFIJL])|a[\p{Pc}\p{Pd}]AF)|(s(v[\p{Pc}\p{Pd}]F|l[\p{Pc}\p{Pd}]S)|fi[\p{Pc}\p{Pd}]F)I|(tr[\p{Pc}\p{Pd}]T|pt[\p{Pc}\p{Pd}]B|ko[\p{Pc}\p{Pd}]K|hr[\p{Pc}\p{Pd}]H|f(r[\p{Pc}\p{Pd}]F|a[\p{Pc}\p{Pd}]I))R|d(e[\p{Pc}\p{Pd}]L[IU]|a[\p{Pc}\p{Pd}]DK)|(kw|gv)[\p{Pc}\p{Pd}]GB|(gl|eu)[\p{Pc}\p{Pd}]ES|(r[ou][\p{Pc}\p{Pd}]M|id[\p{Pc}\p{Pd}]I)D|(sq[\p{Pc}\p{Pd}]A|pl[\p{Pc}\p{Pd}]P|nl[\p{Pc}\p{Pd}]N|kl[\p{Pc}\p{Pd}]G|he[\p{Pc}\p{Pd}]I)L|(ms[\p{Pc}\p{Pd}]M|el[\p{Pc}\p{Pd}]C)Y|b(n[\p{Pc}\p{Pd}]BD|m[\p{Pc}\p{Pd}]ML|e[\p{Pc}\p{Pd}]BY)|(so[\p{Pc}\p{Pd}]E|pt[\p{Pc}\p{Pd}]P|om[\p{Pc}\p{Pd}]E|mt[\p{Pc}\p{Pd}]M|lt[\p{Pc}\p{Pd}]L|it[\p{Pc}\p{Pd}]I|en[\p{Pc}\p{Pd}]T|de[\p{Pc}\p{Pd}]A)T|t(zm|eo?|r|o|i|h|a)|n(aq|[bdeln])|m(fe|as|[gksty])|k(ok|n)|g(sw|u|a)|f(il?|[or]|f|a)|saq|mer|lu[oy]|k(ln|am|i)|guz|ebu|d(av?|e)|haw|nyn|xog|c(hr|gg|[sy]|a)|ses|khq|b(em?|[gm-os])|vun|r(wk|of)|lag|kde|jmc|bez|vi|r[ouw]|om|sn|sw|l[tv]|ja|yo|i[dgist]|or|m[lr]|rm|e[elnst]|kw|gv|lg|gl|eu)\b
-                    name: support.type.locale.trin
-                  - match: \b\w+([\p{Pc}\p{Pd}]\w+)*\b
-                    name: support.type.locale.custom.trin
-          - begin: (\($)\s*(\p{L}+)\s*(:)?
-            end: \s*(\))
-            name: meta.group.script.trin
-            captures:
-              1: {name: punctuation.definition.group.flag.trin}
-              3: {name: punctuation.separator.colon.trin}
-              2:
-                patterns:
-                  - match: (?i)\b(Z(zzz|yyy|sy[em])|Visp|T(ha[ai]|al[eu])|S(yr[cejn]|og[do]|in[dh])|Qa[a-z][a-z]|(Zxx|Xsu)x|Ph(nx|l[ipv])|M(e(r[co]|df)|an[di])|Sar[ab]|L(in[ab]|at[fgn])|(Wol|Osg|Lek)e|(Ran|Mah)j|K(ore|hoj)|(Pau|Mar|Lep)c|Jurc|S(ha|gn)w|H(mn[gp]|luw|an[bgiost])|(Z(mt|in)|Vit|Tir|Ork)h|G(o(th|n[gm])|eo[kr])|Egy[dhp]|(Tam|Kpe|Ita)l|(Tns|Sor|O(sm|ry)|New|Ma[ky]|L(om|an)|K(nd|an)|Jav|War|Hir|Elb)a|D(upl|eva)|Kit[ls]|(P(si|cu)|Moo|Jpa|Gra)n|(Uga|Tak|Sa[mu]|Run|Mym|Kh[am]|H(eb|at)|Guj|Oug|Dog)r|C(yr[ls]|pmn|her)|(S(un|id|hr)|P(lr|iq)|Nan|Men)d|(Xpe|Wch|Tot|S(yl|oy)|Ror|Nko|Mro|Lao|Jam)o|(T(gl|en|an)|Roh|Pha|Mon|Gla)g|(Tf|Rj|Hu)ng|(Ind|C(hr|an))s|(Tel|Nsh|Lis|Gur)u|(Y(ez|ii)|Vai|Shu|Prt|M(te|od)|Ly[cd]|Kal|Kth|Eth|Car)i|B(uhd|ra[hi]|opo|eng|(li|hk)s|ugi|a(ss|mu|li))|(T(ib|av)|Nba|Mul|Hrk|Dsr|C(pr|op|ir))t|(Zan|Tag|N(k[dg]|ar)|Lim)b|(Olc|Gre|Bat)k|Diak|(P(e[lr]|al)|Oga|Mly|Ely|C(ha|ak))m|A(vst|r(m[in]|a[bn])|ghb|fak|hom|dlm))\b
-                    name: support.type.script.trin
-                  - match: \w+
-                    name: support.type.script.custom.trin
-    patterns:
-      - include: "#string-escapes"
-      - include: "#unicode-scripts"
-      - include: "#regexp-patterns"
-
   entities:
     patterns:
       - include: "#function-names"
       - include: "#constant-names"
       - include: "#type-names"
       - include: "#variable-names"
-
-  class-names:
-    comment: Names for built-in classes
-    patterns:
-      - comment:
 
   type-names:
     comment: Names for built-in types
@@ -290,6 +236,18 @@ repository:
         match: \s*\b((\p{Lu}[\w&&\P{Lu}]*)+)able\b
         name: support.class.trait.trin
 
+      - comment: Swift
+      - include: source.swift#builtin-types
+
+      - comment: Python
+      - include: source.python#builtin-types
+
+      - comment: JS
+      - include: "#support-js"
+
+      - comment: PHP
+      - include: source.php#class-builtin
+
   function-names:
     comment: Names for built-in functions (initial dump)
     patterns:
@@ -300,17 +258,80 @@ repository:
         match: (?x)\s*\b_+([\p{Pc}\p{L}]\w*)+_+\b\s*
         name: support.function.magic.trin
 
+      - comment: Swift
+      - include: source.swift#builtin-functions
+
+      - comment: JavaScript
+      - include: source.js#support-objects
+
+      - comment: Python
+      - include: source.python#builtin-functions
+
+      - comment: PHP
+      - include: source.php#support
+
+      - comment: SASS
+      - include: source.css.sass#constant_sass_functions
+
+      - comment: Other (coming soon!)
+
+      - match: |
+          (?x)\b(?:
+          (?<=[!?~]?\.=?|[?!:]:=?)(?<!\.\.+)
+          (?:# Properties (note all properties are by default, symbols)
+          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
+          ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+          ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
+          ([\p{Pc}\p{L}]\w*)
+          )
+          |
+          (?:# Objects and maps
+          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
+          ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+          ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
+          ([\p{Pc}\p{L}]\w*)
+          )
+          (?!\.\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
+          |
+          (?:# Regular variables
+          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
+          ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
+          ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
+          ([\p{Pc}\p{L}]\w*)
+          )
+          )\b
+        captures:
+          1: {name: entity.name.tag.trin}
+          2: {name: entity.name.tag.trin support.class.component.trin}
+          3: {name: entity.name.class.builtin.trin}
+          4: {name: entity.name.function.method.trin}
+          5: {name: variable.other.global.trin}
+          6: {name: variable.other.constant.object.trin}
+          7: {name: variable.other.conditional.trin}
+          8: {name: variable.other.object.trin}
+          9: {name: entity.name.function.tagged-template.trin}
+          10: {name: entity.name.type.trin}
+          11: {name: entity.name.class.trin}
+          12: {name: entity.name.function.trin}
+      - include: $self
+
   constant-names:
     comment: Names for constants, symbols and static properties
-    patterns: []
+    patterns:
+      - comment: Python
+      - include: source.python#magic-variable-names
 
   variable-names:
     comment: Standard Library variable names
-    patterns: []
+    patterns:
+      - comment: Python
+      - include: source.python#magic-function-names
 
   property-names:
     comment: Standard Library property names
-    patterns: []
+    patterns:
+      - comment: Swift
+      - include: source.swift#builtin-properties
 
   literals:
     patterns:
@@ -1056,6 +1077,45 @@ repository:
           - include: "#tag-attributes"
           - include: "#tag-names"
 
+
+  unicode-named-chars:
+    comment: Support for the Unicode Named Character encoding, inspired
+      by LaTeX, HTML, AGL, Unicode and regular expressions.
+    repository:
+      latex:
+      unicode-scripts:
+        patterns:
+          - begin: (\(@)\s*(\w+(?:[\p{Pc}\p{Pd}]\w+)*)\s*(:)?
+            end: \s*(\))
+            name: meta.group.locale.trin
+            captures:
+              1: {name: punctuation.definition.group.flag.trin}
+              3: {name: punctuation.separator.colon.trin}
+              2:
+                patterns:
+                  - match: (?i)\b(((yue[\p{Pc}\p{Pd}]Hant|zh[\p{Pc}\p{Pd}]Han[st])[\p{Pc}\p{Pd}]H|pa[\p{Pc}\p{Pd}]Arab[\p{Pc}\p{Pd}]P|ur[\p{Pc}\p{Pd}]P|ta[\p{Pc}\p{Pd}]L|s(k[\p{Pc}\p{Pd}]S|i[\p{Pc}\p{Pd}]L)|mk[\p{Pc}\p{Pd}]M|en[\p{Pc}\p{Pd}]H)K|(tzm[\p{Pc}\p{Pd}]Latn[\p{Pc}\p{Pd}]M|s(hi[\p{Pc}\p{Pd}](Tfng|Latn)[\p{Pc}\p{Pd}]M|r[\p{Pc}\p{Pd}](Latn|Cyrl)[\p{Pc}\p{Pd}]B)|naq[\p{Pc}\p{Pd}]N|zu[\p{Pc}\p{Pd}]Z|uk[\p{Pc}\p{Pd}]U|ru[\p{Pc}\p{Pd}]U|en[\p{Pc}\p{Pd}]C|bs[\p{Pc}\p{Pd}]B)A|ha[\p{Pc}\p{Pd}]Latn[\p{Pc}\p{Pd}]N[EG]|(uz[\p{Pc}\p{Pd}]Arab[\p{Pc}\p{Pd}]A|sg[\p{Pc}\p{Pd}]C|ps[\p{Pc}\p{Pd}]A)F|(sr[\p{Pc}\p{Pd}](Latn|Cyrl)[\p{Pc}\p{Pd}]R|haw[\p{Pc}\p{Pd}]U|is[\p{Pc}\p{Pd}]I)S|(zh[\p{Pc}\p{Pd}]Hans[\p{Pc}\p{Pd}]C|(pa[\p{Pc}\p{Pd}]Guru|k(ok|n)|te|or|m[lr]|hi|gu)[\p{Pc}\p{Pd}]I|vi[\p{Pc}\p{Pd}]V|ur[\p{Pc}\p{Pd}]I|ta[\p{Pc}\p{Pd}]I|ne[\p{Pc}\p{Pd}]I|ms[\p{Pc}\p{Pd}]B|ii[\p{Pc}\p{Pd}]C|f[fr][\p{Pc}\p{Pd}]S|es[\p{Pc}\p{Pd}]H|b(o[\p{Pc}\p{Pd}][CI]|n[\p{Pc}\p{Pd}]I))N|(zh[\p{Pc}\p{Pd}]Hant[\p{Pc}\p{Pd}]T|rw[\p{Pc}\p{Pd}]R|pt[\p{Pc}\p{Pd}]G|sn[\p{Pc}\p{Pd}]Z|nd[\p{Pc}\p{Pd}]Z)W|(zh[\p{Pc}\p{Pd}]Han[st][\p{Pc}\p{Pd}]M|to[\p{Pc}\p{Pd}]T|so[\p{Pc}\p{Pd}]S|ro[\p{Pc}\p{Pd}]R|n[bn][\p{Pc}\p{Pd}]N|fo[\p{Pc}\p{Pd}]F|es[\p{Pc}\p{Pd}][BD])O|(zh[\p{Pc}\p{Pd}]Hans[\p{Pc}\p{Pd}]S|teo[\p{Pc}\p{Pd}]U|(nyn|lg)[\p{Pc}\p{Pd}]U|xog[\p{Pc}\p{Pd}]U|cgg[\p{Pc}\p{Pd}]U|mg[\p{Pc}\p{Pd}]M|yo[\p{Pc}\p{Pd}]N|ig[\p{Pc}\p{Pd}]N|e(n[\p{Pc}\p{Pd}]S|e[\p{Pc}\p{Pd}]T)|bg[\p{Pc}\p{Pd}]B)G|(uz[\p{Pc}\p{Pd}](Latn|Cyrl)[\p{Pc}\p{Pd}]U|k(k[\p{Pc}\p{Pd}]Cyrl[\p{Pc}\p{Pd}]K|ab[\p{Pc}\p{Pd}]D)|seh[\p{Pc}\p{Pd}]M|mas[\p{Pc}\p{Pd}]T|(vun|r(wk|of)|lag|kde|jmc|bez)[\p{Pc}\p{Pd}]T|pt[\p{Pc}\p{Pd}]M|sw[\p{Pc}\p{Pd}]T|cs[\p{Pc}\p{Pd}]C)Z|(s(r[\p{Pc}\p{Pd}](Latn|Cyrl)[\p{Pc}\p{Pd}]M|v[\p{Pc}\p{Pd}]S|o[\p{Pc}\p{Pd}]K)|teo[\p{Pc}\p{Pd}]K|mas[\p{Pc}\p{Pd}]K|(saq|mer|lu[oy]|k(ln|am|i)|guz|ebu)[\p{Pc}\p{Pd}]K|d(av[\p{Pc}\p{Pd}]K|e[\p{Pc}\p{Pd}][BD])|om[\p{Pc}\p{Pd}]K|nl[\p{Pc}\p{Pd}]B|sw[\p{Pc}\p{Pd}]K|ka[\p{Pc}\p{Pd}]G|ga[\p{Pc}\p{Pd}]I|fr[\p{Pc}\p{Pd}]N|e(t[\p{Pc}\p{Pd}]E|s[\p{Pc}\p{Pd}]V))E|(ha[\p{Pc}\p{Pd}]Latn[\p{Pc}\p{Pd}]G|gsw[\p{Pc}\p{Pd}]C|fil[\p{Pc}\p{Pd}]P|th[\p{Pc}\p{Pd}]T|km[\p{Pc}\p{Pd}]K|it[\p{Pc}\p{Pd}]C|rm[\p{Pc}\p{Pd}]C|ee[\p{Pc}\p{Pd}]G|de[\p{Pc}\p{Pd}]C)H|a((z[\p{Pc}\p{Pd}](Latn|Cyrl)[\p{Pc}\p{Pd}]A|sa[\p{Pc}\p{Pd}]T)Z|z([\p{Pc}\p{Pd}](Latn|Cyrl))?|s[\p{Pc}\p{Pd}]IN|r[\p{Pc}\p{Pd}](TN|S[ADY]|OM|L[BY]|KW|JO|IQ|EG|DZ|[AY]E)|m[\p{Pc}\p{Pd}]ET|r[\p{Pc}\p{Pd}]BH|k[\p{Pc}\p{Pd}]GH|r[\p{Pc}\p{Pd}][MQ]A|f([\p{Pc}\p{Pd}][NZ]A)?|sa?|r|m|k)|tzm[\p{Pc}\p{Pd}]Latn|s(hi([\p{Pc}\p{Pd}](Tfng|Latn))?|r([\p{Pc}\p{Pd}](Latn|Cyrl))?|eh|v|q|o|l|k|i|g)|z(h([\p{Pc}\p{Pd}]Han[st])?|u)|u(z([\p{Pc}\p{Pd}](Latn|Cyrl))?|r|k)|uz[\p{Pc}\p{Pd}]Arab|p(a([\p{Pc}\p{Pd}]Arab)?|[lst])|k(k([\p{Pc}\p{Pd}]Cyrl)?|ea|ab?|[lmo])|pa[\p{Pc}\p{Pd}]Guru|h(a([\p{Pc}\p{Pd}]Latn)?|[eiruy])|(mfe[\p{Pc}\p{Pd}]M|ru[\p{Pc}\p{Pd}]R|hu[\p{Pc}\p{Pd}]H)U|(kea[\p{Pc}\p{Pd}]C|lv[\p{Pc}\p{Pd}]L)V|e(s[\p{Pc}\p{Pd}](419|U[SY]|SV|P[AERY]|MX|G[QT]|E[CS]|C[LOR])|s[\p{Pc}\p{Pd}]NI|n[\p{Pc}\p{Pd}](Z[AW]|VI|U[MS]|P[HK]|N[AZ]|M[HPTU]|I[ELN]|G[BU]|B[EWZ]|A[SU])|s[\p{Pc}\p{Pd}]AR|l[\p{Pc}\p{Pd}]GR|o)|c(hr[\p{Pc}\p{Pd}]US|y[\p{Pc}\p{Pd}]GB|a[\p{Pc}\p{Pd}]ES)|(ses|khq)[\p{Pc}\p{Pd}]ML|(bem[\p{Pc}\p{Pd}]Z|my[\p{Pc}\p{Pd}]M|hy[\p{Pc}\p{Pd}]A|fr[\p{Pc}\p{Pd}]K|en[\p{Pc}\p{Pd}]J)M|ti[\p{Pc}\p{Pd}]E[RT]|ne[\p{Pc}\p{Pd}]NP|ja[\p{Pc}\p{Pd}]JP|so[\p{Pc}\p{Pd}]DJ|f(r[\p{Pc}\p{Pd}](T[DG]|R[EW]|M[CFGLQ]|LU|G[ANPQ]|DJ|C[ADF-IM]|B[EFIJL])|a[\p{Pc}\p{Pd}]AF)|(s(v[\p{Pc}\p{Pd}]F|l[\p{Pc}\p{Pd}]S)|fi[\p{Pc}\p{Pd}]F)I|(tr[\p{Pc}\p{Pd}]T|pt[\p{Pc}\p{Pd}]B|ko[\p{Pc}\p{Pd}]K|hr[\p{Pc}\p{Pd}]H|f(r[\p{Pc}\p{Pd}]F|a[\p{Pc}\p{Pd}]I))R|d(e[\p{Pc}\p{Pd}]L[IU]|a[\p{Pc}\p{Pd}]DK)|(kw|gv)[\p{Pc}\p{Pd}]GB|(gl|eu)[\p{Pc}\p{Pd}]ES|(r[ou][\p{Pc}\p{Pd}]M|id[\p{Pc}\p{Pd}]I)D|(sq[\p{Pc}\p{Pd}]A|pl[\p{Pc}\p{Pd}]P|nl[\p{Pc}\p{Pd}]N|kl[\p{Pc}\p{Pd}]G|he[\p{Pc}\p{Pd}]I)L|(ms[\p{Pc}\p{Pd}]M|el[\p{Pc}\p{Pd}]C)Y|b(n[\p{Pc}\p{Pd}]BD|m[\p{Pc}\p{Pd}]ML|e[\p{Pc}\p{Pd}]BY)|(so[\p{Pc}\p{Pd}]E|pt[\p{Pc}\p{Pd}]P|om[\p{Pc}\p{Pd}]E|mt[\p{Pc}\p{Pd}]M|lt[\p{Pc}\p{Pd}]L|it[\p{Pc}\p{Pd}]I|en[\p{Pc}\p{Pd}]T|de[\p{Pc}\p{Pd}]A)T|t(zm|eo?|r|o|i|h|a)|n(aq|[bdeln])|m(fe|as|[gksty])|k(ok|n)|g(sw|u|a)|f(il?|[or]|f|a)|saq|mer|lu[oy]|k(ln|am|i)|guz|ebu|d(av?|e)|haw|nyn|xog|c(hr|gg|[sy]|a)|ses|khq|b(em?|[gm-os])|vun|r(wk|of)|lag|kde|jmc|bez|vi|r[ouw]|om|sn|sw|l[tv]|ja|yo|i[dgist]|or|m[lr]|rm|e[elnst]|kw|gv|lg|gl|eu)\b
+                    name: support.type.locale.trin
+                  - match: \b\w+([\p{Pc}\p{Pd}]\w+)*\b
+                    name: support.type.locale.custom.trin
+          - begin: (\($)\s*(\p{L}+)\s*(:)?
+            end: \s*(\))
+            name: meta.group.script.trin
+            captures:
+              1: {name: punctuation.definition.group.flag.trin}
+              3: {name: punctuation.separator.colon.trin}
+              2:
+                patterns:
+                  - match: (?i)\b(Z(zzz|yyy|sy[em])|Visp|T(ha[ai]|al[eu])|S(yr[cejn]|og[do]|in[dh])|Qa[a-z][a-z]|(Zxx|Xsu)x|Ph(nx|l[ipv])|M(e(r[co]|df)|an[di])|Sar[ab]|L(in[ab]|at[fgn])|(Wol|Osg|Lek)e|(Ran|Mah)j|K(ore|hoj)|(Pau|Mar|Lep)c|Jurc|S(ha|gn)w|H(mn[gp]|luw|an[bgiost])|(Z(mt|in)|Vit|Tir|Ork)h|G(o(th|n[gm])|eo[kr])|Egy[dhp]|(Tam|Kpe|Ita)l|(Tns|Sor|O(sm|ry)|New|Ma[ky]|L(om|an)|K(nd|an)|Jav|War|Hir|Elb)a|D(upl|eva)|Kit[ls]|(P(si|cu)|Moo|Jpa|Gra)n|(Uga|Tak|Sa[mu]|Run|Mym|Kh[am]|H(eb|at)|Guj|Oug|Dog)r|C(yr[ls]|pmn|her)|(S(un|id|hr)|P(lr|iq)|Nan|Men)d|(Xpe|Wch|Tot|S(yl|oy)|Ror|Nko|Mro|Lao|Jam)o|(T(gl|en|an)|Roh|Pha|Mon|Gla)g|(Tf|Rj|Hu)ng|(Ind|C(hr|an))s|(Tel|Nsh|Lis|Gur)u|(Y(ez|ii)|Vai|Shu|Prt|M(te|od)|Ly[cd]|Kal|Kth|Eth|Car)i|B(uhd|ra[hi]|opo|eng|(li|hk)s|ugi|a(ss|mu|li))|(T(ib|av)|Nba|Mul|Hrk|Dsr|C(pr|op|ir))t|(Zan|Tag|N(k[dg]|ar)|Lim)b|(Olc|Gre|Bat)k|Diak|(P(e[lr]|al)|Oga|Mly|Ely|C(ha|ak))m|A(vst|r(m[in]|a[bn])|ghb|fak|hom|dlm))\b
+                    name: support.type.script.trin
+                  - match: \w+
+                    name: support.type.script.custom.trin
+    patterns:
+      - include: "#string-escapes"
+      - include: "#unicode-scripts"
+      - include: "#regexp-patterns"
+
+  # Symbols
+
   symbols:
     match: |
       (?x)
@@ -1074,6 +1134,9 @@ repository:
           - include: "#constants"
           - include: "#numbers"
           - include: "#string-content"
+
+  # Label keys 
+  # TODO: Add function labels too
 
   labels:
     patterns:
@@ -1096,6 +1159,8 @@ repository:
               - include: "#string-content"
           2: {name: punctuation.separator.key-value.trin}
 
+  # Regular expressions
+  
   regexps:
     patterns:
       - begin: (\p{Alnum}*)(`)\s*
@@ -1327,7 +1392,7 @@ repository:
                   1: {name: punctuation.definition.group.call-out.trin}
                   2: {name: keyword.operator.range.trin}
                   3: {name: punctuation.definition.tag.trin}
-                  4: {patterns: [include: "#function-entities"]}
+                  4: {patterns: [include: "#function-names"]}
                   5: {name: punctuation.definition.tag.trin}
                 patterns:
                   - include: $self
@@ -1796,6 +1861,155 @@ repository:
         match: '&\s*+;'
         name: invalid.illegal.bad-ampersand.trin
 
+  # Comments
+
+  comments:
+    patterns:
+      - include: "#block-comments"
+      - include: "#line-comments"
+
+  block-comments:
+    patterns:
+      - begin: \s*((/\+\+))
+        end: (\s*(\+/))
+        name: comment.block.documentation.nested.trin
+        captures:
+          1: {name: comment.block.documentation.trin}
+          2: {name: punctuation.definition.comment.trin}
+        patterns:
+          - include: "#jsdoc"
+          - include: text.html.markdown#inline
+          - include: "#nested-block-jsdoc"
+      - begin: \s*((/\+))
+        end: (\s*(\+/))
+        name: comment.block.nested.trin
+        captures:
+          1: {name: comment.block.nested.trin}
+          2: {name: punctuation.definition.comment.trin}
+        patterns:
+          - include: text.html.markdown#inline
+          - include: "#nested-block"
+      - begin: \s*((/\*\*))
+        end: (\s*(\*/))
+        name: comment.block.documentation.trin
+        captures:
+          1: {name: comment.block.documentation.trin}
+          2: {name: punctuation.definition.comment.trin}
+        patterns:
+          - include: "#jsdoc"
+          - include: text.html.markdown#inline
+      - begin: \s*((/\*))
+        end: (\s*(\*/))
+        name: comment.block.trin
+        captures:
+          1: {name: comment.block.trin}
+          2: {name: punctuation.definition.comment.trin}
+        patterns:
+          - include: text.html.markdown#inline
+
+  line-comments:
+    patterns:
+      - begin: ((^\s*)|\s*)((//=))
+        end: \s*$
+        name: comment.line.special.trin
+        beginCaptures:
+          2: {name: punctuation.whitespace.comment.leading.trin}
+          3: {name: comment.line.special.trin}
+          4: {name: punctuation.definition.comment.trin}
+        endCaptures:
+          1: {name: punctuation.definition.comment.trin}
+        patterns:
+          - include: "#comment-special"
+          - include: text.html.markdown#inline
+      - begin: ((^\s*)|\s*)((//\+))
+        end: \s*$
+        name: comment.line.playground.trin
+        beginCaptures:
+          2: {name: punctuation.whitespace.comment.leading.trin}
+          3: {name: comment.line.playground.trin}
+          4: {name: punctuation.definition.comment.trin}
+        endCaptures:
+          0: {name: comment.line.playground.trin}
+        patterns:
+          - include: "#jsdoc"
+          - include: text.html.markdown#inline
+      - begin: ((^\s*)|\s*)((///))
+        end: \s*$
+        name: comment.line.documentation.trin
+        beginCaptures:
+          2: {name: punctuation.whitespace.comment.leading.trin}
+          3: {name: comment.line.documentation.trin}
+          4: {name: punctuation.definition.comment.trin}
+        endCaptures:
+          0: {name: comment.line.documentation.trin}
+        patterns:
+          - include: "#jsdoc"
+          - include: text.html.markdown#inline
+      - begin: ((^\s*)|\s*)((//!|\A#!))
+        end: \s*$
+        name: comment.line.shebang.trin
+        beginCaptures:
+          2: {name: punctuation.whitespace.comment.leading.trin}
+          3: {name: comment.line.shebang.trin}
+          4: {name: punctuation.definition.comment.trin}
+        endCaptures:
+          0: {name: comment.line.shebang.trin}
+        patterns:
+          - include: text.html.markdown#inline
+      - begin: ((^\s*)|\s*)((//\*))
+        end: \s*$
+        name: comment.line.doctype.trin
+        beginCaptures:
+          2: {name: punctuation.whitespace.comment.leading.trin}
+          3: {name: comment.line.doctype.trin}
+          4: {name: punctuation.definition.comment.trin}
+        endCaptures:
+          0: {name: comment.line.doctype.trin}
+        patterns:
+          - include: text.html.markdown#inline
+      - begin: ((^\s*)|\s*)((//))
+        end: \s*$
+        name: comment.line.number-sign.trin
+        beginCaptures:
+          2: {name: punctuation.whitespace.comment.leading.trin}
+          3: {name: comment.line.double-slash.trin}
+          4: {name: punctuation.definition.comment.trin}
+        endCaptures:
+          0: {name: comment.line.number-sign.trin}
+        patterns:
+          - include: text.html.markdown#inline
+
+  nested-block-jsdoc:
+    begin: (/\+\+)\s*
+    end: \s*(\+/)
+    name: comment.block.documentation.nested.trin
+    captures:
+      1: {name: punctuation.definition.comment.trin}
+    patterns:
+      - include: "#jsdoc"
+      - include: text.html.markdown#inline
+      - include: "#nested-block-jsdoc"
+
+  nested-block:
+    begin: (/\+)\s*
+    end: \s*(\+/)
+    name: comment.block.nested.trin
+    captures:
+      1: {name: punctuation.definition.comment.trin}
+    patterns:
+      - include: text.html.markdown#inline
+      - include: "#nested-block"
+
+  nested-special:
+    begin: (/\+)\s*
+    end: \s*(\+/)
+    captures:
+      1: {name: punctuation.definition.comment.trin}
+    patterns:
+      - include: "#jsdoc"
+      - include: text.html.markdown#inline
+      - include: "#nested-special"
+
   jsdoc:
     patterns:
       - include: "#jsdoc-inline-tags"
@@ -1962,150 +2176,7 @@ repository:
         name: string.jsdoc
         match: \"(\\"|[^"])*"|'(\\'|[^'])*'
 
-  comments:
-    patterns:
-      - include: "#block-comments"
-      - include: "#line-comments"
-
-  block-comments:
-    patterns:
-      - begin: \s*((/\+\+))
-        end: (\s*(\+/))
-        name: comment.block.documentation.nested.trin
-        captures:
-          1: {name: comment.block.documentation.trin}
-          2: {name: punctuation.definition.comment.trin}
-        patterns:
-          - include: "#jsdoc"
-          - include: text.html.markdown#inline
-          - include: "#nested-block-jsdoc"
-      - begin: \s*((/\+))
-        end: (\s*(\+/))
-        name: comment.block.nested.trin
-        captures:
-          1: {name: comment.block.nested.trin}
-          2: {name: punctuation.definition.comment.trin}
-        patterns:
-          - include: text.html.markdown#inline
-          - include: "#nested-block"
-      - begin: \s*((/\*\*))
-        end: (\s*(\*/))
-        name: comment.block.documentation.trin
-        captures:
-          1: {name: comment.block.documentation.trin}
-          2: {name: punctuation.definition.comment.trin}
-        patterns:
-          - include: "#jsdoc"
-          - include: text.html.markdown#inline
-      - begin: \s*((/\*))
-        end: (\s*(\*/))
-        name: comment.block.trin
-        captures:
-          1: {name: comment.block.trin}
-          2: {name: punctuation.definition.comment.trin}
-        patterns:
-          - include: text.html.markdown#inline
-
-  line-comments:
-    patterns:
-      - begin: ((^\s*)|\s*)((//=))
-        end: \s*$
-        name: comment.line.special.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.special.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          1: {name: punctuation.definition.comment.trin}
-        patterns:
-          - include: "#comment-special"
-          - include: text.html.markdown#inline
-      - begin: ((^\s*)|\s*)((//\+))
-        end: \s*$
-        name: comment.line.playground.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.playground.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          0: {name: comment.line.playground.trin}
-        patterns:
-          - include: "#jsdoc"
-          - include: text.html.markdown#inline
-      - begin: ((^\s*)|\s*)((///))
-        end: \s*$
-        name: comment.line.documentation.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.documentation.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          0: {name: comment.line.documentation.trin}
-        patterns:
-          - include: "#jsdoc"
-          - include: text.html.markdown#inline
-      - begin: ((^\s*)|\s*)((//!|\A#!))
-        end: \s*$
-        name: comment.line.shebang.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.shebang.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          0: {name: comment.line.shebang.trin}
-        patterns:
-          - include: text.html.markdown#inline
-      - begin: ((^\s*)|\s*)((//\*))
-        end: \s*$
-        name: comment.line.doctype.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.doctype.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          0: {name: comment.line.doctype.trin}
-        patterns:
-          - include: text.html.markdown#inline
-      - begin: ((^\s*)|\s*)((//))
-        end: \s*$
-        name: comment.line.number-sign.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.double-slash.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          0: {name: comment.line.number-sign.trin}
-        patterns:
-          - include: text.html.markdown#inline
-
-  nested-block-jsdoc:
-    begin: (/\+\+)\s*
-    end: \s*(\+/)
-    name: comment.block.documentation.nested.trin
-    captures:
-      1: {name: punctuation.definition.comment.trin}
-    patterns:
-      - include: "#jsdoc"
-      - include: text.html.markdown#inline
-      - include: "#nested-block-jsdoc"
-  nested-block:
-    begin: (/\+)\s*
-    end: \s*(\+/)
-    name: comment.block.nested.trin
-    captures:
-      1: {name: punctuation.definition.comment.trin}
-    patterns:
-      - include: text.html.markdown#inline
-      - include: "#nested-block"
-  nested-special:
-    begin: (/\+)\s*
-    end: \s*(\+/)
-    captures:
-      1: {name: punctuation.definition.comment.trin}
-    patterns:
-      - include: "#jsdoc"
-      - include: text.html.markdown#inline
-      - include: "#nested-special"
+  # Function and method calls
 
   calls:
     patterns:
@@ -2131,7 +2202,7 @@ repository:
           |if|lest|elif|elest|else|then
           |for|each|loop|while|until|from|with
           |do|redo|try|retry|throw|catch|finally
-          |switch|case|default|match|when|otherwise
+          |switch|case|default|match|when|pass
           |unison|series|spawn|kill|fix|lock
           |break|continue|return|await|label|yield|goto
           |import|export|impose|expose|using
@@ -2157,7 +2228,7 @@ repository:
           |if|lest|elif|elest|else|then
           |for|each|loop|while|until|from|with
           |do|redo|try|retry|throw|catch|finally
-          |switch|case|default|match|when|otherwise
+          |switch|case|default|match|when|pass
           |unison|series|spawn|kill|fix|lock
           |break|continue|return|await|label|yield|goto
           |import|export|impose|expose|using
@@ -2166,7 +2237,7 @@ repository:
           )
           [\w]+|\[(?!<)|<\|(?!>)(?=\|*)|<\+(?!>)(?=\+*))
         captures:
-          1: {patterns: [include: "#function-entities"]}
+          1: {patterns: [include: "#function-names"]}
       - comment: |
           Function calls
           For testing only:
@@ -2189,7 +2260,7 @@ repository:
           |if|lest|elif|elest|else|then
           |for|each|loop|while|until|from|with
           |do|redo|try|retry|throw|catch|finally
-          |switch|case|default|match|when|otherwise
+          |switch|case|default|match|when|pass
           |unison|series|spawn|kill|fix|lock
           |break|continue|return|await|label|yield|goto
           |import|export|impose|expose|using
@@ -2205,49 +2276,22 @@ repository:
           (?:[!?~]?\.=?|[?!:]:=?)?\s+<[\p{Pc}\p{L}]
           )
         captures:
-          1: {patterns: [include: "#function-entities"]}
+          1: {patterns: [include: "#function-names"]}
 
-  function-entities:
+  placeholder-variables:
     patterns:
-      - match: |
-          (?x)\b(?:
-          (?<=[!?~]?\.=?|[?!:]:=?)(?<!\.\.+)
-          (?:# Properties (note all properties are by default, symbols)
-          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
-          ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
-          ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-          ([\p{Pc}\p{L}]\w*)
-          )
-          |
-          (?:# Objects and maps
-          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
-          ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
-          ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-          ([\p{Pc}\p{L}]\w*)
-          )
-          (?!\.\.+)(?=[!?~]?\.=?|[?!:]:=?|\#?\[)
-          |
-          (?:# Regular variables
-          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\w&&\P{Pc}]*\p{Pc}+)|
-          ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
-          ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-          ([\p{Pc}\p{L}]\w*)
-          )
-          )\b
-        captures:
-          1: {name: entity.name.tag.trin}
-          2: {name: entity.name.tag.trin support.class.component.trin}
-          3: {name: entity.name.class.builtin.trin}
-          4: {name: entity.name.function.method.trin}
-          5: {name: variable.other.global.trin}
-          6: {name: variable.other.constant.object.trin}
-          7: {name: variable.other.conditional.trin}
-          8: {name: variable.other.object.trin}
-          9: {name: entity.name.function.tagged-template.trin}
-          10: {name: entity.name.type.trin}
-          11: {name: entity.name.class.trin}
-          12: {name: entity.name.function.trin}
-      - include: $self
+      - match: (?i)\s*\?[\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.optional.trin
+      - match: (?i)\s*\*[\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.spread.trin
+      - match: (?i)\s*[&~][\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.name.trin
+      - match: (?i)\s*\%[\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.reference.trin
+      - match: (?i)\s*\$[\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.other.trin
+      - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*
+        name: variable.parameter.trin
 
   variables:
     comment: |
@@ -2552,7 +2596,7 @@ repository:
               |if|lest|elif|elest|else|then
               |for|each|loop|while|until|from|with
               |do|redo|try|retry|throw|catch|finally
-              |switch|case|default|match|when|otherwise
+              |switch|case|default|match|when|pass
               |unison|series|spawn|kill|fix|lock
               |break|continue|return|await|label|yield|goto
               |import|export|impose|expose|using
@@ -2586,7 +2630,7 @@ repository:
                   |if|lest|elif|elest|else|then
                   |for|each|loop|while|until|from|with
                   |do|redo|try|retry|throw|catch|finally
-                  |switch|case|default|match|when|otherwise
+                  |switch|case|default|match|when|pass
                   |unison|series|spawn|kill|fix|lock
                   |break|continue|return|await|label|yield|goto
                   |import|export|impose|expose|using
@@ -2695,7 +2739,7 @@ repository:
       |if|lest|elif|elest|else|then
       |for|each|loop|while|until|from|with
       |do|redo|try|retry|throw|catch|finally
-      |switch|case|default|match|when|otherwise
+      |switch|case|default|match|when|pass
       |unison|series|spawn|kill|fix|lock
       |break|continue|return|await|label|yield|goto
       |import|export|impose|expose|using
@@ -2926,27 +2970,6 @@ repository:
 
   support:
     patterns:
-      - comment: Swift
-      - include: source.swift#builtin-properties
-      - include: source.swift#builtin-types
-      - include: source.swift#builtin-functions
-
-      - comment: JavaScript
-      - include: source.js#support-objects
-      - include: "#support-js"
-
-      - comment: Python
-      - include: source.python#builtin-functions
-      - include: source.python#builtin-types
-      - include: source.python#magic-function-names
-      - include: source.python#magic-variable-names
-
-      - comment: PHP
-      - include: source.php#support
-      - include: source.php#class-builtin
-      - include: "#support-php"
-
-      - comment: Other (coming soon!)
 
   parameter-brackets:
     begin: \s*(\()
@@ -3627,7 +3650,7 @@ repository:
       |if|lest|elif|elest|else|then
       |for|each|loop|while|until|from|with
       |do|redo|try|retry|throw|catch|finally
-      |switch|case|default|match|when|otherwise
+      |switch|case|default|match|when|pass
       |unison|series|spawn|kill|fix|lock
       |break|continue|return|await|label|yield|goto
       |import|export|impose|expose|using

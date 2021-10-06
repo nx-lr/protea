@@ -971,17 +971,17 @@ You can use any value as the key of a map, but variables are not expressed.
 assert "a" == { a: "a" }.a
 ```
 
-You can access properties on maps by using dot notation for most cases, as with regular strings and more.
-You can access properties on maps by using dots or angle brackets.
+You can access properties on maps and objects by using angle-bracket or dot-notation; you can do this with regular string literals numbers, and even more.
 
 ```dart
-map.'text-align' = 'right'
-map['text-align'] = 'center'
+x.'text-align' = 'right'
+x['text-align'] = 'center'
 
-assert map?.'font-size'
+assert x?.'font-size' // Optional chaining
+x!.'font-size'! // Raises an error since x.'font-size' is null
 
 // Use angle brackets for property expressions
-map['font' ++ '-' ++ 'size'] = (import Web.CSS)?:px(30)
+x['font' ++ '-' ++ 'size'] = Web.Css.px 30
 ```
 
 ### Symbols
@@ -989,30 +989,25 @@ map['font' ++ '-' ++ 'size'] = (import Web.CSS)?:px(30)
 In Trinity, symbols are basically an object representation of either an identifier or operator. They begin with `:` and are otherwise the same as backslash string literals except that they begin with a colon instead of a backslash.
 
 ```dart
-const aSymbol: Sym['aSymbol'] = :aSymbol
+const aSymbol: Sym.'aSymbol' = :aSymbol
 assert aSymbol = Sym'aSymbol'
 ```
 
 Symbols are opaque and dynamic string names that cannot be changed and remains constant throughout compile time. It can be used for reflecting the metadata on a type, such as a library or class.
 
-### 3ML.
+### 3ML
 
-Trinity supports an inline version of HTML markup called _3ML_. It's slightly different than JSX, ERB, HAML. It's a templating language built into Trinity, and like many of Trinity's DSLs it comes with the full power of Trinity.
+Trinity supports an inline version of HTML markup called _3ML_. It's slightly different than JSX, ERB, HAML and other templating languages.
 
-We recommend using TrinML with React, Angular or Vue to describe what the UI in your application should look like.
+You can use 3ML with any framework including React, Angular or Vue, to describe what the UI in your application should look like, and for it to communicate with the underlying middleware and backend.
 
-But first, here's something you need to know.
-
-Here's a sample HTML snippet.
-
-```html
-<h1 class="blue-heading" style="color:blue;">A Blue Heading</h1>
-```
-
-CSS selectors such as `.class` and `#id` are first-class.
+It's a templating language built into Trinity, and like many of Trinity's DSLs it comes with the full power of Trinity.
 
 ```dart
-<div body:class #id>${child1} ${child2}</div>
+<iframe
+  src=https://www.w3schools.com
+  title="W3Schools Free Online Web Tutorials">
+</iframe>
 ```
 
 ## Operators
