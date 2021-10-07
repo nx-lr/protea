@@ -1158,7 +1158,7 @@ repository:
 
   regexps:
     patterns:
-      - begin: (?<!`+)(\p{Alnum}*)(`+)\s*
+      - begin: (\p{Alnum}*)(?<!`+)(`{3,})\s*
         end: \s*(?!\\)(\2(?!`+))(\p{Alnum}*)
         contentName: string.pattern.regexp.trin
         beginCaptures:
@@ -1170,11 +1170,32 @@ repository:
         patterns:
           - include: "#comments"
           - include: "#regexp-patterns"
-          - begin: (`+)\s*
+          - begin: (`{2,})\s*
             end: \s*(?=(?!\\)\1)
             contentName: string.replace.regexp.trin
             beginCaptures:
               1: {name: punctuation.section.regexp.end.trin}
+            patterns:
+              - include: "#back-references"
+              - include: "#string-content"
+      - begin: (\p{Alnum}*)(`)\s*
+        end: \s*(?!\\)(`(?!`))(\p{Alnum}*)
+        contentName: string.pattern.regexp.trin
+        beginCaptures:
+          1: {name: keyword.modifier.trin}
+          2: {name: punctuation.section.regexp.begin.trin}
+        endCaptures:
+          1: {name: punctuation.section.regexp.end.trin}
+          2: {name: keyword.other.flag.trin}
+        patterns:
+          - include: "#comments"
+          - include: "#regexp-patterns"
+          - begin: (`)(`)\s*\n?
+            end: \s*(?=(?!\\)`)
+            contentName: string.replace.regexp.trin
+            beginCaptures:
+              1: {name: punctuation.section.regexp.end.trin}
+              2: {name: punctuation.section.regexp.begin.trin}
             patterns:
               - include: "#back-references"
               - include: "#string-content"
