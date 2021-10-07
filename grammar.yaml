@@ -353,11 +353,11 @@ repository:
           6: {name: constant.language.infinity.trin}
       - match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(?:
-          (it|this|that|super|self|target)
-          |(params)
-          |(ctor)
-          |(prot)
-          |(pro)
+          (it|this|that|super|self|target)#1
+          |(params)#2
+          |(ctor)#3
+          |(prot)#4
+          |(pro)#5
           )\b\s*
         captures:
           1: {name: variable.language.$1.trin}
@@ -1158,8 +1158,8 @@ repository:
 
   regexps:
     patterns:
-      - begin: (\p{Alnum}*)(`)\s*
-        end: \s*(?!\\)(`(?!`))(\p{Alnum}*)
+      - begin: (?<!`+)(\p{Alnum}*)(`+)\s*
+        end: \s*(?!\\)(\2(?!`+))(\p{Alnum}*)
         contentName: string.pattern.regexp.trin
         beginCaptures:
           1: {name: keyword.modifier.trin}
@@ -1170,12 +1170,11 @@ repository:
         patterns:
           - include: "#comments"
           - include: "#regexp-patterns"
-          - begin: (`)(`)\s*\n?
-            end: \s*(?=(?!\\)`)
+          - begin: (`+)\s*
+            end: \s*(?=(?!\\)\1)
             contentName: string.replace.regexp.trin
             beginCaptures:
               1: {name: punctuation.section.regexp.end.trin}
-              2: {name: punctuation.section.regexp.begin.trin}
             patterns:
               - include: "#back-references"
               - include: "#string-content"
@@ -1604,13 +1603,13 @@ repository:
             name: constant.character.control.trin
           - match: *posix-class
             name: constant.other.character-class.posix.trin
-          - match: (?i)\\p(c[cfos]?|l[lmotu]?|m[cen]?|n[dlo]?|p[c-fios]?|s[ckmo]?|z[lps])
+          - match: (?i)\\p(c[cfos]?|l[motlu]?|m[cen]?|n[dlo]?|p[c-fios]?|s[mock]?|z[lps])
             name: constant.other.character-class.unicode.trin
           - match: (?i)\\[ci]
             name: constant.other.character-class.xml.trin
-          - match: (?x)\\[dhlns-w]
+          - match: (?x)\\[a-z]
             name: constant.other.character-class.trin
-          - match: (?x)\\[DHLNS-W]
+          - match: (?x)\\[A-Z]
             name: constant.other.character-class.negated.trin
           - match: (?i)\\n{[\w\s]+}
             name: constant.character.escape.unicode.name.trin
