@@ -374,16 +374,16 @@ repository:
         name: punctuation.separator.decimal.period.trin
       - match: |
           (?ix)\s*\b
-          ((?:[2-9]|[1-9]\d+)b)# radix prefix
-          (?:\p{Alnum}+(?:_*\p{Alnum}+)*)# integer/numerator
+          ((?:[2-9]|[1-9]\d+)b)# radix/base prefix
+          (?:\p{Alnum}+(?:_*\p{Alnum}+)*)# integer & numerator part
           (?:
-          (\.)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)?(?:# fractional
-          (\~)(?:\p{Alnum}+(?:_*\p{Alnum}+)*))?|# repeating
-          (\/)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)# denominator
+          (\.)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)?(?:# fractional part
+          (\~)(?:\p{Alnum}+(?:_*\p{Alnum}+)*))?|# repeating part
+          (\/)(?:\p{Alnum}+(?:_*\p{Alnum}+)*)# denominator part
           )?
-          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponential part
+          (\=\d+)?# significant figure part
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.trin}
@@ -404,8 +404,8 @@ repository:
           ()# denominator
           )
           (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\=\d+)?# significant
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.trin}
@@ -418,16 +418,16 @@ repository:
           7: {name: storage.type.numeric.trin}
       - match: |
           (?ix)\s*\b
-          (0b)# radix prefix
-          (?:[01]+(?:_*[01]+)*)# integer/numerator
+          (0b)# radix/base prefix
+          (?:[01]+(?:_*[01]+)*)# integer & numerator part
           (?:
-          (\.)(?:[01]+(?:_*[01]+)*)?(?:# fractional
-          (\~)(?:[01]+(?:_*[01]+)*))?|# repeating
-          (\/)(?:[01]+(?:_*[01]+)*)# denominator
+          (\.)(?:[01]+(?:_*[01]+)*)?(?:# fractional part
+          (\~)(?:[01]+(?:_*[01]+)*))?|# repeating part
+          (\/)(?:[01]+(?:_*[01]+)*)# denominator part
           )?
-          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponential part
+          (\=\d+)?# significant figure part
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.binary.trin}
@@ -448,8 +448,8 @@ repository:
           ()# denominator
           )
           (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\=\d+)?# significant
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.binary.trin}
@@ -462,16 +462,16 @@ repository:
           7: {name: storage.type.numeric.trin}
       - match: |
           (?ix)\s*\b
-          (0q)# radix prefix
-          (?:[0-3]+(?:_*[0-3]+)*)# integer/numerator
+          (0q)# radix/base prefix
+          (?:[0-3]+(?:_*[0-3]+)*)# integer & numerator part
           (?:
-          (\.)(?:[0-3]+(?:_*[0-3]+)*)?(?:# fractional
-          (\~)(?:[0-3]+(?:_*[0-3]+)*))?|# repeating
-          (\/)(?:[0-3]+(?:_*[0-3]+)*)# denominator
+          (\.)(?:[0-3]+(?:_*[0-3]+)*)?(?:# fractional part
+          (\~)(?:[0-3]+(?:_*[0-3]+)*))?|# repeating part
+          (\/)(?:[0-3]+(?:_*[0-3]+)*)# denominator part
           )?
-          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponential part
+          (\=\d+)?# significant figure part
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.trin}
@@ -492,8 +492,8 @@ repository:
           ()# denominator
           )
           (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\=\d+)?# significant
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.trin}
@@ -506,16 +506,16 @@ repository:
           7: {name: storage.type.numeric.trin}
       - match: |
           (?ix)\s*\b
-          (0s)# radix prefix
-          (?:[0-5]+(?:_*[0-5]+)*)# integer/numerator
+          (0s)# radix/base prefix
+          (?:[0-5]+(?:_*[0-5]+)*)# integer & numerator part
           (?:
-          (\.)(?:[0-5]+(?:_*[0-5]+)*)?(?:# fractional
-          (\~)(?:[0-5]+(?:_*[0-5]+)*))?|# repeating
-          (\/)(?:[0-5]+(?:_*[0-5]+)*)# denominator
+          (\.)(?:[0-5]+(?:_*[0-5]+)*)?(?:# fractional part
+          (\~)(?:[0-5]+(?:_*[0-5]+)*))?|# repeating part
+          (\/)(?:[0-5]+(?:_*[0-5]+)*)# denominator part
           )?
-          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponential part
+          (\=\d+)?# significant figure part
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.senary.trin}
@@ -536,8 +536,8 @@ repository:
           ()# denominator
           )
           (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\=\d+)?# significant
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.senary.trin}
@@ -550,16 +550,16 @@ repository:
           7: {name: storage.type.numeric.trin}
       - match: |
           (?ix)\s*\b
-          (0o)# radix prefix
-          (?:[0-7]+(?:_*[0-7]+)*)# integer/numerator
+          (0o)# radix/base prefix
+          (?:[0-7]+(?:_*[0-7]+)*)# integer & numerator part
           (?:
-          (\.)(?:[0-7]+(?:_*[0-7]+)*)?(?:# fractional
-          (\~)(?:[0-7]+(?:_*[0-7]+)*))?|# repeating
-          (\/)(?:[0-7]+(?:_*[0-7]+)*)# denominator
+          (\.)(?:[0-7]+(?:_*[0-7]+)*)?(?:# fractional part
+          (\~)(?:[0-7]+(?:_*[0-7]+)*))?|# repeating part
+          (\/)(?:[0-7]+(?:_*[0-7]+)*)# denominator part
           )?
-          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponential part
+          (\=\d+)?# significant figure part
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.octal.trin}
@@ -580,8 +580,8 @@ repository:
           ()# denominator
           )
           (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\=\d+)?# significant
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.octal.trin}
@@ -594,16 +594,16 @@ repository:
           7: {name: storage.type.numeric.trin}
       - match: |
           (?ix)\s*\b
-          (0z)# radix prefix
-          (?:[\dab]+(?:_*[\dab]+)*)# integer/numerator
+          (0z)# radix/base prefix
+          (?:[\dab]+(?:_*[\dab]+)*)# integer & numerator part
           (?:
-          (\.)(?:[\dab]+(?:_*[\dab]+)*)?(?:# fractional
-          (\~)(?:[\dab]+(?:_*[\dab]+)*))?|# repeating
-          (\/)(?:[\dab]+(?:_*[\dab]+)*)# denominator
+          (\.)(?:[\dab]+(?:_*[\dab]+)*)?(?:# fractional part
+          (\~)(?:[\dab]+(?:_*[\dab]+)*))?|# repeating part
+          (\/)(?:[\dab]+(?:_*[\dab]+)*)# denominator part
           )?
-          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponential part
+          (\=\d+)?# significant figure part
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.trin}
@@ -624,8 +624,8 @@ repository:
           ()# denominator
           )
           (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\=\d+)?# significant
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.trin}
@@ -638,16 +638,16 @@ repository:
           7: {name: storage.type.numeric.trin}
       - match: |
           (?ix)\s*\b
-          (0x)# radix prefix
-          (?:\h+(?:_*\h+)*)# integer/numerator
+          (0x)# radix/base prefix
+          (?:\h+(?:_*\h+)*)# integer & numerator part
           (?:
-          (\.)(?:\h+(?:_*\h+)*)?(?:# fractional
-          (\~)(?:\h+(?:_*\h+)*))?|# repeating
-          (\/)(?:\h+(?:_*\h+)*)# denominator
+          (\.)(?:\h+(?:_*\h+)*)?(?:# fractional part
+          (\~)(?:\h+(?:_*\h+)*))?|# repeating part
+          (\/)(?:\h+(?:_*\h+)*)# denominator part
           )?
-          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponential part
+          (\=\d+)?# significant figure part
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.trin}
@@ -668,8 +668,8 @@ repository:
           ()# denominator
           )
           (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\=\d+)?# significant
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.trin}
@@ -682,16 +682,16 @@ repository:
           7: {name: storage.type.numeric.trin}
       - match: |
           (?ix)\s*\b
-          ()# radix prefix
-          (?:\d+(?:_*\d+)*)# integer/numerator
+          ()# radix/base prefix
+          (?:\d+(?:_*\d+)*)# integer & numerator part
           (?:
-          (\.)(?:\d+(?:_*\d+)*)?(?:# fractional
-          (\~)(?:\d+(?:_*\d+)*))?|# repeating
-          (\/)(?:\d+(?:_*\d+)*)# denominator
+          (\.)(?:\d+(?:_*\d+)*)?(?:# fractional part
+          (\~)(?:\d+(?:_*\d+)*))?|# repeating part
+          (\/)(?:\d+(?:_*\d+)*)# denominator part
           )?
-          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponential part
+          (\=\d+)?# significant figure part
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.trin}
@@ -712,8 +712,8 @@ repository:
           ()# denominator
           )
           (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\=\d+)?# significant
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.trin}
@@ -726,19 +726,19 @@ repository:
           7: {name: storage.type.numeric.trin}
       - match: |
           (?ix)\s*\b
-          (\d+(?=\w+))# radix prefix
-          (?:\w+(?:_*\w+)*)# integer/numerator
+          (\d+(?=\w+))# radix/base prefix
+          (?:\w+(?:_*\w+)*)# integer & numerator part
           (?:
-          (\.)(?:\w+(?:_*\w+)*)?(?:# fractional
-          (\~)(?:\w+(?:_*\w+)*))?|# repeating
-          (\/)(?:\w+(?:_*\w+)*)# denominator
+          (\.)(?:\w+(?:_*\w+)*)?(?:# fractional part
+          (\~)(?:\w+(?:_*\w+)*))?|# repeating part
+          (\/)(?:\w+(?:_*\w+)*)# denominator part
           )?
-          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponential part
+          (\=\d+)?# significant figure part
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
-          0: {name: invalid.illegal.numeric.trin}
+          0: {name: constant.numeric.illegal.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
           3: {name: constant.numeric.other.repeating.trin}
@@ -756,11 +756,11 @@ repository:
           ()# denominator
           )
           (\^[+-]?\d+|\*\d+\^[+-]?\d+)?# exponent
-          (=\d+)?# significant
-          (:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\=\d+)?# significant
+          (\:[\p{Pc}\p{L}]\w*)?# type suffix
           \b\s*
         captures:
-          0: {name: invalid.illegal.numeric.trin}
+          0: {name: constant.numeric.illegal.trin}
           1: {name: storage.type.numeric.trin}
           2: {name: punctuation.separator.decimal.period.trin}
           3: {name: constant.numeric.other.repeating.trin}
