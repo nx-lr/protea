@@ -9,15 +9,15 @@ def add2(x: Nat, y: Nat): Nat {
   return x + y;
 }
 
-add2(2, 3)     //5
-add2(x = 2, y = 3) //5
-add2(y = 2, 5)   //7
+add2(2, 3) // 5
+add2(x = 2, y = 3) // 5
+add2(y = 2, 5) // 7
 
-def allPositive(...args: List[Int]): Bool {
-  return args.allOf(|x| x >= 0i);
+def allPositive(*args: List[Int]): Bool {
+  return args.allOf(|x| x >= 0);
 }
 
-allPositive(1, 3, 4) //true
+allPositive(1, 3, 4) // true
 
 def doit(tup: [Int, Bool], rec: {f: Str, g: Int}): Int {
   return tup.0 + rec.g;
@@ -25,19 +25,17 @@ def doit(tup: [Int, Bool], rec: {f: Str, g: Int}): Int {
 
 doit([1, false], {f: "ok", g: 3}) // 4
 
-def sign(?x: Int=0): Int {
-  var y: Int;
-  if x in [null, 0] {
-    y = 0;
-  } else {
-    y = x > 0 ? 1 : -1;
+def sign(?x: Int = 0): Int {
+  return switch x {
+    case 0 | x => 0
+    case > 0 => 1
+    case < 0 => -1
   }
-  return y;
 }
 
-sign(5)    //1
-sign(-5)   //-1
-sign()     //0
+sign(5) // 1
+sign(-5) // -1
+sign() // 0
 ```
 
 ### Roadmap
@@ -325,7 +323,7 @@ def cmpIdent(a: Str, b: Str): Bool =>
 
 The following regular expression denotes all the keywords of the language, including those used for declarations, such as `var`.
 
-Keywords are grouped into three parts:
+Keywords are grouped into three:
 
 - expression, or "operator" keywords such as `1 to 10` or `x in arr`;
 - declaration keywords such as `var`, `def` and `elem`;
@@ -354,51 +352,15 @@ debug check assert fallthru
 
 ## Variables
 
-Trinity has four types of variables, all of which are block-scoped; the immutable `val` and `set`, and the mutable `var` and `let`. `let` and `set` declarations can be overridden in the same scope.
+[block scope]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block
+
+Trinity has four types of variables, all of which are [block-scoped][block scope]. Immutable means cannot be reassigned.
 
 ```dart
-val _val = 1 // immutable but not overridable
+val _val = 1 // immutable BUT NOT overridable
 set _val = 1 // immutable and overridable
-var _val = 1 // mutable but not overridable
+var _val = 1 // mutable BUT NOT overridable
 let _val = 1 // mutable and overridable
-```
-
-Immutable means cannot be reassigned. Overridable means can be redeclared. As for `set` and `let`, the binding you refer to is whatever's the closest upward.
-
-```dart
-val x = null
-val x = 2 //! Error: x already declared
-assert x != 2
-let x = null
-let x = 2 //! Works
-assert x == 2
-```
-
-You don't need to explicitly specify the types of each variable, the compiler is smart enough to infer them for you:
-
-```dart
-val s = 'Hello World!' // s is a `str`
-```
-
-You can also explicitly declare the variable type if you think it makes your code easier to read. All types are declared in `PascalCase`.
-
-```dart
-val s: Str = "hello"
-var i: Int = 42
-val c: RpgChar = new RpgChar("Riven Konte")
-```
-
-As a practical matter it can help to explicitly show the type when you're working with third-party libraries, especially if you don't use the library often, or if their method names don't make the type clear.
-
-A new `var` or `val` in a closure declares a new variable temporarily in that closure, _shadowing_ it.
-
-```dart
-val a = 1
-do {
-  val a = 2
-  print a //= 2
-}
-print a //= 1
 ```
 
 The keywords `set` and `let` behave like `var` and `val` respectively, but you can redefine `set` and `let` fields in the same block, overshadowing them. So you can write this too:
@@ -409,9 +371,37 @@ set a = \b // a is now \a
 let a = \c // a is now \c
 ```
 
+You cannot shadow (override) a `var` or `val`. If you want shadowing behavior, use the keywords `let` or `set`.
+
+```dart
+val a = 1
+do {
+  set a = 2
+  print a //! Error: a already declared
+}
+print a //= 1
+```
+
+You don't need to explicitly specify the types of each variable, the compiler is smart enough to infer them for you:
+
+```dart
+val s = 'Hello World!' // s is a `str`
+```
+
+You can also explicitly declare the variable type if you think it makes your code easier to read. All types are declared in `PascalCase`. If you're working with third-party libraries, you can and should use explicit type annotations.
+
+> Type annotations are actually literals.
+
+```dart
+val s: Str = "hello"
+var i: Int = 42
+val c: Sym = Sym'$i'
+```
+
 Use `:=` instead to set a property on an object or data structure as opposed to a variable.
 
 ```dart
+
 let ct = #{} // A mutable map
 ct.foo := 42 // ct == #{foo: 42}
 let ct = {}
@@ -496,12 +486,16 @@ nan; infin // special float constants
 
 ### Null
 
-`Null` is a single value used to represent the absence of a value.
-Same for `void`. `null` is equal to void by value, but not by reference. `void` compiles to JS `undefined`, `null` compiles to its JS counterpart.
+`Null` is a single value used to represent the absence of a value. Same for `void`. `null` is equal to `void` by value, but not by reference.
+
+`void` compiles to JS `undefined`, `null` compiles to its JS counterpart.
 
 ```dart
 null == void //= true
+null === void //= false
 ```
+
+You would use `null`
 
 ### Booleans
 
@@ -567,7 +561,18 @@ We also provide a multi-base numeric literal, where the digits themselves are se
 assert 0xdead_beef == 16b13_14_10_13__11_14_14_15
 ```
 
+Special float constants involve `nan` (not a number) and `infin` (infinity).
+
+```dart
+nan
+infin
+```
+
 Numbers have the grammar:
+
+```dart
+
+```
 
 ### Strings
 
@@ -692,17 +697,10 @@ Single-line backslash strings can contain any character except `.,:;(){}[]` or w
 assert \ == '' // A single backslash is an empty string
 assert \just-a-string == 'just-a-string'
 assert \just\ a\ string == 'just a string'
-assert \\  == ' ' // the space is escaped!
+assert \\  == ' ' // the space is escaped
 ```
 
 Block strings start with either `\|` or `\>` and work very similar to their YAML counterparts. The same rules apply to block strings, but require that every line after it be indented by at least a single whitespace character, maintaining that indentation throughout.
-
-```yaml
-x: |
-  line 1
-    line 2
-    line 3
-```
 
 ```dart
 let string = \|
@@ -796,144 +794,6 @@ let invalidRe = `($x)`e //! Error: Invalid regex: unterminated character set
 let validRe = `($x)``$1 $2`
 assert validRe == `(\[\\da-z)`
 ```
-
-#### RegExp Syntax
-
-##### Basic Metacharacters
-
-| Character                | Purpose                                 |
-| ------------------------ | --------------------------------------- |
-| `\x` where x is a symbol | escapes symbols                         |
-| `\|`                     | alternation                             |
-| `( )`                    | group                                   |
-| `[ ]`                    | character class                         |
-| `[^]`                    | negated character class                 |
-| `{n,m}`                  | quantifier (explained in next section)  |
-| `\x{p}`                  | modifies an escape                      |
-| `*`                      | none or more times                      |
-| `+`                      | one or more times                       |
-| `?`                      | none or once                            |
-| `^`                      | beginning of line                       |
-| `$`                      | end of line                             |
-| `.`                      | wildcard (any character except newline) |
-
-##### Quantifiers
-
-| Characters | Meaning                        |
-| ---------- | ------------------------------ |
-| `{n}`      | Match exactly _n_ times        |
-| `{n,}`     | Match at least _n_ times       |
-| `{,n}`     | Match at most _n_ times        |
-| `{m,n}`    | Match between _m_ to _n_ times |
-
-| Modifier | Examples   | Meaning                                     |
-| -------- | ---------- | ------------------------------------------- |
-| `?`      | `*?`       | Not greedy; returns shortest possible match |
-| `+`      | `++`, `*+` | Give nothing back (does not backtrack)      |
-| `*`      | `**`, `+*` | Greedy; returns longest possible match      |
-
-##### Character escapes
-
-| Characters                | Negation | Purpose                                         |
-| ------------------------- | -------- | ----------------------------------------------- |
-| `\p`                      | `\P`     | platform specific newline                       |
-| `\r`                      | `\R`     | carriage return                                 |
-| `\n`                      | `\N`     | line feed (or newline)                          |
-| `\f`                      | `\F`     | form feed                                       |
-| `\t`                      | `\T`     | horizontal tabulator                            |
-| `\v`                      | `\V`     | vertical tabulator                              |
-| `\a`                      | `\A`     | alert (inside `[]`)                             |
-| `\c`                      | `\C`     | backspace (inside `[]`)                         |
-| `\e`                      | `\E`     | escape (inside `[]`)                            |
-| `\s`                      | `\S`     | space (inside `[]`)                             |
-| `\d`                      | `\D`     | decimal digit                                   |
-| `\w`                      | `\W`     | Unicode character                               |
-| `\pP`, `\pPr`, `\p{Prop}` | `\P`     | Unicode character category or property selector |
-| `\c`, `\c{lang}`          | `\C`     | Leading character of identifier                 |
-| `\i`, `\i{lang}`          | `\I`     | Trailing character of identifier                |
-| `\l`, `\l{locale}`        | `\L`     | Lowercase letter                                |
-| `\u`, `\u{locale}`        | `\U`     | Uppercase letter                                |
-
-##### Character Classes
-
-| Sequence | Description                      | Example      |
-| -------- | -------------------------------- | ------------ |
-| `[arn]`  | Character set                    | `[abc]`      |
-| `[^]`    | Complement                       | `[a-z]`      |
-| `-`      | Range (in decreasing precedence) | `[a-z]`      |
-| `--`     | Difference                       | `[\w--\d]`   |
-| `&&`     | Intersection                     | `[\w&&\D]`   |
-| `^^`     | Symmetric difference             | `[\w^^\d]`   |
-| `\|\|`   | Union                            | `[\S\|\|\s]` |
-
-##### Metacharacters (escaped)
-
-| Sequence          | Meaning                                                       |
-| ----------------- | ------------------------------------------------------------- |
-| `\X`              | Match Unicode extended grapheme clusters                      |
-| `\1`              | Backreference, where `1` can be any positive integer          |
-| `\g`              | Backreference to a specific group; or previous group if blank |
-| `\g<-2>`,`\g<-2>` | Backreference to previous `2` groups                          |
-| `\g<name>`        | Named backreference                                           |
-| `\K`              | Keep text left of the `\K`                                    |
-
-##### Groups
-
-| Sequence                | Description                            | Subroutine                         |
-| ----------------------- | -------------------------------------- | ---------------------------------- |
-| `()`                    | Numbered capturing group (`1`-indexed) | `\1`, `\2` ...                     |
-| `(?:)`                  | Non-capturing group                    |                                    |
-| `(?#)`                  | Comment                                |                                    |
-| `(?<name>)`,`(?<name>)` | Named capturing group                  | `\g<name>`, `\g'name'`, `\g"name"` |
-| `(?<x-y>)`              | Balancing group                        |                                    |
-| `(?<-y>)`               | Non-capturing balancing group          |                                    |
-| `(?s)`, `(?i:)`         | Mode enabler                           |                                    |
-| `(?-i)`, `(?i:...)`     | Mode disabler                          |                                    |
-| `(?>)`                  | Atomic group (no backtracking)         |                                    |
-| `(?=)`                  | Positive lookahead                     |                                    |
-| `(?!)`                  | Negative lookahead                     |                                    |
-| `(?<=)`                 | Positive lookbehind                    |                                    |
-| `(?<!)`                 | Negative lookbehind                    |                                    |
-| `(?())`                 | Branch conditional                     |                                    |
-| `(?()\|)`               | Branch with else statement             |                                    |
-| `(?&1)` `(?&name)`      | Explicit named or numbered group       |                                    |
-| `(?+1)`, `(?-1)`        | Relative calling                       |                                    |
-| `(?0)`                  | Recursion                              |                                    |
-| `(?{})`                 | Callout                                |                                    |
-| `(?~)`                  | Absent stopper                         |                                    |
-| `(?~\|...\|...)`        | Absent repeater                        |                                    |
-| `(?~\|...)`             | Absent stopper                         |                                    |
-| `(?~\|)`                | Absent stopper                         |                                    |
-
-##### Assertions
-
-| Sequence | Negation | Description                                                |
-| -------- | -------- | ---------------------------------------------------------- |
-| `\a`     | `\A`     | beginning of string                                        |
-| `\b{}`   | `\B{}`   | Match at Unicode boundary of specified type                |
-| `\b`     | `\B`     | beginning of word                                          |
-| `\y`     | `\Y`     | end of word                                                |
-| `\z`     | `\Z`     | Match only at end of string                                |
-| `\G`     |          | Match at the end-of-match position (negation at the START) |
-| `\K`     |          | Keep matched text (so far) out of the match                |
-
-##### Flags and Modes
-
-| Flag | Mode                                               |
-| ---- | -------------------------------------------------- |
-| `i`  | Enable case-insensitive mode                       |
-| `g`  | Enable global mode                                 |
-| `m`  | Disable multiline mode                             |
-| `s`  | Dot-all; `.` matches any character                 |
-| `u`  | Enables full Unicode support                       |
-| `y`  | Sticky mode                                        |
-| `n`  | Disable numbered capturing groups                  |
-| `x`  | Disable free spacing                               |
-| `a`  | Astral mode                                        |
-| `p`  | Preserve the string matched when matching repeats  |
-| `c`  | Keep the current position during repeated matching |
-| `e`  | Evaluate the right-hand side as an expression      |
-| `r`  | Perform non-destructive substitution               |
 
 ### Collections: Lists, Maps and Sets
 
@@ -1150,6 +1010,22 @@ Some types also have special roles in the Trinity language.
 
 ## Control Flow
 
+### Closures
+
+### Conditionals
+
+### Loops
+
+### Error Handling
+
+### Concurrency
+
+### Pattern Matching
+
+### Queries
+
+### Modules
+
 ### Ranges and Generators
 
 Ranges expand to sequences of numbers in an arithmetic progression, from start to end. The `to` clause includes the end of the range, while `til` or `till` excludes it.
@@ -1171,3 +1047,359 @@ You can also specify an additional increment/decrement parameter after the range
 ```dart
 1 to 10 by 2 == [1, 3, 5, 7, 9]
 ```
+
+## Appendix
+
+### Comparison to JavaScript syntax
+
+##### Semicolons
+
+| JavaScript         | Saga        |
+| ------------------ | ----------- |
+| Enforced by linter | None needed |
+
+##### Comments
+
+| JavaScript                 | Saga                           |
+| -------------------------- | ------------------------------ |
+| `// line comment`          | `# line comment`               |
+| `/* block comment */`      | `#[ block comment ]#`          |
+| `/** doc block comment */` | `#{ doc block comment }#`      |
+|                            | `#: doc line comment`          |
+|                            | `#! shebang`                   |
+|                            | `#= special comment`           |
+|                            | `#( shebang )`                 |
+|                            | `#_( special inline comment )` |
+
+##### Variables
+
+| JavaScript          | Saga                |
+| ------------------- | ------------------- |
+| `const x = 5`       | `val x = 5`         |
+| `var x = 5`         | Same                |
+| `let x = 5; x += 1` | `var x = 5; x += 1` |
+
+##### Data Types
+
+| Type    | Default Value    | Description            | JavaScript equivalent (class) |
+| ------- | ---------------- | ---------------------- | ----------------------------- |
+| `nil`   | `nil`            | The constant `nil`     | `undefined`                   |
+| `bool`  | `false`          | A boolean value        | `Boolean`                     |
+| `int`   | `0`              | 32-bit integer         | `Number`                      |
+| `float` | `0.`             | 64-bit floating point  | `Number`                      |
+| `char`  | `'\0'`           | 16-bit code unit       | `String`                      |
+| `str`   | `''` `""` ` `` ` | String                 | `String`                      |
+| `regex` | `/ /`            | Regular expression     | `RegExp`                      |
+| `func`  | `() => ()`       | Function               | `Function`                    |
+| `seq`   | `(\|\|)`         | Generator sequence     | `Generator`                   |
+| `bits`  | ` bits`` `       | Bit stream             | `Buffer`                      |
+| `list`  | `[\|\|]`         | Ordered list           | `Array`                       |
+| `set`   | `{\|\|}`         | Set                    | `Set`                         |
+| `map`   | `{\|\|}`         | Hash map or dictionary | `Object`, `Map`               |
+
+##### Strings
+
+| JavaScript                    | Saga                                 |
+| ----------------------------- | ------------------------------------ |
+| `"Hello world!"`              | Same                                 |
+| `'Hello world!'`              | Same                                 |
+| `"hello " + "world"`          | `hello" + "world"`                   |
+| `'hello'.repeat(3)`           | `hello" * 3`                         |
+| `` `hello ${message}` ``      | `` `hello $message` ``               |
+| `\u03B1`                      | `\h{alpha}`                          |
+| `${msg.toUpperCase()}`        | `$msg:su`                            |
+| `'hello'[1]`                  | Same                                 |
+| `'hello'['hello'.length - 1]` | `'hello'[-1]`                        |
+| `'hello'.slice(3, 4)`         | `'hello'[3:4]`                       |
+| `/x/.test('next')`            | `'x' in 'next'`<br>`(/x/) in 'next'` |
+| `'hello'.replace('l', 'r')`   | `'hello' =< /l/r/`                   |
+| `[...hello].length`           | `len 'hello'`                        |
+| `'hello'.length`              | `size 'hello'`                       |
+| chalk`{blue hello world}`     | Same                                 |
+
+##### Booleans
+
+| JavaScript                   | Saga                                                  |
+| ---------------------------- | ----------------------------------------------------- |
+| `null`, `undefined`          | `nil`                                                 |
+| `true`, `false`              | Same                                                  |
+| `!`, `&&`, `\|\|`            | Same                                                  |
+| `!x != !y`                   | `x ^^ y`                                              |
+| `x && y` (short-circuit)     | `x !: y`                                              |
+| `x \|\| y` (short-circuit)   | `x ?: y`                                              |
+| `a ?? b`                     | Same                                                  |
+| `a == null ? a : b`          | `a !! b`                                              |
+| `===`, `!==`                 | `===`, `!==` (Referential)<br>`==`, `!=` (Structural) |
+| `==`, `!=`                   | `=~`, `!~`                                            |
+| `<`, `>`, `<=`, `>=`         | Same, but no type coercion                            |
+| `a < b ? -1 : a > b ? 1 : 0` | `a <=> b`                                             |
+
+##### Numbers
+
+| JavaScript                        | Saga              |
+| --------------------------------- | ----------------- |
+| `1`, `0x10`, `0o40`, `0b10_10`    | Same              |
+| `1e40`                            | Same              |
+| `13.1875`                         | Same              |
+| No complex number support         | `1j`              |
+| `144`, `36`                       | `0z100`, `0s100`  |
+| `Infinity`, `NaN`                 | `inf`, `nan`      |
+| No fraction support               | `1 / 3r`, `0.r3`  |
+| `+`, `-`, `*`, `/`, `%`           | Same              |
+| `1 / 4 \| 0`                      | `1 ~/ 4`          |
+| `((1 % 4) + 4) % 4`               | `1 %% 4`          |
+| `Math.max(3, 4); Math.min(3, 4)`  | `3 *> 4; 3 <* 4`; |
+| `&`, `\|`, `^`, `~`               | same              |
+| `>>`, `<<`, `>>>`                 | same; no `>>>`    |
+| `x++; x--; ++x; --x`              | `x += 1; x -= 1;` |
+| `1 >>> -20`                       | `1 <<< 20`        |
+| `[...Array(100).keys()]`          | `..100`           |
+| `[...Array(102).keys()].slice(1)` | `1..=100`         |
+
+##### Lists, Sets and Maps
+
+Saga's JavaScript runtime uses Immutable.JS for its internal data structures.
+
+| JavaScript                         | Saga                     |
+| ---------------------------------- | ------------------------ |
+| `[1, 2, 3]`                        | Same                     |
+| `[1, 2, 3].concat([4])`            | `[1, 2, 3] + 4`          |
+| `Array(3).fill([1, 2, 3]).flat(1)` | `[1, 2, 3] * 3`          |
+| `[1, 2, 3].filter(x => x === 1)`   | `[1, 2, 3].filter(== 1)` |
+| `arr.indexOf(ele) >= 0`            | `ele in arr`             |
+| `arr.indexOf(ele) < 0`             | `ele !in arr`            |
+| `var [x, y] = [1, 2]`              | Same                     |
+| `[...x, ...y]`                     | `[*x, *y]`               |
+| `tuple()` (Python)                 | `#[]`                    |
+| `(1, 2, 3)` (Python)               | `#[1, 2, 3]`             |
+
+<!--  -->
+
+| JavaScript                                    | Saga                |
+| --------------------------------------------- | ------------------- |
+| `new Set([1, 2, 3])`                          | `{1, 2, 3}`         |
+| `new Set('hello')`                            | `{*'hello'}`        |
+| `new Set('hello').has('h')`                   | `'h' in {*'hello'}` |
+| Intersection<br>Union<br>Symmetric difference | `&`<br>`\|`<br>`^`  |
+| Superset, subset                              | `>=`, `<=`          |
+| Strict superset, subset                       | `>`, `<`            |
+
+<!--  -->
+
+| JavaScript                      | Saga                                                         |
+| ------------------------------- | ------------------------------------------------------------ |
+| `{}`                            | `{:}` (mandatory colon)                                      |
+| `{a: 1, b: 2, c: 3}`            | Same                                                         |
+| `map?.prop; map?.method()`      | Same                                                         |
+| `map.prop = 10`                 | `map.prop set 10` or `.= 10` returns new map; otherwise same |
+| `'prop' in map`                 | `'prop' of map`                                              |
+| `!('prop' in map)`              | `'prop' !of map`                                             |
+| `delete map.prop`               | `del map.prop` returns new map                               |
+| `map.prop`                      | `map!.prop` would throw if it does not exist                 |
+| `{...details, prop, let: 2}`    | `{*details, :prop, let: 2}`                                  |
+| `{...details, let: 2}`          | `details \| {let: 2}`                                        |
+| `{a: 1, b: 2, c: 3}` (ReScript) | `#{a: 1, b: 2, c: 3}`                                        |
+| `Object.keys({})`               | `{}.keys()` (Same for values and entries)                    |
+| `map.y = 40; map.x()`           | `map.y = 40; ~.x()`                                          |
+
+##### Functions
+
+| JavaScript                                      | Saga                               |
+| ----------------------------------------------- | ---------------------------------- |
+| `function () { return 10 }`                     | `def () = 10`                      |
+| `function named () {}`                          | `def named() {}`                   |
+| `x => x + 1`                                    | Same                               |
+| `x = function*(x) { yield x; return }`          | `x =>* x`                          |
+| `const f = function(arg) {}`                    | `let f = arg => ()`                |
+| `const f: () => void = () => {}`                | `let f = (): void => ()`           |
+| `add(4, add(5, 6))`                             | Same                               |
+| `function x({ name }) {}`                       | `def x(&name) ...`                 |
+| `add({left: 1, right: 4})`                      | `add(&left = 1, &right = 4)`       |
+| `function x(name: number): number { return 3 }` | `def x(name: num): num = 3`        |
+| `function x(...args: number[]): number[] {}`    | `def x(*args: num[]): num[] = ...` |
+| `Math.imul(1, 2)`                               | `1 $Math.imul$ 2`                  |
+| `Math.sqrt(2)`                                  | `(Math.sqrt) 2`                    |
+
+##### Compound Expressions
+
+Everything is an expression!
+
+```dart
+var integer = type int | byte | short | nint | long
+var result = if a then 'hello' else 'bye'
+var file = match {
+  when x is int => 1
+  else => 0
+}
+```
+
+| JavaScript                                   | Saga                                  |
+| -------------------------------------------- | ------------------------------------- |
+| `a ? b : c`                                  | Same                                  |
+| `if ()`                                      | Same (no brackets needed)             |
+| `if (!expr)`                                 | `unless expr`                         |
+| `else if`                                    | `elif`                                |
+| `for (var i = 1; i <= 10; i++)`              | `for (var i in 1 .. 10)`              |
+| `for (var i = 1; i < 10; i++)`               | `for (var i in 1 ..= 10)`             |
+| `for (var i of map)`<br>`for (var i in map)` | `in` and `of` are swapped             |
+| `switch`                                     | Same, explicit fallthrough + go-to    |
+| `try`                                        | Same                                  |
+| `throw`, `catch`                             | `raise`, `rescue`                     |
+| `break`, `continue`                          | `halt`, `skip`                        |
+| _(deprecated)_                               | `with fs.readFile() as (let file) {}` |
+| `while (true) {}`                            | `repeat {}`                           |
+| `while (x < 10) { x++ } `                    | Same                                  |
+| `while (x != 10) { x++ }`                    | `until x == 10 { x += 1 }`            |
+| `do { x++ } while (x < 10) `                 | `repeat while x < 10 { x += 1 } `     |
+| `do { x++ } while (x != 10) `                | `repeat until x == 10 { x += 1 } `    |
+
+### Appendix 4A: Regular Expression Syntax
+
+##### Basic Metacharacters
+
+| Character                | Purpose                                 |
+| ------------------------ | --------------------------------------- |
+| `\x` where x is a symbol | escapes symbols                         |
+| `\|`                     | alternation                             |
+| `( )`                    | group                                   |
+| `[ ]`                    | character class                         |
+| `[^]`                    | negated character class                 |
+| `{n,m}`                  | quantifier (explained in next section)  |
+| `\x{p}`                  | modifies an escape                      |
+| `*`                      | none or more times                      |
+| `+`                      | one or more times                       |
+| `?`                      | none or once                            |
+| `^`                      | beginning of line                       |
+| `$`                      | end of line                             |
+| `.`                      | wildcard (any character except newline) |
+
+##### Operators
+
+| Characters | Meaning                        |
+| ---------- | ------------------------------ |
+| `{n}`      | Match exactly _n_ times        |
+| `{n,}`     | Match at least _n_ times       |
+| `{,n}`     | Match at most _n_ times        |
+| `{m,n}`    | Match between _m_ to _n_ times |
+| `*`        | none or more times `{0,}`      |
+| `+`        | one or more times `{1,}`       |
+| `?`        | none or once `{0,1}`           |
+
+| Modifier | Examples   | Meaning                                     |
+| -------- | ---------- | ------------------------------------------- |
+| `?`      | `*?`       | Not greedy; returns shortest possible match |
+| `+`      | `++`, `*+` | Give nothing back (does not backtrack)      |
+| `*`      | `**`, `+*` | Greedy; returns longest possible match      |
+
+| Shorthand        | Meaning  |
+| ---------------- | -------- |
+| `&` e.g. `a&b`   | `ab`     |
+| `!` e.g. `a!b`   | `ba`     |
+| `&?` e.g. `a&?b` | `a(ba)?` |
+| `&+` e.g. `a&+b` | `a(ba)+` |
+| `&*` e.g. `a&*b` | `a(ba)*` |
+| `!?` e.g. `a!?b` | `b(ab)?` |
+| `!+` e.g. `a!+b` | `b(ab)+` |
+| `!*` e.g. `a!*b` | `b(ab)*` |
+
+##### Character escapes
+
+| Characters                | Negation | Purpose                                         |
+| ------------------------- | -------- | ----------------------------------------------- |
+| `\p`                      | `\P`     | platform specific newline                       |
+| `\r`                      | `\R`     | carriage return                                 |
+| `\n`                      | `\N`     | line feed (or newline)                          |
+| `\f`                      | `\F`     | form feed                                       |
+| `\t`                      | `\T`     | horizontal tabulator                            |
+| `\v`                      | `\V`     | vertical tabulator                              |
+| `\a`                      | `\A`     | alert (inside `[]`)                             |
+| `\c`                      | `\C`     | backspace (inside `[]`)                         |
+| `\e`                      | `\E`     | escape (inside `[]`)                            |
+| `\s`                      | `\S`     | space (inside `[]`)                             |
+| `\d`                      | `\D`     | decimal digit                                   |
+| `\w`                      | `\W`     | Unicode character                               |
+| `\pP`, `\pPr`, `\p{Prop}` | `\P`     | Unicode character category or property selector |
+| `\c`, `\c{lang}`          | `\C`     | Leading character of identifier                 |
+| `\i`, `\i{lang}`          | `\I`     | Trailing character of identifier                |
+| `\l`, `\l{locale}`        | `\L`     | Lowercase letter                                |
+| `\u`, `\u{locale}`        | `\U`     | Uppercase letter                                |
+
+##### Character Classes
+
+| Sequence | Description                      | Example      |
+| -------- | -------------------------------- | ------------ |
+| `[arn]`  | Character set                    | `[abc]`      |
+| `[^]`    | Complement                       | `[a-z]`      |
+| `-`      | Range (in decreasing precedence) | `[a-z]`      |
+| `--`     | Difference                       | `[\w--\d]`   |
+| `&&`     | Intersection                     | `[\w&&\D]`   |
+| `^^`     | Symmetric difference             | `[\w^^\d]`   |
+| `\|\|`   | Union                            | `[\S\|\|\s]` |
+
+##### Metacharacters (escaped)
+
+| Sequence          | Meaning                                                       |
+| ----------------- | ------------------------------------------------------------- |
+| `\X`              | Match Unicode extended grapheme clusters                      |
+| `\1`              | Backreference, where `1` can be any positive integer          |
+| `\g`              | Backreference to a specific group; or previous group if blank |
+| `\g<-2>`,`\g<-2>` | Backreference to previous `2` groups                          |
+| `\g<name>`        | Named backreference                                           |
+| `\K`              | Do not retain text matched before `\K`                        |
+
+##### Groups
+
+| Sequence                | Description                            | Subroutine                                  |
+| ----------------------- | -------------------------------------- | ------------------------------------------- |
+| `()`                    | Numbered capturing group (`1`-indexed) | `\1`, `\2` ... (disabled if `n` is enabled) |
+| `(?:)`                  | Non-capturing group                    |                                             |
+| `(?#)`                  | Comment                                |                                             |
+| `(?<name>)`,`(?<name>)` | Named capturing group                  | `\g<name>`, `\g'name'`, `\g"name"`          |
+| `(?<x-y>)`              | Balancing group                        |                                             |
+| `(?<-y>)`               | Non-capturing balancing group          |                                             |
+| `(?s)`, `(?i:)`         | Mode enabler                           |                                             |
+| `(?-i)`, `(?i:...)`     | Mode disabler                          |                                             |
+| `(?>)`                  | Atomic group (no backtracking)         |                                             |
+| `(?=)`                  | Positive lookahead                     |                                             |
+| `(?!)`                  | Negative lookahead                     |                                             |
+| `(?<=)`                 | Positive lookbehind                    |                                             |
+| `(?<!)`                 | Negative lookbehind                    |                                             |
+| `(?())`                 | Branch conditional                     |                                             |
+| `(?()\|)`               | Branch with else statement             |                                             |
+| `(?&1)` `(?&name)`      | Explicit named or numbered group       |                                             |
+| `(?+1)`, `(?-1)`        | Relative calling                       |                                             |
+| `(?0)`                  | Recursion                              |                                             |
+| `(?{})`                 | Callout                                |                                             |
+| `(?~)`                  | Absent stopper                         |                                             |
+| `(?~\|...\|...)`        | Absent repeater                        |                                             |
+| `(?~\|...)`             | Absent stopper                         |                                             |
+| `(?~\|)`                | Absent stopper                         |                                             |
+
+##### Assertions
+
+| Sequence | Negation | Description                                                |
+| -------- | -------- | ---------------------------------------------------------- |
+| `\a`     | `\A`     | beginning of string                                        |
+| `\b{}`   | `\B{}`   | Match at Unicode boundary of specified type                |
+| `\b`     | `\B`     | beginning of word                                          |
+| `\y`     | `\Y`     | end of word                                                |
+| `\z`     | `\Z`     | Match only at end of string                                |
+| `\G`     |          | Match at the end-of-match position (negation at the START) |
+| `\K`     |          | Keep matched text (so far) out of the match                |
+
+##### Flags and Modes
+
+| Flag     | Mode                                               |
+| -------- | -------------------------------------------------- |
+| `i`      | Enable case-insensitive mode                       |
+| `g`      | Enable global mode                                 |
+| `m`      | Disable multiline mode                             |
+| `s`      | Dot-all; `.` matches any character                 |
+| `u`, `a` | Enables full Unicode support                       |
+| `y`      | Sticky mode                                        |
+| `n`      | Disable numbered capturing groups                  |
+| `x`, `t` | Disable free spacing                               |
+| `p`      | Preserve the string matched when matching repeats  |
+| `c`      | Keep the current position during repeated matching |
+| `e`      | Evaluate the right-hand side as an expression      |
+| `r`      | Perform non-destructive substitution               |
