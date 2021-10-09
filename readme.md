@@ -765,9 +765,9 @@ Trinity's regular expressions are delimited in between backticks much like Go. B
 `[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] ]`x
 
 `
-  /\* // Match the opening delimiter.
+  \/\* // Match the opening delimiter.
   .*? // Match a minimal number of characters.
-  \*/ // Match the closing delimiter.
+  \*\/ // Match the closing delimiter.
 `
 ```
 
@@ -816,7 +816,7 @@ val myMap: Map[Int, Int] = {1: 1, 2: 2, 3: 3, 4: 4}
 The type of a list, set or map is inferred from its elements.
 
 ```dart
-val myMap = {a: x, b: x, 10: 2, :a: 2}
+val myMap = {a: x, b: x, 10: 2, x: 2}
 assert myMap is Map[Int | Str, Int]
 ```
 
@@ -824,6 +824,7 @@ Prefix a list, map or set literal with a `#` to make the collection mutable. Mut
 
 ```dart
 val myList: MutList[Int | Str] = #[1, \2, 3, \4]
+myList.push(1, 2) //= #[1, \2, 3, \4, 1, 2]
 ```
 
 Not much to say about lists and sets other than their elements are separated by commas (or even newlines). However, sets unlike lists are delimited between curly brackets `{}` as opposed to square `[]` ones.
@@ -860,7 +861,7 @@ You can query (filter) lists or sets by using angle brackets. Python-style negat
 You can use any value or expression except strings beginning with underscores or letters, which would be parsed as an unquoted string. The same rules with unquoted strings and symbols apply for map keys.
 
 ```dart
-assert "a" == { \a\: "a" }.a
+assert "a" == { a: "a" }.a
 ```
 
 You can access properties on maps and objects by using angle-bracket or dot-notation; you can do this with quoted strings, numbers, symbols, regular expressions, and even more.
