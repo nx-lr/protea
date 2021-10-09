@@ -254,7 +254,7 @@ In summary, except for required white space between alphanumeric tokens, adding 
 
 ### Syntax
 
-Trinity derives most of its syntax from JavaScript, so all code blocks are delimited inside curly braces.
+Trinity derives most of its syntax from JavaScript, so all code blocks are delimited inside curly brackets.
 
 ```dart
 class Person(val firstName: Str, val lastName: Str) {
@@ -262,19 +262,26 @@ class Person(val firstName: Str, val lastName: Str) {
 }
 ```
 
-Semicolons can be used to terminate expressions if the next is on the following line. Ignoring all comments, the next line is joined to the previous if the current line ends with an infix operator, such as `in` or `of`, or the next line begins with one.
+Semicolons can be used to separate two or more expressions ont he same line. The next line is joined to the previous if the current line ends with an infix or primary operator, or the next line begins with one.
+
+In these two scenarios, the next line is joined to the previous.
 
 ```dart
+x in arr
+
 x in
-arr //= joined
+arr //= x in arr
 
 x
-in arr //= joined
+in arr //= x in arr
+
+x
+.push(i)
 ```
 
 #### Comments
 
-Line comments start with `//` and go until the end of the line. Comments beginning with `/+` can be nested.
+Trinity borrows its comments from D. Line comments start with `//` and go until the end of the line. Block comments begin with a `/*`, and end `*/`. Nested block comments begin with `/+` and end in `+/`.
 
 ```dart
 // line
@@ -282,16 +289,12 @@ Line comments start with `//` and go until the end of the line. Comments beginni
 /+ nested block /+ +/ +/
 ```
 
-Special, reserved line comments include documentation, to-do and compiler comments, which are recognized by several aspects of the compiler.
+Documentation comments are special forms of comments which are all used to generate API documentation. All forms of comments have support for Markdown-based formatting.
 
 ```dart
 /// JSDoc line
 /** JSDoc block */
-/++ nested JSDoc /++ +/ +/
-//= assertion
-//+ testing
-//! fixme/todo
-//* compiler
+/++ JSDoc nested block /++ +/ +/
 ```
 
 #### Identifiers
@@ -302,7 +305,7 @@ Identifiers can begin with a letter or "underscore". Other characters include di
 var identifier = `[\pL\pPc][\pL\pM\pNd\pPc]*`
 ```
 
-For JSX tags, identifiers can also include dashes, but an identifier should not include a trailing dash.
+For JSX tags, identifiers can also include dashes, but an identifier should not end with a trailing dash.
 
 ```dart
 var identifier = `[\pL\pPc][\pL\pM\pNd\pPc\pPd]*(?!\pPd+)`
@@ -381,9 +384,9 @@ You cannot shadow (override) a `var` or `val`. If you want shadowing behavior, u
 val a = 1
 do {
   set a = 2
-  print a //! Error: a already declared
+  print(a) //! Error: a already declared
 }
-print a //= 1
+print(a) //= 1
 ```
 
 You don't need to explicitly specify the types of each variable, the compiler is smart enough to infer them for you:
@@ -399,7 +402,7 @@ You can also explicitly declare the variable type if you think it makes your cod
 ```dart
 val s: Str = "hello"
 var i: Int = 42
-val c: Sym = Sym'$i'
+val c: Sym = Sym'$i' 
 ```
 
 Use `:=` instead to set a property on an object or data structure as opposed to a variable.
