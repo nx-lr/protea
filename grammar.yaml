@@ -73,6 +73,7 @@ define:
     |class|enum|module|pkg|inter|struct|object|record
     |frag|space|data|trait|proto|proc|macro|type|given
     |raw|style|compo|elem|decl|ext|impl|sub
+    |pred|method|lambda|lat|rel|lemma|iter|ctor
 
     |if|lest|elif|elest|else|then
     |for|each|loop|while|until|from|with
@@ -100,6 +101,7 @@ define:
     |class|enum|module|pkg|inter|struct|object|record
     |frag|space|data|trait|proto|proc|macro|type|given
     |raw|style|compo|elem|decl|ext|impl|sub
+    |pred|method|lambda|lat|rel|lemma|iter|ctor
 
     |if|lest|elif|elest|else|then
     |for|each|loop|while|until|from|with
@@ -170,6 +172,7 @@ repository:
       |class|enum|module|pkg|inter|struct|object|record
       |frag|space|data|trait|proto|proc|macro|type|given
       |raw|style|compo|elem|decl|ext|impl|sub
+      |pred|method|lambda|lat|rel|lemma|iter|ctor
 
       |if|lest|elif|elest|else|then
       |for|each|loop|while|until|from|with
@@ -1921,8 +1924,9 @@ repository:
     patterns:
       - include: "#block-comments"
       - include: "#line-comments"
+      - include: "#nested-comments"
 
-  block-comments:
+  nested-comments:
     patterns:
       - begin: \s*((/\+\+))
         end: (\s*(\+/))
@@ -1933,7 +1937,7 @@ repository:
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
-          - include: "#nested-block-jsdoc"
+          - include: "#nested-jsdoc"
       - begin: \s*((/\+))
         end: (\s*(\+/))
         name: comment.block.nested.trin
@@ -1942,7 +1946,10 @@ repository:
           2: {name: punctuation.definition.comment.trin}
         patterns:
           - include: text.html.markdown#inline
-          - include: "#nested-block"
+          - include: "#nested"
+
+  block-comments:
+    patterns:
       - begin: \s*((/\*\*))
         end: (\s*(\*/))
         name: comment.block.documentation.trin
@@ -1963,30 +1970,6 @@ repository:
 
   line-comments:
     patterns:
-      - begin: ((^\s*)|\s*)((//=))
-        end: \s*$
-        name: comment.line.special.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.special.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          1: {name: punctuation.definition.comment.trin}
-        patterns:
-          - include: "#comment-special"
-          - include: text.html.markdown#inline
-      - begin: ((^\s*)|\s*)((//\+))
-        end: \s*$
-        name: comment.line.playground.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.playground.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          0: {name: comment.line.playground.trin}
-        patterns:
-          - include: "#jsdoc"
-          - include: text.html.markdown#inline
       - begin: ((^\s*)|\s*)((///))
         end: \s*$
         name: comment.line.documentation.trin
@@ -1998,28 +1981,6 @@ repository:
           0: {name: comment.line.documentation.trin}
         patterns:
           - include: "#jsdoc"
-          - include: text.html.markdown#inline
-      - begin: ((^\s*)|\s*)((//!|\A#!))
-        end: \s*$
-        name: comment.line.shebang.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.shebang.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          0: {name: comment.line.shebang.trin}
-        patterns:
-          - include: text.html.markdown#inline
-      - begin: ((^\s*)|\s*)((//\*))
-        end: \s*$
-        name: comment.line.doctype.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.doctype.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          0: {name: comment.line.doctype.trin}
-        patterns:
           - include: text.html.markdown#inline
       - begin: ((^\s*)|\s*)((//))
         end: \s*$
@@ -2033,8 +1994,8 @@ repository:
         patterns:
           - include: text.html.markdown#inline
 
-  nested-block-jsdoc:
-    begin: (/\+\+)\s*
+  nested-jsdoc:
+    begin: (/\+\+?)\s*
     end: \s*(\+/)
     name: comment.block.documentation.nested.trin
     captures:
@@ -2042,9 +2003,9 @@ repository:
     patterns:
       - include: "#jsdoc"
       - include: text.html.markdown#inline
-      - include: "#nested-block-jsdoc"
+      - include: "#nested-jsdoc"
 
-  nested-block:
+  nested:
     begin: (/\+)\s*
     end: \s*(\+/)
     name: comment.block.nested.trin
@@ -2052,17 +2013,7 @@ repository:
       1: {name: punctuation.definition.comment.trin}
     patterns:
       - include: text.html.markdown#inline
-      - include: "#nested-block"
-
-  nested-special:
-    begin: (/\+)\s*
-    end: \s*(\+/)
-    captures:
-      1: {name: punctuation.definition.comment.trin}
-    patterns:
-      - include: "#jsdoc"
-      - include: text.html.markdown#inline
-      - include: "#nested-special"
+      - include: "#nested"
 
   jsdoc:
     patterns:
@@ -2250,6 +2201,7 @@ repository:
           |class|enum|module|pkg|inter|struct|object|record
           |frag|space|data|trait|proto|proc|macro|type|given
           |raw|style|compo|elem|decl|ext|impl|sub
+          |pred|method|lambda|lat|rel|lemma|iter|ctor
 
           |if|lest|elif|elest|else|then
           |for|each|loop|while|until|from|with
@@ -2283,6 +2235,7 @@ repository:
           |class|enum|module|pkg|inter|struct|object|record
           |frag|space|data|trait|proto|proc|macro|type|given
           |raw|style|compo|elem|decl|ext|impl|sub
+          |pred|method|lambda|lat|rel|lemma|iter|ctor
 
           |if|lest|elif|elest|else|then
           |for|each|loop|while|until|from|with
@@ -2620,6 +2573,7 @@ repository:
               |class|enum|module|pkg|inter|struct|object|record
               |frag|space|data|trait|proto|proc|macro|type|given
               |raw|style|compo|elem|decl|ext|impl|sub
+              |pred|method|lambda|lat|rel|lemma|iter|ctor
 
               |if|lest|elif|elest|else|then
               |for|each|loop|while|until|from|with
@@ -2654,6 +2608,7 @@ repository:
                   |class|enum|module|pkg|inter|struct|object|record
                   |frag|space|data|trait|proto|proc|macro|type|given
                   |raw|style|compo|elem|decl|ext|impl|sub
+                  |pred|method|lambda|lat|rel|lemma|iter|ctor
 
                   |if|lest|elif|elest|else|then
                   |for|each|loop|while|until|from|with
@@ -2983,6 +2938,7 @@ repository:
       |class|enum|module|pkg|inter|struct|object|record
       |frag|space|data|trait|proto|proc|macro|type|given
       |raw|style|compo|elem|decl|ext|impl|sub
+      |pred|method|lambda|lat|rel|lemma|iter|ctor
 
       |if|lest|elif|elest|else|then
       |for|each|loop|while|until|from|with
@@ -3093,6 +3049,7 @@ repository:
       |class|enum|module|pkg|inter|struct|object|record
       |frag|space|data|trait|proto|proc|macro|type|given
       |raw|style|compo|elem|decl|ext|impl|sub
+      |pred|method|lambda|lat|rel|lemma|iter|ctor
       )
       \b
       )
@@ -3130,54 +3087,70 @@ repository:
         name: storage.type.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)\b\s*
         name: keyword.other.declare.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def|fn|func?)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(def|fn|fun|func)\b\s*
         name: storage.type.function.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(class)\b\s*
         name: storage.type.class.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(enum)\b\s*
         name: storage.type.enum.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(mod)\b\s*
         name: storage.type.module.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pkg)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(pkg)\b\s*
         name: storage.type.package.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inter)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(inter)\b\s*
         name: storage.type.interface.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(struct)\b\s*
         name: storage.type.structure.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(obj)\b\s*
         name: storage.type.object.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(record)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(rec)\b\s*
         name: storage.type.record.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(frag)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(frag)\b\s*
         name: storage.type.fragment.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(data)\b\s*
         name: storage.type.data.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(trait)\b\s*
         name: storage.type.trait.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(proto)\b\s*
         name: storage.type.protocol.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(proc)\b\s*
         name: storage.type.procedure.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(macro)\b\s*
         name: storage.type.macro.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(type)\b\s*
         name: storage.type.type.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(given)\b\s*
         name: storage.type.constraint.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(raw)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(raw)\b\s*
         name: storage.type.raw.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(style)\b\s*
         name: storage.type.style.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(compo)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(comp)\b\s*
         name: storage.type.component.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(elem)\b\s*
         name: storage.type.element.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sub)\b\s*
-        name: storage.type.subroutine.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(ext)\b\s*
         name: storage.type.extends.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(impl)\b\s*
-        name: storage.type.implementation.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(impl)\b\s*
+        name: storage.type.implements.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(sub)\b\s*
+        name: storage.type.subroutine.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(pred)\b\s*
+        name: storage.type.predicate.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(method)\b\s*
+        name: storage.type.method.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(lambda)\b\s*
+        name: storage.type.lambda.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(lat)\b\s*
+        name: storage.type.lattice.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(rel)\b\s*
+        name: storage.type.relation.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(lemma)\b\s*
+        name: storage.type.lemma.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(iter)\b\s*
+        name: storage.type.iterator.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(ctor)\b\s*
+        name: storage.type.constructor.trin
 
   general-keywords:
     comment: general keywords
@@ -3192,7 +3165,7 @@ repository:
         name: keyword.control.trycatch.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch|case|default)\b\s*
         name: keyword.control.switch.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|when|otherwise)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|when)\b\s*
         name: keyword.control.match.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unison|series|spawn|kill|fix|lock)\b\s*
         name: keyword.control.thread.trin
@@ -3390,30 +3363,38 @@ repository:
   declarations:
     patterns:
       - include: "#variable"
-      - include: "#function"
-      - include: "#class"
-      - include: "#enum"
-      - include: "#module"
-      - include: "#package"
-      - include: "#interface"
-      - include: "#structure"
-      - include: "#object"
-      - include: "#record"
-      - include: "#fragment"
-      - include: "#namespace"
-      - include: "#data"
-      - include: "#trait"
-      - include: "#protocol"
-      - include: "#procedure"
-      - include: "#macro"
-      - include: "#constraint"
-      - include: "#raw"
-      - include: "#style"
-      - include: "#component"
-      - include: "#element"
-      - include: "#subroutine"
-      - include: "#extends"
-      - include: "#implements"
+      - include: '#function'
+      - include: '#class'
+      - include: '#enum'
+      - include: '#module'
+      - include: '#package'
+      - include: '#interface'
+      - include: '#structure'
+      - include: '#object'
+      - include: '#record'
+      - include: '#fragment'
+      - include: '#data'
+      - include: '#trait'
+      - include: '#protocol'
+      - include: '#procedure'
+      - include: '#macro'
+      - include: '#type'
+      - include: '#constraint'
+      - include: '#raw'
+      - include: '#style'
+      - include: '#component'
+      - include: '#element'
+      - include: '#extends'
+      - include: '#implements'
+      - include: '#subroutine'
+      - include: '#predicate'
+      - include: '#method'
+      - include: '#lambda'
+      - include: '#lattice'
+      - include: '#relation'
+      - include: '#lemma'
+      - include: '#iterator'
+      - include: '#constructor'
 
     repository:
       variable:
@@ -3424,254 +3405,356 @@ repository:
           1: {name: storage.type.trin}
       function:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def|fn|fun|func)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(def|fn|fun|func)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.function.trin}
+          '1':
+            name: storage.type.function.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.function.trin
       class:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(class)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.class.trin}
+          '1':
+            name: storage.type.class.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.class.trin
       enum:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(enum)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.enum.trin}
+          '1':
+            name: storage.type.enum.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.enum.trin
       module:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(mod)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.module.trin}
+          '1':
+            name: storage.type.module.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.module.trin
       package:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pkg)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(pkg)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.package.trin}
+          '1':
+            name: storage.type.package.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.package.trin
       interface:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inter)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(inter)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.interface.trin}
+          '1':
+            name: storage.type.interface.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.interface.trin
       structure:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(struct)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.structure.trin}
+          '1':
+            name: storage.type.structure.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.structure.trin
       object:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(obj)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.object.trin}
+          '1':
+            name: storage.type.object.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.object.trin
       record:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(record)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(rec)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.record.trin}
+          '1':
+            name: storage.type.record.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.record.trin
       fragment:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(frag)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(frag)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.fragment.trin}
+          '1':
+            name: storage.type.fragment.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.fragment.trin
-      namespace:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(space)\b\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.namespace.trin}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.namespace.trin
       data:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(data)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.data.trin}
+          '1':
+            name: storage.type.data.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.data.trin
       trait:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(trait)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.trait.trin}
+          '1':
+            name: storage.type.trait.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.trait.trin
       protocol:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(proto)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.protocol.trin}
+          '1':
+            name: storage.type.protocol.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.protocol.trin
       procedure:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(proc)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.procedure.trin}
+          '1':
+            name: storage.type.procedure.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.procedure.trin
       macro:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(macro)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.macro.trin}
+          '1':
+            name: storage.type.macro.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.macro.trin
       type:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(type)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.type.trin}
+          '1':
+            name: storage.type.type.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.type.trin
       constraint:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(given)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.constraint.trin}
+          '1':
+            name: storage.type.constraint.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.constraint.trin
       raw:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(raw)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(raw)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.raw.trin}
+          '1':
+            name: storage.type.raw.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.raw.trin
       style:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(style)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.style.trin}
+          '1':
+            name: storage.type.style.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.style.trin
       component:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(compo)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(comp)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.component.trin}
+          '1':
+            name: storage.type.component.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.component.trin
       element:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(elem)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.element.trin}
+          '1':
+            name: storage.type.element.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.element.trin
-      subroutine:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sub)\b\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.subroutine.trin}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.subroutine.trin
       extends:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(ext)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.extends.trin}
+          '1':
+            name: storage.type.extends.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.extends.trin
       implements:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(impl)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(impl)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.implements.trin}
+          '1':
+            name: storage.type.implements.trin
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.implements.trin
+      subroutine:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(sub)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          '1':
+            name: storage.type.subroutine.trin
+        patterns:
+          - include: '#block-entities'
+          - match: *entity-name
+            name: entity.name.subroutine.trin
+      predicate:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(pred)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          '1':
+            name: storage.type.predicate.trin
+        patterns:
+          - include: '#block-entities'
+          - match: *entity-name
+            name: entity.name.predicate.trin
+      method:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(method)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          '1':
+            name: storage.type.method.trin
+        patterns:
+          - include: '#block-entities'
+          - match: *entity-name
+            name: entity.name.method.trin
+      lambda:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(lambda)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          '1':
+            name: storage.type.lambda.trin
+        patterns:
+          - include: '#block-entities'
+          - match: *entity-name
+            name: entity.name.lambda.trin
+      lattice:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(lat)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          '1':
+            name: storage.type.lattice.trin
+        patterns:
+          - include: '#block-entities'
+          - match: *entity-name
+            name: entity.name.lattice.trin
+      relation:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(rel)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          '1':
+            name: storage.type.relation.trin
+        patterns:
+          - include: '#block-entities'
+          - match: *entity-name
+            name: entity.name.relation.trin
+      lemma:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(lemma)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          '1':
+            name: storage.type.lemma.trin
+        patterns:
+          - include: '#block-entities'
+          - match: *entity-name
+            name: entity.name.lemma.trin
+      iterator:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(iter)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          '1':
+            name: storage.type.iterator.trin
+        patterns:
+          - include: '#block-entities'
+          - match: *entity-name
+            name: entity.name.iterator.trin
+      constructor:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?|->)\b(ctor)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          '1':
+            name: storage.type.constructor.trin
+        patterns:
+          - include: '#block-entities'
+          - match: *entity-name
+            name: entity.name.constructor.trin
 
   params-clause:
     begin: |
@@ -3686,6 +3769,7 @@ repository:
       |class|enum|module|pkg|inter|struct|object|record
       |frag|space|data|trait|proto|proc|macro|type|given
       |raw|style|compo|elem|decl|ext|impl|sub
+      |pred|method|lambda|lat|rel|lemma|iter|ctor
 
       |if|lest|elif|elest|else|then
       |for|each|loop|while|until|from|with
