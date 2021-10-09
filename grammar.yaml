@@ -2451,7 +2451,7 @@ repository:
               20: {name: keyword.operator.macro.dollar.trin}
             match: |
               (?x)
-              (?<=^|[\s'"`\\({\[])# spacing
+              (?<=^|[\s'"`\\({\[])# opening
               (?:
               (:?=)#1
               |([+-]|\*{1,3}|~?/|%%?|\#\#?|<?\*>?)#2
@@ -2474,7 +2474,7 @@ repository:
               |(!:)#19
               |(\$:)#20
               )
-              (?=$|[\s'"`\\)}\]])
+              (?=$|[\s'"`\\)}\]])# closing
 
           - comment: |
               CUSTOM OPERATORS
@@ -2504,7 +2504,7 @@ repository:
               11: {name: keyword.operator.infix.custom.trin}
             match: |
               (?x)
-              (?<=^|[\s'"`\\({\[])# spacing
+              (?<=^|[\s'"`\\({\[])# opening
               (?:
               ([&|^~][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#1
               |([+\-*/%][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#2
@@ -2518,14 +2518,14 @@ repository:
               |([\p{S}\p{P}&&[\x80-\xFF]][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#9
               |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#10
               )
-              (?=$|[\s'"`\\)}\]])
+              (?=$|[\s'"`\\)}\]])# closing
 
       unary-ops:
         patterns:
           - &primary-operators
             comment: Primary binary operators
             match: |
-              (?x)(?<=\b|[)}\]'"`\\])
+              (?x)(?<=\b|['"`\\)}\]])# closing
               (?:
               ([>.]\.[.<])#1
               |(\?[.:]=?)#2
@@ -2534,7 +2534,7 @@ repository:
               |((?:::|\.)=?)#5
               |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#6
               )
-              (?=\b|[({\['"`\\])
+              (?=\b|['"`\\({\[])# opening
             captures:
               1: {name: keyword.operator.range.trin}
               2: {name: keyword.operator.optional.trin}
@@ -2833,7 +2833,7 @@ repository:
         repository:
           punctuation:
             patterns:
-              - match: (?<=\b|^|[)}\]'"`\\\s])(:)(?=\b|$|[({\['"`\\\s])
+              - match: (?<=\b|^|['"`\\)}\]\s])(:)(?=\b|$|['"`\\({\[\s])
                 captures:
                   1: {name: punctuation.separator.slice.trin}
               - match: ","
@@ -2886,7 +2886,7 @@ repository:
       - &primary-operators
         comment: Primary binary operators
         match: |
-          (?x)(?<=\b|[)}\]'"`\\])
+          (?x)(?<=\b|['"`\\)}\]])
           (?:
           ([>.]\.[.<])
           |(\?[.:]=?)
@@ -2894,7 +2894,7 @@ repository:
           |(![.:]=?)
           |((?:::|\.)=?)
           )
-          (?=\b|[({\['"`\\])
+          (?=\b|['"`\\({\[])
         captures:
           1: {name: keyword.operator.range.trin}
           2: {name: keyword.operator.optional.trin}
