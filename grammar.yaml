@@ -2233,9 +2233,7 @@ repository:
   calls:
     patterns:
       - comment: |
-          Function calls
-          For testing only:
-          for let x int|str, y int in list arr 'json' if x % 2 < 3
+          Function calls (with spacing)
         match: |
           (?x)\s*\b
           (
@@ -2264,36 +2262,11 @@ repository:
           [\p{Pc}\p{L}]\w*
           )
           \b\s+
-          (?=
-          (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
-          \b(?:# don't match keywords
-          in|of|as|is|out|new|infer|unset
-          |typeof|nameof|sizeof
-          |keyof|valof|pairof|instof
-          |len|del|to|til|till|thru|by
-
-          |var|val|let|set|get|const|def|fn|fun|func
-          |class|enum|module|pkg|inter|struct|object|record
-          |frag|space|data|trait|proto|proc|macro|type|given
-          |raw|style|compo|elem|decl|ext|impl|sub
-
-          |if|lest|elif|elest|else|then
-          |for|each|loop|while|until|from|with
-          |do|redo|try|retry|throw|catch|finally
-          |switch|case|default|match|when|pass
-          |unison|series|spawn|kill|fix|lock
-          |break|continue|return|await|label|yield|goto
-          |import|export|impose|expose|using
-          |debug|check|assert|fallthru
-          )\b
-          )
-          [\w]+|\[(?!<)|<\|{1,3}\s+|<\+\s+)
+          (?=\[(?!<)|<\|{1,3}\s+|<\+\s+)
         captures:
           1: {patterns: [include: "#function-names"]}
       - comment: |
-          Function calls
-          For testing only:
-          for let x int|str, y int in list arr 'json' if x % 2 < 3
+          Function calls (optional spacing)
         match: |
           (?x)\s*\b
           (
