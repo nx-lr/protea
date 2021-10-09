@@ -2,40 +2,11 @@
 
 > One language, three aspects.
 
-Trinity is a portable, multi-paradigm and multi-faceted programming language I created that aims to run on the JavaScript and Node.JS runtimes. It features a familiar JavaScript-like syntax, static (and dynamic) typing, a robust standard library and a unique combination of powerful features for imperative, declarative and meta-programming.
+Trinity is an optionally typed, compiled, multi-paradigm and multi-faceted programming language implemented in JavaScript, enabling one to build reliable and fast-performing software for web, desktop and mobile; for the frontend, API and backend.
+
+The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified, comprehensive and clean API with minimal abstractions. These powerful features and APIs are supported out of the box, providing (almost) everything you need to develop modern applications that don't crash, quicker and safer.
 
 ```dart
-def add2(x: Nat, y: Nat): Nat {
-  return x + y;
-}
-
-add2(2, 3) // 5
-add2(x = 2, y = 3) // 5
-add2(y = 2, 5) // 7
-
-def allPositive(*args: List[Int]): Bool {
-  return args.allOf(|x| x >= 0);
-}
-
-allPositive(1, 3, 4) // true
-
-def doit(tup: [Int, Bool], rec: {f: Str, g: Int}): Int {
-  return tup.0 + rec.g;
-}
-
-doit([1, false], {f: "ok", g: 3}) // 4
-
-def sign(?x: Int = 0): Int {
-  return switch x {
-    case 0 | x => 0
-    case > 0 => 1
-    case < 0 => -1
-  }
-}
-
-sign(5) // 1
-sign(-5) // -1
-sign() // 0
 ```
 
 ### Roadmap
@@ -66,7 +37,9 @@ This project is currently in the works and would be my largest project to date. 
 
 ## Standard Library
 
-<table><tr><td width=33.333% valign=top>
+<style>table{table-layout:fixed;width:100%;}</style>
+
+<table><tr><td valign=top>
 
 #### [Introduction](./Introduction.md)
 
@@ -76,7 +49,7 @@ This project is currently in the works and would be my largest project to date. 
 
 <table><tr><td width=25% valign=top>
 
-#### [Introduction](./Introduction.md)
+#### Introduction
 
 - [Overview](#./)
 - [Installation](#)
@@ -86,7 +59,7 @@ This project is currently in the works and would be my largest project to date. 
   - [Comments](#)
   - [Keywords](#)
 
-#### [Data Types](#)
+#### Data Types
 
 - [Integers and Floats](#)
 - [Strings](#)
