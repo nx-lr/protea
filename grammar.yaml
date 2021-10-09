@@ -2400,151 +2400,148 @@ repository:
 
     repository:
       binary-ops:
-        match: (?<=^|['"`\\\s({\[])([\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)(?=$|['"`\\\s)}\]])
-        captures:
-          0:
-            patterns:
-              - comment: augmented assignment += -= *= /= etc
-                match: (?<=^|['"`\\({\[\s])([\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+(?<![!:~.<=>])=)(?=$|['"`\\\s)}\]])
-                name: keyword.operator.assignment.augmented.trin
+        patterns:
+          - comment: augmented assignment += -= *= /= etc
+            match: (?<=^|['"`\\({\[\s])([\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+(?<![!:~.<=>])=)(?=$|['"`\\\s)}\]])
+            name: keyword.operator.assignment.augmented.trin
 
-              - comment: |
-                  BUILT-IN OPERATORS
+          - comment: |
+              BUILT-IN OPERATORS
 
-                  1: assignment : :=
-                  2: arithmetic + - * ** *** / // /// % %% *> <*
-                  3: increment/decrement ++ --
-                  4: logical && || ^^ !& !| !^ &| &!
-                  5: bitwise & | ^ ~
-                  6: bitwise shift << >> <<< >>>
-                  7: function pipeline <| |> <|| ||> <||| |||>
-                  8: function composition +> <+ <++ +>>
-                  9: class <: :> :< >: <:< >:> <:> >:< <! !> !< >! <!< >!> <!> >!<
-                  10: relational < > <= >=
-                  11: regex =< <> </ /> <$ $> <$> <+> <*> </> <$> $
-                  12: equality == != === !==
-                  13: wavy operators ~> <~ ~~> <~~
-                  14: fat arrow-like => ==> <==
-                  15: skinny arrow-like -> --> <- <--
-                  16: null-coalescing ??
-                  17: non-null coalescing !!
-                  18: compact ternary operator ?:
-                  19: inverse ternary operator !:
-                  20: infix function call $:
-                captures:
-                  1: {name: keyword.operator.assignment.trin}
-                  2: {name: keyword.operator.arithmetic.trin}
-                  3: {name: keyword.operator.successor.trin}
-                  4: {name: keyword.operator.logical.trin}
-                  5: {name: keyword.operator.bitwise.trin}
-                  6: {name: keyword.operator.bitwise.shift.trin}
-                  7: {name: keyword.operator.pipeline.trin}
-                  8: {name: keyword.operator.compose.trin}
-                  9: {name: keyword.operator.class.trin}
-                  10: {name: keyword.operator.relational.trin}
-                  11: {name: keyword.operator.regexp.trin}
-                  12: {name: keyword.operator.comparison.trin}
-                  13: {name: keyword.operator.similarity.trin}
-                  14: {name: keyword.operator.arrow.fat.trin}
-                  15: {name: keyword.operator.arrow.skinny.trin}
-                  16: {name: keyword.operator.null-coalescing.trin}
-                  17: {name: keyword.operator.coalescing.trin}
-                  18: {name: keyword.operator.conditional.trin}
-                  19: {name: keyword.operator.ternary.trin}
-                  20: {name: keyword.operator.macro.dollar.trin}
-                match: |
-                  (?x)
-                  (?<=^|['"`\\({\[\s])# spacing
-                  (?:
-                  (:?=)#1
-                  |([+-]|\*{1,3}|~?/|%%?|\#\#?|<?\*>?)#2
-                  |(\+\+|--)#3
-                  |([&|^~]{2})#4
-                  |([&|^~])#5
-                  |(<<<?|>>>?)#6
-                  |(\|{1,3}>|<\|{1,3})#7
-                  |(\+>|<\+)#8
-                  |([<>]?[!:][<>]?)#9
-                  |([<>]=?)#10
-                  |(<>|=<|<?[/*|+$]>?)#11
-                  |([!=]==?)#12
-                  |(~>|<~|~~>|<~~)#13
-                  |(<==|==?>)#14
-                  |(--?>|<--?)#15
-                  |(\?\?)#16
-                  |(!!)#17
-                  |(\?:)#18
-                  |(!:)#19
-                  |(\$:)#20
-                  )
-                  (?=$|['"`\\\s)}\]])
+              1: assignment : :=
+              2: arithmetic + - * ** *** / // /// % %% *> <*
+              3: increment/decrement ++ --
+              4: logical && || ^^ !& !| !^ &| &!
+              5: bitwise & | ^ ~
+              6: bitwise shift << >> <<< >>>
+              7: function pipeline <| |> <|| ||> <||| |||>
+              8: function composition +> <+ <++ +>>
+              9: class <: :> :< >: <:< >:> <:> >:< <! !> !< >! <!< >!> <!> >!<
+              10: relational < > <= >=
+              11: regex =< <> </ /> <$ $> <$> <+> <*> </> <$> $
+              12: equality == != === !==
+              13: wavy operators ~> <~ ~~> <~~
+              14: fat arrow-like => ==> <==
+              15: skinny arrow-like -> --> <- <--
+              16: null-coalescing ??
+              17: non-null coalescing !!
+              18: compact ternary operator ?:
+              19: inverse ternary operator !:
+              20: infix function call $:
+            captures:
+              1: {name: keyword.operator.assignment.trin}
+              2: {name: keyword.operator.arithmetic.trin}
+              3: {name: keyword.operator.successor.trin}
+              4: {name: keyword.operator.logical.trin}
+              5: {name: keyword.operator.bitwise.trin}
+              6: {name: keyword.operator.bitwise.shift.trin}
+              7: {name: keyword.operator.pipeline.trin}
+              8: {name: keyword.operator.compose.trin}
+              9: {name: keyword.operator.class.trin}
+              10: {name: keyword.operator.relational.trin}
+              11: {name: keyword.operator.regexp.trin}
+              12: {name: keyword.operator.comparison.trin}
+              13: {name: keyword.operator.similarity.trin}
+              14: {name: keyword.operator.arrow.fat.trin}
+              15: {name: keyword.operator.arrow.skinny.trin}
+              16: {name: keyword.operator.null-coalescing.trin}
+              17: {name: keyword.operator.coalescing.trin}
+              18: {name: keyword.operator.conditional.trin}
+              19: {name: keyword.operator.ternary.trin}
+              20: {name: keyword.operator.macro.dollar.trin}
+            match: |
+              (?x)
+              (?<=^|['"`\\({\[\s])# spacing
+              (?:
+              (:?=)#1
+              |([+-]|\*{1,3}|~?/|%%?|\#\#?|<?\*>?)#2
+              |(\+\+|--)#3
+              |([&|^~]{2})#4
+              |([&|^~])#5
+              |(<<<?|>>>?)#6
+              |(\|{1,3}>|<\|{1,3})#7
+              |(\+>|<\+)#8
+              |([<>]?[!:][<>]?)#9
+              |([<>]=?)#10
+              |(<>|=<|<?[/*|+$]>?)#11
+              |([!=]==?)#12
+              |(~>|<~|~~>|<~~)#13
+              |(<==|==?>)#14
+              |(--?>|<--?)#15
+              |(\?\?)#16
+              |(!!)#17
+              |(\?:)#18
+              |(!:)#19
+              |(\$:)#20
+              )
+              (?=$|['"`\\\s)}\]])
 
-              - comment: |
-                  CUSTOM OPERATORS
+          - comment: |
+              CUSTOM OPERATORS
 
-                  1: custom bitwise (& | ^ ~)
-                  2: custom arithmetic (+ - * / %)
-                  3: custom prototype (:)
-                  4: custom accessor (.)
-                  5: custom equality (= !)
-                  6: custom comparison (< >)
-                  7: custom private (? #)
-                  8: custom mathematical (Unicode Sm)
-                  9: custom currency (Unicode Sc)
-                  10: custom ASCII (between \x80 and \xff)
-                  11: custom infix operators (all other chars)
-                captures:
-                  1: {name: keyword.operator.bitwise.custom.trin}
-                  2: {name: keyword.operator.arithmetic.custom.trin}
-                  3: {name: keyword.operator.prototype.custom.trin}
-                  4: {name: keyword.operator.accessor.custom.trin}
-                  5: {name: keyword.operator.comparison.custom.trin}
-                  6: {name: keyword.operator.relational.custom.trin}
-                  7: {name: keyword.operator.private.custom.trin}
-                  8: {name: keyword.operator.math.custom.trin}
-                  9: {name: keyword.operator.currency.custom.trin}
-                  10: {name: keyword.operator.ascii.custom.trin}
-                  11: {name: keyword.operator.infix.custom.trin}
-                match: |
-                  (?x)
-                  (?<=^|['"`\\({\[\s])# spacing
-                  (?:
-                  ([&|^~][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#1
-                  |([+\-*/%][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#2
-                  |(:[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#3
-                  |(\.[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#3
-                  |([!=][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#4
-                  |([<>][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#5
-                  |([?\#][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#6
-                  |(\p{Sm}[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#7
-                  |(\p{Sc}[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#8
-                  |([\p{S}\p{P}&&[\x80-\xff]][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#9
-                  |([\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#10
-                  )
-                  (?=$|['"`\\\s)}\]])
+              1: custom bitwise (& | ^ ~)
+              2: custom arithmetic (+ - * / %)
+              3: custom prototype (:)
+              4: custom accessor (.)
+              5: custom equality (= !)
+              6: custom comparison (< >)
+              7: custom private (? #)
+              8: custom mathematical (Unicode Sm)
+              9: custom currency (Unicode Sc)
+              10: custom ASCII (between \x80 and \xff)
+              11: custom infix operators (all other chars)
+            captures:
+              1: {name: keyword.operator.bitwise.custom.trin}
+              2: {name: keyword.operator.arithmetic.custom.trin}
+              3: {name: keyword.operator.prototype.custom.trin}
+              4: {name: keyword.operator.accessor.custom.trin}
+              5: {name: keyword.operator.comparison.custom.trin}
+              6: {name: keyword.operator.relational.custom.trin}
+              7: {name: keyword.operator.private.custom.trin}
+              8: {name: keyword.operator.math.custom.trin}
+              9: {name: keyword.operator.currency.custom.trin}
+              10: {name: keyword.operator.ascii.custom.trin}
+              11: {name: keyword.operator.infix.custom.trin}
+            match: |
+              (?x)
+              (?<=^|['"`\\({\[\s])# spacing
+              (?:
+              ([&|^~][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#1
+              |([+\-*/%][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#2
+              |(:[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#3
+              |(\.[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#3
+              |([!=][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#4
+              |([<>][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#5
+              |([?\#][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#6
+              |(\p{Sm}[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#7
+              |(\p{Sc}[\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#8
+              |([\p{S}\p{P}&&[\x80-\xff]][\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#9
+              |([\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#10
+              )
+              (?=$|['"`\\\s)}\]])
 
       unary-ops:
         patterns:
           - &primary-operators
             comment: Primary binary operators
             match: |
-              (?x)(?<=\b|^|[)}\]'"`\\])
+              (?x)(?<=\b|[)}\]'"`\\])
               (?:
-              ([>.]\.[.<])
-              |(\?[.:]=?)
-              |(~[.:]=?)
-              |(![.:]=?)
-              |((?:::|\.)=?)
-              |(->)
+              ([>.]\.[.<])#1
+              |(\?[.:]=?)#2
+              |(~[.:]=?)#3
+              |(![.:]=?)#4
+              |((?:::|\.)=?)#5
+              |([\p{S}\p{P}&&[^,;'"`\\\p{Pc}(){}\[\]]]+)#6
               )
-              (?=\b|$|[({\['"`\\])
+              (?=\b|[({\['"`\\])
             captures:
               1: {name: keyword.operator.range.trin}
-              2: {name: punctuation.accessor.optional.trin}
-              3: {name: punctuation.accessor.cascade.trin}
-              4: {name: punctuation.accessor.call.trin}
-              5: {name: punctuation.accessor.trin}
-              6: {name: punctuation.accessor.module.trin}
+              2: {name: keyword.operator.optional.trin}
+              3: {name: keyword.operator.cascade.trin}
+              4: {name: keyword.operator.assert.trin}
+              5: {name: keyword.operator.accessor.trin}
+              6: {name: keyword.operator.primary.trin}
 
           - &prefix-operators
             comment: Prefix operators
@@ -2614,11 +2611,11 @@ repository:
               4: {name: keyword.operator.intersection.trin}
               5: {name: keyword.operator.union.trin}
               6: {name: keyword.operator.symmetric.trin}
-              7: {name: punctuation.accessor.call.trin}
+              7: {name: keyword.operator.assert.trin}
               8: {name: keyword.operator.private.trin}
               9: {name: keyword.operator.decorator.trin}
               10: {name: keyword.operator.bitwise.trin}
-              11: {name: punctuation.accessor.optional.trin}
+              11: {name: keyword.operator.optional.trin}
               12: {name: keyword.operator.assignment.trin}
               13: {name: keyword.operator.pipeline.trin}
               14: {name: keyword.operator.private.trin}
@@ -2886,17 +2883,24 @@ repository:
 
   type-operators:
     patterns:
-      - comment: primary binary operators
+      - &primary-operators
+        comment: Primary binary operators
         match: |
-          (?x)(?<=^|[)}\]\w'"`])
-          (?:(\?[:.])|(~[:.])|(![:.])|(::|\.)|(->))
-          (?=$|[({\[\w'"`])
+          (?x)(?<=\b|[)}\]'"`\\])
+          (?:
+          ([>.]\.[.<])
+          |(\?[.:]=?)
+          |(~[.:]=?)
+          |(![.:]=?)
+          |((?:::|\.)=?)
+          )
+          (?=\b|[({\['"`\\])
         captures:
-          1: {name: punctuation.accessor.optional.trin}
-          2: {name: punctuation.accessor.cascade.trin}
-          3: {name: punctuation.accessor.call.trin}
-          4: {name: punctuation.accessor.trin}
-          5: {name: punctuation.accessor.module.trin}
+          1: {name: keyword.operator.range.trin}
+          2: {name: keyword.operator.optional.trin}
+          3: {name: keyword.operator.cascade.trin}
+          4: {name: keyword.operator.assert.trin}
+          5: {name: keyword.operator.accessor.trin}
 
       - comment: type operators
         match: |
