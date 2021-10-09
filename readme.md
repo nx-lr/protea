@@ -254,9 +254,31 @@ The Trinity language derives from a combination of Scala and Swift inspired synt
 
 This document provides an overview of the syntax, operations, and semantics in the Bosque language with an emphasis on the distinctive or unusual features in the language. as well as a comprehensive guide to the modules in Trinity's Standard Library.
 
+### Tokens and whitespace
+
+The characters used in Trinity fall into four groups:
+
+- White space characters
+- Alphanumerics: letters, digits, combining punctuation and underscores
+- Operator characters (other printable characters excluding below)
+- Punctuation: `` (){}[],;\'"` ``
+
+Each token consists of a sequence of consecutive characters from just one of those groups, excluding whitespace. Whitespace is ignored except they separate tokens.
+
+A sequence of alphanumeric characters, with no additional non-alphanumeric characters, is a single token. White-space must be used to separate two such tokens in a program. The same thing goes for operators.
+
+The parser treats operator tokens much like identifiers and use the immediately surrounding context (whitespace, alphanumerics and punctuation) to determine if the operator should be parsed as a _prefix_, _suffix_, _infix_ or _primary_. Prefix and suffix, i.e. unary operators, are parsed character by character, whereas infix and primary operators are parsed as a single token.
+
+- Primary operators are surrounded by punctuation or alphanumerics on either end. Multiple characters are captured. The multiple pluses in `x++++x` is a single primary operator.
+- Suffix operators are surrounded by any punctuation or alphanumeric on the left side, and whitespace, any closing bracket, comma or semicolon on the left side. The pluses in `(1+,1+)+` are all suffix operators.
+- Prefix operators are surrounded by any punctuation or alphanumeric on the right side, and whitespace, any opening bracket, comma or semicolon on the left. The pluses in `+(+1,+1)` are all prefix operators.
+- Infix operators are surrounded by whitespace on either side. The double plus in `1 ++ 1` is an infix operator.
+
+In summary, except for required white space between alphanumeric tokens, adding white space between tokens or removing white space can never result in changing the meaning of a Dafny program. For the rest of this document, we consider Dafny programs as sequences of tokens.
+
 ### Syntax
 
-Trinity derives its syntax from JavaScript, so naturally all code blocks are delimited inside curly brackets, so it feels _somewhat_ familiar to most JavaScript developers.
+Trinity derives most of its syntax from JavaScript, so all code blocks are delimited inside curly braces.
 
 ```dart
 class Person(val firstName: Str, val lastName: Str) {
@@ -264,16 +286,14 @@ class Person(val firstName: Str, val lastName: Str) {
 }
 ```
 
-Like JavaScript, semicolons can be used to terminate expressions, or commas if the next expression is on the following line. Lines are joined if the first token of the next line begins with an infix, control flow or declarative keyword, or infix operator.
+Semicolons can be used to terminate expressions if the next is on the following line. Ignoring all comments, the next line is joined to the previous if the current line ends with an infix operator, such as `in` or `of`, or the next line begins with one.
 
 ```dart
-print 'Hello World!'
+x in
+arr //= joined
 
-; const car = { //* join
-  type: "Fiat"
-  , model: "500" //* join
-  , color: "white" //* join
-}
+x
+in arr //= joined
 ```
 
 #### Comments
@@ -281,28 +301,36 @@ print 'Hello World!'
 Line comments start with `//` and go until the end of the line. Comments beginning with `/+` can be nested.
 
 ```dart
-// line comment
-/* block comment */
-/+ nested block comment /+ +/ +/
+// line
+/* block */
+/+ nested block /+ +/ +/
 ```
 
 Special, reserved line comments include documentation, to-do and compiler comments, which are recognized by several aspects of the compiler.
 
 ```dart
-/// JSDoc line comment
-/** JSDoc block comment */
-/++ nested JSDoc comment /++ +/ +/
-//= assertion comment
-//+ testing comment
-//! fixme/todo comment
-//* compiler comment
+/// JSDoc line
+/** JSDoc block */
+/++ nested JSDoc /++ +/ +/
+//= assertion
+//+ testing
+//! fixme/todo
+//* compiler
 ```
 
 #### Identifiers
 
-Identifiers always begin with a Unicode letter or combining punctuation character, such as an underscore. The rest of the characters may include _decimal_ digits and combining marks.
+Identifiers can begin with a letter or "underscore". Other characters include digits and diacritics. In simpler terms:
+
+```dart
+var identifier = `[\pL\pPc][\pL\pM\pNd\pPc]*`
+```
 
 For JSX tags, identifiers can also include dashes, but an identifier should not include a trailing dash.
+
+```dart
+var identifier = `[\pL\pPc][\pL\pM\pNd\pPc\pPd]*(?!\pPd+)`
+```
 
 Naming conventions follow Java or JavaScript. There are four types of identifiers which Trinity recognizes and highlights accordingly:
 
