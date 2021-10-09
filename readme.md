@@ -7,6 +7,7 @@ Trinity is an optionally typed, compiled, multi-paradigm and multi-faceted progr
 The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified, comprehensive and clean API with minimal abstractions. These powerful features and APIs are supported out of the box, providing (almost) everything you need to develop modern applications that don't crash, quicker and safer.
 
 ```dart
+
 ```
 
 ### Roadmap
@@ -80,7 +81,7 @@ This project is currently in the works and would be my largest project to date. 
   - [Functions](#)
   - [Symbols](#)
 
-#### [Control Flow](#)
+#### Control Flow
 
 - [Basic Block](#)
 - [Conditionals](#)
@@ -92,7 +93,7 @@ This project is currently in the works and would be my largest project to date. 
 
 </td><td width=25% valign=top>
 
-#### [Functions](#)
+#### Functions
 
 - [Functions](#)
 - [Closures](#)
@@ -104,7 +105,7 @@ This project is currently in the works and would be my largest project to date. 
 - [Generators](#)
 - [String Macros](#)
 
-#### [Classes](#)
+#### Classes
 
 - [Introduction](#)
 - [Constructors](#)
@@ -118,7 +119,7 @@ This project is currently in the works and would be my largest project to date. 
 - [Advanced Modifiers](#)
 - [Extensions](#)
 
-#### [Types](#)
+#### Types
 
 - [Introduction](#)
 - [Any, Mixed, Void/Unit, Empty](#)
@@ -136,14 +137,14 @@ This project is currently in the works and would be my largest project to date. 
 
 </td><td width=25% valign=top>
 
-#### [Concurrency and Asynchrony](#)
+#### Concurrency
 
 - [Channels](#)
 - [Series and Parallel Blocks](#)
 - [Async-Await](#)
 - [Callbacks and Futures](#)
 
-#### [Modules](#)
+#### Modules
 
 - [The Module System](#)
 - [Imports and Exports](#)
@@ -151,7 +152,7 @@ This project is currently in the works and would be my largest project to date. 
 - [Calling Python and Node.JS Code](#)
 - [Managing and Publishing Packages](#)
 
-#### [Advanced Topics](#)
+#### Advanced Topics
 
 - [More on Types](#)
 - [Domain-Specific Extensions](#)
@@ -181,11 +182,13 @@ This project is currently in the works and would be my largest project to date. 
 
 </td><td width=25% valign=top>
 
-#### [Tools](#)
+#### Tools
 
 - [Nifty, Trinity's Formatter](#)
 
-#### [Standard Library](#)
+#### Standard Library
+
+> \* Far future
 
 - [Test-Driven Development](#)
 - [File System and I/O](#)
@@ -204,9 +207,9 @@ This project is currently in the works and would be my largest project to date. 
 - [Object-Oriented Programming](#)
 - [Markup and Styling](#)
 - [Frontend and Backend](#)
-- [Domain-Specific Language Extensions](#)
+- [Domain-Specific Extensions](#)
 
-#### [Appendices and References](#)
+#### Appendices and References
 
 - [Keywords and Modifiers](#)
 - [Operators & Precedence](#)
