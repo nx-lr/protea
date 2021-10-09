@@ -1,4 +1,4 @@
-# @TehFynlNyt/Trinity
+# Trinity
 
 > One language, three aspects.
 
