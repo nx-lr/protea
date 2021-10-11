@@ -1132,7 +1132,7 @@ repository:
   symbols:
     match: |
       (?x)
-      \s*
+      (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
       (:)(
       (?:\w|\\.)# identifier
       (?:[^\s\\(){}\[\]<>.,:;]|\\.)*?# remainder
@@ -4213,7 +4213,7 @@ repository:
         match: \s*(,)
         name: punctuation.separator.comma.trin
       right-arrow:
-        match: (?:^|[\s'"`\\({\[]*)(=>)(?:$|[\s'"`\\)}\]])
+        match: (?<=^|[\s'"`\\({\[]*)(=>)(?=$|[\s'"`\\)}\]])
         name: punctuation.definition.arrow.trin}
       double-semi:
         match: \s*(;;)
