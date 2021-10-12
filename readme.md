@@ -270,7 +270,7 @@ x14 => base14
 
 ```dart
 block = "{" statements "}";
-clause = ( ("then" | "=>") statement | block);
+clause = (("then" | "=>") statement | block);
 ifStatement =
   ("if" | "lest") statement clause
   (("elif" | "elest") statement clause)*
@@ -479,7 +479,7 @@ Terminal symbol in the grammar: `MultiRawStrLit` and `MultiEscStrLit`.
 String literals can also be delimited by at least three single or double quotes `""" ... """`, provided they end with at least that many quotes of the same character. The above rules for single- and double-quoted strings also apply.
 
 ```dart
-"""" "stringified string"""""
+""" "stringified string""""
 ```
 
 produces:
@@ -492,9 +492,257 @@ produces:
 
 Terminal symbols in the grammar: `Macro(Multi)?(Raw|Esc)StrLit`.
 
-The construct `identifier"string literal"` (without whitespace between the identifier and the opening quotation mark) is an example of a macro string. It is a shortcut for the construct `identifier("string literal")`, so it denotes a `macro` call with a raw string literal as its only argument.
+The construct `identifier"string"` is a shortcut for the construct `identifier("string")`, denoting a macro call with a string literal as its only argument. Macro string literals are especially convenient for embedding DSLs directly into Trinity (for example, SQL).
 
-Macro string literals are especially convenient for embedding DSLs directly into Trinity (for example, SQL).
+#### String Interpolation
+
+#### Locale Strings
+
+#### Format Directives
+
+### Regular expressions
+
+Regular expressions are like strings, except that they are delimited using backticks `` ` `` as opposed to single or double quotes. Typical escaping rules apply, though in between `()` or `[]`, `` ` `` can be left as is.
+
+The following section serves as a summary to the regular expression syntax of Nova, as well as some of the more unique features that Nova has over other regex flavors.
+
+#### Basic Syntax Elements
+
+| Syntax      | Description                           |
+| ----------- | ------------------------------------- |
+| `\`         | Escape (disable) a metacharacter      |
+| `\|`        | Alternation                           |
+| `(...)`     | Capturing group                       |
+| `[...]`     | Character class (can be nested)       |
+| `${...}`    | Embedded expression                   |
+| `{,}`       | Quantifier token (LHS 0, RHS &infin;) |
+| `\Q...\E`   | Raw quoted literal                    |
+| `\q...\e`   | Quoted literal                        |
+| `\0` onward | Numeric backreference (0-indexed)     |
+| `$...%...`  | Interpolation with `sprintf` syntax   |
+
+#### Characters
+
+Most of these characters also appear the same way as in string literals.
+
+| Syntax                           | Description and Use                         |
+| -------------------------------- | ------------------------------------------- |
+| `\a`                             | \*Alert/bell character (inside `[]`)        |
+| `\b`                             | \*Backspace character (inside `[]`)         |
+| `\B`                             | \*Backslash (inside `[]`)                   |
+| `\e`                             | Escape character (Unicode `U+`)             |
+| `\f`                             | Form feed (Unicode `U+`)                    |
+| `\n`                             | New line (Unicode `U+`)                     |
+| `\r`                             | Carriage return (Unicode `U+`)              |
+| `\t`                             | Horizontal tab (Unicode `U+`)               |
+| `\v`                             | Vertical tab (Unicode `U+`)                 |
+| `\cA`...`\cZ`<br>`\ca`...`\cz`   | Control character from `U+01` to `U+1A`     |
+| `\x00`                           | Unicode character from `U+00` to `U+FF`     |
+| `\u0000`                         | Unicode character from `U+00` to `U+FFFF`   |
+| `\U00000000`                     | Unicode character from `U+00` to `U+10FFFF` |
+| `\u{7HHHHHHH}`<br>`\x{7HHHHHHH}` | Unicode character (1-8 digits)              |
+| `\o{17777777777}`                | Octal Unicode codepoint (1-11 digits)       |
+
+#### Character Sequences
+
+| Syntax                | Description                              |
+| --------------------- | ---------------------------------------- |
+| `\x{7F 7F ... 7F}`    | Hexadecimal code point (1-8 digits)      |
+| `\o{100 100 ... 100}` | Octal code point (1-11 digits)           |
+| `\j{alpha beta}`      | `j`-expansion (full documentation later) |
+
+#### Character Classes
+
+| Syntax     | Inverse | Description                                                       |
+| ---------- | ------- | ----------------------------------------------------------------- |
+| `.`        | None    | Hexadecimal code point (1-8 digits)                               |
+| `\w`       | `\W`    | Word character `[\d]`                                             |
+| `\d`       | `\D`    | Digit character `[0-9]`                                           |
+| `\s`       | `\S`    | Space character `[\t\n\v\f\r\20]`                                 |
+| `\h`       | `\H`    | Hexadecimal digit character `[\da-fA-F]`                          |
+| `\u`       | `\U`    | Uppercase letter `[A-Z]`                                          |
+| `\l`       | `\L`    | Lowercase letter `[a-z]`                                          |
+| `\f`       | `\F`    | Form feed `[\f]`                                                  |
+| `\t`       | `\T`    | Horizontal tab `[\t]`                                             |
+| `\v`       | `\V`    | Form feed `[\v]`                                                  |
+| `\n`       | `\N`    | Newline `[\n]`                                                    |
+|            | `\O`    | Any character `[^]`                                               |
+| `\R`       |         | General line break (CR + LF, etc)                                 |
+| `\x`, `\X` |         | Extended grapheme cluster                                         |
+| `\c`       | `\C`    | First character of identifier; `[\pL\pPc]` by default             |
+| `\i`       | `\I`    | Subsequent characters of identifier `[\pL\pPc\pM\pNd]` by default |
+
+##### Unicode Properties
+
+Properties are case-insensitive. Logical operators such as `&&`, `||`, `^^` and `!`, as well as `==` and `!=`, unary `in` and `!in` , `is` and `!is` can work.
+
+A short form starting with `Is` indicates a script or binary property:
+
+- `is Latin`, &rarr; `Script=Latin`.
+- `is Alphabetic`, &rarr; `Alphabetic=Yes`.
+
+A short form starting with `In` indicates a block property:
+
+- `InBasicLatin`, &rarr; `Block=BasicLatin` .
+- `\p{in Alphabetic && is Latin}` &rarr; all Latin characters in Unicode
+
+| Syntax                                                                | Description                      |
+| --------------------------------------------------------------------- | -------------------------------- |
+| `\p{property=value}`<br>`\p{property:value}`<br>`\p{property==value}` | Unicode binary property          |
+| `\p{property!=value}`<br>`\P{property:value}`                         | Negated binary property          |
+| `\p{in BasicLatin}`<br>`\P{!in BasicLatin}`                           | Block property                   |
+| `\p{is Latin}`<br>`\p{script==Latin}`                                 | Script property (shorthand `is`) |
+| `\p{value}`                                                           | Short form\*                     |
+| `\p{Cc}`                                                              | Unicode character categories^    |
+
+\*Properties are checked in the order: `General_Category`, `Script`, `Block`, binary property:
+
+- `Latin` &rarr; (`Script=Latin`).
+- `BasicLatin` &rarr; (`Block=BasicLatin`).
+- `Alphabetic` &rarr; (`Alphabetic=Yes`).
+
+##### POSIX Classes
+
+Alternatively, `\p{}` notation can be used instead of `[::]`.
+
+| Syntax       | ASCII                                        | Unicode (`/u` flag) | Description                                              |
+| ------------ | -------------------------------------------- | ------------------- | -------------------------------------------------------- |
+| `[:alnum:]`  | `[a-zA-Z0-9]`                                | `[\pL\pNl}\pNd]`    | Alphanumeric characters                                  |
+| `[:alpha:]`  | `[a-zA-Z]`                                   | `[\pL\pNl]`         | Alphabetic characters                                    |
+| `[:ascii:]`  | `[\x00-\x7F]`                                | `[\x00-\xFF]`       | ASCII characters                                         |
+| `[:blank:]`  | `[\x20\t]`                                   | `[\pZs\t]`          | Space and tab                                            |
+| `[:cntrl:]`  | `[\x00-\x1F\x7F]`                            | `\pCc`              | Control characters                                       |
+| `[:digit:]`  | `[0-9]`                                      | `\pNd`              | Digits                                                   |
+| `[:graph:]`  | `[\x21-\x7E]`                                | `[^\pZ\pC]`         | Visible characters (anything except spaces and controls) |
+| `[:lower:]`  | `[a-z]`                                      | `\pLl`              | Lowercase letters                                        |
+| `[:number:]` | `[0-9]`                                      | `\pN`               | Numeric characters                                       |
+| `[:print:]`  | `[\x20-\x7E] `                               | `\PC`               | Printable characters (anything except controls)          |
+| `[:punct:]`  | `[!"\#$%&'()\*+,\-./:;<=>?@\[\\\]^\_'{\|}~]` | `\pP`               | Punctuation (and symbols).                               |
+| `[:space:]`  | `[ \t\r\n\v\f]`                              | `[\pZ\t\r\n\v\f]`   | Spacing characters                                       |
+| `[:symbol:]` | `[\pS&&\p{ASCII}]`                           | `\pS`               | Symbols                                                  |
+| `[:upper:]`  | `[A-Z]`                                      | `\pLu`              | Uppercase letters                                        |
+| `[:word:]`   | `[A-Za-z0-9_]`                               | `[\pL\pNl\pNd\pPc]` | Word characters                                          |
+| `[:xdigit:]` | `[A-Fa-f0-9] `                               | `[A-Fa-f0-9]`       | Hexadecimal digits                                       |
+
+#### Character Sets
+
+A set `[...]` can include nested sets. The operators below are listed in increasing precedence, meaning they are evaluated first.
+
+<!-- prettier-ignore -->
+| Syntax | Description |
+| --- | --- |
+| `^...`, `~...`, `!...`  | Negated (complement) character class |
+| `x-y` | Range (from x to y) |
+| `\|\|` | Union (`x \|\| y` means "x or y") |
+| `&&` | Intersection (`x && y` means "x and y" ) |
+| `^^` | Symmetric difference (`x ^^ y` means "x and y, but not both") |
+| `--` | Difference (`x ~~ y` means "x but not y") |
+
+#### Anchors
+
+| Syntax | Inverse | Description                                  |
+| ------ | ------- | -------------------------------------------- |
+| `^`    | None    | Beginning of the string/line                 |
+| `$`    | None    | End of the string/line                       |
+| `\b`   | `\B`    | Word boundary                                |
+| `\a`   | `\A`    | Beginning of the string/line                 |
+| `\z`   | `\Z`    | End of the string/before new line            |
+|        | `\G`    | Where the current search attempt begins/ends |
+|        | `\K`    | Keep start/end position of the result string |
+| `\m`   | `\M`    | Line boundary                                |
+| `\y`   | `\Y`    | Text segment boundary                        |
+
+#### Quantifiers
+
+| Syntax           | Reluctant `?` (returns shortest match) | Possessive `+` (returns nothing) | Greedy `*` (returns longest match) | Description                             |
+| ---------------- | -------------------------------------- | -------------------------------- | ---------------------------------- | --------------------------------------- |
+| `?`              | `??`                                   | `?+`                             | `?*`                               | 1 or 0 times                            |
+| `+`              | `+?`                                   | `++`                             | `+*`                               | 1 or more times                         |
+| `*`, `{,}`, `{}` | `*?`, `{,}?`, `{}?`                    | `*+`, `{,}+`, `{}+`              | `**`, `{,}*`, `{}*`                | 0 or more times                         |
+| `{n,m}`          | `{n,m}?`                               | `{n,m}+`                         | `{n,m}*`                           | At least `n` but no more than `m` times |
+| `{n,}`           | `{n,}?`                                | `{n,}+`                          | `{n,}*`                            | At least `n` times                      |
+| `{,m}`           | `{,m}?`                                | `{,m}+`                          | `{,m}*`                            | Up to `m` times                         |
+| `{n}`            | `{n}?`                                 | `{n}+`                           | `{n}*`                             | Exactly `n` times                       |
+
+#### Groups
+
+`(?'')`, `(?"")` notation can also be used.
+
+| Syntax                      | Description                       |
+| --------------------------- | --------------------------------- |
+| `(?#...)`                   | Comment                           |
+| `(?x-y:...)`<br>`(?x-y)...` | Mode modifier                     |
+| `(?:...)`                   | Non-capturing (passive) group     |
+| `(...)`                     | Capturing group (numbered from 1) |
+| `(?<name>...)`              | Named capturing group             |
+| `(?<-x>...)`                | Balancing group                   |
+| `(?<x-x>...)`               | Balancing group pair              |
+| `(?=...)`                   | Positive lookahead                |
+| `(?!...)`                   | Negative lookahead                |
+| `(?<=...)`                  | Positive lookbehind               |
+| `(?<!...)`                  | Negative lookbehind               |
+| `(?>...)`                   | Atomic group (no backtracking)    |
+| `(?~...)`                   | Sub-expression                    |
+| `(?()\|...\|...)`           | Conditional branching             |
+| `(?~\|...\|...)`            | Absent expression                 |
+| `(?~\|...)`                 | Absent repeater                   |
+| `(?~...)`                   | Absent stopper                    |
+| `(?~\|)`                    | Range clear                       |
+
+#### Backreferences and Calls
+
+`\k''`, `\k""` can also be used.
+
+| Syntax     | Description                                               |
+| ---------- | --------------------------------------------------------- |
+| `\1`       | Specific numbered backreference                           |
+| `\k<1>`    | Specific numbered backreference                           |
+| `\k<-1>`   | Relative numbered backreference (`+` ahead, `-` behind)   |
+| `\k<name>` | Specific named backreference                              |
+| `\g<1>`    | Specific numbered subroutine call                         |
+| `\g<-1>`   | Relative numbered subroutine call (`+` ahead, `-` behind) |
+| `\g<name>` | Specific named subroutine call                            |
+
+#### Flags
+
+These flags go after the regex literal. `f`, `m`, `u`, `e` and `x` are enabled by default.
+
+| Flag | Description                                                                  |
+| ---- | ---------------------------------------------------------------------------- |
+| `a`  | Astral mode - `\p` supports the past the BMP                                 |
+| `c`  | Case-sensitive mode.                                                         |
+| `d`  | Treat only `\n` as a line break                                              |
+| `e`  | Safe mode - escape all interpolations                                        |
+| `f`  | First match only                                                             |
+| `g`  | Global. Enabled by default                                                   |
+| `i`  | Case-insensitive mode                                                        |
+| `j`  | Switches definitions of `()` and `(?:)`                                      |
+| `k`  | Allows duplicate named groups                                                |
+| `l`  | Last match only                                                              |
+| `m`  | Multiline - `^`/`$` match at every line                                      |
+| `n`  | Named capturing groups only - all unnamed groups become non-capturing        |
+| `o`  | Unsafe mode - coerces interpolations into strings                            |
+| `p`  | `^` and `$` match at the start/end of line                                   |
+| `q`  | Quote all metacharacters                                                     |
+| `s`  | "Dot-all" - `.` matches all characters                                       |
+| `t`  | Strict spacing mode                                                          |
+| `u`  | Unicode mode - POSIX class definitions also expanded                         |
+| `w`  | `^` and `$` match at the start/end of string, `.` does not match line breaks |
+| `x`  | Free-spacing mode                                                            |
+| `y`  | Sticky mode - search begins from specified index on LHS of regex             |
+
+#### Replacement String
+
+This syntax applies to the right hand side of the regex literal in regex operations such as `=<` substitution and `</>` transliteration.
+
+| x         | y                                                                                                                                                      |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `$$`      | Inserts a literal "$".                                                                                                                                 |
+| `$0`      | Inserts the entire matched substring into the output                                                                                                   |
+| `$-`      | Inserts the portion of the string that precedes the matched substring.                                                                                 |
+| `$+`      | Inserts the portion of the string that follows the matched substring.                                                                                  |
+| `$n`      | Where `n` is a positive integer, inserts the `n`th parenthesized submatch string. If `n` refers to an invalid group, the result is inserted literally. |
+| `$<name>` | Where name is a capturing group name. If the group is invalid, it is inserted literally.                                                               |
 
 ### Numbers
 
@@ -503,6 +751,7 @@ Numbers are of a single type, and have the following form as shown below. If a n
 Type suffixes can also be used to cast numeric literals to the appropriate type; alternatively, the type can be inferred from the surrounding context: `var x: i16 = 1` and `var x = 1:i16` are one and the same.
 
 ```dart
+numbersFrom2 = ("2"..."9" | "1"..."9" "0"..."9"+)
 customBasePrefix = ("2"..."9" | "1"..."9" digit+) @"b";
 customBaseDigits = `[:alnum]`;
 base2Prefix = @"0b";  base2Digits = "0" | "1";
@@ -518,9 +767,9 @@ base16Prefix = @"0x"; base16Digits = digit | @"a"...@"f";
 #RepeatingPart = "*" #Digits ("_"+ #Digits)*;
 #DenominatorPart = "/" #Digits ("_"+ #Digits)*;
 
-decimal = "0" | "1"..."9" digit+;
-ExponentPart = ("*" decimal)? "^" ["+" "-"]? decimal;
-RoundingPart = "=" ["+" "-" "~"]? decimal;
+base = "0" | "1"..."9" digit+;
+ExponentPart = ("*" base)? "^" ["+" "-"]? base;
+RoundingPart = "=" ["+" "-" "~"]? base;
 TypeSuffix = ":" identifier;
 
 #NumericLit = #Prefix
@@ -536,14 +785,75 @@ Any other pseudo-identifier that starts with a digit are not matched and are con
 
 ### Operators
 
-Trinity allows user defined operators. An operator is any punctuation `P` or symbol `S` character, except `` ()[]{}'"`,; ``. These keywords are also operators: `in of as is new to til thru by unset del`.
+Trinity allows user defined operators. An operator is any punctuation `P` or symbol `S` character, except `` ,;\'"`()[]{} ``. These keywords are also operators: `in of as is new to til thru by unset del`.
 
 `.=`, `:`, `=`, `:=`, `? :`, `! :` and `$ :` are not available as general operators; they are used for other notational purposes. `=>` is a special case, as it is syntactic sugar for `then` and introduces a block.
 
 ### Other tokens
 
-The following strings denote other tokens:
+The following strings denote other tokens: `'` `"` `` ` `` `#(` `(` `)` `#{` `{` `}` `#[` `[` `]` `,` `;` `:` `=>`
 
+## Syntax
+
+This section describes the syntax for Trinity.
+
+### Operators
+
+Trinity allows user defined operators with a combination of two declarative keywords: one which tells the parser the arity of the operator, and the keyword `oper`. Both must be before a declaration keyword, such as `fun`, `def`, `proc` or `sub`.
+
+```dart
+infix oper fun x = 10
 ```
-' " ` #( ( ) #{ { } #[ [ ] , ; : =>
+
+Nim allows user-definable operators. Binary operators have 11 different levels of precedence.
+
+### Associativity
+
+Binary operators whose first character is `@` are right-associative, all other binary operators are left-associative.
+
+```dart
+infix oper fun "@/"(x, y: Float): Float = x / y
+// A right-associative division operator
+result = x / y
+echo(12 @/ 4 @/ 8) // 24.0 (4 / 8 = 0.5, then 12 / 0.5 = 24.0)
+echo(12 / 4 / 8) // 0.375 (12 / 4 = 3.0, then 3 / 8 = 0.375)
+```
+
+### Precedence
+
+Prefix operators always bind stronger than any binary operator: `$a + b` is `($a) + b` and not `$(a + b)`.
+
+If an Prefix operator's first character is `@` it is a sigil-like operator which binds stronger than a leading identifier: `@x.abc` is parsed as `(@x).abc` whereas `$x.abc` is parsed as `$(x.abc)`.
+
+For binary operators that are not keywords, the precedence is determined by the following rules: Operators ending in either `->`, `~>` or `=>` are called arrow like, and have the lowest precedence of all operators.
+
+If the operator ends with `=` and its first character is none of `<`, `>`, `!`, `=`, `~`, `?`, it is an assignment operator which has the second-lowest precedence.
+
+Otherwise, precedence is determined by the first character.
+
+| Precedence level | Operators                                                                                         | First Character | Terminal Symbol |
+| ---------------- | ------------------------------------------------------------------------------------------------- | --------------- | --------------- |
+| 10 (highest)     | `~@` `::` `:-` `-~` `~-` `.-` `@@` `$$`                                                           | `$` `@`         | `BinaryOper10`  |
+| 9                | `*` `**` `***` `/` `#` `##` `%` `%%` `*>` `<*`                                                    | `%` `*` `/`     | `BinaryOper9`   |
+| 8                | `+` `-` `++` `--` `=<` `<>` `</` `/>` `<$` `$>` `<$>` `<+>` `<*>` `</>`                           | `+` `-`         | `BinaryOper8`   |
+| 7                | `<:` `:>` `:<` `>:` `<:<` `>:>` `<:>` `>:<` `<!` `!>` `!<` `>!` `<!<` `>!>` `<!>` `>!<`           | `.`             | `BinaryOper7`   |
+| 6                | `==` `!=` `===` `!==` `~>` `<~` `~~>` `<~~` `<==` `==>` `->` `-->` `<-` `<--` `<~>` `<==>` `<-->` | `=` `!` `>` `<` | `BinaryOper6`   |
+| 5                | `&` `^` `\|` `>>` `<<` `>>>` `<<<` `<=>` `<->`                                                    | `?`             | `BinaryOper5`   |
+| 4                | `??` `!!` `?:` `!:` `$:` `&!` `\|!` `^!` `!&` `!\|` `!^`                                          | `~`             | `BinaryOper4`   |
+| 3                | `&&` `&\|` `&^` `&~` `\|&` `\|\|` `\|^` `\|~` `^&` `^\|` `^^` `^~` `~&` `~\|` `~^` `~~`           | `#`             | `BinaryOper3`   |
+| 2                | `<\|` `\|>` `<\|\|` `\|\|>` `<\|\|\|` `\|\|\|>`                                                   | `?` `:`         | `BinaryOper2`   |
+| 1 (lowest)       | `=` `:=` `+=` `*=` etc; other assignment operators                                                |                 | `BinaryOper1`   |
+| 0                | `? :` `! :` `$ :`                                                                                 |                 | `TernaryOper`   |
+
+Whitespace also affects operator parsing. Spacing also determines whether `(a, b)` is parsed as an argument list of a call or whether it is parsed as a tuple constructor.
+
+| Type of operator | Whitespace               | Precedence | Associativity & Evaluation Order | Characters |
+| ---------------- | ------------------------ | ---------- | -------------------------------- | ---------- |
+| Primary          | None on either end       | Highest    | None                             | Multiple   |
+| Suffix           | Trailing                 | Higher     | Left to right                    | Single     |
+| Prefix           | Leading                  | Lower      | Right to left                    | Single     |
+| Infix            | Spaced out on either end | Lowest     | Refer to table above             | Multiple   |
+
+```dart
+foo |> echo
 ```
