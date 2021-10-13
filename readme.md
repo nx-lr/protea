@@ -25,10 +25,10 @@ class Node {
   }
 
   stat def Cons(x: int, tail: ?Node): (n: Node) where
-    check (tail == null || tail.Valid()),
-    check (n.Valid())
-    check (if tail == null { n.List == [x] }
-           else { n.List == [x] + tail.List }) {
+    check(tail == null || tail.Valid()),
+    check(n.Valid()),
+    check(if tail == null { n.List == [x] }
+          else { n.List == [x] + tail.List }) {
     var n = new Node
     n.head, n.next = x, tail
     if (tail == null) {
