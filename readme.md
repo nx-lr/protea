@@ -49,9 +49,7 @@ fun Search(ll: ?Node) return (r: Int) where
     (r < #ll.List ==> ll.List[r] == 0 &&
     0 !in ll.List[: r]) &&
     (r == #ll.List ==> 0 !in ll.List) {
-  if !?ll {
-    r = 0
-  } else {
+  if !?ll { r = 0 } else {
     var jj, i = ll, 0
     while ?jj && jj.head != 0 where
       same ?jj ==> jj.Valid() &&
