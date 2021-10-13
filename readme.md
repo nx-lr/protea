@@ -57,7 +57,7 @@ proc search(ll: ?Node) return (r: Int) where
       and !?jj ==> i == #ll.list
       and 0 !in ll.list[: i]
       till #ll.list - i {
-      jj = jj.next
+      jj.=next
       i += 1
     }
     r = i
