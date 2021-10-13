@@ -47,7 +47,7 @@ fun Search(ll: ?Node): (r: Int) where
   check(ll != null ==>
     0 <= r && r <= #ll.List &&
     (r < #ll.List ==> ll.List[r] == 0 &&
-    0 !in ll.List[..r]) &&
+    0 !in ll.List[: r]) &&
     (r == #ll.List ==> 0 !in ll.List)) {
   if ll == null {
     r = 0;
