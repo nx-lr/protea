@@ -7,7 +7,7 @@ Trinity is an optionally typed, compiled, multi-paradigm and multi-faceted progr
 The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified, comprehensive and clean API with minimal abstractions. These powerful features and APIs are supported out of the box, providing (almost) everything you need to develop modern applications that don't crash, quicker and safer.
 
 ```dart
-import {need, read} from 'assert';
+import {need, read} from 'assert'
 
 class Node {
   ghost var List: Seq[Int]
@@ -29,14 +29,14 @@ class Node {
     check (n.Valid())
     check (if tail == null { n.List == [x] }
            else { n.List == [x] + tail.List }) {
-    var n = new Node;
-    n.head, n.next = x, tail;
+    var n = new Node
+    n.head, n.next = x, tail
     if (tail == null) {
-      n.List = [x];
-      n.Repr = {n};
+      n.List = [x]
+      n.Repr = {n}
     } else {
-      n.List = [x] + tail.List;
-      n.Repr = {n} + tail.Repr;
+      n.List = [x] + tail.List
+      n.Repr = {n} + tail.Repr
     }
   }
 }
@@ -50,9 +50,9 @@ fun Search(ll: ?Node): (r: Int) where
     0 !in ll.List[: r]) &&
     (r == #ll.List ==> 0 !in ll.List)) {
   if ll == null {
-    r = 0;
+    r = 0
   } else {
-    var jj, i = ll, 0;
+    var jj, i = ll, 0
     while jj != null && jj.head != 0 where
       same(jj != null ==> jj.Valid() &&
             i + #jj.List == #ll.List &&
@@ -60,22 +60,22 @@ fun Search(ll: ?Node): (r: Int) where
       same(jj == null ==> i == #ll.List),
       same(0 !in ll.List[: i]),
       stop(#ll.List - i) {
-      jj = jj.next;
-      i = i + 1;
+      jj = jj.next
+      i = i + 1
     }
-    r = i;
+    r = i
   }
 }
 
 proc Main() {
-  var list: ?Node = null;
-  list = list.Cons(0, list);
-  list = list.Cons(5, list);
-  list = list.Cons(0, list);
-  list = list.Cons(8, list);
-  var r = Search(list);
-  print"Search returns $r\n";
-  assert r == 1;
+  var list: ?Node = null
+  list = list.Cons(0, list)
+  list = list.Cons(5, list)
+  list = list.Cons(0, list)
+  list = list.Cons(8, list)
+  var r = Search(list)
+  print"Search returns $r\n"
+  assert r == 1
 }
 ```
 
