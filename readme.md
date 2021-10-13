@@ -7,7 +7,16 @@ Trinity is a typed, multi-paradigm and multi-faceted programming language, and c
 The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified, comprehensive and clean API with minimal abstractions, supported out of the box.
 
 ```dart
-class Node {
+// Driver code
+proc main {
+  var list: ?Node = null
+  for let x in [0, 5, 0, 8] { list.=cons(x, list) }
+  var r = search(list)
+  print"Search returns $r\n"
+  assert r == 1
+}
+
+export class Node {
   ghost var list: Seq[Int]
   ghost var repr: Set[Node]
   var head: Int
@@ -42,7 +51,7 @@ class Node {
   }
 }
 
-proc search(ll: ?Node) return r: Int where
+export proc search(ll: ?Node) return r: Int where
   need !?ll || ll.valid()
   check !?ll ==> r == 0
   and ?ll ==>
@@ -64,14 +73,6 @@ proc search(ll: ?Node) return r: Int where
     }
     r = i
   }
-}
-
-proc main {
-  var list: ?Node = null
-  for let x in [0, 5, 0, 8] { list.=cons(x, list) }
-  var r = search(list)
-  print"Search returns $r\n"
-  assert r == 1
 }
 ```
 
