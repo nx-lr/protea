@@ -25,8 +25,8 @@ class Node {
 
   stat def cons(x: int, tail: ?Node) return (n: Node) where
     check !?tail || tail.valid()
-    check n.valid()
-    check if !?tail { n.list == [x] }
+    and n.valid()
+    and if !?tail { n.list == [x] }
           else { n.list == [x] + tail.list } {
     var n = new Node
     n.head, n.next = x, tail
@@ -43,7 +43,7 @@ class Node {
 proc search(ll: ?Node) return (r: Int) where
   need !?ll || ll.valid()
   check !?ll ==> r == 0
-  check ?ll ==>
+  and ?ll ==>
     0 <= r && r <= #ll.list &&
     (r < #ll.list ==> ll.list[r] == 0 &&
     0 !in ll.list[: r]) &&
@@ -54,11 +54,11 @@ proc search(ll: ?Node) return (r: Int) where
       same ?jj ==> jj.valid() &&
         i + #jj.list == #ll.list &&
         ll.list[i :] == jj.list
-      same !?jj ==> i == #ll.list
-      same 0 !in ll.list[: i]
+      and !?jj ==> i == #ll.list
+      and 0 !in ll.list[: i]
       till #ll.list - i {
       jj = jj.next
-      i = i + 1
+      i += 1
     }
     r = i
   }
