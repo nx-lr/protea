@@ -2763,19 +2763,20 @@ repository:
       1: {name: punctuation.definition.parameters.trin}
     patterns: &function-params
       - include: "#clauses"
+      - include: "#constants"
       - include: "#declarations"
       - include: "#keywords"
-      - match: (?i)\s*\?[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: (?i)(?<=[({\[;,])\s*\?[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
         name: variable.parameter.optional.trin
-      - match: (?i)\s*\*[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: (?i)(?<=[({\[;,])\s*\*[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
         name: variable.parameter.spread.trin
-      - match: (?i)\s*[&~][\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: (?i)(?<=[({\[;,])\s*[&~][\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
         name: variable.parameter.name.trin
-      - match: (?i)\s*\%[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: (?i)(?<=[({\[;,])\s*\%[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
         name: variable.parameter.reference.trin
-      - match: (?i)\s*\$[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: (?i)(?<=[({\[;,])\s*\$[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
         name: variable.parameter.other.trin
-      - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: (?i)(?<=[({\[;,])\s*\b[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
         name: variable.parameter.trin
       - include: "$self"
 
@@ -3034,6 +3035,7 @@ repository:
 
   keywords:
     patterns:
+      - include: "#validation-expression"
       - include: "#module-expression"
       - include: "#control-expression"
       - include: "#query-expression"
@@ -3106,17 +3108,26 @@ repository:
               - match: *entity-name
                 name: variable.other.readwrite.alias.trin
 
+      validation-expression:
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where)\b\s*
+        beginCaptures:
+          1: {name: keyword.control.validate.trin}
+        end: (?<=})|(?=[,;)\]])
+        patterns:
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(need|know|check|test|read|write|till|same)\b\s*
+            name: keyword.control.validate.trin
+          - include: $self
+
       query-expression:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)\b\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)\b\s*
         beginCaptures:
-          1: {name: keyword.query.trin}
+          1: {name: keyword.control.query.trin}
           2: {patterns: [include: $self]}
-          3: {name: keyword.query.trin}
-        end: (?=[,;)}\]])
+          3: {name: keyword.control.query.trin}
+        end: (?<=})|(?=[,;)\]])
         patterns:
           - include: "#query-body"
           - include: $self
-
       query-body:
         patterns:
           - include: "#where-clause"
@@ -3126,75 +3137,75 @@ repository:
           - include: "#group-clause"
           - include: "#limit-clause"
           - include: "#reduce-clause"
-
-      join-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:full|part)?\b\s*\b(?:inner|outer|left|right)?\b\s*\bjoin)\b\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)\b\s*
-        beginCaptures:
-          1: {name: keyword.query.trin}
-          2: {patterns: [include: $self]}
-          3: {name: keyword.query.trin}
-        end: (?=[,;)}\]])
-        patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(on|equals|into)\b\s*
-            name: keyword.query.trin
-          - include: "#query-body"
-          - include: $self
-      where-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where|having)\b\s*
-        beginCaptures:
-          1: {name: keyword.query.trin}
-        end: (?=[,;)}\]])
-        patterns:
-          - include: "#query-body"
-          - include: $self
-      sort-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sort\b\s*\b(?:asc|desc)?\b\s*\b(?:by|with)?)\b\s*
-        beginCaptures:
-          1: {name: keyword.query.trin}
-        end: (?=[,;)}\]])
-        patterns:
-          - include: "#query-body"
-          - include: $self
-      select-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(select\b\s*\b(?:unique|any|all)?)\b\s*
-        beginCaptures:
-          1: {name: keyword.query.trin}
-        end: (?=[,;)}\]])
-        patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
-            name: keyword.query.trin
-          - include: "#query-body"
-          - include: $self
-      limit-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit)\b\s*\b(?:first|last|head|tail)?)\b\s*
-        beginCaptures:
-          1: {name: keyword.query.trin}
-        end: (?=[,;)}\]])
-        patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
-            name: keyword.query.trin
-          - include: "#query-body"
-          - include: $self
-      reduce-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)\b\s*\b(?:left|right)?)\b\s*
-        beginCaptures:
-          1: {name: keyword.query.trin}
-        end: (?=[,;)}\]])
-        patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
-            name: keyword.query.trin
-          - include: "#query-body"
-          - include: $self
-      group-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(group)\b\s*
-        beginCaptures:
-          1: {name: keyword.query.trin}
-        end: (?=[,;)}\]])
-        patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|into)\b\s*
-            name: keyword.query.trin
-          - include: "#query-body"
-          - include: $self
+        repository:
+          join-clause:
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:full|part)?\b\s*\b(?:inner|outer|left|right)?\b\s*\bjoin)\b\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)\b\s*
+            beginCaptures:
+              1: {name: keyword.control.query.trin}
+              2: {patterns: [include: $self]}
+              3: {name: keyword.control.query.trin}
+            end: (?<=})|(?=[,;)\]])
+            patterns:
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(on|equals|into)\b\s*
+                name: keyword.control.query.trin
+              - include: "#query-body"
+              - include: $self
+          where-clause:
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where|having)\b\s*
+            beginCaptures:
+              1: {name: keyword.control.query.trin}
+            end: (?<=})|(?=[,;)\]])
+            patterns:
+              - include: "#query-body"
+              - include: $self
+          sort-clause:
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sort\b\s*\b(?:asc|desc)?\b\s*\b(?:by|with)?)\b\s*
+            beginCaptures:
+              1: {name: keyword.control.query.trin}
+            end: (?<=})|(?=[,;)\]])
+            patterns:
+              - include: "#query-body"
+              - include: $self
+          select-clause:
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(select\b\s*\b(?:unique|any|all)?)\b\s*
+            beginCaptures:
+              1: {name: keyword.control.query.trin}
+            end: (?<=})|(?=[,;)\]])
+            patterns:
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
+                name: keyword.control.query.trin
+              - include: "#query-body"
+              - include: $self
+          limit-clause:
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit)\b\s*\b(?:first|last|head|tail)?)\b\s*
+            beginCaptures:
+              1: {name: keyword.control.query.trin}
+            end: (?<=})|(?=[,;)\]])
+            patterns:
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
+                name: keyword.control.query.trin
+              - include: "#query-body"
+              - include: $self
+          reduce-clause:
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)\b\s*\b(?:left|right)?)\b\s*
+            beginCaptures:
+              1: {name: keyword.control.query.trin}
+            end: (?<=})|(?=[,;)\]])
+            patterns:
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
+                name: keyword.control.query.trin
+              - include: "#query-body"
+              - include: $self
+          group-clause:
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(group)\b\s*
+            beginCaptures:
+              1: {name: keyword.control.query.trin}
+            end: (?<=})|(?=[,;)\]])
+            patterns:
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|into)\b\s*
+                name: keyword.control.query.trin
+              - include: "#query-body"
+              - include: $self
 
   declarations:
     patterns:
