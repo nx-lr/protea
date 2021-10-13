@@ -1060,11 +1060,17 @@ repository:
           - include: "#tag-attributes"
           - include: "#tag-names"
 
+  # Format Specifier Language
+
+  format-specifiers:
+    comment: Grammar for Trinity's format specifier language, inspired by
+      MS-DOS, Bash and Python's f-strings.
+    patterns: []
+
   # Unicode Named Character Language
 
   unicode-named-chars:
-    comment: Support for the Unicode Named Character encoding, inspired
-      by LaTeX, HTML, AGL, Unicode and regular expressions.
+    comment: Grammar for the Unicode Named Character Mini-Language.
     repository:
       named-chars-database:
         patterns:
@@ -2673,7 +2679,195 @@ repository:
 
   type-strings:
     comment: coming soon
-    patterns: []
+    patterns:
+      - comment: single quoted raw string
+        begin: (?<!'+)\s*('''+)
+        contentName: string.quoted.single.trin
+        end: \s*((\1)(?!'+))
+        captures:
+          1: {name: punctuation.definition.string.trin}
+        patterns:
+          - include: "#type-embedded-raw"
+      - comment: simple single quoted raw string
+        begin: (?<!'+)\s*(')
+        contentName: string.quoted.single.trin
+        end: \s*((\1)(?!'+))
+        captures:
+          1: {name: punctuation.definition.string.trin}
+        patterns:
+          - match: "''"
+            name: constant.character.escape.trin
+          - include: "#type-embedded-raw"
+      - comment: double quoted standard string
+        begin: (?<!"+)\s*("""+|")
+        contentName: string.quoted.double.trin
+        end: \s*((\1)(?!"+))
+        captures:
+          1: {name: punctuation.definition.string.trin}
+        patterns:
+          - include: "#string-escapes"
+          - include: "#type-embedded"
+      - begin: |
+          (?x)\s*
+          (\\\|)\s*
+          ([-+*<=>])?\s*
+          (?:(\d\w*)|
+          (
+          [\p{Pc}\p{L}]\w*
+          (?:(?:[?!]?\.|[?!:]:)
+          (?:(?:[\p{Pc}\p{L}]\w*)))*
+          )
+          )?\s*
+          (.*\n?)
+        beginCaptures:
+          1: {name: keyword.control.flow.block-scalar.literal.trin}
+          2: {name: storage.modifier.chomping-indicator.trin}
+          3: {patterns: [include: "#numbers"]}
+          4: {name: fenced_code.block.language.trin}
+          5:
+            patterns:
+              - include: "#line-comments"
+              - match: .+
+                name: invalid.illegal.expected-comment-or-newline.trin
+        end: ^(?=\S)|(?!\G)
+        patterns:
+          - begin: ^((\s)+)(?!\2)
+            end: ^(?!\1|\s*$)
+            name: string.unquoted.block.trin
+            patterns:
+              - include: "#type-embedded-raw"
+              - include: text.html.markdown#inline
+          - include: $self
+      - begin: |
+          (?x)\s*
+          (\\\>)\s*
+          ([-+*<=>])?\s*
+          (?:(\d\w*)|
+          (
+          [\p{Pc}\p{L}]\w*
+          (?:(?:[?!]?\.|[?!:]:)
+          (?:(?:[\p{Pc}\p{L}]\w*)))*
+          )
+          )?\s*
+          (.*\n?)
+        beginCaptures:
+          1: {name: keyword.control.flow.block-scalar.folded.trin}
+          2: {name: storage.modifier.chomping-indicator.trin}
+          3: {patterns: [include: "#numbers"]}
+          4: {name: fenced_code.block.language.trin}
+          5:
+            patterns:
+              - include: "#line-comments"
+              - match: .+
+                name: invalid.illegal.syntax.trin
+        end: ^(?=\S)|(?!\G)
+        patterns:
+          - begin: ^((\s)+)(?!\2)
+            end: ^(?!\1|\s*$)
+            name: string.unquoted.plain.in.trin
+            patterns:
+              - include: "#string-escapes"
+              - include: "#type-embedded"
+              - include: text.html.markdown#inline
+          - include: $self
+      - match: |
+          (?x)
+          \s*(\\)
+          ((?:[^\s\\(){}\[\]<>.,:;]|\\.)*)
+          \s*
+        name: string.unquoted.trin
+        captures:
+          1: {name: punctuation.definition.string.trin}
+          2:
+            patterns:
+              - include: "#string-escapes"
+              - include: "#type-embedded"
+
+  type-embedded-raw:
+    patterns:
+      - match: ([$%#])\1
+        name: constant.character.escape.trin
+      - match: (\#)([+-]?\d+)
+        captures:
+          1: {name: punctuation.definition.anchor.trin}
+          2: {name: constant.numeric.decimal.trin}
+      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}]\w*)
+        captures:
+          1: {name: punctuation.definition.anchor.trin}
+          2: {patterns: [include: "#placeholder-variables"]}
+      - match: (%)((\w|\\.)+(([^\s'"`\\\[\](){}<>]|\\.)*(\w|\\.)+)?)
+        captures:
+          1: {name: punctuation.definition.directive.trin}
+          2: {name: storage.type.format.trin}
+      - match: |
+          (?xi)
+          (\$)# prefix
+          (
+          [\p{Pc}\p{L}]\w*
+          (?:(?:[?!]?\.|[?!:]:)
+          (?:(?:[\p{Pc}\p{L}]\w*)))*
+          )# variable
+        captures:
+          1: {name: punctuation.section.embedded.trin}
+          2: {patterns: [{include: "#types"}, {include: "#self"}]}
+      - begin: (\${)\s*
+        end: (})
+        name: entity.quasi.element.trin
+        captures:
+          1: {name: punctuation.section.embedded.trin}
+        patterns:
+          - include: "#types"
+          - include: "#self"
+      - begin: (\$<)\s*
+        end: (>)
+        name: entity.quasi.element.trin
+        captures:
+          1: {name: punctuation.section.embedded.trin}
+        patterns:
+          - include: "#tag-attributes"
+          - include: "#tag-names"
+
+  type-embedded:
+    patterns:
+      - match: (\#)([+-]?\d+)
+        captures:
+          1: {name: punctuation.definition.anchor.trin}
+          2: {name: constant.numeric.decimal.trin}
+      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}]\w*)
+        captures:
+          1: {name: punctuation.definition.anchor.trin}
+          2: {patterns: [include: "#placeholder-variables"]}
+      - match: (%)((\w|\\.)+(([^\s'"`\\\[\](){}<>]|\\.)*(\w|\\.)+)?)
+        captures:
+          1: {name: punctuation.definition.directive.trin}
+          2: {name: storage.type.format.trin}
+      - match: |
+          (?xi)
+          (\$)# prefix
+          (
+          [\p{Pc}\p{L}]\w*
+          (?:(?:[?!]?\.|[?!:]:)
+          (?:(?:[\p{Pc}\p{L}]\w*)))*
+          )# variable
+        captures:
+          1: {name: punctuation.section.embedded.trin}
+          2: {patterns: [{include: "#types"}, {include: "#self"}]}
+      - begin: (\${)\s*
+        end: (})
+        name: entity.quasi.element.trin
+        captures:
+          1: {name: punctuation.section.embedded.trin}
+        patterns:
+          - include: "#types"
+          - include: "#self"
+      - begin: (\$<)\s*
+        end: (>)
+        name: entity.quasi.element.trin
+        captures:
+          1: {name: punctuation.section.embedded.trin}
+        patterns:
+          - include: "#tag-attributes"
+          - include: "#tag-names"
 
   type-keywords:
     patterns:
@@ -2759,6 +2953,7 @@ repository:
       - include: "#type-brackets"
       - include: "#code-block"
       - include: "#type-operators"
+      - include: "#type-strings"
       - include: "#literals"
 
   parameter-brackets:
@@ -2771,17 +2966,53 @@ repository:
       - include: "#constants"
       - include: "#declarations"
       - include: "#keywords"
-      - match: (?i)(?<=[({\[;,])\s*\?[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,])
+          \s*\?[\p{Pc}\p{L}]\w*\b\s*
+          (?=\s*(?:
+          [,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
         name: variable.parameter.optional.trin
-      - match: (?i)(?<=[({\[;,])\s*\*[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,])
+          \s*\*[\p{Pc}\p{L}]\w*\b\s*
+          (?=\s*(?:
+          [,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
         name: variable.parameter.spread.trin
-      - match: (?i)(?<=[({\[;,])\s*[&~][\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,])
+          \s*\&[\p{Pc}\p{L}]\w*\b\s*
+          (?=\s*(?:
+          [,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
         name: variable.parameter.name.trin
-      - match: (?i)(?<=[({\[;,])\s*\%[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,])
+          \s*\%[\p{Pc}\p{L}]\w*\b\s*
+          (?=\s*(?:
+          [,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
         name: variable.parameter.reference.trin
-      - match: (?i)(?<=[({\[;,])\s*\$[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,])
+          \s*\$[\p{Pc}\p{L}]\w*\b\s*
+          (?=\s*(?:
+          [,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
         name: variable.parameter.other.trin
-      - match: (?i)(?<=[({\[;,])\s*\b[\p{Pc}\p{L}]\w*\b\s*(?=\s*[,;)}\]]|\s+:?=\s+|\s*:\s+|\s*\|(?!\|))
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,])
+          \s*\b[\p{Pc}\p{L}]\w*\b\s*
+          (?=\s*(?:
+          [,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
         name: variable.parameter.trin
       - include: "$self"
 
@@ -3496,6 +3727,7 @@ repository:
           - include: "#block-entities"
           - match: *entity-name
             name: entity.name.field.trin
+
   params-clause:
     begin: |
       (?x)
@@ -3520,8 +3752,7 @@ repository:
     captures:
       1: {name: punctuation.separator.arguments.trin}
     end: (?<!\|)(\|)(?!\|)
-    patterns:
-      - include: "#function-params"
+    patterns: *function-params
 
   clauses:
     patterns:
@@ -3542,31 +3773,6 @@ repository:
       - include: "#function-clause"
 
     repository:
-      function-params:
-        patterns: *function-params
-
-      macro-call:
-        match: |
-          (?x)\s*
-          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          in|of|as|is|new|to|til|thru|by|del|unset
-          |var|val|let|const|decl|def|fun|type|sin
-          |class|enum|mod|pack|struct|inter|space
-          |proc|proto|macro|given|style|elem|field
-          |ext|pred|data|trait|lemma|iter|sub
-          |if|un|elif|elun|else|then
-          |for|each|loop|while|until|when
-          |with|do|from
-          |try|throw|catch|fix
-          |switch|match|case|fail
-          |tandem|unison|series|spawn|kill|lock
-          |break|skip|redo|retry|return|await|label|yield|goto|pass
-          |import|export|using
-          |debug|assert|where
-          )\b
-          \b([\p{Pc}\p{L}]\w*)\b(?=[\\'"])
-        name: entity.name.function.tagged-template.trin
-
       pattern-brackets:
         begin: \s*(\()
         end: \s*(\))
@@ -4028,8 +4234,7 @@ repository:
           4: {name: punctuation.separator.arguments.trin}
         endCaptures:
           1: {name: punctuation.separator.arguments.trin}
-        patterns:
-          - include: "#function-params"
+        patterns: *function-params
       - match: |
           (?x)
           (?<=^|{|;|,|\s)\s*
