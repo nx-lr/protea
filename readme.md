@@ -42,22 +42,22 @@ class Node {
 }
 
 fun Search(ll: ?Node) return (r: Int) where
-  need !?ll || ll.Valid()
+  need !?ll || ll.valid()
   check !?ll ==> r == 0
   check ?ll ==>
-    0 <= r && r <= #ll.List &&
-    (r < #ll.List ==> ll.List[r] == 0 &&
-    0 !in ll.List[: r]) &&
-    (r == #ll.List ==> 0 !in ll.List) {
+    0 <= r && r <= #ll.list &&
+    (r < #ll.list ==> ll.list[r] == 0 &&
+    0 !in ll.list[: r]) &&
+    (r == #ll.list ==> 0 !in ll.list) {
   if !?ll { r = 0 } else {
     var jj, i = ll, 0
     while ?jj && jj.head != 0 where
-      same ?jj ==> jj.Valid() &&
-        i + #jj.List == #ll.List &&
-        ll.List[i :] == jj.List
-      same !?jj ==> i == #ll.List
-      same 0 !in ll.List[: i]
-      till #ll.List - i {
+      same ?jj ==> jj.valid() &&
+        i + #jj.list == #ll.list &&
+        ll.list[i :] == jj.list
+      same !?jj ==> i == #ll.list
+      same 0 !in ll.list[: i]
+      till #ll.list - i {
       jj = jj.next
       i = i + 1
     }
