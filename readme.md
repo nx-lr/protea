@@ -2,12 +2,11 @@
 
 > One language, three aspects.
 
-Trinity is an optionally typed, compiled, multi-paradigm and multi-faceted programming language implemented in JavaScript, enabling one to build reliable and fast-performing software for web, desktop and mobile; for the frontend, API and backend.
+Trinity is a typed, multi-paradigm and multi-faceted programming language, and can be used to safely build and test complex software, apps and libraries for web, desktop and mobile; or for the frontend, API and backend. Trinity will be entirely implemented and integrated with JavaScript and the web ecosystem.
 
-The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified, comprehensive and clean API with minimal abstractions. These powerful features and APIs are supported out of the box, providing (almost) everything you need to develop modern applications that don't crash, quicker and safer.
+The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified, comprehensive and clean API with minimal abstractions, supported out of the box.
 
 ```dart
-
 class Node {
   ghost var list: Seq[Int]
   ghost var repr: Set[Node]
@@ -19,15 +18,18 @@ class Node {
     1 <= #list && list[0] == head &&
     (next == null ==> #list == 1) &&
     (next != null ==>
-      next in repr && next.repr <= repr && this !in next.repr &&
-      next.valid() && next.list == list[1 : #list])
+      next in repr &&
+      next.repr <= repr &&
+      this !in next.repr &&
+      next.valid() &&
+      next.list == list[1 : #list])
   }
 
-  stat def cons(x: int, tail: ?Node) return (n: Node) where
+  stat def cons(x: int, tail: ?Node) return n: Node where
     check !?tail || tail.valid()
     and n.valid()
-    and if !?tail { n.list == [x] }
-          else { n.list == [x] + tail.list } {
+    and (if !?tail { n.list == [x] }
+        else { n.list == [x] + tail.list }) {
     var n = new Node
     n.head, n.next = x, tail
     if !?tail {
@@ -40,7 +42,7 @@ class Node {
   }
 }
 
-proc search(ll: ?Node) return (r: Int) where
+proc search(ll: ?Node) return r: Int where
   need !?ll || ll.valid()
   check !?ll ==> r == 0
   and ?ll ==>
@@ -64,7 +66,7 @@ proc search(ll: ?Node) return (r: Int) where
   }
 }
 
-proc main(*args: Str[]) {
+proc main {
   var list: ?Node = null
   for let x in [0, 5, 0, 8] { list.=cons(x, list) }
   var r = search(list)
