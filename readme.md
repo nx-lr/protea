@@ -7,7 +7,76 @@ Trinity is an optionally typed, compiled, multi-paradigm and multi-faceted progr
 The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified, comprehensive and clean API with minimal abstractions. These powerful features and APIs are supported out of the box, providing (almost) everything you need to develop modern applications that don't crash, quicker and safer.
 
 ```dart
-contra var x = 10
+import {need, read} from 'assert';
+
+class Node {
+  ghost var List: Seq[Int]
+  ghost var Repr: Set[Node]
+  var head: Int
+  var next: ?Node
+
+  pred valid where read(this, Repr) {
+    this in Repr &&
+    1 <= #List && List[0] == head &&
+    (next == null ==> #List == 1) &&
+    (next != null ==>
+      next in Repr && next.Repr <= Repr && this !in next.Repr &&
+      next.Valid() && next.List == List[1 : #List])
+  }
+
+  stat def Cons(x: int, tail: ?Node): (n: Node) where
+    check (tail == null || tail.Valid()),
+    check (n.Valid())
+    check (if tail == null { n.List == [x] }
+           else { n.List == [x] + tail.List }) {
+    var n = new Node;
+    n.head, n.next = x, tail;
+    if (tail == null) {
+      n.List = [x];
+      n.Repr = {n};
+    } else {
+      n.List = [x] + tail.List;
+      n.Repr = {n} + tail.Repr;
+    }
+  }
+}
+
+fun Search(ll: ?Node): (r: Int) where
+  need(ll == null || ll.Valid()),
+  check(ll == null ==> r == 0),
+  check(ll != null ==>
+    0 <= r && r <= #ll.List &&
+    (r < #ll.List ==> ll.List[r] == 0 &&
+    0 !in ll.List[..r]) &&
+    (r == #ll.List ==> 0 !in ll.List)) {
+  if ll == null {
+    r = 0;
+  } else {
+    var jj, i = ll, 0;
+    while jj != null && jj.head != 0 where
+      same(jj != null ==> jj.Valid() &&
+            i + #jj.List == #ll.List &&
+            ll.List[i :] == jj.List),
+      same(jj == null ==> i == #ll.List),
+      same(0 !in ll.List[: i]),
+      stop(#ll.List - i) {
+      jj = jj.next;
+      i = i + 1;
+    }
+    r = i;
+  }
+}
+
+proc Main() {
+  var list: ?Node = null;
+  list = list.Cons(0, list);
+  list = list.Cons(5, list);
+  list = list.Cons(0, list);
+  list = list.Cons(8, list);
+  var r = Search(list);
+  print"Search returns $r\n";
+  assert r == 1;
+}
 ```
 
 ### Roadmap
@@ -48,16 +117,16 @@ This project is currently in the works and would be my largest project to date. 
 
 ## Table of Contents
 
-<table><tr><td width=25% valign=top>
+<table><tr><td>
 
 #### Introduction
 
-- [Overview](#./)
-- [Installation](#)
-- [The Basics](#)
-  - [Variables](#)
-  - [Syntax](#)
-  - [Comments](#)
+- [Overview](#overview)
+- [Installation](#installation)
+- [The Basics](#the-basics)
+  - [Variables](#variables)
+  - [Syntax](#syntax)
+  - [Comments](#comments)
   - [Keywords](#)
 
 #### Data Types
@@ -91,7 +160,7 @@ This project is currently in the works and would be my largest project to date. 
 - [Error Handling](#)
 - [Query Expressions](#)
 
-</td><td width=25% valign=top>
+</td><td>
 
 #### Functions
 
@@ -135,7 +204,7 @@ This project is currently in the works and would be my largest project to date. 
 - [Infer, Key-Of, Name-Of](#)
 - [Constraints (For-All)](#)
 
-</td><td width=25% valign=top>
+</td><td>
 
 #### Concurrency
 
@@ -180,7 +249,7 @@ This project is currently in the works and would be my largest project to date. 
   - [Translating Trinity to Python](#)
 - [Documentation](#)
 
-</td><td width=25% valign=top>
+</td><td>
 
 #### Tools
 
@@ -241,18 +310,18 @@ The language constructs are explained using an Extended Backus Naur Form (EBNF),
 - `<!` - negative lookbehind and `!>` lookahead
 - `*` - repetition: zero or many
 - `+` - repetition: one or many
-- `?` - optional: zero or one
+- `?` - repetition: zero or one
 - `|` - alternation: return longest match
 - `/` - alternation: try operands in given order, from left to right
-- `-` - subtracts a class or range from another i
+- `-` - subtracts a class or range from another
 - `&` - takes the intersection of two classes or ranges
 - `+` - takes the union of two classes or ranges
 - `~` - negates a character class or range
 - `+` - takes the symmetric difference of two classes or ranges
 - `a %+ b` - equivalent to `a (b a)*`
 - `a %* b` - equivalent to `(a (b a)*)?`
-- `a...z` - character range (inclusive)
-- `a..<z` - character range (exclusive)
+- `a...z` - inclusive character range
+- `a..<z` - character range exclusive
 - ` `` ` - character class or regular expression
 - `''` or `""` - verbatim strings
 - `@` - makes a production case-insensitive
@@ -409,16 +478,16 @@ proc cmpIdent(a: Str, b: Str): Bool => a[0] == b[0] &&
 
 The above rule does not apply to keywords, as all keywords are all-lowercase. Because of this rule, to strop keywords, add one or more trailing underscores.
 
-Keywords lose meaning and become ordinary identifiers when they are part of a qualified name, meaning preceded by any of `.`, `?.`, `!.`, `~.`, `::`, `?:`, `!:`, `.=`, `?.=`, `!.=`, `~.=`, `::=`, `?:=`, and `!:=`.
+Keywords lose meaning and become ordinary identifiers when they are part of the inner members of a qualified name, such as a function or method.
 
 ```dart
 type Type = {
-  method: Func;
+  def: Func;
 };
 
-const object_ = new Type({method: |x| x = 1});
+const object_ = new Type({def: |x| x = 10});
 assert object_ is Type;
-assert object_.method == 9;
+assert object_.def == 9;
 
 var var_ = 42;
 const let_ = 8;
@@ -752,15 +821,15 @@ Type suffixes can also be used to cast numeric literals to the appropriate type;
 
 ```dart
 numbersFrom2 = ("2"..."9" | "1"..."9" "0"..."9"+)
-customBasePrefix = ("2"..."9" | "1"..."9" digit+) @"b";
+customBasePrefix = ("2"..."9" | "1"..."9" digit+) i"b";
 customBaseDigits = `[:alnum]`;
-base2Prefix = @"0b";  base2Digits = "0" | "1";
-base4Prefix = @"0q";  base4Digits = "0"..."3";
-base6Prefix = @"0s";  base6Digits = "0"..."5";
-base8Prefix = @"0o";  base8Digits = "0"..."7";
+base2Prefix = i"0b";  base2Digits = "0" | "1";
+base4Prefix = i"0q";  base4Digits = "0"..."3";
+base6Prefix = i"0s";  base6Digits = "0"..."5";
+base8Prefix = i"0o";  base8Digits = "0"..."7";
 base10Prefix = "";    base10Digits = digit = "0"..."9";
-base12Prefix = @"0z"; base12Digits = digit | @"a" | @"b";
-base16Prefix = @"0x"; base16Digits = digit | @"a"...@"f";
+base12Prefix = i"0z"; base12Digits = digit | i"a" | i"b";
+base16Prefix = i"0x"; base16Digits = digit | i"a"...i"f";
 
 #IntegerPart = #Digits ("_"+ #Digits)*;
 #FractionPart = "." #Digits ("_"+ #Digits)*;
@@ -812,7 +881,7 @@ Nim allows user-definable operators. Binary operators have 11 different levels o
 Binary operators whose first character is `@` are right-associative, all other binary operators are left-associative.
 
 ```dart
-infix oper fun "@/"(x, y: Float): Float = x / y
+infix fun + (x, y: Float): Float = x / y
 // A right-associative division operator
 result = x / y
 echo(12 @/ 4 @/ 8) // 24.0 (4 / 8 = 0.5, then 12 / 0.5 = 24.0)
@@ -839,20 +908,20 @@ Otherwise, precedence is determined by the first character.
 | 7                | `<:` `:>` `:<` `>:` `<:<` `>:>` `<:>` `>:<` `<!` `!>` `!<` `>!` `<!<` `>!>` `<!>` `>!<`           | `.`             | `BinaryOper7`   |
 | 6                | `==` `!=` `===` `!==` `~>` `<~` `~~>` `<~~` `<==` `==>` `->` `-->` `<-` `<--` `<~>` `<==>` `<-->` | `=` `!` `>` `<` | `BinaryOper6`   |
 | 5                | `&` `^` `\|` `>>` `<<` `>>>` `<<<` `<=>` `<->`                                                    | `?`             | `BinaryOper5`   |
-| 4                | `??` `!!` `?:` `!:` `$:` `&!` `\|!` `^!` `!&` `!\|` `!^`                                          | `~`             | `BinaryOper4`   |
-| 3                | `&&` `&\|` `&^` `&~` `\|&` `\|\|` `\|^` `\|~` `^&` `^\|` `^^` `^~` `~&` `~\|` `~^` `~~`           | `#`             | `BinaryOper3`   |
-| 2                | `<\|` `\|>` `<\|\|` `\|\|>` `<\|\|\|` `\|\|\|>`                                                   | `?` `:`         | `BinaryOper2`   |
+| 4                | `??` `!!` `?:` `!:` `$:` `&` `\|` `^` `~&` `~\|` `~^`                                             | `~`             | `BinaryOper4`   |
+| 3                | `&&` `\|\|` `^^` `&~` `\|~` `^~`                                                                  | `#`             | `BinaryOper3`   |
+| 2                | `<+` `+>` `<\|` `\|>` `<\|\|` `\|\|>` `<\|\|\|` `\|\|\|>`                                         | `?` `:`         | `BinaryOper2`   |
 | 1 (lowest)       | `=` `:=` `+=` `*=` etc; other assignment operators                                                |                 | `BinaryOper1`   |
 | 0                | `? :` `! :` `$ :`                                                                                 |                 | `TernaryOper`   |
 
 Whitespace also affects operator parsing. Spacing also determines whether `(a, b)` is parsed as an argument list of a call or whether it is parsed as a tuple constructor.
 
-| Type of operator | Whitespace               | Precedence | Associativity & Evaluation Order | Characters |
-| ---------------- | ------------------------ | ---------- | -------------------------------- | ---------- |
-| Primary          | None on either end       | Highest    | None                             | Multiple   |
-| Suffix           | Trailing                 | Higher     | Left to right                    | Single     |
-| Prefix           | Leading                  | Lower      | Right to left                    | Single     |
-| Infix            | Spaced out on either end | Lowest     | Refer to table above             | Multiple   |
+| Type of operator | Whitespace               | Precedence, Associativity    | Characters |
+| ---------------- | ------------------------ | ---------------------------- | ---------- |
+| Primary          | None on either end       | Highest; None                | Multiple   |
+| Suffix           | Trailing                 | Higher; Left to right        | Single     |
+| Prefix           | Leading                  | Lower; Right to left         | Single     |
+| Infix            | Spaced out on either end | Lowest; Refer to table above | Multiple   |
 
 ```dart
 foo |> echo
