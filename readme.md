@@ -15,7 +15,7 @@ class Node {
   var head: Int
   var next: ?Node
 
-  pred valid where read(this, repr) {
+  pred valid where read (this, repr) {
     this in repr &&
     1 <= #list && list[0] == head &&
     (next == null ==> #list == 1) &&
