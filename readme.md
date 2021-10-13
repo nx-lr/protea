@@ -64,7 +64,7 @@ proc search(ll: ?Node) return (r: Int) where
   }
 }
 
-proc main {
+proc main(*args: Str[]) {
   var list: ?Node = null
   for let x in [0, 5, 0, 8] then list.=cons(x, list)
   var r = search(list)
