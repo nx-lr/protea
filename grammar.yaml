@@ -77,7 +77,7 @@ define:
     |unite|queue|spawn|kill|lock
     |break|skip|redo|retry|return|await|label|yield|goto|pass
     |import|export|using
-    |debug|check|assert|assume
+    |debug|assert|where
     )\b
     )
     ([\p{Pc}\p{L}]\w*)
@@ -100,7 +100,7 @@ define:
     |unite|queue|spawn|kill|lock
     |break|skip|redo|retry|return|await|label|yield|goto|pass
     |import|export|using
-    |debug|check|assert|assume
+    |debug|assert|where
     )\b
     )
     ([\p{Pc}\p{L}]\w*)
@@ -166,7 +166,7 @@ repository:
       |unite|queue|spawn|kill|lock
       |break|skip|redo|retry|return|await|label|yield|goto|pass
       |import|export|using
-      |debug|check|assert|assume
+      |debug|assert|where
       )\b\s*
     name: invalid.illegal.keyword.trin
 
@@ -1595,7 +1595,12 @@ repository:
     comment: Avoid < operator expressions as best we can using Zertosh's regex
     begin: |
       (?x)
-      (?<=(?:^\s*|\#?[({\[]\s*|(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+)\s+|\b(?:#keywords
+      (?<=(?:
+      ^\s*|,\s*|;\s*|
+      \#?[({\[]\s*|
+      [\p{Pc}\p{L}]\w*|
+      (?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+)\s+|
+      \b(?:#keywords
       in|of|as|is|new|to|til|thru|by|del|unset
       |var|val|let|const|decl|def|fun|type|sin
       |class|enum|mod|pack|struct|inter|space
@@ -1609,8 +1614,8 @@ repository:
       |unite|queue|spawn|kill|lock
       |break|skip|redo|retry|return|await|label|yield|goto|pass
       |import|export|using
-      |debug|check|assert|assume
-      )\b)\s*|[\p{Pc}\p{L}]\w*)
+      |debug|assert|where
+      )\b)\s*)
       (?=<[\p{Pc}\p{L}])
     end: (?=.)|$
     applyEndPatternLast: 1
@@ -2085,7 +2090,7 @@ repository:
           |unite|queue|spawn|kill|lock
           |break|skip|redo|retry|return|await|label|yield|goto|pass
           |import|export|using
-          |debug|check|assert|assume
+          |debug|assert|where
           )\b
           )
           [\p{Pc}\p{L}]\w*
@@ -2114,7 +2119,7 @@ repository:
           |unite|queue|spawn|kill|lock
           |break|skip|redo|retry|return|await|label|yield|goto|pass
           |import|export|using
-          |debug|check|assert|assume
+          |debug|assert|where
           )\b
           )
           [\p{Pc}\p{L}]\w*
@@ -2122,7 +2127,7 @@ repository:
           \b
           (?=
           (?:[!?~]?\.=?|[?!:]:=?)?\#?\(|
-          (?:[!?~]?\.=?|[?!:]:=?)?['"`\\\[]|
+          (?:[!?~]?\.=?|[?!:]:=?)?['"`\\]|
           (?:[!?~]?\.=?|[?!:]:=?)?<[\p{Pc}\p{L}]
           )
         captures:
@@ -2447,7 +2452,7 @@ repository:
               |unite|queue|spawn|kill|lock
               |break|skip|redo|retry|return|await|label|yield|goto|pass
               |import|export|using
-              |debug|check|assert|assume
+              |debug|assert|where
               )\b
               )
               [\w]+
@@ -2477,7 +2482,7 @@ repository:
                   |unite|queue|spawn|kill|lock
                   |break|skip|redo|retry|return|await|label|yield|goto|pass
                   |import|export|using
-                  |debug|check|assert|assume
+                  |debug|assert|where
                   )\b
                   )
                   (?:
@@ -2802,7 +2807,7 @@ repository:
       |unite|queue|spawn|kill|lock
       |break|skip|redo|retry|return|await|label|yield|goto|pass
       |import|export|using
-      |debug|check|assert|assume
+      |debug|assert|where
       )\b
       )
       (?:
@@ -2881,7 +2886,7 @@ repository:
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:
       # access modifiers
-      pub|priv|prot|inline|final|mut|immut
+      pub|priv|prot|inline|final|mut|immut|ghost
       |seal|abs|intern|extern|imply|exply|global|local
 
       # concurrency modifiers
@@ -2919,7 +2924,7 @@ repository:
               \s*\b
               (?:
               (# Access modifiers
-              pub|priv|prot|inline|final|mut|immut
+              pub|priv|prot|inline|final|mut|immut|ghost
               |seal|abs|intern|extern|imply|exply|global|local
               )|
               (# Function or method modifiers
@@ -3012,7 +3017,7 @@ repository:
         name: keyword.control.module.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|do|from)\b\s*
         name: keyword.control.$1.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|check|assert|assume)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|assert|where)\b\s*
         name: keyword.other.$1.trin
 
   expression-keywords:
@@ -3473,7 +3478,7 @@ repository:
       |unite|queue|spawn|kill|lock
       |break|skip|redo|retry|return|await|label|yield|goto|pass
       |import|export|using
-      |debug|check|assert|assume
+      |debug|assert|where
       )\b)\s*)
       (\|)
       (?!\|)
@@ -3485,7 +3490,6 @@ repository:
 
   clauses:
     patterns:
-      - include: "#macro-call"
       - include: "#params-clause"
       - include: "#for-clause"
       - include: "#if-clause"
@@ -3507,7 +3511,25 @@ repository:
         patterns: *function-params
 
       macro-call:
-        match: (?x)\s*\b([\p{Pc}\p{L}]\w*)\b(?=[\\'"])
+        match: |
+          (?x)\s*
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
+          in|of|as|is|new|to|til|thru|by|del|unset
+          |var|val|let|const|decl|def|fun|type|sin
+          |class|enum|mod|pack|struct|inter|space
+          |proc|proto|macro|given|style|elem|field
+          |ext|pred|data|trait|lemma|iter|sub
+          |if|un|elif|elun|else|then
+          |for|each|loop|while|until|when
+          |with|do|from
+          |try|throw|catch|fix
+          |switch|match|case|fail
+          |unite|queue|spawn|kill|lock
+          |break|skip|redo|retry|return|await|label|yield|goto|pass
+          |import|export|using
+          |debug|assert|where
+          )\b
+          \b([\p{Pc}\p{L}]\w*)\b(?=[\\'"])
         name: entity.name.function.tagged-template.trin
 
       pattern-brackets:
@@ -3527,7 +3549,7 @@ repository:
               (
               (?:
               (?:# access modifiers
-              pub|priv|prot|inline|final|mut|immut
+              pub|priv|prot|inline|final|mut|immut|ghost
               |seal|abs|intern|extern|imply|exply|global|local
 
               # concurrency modifiers
@@ -3563,7 +3585,7 @@ repository:
               ((?:
               \s*(?:
               (?:# access modifiers
-              pub|priv|prot|inline|final|mut|immut
+              pub|priv|prot|inline|final|mut|immut|ghost
               |seal|abs|intern|extern|imply|exply|global|local
 
               # concurrency modifiers
@@ -3596,7 +3618,7 @@ repository:
               (
               (?:
               (?:# access modifiers
-              pub|priv|prot|inline|final|mut|immut
+              pub|priv|prot|inline|final|mut|immut|ghost
               |seal|abs|intern|extern|imply|exply|global|local
 
               # concurrency modifiers
@@ -3632,7 +3654,7 @@ repository:
               ((?:
               \s*(?:
               (?:# access modifiers
-              pub|priv|prot|inline|final|mut|immut
+              pub|priv|prot|inline|final|mut|immut|ghost
               |seal|abs|intern|extern|imply|exply|global|local
 
               # concurrency modifiers
@@ -3910,7 +3932,7 @@ repository:
           ((?:
           \s*(?:
           (?:# access modifiers
-          pub|priv|prot|inline|final|mut|immut
+          pub|priv|prot|inline|final|mut|immut|ghost
           |seal|abs|intern|extern|imply|exply|global|local
 
           # concurrency modifiers
@@ -3946,7 +3968,7 @@ repository:
           (
           (?:
           (?:# access modifiers
-          pub|priv|prot|inline|final|mut|immut
+          pub|priv|prot|inline|final|mut|immut|ghost
           |seal|abs|intern|extern|imply|exply|global|local
 
           # concurrency modifiers
