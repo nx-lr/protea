@@ -7,7 +7,6 @@ Trinity is an optionally typed, compiled, multi-paradigm and multi-faceted progr
 The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified, comprehensive and clean API with minimal abstractions. These powerful features and APIs are supported out of the box, providing (almost) everything you need to develop modern applications that don't crash, quicker and safer.
 
 ```dart
-import {need, read} from 'assert'
 
 class Node {
   ghost var list: Seq[Int]
@@ -41,7 +40,7 @@ class Node {
   }
 }
 
-fun Search(ll: ?Node) return (r: Int) where
+proc search(ll: ?Node) return (r: Int) where
   need !?ll || ll.valid()
   check !?ll ==> r == 0
   check ?ll ==>
@@ -68,7 +67,7 @@ fun Search(ll: ?Node) return (r: Int) where
 proc main {
   var list: ?Node = null
   for let x in [0, 5, 0, 8] then list.=cons(x, list)
-  var r = Search(list)
+  var r = search(list)
   print"Search returns $r\n"
   assert r == 1
 }
