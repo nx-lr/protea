@@ -36,8 +36,8 @@ export class Node {
 
   stat def cons(x: int, tail: ?Node) return n: Node where
     check !?tail || tail.valid()
-    and n.valid()
-    and (if !?tail { n.list == [x] }
+    check n.valid()
+    check (if !?tail { n.list == [x] }
         else { n.list == [x] + tail.list }) {
     var n = new Node
     n.head, n.next = x, tail
@@ -54,19 +54,19 @@ export class Node {
 export proc search(ll: ?Node) return r: Int where
   need !?ll || ll.valid()
   check !?ll ==> r == 0
-  and ?ll ==>
-    0 <= r && r <= #ll.list &&
+  check ?ll ==>
+    0 <= r and r <= #ll.list and
     (r < #ll.list ==> ll.list[r] == 0 &&
-    0 !in ll.list[: r]) &&
+    0 !in ll.list[: r]) and
     (r == #ll.list ==> 0 !in ll.list) {
   if !?ll { r = 0 } else {
     var jj, i = ll, 0
     while ?jj && jj.head != 0 where
-      same ?jj ==> jj.valid() &&
-        i + #jj.list == #ll.list &&
+      same ?jj ==> jj.valid() and
+        i + #jj.list == #ll.list and
         ll.list[i :] == jj.list
-      and !?jj ==> i == #ll.list
-      and 0 !in ll.list[: i]
+      same !?jj ==> i == #ll.list
+      same 0 !in ll.list[: i]
       till #ll.list - i {
       jj.=next
       i += 1
