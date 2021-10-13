@@ -35,10 +35,9 @@ export class Node {
   }
 
   stat def cons(x: int, tail: ?Node) return n: Node where
-    check !?tail || tail.valid()
-    check n.valid()
-    check (if !?tail { n.list == [x] }
-        else { n.list == [x] + tail.list }) {
+  check !?tail || tail.valid()
+  check n.valid()
+  check !?tail ? n.list == [x] : n.list == [x] + tail.list {
     var n = new Node
     n.head, n.next = x, tail
     if !?tail {
@@ -62,12 +61,12 @@ export proc search(ll: ?Node) return r: Int where
   if !?ll { r = 0 } else {
     var jj, i = ll, 0
     while ?jj && jj.head != 0 where
-      same ?jj ==> jj.valid() and
-        i + #jj.list == #ll.list and
-        ll.list[i :] == jj.list
-      same !?jj ==> i == #ll.list
-      same 0 !in ll.list[: i]
-      till #ll.list - i {
+    same ?jj ==> jj.valid() and
+      i + #jj.list == #ll.list and
+      ll.list[i :] == jj.list
+    same !?jj ==> i == #ll.list
+    same 0 !in ll.list[: i]
+    till #ll.list - i {
       jj.=next
       i += 1
     }
@@ -161,7 +160,14 @@ This project is currently in the works and would be my largest project to date. 
       3. Backslash strings
       4. String interpolation
       5. String formatting
-         1. Directives **TODO**
+         1. Booleans
+         2. Numbers
+         3. Strings
+         4. Collections
+         5. Regex
+         6. Markup
+         7. Custom objects
+         8. 
       6. Locale strings
    5. Regular expressions
       1. Basic syntax elements
@@ -421,6 +427,10 @@ Keywords are grouped into three:
     import export using
     desc debug check assert assume
 
+    true false null void nan infin
+    it this that super self target
+    params ctor prot pro
+
 #### Identifiers
 
 In [The Unicode Standard 14.0](https://www.unicode.org/versions/Unicode14.0.0/UnicodeStandard-14.0.pdf), **Table 4-4** defines a set of character categories for all Unicode characters.
@@ -467,7 +477,7 @@ Keywords lose meaning and become ordinary identifiers when they are part of the 
 
 ```dart
 type Type = {
-  def: Func;
+  def: Func,
 };
 
 const object_ = new Type({def: |x| x = 10});
