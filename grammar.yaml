@@ -1593,7 +1593,25 @@ repository:
 
   jsx:
     comment: Avoid < operator expressions as best we can using Zertosh's regex
-    begin: (?=<[\p{Pc}\p{L}])
+    begin: |
+      (?x)
+      (?<=(?:^\s*|\#?[({\[]\s*|(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+)\s+|\b(?:#keywords
+      in|of|as|is|new|to|til|thru|by|del|unset
+      |var|val|let|const|decl|def|fun|type|sin
+      |class|enum|mod|pack|struct|inter|space
+      |proc|proto|macro|given|style|elem|field
+      |ext|pred|data|trait|lemma|iter|sub
+      |if|un|elif|elun|else|then
+      |for|each|loop|while|until|when
+      |with|do|from
+      |try|throw|catch|fix
+      |switch|match|case|fail
+      |unite|queue|spawn|kill|lock
+      |break|skip|redo|retry|return|await|label|yield|goto|pass
+      |import|export|using
+      |debug|check|assert|assume
+      )\b)\s*|[\p{Pc}\p{L}]\w*)
+      (?=<[\p{Pc}\p{L}])
     end: (?=.)|$
     applyEndPatternLast: 1
     patterns:
