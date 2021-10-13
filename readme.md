@@ -105,185 +105,173 @@ This project is currently in the works and would be my largest project to date. 
 
 <style>table{table-layout:fixed;width:100%;}</style>
 
-<table><tr><td valign=top>
-
-#### [Introduction](./Introduction.md)
-
-</td></tr></table>
-
 ## Table of Contents
 
-<table><tr><td>
-
-#### Introduction
-
-- [Overview](#overview)
-- [Installation](#installation)
-- [The Basics](#the-basics)
-  - [Variables](#variables)
-  - [Syntax](#syntax)
-  - [Comments](#comments)
-  - [Keywords](#)
-
-#### Data Types
-
-- [Integers and Floats](#)
-- [Strings](#)
-  - [Quoted Strings](#)
-  - [Raw Strings](#)
-  - [Slicing and Splicing](#)
-- [Booleans](#)
-- [Null and Void](#)
-- [Collections](#)
-  - [lists/Tuples](#)
-  - [Sets](#)
-  - [Maps/Dictionaries](#)
-  - [Sequences](#)
-  - [Destructuring](#)
-- [Other Data Types](#)
-  - [Regular Expressions](#)
-  - [Buffers](#)
-  - [Functions](#)
-  - [Symbols](#)
-
-#### Control Flow
-
-- [Basic Block](#)
-- [Conditionals](#)
-- [Loops and Ranges](#)
-- [Switch](#)
-- [Pattern Matching](#)
-- [Error Handling](#)
-- [Query Expressions](#)
-
-</td><td>
-
-#### Functions
-
-- [Functions](#)
-- [Closures](#)
-- [Inline and Named Functions](#)
-- [Anonymous and Higher-Order Functions](#)
-- [Currying](#)
-- [Recursion](#)
-- [Function Piping](#)
-- [Generators](#)
-- [String Macros](#)
-
-#### Classes
-
-- [Introduction](#)
-- [Constructors](#)
-- [Methods and Attributes](#)
-- [Access Modifiers](#)
-- [Getters and Setters](#)
-- [Symbols](#)
-- [Traits and Fragments](#)
-- [Constraints](#)
-- [Objects and Records](#)
-- [Advanced Modifiers](#)
-- [Extensions](#)
-
-#### Types
-
-- [Introduction](#)
-- [Any, Mixed, Void/Unit, Empty](#)
-- [Optional Types](#)
-- [Function Types](#)
-- [Collection Types](#)
-- [Type Combinatorics](#)
-- [Conditional Types](#)
-- [Enumerations](#)
-- [Sum and Product Types](#)
-- [Generics and Variants](#)
-- [Type Aliases](#)
-- [Infer, Key-Of, Name-Of](#)
-- [Constraints (For-All)](#)
-
-</td><td>
-
-#### Concurrency
-
-- [Channels](#)
-- [Series and Parallel Blocks](#)
-- [Async-Await](#)
-- [Callbacks and Futures](#)
-
-#### Modules
-
-- [The Module System](#)
-- [Imports and Exports](#)
-- [Python and JS Modules](#)
-- [Calling Python and Node.JS Code](#)
-- [Managing and Publishing Packages](#)
-
-#### Advanced Topics
-
-- [More on Types](#)
-- [Domain-Specific Extensions](#)
-  - [Macros and Procedures](#)
-  - [Inline and Using Modifiers](#)
-  - [Operators and Overriding](#)
-  - [Control Flow](#)
-  - [Reflection API](#)
-  - [Extending Built-Ins](#)
-- [Text Processing](#)
-  - [String Library](#)
-  - [Regex Flavors, Compared](#)
-- [Internationalization](#)
-  - [Date and Time](#)
-  - [Currency](#)
-  - [Math](#)
-- [File System](#)
-  - [Reading and Writing Files](#)
-  - [Languages and Markup](#)
-- [Embedded Languages in Action: A React Example](#)
-- [Debugging and TDD](#)
-- [Conditional Compilation](#)
-- [Language Interop](#)
-  - [Translating Python/JS to Trinity](#)
-  - [Translating Trinity to Python](#)
-- [Documentation](#)
-
-</td><td>
-
-#### Tools
-
-- [Nifty, Trinity's Formatter](#)
-
-#### Standard Library
-
-> \* Far future
-
-- [Test-Driven Development](#)
-- [File System and I/O](#)
-- [Serialization](#)
-- [Collections](#)
-- [Text Processing](#)
-- [Internationalization](#)
-- [NLP and ML](#)
-- [Mathematics](#)
-- [Cryptography](#)
-- [Science\*](#)
-- [Data Analysis\*](#)
-- [Reactive Programming](#)
-- [Asynchronous Programming](#)
-- [Functional Programming](#)
-- [Object-Oriented Programming](#)
-- [Markup and Styling](#)
-- [Frontend and Backend](#)
-- [Domain-Specific Extensions](#)
-
-#### Appendices and References
-
-- [Keywords and Modifiers](#)
-- [Operators & Precedence](#)
-- [Regex Language](#)
-- [Format Language](#)
-- [J-Expression Language](#)
-- [CLI Reference](#)
-
-</td></tr></table>
+1. About this document
+   1. Introducing Trinity
+   2. About this document
+   3. Backus-Naur form
+   4. Definitions
+2. Lexical analysis
+   1. Encoding
+   2. Definitions
+      1. Input
+      2. Tokens and whitespace
+      3. Character Classes
+      4. Comments
+   3. Syntax
+      1. Semicolons
+      2. Commas
+      3. Curly brackets
+      4. Parentheses
+   4. Comments
+      1. Line comments
+      2. Simple block comments
+      3. Nested block comments
+   5. Identifiers
+      1. Identifier types
+         1. Camel-case
+         2. Pascal-case
+         3. Capital/snake-case
+         4. Leading underscores
+      2. Identifier equality
+      3. Stropping
+   6. Keywords
+3. Syntax
+   1. Structure
+   2. Precedence
+   3. Associativity
+   4. Order of evaluation
+   5. Full grammar **TODO**
+4. Literals
+   1. Null and Void
+   2. Booleans
+   3. Numbers
+      1. Integers
+      2. Floats and decimals
+      3. Exponential notation
+      4. Repeating digits
+      5. Fractions
+      6. Rounding
+      7. Arbitrary-base numbers
+   4. Strings
+      1. Raw (single-quoted) strings
+      2. Escaped (escaped) strings
+      3. Backslash strings
+      4. String interpolation
+      5. String formatting
+         1. Directives **TODO**
+      6. Locale strings
+   5. Regular expressions
+      1. Basic syntax elements
+      2. Characters
+      3. Classes
+      4. Sets
+      5. Unicode
+      6. POSIX
+      7. Anchors
+      8. Assertions
+      9. Quantifiers
+      10. Groups
+      11. Back-references
+      12. Flags
+      13. Embedded code
+      14. Template strings
+   6. Collections
+      1. Lists
+      2. Sets
+      3. Maps
+   7. Buffers
+   8. Symbols
+   9. Operators
+   10. JSX Markup
+   11. Styles
+   12. Lambdas
+   13. Punctuation
+5. Clauses and statements
+   1. Closures
+      1. Do clause
+   2. Control flow
+      1. Return statement
+      2. Yield statement
+      3. Break statement
+      4. Skip statement
+      5. Label statement
+      6. Goto statement
+      7. Redo statement
+      8. Retry statement
+      9. Await statement
+      10. Pass statement
+      11. Throw statement
+   3. Conditions
+      1. If/Un clause
+      2. Elif/elun clause
+      3. Else clause
+      4. When clause in loops
+   4. Loops
+      1. For/each clause
+      2. While/until clause
+      3. Loop clause
+      4. Loop-while/until clause
+   5. Switch
+      1. Case/when clause
+      2. Fail/else clause
+   6. Match
+      1. Basic expressions
+      2. Guard conditions
+      3. Matching on:
+         1. Literals
+         2. Strings
+         3. Regular expressions
+         4. Collections
+         5. Objects
+         6. Functions
+         7. Symbols
+         8. Types
+   7. Concurrency
+      1. Unite clause
+      2. Queue clause
+      3. Spawn and kill clause
+   8. Error handling
+      1. Try clause
+      2. Catch clause
+      3. Fix clause
+      4. Catch-match/switch
+      5. With clause
+      6. Defer clause
+   9. Query expressions
+      1. Select clause
+      2. Where clause
+      3. Sort clause
+      4. Limit clause
+      5. Group clause
+      6. Join clause
+      7. Reduce clause
+   10. Program verification
+       1. Debug statement
+       2. Check statement
+       3. Assert statement
+       4. Assume statement
+   11. Module statement
+       1. Import statement
+       2. Export statement
+       3. Using statement
+6. Declarations
+   1. Variables
+   2. Types
+   3. Functions and closures
+   4. Classes
+   5. Enumerations
+   6. Modules and packages
+   7. Namespaces
+   8. Singleton objects
+   9. Structures and interfaces
+   10. Protocols and traits
+   11. Datatypes and fields
+   12. Iterators
+   13. Constraints
+   14. Styles and components
+   15. Predicates
 
 ## A Tour
 
