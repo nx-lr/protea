@@ -10,56 +10,56 @@ The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified,
 import {need, read} from 'assert'
 
 class Node {
-  ghost var List: Seq[Int]
-  ghost var Repr: Set[Node]
+  ghost var list: Seq[Int]
+  ghost var repr: Set[Node]
   var head: Int
   var next: ?Node
 
-  pred valid where read(this, Repr) {
-    this in Repr &&
-    1 <= #List && List[0] == head &&
-    (next == null ==> #List == 1) &&
+  pred valid where read(this, repr) {
+    this in repr &&
+    1 <= #list && list[0] == head &&
+    (next == null ==> #list == 1) &&
     (next != null ==>
-      next in Repr && next.Repr <= Repr && this !in next.Repr &&
-      next.Valid() && next.List == List[1 : #List])
+      next in repr && next.repr <= repr && this !in next.repr &&
+      next.valid() && next.list == list[1 : #list])
   }
 
-  stat def Cons(x: int, tail: ?Node): (n: Node) where
-    check(tail == null || tail.Valid()),
-    check(n.Valid()),
-    check(if tail == null { n.List == [x] }
-          else { n.List == [x] + tail.List }) {
+  stat def cons(x: int, tail: ?Node) return (n: Node) where
+    check !?tail || tail.valid()
+    check n.valid()
+    check if !?tail { n.list == [x] }
+          else { n.list == [x] + tail.list } {
     var n = new Node
     n.head, n.next = x, tail
-    if (tail == null) {
-      n.List = [x]
-      n.Repr = {n}
+    if !?tail {
+      n.list = [x]
+      n.repr = {n}
     } else {
-      n.List = [x] + tail.List
-      n.Repr = {n} + tail.Repr
+      n.list = [x] + tail.list
+      n.repr = {n} + tail.repr
     }
   }
 }
 
-fun Search(ll: ?Node): (r: Int) where
-  need(ll == null || ll.Valid()),
-  check(ll == null ==> r == 0),
-  check(ll != null ==>
+fun Search(ll: ?Node) return (r: Int) where
+  need !?ll || ll.Valid()
+  check !?ll ==> r == 0
+  check ?ll ==>
     0 <= r && r <= #ll.List &&
     (r < #ll.List ==> ll.List[r] == 0 &&
     0 !in ll.List[: r]) &&
-    (r == #ll.List ==> 0 !in ll.List)) {
-  if ll == null {
+    (r == #ll.List ==> 0 !in ll.List) {
+  if !?ll {
     r = 0
   } else {
     var jj, i = ll, 0
-    while jj != null && jj.head != 0 where
-      same(jj != null ==> jj.Valid() &&
-            i + #jj.List == #ll.List &&
-            ll.List[i :] == jj.List),
-      same(jj == null ==> i == #ll.List),
-      same(0 !in ll.List[: i]),
-      stop(#ll.List - i) {
+    while ?jj && jj.head != 0 where
+      same ?jj ==> jj.Valid() &&
+        i + #jj.List == #ll.List &&
+        ll.List[i :] == jj.List
+      same !?jj ==> i == #ll.List
+      same 0 !in ll.List[: i]
+      till #ll.List - i {
       jj = jj.next
       i = i + 1
     }
@@ -67,12 +67,9 @@ fun Search(ll: ?Node): (r: Int) where
   }
 }
 
-proc Main() {
+proc main {
   var list: ?Node = null
-  list = list.Cons(0, list)
-  list = list.Cons(5, list)
-  list = list.Cons(0, list)
-  list = list.Cons(8, list)
+  for let x in [0, 5, 0, 8] then list.=cons(x, list)
   var r = Search(list)
   print"Search returns $r\n"
   assert r == 1
@@ -139,7 +136,7 @@ This project is currently in the works and would be my largest project to date. 
 - [Booleans](#)
 - [Null and Void](#)
 - [Collections](#)
-  - [Lists/Tuples](#)
+  - [lists/Tuples](#)
   - [Sets](#)
   - [Maps/Dictionaries](#)
   - [Sequences](#)
@@ -361,7 +358,7 @@ Each token consists of a sequence of consecutive characters from just one of tho
 
 A sequence of alphanumeric characters, with no additional non-alphanumeric characters, is a single token. White-space must be used to separate two such tokens in a program. The same thing goes for operators.
 
-### Source code representation
+### Source code reproesentation
 
 Source code is Unicode text encoded in UTF-8. Other encodings are not supported. Any of the standard platform line termination sequences can be used. All of these forms can be used equally, regardless of the platform.
 
