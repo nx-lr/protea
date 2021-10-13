@@ -79,7 +79,7 @@ define:
     |with|do|from
     |try|throw|catch|fix
     |switch|match|case|fail
-    |unite|queue|spawn|kill|lock
+    |tandem|unison|series|spawn|kill|lock
     |break|skip|redo|retry|return|await|label|yield|goto|pass
     |import|export|using
     |debug|assert|where
@@ -102,7 +102,7 @@ define:
     |with|do|from
     |try|throw|catch|fix
     |switch|match|case|fail
-    |unite|queue|spawn|kill|lock
+    |tandem|unison|series|spawn|kill|lock
     |break|skip|redo|retry|return|await|label|yield|goto|pass
     |import|export|using
     |debug|assert|where
@@ -168,7 +168,7 @@ repository:
       |with|do|from
       |try|throw|catch|fix
       |switch|match|case|fail
-      |unite|queue|spawn|kill|lock
+      |tandem|unison|series|spawn|kill|lock
       |break|skip|redo|retry|return|await|label|yield|goto|pass
       |import|export|using
       |debug|assert|where
@@ -1616,7 +1616,7 @@ repository:
       |with|do|from
       |try|throw|catch|fix
       |switch|match|case|fail
-      |unite|queue|spawn|kill|lock
+      |tandem|unison|series|spawn|kill|lock
       |break|skip|redo|retry|return|await|label|yield|goto|pass
       |import|export|using
       |debug|assert|where
@@ -2092,7 +2092,7 @@ repository:
           |with|do|from
           |try|throw|catch|fix
           |switch|match|case|fail
-          |unite|queue|spawn|kill|lock
+          |tandem|unison|series|spawn|kill|lock
           |break|skip|redo|retry|return|await|label|yield|goto|pass
           |import|export|using
           |debug|assert|where
@@ -2121,7 +2121,7 @@ repository:
           |with|do|from
           |try|throw|catch|fix
           |switch|match|case|fail
-          |unite|queue|spawn|kill|lock
+          |tandem|unison|series|spawn|kill|lock
           |break|skip|redo|retry|return|await|label|yield|goto|pass
           |import|export|using
           |debug|assert|where
@@ -2454,7 +2454,7 @@ repository:
               |with|do|from
               |try|throw|catch|fix
               |switch|match|case|fail
-              |unite|queue|spawn|kill|lock
+              |tandem|unison|series|spawn|kill|lock
               |break|skip|redo|retry|return|await|label|yield|goto|pass
               |import|export|using
               |debug|assert|where
@@ -2484,7 +2484,7 @@ repository:
                   |with|do|from
                   |try|throw|catch|fix
                   |switch|match|case|fail
-                  |unite|queue|spawn|kill|lock
+                  |tandem|unison|series|spawn|kill|lock
                   |break|skip|redo|retry|return|await|label|yield|goto|pass
                   |import|export|using
                   |debug|assert|where
@@ -2810,7 +2810,7 @@ repository:
       |with|do|from
       |try|throw|catch|fix
       |switch|match|case|fail
-      |unite|queue|spawn|kill|lock
+      |tandem|unison|series|spawn|kill|lock
       |break|skip|redo|retry|return|await|label|yield|goto|pass
       |import|export|using
       |debug|assert|where
@@ -2949,12 +2949,10 @@ repository:
 
   declaration-keywords:
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)\b\s*
-        name: storage.type.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)\b\s*
         name: keyword.other.declare.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)\b\s*
-        name: storage.type.variable.trin
+        name: storage.type.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fun)\b\s*
         name: storage.type.function.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)\b\s*
@@ -2969,6 +2967,8 @@ repository:
         name: storage.type.package.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inter)\b\s*
         name: storage.type.interface.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(space)\b\s*
+        name: storage.type.namespace.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
         name: storage.type.structure.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sin)\b\s*
@@ -3015,7 +3015,7 @@ repository:
         name: keyword.control.switch.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|when)\b\s*
         name: keyword.control.match.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unite|queue|spawn|kill|lock)\b\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(tandem|unison|series|spawn|kill|lock)\b\s*
         name: keyword.control.thread.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|skip|redo|retry|return|await|label|yield|goto|pass)\b\s*
         name: keyword.control.flow.trin
@@ -3224,6 +3224,7 @@ repository:
       - include: "#module"
       - include: "#package"
       - include: "#interface"
+      - include: "#namespace"
       - include: "#structure"
       - include: "#singleton"
       - include: "#data"
@@ -3255,7 +3256,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.function.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.function.trin
       method:
@@ -3265,7 +3266,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.method.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.method.trin
       class:
@@ -3275,7 +3276,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.class.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.class.trin
       enum:
@@ -3285,7 +3286,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.enum.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.enum.trin
       module:
@@ -3295,7 +3296,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.module.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.module.trin
       package:
@@ -3305,7 +3306,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.package.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.package.trin
       interface:
@@ -3315,9 +3316,19 @@ repository:
         beginCaptures:
           1: {name: storage.type.interface.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.interface.trin
+      namespace:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(space)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.namespace.trin}
+        patterns:
+          - include: '#block-entities'
+          - match: *entity-name
+            name: entity.name.namespace.trin
       structure:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
@@ -3325,7 +3336,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.structure.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.structure.trin
       singleton:
@@ -3335,7 +3346,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.singleton.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.singleton.trin
       data:
@@ -3345,7 +3356,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.data.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.data.trin
       trait:
@@ -3355,7 +3366,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.trait.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.trait.trin
       procedure:
@@ -3365,7 +3376,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.procedure.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.procedure.trin
       macro:
@@ -3375,7 +3386,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.macro.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.macro.trin
       type:
@@ -3385,7 +3396,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.type.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.type.trin
       given:
@@ -3395,7 +3406,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.given.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.given.trin
       style:
@@ -3405,7 +3416,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.style.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.style.trin
       element:
@@ -3415,7 +3426,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.element.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.element.trin
       extends:
@@ -3425,7 +3436,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.extends.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.extends.trin
       subroutine:
@@ -3435,7 +3446,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.subroutine.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.subroutine.trin
       predicate:
@@ -3445,7 +3456,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.predicate.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.predicate.trin
       lemma:
@@ -3455,7 +3466,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.lemma.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.lemma.trin
       iterator:
@@ -3465,7 +3476,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.iterator.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.iterator.trin
       field:
@@ -3475,10 +3486,9 @@ repository:
         beginCaptures:
           1: {name: storage.type.field.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.field.trin
-
   params-clause:
     begin: |
       (?x)
@@ -3493,7 +3503,7 @@ repository:
       |with|do|from
       |try|throw|catch|fix
       |switch|match|case|fail
-      |unite|queue|spawn|kill|lock
+      |tandem|unison|series|spawn|kill|lock
       |break|skip|redo|retry|return|await|label|yield|goto|pass
       |import|export|using
       |debug|assert|where
@@ -3542,7 +3552,7 @@ repository:
           |with|do|from
           |try|throw|catch|fix
           |switch|match|case|fail
-          |unite|queue|spawn|kill|lock
+          |tandem|unison|series|spawn|kill|lock
           |break|skip|redo|retry|return|await|label|yield|goto|pass
           |import|export|using
           |debug|assert|where
@@ -3749,7 +3759,7 @@ repository:
           - include: $self
 
       thread-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unite|queue|spawn|kill|lock)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(tandem|unison|series|spawn|kill|lock)\b\s*
         end: (?<=})|(?=;|\s=>|$)|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b
         name: meta.thread.trin
         captures:
