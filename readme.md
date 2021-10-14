@@ -51,15 +51,15 @@ export proc search(ll: ?Node) return r: Int where
 need !?ll || ll.valid()
 check !?ll ==> r == 0
 check ?ll ==>
-  0 <= r and r <= #ll.list and
+  0 <= r && r <= #ll.list &&
   (r < #ll.list ==> ll.list[r] == 0 &&
-  0 !in ll.list[: r]) and
+  0 !in ll.list[: r]) &&
   (r == #ll.list ==> 0 !in ll.list) {
   if !?ll { r = 0 } else {
     var jj, i = ll, 0
     while ?jj && jj.head != 0 where
-    same ?jj ==> jj.valid() and
-      i + #jj.list == #ll.list and
+    same ?jj ==> jj.valid() &&
+      i + #jj.list == #ll.list &&
       ll.list[i :] == jj.list
     same !?jj ==> i == #ll.list
     same 0 !in ll.list[: i]
@@ -282,29 +282,53 @@ Trinity is a relatively new programming language which allows users to write eas
 
 ### Overview
 
-The Trinity language derives from a combination of Scala and Swift inspired syntax, plus ML and Node/JavaScript inspired semantics. This is a reference manual for the Go programming language. This document provides an overview of the syntax, operations, and semantics in the Trinity language with an emphasis on the distinctive or unusual features in the language. as well as a comprehensive guide to the modules in Trinity's Standard Library.
+Trinity derives most of its syntax from modern-day JavaScript, except for a couple of major changes inspired by Go, Scala, Swift, Kotlin, Fantom and Flix, and features from Oniguruma, Ruby, YAML, ML, Haskell, LESS and SGML.
+
+This document provides an overview of the syntax, operations, and semantics in the Trinity language with an emphasis on the distinctive or unusual features in the language. as well as a comprehensive guide to the modules in Trinity's Standard Library.
 
 ### Notation
 
 The language constructs are explained using an Extended Backus-Naur Form (EBNF), with some extensions from regular expressions.
 
-Definitions begin with an identifier, and a production rule, separated with `=` with spaces on both sides. Definitions are separated by semicolons.
+Definitions begin with an identifier, and a production rule, separated with `=` with spaces on both sides. Definitions are separated by semicolons as do most languages, except the last.
 
-If `Base12Prefix` and `Base12Digits` are defined, and so are `ArbitraryPrefix` and `ArbitraryDigits`, `#Numeric` (prefix hash) simultaneously expands and defines `Base12Numeric` and `ArbitraryNumeric`. The same applies for `Numeric#`, which defines `NumericBase12` and `NumericArbitrary` respectively.
+Non-terminals are written in `camelCase`, abstract terminal symbols are written in `PascalCase`. Verbatim terminal symbols (including keywords) are quoted with `'` or `"`, whichever fits.
 
-`a*` means 0 or more `a`s, `a+` means one or more `a`s, and `a?` means an optional `a`. Parentheses are used to group elements.
+`#` can prefix _or_ suffix a definition. `#` goes through all declaration with the matched wildcard, and generating new ones by referencing other declarations with the wildcard that share the same prefix or suffix.
+
+```dart
+base16Prefix = i"0x";
+base16Digits = i[digit "a"..."f"];
+
+// base16IntegerPart = base16Digits ("_"+ base16Digits)*
+#IntegerPart = #Digits ("_"+ #Digits)*;
+```
+
+`a*` means 0 or more `a`s, `a+` means one or more `a`s, and `a?` means an optional `a`.
+
+Parentheses `()` are used to group elements.
 
 `|` and `/` are used to mark alternatives and have the lowest precedence. `/` is the ordered choice that requires the parser to try the alternatives in the given order and to ensure the grammar is not ambiguous.
 
-`[]` is used as a shorthand for alternatives, where each production rule is an independent path. `...` is used to mark inclusive character ranges; `..<` is used to specify that the end is excluded---both range operators are used in conjunction with `[]`.
+`[]` is used as a shorthand for alternatives, where each is a unique production. A prefix `i` is used to mark a production as case-insensitive.
+
+```dart
+hexDigit = i[digit "a"..."f" "A"..."F"];
+hexDigit = i("0" | "1" | "2" | "3" |
+             "4" | "5" | "6" | "7" |
+             "8" | "9" | "a" | "b" |
+             "c" | "d" | "e" | "f" );
+```
+
+`...` is used to mark inclusive character ranges; `..<` is used to specify that the end is excluded---both range operators are used in conjunction with `[]`.
 
 The binary `^*` operator is used as a shorthand for 0 or more occurrences separated by its second argument; likewise `^+` means 1 or more occurrences: `a ^+ b` is short for `a (b a)*` and `a ^* b` is short for `(a (b a)*)?`.
 
-`>>` and `<<` function as the _unary_ lookahead and lookbehind operators (which expect but not consume whatever match goes after or before it, respectively ). `~>` and `<~` are their production rules.
+```dart
+ArrayLiteral = "[" Expression ^* "," "]"
+```
 
-A prefix `i` is used to mark a terminal symbol or character class or option list as case-insensitive. `i'if'` would match `if`, `IF`, `iF`, or `If`, while `i('0'...'9' | 'a'...'f')` expands to `('0'...'9' | 'A'...'F' | 'a'...'f')`.
-
-Non-terminals are written in camel-case, abstract terminal and wildcard symbols are written in uppercase. Verbatim terminal symbols (including keywords) are quoted with `'` or `"`, whichever fits.
+`>>` is the lookahead operator, which expects but does not consume the symbol to its right. `<<` expects but does not consume the symbol to its left. `!>>` and `!<<` are the direct negations of said operators, which means the match is invalid if the production returns a match.
 
 ```dart
 base12 = '...'
@@ -320,8 +344,8 @@ x14 => base14
 block = "{" statements "}";
 clause = (("then" | "=>") statement | block);
 ifStatement =
-  ("if" | "lest") statement clause
-  (("elif" | "elest") statement clause)*
+  ("if" | "un") statement clause
+  (("elif" | "elun") statement clause)*
   "else" statement;
 ```
 
@@ -340,13 +364,13 @@ Each token consists of a sequence of consecutive characters from just one of tho
 
 A sequence of alphanumeric characters, with no additional non-alphanumeric characters, is a single token. White-space must be used to separate two such tokens in a program. The same thing goes for operators.
 
-### Source code reproesentation
+### Source code representation
 
-Source code is Unicode text encoded in UTF-8. Other encodings are not supported. Any of the standard platform line termination sequences can be used. All of these forms can be used equally, regardless of the platform.
+Trinity only encodes text in UTF-8; other encodings are not supported.
 
 ### Comments
 
-Comments start anywhere outside a string or character literal with two slashes. A comment piece starts with # and runs until the end of the line. The end of line characters belong to the piece.
+Comments start anywhere outside a string or character literal with two slashes, and runs until the end of the line. The end of line characters belong to the piece.
 
 If the next line only consists of a comment piece with no other tokens between it and the preceding one, it does not start a new comment:
 
@@ -370,7 +394,7 @@ Trinity supports two types of multi-line comments beginning with `/*` and ending
     are not a problem. */
 ```
 
-`/*` comments do not support nesting. `/+` does however.
+`/+ +/` allow nesting.
 
 ```dart
 /+
@@ -431,7 +455,7 @@ digit = `\pNd` = `\d` = "0"..."9";
 lower = `\pLl`; upper = letter - lower; dash = `\pPd`;
 
 identifier = [letter delim] [letter delim mark digit]*;
-jsxTagName = [letter delim] [letter delim mark digit dash]* dash;
+jsxTagName = [letter delim] [letter delim mark digit dash]* !>>dash;
 ```
 
 JSX tags can also include dashes, but must not end with dashes. The `!` notation ensures that.
@@ -484,7 +508,7 @@ assert assert_;
 
 #### Double-quoted (Escaped) Strings
 
-Terminal symbol in the grammar: `EscStrLit`. Escaped string literals are delimited using matching double quotes, and can contain the following escape sequences:
+Terminal symbol in the grammar: `DoubleQuoteStringLit`. Escaped string literals are delimited using matching double quotes, and can contain the following escape sequences:
 
 | Escape Sequence      | Meaning                                                                      |
 | -------------------- | ---------------------------------------------------------------------------- |
@@ -518,7 +542,7 @@ Trinity also supports escapes in many bases. The same escapes with curly bracket
 
 #### Single-quoted (raw) strings
 
-Terminal symbol in the grammar: `RawStrLit`. Single-quoted raw strings the escape sequences for double-quoted strings mentioned above are not escaped. To escape a single quote, double it.
+Terminal symbol in the grammar: `SingleQuoteStringLit`. Single-quoted raw strings the escape sequences for double-quoted strings mentioned above are not escaped. To escape a single quote, double it.
 
 ```dart
 var daughterOfTheVoid = 'Kai''Sa';
@@ -526,7 +550,7 @@ var daughterOfTheVoid = 'Kai''Sa';
 
 #### Multi-line strings
 
-Terminal symbol in the grammar: `MultiRawStrLit` and `MultiEscStrLit`.
+Terminal symbol in the grammar: `Multi(Single|Double)QuoteStringLit`.
 
 String literals can also be delimited by at least three single or double quotes `""" ... """`, provided they end with at least that many quotes of the same character. The above rules for single- and double-quoted strings also apply.
 
@@ -536,17 +560,52 @@ String literals can also be delimited by at least three single or double quotes 
 
 produces:
 
-```txt
-"stringified string"
-```
+    "stringified string"
 
 #### Macro Strings
 
-Terminal symbols in the grammar: `Macro(Multi)?(Raw|Esc)StrLit`.
+Terminal symbols in the grammar: `Macro(Multi)?((Single|Double)Quote|Backslash)StringLit`.
+
+Macro strings are used to embed DSLs directly into Trinity. Any non-keyword identifier or the last element in a qualified name, can be useful for
 
 The construct `identifier"string"` is a shortcut for the construct `identifier("string")`, denoting a macro call with a string literal as its only argument. Macro string literals are especially convenient for embedding DSLs directly into Trinity (for example, SQL).
 
 #### String Interpolation
+
+The dollar sign begins an interpolation sequence, and can prefix a variable or expression, the latter enclosed in curly brackets.
+
+```dart
+val height = 1.9, name = 'James'
+print("$name%s is $height%n/d:2.2 meters tall")
+// James is 1.90 meters tall
+```
+
+You can specify a reusable format string this way:
+
+```dart
+'#0%s is #1%n/d:2.2 meters tall'._format('James', 1.9)
+```
+
+```dart
+whitespace = `\s` = `\pZ`; quotes = ["\"" "'" "`"];ww
+wordChar = `\w` = [letter delim mark digit]
+brackets = ["{" "}" "[" "]" "(" ")" "<" ">"];
+
+qualifiedName = !>>Keyword (identifier ^+ separator;)
+separator = "." | "!." | "?." | "::" | "!:" | "?:";
+interpolateVariable = "$" qualifiedName;
+interpolateExpression = "\${" expression "}";
+
+formatSwitchPlain = "/" formatSwitchName;
+formatSwitchName = formatDirectiveName = jsxTagName;
+formatSwitchAttrib = formatSwitchPlain ":" formatValue;
+formatValue = (word | "\\" anyChar) ^*
+              (![whitespace quotes brackets "\\" "/"] | "\\" anyChar)
+              !>>[whitespace "/"];
+
+formatDirective = "%" formatDirectiveName;
+formatSwitch = formatSwitchPlain | formatSwitchName;
+```
 
 #### Locale Strings
 
@@ -680,15 +739,14 @@ Alternatively, `\p{}` notation can be used instead of `[:]`.
 
 A set `[...]` can include nested sets. The operators below are listed in increasing precedence, meaning they are evaluated first.
 
-<!-- prettier-ignore -->
-| Syntax | Description |
-| --- | --- |
-| `^...`, `~...`, `!...`  | Negated (complement) character class |
-| `x-y` | Range (from x to y) |
-| `\|\|` | Union (`x \|\| y` means "x or y") |
-| `&&` | Intersection (`x && y` means "x and y" ) |
-| `^^` | Symmetric difference (`x ^^ y` means "x and y, but not both") |
-| `--` | Difference (`x ~~ y` means "x but not y") |
+| Syntax                 | Description                                                    |
+| ---------------------- | -------------------------------------------------------------- |
+| `^...`, `~...`, `!...` | Negated (complement) character class                           |
+| `x-y`                  | Range (from x to y)                                            |
+| `\|\|`                 | Union (`x \|\| y` &rArr; "x or y")                             |
+| `&&`                   | Intersection (`x && y` &rArr; "x and y" )                      |
+| `^^`                   | Symmetric difference (`x ^^ y` &rArr; "x and y, but not both") |
+| `--`                   | Difference (`x ~~ y` &rArr; "x but not y")                     |
 
 #### Anchors
 
@@ -888,12 +946,12 @@ Otherwise, precedence is determined by the first character.
 | 10 (highest)     | `~@` `::` `:-` `-~` `~-` `.-` `@@` `$$`                                                           | `$` `@`         | `BinaryOper10`  |
 | 9                | `*` `**` `***` `/` `#` `##` `%` `%%` `*>` `<*`                                                    | `%` `*` `/`     | `BinaryOper9`   |
 | 8                | `+` `-` `++` `--` `=<` `<>` `</` `/>` `<$` `$>` `<$>` `<+>` `<*>` `</>`                           | `+` `-`         | `BinaryOper8`   |
-| 7                | `<:` `:>` `:<` `>:` `<:<` `>:>` `<:>` `>:<` `<!` `!>` `!<` `>!` `<!<` `>!>` `<!>` `>!<`           | `.`             | `BinaryOper7`   |
+| 7                | `<:` `:>` `:<` `>:` `<!` `!>` `!<` `>!` `::` `..` `:::` `...` `..<` `>.<` `>..`                   | `.` `:`         | `BinaryOper7`   |
 | 6                | `==` `!=` `===` `!==` `~>` `<~` `~~>` `<~~` `<==` `==>` `->` `-->` `<-` `<--` `<~>` `<==>` `<-->` | `=` `!` `>` `<` | `BinaryOper6`   |
 | 5                | `&` `^` `\|` `>>` `<<` `>>>` `<<<` `<=>` `<->`                                                    | `?`             | `BinaryOper5`   |
 | 4                | `??` `!!` `?:` `!:` `$:` `&` `\|` `^` `~&` `~\|` `~^`                                             | `~`             | `BinaryOper4`   |
 | 3                | `&&` `\|\|` `^^` `&~` `\|~` `^~`                                                                  | `#`             | `BinaryOper3`   |
-| 2                | `<+` `+>` `<\|` `\|>` `<\|\|` `\|\|>` `<\|\|\|` `\|\|\|>`                                         | `?` `:`         | `BinaryOper2`   |
+| 2                | `<+` `+>` `<\|` `\|>` `<\|\|` `\|\|>` `<\|\|\|` `\|\|\|>`                                         | `?`             | `BinaryOper2`   |
 | 1 (lowest)       | `=` `:=` `+=` `*=` etc; other assignment operators                                                |                 | `BinaryOper1`   |
 | 0                | `? :` `! :` `$ :`                                                                                 |                 | `TernaryOper`   |
 
