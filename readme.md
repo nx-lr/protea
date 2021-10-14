@@ -1,10 +1,9 @@
 # Trinity
 
 Trinity is an open source programming language that integrates object-oriented and functional programming, enabling developers and teams to fully develop, test and deploy their projects with less code on both the frontend and backend, no matter the platform.
+Trinity provides easy access to huge ecosystems of libraries, without the need to manage complex dependencies.
 
-Trinity provides easy access to huge ecosystems of libraries, without the need to manage complex dependencies. It comes with a robust program verifier and type checker that watches over your shoulder and flags any errors to you so you can catch bugs early.
-
-The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified and comprehensive standard library for everyday or highly specialized computing tasks (in the future).
+Trinity also comes with a robust program verifier and type checker that watches over your shoulder and flags any errors to you so you can catch bugs early, all tied with a unified and comprehensive standard library for everyday or highly specialized computing tasks (in the future).
 
 ```dart
 // Driver code
