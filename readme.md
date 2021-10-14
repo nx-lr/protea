@@ -302,7 +302,7 @@ The binary `^*` operator is used as a shorthand for 0 or more occurrences separa
 
 `>>` and `<<` function as the _unary_ lookahead and lookbehind operators (which expect but not consume whatever match goes after or before it, respectively ). `~>` and `<~` are their production rules.
 
-A prefix `i` is used to mark a production as case-insensitive, and modifies any production rule.
+A prefix `i` is used to mark a terminal symbol or character class or option list as case-insensitive. `i'if'` would match `if`, `IF`, `iF`, or `If`, while `i('0'...'9' | 'a'...'f')` expands to `('0'...'9' | 'A'...'F' | 'a'...'f')`.
 
 Non-terminals are written in camel-case, abstract terminal and wildcard symbols are written in uppercase. Verbatim terminal symbols (including keywords) are quoted with `'` or `"`, whichever fits.
 
