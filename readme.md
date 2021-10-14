@@ -60,7 +60,7 @@ check ?ll ==>
     while ?jj && jj.head != 0 where
     same ?jj ==> jj.valid() and
       i + #jj.list == #ll.list and
-      ll.list[i ] == jj.list
+      ll.list[i :] == jj.list
     same !?jj ==> i == #ll.list
     same 0 !in ll.list[: i]
     till #ll.list - i {
