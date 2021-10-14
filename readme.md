@@ -290,44 +290,21 @@ The language constructs are explained using an Extended Backus-Naur Form (EBNF),
 
 Definitions begin with an identifier, and a production rule, separated with `=` with spaces on both sides. Definitions are separated by semicolons.
 
+If `Base12Prefix` and `Base12Digits` are defined, and so are `ArbitraryPrefix` and `ArbitraryDigits`, `#Numeric` (prefix hash) simultaneously expands and defines `Base12Numeric` and `ArbitraryNumeric`. The same applies for `Numeric#`, which defines `NumericBase12` and `NumericArbitrary` respectively.
+
 `a*` means 0 or more `a`s, `a+` means one or more `a`s, and `a?` means an optional `a`. Parentheses are used to group elements.
 
 `|` and `/` are used to mark alternatives and have the lowest precedence. `/` is the ordered choice that requires the parser to try the alternatives in the given order and to ensure the grammar is not ambiguous.
 
-`[]` is used as a shorthand for alternatives.
+`[]` is used as a shorthand for alternatives, where each production rule is an independent path. `...` is used to mark inclusive character ranges; `..<` is used to specify that the end is excluded---both range operators are used in conjunction with `[]`.
 
-The binary `%*` operator is used as a shorthand for 0 or more occurrences separated by its second argument; likewise `^+` means 1 or more occurrences: `a %+ b` is short for `a (b a)*` and `a %* b` is short for `(a (b a)*)?`. Example:
+The binary `^*` operator is used as a shorthand for 0 or more occurrences separated by its second argument; likewise `^+` means 1 or more occurrences: `a ^+ b` is short for `a (b a)*` and `a ^* b` is short for `(a (b a)*)?`.
 
-A prefix `i` is used to mark a production as case-insensitive, and can be used on groups an
+`>>` and `<<` function as the _unary_ lookahead and lookbehind operators (which expect but not consume whatever match goes after or before it, respectively ). `~>` and `<~` are their production rules.
 
-Non-terminals start with a lowercase letter, abstract terminal symbols are in UPPERCASE. Verbatim terminal symbols (including keywords) are quoted with '. An example:
+A prefix `i` is used to mark a production as case-insensitive, and modifies any production rule.
 
-- `;` - delimit productions
-- `=` - assign productions
-- `()` - grouping
-- `[]` - option
-- `{}` - quantifier
-- `<<` - lookbehind: expects a match on left in order to be valid
-- `>>` - lookahead: expects a match on right in order to be valid
-- `<~` - negative lookbehind and `~>` lookahead
-- `*` - repetition: zero or many
-- `+` - repetition: one or many
-- `?` - repetition: zero or one
-- `|` - alternation: return longest match
-- `/` - alternation: try operands in given order, from left to right
-- `-` - subtracts a class or range from another
-- `&` - takes the intersection of two classes or ranges
-- `+` - takes the union of two classes or ranges
-- `!` - negates a character class or range
-- `^` - takes the symmetric difference of two classes or ranges
-- `a %+ b` - equivalent to `a (b a)*`
-- `a %* b` - equivalent to `(a (b a)*)?`
-- `a...z` - inclusive character range
-- `a..<z` - character range exclusive
-- ` `` ` - character class or regular expression
-- `''` or `""` - verbatim strings
-- `@` - makes a production case-insensitive
-- `#` - wildcard: matches all production rules above based on the wildcard, creating new productions for all matches.
+Non-terminals are written in camel-case, abstract terminal and wildcard symbols are written in uppercase. Verbatim terminal symbols (including keywords) are quoted with `'` or `"`, whichever fits.
 
 ```dart
 base12 = '...'
