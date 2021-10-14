@@ -989,7 +989,9 @@ repository:
       - match: (%)((\w|\\.)+(([^\s'"`\\\[\](){}<>]|\\.)*(\w|\\.)+)?)
         captures:
           1: {name: punctuation.definition.directive.trin}
-          2: {name: storage.type.format.trin}
+          2:
+            name: storage.type.format.trin
+            patterns: [include: "#format-specifiers"]
       - match: |
           (?xi)
           (\$)# prefix
@@ -1032,7 +1034,9 @@ repository:
       - match: (%)((\w|\\.)+(([^\s'"`\\\[\](){}<>]|\\.)*(\w|\\.)+)?)
         captures:
           1: {name: punctuation.definition.directive.trin}
-          2: {name: storage.type.format.trin}
+          2:
+            name: storage.type.format.trin
+            patterns: [include: "#format-specifiers"]
       - match: |
           (?xi)
           (\$)# prefix
@@ -1065,7 +1069,40 @@ repository:
   format-specifiers:
     comment: Grammar for Trinity's format specifier language, inspired by
       MS-DOS, Bash and Python's f-strings.
-    patterns: []
+    repository:
+      attribute-values:
+        patterns:
+          - include: "#constants"
+          - include: "#string-content"
+          - include: source.yaml#flow-scalar-plain-out-implicit-type
+          - include: source.css#numeric-values
+          - include: source.css#property-keywords
+          - include: source.css#color-keywords
+          - include: source.css#property-names
+          - include: source.css.scss#constant_functions
+          - include: source.css.scss#constant_sass_functions
+          - include: source.css.scss#constant_important
+          - include: source.css.scss#constant_default
+          - include: source.css.scss#constant_optional
+          - include: "#numbers"
+    patterns:
+      - comment: type specifier
+        match: (?<=[^\\%]%)\w+
+        name: storage.type.format.trin
+      - comment: Format switch with value /x:24
+        match: (?<!\\)(/)([\p{Pc}\p{L}]\w*)(:)((?:[^\s'"`<=>\\/]|\\.|(?<!\w)/(?!>))*)
+        captures:
+          1: {name: punctuation.separator.mapping.trin}
+          2: {name: entity.other.attribute-name.class.trin}
+          3: {name: punctuation.separator.key-value.trin}
+          4:
+            name: string.quoted.double.html.trin
+            patterns: [include: "#attribute-values"]
+      - comment: Format switch with value /x:24
+        match: (?<!\\)(/)([\p{Pc}\p{L}]\w*)
+        captures:
+          1: {name: punctuation.separator.mapping.trin}
+          2: {name: entity.other.attribute-name.attribute.trin}
 
   # Unicode Named Character Language
 
@@ -1504,9 +1541,7 @@ repository:
             end: \s*}
             name: constant.other.character-class.unicode.trin
             patterns:
-              - include: "#expression-keywords"
-              - include: "#variables"
-              - include: "#operators"
+              - include: "#unicode-query"
           - begin: \\j{
             end: \s*}
             name: constant.character.entity.named.trin
@@ -1590,6 +1625,44 @@ repository:
               - include: "#regexp-char-class"
               - include: "#regexp-char-ops"
               - include: "#regexp-char-set"
+
+  unicode-query:
+    patterns:
+      - include: "#comments"
+      - include: "#strings-quoted"
+      - include: "#numbers"
+      - captures:
+          1: {name: storage.modifier.ignore-case.trin}
+        match: (?<=["'\s]|^|[*+/]/)\s*([iI])\s*(?=[\s}]|/\*|$)
+      - captures:
+          1:
+            name: string.unquoted.attribute-value.trin
+            patterns: [include: "#string-escapes"]
+        match: (?x)(?<==)\s*((?!/[*+/])(?:[^\\"'\s}]|\\.)+)
+      - include: "#string-escapes"
+      - match: "[~|^$!&*=]?="
+        name: keyword.operator.pattern.trin
+      - match: \|
+        name: punctuation.separator.trin
+      - captures:
+          1:
+            name: entity.other.namespace-prefix.trin
+            patterns: [include: "#string-escapes"]
+        match: |-
+          (?x)
+          # Qualified namespace prefix
+          (-?(?!\d)(?:[\w-]|[^\x00-\x7F]|\\(?:\h{1,6}|.))+|\*)
+          # Lookahead to ensure there's a valid identifier ahead
+          (?=\|(?!\s|=|$|\])(?:-?(?!\d)|[\\\w-]|[^\x00-\x7F]))
+      - captures:
+          1:
+            name: entity.other.attribute-name.trin
+            patterns: [include: "#string-escapes"]
+        match: |-
+          (?x)
+          (-?(?!\d)(?>[\w-]|[^\x00-\x7F]|\\(?:\h{1,6}|.))+)
+          \s*
+          (?=[}~|^$!&*=]|/[*+/])
 
   # Markdown
 

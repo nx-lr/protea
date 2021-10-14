@@ -1,10 +1,10 @@
 # Trinity
 
-> One language, three aspects.
+Trinity is an open source programming language that integrates object-oriented and functional programming, enabling developers and teams to fully develop, test and deploy their projects with less code on both the frontend and backend, no matter the platform.
 
-Trinity is a typed, multi-paradigm and multi-faceted programming language, and can be used to safely build and test complex software, apps and libraries for web, desktop and mobile; or for the frontend, API and backend. Trinity will be entirely implemented and integrated with JavaScript and the web ecosystem.
+Trinity provides easy access to huge ecosystems of libraries, without the need to manage complex dependencies. It comes with a robust program verifier and type checker that watches over your shoulder and flags any errors to you so you can catch bugs early.
 
-The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified, comprehensive and clean API with minimal abstractions, supported out of the box.
+The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified and comprehensive standard library for everyday or highly specialized computing tasks (in the future).
 
 ```dart
 // Driver code
@@ -17,10 +17,8 @@ proc main {
 }
 
 export class Node {
-  ghost var list: Seq[Int]
-  ghost var repr: Set[Node]
-  var head: Int
-  var next: ?Node
+  ghost var list: Seq[Int], repr: Set[Node]
+  var head: Int, next: ?Node
 
   pred valid where read (this, repr) {
     this in repr &&
@@ -51,19 +49,19 @@ export class Node {
 }
 
 export proc search(ll: ?Node) return r: Int where
-  need !?ll || ll.valid()
-  check !?ll ==> r == 0
-  check ?ll ==>
-    0 <= r and r <= #ll.list and
-    (r < #ll.list ==> ll.list[r] == 0 &&
-    0 !in ll.list[: r]) and
-    (r == #ll.list ==> 0 !in ll.list) {
+need !?ll || ll.valid()
+check !?ll ==> r == 0
+check ?ll ==>
+  0 <= r and r <= #ll.list and
+  (r < #ll.list ==> ll.list[r] == 0 &&
+  0 !in ll.list[: r]) and
+  (r == #ll.list ==> 0 !in ll.list) {
   if !?ll { r = 0 } else {
     var jj, i = ll, 0
     while ?jj && jj.head != 0 where
     same ?jj ==> jj.valid() and
       i + #jj.list == #ll.list and
-      ll.list[i :] == jj.list
+      ll.list[i ] == jj.list
     same !?jj ==> i == #ll.list
     same 0 !in ll.list[: i]
     till #ll.list - i {
@@ -167,7 +165,6 @@ This project is currently in the works and would be my largest project to date. 
          5. Regex
          6. Markup
          7. Custom objects
-         8. 
       6. Locale strings
    5. Regular expressions
       1. Basic syntax elements
@@ -290,15 +287,30 @@ The Trinity language derives from a combination of Scala and Swift inspired synt
 
 ### Notation
 
-The language constructs are explained using an Extended Backus Naur Form (EBNF), with some extensions inspired by regular expressions.
+The language constructs are explained using an Extended Backus-Naur Form (EBNF), with some extensions from regular expressions.
+
+Definitions begin with an identifier, and a production rule, separated with `=` with spaces on both sides. Definitions are separated by semicolons.
+
+`a*` means 0 or more `a`s, `a+` means one or more `a`s, and `a?` means an optional `a`. Parentheses are used to group elements.
+
+`|` and `/` are used to mark alternatives and have the lowest precedence. `/` is the ordered choice that requires the parser to try the alternatives in the given order and to ensure the grammar is not ambiguous.
+
+`[]` is used as a shorthand for alternatives.
+
+The binary `%*` operator is used as a shorthand for 0 or more occurrences separated by its second argument; likewise `^+` means 1 or more occurrences: `a %+ b` is short for `a (b a)*` and `a %* b` is short for `(a (b a)*)?`. Example:
+
+A prefix `i` is used to mark a production as case-insensitive, and can be used on groups an
+
+Non-terminals start with a lowercase letter, abstract terminal symbols are in UPPERCASE. Verbatim terminal symbols (including keywords) are quoted with '. An example:
 
 - `;` - delimit productions
 - `=` - assign productions
 - `()` - grouping
-- `!` - negates lookaround
-- `<` - lookbehind: expects a match on left in order to be valid
-- `>` - lookahead: expects a match on right in order to be valid
-- `<!` - negative lookbehind and `!>` lookahead
+- `[]` - option
+- `{}` - quantifier
+- `<<` - lookbehind: expects a match on left in order to be valid
+- `>>` - lookahead: expects a match on right in order to be valid
+- `<~` - negative lookbehind and `~>` lookahead
 - `*` - repetition: zero or many
 - `+` - repetition: one or many
 - `?` - repetition: zero or one
@@ -307,8 +319,8 @@ The language constructs are explained using an Extended Backus Naur Form (EBNF),
 - `-` - subtracts a class or range from another
 - `&` - takes the intersection of two classes or ranges
 - `+` - takes the union of two classes or ranges
-- `~` - negates a character class or range
-- `+` - takes the symmetric difference of two classes or ranges
+- `!` - negates a character class or range
+- `^` - takes the symmetric difference of two classes or ranges
 - `a %+ b` - equivalent to `a (b a)*`
 - `a %* b` - equivalent to `(a (b a)*)?`
 - `a...z` - inclusive character range
@@ -667,26 +679,26 @@ A short form starting with `In` indicates a block property:
 
 ##### POSIX Classes
 
-Alternatively, `\p{}` notation can be used instead of `[::]`.
+Alternatively, `\p{}` notation can be used instead of `[:]`.
 
-| Syntax       | ASCII                                        | Unicode (`/u` flag) | Description                                              |
-| ------------ | -------------------------------------------- | ------------------- | -------------------------------------------------------- |
-| `[:alnum:]`  | `[a-zA-Z0-9]`                                | `[\pL\pNl}\pNd]`    | Alphanumeric characters                                  |
-| `[:alpha:]`  | `[a-zA-Z]`                                   | `[\pL\pNl]`         | Alphabetic characters                                    |
-| `[:ascii:]`  | `[\x00-\x7F]`                                | `[\x00-\xFF]`       | ASCII characters                                         |
-| `[:blank:]`  | `[\x20\t]`                                   | `[\pZs\t]`          | Space and tab                                            |
-| `[:cntrl:]`  | `[\x00-\x1F\x7F]`                            | `\pCc`              | Control characters                                       |
-| `[:digit:]`  | `[0-9]`                                      | `\pNd`              | Digits                                                   |
-| `[:graph:]`  | `[\x21-\x7E]`                                | `[^\pZ\pC]`         | Visible characters (anything except spaces and controls) |
-| `[:lower:]`  | `[a-z]`                                      | `\pLl`              | Lowercase letters                                        |
-| `[:number:]` | `[0-9]`                                      | `\pN`               | Numeric characters                                       |
-| `[:print:]`  | `[\x20-\x7E] `                               | `\PC`               | Printable characters (anything except controls)          |
-| `[:punct:]`  | `[!"\#$%&'()\*+,\-./:;<=>?@\[\\\]^\_'{\|}~]` | `\pP`               | Punctuation (and symbols).                               |
-| `[:space:]`  | `[ \t\r\n\v\f]`                              | `[\pZ\t\r\n\v\f]`   | Spacing characters                                       |
-| `[:symbol:]` | `[\pS&&\p{ASCII}]`                           | `\pS`               | Symbols                                                  |
-| `[:upper:]`  | `[A-Z]`                                      | `\pLu`              | Uppercase letters                                        |
-| `[:word:]`   | `[A-Za-z0-9_]`                               | `[\pL\pNl\pNd\pPc]` | Word characters                                          |
-| `[:xdigit:]` | `[A-Fa-f0-9] `                               | `[A-Fa-f0-9]`       | Hexadecimal digits                                       |
+| Syntax      | ASCII                                        | Unicode (`/u` flag) | Description                                              |
+| ----------- | -------------------------------------------- | ------------------- | -------------------------------------------------------- |
+| `[:alnum]`  | `[a-zA-Z0-9]`                                | `[\pL\pNl}\pNd]`    | Alphanumeric characters                                  |
+| `[:alpha]`  | `[a-zA-Z]`                                   | `[\pL\pNl]`         | Alphabetic characters                                    |
+| `[:ascii]`  | `[\x00-\x7F]`                                | `[\x00-\xFF]`       | ASCII characters                                         |
+| `[:blank]`  | `[\x20\t]`                                   | `[\pZs\t]`          | Space and tab                                            |
+| `[:cntrl]`  | `[\x00-\x1F\x7F]`                            | `\pCc`              | Control characters                                       |
+| `[:digit]`  | `[0-9]`                                      | `\pNd`              | Digits                                                   |
+| `[:graph]`  | `[\x21-\x7E]`                                | `[^\pZ\pC]`         | Visible characters (anything except spaces and controls) |
+| `[:lower]`  | `[a-z]`                                      | `\pLl`              | Lowercase letters                                        |
+| `[:number]` | `[0-9]`                                      | `\pN`               | Numeric characters                                       |
+| `[:print]`  | `[\x20-\x7E] `                               | `\PC`               | Printable characters (anything except controls)          |
+| `[:punct]`  | `[!"\#$%&'()\*+,\-./:;<=>?@\[\\\]^\_'{\|}~]` | `\pP`               | Punctuation (and symbols).                               |
+| `[:space]`  | `[\pS\t\r\n\v\f]`                            | `[\pZ\t\r\n\v\f]`   | Spacing characters                                       |
+| `[:symbol]` | `[\pS&&[:ascii]]`                            | `\pS`               | Symbols                                                  |
+| `[:upper]`  | `[A-Z]`                                      | `\pLu`              | Uppercase letters                                        |
+| `[:word]`   | `[A-Za-z0-9_]`                               | `[\pL\pNl\pNd\pPc]` | Word characters                                          |
+| `[:xdigit]` | `[A-Fa-f0-9] `                               | `[A-Fa-f0-9]`       | Hexadecimal digits                                       |
 
 #### Character Sets
 
@@ -823,8 +835,8 @@ base4Prefix = i"0q";  base4Digits = "0"..."3";
 base6Prefix = i"0s";  base6Digits = "0"..."5";
 base8Prefix = i"0o";  base8Digits = "0"..."7";
 base10Prefix = "";    base10Digits = digit = "0"..."9";
-base12Prefix = i"0z"; base12Digits = digit | i"a" | i"b";
-base16Prefix = i"0x"; base16Digits = digit | i"a"...i"f";
+base12Prefix = i"0z"; base12Digits = i[digit "a" "b"];
+base16Prefix = i"0x"; base16Digits = i[digit "a"..."f"];
 
 #IntegerPart = #Digits ("_"+ #Digits)*;
 #FractionPart = "." #Digits ("_"+ #Digits)*;
