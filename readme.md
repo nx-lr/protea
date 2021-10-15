@@ -9,23 +9,21 @@ Trinity also comes with a robust program verifier and type checker that watches 
 import Process
 
 // Reads a file and prints out the word count.
-class WordCount {
-  stat def main(args: Str[]): Void {
-    if args.size() != 1 {
-      print('Usage: WordCount <file>')
-      exit(&code = -1)
-    }
+class WordCount(*args) {
+  if args.size() != 1 {
+    print('Usage: WordCount <file>');
+    exit(&code = -1);
+  }
 
-    var wordCounts: {[Str]: Int = 0} = {:}
-    var file = Path(args[0]).toFile
-    var raw = file.read()
-                  .lines().map(.trim())
-                  .words().map(.trim().lower())
+  var wordCounts: {[Str]: Int = 0} = {:};
+  var file = Path(args[0]).toFile();
+  var raw = file.read();
+                .lines().map(.trim())
+                .words().map(.trim().lower());
 
-    for let word in words { wordCounts[word] += 1 }
-    for let key, value in wordCounts.keys().sort() {
-      print"$key: $value"
-    }
+  for let word in words { wordCounts[word] += 1; }
+  for let key, value in wordCounts.keys().sort() {
+    print"$key: $value";
   }
 }
 ```
@@ -240,74 +238,9 @@ Trinity is a relatively new programming language which allows users to write eas
 
 ### Overview
 
-Trinity derives most of its syntax from modern-day JavaScript, except for a couple of major changes inspired by Go, Scala, Swift, Kotlin, Fantom and Flix, and features from Oniguruma, Ruby, YAML, ML, Haskell, LESS and SGML.
+For the most part, Trinity derives many features from Go, with major influences from Ruby, Scala, Kotlin, Swift, Fantom and Flix. Trinity supports Oniguruma, Stylus and JSX syntax too, though with several adaptations and enhancements to its existing features.
 
-This document provides an overview of the syntax, operations, and semantics in the Trinity language with an emphasis on the distinctive or unusual features in the language. as well as a comprehensive guide to the modules in Trinity's Standard Library.
-
-### Notation
-
-The language constructs are explained using an Extended Backus-Naur Form (EBNF), with some extensions from regular expressions.
-
-Definitions begin with an identifier, and a production rule, separated with `=` with spaces on both sides. Definitions are separated by semicolons as do most languages, except the last.
-
-Non-terminals are written in `camelCase`, abstract terminal symbols are written in `PascalCase`. Verbatim terminal symbols (including keywords) are quoted with `'` or `"`, whichever fits.
-
-`#` can prefix _or_ suffix a definition. `#` goes through all declaration with the matched wildcard, and generating new ones by referencing other declarations with the wildcard that share the same prefix or suffix.
-
-```dart
-base16Prefix = i"0x";
-base16Digits = i[digit "a"..."f"];
-
-// base16IntegerPart = base16Digits ("_"+ base16Digits)*
-#IntegerPart = #Digits ("_"+ #Digits)*;
-```
-
-`a*` means 0 or more `a`s, `a+` means one or more `a`s, and `a?` means an optional `a`.
-
-Parentheses `()` are used to group elements.
-
-`|` and `/` are used to mark alternatives and have the lowest precedence. `/` is the ordered choice that requires the parser to try the alternatives in the given order and to ensure the grammar is not ambiguous.
-
-`[]` is used as a shorthand for alternatives, where each is a unique production. A prefix `i` is used to mark a production as case-insensitive.
-
-```dart
-hexDigit = i[digit "a"..."f" "A"..."F"];
-hexDigit = i("0" | "1" | "2" | "3" |
-             "4" | "5" | "6" | "7" |
-             "8" | "9" | "a" | "b" |
-             "c" | "d" | "e" | "f" );
-```
-
-`...` is used to mark inclusive character ranges; `..<` is used to specify that the end is excluded---both range operators are used in conjunction with `[]`.
-
-The binary `^*` operator is used as a shorthand for 0 or more occurrences separated by its second argument; likewise `^+` means 1 or more occurrences: `a ^+ b` is short for `a (b a)*` and `a ^* b` is short for `(a (b a)*)?`.
-
-```dart
-ArrayLiteral = "[" Expression ^* "," "]"
-```
-
-`>>` is the lookahead operator, which expects but does not consume the symbol to its right. `<<` expects but does not consume the symbol to its left. `!>>` and `!<<` are the direct negations of said operators, which means the match is invalid if the production returns a match.
-
-```dart
-base12 = '...'
-base14 = '...'
-x# = base#
-
-// therefore:
-x12 => base12
-x14 => base14
-```
-
-```dart
-block = "{" statements "}";
-clause = (("then" | "=>") statement | block);
-ifStatement =
-  ("if" | "un") statement clause
-  (("elif" | "elun") statement clause)*
-  "else" statement;
-```
-
-Other parts of Trinity, like scoping rules or runtime semantics, are described informally.
+This document provides an overview of the syntax, operations, and semantics in the Trinity language, as well as a comprehensive guide to the modules in Trinity's Standard Library. Other parts of Trinity, like scoping rules or runtime semantics, are described informally.
 
 ### Tokens and whitespace
 
@@ -377,6 +310,7 @@ Keywords are grouped into three:
 - declaration keywords, which declare program entities such as variables, classes and functions,
 - modifier keywords which modify such declarations,
 - general keywords which command and control program flow and execution.
+- pre-defined, or dynamic constants and variables.
 
 <!--  -->
 
@@ -407,16 +341,7 @@ In [The Unicode Standard 14.0](https://www.unicode.org/versions/Unicode14.0.0/Un
 
 Trinity treats the entire Unicode `L` super-category as Unicode letters, `M` as combining marks, `Pc` as "underscores", `Pd` as dashes and `Nd` as digits.
 
-```dart
-letter = `\pL`; mark = `\pM`; delim = `\pPc`;
-digit = `\pNd` = `\d` = "0"..."9";
-lower = `\pLl`; upper = letter - lower; dash = `\pPd`;
-
-identifier = [letter delim] [letter delim mark digit]*;
-jsxTagName = [letter delim] [letter delim mark digit dash]* !>>dash;
-```
-
-JSX tags can also include dashes, but must not end with dashes. The `!` notation ensures that.
+An identifier is any sequence of letters, digits, underscores and diacritics, but do not start with diacritics or combining marks. JSX tags can include dashes, but must not end with any amount of trailing dashes.
 
 Naming conventions follow Java or JavaScript. There are four types of identifiers which Trinity recognizes and highlights accordingly:
 
@@ -425,19 +350,11 @@ Naming conventions follow Java or JavaScript. There are four types of identifier
 - `camelCase` or `snake_case` used for variables, parameters, functions and methods.
 - `_leading` underscores for special methods and keywords.
 
-```dart
-shoutCase  = upper [upper digit mark delim]*;
-snakeCase  = delim [letter digit mark delim]*;
-pascalCase = (upper [lower digit mark delim]*)+;
-camelCase  = [letter delim] [letter delim mark digit]*;
-
-identifier = shoutCase / snakeCase / pascalCase / camelCase;
-```
-
 Variables are compared using their first character, then comparing further characters case-insensitively and ignoring all delimiters. This makes it easier for developers to use varying conventions without having to worry about the variables' exact spelling.
 
 ```dart
-proc cmpIdent(a: Str, b: Str): Bool => a[0] == b[0] &&
+proc cmpIdent(a: Str, b: Str): Bool =>
+  a[0] == b[0] &&
   a.sub(`[^\pL\d]+`g, "").lower() == b.sub(`[^\pL\d]+`g, "").lower();
 ```
 
@@ -450,12 +367,12 @@ type Type = {
   def: Func,
 };
 
-const object_ = new Type({def: |x| x = 10});
+val object_ = new Type({def: |x| x = 10});
 assert object_ is Type;
 assert object_.def == 9;
 
 var var_ = 42;
-const let_ = 8;
+val val_ = 8;
 assert var_ + let_ == 50;
 
 val assert_ = true;
@@ -464,43 +381,12 @@ assert assert_;
 
 ### Strings
 
-#### Double-quoted (Escaped) Strings
-
-Terminal symbol in the grammar: `DoubleQuoteStringLit`. Escaped string literals are delimited using matching double quotes, and can contain the following escape sequences:
-
-| Escape Sequence      | Meaning                                                                      |
-| -------------------- | ---------------------------------------------------------------------------- |
-| `\p`                 | platform specific newline<br> CRLF (`\x9\xA`) on Windows, LF on Unix (`\x9`) |
-| `\r`                 | carriage return (`\x9`)                                                      |
-| `\n`                 | line feed (or newline) (`\xA`)                                               |
-| `\f`                 | form feed (`\xC`)                                                            |
-| `\t`                 | horizontal tabulator (`\x9`)                                                 |
-| `\v`                 | vertical tabulator (`\xB`)                                                   |
-| `\a`                 | alert (`\x7`)                                                                |
-| `\b`                 | backspace (`\x8`)                                                            |
-| `\e`                 | escape (`\xB`)                                                               |
-| `\s`                 | space (`\x20`)                                                               |
-| `\b` (beside 0 or 1) | _Base 2_ - from `0` to `100001111111111111111`                               |
-| `\q`                 | _Base 4_ - from `0` to `10033333333`                                         |
-| `\s` (beside 0 to 5) | _Base 6_ - from `0` to `35513531`                                            |
-| `\o`                 | _Base 8_ - from `0` to `4177777`                                             |
-| `\d` or `\`          | _Base 10_ - from `0` to `1114111`                                            |
-| `\z`                 | _Base 12_ - from `0` to `4588A7`                                             |
-| `\x`                 | _Base 16_ - from `0` to `10FFFF`                                             |
-| `\u`                 | UTF-8, 16 or 32 code units only                                              |
-| `\j`                 | Named Unicode characters (more later)                                        |
-
-Trinity also supports escapes in many bases. The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
+Strings function the same way as in JavaScript, and are delimited by matching quotes. Only double-quoted strings contain escape sequences which all begin with a backslash. Single-quoted strings are raw, which means that escape sequences are not transformed.
 
 ```dart
-// "HELLO"
-"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}";
-"\d{72 69 76 76 69}" == "\72\69\76\76\79";
+var s1 = 'Single quotes work well for string literals.';
+var s2 = "Double quotes work just as well.";
 ```
-
-#### Single-quoted (raw) strings
-
-Terminal symbol in the grammar: `SingleQuoteStringLit`.
 
 Single-quoted raw strings the escape sequences for double-quoted strings mentioned above are not escaped. To escape a single quote, double it.
 
@@ -508,11 +394,62 @@ Single-quoted raw strings the escape sequences for double-quoted strings mention
 var daughterOfTheVoid = 'Kai''Sa';
 ```
 
-#### Block quoted strings
+Double quoted string literals can contain the following escape sequences, and can contain the following escape sequences:
 
-Terminal symbol in the grammar: `Block(Single|Double)QuoteStringLit`.
+| Escape Sequence | Meaning                                        |
+| --------------- | ---------------------------------------------- |
+| `\p`            | platform specific newline (`\r\n`, `\n`, `\r`) |
+| `\r`            | carriage return (`\x9`)                        |
+| `\n`            | line feed (or newline) (`\xA`)                 |
+| `\f`            | form feed (`\xC`)                              |
+| `\t`            | horizontal tabulator (`\x9`)                   |
+| `\v`            | vertical tabulator (`\xB`)                     |
+| `\a`            | alert (`\x7`)                                  |
+| `\b`            | backspace (`\x8`)                              |
+| `\e`            | escape (`\xB`)                                 |
+| `\s`            | space (`\x20`)                                 |
 
-String literals can also be delimited by at least three single or double quotes, provided they end with _at least_ that many quotes of the same type. The above rules for single- and double-quoted strings also apply.
+Trinity also supports escapes in even bases up to 16, excluding 14.
+
+| Escape Sequence      | Meaning                                        |
+| -------------------- | ---------------------------------------------- |
+| `\b` (beside 0 or 1) | _Base 2_ - from `0` to `100001111111111111111` |
+| `\q`                 | _Base 4_ - from `0` to `10033333333`           |
+| `\s` (beside 0 to 5) | _Base 6_ - from `0` to `35513531`              |
+| `\o`                 | _Base 8_ - from `0` to `4177777`               |
+| `\d` or `\`          | _Base 10_ - from `0` to `1114111`              |
+| `\z`                 | _Base 12_ - from `0` to `4588A7`               |
+| `\x`                 | _Base 16_ - from `0` to `10FFFF`               |
+| `\u`                 | UTF-8, 16 or 32 code units only                |
+| `\j`                 | Named Unicode characters (more later)          |
+
+The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
+
+```dart
+// "HELLO"
+"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}";
+"\d{72 69 76 76 69}" == "\72\69\76\76\79";
+```
+
+In single quoted strings, to escape single quotes, double them.
+
+```dart
+var s3 = 'It''s easy to escape the string delimiter.';
+var s4 = "It's even easier to use the other delimiter.";
+```
+
+In double-quoted strings, an ending backslash joins the next line _without spaces_.
+
+```dart
+assert "hello \
+        world" == "hello world";
+```
+
+#### Block strings
+
+String literals can also be delimited by at least three single or double quotes, provided they end with _at least_ that many quotes of the same type.
+
+The rules for single- and double-quoted strings also apply.
 
 ```dart
 '''"stringified string"'''
@@ -523,11 +460,18 @@ produces:
 
     "stringified string"
 
-#### Backslash line and block strings
+Indentation in block strings begin with the indentation of the first line, right after the opening quote(s). All indentation is preserved or stripped based ons ieh
 
-Strings can also be delimited using an initial backslash, and ends in the nearest whitespace, dot, comma, semicolon or bracket, so those cannot be included at all in the string. However, you can escape them.
+```dart
+'''"stringified string"'''
+""" "stringified string""""
+```
 
-In addition, backslash inline strings cannot begin with `|`, `>` or `<` as those begin block literals.
+#### Backslash strings
+
+Strings can also be delimited using an initial backslash, and do not contain `()[]{}<>.,:;`, so those cannot be included at all in the string. However, you can escape them.
+
+Strings cannot begin in `|`, `>`, `<` or `-`.
 
 ```dart
 \word
@@ -535,6 +479,19 @@ func(\word, \word)
 func\word
 [\word]
 {prop: \word}
+```
+
+Block strings also begin with a backslash followed by either `|` or `>`, both functioning like `|` block strings. `\|` behaves like the single quote and `\>` the double quote.
+
+They can also be appended with a "chomping indicator" `+` or `-` to preserve or remove the line feed and trailing blank lines.
+
+```dart
+\|
+  this is my very very "very" long-ass string.
+  Love, Trinity.
+\>
+  this is my very very \"very\" long-\
+  ass string.\nLove, Trinity.
 ```
 
 Trinity comes with several avenues to make manipulating, formatting and serializing strings easier.
@@ -665,8 +622,8 @@ The following section serves as a summary to the regular expression syntax of Tr
 | `[...]`     | Character class (can be nested)                 |
 | `${...}`    | Embedded expression                             |
 | `{,}`       | Quantifier token (LHS 0, RHS &infin;)           |
-| `\Q...\E`   | Raw quoted literal                              |
-| `\q...\e`   | Quoted literal                                  |
+| `"..."`     | Raw quoted literal                              |
+| `'...'`     | Quoted literal                                  |
 | `\0` onward | Numeric backreference (0-indexed)               |
 | `$...%...`  | Interpolation with `sprintf` syntax             |
 
@@ -674,65 +631,54 @@ The following section serves as a summary to the regular expression syntax of Tr
 
 Most of these characters also appear the same way as in string literals.
 
-| Syntax                           | Description and Use                            |
-| -------------------------------- | ---------------------------------------------- |
-| `\a`                             | \*Alert/bell character (inside `[]`)           |
-| `\b`                             | \*Backspace character (inside `[]`)            |
-| `\B`                             | \*Backslash (inside `[]`)                      |
-| `\e`                             | Escape character (Unicode `U+`)                |
-| `\f`                             | Form feed (Unicode `U+`)                       |
-| `\n`                             | New line (Unicode `U+`)                        |
-| `\r`                             | Carriage return (Unicode `U+`)                 |
-| `\t`                             | Horizontal tab (Unicode `U+`)                  |
-| `\v`                             | Vertical tab (Unicode `U+`)                    |
-| `\cA`...`\cZ`<br>`\ca`...`\cz`   | Control character from `U+01` to `U+1A`        |
-| `\x00`                           | Unicode character from `U+00` to `U+FF`        |
-| `\u0000`                         | Unicode character from `U+00` to `U+FFFF`      |
-| `\U00000000`                     | Unicode character from `U+00` to `U+10FFFF`    |
-| `\u{7HHHHHHH}`<br>`\x{7HHHHHHH}` | Unicode character (1-8 digits)                 |
-| `\b` (beside 0 or 1)             | _Base 2_ - from `0` to `100001111111111111111` |
-| `\q`                             | _Base 4_ - from `0` to `10033333333`           |
-| `\s` (beside 0 to 5)             | _Base 6_ - from `0` to `35513531`              |
-| `\o`                             | _Base 8_ - from `0` to `4177777`               |
-| `\d` or `\`                      | _Base 10_ - from `0` to `1114111`              |
-| `\z`                             | _Base 12_ - from `0` to `4588A7`               |
-| `\x`                             | _Base 16_ - from `0` to `10FFFF`               |
+| Syntax                         | Description and Use                     |
+| ------------------------------ | --------------------------------------- |
+| `\a`                           | \*Alert/bell character (inside `[]`)    |
+| `\b`                           | \*Backspace character (inside `[]`)     |
+| `\e`                           | Escape character (Unicode `U+`)         |
+| `\f`                           | Form feed (Unicode `U+`)                |
+| `\n`                           | New line (Unicode `U+`)                 |
+| `\r`                           | Carriage return (Unicode `U+`)          |
+| `\t`                           | Horizontal tab (Unicode `U+`)           |
+| `\v`                           | Vertical tab (Unicode `U+`)             |
+| `\cA`...`\cZ`<br>`\ca`...`\cz` | Control character from `U+01` to `U+1A` |
+
+The following can only be used inside square brackets.
+
+| Syntax               | Description and Use                            |
+| -------------------- | ---------------------------------------------- |
+| `\b` (beside 0 or 1) | _Base 2_ - from `0` to `100001111111111111111` |
+| `\q`                 | _Base 4_ - from `0` to `10033333333`           |
+| `\s` (beside 0 to 5) | _Base 6_ - from `0` to `35513531`              |
+| `\o`                 | _Base 8_ - from `0` to `4177777`               |
+| `\d` or `\`          | _Base 10_ - from `0` to `1114111`              |
+| `\z`                 | _Base 12_ - from `0` to `4588A7`               |
+| `\x`                 | _Base 16_ - from `0` to `10FFFF`               |
 
 #### Character Sequences
 
-Character sequences in regular expressions work very similarly to their string counterparts, with exception to `\b{}`.
+Character sequences in regular expressions are the same as in their string counterparts, with exception to `\b{}` outside `[]`.
 
-| Syntax | Description                                    |
-| ------ | ---------------------------------------------- |
-| `\j{}` | Unicode named character sequences              |
-| `\b{}` | _Base 2_ - from `0` to `100001111111111111111` |
-| `\q{}` | _Base 4_ - from `0` to `10033333333`           |
-| `\s{}` | _Base 6_ - from `0` to `35513531`              |
-| `\o{}` | _Base 8_ - from `0` to `4177777`               |
-| `\d{}` | _Base 10_ - from `0` to `1114111`              |
-| `\z{}` | _Base 12_ - from `0` to `4588A7`               |
-| `\x{}` | _Base 16_ - from `0` to `10FFFF`               |
+#### Character Classes and Sequences
 
-#### Character Classes
-
-| Syntax     | Inverse | Description                                                       |
-| ---------- | ------- | ----------------------------------------------------------------- |
-| `.`        | None    | Hexadecimal code point (1-8 digits)                               |
-| `\w`       | `\W`    | Word character `[\d]`                                             |
-| `\d`       | `\D`    | Digit character `[0-9]`                                           |
-| `\s`       | `\S`    | Space character `[\t\n\v\f\r\20]`                                 |
-| `\h`       | `\H`    | Hexadecimal digit character `[\da-fA-F]`                          |
-| `\u`       | `\U`    | Uppercase letter `[A-Z]`                                          |
-| `\l`       | `\L`    | Lowercase letter `[a-z]`                                          |
-| `\f`       | `\F`    | Form feed `[\f]`                                                  |
-| `\t`       | `\T`    | Horizontal tab `[\t]`                                             |
-| `\v`       | `\V`    | Form feed `[\v]`                                                  |
-| `\n`       | `\N`    | Newline `[\n]`                                                    |
-|            | `\O`    | Any character `[^]`                                               |
-| `\R`       |         | General line break (CR + LF, etc)                                 |
-| `\x`, `\X` |         | Extended grapheme cluster                                         |
-| `\c`       | `\C`    | First character of identifier; `[\pL\pPc]` by default             |
-| `\i`       | `\I`    | Subsequent characters of identifier `[\pL\pPc\pM\pNd]` by default |
+| Syntax | Inverse | Description                                                       |
+| ------ | ------- | ----------------------------------------------------------------- |
+| `.`    | None    | Hexadecimal code point (1-8 digits)                               |
+| `\w`   | `\W`    | Word character `[\d]`                                             |
+| `\d`   | `\D`    | Digit character `[0-9]`                                           |
+| `\s`   | `\S`    | Space character `[\t\n\v\f\r\20]`                                 |
+| `\h`   | `\H`    | Hexadecimal digit character `[\da-fA-F]`                          |
+| `\u`   | `\U`    | Uppercase letter `[A-Z]`                                          |
+| `\l`   | `\L`    | Lowercase letter `[a-z]`                                          |
+| `\f`   | `\F`    | Form feed `[\f]`                                                  |
+| `\t`   | `\T`    | Horizontal tab `[\t]`                                             |
+| `\v`   | `\V`    | Form feed `[\v]`                                                  |
+| `\n`   | `\N`    | Newline `[\n]`                                                    |
+|        | `\O`    | Any character `[^]`                                               |
+| `\R`   |         | General line break (CR + LF, etc)                                 |
+| `\c`   | `\C`    | First character of identifier; `[\pL\pPc]` by default             |
+| `\i`   | `\I`    | Subsequent characters of identifier `[\pL\pPc\pM\pNd]` by default |
+| `\x`   | `\X`    | Extended grapheme cluster                                         |
 
 ##### Unicode Properties
 
