@@ -6,68 +6,26 @@ Trinity provides easy access to huge ecosystems of libraries, without the need t
 Trinity also comes with a robust program verifier and type checker that watches over your shoulder and flags any errors to you so you can catch bugs early, all tied with a unified and comprehensive standard library for everyday or highly specialized computing tasks (in the future).
 
 ```dart
-// Driver code
-proc main {
-  var list: ?Node = null
-  for let x in [0, 5, 0, 8] { list.=cons(x, list) }
-  var r = search(list)
-  print"Search returns $r\n"
-  assert r == 1
-}
+import Process
 
-export class Node {
-  ghost var list: Seq[Int], repr: Set[Node]
-  var head: Int, next: ?Node
-
-  pred valid where read (this, repr) {
-    this in repr &&
-    1 <= #list && list[0] == head &&
-    (next == null ==> #list == 1) &&
-    (next != null ==>
-      next in repr &&
-      next.repr <= repr &&
-      this !in next.repr &&
-      next.valid() &&
-      next.list == list[1 : #list])
-  }
-
-  stat def cons(x: int, tail: ?Node) return n: Node where
-  check !?tail || tail.valid()
-  check n.valid()
-  check !?tail ? n.list == [x] : n.list == [x] + tail.list {
-    var n = new Node
-    n.head, n.next = x, tail
-    if !?tail {
-      n.list = [x]
-      n.repr = {n}
-    } else {
-      n.list = [x] + tail.list
-      n.repr = {n} + tail.repr
+// Reads a file and prints out the word count.
+class WordCount {
+  stat def main(args: Str[]): Void {
+    if args.size() != 1 {
+      print('Usage: WordCount <file>')
+      exit(&code = -1)
     }
-  }
-}
 
-export proc search(ll: ?Node) return r: Int where
-need !?ll || ll.valid()
-check !?ll ==> r == 0
-check ?ll ==>
-  0 <= r && r <= #ll.list &&
-  (r < #ll.list ==> ll.list[r] == 0 &&
-  0 !in ll.list[: r]) &&
-  (r == #ll.list ==> 0 !in ll.list) {
-  if !?ll { r = 0 } else {
-    var jj, i = ll, 0
-    while ?jj && jj.head != 0 where
-    same ?jj ==> jj.valid() &&
-      i + #jj.list == #ll.list &&
-      ll.list[i :] == jj.list
-    same !?jj ==> i == #ll.list
-    same 0 !in ll.list[: i]
-    till #ll.list - i {
-      jj.=next
-      i += 1
+    var wordCounts: {[Str]: Int = 0} = {:}
+    var file = Path(args[0]).toFile
+    var raw = file.read()
+                  .lines().map(.trim())
+                  .words().map(.trim().lower())
+
+    for let word in words { wordCounts[word] += 1 }
+    for let key, value in wordCounts.keys().sort() {
+      print"$key: $value"
     }
-    r = i
   }
 }
 ```
@@ -542,19 +500,22 @@ Trinity also supports escapes in many bases. The same escapes with curly bracket
 
 #### Single-quoted (raw) strings
 
-Terminal symbol in the grammar: `SingleQuoteStringLit`. Single-quoted raw strings the escape sequences for double-quoted strings mentioned above are not escaped. To escape a single quote, double it.
+Terminal symbol in the grammar: `SingleQuoteStringLit`.
+
+Single-quoted raw strings the escape sequences for double-quoted strings mentioned above are not escaped. To escape a single quote, double it.
 
 ```dart
 var daughterOfTheVoid = 'Kai''Sa';
 ```
 
-#### Multi-line strings
+#### Block quoted strings
 
-Terminal symbol in the grammar: `Multi(Single|Double)QuoteStringLit`.
+Terminal symbol in the grammar: `Block(Single|Double)QuoteStringLit`.
 
-String literals can also be delimited by at least three single or double quotes `""" ... """`, provided they end with at least that many quotes of the same character. The above rules for single- and double-quoted strings also apply.
+String literals can also be delimited by at least three single or double quotes, provided they end with _at least_ that many quotes of the same type. The above rules for single- and double-quoted strings also apply.
 
 ```dart
+'''"stringified string"'''
 """ "stringified string""""
 ```
 
@@ -562,39 +523,89 @@ produces:
 
     "stringified string"
 
-#### Macro Strings
+#### Backslash line and block strings
 
-Terminal symbols in the grammar: `Macro(Multi)?((Single|Double)Quote|Backslash)StringLit`.
+Strings can also be delimited using an initial backslash, and ends in the nearest whitespace, dot, comma, semicolon or bracket, so those cannot be included at all in the string. However, you can escape them.
 
-Macro strings are used to embed DSLs directly into Trinity. Any non-keyword identifier or the last element in a qualified name, can be useful for
+In addition, backslash inline strings cannot begin with `|`, `>` or `<` as those begin block literals.
 
-The construct `identifier"string"` is a shortcut for the construct `identifier("string")`, denoting a macro call with a string literal as its only argument. Macro string literals are especially convenient for embedding DSLs directly into Trinity (for example, SQL).
+```dart
+\word
+func(\word, \word)
+func\word
+[\word]
+{prop: \word}
+```
+
+Trinity comes with several avenues to make manipulating, formatting and serializing strings easier.
 
 #### String Interpolation
 
-The dollar sign begins an interpolation sequence, and can prefix a variable or expression, the latter enclosed in curly brackets.
+All forms of string literals, with exception to inline backslash strings, can enable arbitrary expressions to be embedded. Embedded expressions are prefixed using the dollar sign and surrounded with curly brackets.
+
+If the expression is an identifier or qualified name, then the brackets can be left out. Use the `\$` escape sequence if you wish to express the dollar sign itself.
 
 ```dart
-val height = 1.9, name = 'James'
-print("$name%s is $height%n/d:2.2 meters tall")
-// James is 1.90 meters tall
+"x is $x, in hex $x.toHex, and x+8 is ${x + 8}"
+```
+
+is syntax sugar for:
+
+```dart
+"x is " + x + ", in hex " + x.toHex + ", and x+8 is " + (x + 8)
 ```
 
 You can specify a reusable format string this way:
 
 ```dart
-'#0%s is #1%n/d:2.2 meters tall'._format('James', 1.9)
+'#0%s is #1 meters tall'._format('James', 1.9)
+// "James is 1.9 meters tall"
+```
+
+The grammar for this is similar to ih
+
+```dart
+qualifiedName = !>>Keyword (identifier ^+ separator;)
+separator = ["." "!." "?." "::" "!:" "?:"];
+interpolateVariable = "$" qualifiedName;
+interpolateExpression = "\${" expression "}";
+```
+
+#### Macro Strings
+
+Terminal symbols in the grammar: `Macro(Block)?((Single|Double)Quote|Backslash)StringLit`.
+
+Macro strings are used to embed domain-specific languages directly into Trinity, and are functionally the same as JS tagged template literals.
+
+The construct `qualifiedName"string"` denotes a macro call, with a string literal as its only argument. Macro string literals are especially convenient for embedding DSLs directly into Trinity (for example, SQL).
+
+A macro function is defined with the keyword `macro` rather than `fun`, `sub` or `proc`. Macros are functions with two arguments, both of which are strings.
+
+The first argument of a tag function contains an array of string values. The remaining arguments are related to the expressions.
+
+The tag function can then perform whatever operations on these arguments you wish, and return the manipulated string. (Alternatively, it can return something completely different, as described in one of the following examples.)
+
+The name of the function used for the tag can be whatever you want.
+
+```dart
+macro template(strings, keys) = |*values| {
+  let dict = values[-1] ?? {}
+  let values = (from let key in keys
+    select if key is Int => values[key]
+    else => dict[key]) as List
+  strings.intercalate(keys).join('')
+}
+
+let t1Closure = template"${0}${1}${0}!"
+assert t1Closure("Y", "A") == "YAY!"
+let t2Closure = template"${0} ${"foo"}!"
+assert t2Closure("Hello", {foo: "World"}) == "Hello World!"
 ```
 
 ```dart
-whitespace = `\s` = `\pZ`; quotes = ["\"" "'" "`"];ww
 wordChar = `\w` = [letter delim mark digit]
+whitespace = `\s` = `\pZ`; quotes = ["\"" "'" "`"];
 brackets = ["{" "}" "[" "]" "(" ")" "<" ">"];
-
-qualifiedName = !>>Keyword (identifier ^+ separator;)
-separator = "." | "!." | "?." | "::" | "!:" | "?:";
-interpolateVariable = "$" qualifiedName;
-interpolateExpression = "\${" expression "}";
 
 formatSwitchPlain = "/" formatSwitchName;
 formatSwitchName = formatDirectiveName = jsxTagName;
@@ -607,60 +618,100 @@ formatDirective = "%" formatDirectiveName;
 formatSwitch = formatSwitchPlain | formatSwitchName;
 ```
 
-#### Locale Strings
-
 #### Format Directives
 
 ### Regular expressions
 
-Regular expressions are like strings, except that they are delimited using backticks `` ` `` as opposed to single or double quotes. Typical escaping rules apply, though in between `()` or `[]`, `` ` `` can be left as is.
+Regular expressions function much like strings, except that they are delimited using backticks as opposed to single or double quotes. Escape rules apply, though in between `()` or `[]`, the backtick itself need not be escaped.
 
-The following section serves as a summary to the regular expression syntax of Nova, as well as some of the more unique features that Nova has over other regex flavors.
+```dart
+`\b{wb}(fee|fie|foe|fum)\b{wb}`x
+`[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] `]`x
+`
+  \/\* // Match the opening delimiter.
+  .*?  // Match a minimal number of characters.
+  \*\/ // Match the closing delimiter.
+`
+```
+
+Multi-quoted and block regular expressions are also supported.
+
+````dart
+```\/\* // Match the opening delimiter.
+.\*? // Match a minimal number of characters.
+\*\/ // Match the closing delimiter.
+```
+````
+
+If there are two regular expressions side by side, then the one on the right is the replacement string attributed to the pattern on the left.
+
+```dart
+val str = 'James Bond'
+val newStr = str =< `(\w+)\W+(\w+)` `$2, $1` // 'Bond, James'
+val newStr = str =< `(\w+)\W+(\w+)` `My name is $2, $0!`
+// 'My name is Bond, James Bond'
+```
+
+The following section serves as a summary to the regular expression syntax of Trinity, as well as some of the more unique features that Nova has over other regex flavors.
 
 #### Basic Syntax Elements
 
-| Syntax      | Description                           |
-| ----------- | ------------------------------------- |
-| `\`         | Escape (disable) a metacharacter      |
-| `\|`        | Alternation                           |
-| `(...)`     | Capturing group                       |
-| `[...]`     | Character class (can be nested)       |
-| `${...}`    | Embedded expression                   |
-| `{,}`       | Quantifier token (LHS 0, RHS &infin;) |
-| `\Q...\E`   | Raw quoted literal                    |
-| `\q...\e`   | Quoted literal                        |
-| `\0` onward | Numeric backreference (0-indexed)     |
-| `$...%...`  | Interpolation with `sprintf` syntax   |
+| Syntax      | Description                                     |
+| ----------- | ----------------------------------------------- |
+| `\`         | Escape (disable) a metacharacter                |
+| `\|`        | Alternation                                     |
+| `/`         | Alternation: try out matches in the given order |
+| `(...)`     | Capturing group                                 |
+| `[...]`     | Character class (can be nested)                 |
+| `${...}`    | Embedded expression                             |
+| `{,}`       | Quantifier token (LHS 0, RHS &infin;)           |
+| `\Q...\E`   | Raw quoted literal                              |
+| `\q...\e`   | Quoted literal                                  |
+| `\0` onward | Numeric backreference (0-indexed)               |
+| `$...%...`  | Interpolation with `sprintf` syntax             |
 
 #### Characters
 
 Most of these characters also appear the same way as in string literals.
 
-| Syntax                           | Description and Use                         |
-| -------------------------------- | ------------------------------------------- |
-| `\a`                             | \*Alert/bell character (inside `[]`)        |
-| `\b`                             | \*Backspace character (inside `[]`)         |
-| `\B`                             | \*Backslash (inside `[]`)                   |
-| `\e`                             | Escape character (Unicode `U+`)             |
-| `\f`                             | Form feed (Unicode `U+`)                    |
-| `\n`                             | New line (Unicode `U+`)                     |
-| `\r`                             | Carriage return (Unicode `U+`)              |
-| `\t`                             | Horizontal tab (Unicode `U+`)               |
-| `\v`                             | Vertical tab (Unicode `U+`)                 |
-| `\cA`...`\cZ`<br>`\ca`...`\cz`   | Control character from `U+01` to `U+1A`     |
-| `\x00`                           | Unicode character from `U+00` to `U+FF`     |
-| `\u0000`                         | Unicode character from `U+00` to `U+FFFF`   |
-| `\U00000000`                     | Unicode character from `U+00` to `U+10FFFF` |
-| `\u{7HHHHHHH}`<br>`\x{7HHHHHHH}` | Unicode character (1-8 digits)              |
-| `\o{17777777777}`                | Octal Unicode codepoint (1-11 digits)       |
+| Syntax                           | Description and Use                            |
+| -------------------------------- | ---------------------------------------------- |
+| `\a`                             | \*Alert/bell character (inside `[]`)           |
+| `\b`                             | \*Backspace character (inside `[]`)            |
+| `\B`                             | \*Backslash (inside `[]`)                      |
+| `\e`                             | Escape character (Unicode `U+`)                |
+| `\f`                             | Form feed (Unicode `U+`)                       |
+| `\n`                             | New line (Unicode `U+`)                        |
+| `\r`                             | Carriage return (Unicode `U+`)                 |
+| `\t`                             | Horizontal tab (Unicode `U+`)                  |
+| `\v`                             | Vertical tab (Unicode `U+`)                    |
+| `\cA`...`\cZ`<br>`\ca`...`\cz`   | Control character from `U+01` to `U+1A`        |
+| `\x00`                           | Unicode character from `U+00` to `U+FF`        |
+| `\u0000`                         | Unicode character from `U+00` to `U+FFFF`      |
+| `\U00000000`                     | Unicode character from `U+00` to `U+10FFFF`    |
+| `\u{7HHHHHHH}`<br>`\x{7HHHHHHH}` | Unicode character (1-8 digits)                 |
+| `\b` (beside 0 or 1)             | _Base 2_ - from `0` to `100001111111111111111` |
+| `\q`                             | _Base 4_ - from `0` to `10033333333`           |
+| `\s` (beside 0 to 5)             | _Base 6_ - from `0` to `35513531`              |
+| `\o`                             | _Base 8_ - from `0` to `4177777`               |
+| `\d` or `\`                      | _Base 10_ - from `0` to `1114111`              |
+| `\z`                             | _Base 12_ - from `0` to `4588A7`               |
+| `\x`                             | _Base 16_ - from `0` to `10FFFF`               |
 
 #### Character Sequences
 
-| Syntax                | Description                              |
-| --------------------- | ---------------------------------------- |
-| `\x{7F 7F ... 7F}`    | Hexadecimal code point (1-8 digits)      |
-| `\o{100 100 ... 100}` | Octal code point (1-11 digits)           |
-| `\j{alpha beta}`      | `j`-expansion (full documentation later) |
+Character sequences in regular expressions work very similarly to their string counterparts, with exception to `\b{}`.
+
+| Syntax | Description                                    |
+| ------ | ---------------------------------------------- |
+| `\j{}` | Unicode named character sequences              |
+| `\b{}` | _Base 2_ - from `0` to `100001111111111111111` |
+| `\q{}` | _Base 4_ - from `0` to `10033333333`           |
+| `\s{}` | _Base 6_ - from `0` to `35513531`              |
+| `\o{}` | _Base 8_ - from `0` to `4177777`               |
+| `\d{}` | _Base 10_ - from `0` to `1114111`              |
+| `\z{}` | _Base 12_ - from `0` to `4588A7`               |
+| `\x{}` | _Base 16_ - from `0` to `10FFFF`               |
 
 #### Character Classes
 
