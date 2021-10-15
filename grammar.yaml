@@ -232,13 +232,10 @@ repository:
 
       - comment: Swift
       - include: source.swift#builtin-types
-
       - comment: Python
       - include: source.python#builtin-types
-
       - comment: JS
       - include: "#support-js"
-
       - comment: PHP
       - include: source.php#class-builtin
 
@@ -251,7 +248,6 @@ repository:
       - comment: magic functions
         match: (?x)\s*\b_+([\p{Pc}\p{L}]\w*)+_+\b\s*
         name: support.function.magic.trin
-
       - comment: Swift
       - include: source.swift#builtin-functions
       - comment: JavaScript
@@ -263,7 +259,6 @@ repository:
       - comment: SASS
       - include: source.css.sass#constant_sass_functions
       - comment: Other (coming soon!)
-
       - match: |
           (?x)\b(?:
           (?<=[!?~]?\.=?|[?!:]:=?)(?<!\.\.+)
@@ -814,7 +809,7 @@ repository:
             patterns:
               - include: "#line-comments"
               - match: .+
-                name: invalid.illegal.expected-comment-or-newline.trin
+                name: invalid.illegal.comment-newline.trin
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\s)+)(?!\2)
@@ -863,7 +858,7 @@ repository:
         name: string.unquoted.trin
         captures:
           1: {name: punctuation.definition.string.trin}
-          2: {patterns: [include: "#string-content"]}
+          2: {patterns: [include: "#string-escapes"]}
 
   string-content:
     patterns:
@@ -1010,14 +1005,6 @@ repository:
           1: {name: punctuation.section.embedded.trin}
         patterns:
           - include: $self
-      - begin: (\$<)\s*
-        end: (>)
-        name: entity.quasi.element.trin
-        captures:
-          1: {name: punctuation.section.embedded.trin}
-        patterns:
-          - include: "#tag-attributes"
-          - include: "#tag-names"
 
   embedded-raw:
     patterns:
@@ -1055,14 +1042,6 @@ repository:
           1: {name: punctuation.section.embedded.trin}
         patterns:
           - include: $self
-      - begin: (\$<)\s*
-        end: (>)
-        name: entity.quasi.element.trin
-        captures:
-          1: {name: punctuation.section.embedded.trin}
-        patterns:
-          - include: "#tag-attributes"
-          - include: "#tag-names"
 
   # Format Specifier Language
 
@@ -1179,8 +1158,19 @@ repository:
 
   regexps:
     patterns:
-      - begin: (\p{Alnum}*)(?<!`+)(`{3,})\s*
-        end: \s*(?!\\)(\2(?!`+))(\p{Alnum}*)
+      - comment: Block regex
+        begin: (?<=`+)\s*(```+|`)
+        end: \s*(?:(\1)(?!`+))(\p{Alnum}*)
+        contentName: string.replace.regexp.trin
+        captures:
+          1: {name: punctuation.section.regexp.end.trin}
+          2: {name: keyword.other.flag.trin}
+        patterns:
+          - include: "#back-references"
+          - include: "#string-content"
+      - comment: Block regex
+        begin: \s*(\p{Alnum}*)(?<!`+)(```+|`)
+        end: \s*(?:(\2)(?!`+))(\p{Alnum}*)
         contentName: string.pattern.regexp.trin
         beginCaptures:
           1: {name: keyword.modifier.trin}
@@ -1191,35 +1181,6 @@ repository:
         patterns:
           - include: "#comments"
           - include: "#regexp-patterns"
-          - begin: (`{2,})\s*
-            end: \s*(?=(?!\\)\1)
-            contentName: string.replace.regexp.trin
-            beginCaptures:
-              1: {name: punctuation.section.regexp.end.trin}
-            patterns:
-              - include: "#back-references"
-              - include: "#string-content"
-      - begin: (\p{Alnum}*)(`)\s*
-        end: \s*(?!\\)(`(?!`))(\p{Alnum}*)
-        contentName: string.pattern.regexp.trin
-        beginCaptures:
-          1: {name: keyword.modifier.trin}
-          2: {name: punctuation.section.regexp.begin.trin}
-        endCaptures:
-          1: {name: punctuation.section.regexp.end.trin}
-          2: {name: keyword.other.flag.trin}
-        patterns:
-          - include: "#comments"
-          - include: "#regexp-patterns"
-          - begin: (`)(`)\s*\n?
-            end: \s*(?=(?!\\)`)
-            contentName: string.replace.regexp.trin
-            beginCaptures:
-              1: {name: punctuation.section.regexp.end.trin}
-              2: {name: punctuation.section.regexp.begin.trin}
-            patterns:
-              - include: "#back-references"
-              - include: "#string-content"
       - begin: |
           (?x)\s*
           (\\\<)\s*
@@ -1241,7 +1202,7 @@ repository:
             patterns:
               - include: "#line-comments"
               - match: .+
-                name: invalid.illegal.expected-comment-or-newline.trin
+                name: invalid.illegal.comment-newline.trin
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\s)+)(?!\2)
@@ -1814,14 +1775,14 @@ repository:
   attribute-name:
     patterns:
       - comment: Attribute names
-        match: (=)((?:[^\s'"`<=>\\/]|\\.|/(?!>))*)\s*
+        match: (=)((?![#$][{\w])(?:[^\s'"`<=>\\/]|\\.|/(?!>))*)\s*
         captures:
           1: {name: punctuation.separator.key-value.trin}
           2:
             name: string.unquoted.attribute-name.trin
             patterns: [include: "#jsx-properties"]
       - comment: Attribute names
-        match: (?<![^\s<])([\p{Pc}\p{L}][\p{Pd}\w]*)(=)?((?:[^\s'"`<=>\\/]|\\.|/(?!>))*)\s*
+        match: (?<![^\s<])([\p{Pc}\p{L}][\p{Pd}\w]*)(?:(=)((?![#$][{\w])(?:[^\s'"`<=>\\/]|\\.|/(?!>))*))?\s*
         captures:
           1: {name: entity.other.attribute-name.trin}
           2: {name: punctuation.separator.key-value.trin}
@@ -1846,7 +1807,6 @@ repository:
         captures:
           1: {name: punctuation.section.embedded.trin}
         patterns:
-          - include: "#spread-attribute"
           - include: $self
 
   jsx-entities:
@@ -2401,7 +2361,7 @@ repository:
               (?:
               ([&|^~][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#1
               |([+\-*/%][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#2
-              |(:[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#3
+              |([@:][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#3
               |(\.[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#3
               |([!=][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#4
               |([<>][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#5
@@ -2800,7 +2760,7 @@ repository:
             patterns:
               - include: "#line-comments"
               - match: .+
-                name: invalid.illegal.expected-comment-or-newline.trin
+                name: invalid.illegal.comment-newline.trin
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\s)+)(?!\2)
@@ -2890,14 +2850,6 @@ repository:
         patterns:
           - include: "#types"
           - include: "#self"
-      - begin: (\$<)\s*
-        end: (>)
-        name: entity.quasi.element.trin
-        captures:
-          1: {name: punctuation.section.embedded.trin}
-        patterns:
-          - include: "#tag-attributes"
-          - include: "#tag-names"
 
   type-embedded:
     patterns:
@@ -2932,14 +2884,6 @@ repository:
         patterns:
           - include: "#types"
           - include: "#self"
-      - begin: (\$<)\s*
-        end: (>)
-        name: entity.quasi.element.trin
-        captures:
-          1: {name: punctuation.section.embedded.trin}
-        patterns:
-          - include: "#tag-attributes"
-          - include: "#tag-names"
 
   type-keywords:
     patterns:
@@ -3422,7 +3366,7 @@ repository:
           1: {name: keyword.control.validate.trin}
         end: (?<=})|(?=[,;)\]])
         patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(need|know|check|test|read|write|till|same)\b\s*
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pre|post|need|know|check|test|read|write|till|same)\b\s*
             name: keyword.control.validate.trin
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)\b\s*
             name: keyword.control.validate.trin
