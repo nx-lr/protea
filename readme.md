@@ -553,25 +553,9 @@ let t2Closure = template"${0} ${"foo"}!"
 assert t2Closure("Hello", {foo: "World"}) == "Hello World!"
 ```
 
-```dart
-wordChar = `\w` = [letter delim mark digit]
-whitespace = `\s` = `\pZ`; quotes = ["\"" "'" "`"];
-brackets = ["{" "}" "[" "]" "(" ")" "<" ">"];
-
-formatSwitchPlain = "/" formatSwitchName;
-formatSwitchName = formatDirectiveName = jsxTagName;
-formatSwitchAttrib = formatSwitchPlain ":" formatValue;
-formatValue = (word | "\\" anyChar) ^*
-              (![whitespace quotes brackets "\\" "/"] | "\\" anyChar)
-              !>>[whitespace "/"];
-
-formatDirective = "%" formatDirectiveName;
-formatSwitch = formatSwitchPlain | formatSwitchName;
-```
-
 #### Format Directives
 
-Trinity provides a format specifier and mini-language for manipulating and transforming strings, inspired partially by C-shell syntax, such as `taskkill /f /im`. They look like this: `%f/sci/pow:32`.
+Trinity provides a format specifier and mini-language for manipulating and transforming strings, inspired partially by C-shell command prompt syntax. They look like this: `%f/sci/pow:32`.
 
 The first identifier is a command denoted with a type, denoted with `%f` like C, followed by a range of switches/attributes/named arguments `/sw` with their optional values `:value`.
 
