@@ -534,15 +534,9 @@ Terminal symbols in the grammar: `Macro(Block)?((Single|Double)Quote|Backslash)S
 
 Macro strings are used to embed domain-specific languages directly into Trinity, and are functionally the same as JS tagged template literals.
 
-The construct `qualifiedName"string"` denotes a macro call, with a string literal as its only argument. Macro string literals are especially convenient for embedding DSLs directly into Trinity (for example, SQL).
+The construct `qualifiedName"string"` denotes a macro call, with a string literal as its only argument. Macro string literals are especially convenient for embedding DSLs directly into Trinity (for example, SQL), then parsing them and doing things with them.
 
-A macro function is defined with the keyword `macro` rather than `fun`, `sub` or `proc`. Macros are functions with two arguments, both of which are strings.
-
-The first argument of a tag function contains an array of string values. The remaining arguments are related to the expressions.
-
-The tag function can then perform whatever operations on these arguments you wish, and return the manipulated string. (Alternatively, it can return something completely different, as described in one of the following examples.)
-
-The name of the function used for the tag can be whatever you want.
+A macro function is defined with the keyword `macro` rather than `fun`, `sub` or `proc`. Macros are functions with up to three arguments. The first argument of a tagged function contains a list of intermediate strings, the second are related to the interpolated values themselves, and the third the formatted result.
 
 ```dart
 macro template(strings, keys) = |*values| {
@@ -576,6 +570,16 @@ formatSwitch = formatSwitchPlain | formatSwitchName;
 ```
 
 #### Format Directives
+
+Trinity provides a format specifier and mini-language for manipulating and transforming strings, inspired partially by C-shell syntax, such as `taskkill /f /im`. They look like this: `%f/sci/pow:32`.
+
+The first identifier is a command denoted with a type, denoted with `%f` like C, followed by a range of switches/attributes/named arguments `/sw` with their optional values `:value`.
+
+```dart
+const prices = { bread: 4.50 }
+'I like bread. It costs $prices.bread%f/cur:SGD/loc:en-SG.'
+// "I like bread. It costs $4.50."
+```
 
 ### Regular expressions
 
