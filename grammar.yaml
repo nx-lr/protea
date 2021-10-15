@@ -1183,6 +1183,37 @@ repository:
           - include: "#regexp-patterns"
       - begin: |
           (?x)\s*
+          (\\\-)\s*
+          ([-+*<=>])?\s*
+          (?:(\w+)?\b\s*\b
+          (
+          \w+\s*
+          (?:[+-]\s*
+          (?:(?:\w+)))*
+          )
+          )?\s*
+          (.*\n?)
+        beginCaptures:
+          1: {name: keyword.control.flow.block-scalar.replace.trin}
+          2: {name: storage.modifier.chomping-indicator.trin}
+          3: {name: keyword.modifier.trin}
+          4: {name: keyword.other.flag.trin}
+          5:
+            patterns:
+              - include: "#line-comments"
+              - match: .+
+                name: invalid.illegal.comment-newline.trin
+        end: ^(?=\S)|(?!\G)
+        patterns:
+          - begin: ^((\s)+)(?!\2)
+            end: ^(?!\1|\s*$)
+            name: string.replace.regexp.trin
+            patterns:
+              - include: "#back-references"
+              - include: "#string-content"
+          - include: $self
+      - begin: |
+          (?x)\s*
           (\\\<)\s*
           ([-+*<=>])?\s*
           (?:(\w+)?\b\s*\b
@@ -1207,7 +1238,7 @@ repository:
         patterns:
           - begin: ^((\s)+)(?!\2)
             end: ^(?!\1|\s*$)
-            name: string.unquoted.plain.out.trin
+            name: string.pattern.regexp.trin
             patterns:
               - include: "#regexp-patterns"
           - include: $self
@@ -1272,22 +1303,6 @@ repository:
         name: keyword.other.back-reference.trin
       - match: \{(\s*\d*\s*(?:,?\s*\d*\s*)*)\}
         name: keyword.operator.quantifier.trin
-      - begin: (\\Q)
-        contentName: string.quoted.single.trin
-        end: (\\E)
-        name: string.quoted.raw.trin
-        captures:
-          1: {name: punctuation.definition.string.trin}
-        patterns:
-          - include: "#string-content"
-      - begin: (\\q)
-        contentName: string.quoted.double.trin
-        end: (\\e)
-        name: string.quoted.trin
-        captures:
-          1: {name: punctuation.definition.string.trin}
-        patterns:
-          - include: "#embedded-raw"
       - begin: (\\k<)
         end: \s*(>)
         name: constant.other.back-reference.trin
@@ -1515,7 +1530,7 @@ repository:
             name: constant.other.character-class.posix.trin
           - match: (?i)\\p(c[cfos]?|l[motlu]?|m[cen]?|n[dlo]?|p[c-fios]?|s[mock]?|z[lps]?)
             name: constant.other.character-class.unicode.trin
-          - match: (?i)\\[ci]
+          - match: (?i)\\[ci]({\w+})?
             name: constant.other.character-class.xml.trin
           - match: (?x)\\[a-z]
             name: constant.other.character-class.trin
