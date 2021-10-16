@@ -483,14 +483,14 @@ func\word
 
 Block strings also begin with a backslash followed by either `|` or `>`, both functioning like `|` block strings. `\|` behaves like the single quote and `\>` the double quote.
 
-They can also be appended with a "chomping indicator" `+` or `-` to preserve or remove the line feed and trailing blank lines.
+They can also be appended with a "chomping indicator" `+` or `-` to preserve or remove the line feed, or fold the line past how many spaces.
 
 ```dart
 \|
   this is my very very "very" long-ass string.
   Love, Trinity.
 \>
-  this is my very very \"very\" long-\
+  this is my very very "very" long-\
   ass string.\nLove, Trinity.
 ```
 
@@ -498,7 +498,7 @@ Trinity comes with several avenues to make manipulating, formatting and serializ
 
 #### String Interpolation
 
-All forms of string literals, with exception to inline backslash strings, can enable arbitrary expressions to be embedded. Embedded expressions are prefixed using the dollar sign and surrounded with curly brackets.
+All forms of string literals, with exception to inline backslash strings, can enable embedding of arbitrary expressions. Embedded expressions are prefixed with the dollar and surrounded by curly brackets.
 
 If the expression is an identifier or qualified name, then the brackets can be left out. Use the `\$` escape sequence if you wish to express the dollar sign itself.
 
@@ -512,25 +512,14 @@ is syntax sugar for:
 "x is " + x + ", in hex " + x.toHex + ", and x+8 is " + (x + 8)
 ```
 
-You can specify a reusable format string this way:
+The hash sign takes several arguments, as placeholders, passed to the `format` method. Arguments can either be named, numbered or keyed.
 
 ```dart
-'#0%s is #1 meters tall'._format('James', 1.9)
+'#0%s is #1 meters tall'.format('James', 1.9)
 // "James is 1.9 meters tall"
 ```
 
-The grammar for this is similar to ih
-
-```dart
-qualifiedName = !>>Keyword (identifier ^+ separator;)
-separator = ["." "!." "?." "::" "!:" "?:"];
-interpolateVariable = "$" qualifiedName;
-interpolateExpression = "\${" expression "}";
-```
-
 #### Macro Strings
-
-Terminal symbols in the grammar: `Macro(Block)?((Single|Double)Quote|Backslash)StringLit`.
 
 Macro strings are used to embed domain-specific languages directly into Trinity, and are functionally the same as JS tagged template literals.
 
@@ -540,11 +529,11 @@ A macro function is defined with the keyword `macro` rather than `fun`, `sub` or
 
 ```dart
 macro template(strings, keys) = |*values| {
-  let dict = values[-1] ?? {}
+  let dict = values[-1] ?? {};
   let values = (from let key in keys
     select if key is Int => values[key]
     else => dict[key]) as List
-  strings.intercalate(keys).join('')
+  return strings.intercalate(keys).join('')
 }
 
 let t1Closure = template"${0}${1}${0}!"
@@ -561,13 +550,15 @@ The first identifier is a command denoted with a type, denoted with `%f` like C,
 
 ```dart
 const prices = { bread: 4.50 }
-'I like bread. It costs $prices.bread%f/cur:SGD/loc:en-SG.'
+'I like bread. It costs $prices.bread%f/cur:SGD.'
 // "I like bread. It costs $4.50."
 ```
 
 ### Regular expressions
 
-Regular expressions function much like strings, except that they are delimited using backticks as opposed to single or double quotes. Escape rules apply, though in between `()` or `[]`, the backtick itself need not be escaped.
+Regular expressions function much like strings, except that they are delimited using backticks ` `` ` as opposed to quotes. They allow free spacing and comments, and therefore, spaces and comments are removed when they compile.
+
+Escaping rules apply, though in between `()` or `[]`, the backtick `` ` `` itself need not be escaped. Interpolation and formatting also applies but the interpolated result is usually escaped (quoted) so to prevent generating invalid regular expressions.
 
 ```dart
 `\b{wb}(fee|fie|foe|fum)\b{wb}`x
@@ -581,12 +572,13 @@ Regular expressions function much like strings, except that they are delimited u
 
 Multi-quoted and block regular expressions are also supported.
 
-````dart
-```\/\* // Match the opening delimiter.
-.\*? // Match a minimal number of characters.
-\*\/ // Match the closing delimiter.
+```dart
+\<x // global flag
+  (?x)\s*
+  (\\\|)\s*
+  ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
+  (.*$)?
 ```
-````
 
 If there are two regular expressions side by side, then the one on the right is the replacement string attributed to the pattern on the left.
 
@@ -612,8 +604,9 @@ The following section serves as a summary to the regular expression syntax of Tr
 | `{,}`       | Quantifier token (LHS 0, RHS &infin;)           |
 | `"..."`     | Raw quoted literal                              |
 | `'...'`     | Quoted literal                                  |
-| `\0` onward | Numeric backreference (0-indexed)               |
-| `$...%...`  | Interpolation with `sprintf` syntax             |
+| `\0` onward | Numeric back-reference (0-indexed)              |
+| `$...%...`  | String interpolation syntax                     |
+| `#...`      | String anchor syntax                            |
 
 #### Characters
 
