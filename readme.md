@@ -379,6 +379,69 @@ val assert_ = true;
 assert assert_;
 ```
 
+### Numbers
+
+Numbers are of a single type, and have the following form as shown below. If a number contains only an integer part, it is considered an integer.
+
+Type suffixes can also be used to cast numeric literals to the appropriate type; alternatively, the type can be inferred from the surrounding context: `var x: i16 = 1` and `var x = 1:i16` are one and the same.
+
+```dart
+numbersFrom2 = ("2"..."9" | "1"..."9" "0"..."9"+)
+customBasePrefix = ("2"..."9" | "1"..."9" digit+) i"b";
+customBaseDigits = `[:alnum]`;
+base2Prefix = i"0b";  base2Digits = "0" | "1";
+base4Prefix = i"0q";  base4Digits = "0"..."3";
+base6Prefix = i"0s";  base6Digits = "0"..."5";
+base8Prefix = i"0o";  base8Digits = "0"..."7";
+base10Prefix = "";    base10Digits = digit = "0"..."9";
+base12Prefix = i"0z"; base12Digits = i[digit "a" "b"];
+base16Prefix = i"0x"; base16Digits = i[digit "a"..."f"];
+
+#IntegerPart = #Digits ("_"+ #Digits)*;
+#FractionPart = "." #Digits ("_"+ #Digits)*;
+#RepeatingPart = "*" #Digits ("_"+ #Digits)*;
+#DenominatorPart = "/" #Digits ("_"+ #Digits)*;
+
+base = "0" | "1"..."9" digit+;
+ExponentPart = ("*" base)? "^" ["+" "-"]? base;
+RoundingPart = "=" ["+" "-" "~"]? base;
+TypeSuffix = ":" identifier;
+
+#NumericLit = #Prefix
+            ( #IntegerPart #DenominatorPart? |
+              #IntegerPart #FractionPart? #RepeatingPart? |
+              #IntegerPart? #FractionPart #RepeatingPart? )
+              ExponentPart?
+              RoundingPart?
+              TypeSuffix?;
+```
+
+Any other pseudo-identifier that starts with a digit are not matched and are considered a syntax error.
+
+### Booleans, Null and Void
+
+`Null` and `void` compile to JavaScript `null` and `undefined`. In Trinity, null is equal to void by value, but not by reference.
+
+```dart
+null; void;
+assert null == void
+assert null !== void
+```
+
+A boolean data type can only have two values: `true` or `false`. Booleans are mainly used for control flow, and there are a lot of operators that return boolean values.
+
+```dart
+true; false;
+```
+
+All values default to an empty value, which means they yield `false` when converted into booleans. All other values, including non-primitive objects, yield true.
+
+Boolean values also come as a result of comparisons, or other logical operations (`&&`, `||`, `^^`, `!`):
+
+```dart
+val isGreater = 4 > 1 // true
+```
+
 ### Strings
 
 Strings function the same way as in JavaScript, and are delimited by matching quotes. Only double-quoted strings contain escape sequences which all begin with a backslash. Single-quoted strings are raw, which means that escape sequences are not transformed.
@@ -544,9 +607,9 @@ assert t2Closure("Hello", {foo: "World"}) == "Hello World!"
 
 #### Format Directives
 
-Trinity provides a format specifier and mini-language for manipulating and transforming strings, inspired partially by C-shell command prompt syntax. They look like this: `%f/sci/pow:32`.
+Trinity also provides an extensive format specifier mini-language for transforming, converting serializing and translating strings, taking its inspiration from Command Prompt.
 
-The first identifier is a command denoted with a type, denoted with `%f` like C, followed by a range of switches/attributes/named arguments `/sw` with their optional values `:value`.
+They look like this: `%float/sci/pow:32/sf:3`. A command immediately after the percent sign, followed by an optional range of switches `/sw` and their optional values `:val`.
 
 ```dart
 const prices = { bread: 4.50 }
@@ -831,45 +894,6 @@ This syntax applies to the right hand side of the regex literal in regex operati
 | `$+`      | Inserts the portion of the string that follows the matched substring.                                                                                  |
 | `$n`      | Where `n` is a positive integer, inserts the `n`th parenthesized submatch string. If `n` refers to an invalid group, the result is inserted literally. |
 | `$<name>` | Where name is a capturing group name. If the group is invalid, it is inserted literally.                                                               |
-
-### Numbers
-
-Numbers are of a single type, and have the following form as shown below. If a number contains only an integer part, it is considered an integer.
-
-Type suffixes can also be used to cast numeric literals to the appropriate type; alternatively, the type can be inferred from the surrounding context: `var x: i16 = 1` and `var x = 1:i16` are one and the same.
-
-```dart
-numbersFrom2 = ("2"..."9" | "1"..."9" "0"..."9"+)
-customBasePrefix = ("2"..."9" | "1"..."9" digit+) i"b";
-customBaseDigits = `[:alnum]`;
-base2Prefix = i"0b";  base2Digits = "0" | "1";
-base4Prefix = i"0q";  base4Digits = "0"..."3";
-base6Prefix = i"0s";  base6Digits = "0"..."5";
-base8Prefix = i"0o";  base8Digits = "0"..."7";
-base10Prefix = "";    base10Digits = digit = "0"..."9";
-base12Prefix = i"0z"; base12Digits = i[digit "a" "b"];
-base16Prefix = i"0x"; base16Digits = i[digit "a"..."f"];
-
-#IntegerPart = #Digits ("_"+ #Digits)*;
-#FractionPart = "." #Digits ("_"+ #Digits)*;
-#RepeatingPart = "*" #Digits ("_"+ #Digits)*;
-#DenominatorPart = "/" #Digits ("_"+ #Digits)*;
-
-base = "0" | "1"..."9" digit+;
-ExponentPart = ("*" base)? "^" ["+" "-"]? base;
-RoundingPart = "=" ["+" "-" "~"]? base;
-TypeSuffix = ":" identifier;
-
-#NumericLit = #Prefix
-            ( #IntegerPart #DenominatorPart? |
-              #IntegerPart #FractionPart? #RepeatingPart? |
-              #IntegerPart? #FractionPart #RepeatingPart? )
-              ExponentPart?
-              RoundingPart?
-              TypeSuffix?;
-```
-
-Any other pseudo-identifier that starts with a digit are not matched and are considered a syntax error.
 
 ### Operators
 
