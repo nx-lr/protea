@@ -1,35 +1,36 @@
 # Trinity
 
-Trinity is an open source programming language that integrates object-oriented and functional programming, enabling developers and teams to fully develop, test and deploy their projects with less code on both the frontend and backend, no matter the platform.
-Trinity provides easy access to huge ecosystems of libraries, without the need to manage complex dependencies.
+> The language of the future.
 
-Trinity also comes with a robust program verifier and type checker that watches over your shoulder and flags any errors to you so you can catch bugs early, all tied with a unified and comprehensive standard library for everyday or highly specialized computing tasks (in the future).
+**Trinity** is an open source, featured and agile language that enables developers, designers and testers to build, test and deploy their projects with less code, no matter the platform or runtime. It provides avenues to access huge ecosystems of libraries and runtimes, without the need for any installation.
+
+Out of the box, it provides a robust program verifier and type checker that flags any errors to you so you can catch bugs early, and comes with a unified and comprehensive API and core libraries for making everyday or specialised tasks easier.
 
 ```dart
-import Process;
+import Process
 
-// Reads a file and prints out the word count.
+// Reads a file and prints out the word count
 class WordCount(*args) {
   if args.len != 1 {
-    print('Usage: WordCount <file>');
-    exit(-1);
+    print('Usage: WordCount <file>')
+    exit(-1)
   }
 
-  var wordCounts: {[Str]: Int = 0} = {:};
-  var file = fs.Path(args[0]).toFile();
-  var raw = file.read();
-                .lines().map(.trim())
-                .words().map(.trim().lower());
+  var wordCounts: {[Str]: Int = 0} = {:}
+  var file = fs.Path(args[0]).toFile()
+  var raw = file.read()
+    .lines().map(.trim())
+    .words().map(.trim().lower())
+  for let word in words: wordCounts[word] += 1
 
-  for let word in words: wordCounts[word] += 1;
-  for let key, value in wordCounts.keys().sort():
-    print"$key: $value";
+  for let key, value in wordCounts.sort():
+    print"$key: $value"
 }
 ```
 
 ### Roadmap
 
-> Update: I have a [Trello](https://trello.com/b/A3NDX7qY/trinity-programming-language) now!
+> Update: I have a [Trello](https://trello.com/b/A3NDX7qY/Trinity-programming-language) now!
 
 - **Grammar** (see [`grammar.yaml`]())
 - Documentation (language and API)
@@ -41,17 +42,21 @@ class WordCount(*args) {
 
 ## Overview
 
-Trinity is a statically typed compiled programming language designed to build reliable software for the frontend, backend and middle-end; for the web, desktop and mobile. It's very similar to languages of the JVM such as Kotlin, Rust, Go and Swift and also influenced by Scala, Flix, TypeScript, ReScript, and Fantom.
+Trinity is a programming language designed with web, mobile, desktop and systems in mind. It is strongly typed, compiled, garbage-collected and has explicit support for multiple paradigms, including object-oriented, functional, concurrent and reflective programming.
+
+Trinity takes on its influences from Go, Kotlin, Rust, Scala, Swift, TypeScript, ReScript, C#, Flix and Fantom (not the malware). Trinity's name literally means "future" and extends its regard to ReScript as the (systems) language of the future.
 
 Trinity gives the developer a lot of power, all with an easy syntax, and a clean, consistent and comprehensive API. The language promotes writing simple and clear code with minimal abstraction. Anything you can do in other languages, you can do in Trinity.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 
-## Trinity's Origins
+## Origins
 
-Trinity started out as a simple concept to bridge the gap between Python and JavaScript in a hybrid language, though sharing most of the concepts from modern JavaScript. Now over almost a year of iteration and tinkering the language had poured in tons of influence from other languages like Scala and Kotlin.
+> Trinity does **_NOT_** refer to the Linux botnet or malware responsible for many DDoS attacks.
 
-This project is currently in the works and would be my largest project to date. I will be posting a Trello on my development of Trinity very soon, and I'm looking forward for anyone out there to contribute; fork this repo, and pull your changes to this repository: https://github.com/nxltm/trinity-lang.
+Trinity started out as a little dream to build a _runtime-agnostic language_ that looked like Python or TypeScript, but could enable one to develop web, desktop or mobile apps, games and server-side software, with as much performance and portability as possible. This idea was inspired partially by Rust and ReScript.
+
+The language grew through tinkering with regular expressions and writing documentation during my free time, and the language poured in tons of influence from others. I gave the name Trinity as I wanted it to be the _future_ of programming.
 
 ## Standard Library
 
@@ -233,13 +238,32 @@ This project is currently in the works and would be my largest project to date. 
 
 ## A Tour
 
-Trinity is a relatively new programming language which allows users to write easy-to-read high-performance code. This is a work-in-progress: if you spot any errors and/or you have an idea how to make this tutorial better, please report it as an issue on GitHub at [this repository](https://github.com/nxltm/trinity-lang).
+This project is currently in the works. I will be posting a Trello on Trinity very soon, and I'm looking forward for anyone out there to contribute.
+
+If you spot any errors and/or you have an idea how to make this tutorial better, fork this repo, and pull your changes to [this repository](https://github.com/tehfynlnyt/trinity-language).
 
 ### Overview
 
-For the most part, Trinity derives many features from Go, with major influences from Ruby, Scala, Kotlin, Swift, Fantom and Flix. Trinity supports Oniguruma, Stylus and JSX syntax too, though with several adaptations and enhancements to its existing features.
+This document provides an overview of the syntax, operations, and semantics in the Trinity language, as well as a comprehensive guide to the modules in the Standard Library. Other parts of Trinity, like scoping rules or runtime semantics, will be described informally.
 
-This document provides an overview of the syntax, operations, and semantics in the Trinity language, as well as a comprehensive guide to the modules in Trinity's Standard Library. Other parts of Trinity, like scoping rules or runtime semantics, are described informally.
+### File Types
+
+Trinity only encodes text in UTF-8; other encodings are not supported. Any of the standard line termination sequences can be used, depending on the platform: `\r`, `\n` or `\r\n`.
+
+Trinity has only three file types: module (`*.mir`), script (`*.mirs`), config (`*.mco`) and markup (`*.mml`).
+
+Module files are the most commonly used as they can be imported and exported through packages. The entry point of a Trinity module is defined in the `main` function.
+
+```dart
+/// @file .mir
+fun main(*args: []Str): Void { /*...*/ }
+```
+
+The type annotations or the spread `*args` declaration can be left out, so it can be `fun main {}` instead.
+
+Script files do not have a `main` function, but they can import other modules and files.
+
+Trinity markup is a special syntax of Trinity derived from Markdown, HTML and CSS which you can use to declaratively build user interfaces. Trinity config files are like YAML and JSON, though they can be interspersed with arbitrary Trinity expressions.
 
 ### Tokens and whitespace
 
@@ -253,10 +277,6 @@ The characters used in Trinity fall into four groups:
 Each token consists of a sequence of consecutive characters from just one of those groups, excluding whitespace. Whitespace is ignored except they separate tokens.
 
 A sequence of alphanumeric characters, with no additional non-alphanumeric characters, is a single token. White-space must be used to separate two such tokens in a program. The same thing goes for operators.
-
-### Source code representation
-
-Trinity only encodes text in UTF-8; other encodings are not supported.
 
 ### Comments
 
@@ -332,7 +352,7 @@ Keywords are grouped into three:
 
     true false null void nan infin
     it this that super self target
-    params ctor prot pro
+    params ctor proto pro
 
 #### Identifiers
 
@@ -550,7 +570,9 @@ String literals can also be delimited by at least three single or double quotes,
 The rules for single- and double-quoted strings also apply.
 
 ```dart
-'''"stringified string"'''
+'''
+  "stringified string"
+'''
 """ "stringified string""""
 ```
 
@@ -558,7 +580,11 @@ produces:
 
     "stringified string"
 
-The first line is indicated with th , right after the opening quote(s). All indentation after that column is preserved while those before it are discarded.
+All newlines and whitespace before the first non-line character and after the last non-line character are discarded.
+
+All indentation is determined based on the first line of text (the first non-whitespace character). All indentation after that column is preserved while those before it are discarded.
+
+Newlines are normalized to `\n`.
 
 ```dart
 '''
@@ -571,7 +597,14 @@ The first line is indicated with th , right after the opening quote(s). All inde
 """
 ```
 
-Any non-whitespace character before the leading backslash
+Any string that does not obey this rule is a compile-time error.
+
+```dart
+"""
+  "stringified
+string"
+"""
+```
 
 #### Backslash strings
 
