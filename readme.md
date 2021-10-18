@@ -6,7 +6,7 @@ Trinity provides easy access to huge ecosystems of libraries, without the need t
 Trinity also comes with a robust program verifier and type checker that watches over your shoulder and flags any errors to you so you can catch bugs early, all tied with a unified and comprehensive standard library for everyday or highly specialized computing tasks (in the future).
 
 ```dart
-import Process
+import Process;
 
 // Reads a file and prints out the word count.
 class WordCount(*args) {
@@ -381,42 +381,78 @@ assert assert_;
 
 ### Numbers
 
-Numbers are of a single type, and have the following form as shown below. If a number contains only an integer part, it is considered an integer.
+Trinity supports integers and floating-point numbers. Floats compile to regular JavaScript `number`s, [IEEE-754 double-precision floating-point][double] while integers compile to `bigint` (arbitrary-precision integers). Floats are typically distinguished between integers with a dot.
 
-Type suffixes can also be used to cast numeric literals to the appropriate type; alternatively, the type can be inferred from the surrounding context: `var x: i16 = 1` and `var x = 1:i16` are one and the same.
+[double]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 
 ```dart
-numbersFrom2 = ("2"..."9" | "1"..."9" "0"..."9"+)
-customBasePrefix = ("2"..."9" | "1"..."9" digit+) i"b";
-customBaseDigits = `[:alnum]`;
-base2Prefix = i"0b";  base2Digits = "0" | "1";
-base4Prefix = i"0q";  base4Digits = "0"..."3";
-base6Prefix = i"0s";  base6Digits = "0"..."5";
-base8Prefix = i"0o";  base8Digits = "0"..."7";
-base10Prefix = "";    base10Digits = digit = "0"..."9";
-base12Prefix = i"0z"; base12Digits = i[digit "a" "b"];
-base16Prefix = i"0x"; base16Digits = i[digit "a"..."f"];
-
-#IntegerPart = #Digits ("_"+ #Digits)*;
-#FractionPart = "." #Digits ("_"+ #Digits)*;
-#RepeatingPart = "*" #Digits ("_"+ #Digits)*;
-#DenominatorPart = "/" #Digits ("_"+ #Digits)*;
-
-base = "0" | "1"..."9" digit+;
-ExponentPart = ("*" base)? "^" ["+" "-"]? base;
-RoundingPart = "=" ["+" "-" "~"]? base;
-TypeSuffix = ":" identifier;
-
-#NumericLit = #Prefix
-            ( #IntegerPart #DenominatorPart? |
-              #IntegerPart #FractionPart? #RepeatingPart? |
-              #IntegerPart? #FractionPart #RepeatingPart? )
-              ExponentPart?
-              RoundingPart?
-              TypeSuffix?;
+val integer: Int = 123;
+val floating: Float = 12.345;
 ```
 
-Any other pseudo-identifier that starts with a digit are not matched and are considered a syntax error.
+[double]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+
+Numbers are case-insensitive including its type suffix, and can contain leading zeroes and underscores for readability. Integer and floating-point literals can be written in base 2, 4, 6, 8, 10, 12 or 16:
+
+| Base | Name        | Prefix    | Digits                       |
+| ---- | ----------- | --------- | ---------------------------- |
+| 2    | Binary      | `0b`      | `0` and `1`                  |
+| 4    | Quaternary  | `0q`      | `0` to `3`                   |
+| 6    | Senary      | `0s`      | `0` to `5`                   |
+| 8    | Octal       | `0o`      | `0` to `7`                   |
+| 10   | Decimal     | no prefix | `0` to `9`                   |
+| 12   | Duodecimal  | `0z`      | `0` to `9`, then `a` and `b` |
+| 16   | Hexadecimal | `0x`      | `0` to `9` then `a` to `f`   |
+
+```dart
+val base2 = 0b101010111100000100100011;
+val base4 = 0q320210213202;
+val base6 = 0s125423;
+val base8 = 0o52740443;
+val base10 = 0011256099;
+val base12 = 0z10a37b547ab97;
+val base16 = 0xabcdef123;
+```
+
+Floating-point numbers can allow different kinds of delimiters and separators,
+
+Repeating fractional blocks are separated with a tilde `~`, so `0.3~33` or simply `0.~3` is equal to `0.33333333333333...`. Fractional literals separate their numerator and denominator with a slash `/`.
+
+```dart
+0.3~33 == 0.~3 == 1/3
+```
+
+Exponents are relative to the base, but are written in base 10. Therefore `1 * 16^10` is equal to `0x1^10`. If you want a custom base, use the notation `coefficient*base^power`, where the power is signed.
+
+```dart
+1 * 16^10  == 0x1^10
+```
+
+Precision is delimited using `=n` where `n` is the number of places after the "decimal" point. `!` counts significant figures rather than mantisa digits, while `-` or `+` toggles whether to always round up or down as opposed to automatically.
+
+```dart
+10=10
+```
+
+There is a literal for every numerical type defined. Suffixes beginning with a backslash is called a _type suffix_. The backslash denoting the type suffix cannot be left out.
+
+| Suffix  | Resultant Type | Equivalent C#/D Type |
+| ------- | -------------- | -------------------- |
+| `:i8`   | `I8`           | `sbyte`              |
+| `:i16`  | `I16`          | `short`              |
+| `:i32`  | `I32`          | `int`                |
+| `:i64`  | `I64`          | `long`               |
+| `:i128` | `I128`         | `cent`               |
+| `:u8`   | `U8`           | `byte`               |
+| `:u16`  | `U16`          | `ushort`             |
+| `:u32`  | `U32`          | `uint`               |
+| `:u64`  | `U64`          | `ulong`              |
+| `:u128` | `U128`         | `ucent`              |
+| `:f32`  | `F32`          | `float`              |
+| `:f64`  | `F64`          | `double`             |
+| `:f128` | `F128`         | `decimal`            |
+
+Arbitrary bases can be used, beginning with `nb` where `n` is a positive integer greater than 1. The digits are usually decimal, though
 
 ### Booleans, Null and Void
 
@@ -436,7 +472,7 @@ true; false;
 
 All values default to an empty value, which means they yield `false` when converted into booleans. All other values, including non-primitive objects, yield true.
 
-Boolean values also come as a result of comparisons, or other logical operations (`&&`, `||`, `^^`, `!`):
+Boolean values also come as a result of comparisons, or other logical operations.
 
 ```dart
 val isGreater = 4 > 1 // true
