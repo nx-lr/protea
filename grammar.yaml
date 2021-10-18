@@ -759,7 +759,7 @@ repository:
 
   strings-quoted:
     patterns:
-      - comment: single quoted raw string
+      - comment: multi-single quoted string
         begin: (?<!'+)\s*('''+)
         contentName: string.quoted.single.trin
         end: \s*((\1)(?!'+))
@@ -767,7 +767,7 @@ repository:
           1: {name: punctuation.definition.string.trin}
         patterns:
           - include: "#embedded-raw"
-      - comment: simple single quoted raw string
+      - comment: single quoted string
         begin: (?<!'+)\s*(')
         contentName: string.quoted.single.trin
         end: \s*((\1)(?!'+))
@@ -777,8 +777,16 @@ repository:
           - match: "''"
             name: constant.character.escape.trin
           - include: "#embedded-raw"
-      - comment: double quoted standard string
-        begin: (?<!"+)\s*("""+|")
+      - comment: multi-double quoted string
+        begin: (?<!"+)\s*("""+)
+        contentName: string.quoted.double.trin
+        end: \s*((\1)(?!"+))
+        captures:
+          1: {name: punctuation.definition.string.trin}
+        patterns:
+          - include: "#string-content"
+      - comment: double quoted string
+        begin: (?<!"+)\s*(")
         contentName: string.quoted.double.trin
         end: \s*((\1)(?!"+))
         captures:
@@ -3205,6 +3213,8 @@ repository:
         name: storage.type.trait.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)\b\s*
         name: storage.type.procedure.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)\b\s*
+        name: storage.type.protocol.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
         name: storage.type.macro.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)\b\s*
@@ -3457,6 +3467,7 @@ repository:
       - include: "#data"
       - include: "#trait"
       - include: "#procedure"
+      - include: "#protocol"
       - include: "#macro"
       - include: "#type"
       - include: "#given"
@@ -3468,7 +3479,6 @@ repository:
       - include: "#lemma"
       - include: "#iterator"
       - include: "#field"
-
     repository:
       variable:
         applyEndPatternLast: 1
@@ -3612,6 +3622,16 @@ repository:
           - include: "#block-entities"
           - match: *entity-name
             name: entity.name.procedure.trin
+      protocol:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.protocol.trin}
+        patterns:
+          - include: "#block-entities"
+          - match: *entity-name
+            name: entity.name.protocol.trin
       macro:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
