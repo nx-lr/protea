@@ -10,21 +10,20 @@ import Process;
 
 // Reads a file and prints out the word count.
 class WordCount(*args) {
-  if args.size() != 1 {
+  if args.len != 1 {
     print('Usage: WordCount <file>');
-    exit(&code = -1);
+    exit(-1);
   }
 
   var wordCounts: {[Str]: Int = 0} = {:};
-  var file = Path(args[0]).toFile();
+  var file = fs.Path(args[0]).toFile();
   var raw = file.read();
                 .lines().map(.trim())
                 .words().map(.trim().lower());
 
-  for let word in words { wordCounts[word] += 1; }
-  for let key, value in wordCounts.keys().sort() {
+  for let word in words: wordCounts[word] += 1;
+  for let key, value in wordCounts.keys().sort():
     print"$key: $value";
-  }
 }
 ```
 
@@ -559,12 +558,20 @@ produces:
 
     "stringified string"
 
-Indentation in block strings begin with the indentation of the first line, right after the opening quote(s). All indentation is preserved or stripped based ons ieh
+The first line is indicated with th , right after the opening quote(s). All indentation after that column is preserved while those before it are discarded.
 
 ```dart
-'''"stringified string"'''
-""" "stringified string""""
+'''
+"stringified
+  string"
+''' ==
+"""
+  "stringified
+    string"
+"""
 ```
+
+Any non-whitespace character before the leading backslash
 
 #### Backslash strings
 
@@ -579,6 +586,8 @@ func\word
 [\word]
 {prop: \word}
 ```
+
+Block strings begin with a backslash followed by either `|` or `>`, both functioning like block strings. `\|` behaves like the single quote and `\>` the double quote.
 
 Block strings also begin with a backslash followed by either `|` or `>`, both functioning like `|` block strings. `\|` behaves like the single quote and `\>` the double quote.
 
@@ -672,7 +681,7 @@ Escaping rules apply, though in between `()` or `[]`, the backtick `` ` `` itsel
 Multi-quoted and block regular expressions are also supported.
 
 ```dart
-\<x // global flag
+\< x // global flag
   (?x)\s*
   (\\\|)\s*
   ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
