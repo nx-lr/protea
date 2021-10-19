@@ -128,12 +128,12 @@ This document describes Trinity in terms of its default (and currently, only) te
 
 Trinity only encodes text in UTF-8; other encodings are not supported. Any of the standard line termination sequences can be used, depending on the platform: `\r`, `\n` or `\r\n`.
 
-Trinity has only three file types: module (`*.trin`), script (`*.tris`), config (`*.tco`) and markup (`*.tml`).
+Trinity has only three file types: module (`*.3n`), script (`*.3s`), config (`*.3c`) and markup (`*.3m`).
 
 Module files are the most commonly used as they can be imported and exported through packages. The entry point of a Trinity module is defined in the `main` function.
 
 ```dart
-/// @file .trin
+/// @file main.3n
 fun main(*args: []Str): Void { /*...*/ }
 ```
 
@@ -409,7 +409,7 @@ Precision is delimited using `=n` where `n` is the number of places after the "d
 
 The last component of a numeric literal is called a _type suffix_. The colon denoting the type suffix cannot be left out.
 
-By extending from the class Numeric.Format, arbitrary base values can be used. By default, all digits are decimal, though any alphanumeric character can be used.
+By extending from the class `Numeric.Format`, arbitrary base values can be used. By default, all digits are decimal, though any alphanumeric character can be used.
 
 Arbitrary bases can be used, beginning with `nb` where `n` is a positive integer greater than 1. The digits are usually decimal, though any alphanumeric can be used when suffixed with a type.
 
@@ -465,7 +465,7 @@ Trinity also supports escapes in even bases up to 16, excluding 14.
 | `\z`                 | _Base 12_ - from `0` to `4588A7`               |
 | `\x`                 | _Base 16_ - from `0` to `10FFFF`               |
 | `\u`                 | UTF-8, 16 or 32 code units only                |
-| `\j`                 | Named Unicode characters (more later)          |
+| `\j`                 | Named Unicode characters and LaTeX expressions |
 
 The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
 
@@ -534,9 +534,7 @@ string"
 
 #### Backslash strings
 
-Strings can also be delimited using an initial backslash, and do not contain `()[]{}<>.,:;`, so those cannot be included at all in the string. However, you can escape them.
-
-Strings cannot begin in `|`, `>`, `<` or `-`.
+Strings can also be delimited using an initial backslash, Backslash strings end in the nearest backslash-unescaped space, `,`, `;`, `'`, `"`, `` ` ``, `<`, `>`, `$`, `(`, `)`, `{`, `}`, `[`, `]`, `/>`, `::`, `!:`, `?:`, `.`, `!.`, `?.` and newline.
 
 ```dart
 \word
@@ -546,11 +544,11 @@ func\word
 {prop: \word}
 ```
 
-Block strings begin with a backslash followed by either `|` or `>`, both functioning like block strings. `\|` behaves like the single quote and `\>` the double quote.
+Backslash block strings also begin with a backslash followed by either `|` or `>`, both functioning like block strings. `\|` behaves like the single quote and `\>` the double quote.
 
 Block strings also begin with a backslash followed by either `|` or `>`, both functioning like `|` block strings. `\|` behaves like the single quote and `\>` the double quote.
 
-They can also be appended with a "chomping indicator" `+` or `-` to preserve or remove the line feed, or fold the line past how many spaces.
+Like YAML, backslash block strings can also be appended with a "chomping indicator" `+` or `-` to preserve or remove the line feed, or fold the line past how many spaces.
 
 ```dart
 \|
@@ -586,21 +584,36 @@ The hash sign takes several arguments, as placeholders, passed to the `format` m
 // "James is 1.9 meters tall"
 ```
 
+#### Format Directives
+
+Trinity provides an extensive string formatting mini-language for converting, transforming, transl(iter)ating and serialising strings. Its syntax derives from Command Prompt.
+
+They are composed of the following parts:
+
+- A command: `%command` denoted by a percentage sign;
+- An optional range of switches, each denoted by a slash `/switch`,
+- Their optional values, separated by a colon: `/sw:value`.
+
+```dart
+const prices = { bread: 4.50 };
+'I like bread. It costs $prices.bread%f/cur:SGD.'
+// "I like bread. It costs $4.50."
+```
+
 #### Macro Strings
 
-Macro strings are used to embed domain-specific languages directly into Trinity, and are functionally the same as JS tagged template literals.
+Macro strings are used to embed domain-specific languages directly into Trinity, and are functionally the same as tagged template literals. The construct `name"string"`, or `name("string")`, that is, a qualified name before a string literal, denotes a macro call.
 
-The construct `qualifiedName"string"` denotes a macro call, with a string literal as its only argument. Macro string literals are especially convenient for embedding DSLs directly into Trinity (for example, SQL), then parsing them and doing things with them.
-
-A macro function is defined with the keyword `macro` rather than `fun`, `sub` or `proc`. Macros are functions with up to three arguments. The first argument of a tagged function contains a list of intermediate strings, the second are related to the interpolated values themselves, and the third the formatted result.
+A macro function is defined with the keyword `macro` rather than `fun`. The first argument of a `macro` contains a list of intermediate strings, the second being the interpolated values or placeholders, and the third being the formatting metadata.
 
 ```dart
 macro template(strings, keys) = |*values| {
   let dict = values[-1] ?? {};
-  let values = (from let key in keys
-    select if key is Int => values[key]
-    else => dict[key]) as List
-  return strings.intercalate(keys).join('')
+  let values = from let key in keys
+    select if key is Int: values[key]
+    else: dict[key];
+  values = values as List;
+  return strings.intercalate(keys).join('');
 }
 
 let t1Closure = template"${0}${1}${0}!"
@@ -609,14 +622,41 @@ let t2Closure = template"${0} ${"foo"}!"
 assert t2Closure("Hello", {foo: "World"}) == "Hello World!"
 ```
 
-#### Format Directives
+### Regular expressions
 
-Trinity also provides an extensive format specifier mini-language for transforming, converting serializing and translating strings, taking its inspiration from Command Prompt.
+Regular expressions are function like strings, except that they are delimited with backticks `` ` `` as opposed to quotes. They allow free spacing and comments by default.
 
-They look like this: `%float/sci/pow:32/sf:3`. A command immediately after the percent sign, followed by an optional range of switches `/sw` and their optional values `:val`.
+Escaping rules apply, though in between brackets the backtick need not be escaped. Interpolation and formatting also applies but the interpolated result is usually escaped so to prevent generating invalid regular expressions.
+
+Trinity uses the [Oniguruma](https://github.com/kkos/oniguruma) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. But it adds its own extensions and will be (re)implemented in Trinity.
 
 ```dart
-const prices = { bread: 4.50 }
-'I like bread. It costs $prices.bread%f/cur:SGD.'
-// "I like bread. It costs $4.50."
+`\b{wb}(fee|fie|foe|fum)\b{wb}`x
+`[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] `]`x
+`
+  \/\* // Match the opening delimiter.
+  .*?  // Match a minimal number of characters.
+  \*\/ // Match the closing delimiter.
+`
 ```
+
+Multi-quoted and block regular expressions are also supported.
+
+```dart
+\< x
+  (?x)\s*
+  (\\\|)\s*
+  ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
+  (.*$)?
+```
+
+If there are two regular expressions side by side, then the one on the right is the replacement string attributed to the pattern on the left.
+
+```dart
+val str = 'James Bond'
+val newStr = str =< `(\w+)\W+(\w+)` `$2, $1` // 'Bond, James'
+val newStr = str =< `(\w+)\W+(\w+)` `My name is $2, $0!`
+// 'My name is Bond, James Bond'
+```
+
+The following section serves as a summary to the regular expression syntax of Trinity, as well as some of the more unique features that Nova has over other regex flavors.
