@@ -801,18 +801,13 @@ repository:
           (\\\|)\s*
           ([-+*~=<>])?\s*
           ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          (.*\n?)?
+          \s*
         beginCaptures:
           1: {name: keyword.control.flow.block-scalar.literal.trin}
           2: {name: storage.modifier.chomping-indicator.trin}
           3:
             name: storage.type.format.trin
             patterns: [include: "#format-specifiers"]
-          4:
-            patterns:
-              - include: "#line-comments"
-              - match: .+
-                name: invalid.illegal.comment-newline.trin
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\s)+)(?!\2)
@@ -827,18 +822,13 @@ repository:
           (\\\>)\s*
           ([-+*~=<>])?\s*
           ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          (.*\n?)?
+          \s*
         beginCaptures:
           1: {name: keyword.control.flow.block-scalar.folded.trin}
           2: {name: storage.modifier.chomping-indicator.trin}
           3:
             name: storage.type.format.trin
             patterns: [include: "#format-specifiers"]
-          4:
-            patterns:
-              - include: "#line-comments"
-              - match: .+
-                name: invalid.illegal.comment-newline.trin
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\s)+)(?!\2)
@@ -851,7 +841,7 @@ repository:
       - begin: \s*(\\)
         beginCaptures:
           1: {name: punctuation.definition.string.trin}
-        end: (?=\s|,|;|'|"|`|\(|\)|\[|\]|\{|\}|<|>|/>|$|[?!:]:|[?!~]?\.)
+        end: (?=\s|,|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
         name: string.unquoted.trin
         patterns:
           - include: "#string-content"
@@ -1182,18 +1172,13 @@ repository:
           (\\\=)\s*
           ([-+*~=<>])?\s*
           ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          (.*\n?)?
+          \s*
         beginCaptures:
           1: {name: keyword.control.flow.block-scalar.replace.trin}
           2: {name: storage.modifier.chomping-indicator.trin}
           3:
             name: storage.type.format.trin
             patterns: [include: "#format-specifiers"]
-          4:
-            patterns:
-              - include: "#line-comments"
-              - match: .+
-                name: invalid.illegal.comment-newline.trin
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\s)+)(?!\2)
@@ -1208,18 +1193,13 @@ repository:
           (\\\<)\s*
           ([-+*~=<>])?\s*
           ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          (.*\n?)?
+          \s*
         beginCaptures:
           1: {name: keyword.control.flow.block-scalar.regexp.trin}
           2: {name: storage.modifier.chomping-indicator.trin}
           3:
             name: storage.type.format.trin
             patterns: [include: "#format-specifiers"]
-          4:
-            patterns:
-              - include: "#line-comments"
-              - match: .+
-                name: invalid.illegal.comment-newline.trin
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\s)+)(?!\2)
@@ -1779,17 +1759,14 @@ repository:
         beginCaptures:
           1: {name: entity.other.attribute-name.trin}
           2: {name: punctuation.separator.key-value.trin}
-        end: (?=\s|,|;|'|"|`|\(|\)|\[|\]|\{|\}|<|>|/>|$|[?!:]:|[?!~]?\.)
+        end: (?=\s|,|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
         name: string.unquoted.trin
         patterns: [include: "#jsx-properties"]
       - comment: Attribute names
-        match: (?<![^\s<])([\p{Pc}\p{L}][\p{Pd}\w]*)(?:(=)((?![#$][{\w])(?:[^\s'"`<=>\\/]|\\.|/(?!>))*))?\s*
+        match: (?<![^\s<])([\p{Pc}\p{L}][\p{Pd}\w]*)(=)?
         captures:
           1: {name: entity.other.attribute-name.trin}
           2: {name: punctuation.separator.key-value.trin}
-          3:
-            name: string.unquoted.attribute-name.trin
-            patterns: [include: "#jsx-properties"]
 
   evaluated-code:
     patterns:
@@ -2747,18 +2724,13 @@ repository:
           (\\\|)\s*
           ([-+*~=<>])?\s*
           ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          (.*\n?)?
+          \s*
         beginCaptures:
           1: {name: keyword.control.flow.block-scalar.literal.trin}
           2: {name: storage.modifier.chomping-indicator.trin}
           3:
             name: storage.type.format.trin
             patterns: [include: "#format-specifiers"]
-          4:
-            patterns:
-              - include: "#line-comments"
-              - match: .+
-                name: invalid.illegal.comment-newline.trin
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\s)+)(?!\2)
@@ -2773,18 +2745,13 @@ repository:
           (\\\>)\s*
           ([-+*~=<>])?\s*
           ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          (.*\n?)?
+          \s*
         beginCaptures:
           1: {name: keyword.control.flow.block-scalar.folded.trin}
           2: {name: storage.modifier.chomping-indicator.trin}
           3:
             name: storage.type.format.trin
             patterns: [include: "#format-specifiers"]
-          4:
-            patterns:
-              - include: "#line-comments"
-              - match: .+
-                name: invalid.illegal.comment-newline.trin
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^((\s)+)(?!\2)
@@ -2797,7 +2764,7 @@ repository:
       - begin: \s*(\\)
         beginCaptures:
           1: {name: punctuation.definition.string.trin}
-        end: (?=\s|,|;|'|"|`|\(|\)|\[|\]|\{|\}|<|>|/>|$|[?!:]:|[?!~]?\.)
+        end: (?=\s|,|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
         name: string.unquoted.trin
         patterns:
           - include: "#type-embedded"
