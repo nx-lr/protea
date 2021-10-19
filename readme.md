@@ -7,24 +7,35 @@
 Out of the box, it provides a robust program verifier and type checker that flags any errors to you so you can catch bugs early, and comes with a unified and comprehensive API and core libraries for making everyday or specialised tasks easier.
 
 ```dart
-import Process
+import Math.[Point, Random];
 
-// Reads a file and prints out the word count
-class WordCount(*args) {
-  if args.len != 1 {
-    print('Usage: WordCount <file>')
-    exit(-1)
+// Main function
+async proc main {
+  print("Compute π using the Monte Carlo algorithm");
+  await for val estimate in computePi().take(100):
+    print("π \x2245 $estimate");
+}
+
+// Iterator functions (function* in JavaScript)
+async iter computePi(%batch: 1^5): Stream[Float] {
+  var total = 0, count = 0;
+  loop {
+    val points = generateRandom().take(batch);
+    val inside = from val p in points
+                 where p.isInsideCirc();
+
+    total += batch;
+    count += inside.len;
+    val ratio = count / total;
+
+    yield ratio * 4;
   }
+}
 
-  var wordCounts: {[Str]: Int = 0} = {:}
-  var file = fs.Path(args[0]).toFile()
-  var raw = file.read()
-    .lines().map(.trim())
-    .words().map(.trim().lower())
-  for let word in words: wordCounts[word] += 1
-
-  for let key, value in wordCounts.sort():
-    print"$key: $value"
+sync iter generateRandom(*seed: []Int): Point {
+  val random = Random(seed);
+  loop:
+    yield Point(random.nextFloat(), random.nextFloat());
 }
 ```
 
@@ -130,69 +141,298 @@ The type annotations or the spread `*args` declaration can be left out, so it ca
 
 Script files do not have a `main` function, but they can import other modules and files.
 
-Trinity markup is a special syntax of Trinity derived from Markdown, HTML and CSS which you can use to declaratively build user interfaces, snippets of which can be interlaced in Trinity module files, like embedded HTML in JavaScript.
+Trinity markup is a special branch of Trinity whose syntax is derived from JSX, HTML and Stylus which enable you to build UIs, style them and add functionality. HTML snippets can be interlaced in Trinity module files and passed on as objects.
 
 ```dart
-import UI.{Image, ImagePicker, Sharing, Touchable, Text, View, Button}
-import './functions'.submit
-import logo from './assets/logo.png'
+import Native.{Text, View, StyleSheet, Button, Audio};
 
-const styles = {
-  style Container {
-    flex: #fff;
-    backgroundColor: #fff;
-    alignItems: center;
-    justifyContent: center;
-  };
-  style Logo {
-    width: 305;
-    height: 198;
-    marginBottom: 20;
-  };
-  style Instructions {
-    color: #888;
-    fontSize: 18;
-    marginHorizontal: 15;
-    marginBottom: 10;
-  };
-};
-
-export just elem App {
-  prop selectedImage; set def selectedImage;
-
-  async def openImagePicker =
-    setSelectedImage(localUri = pickerResult.uri)
-
-  async def openShareDialog {
-    if !await Sharing.isAvailable():
-      return <Toast length=long>
-        Oops, sharing isn't available on your platform!
-      </Toast>
-    if (!selectedImage?):
-      return <View style=.container>
-        <Image
-          source=${{uri: selectedImage.localUri}}
-          style=$styles.thumbnail/>
-        <Touchable
-          onPress=$openShareDialogAsync
-          style=$styles.button>
-          <Text style=$styles.buttonText>
-            Share this photo
-          </Text>
-        </Touchable>
-      </View>
-    return
+export pub elem App: View {
+  field sound: Audio {
+    async del proc unload: Void =
+      if !?self:
+        print("Unloading sound") && self = void;
+    async new proc load: Void {
+      print("Loading sound");
+      self = await import "./assets/Hello.mp3";
+      self.play();
+    }
   }
 
   return <View style=$styles.container>
-    <Image source=${{uri: 'https://i.imgur.com/TkIrScD.png'}} style=$styles.logo/>
-    <Text style=$styles.instructions>
-      To share a photo from your phone with a friend, just press the button below!
-    </Text>
-  </View>
+    <Button title="Play Sound" onPress=sound.load()/>
+  </View>;
 }
 ```
 
-Trinity config files are like YAML and JSON, though they can be interspersed with arbitrary Trinity expressions. This includes
+## Syntax
 
-Trinity config files are like YAML and JSON, though they can be interspersed with arbitrary Trinity expressions.
+### Some Guidelines
+
+#### Syntax
+
+Trinity is a curly-brace language similar to JavaScript, Rust, Scala and Kotlin, which means that code blocks and closures are delimited using curly brackets.
+
+#### Comments
+
+Comments start anywhere outside a "string" literal with two slashes, and runs until the end of the line. If the next line only of a comment piece with no other tokens between it and the preceding one, it does not start a new comment.
+
+```dart
+const x = 10; // This is a single comment over multiple lines.
+// The scanner merges these two pieces.
+// The comment continues here.
+```
+
+Documentation comments are comments that start with three slashes `///` rather than two. Documentation comments are tokens; they are only allowed at certain places in the input file as they belong to the syntax tree!
+
+```dart
+1 /// This is a documentation comment
+```
+
+Trinity supports two types of multi-line comments beginning with `/*` and ending in `*/`.
+
+```dart
+/*  Comment here.
+    Multiple lines
+    are not a problem. */
+```
+
+`/+ +/` allow nesting.
+
+```dart
+/+
+/+ Multiline comment in already commented out code. +/
++/
+```
+
+Multiline documentation comments also exist and support nesting too. They begin with two asterisks or plus signs (`/**` `/++`) instead of one, and end in only one of each type.
+
+```dart
+/** this is a multi-line documentation comment */
+/++ and this is its nested cousin +/
+```
+
+### Top-level declarations
+
+A top-level declaration can appear at the top level or outermost scope of a Unison file. It can be one of the following forms:
+
+- A declaration, like `let x = 42`, or `type Option[a] = None | Some[a]`.
+- An `import`, `export` or `using` clause.
+
+A variable binding begins with `var`, `val`, `let`, or `const`. `var` and `let` declare an mutable variable binding, whereas `val` and `const` declare a mutable variable binding.
+
+A variable binding looks like this:
+
+```dart
+var x = 42;
+let x: Int = 42;
+```
+
+Multiple variables can be assigned, similar to Python:
+
+```dart
+val x, y = 0, 0;
+```
+
+Or unpacked from an iterable, list (array), set or map:
+
+```dart
+(x, y): (Int, Int) = (42, 42);
+[x, y]: [Int, Int] = [42, 42];
+{x, y}: {[Str]: Int} = {x: 42, y: 42};
+{x, y}: {}Int = {42, 10};
+```
+
+### Keywords
+
+The following are all the keywords of the language. Keywords are grouped into five different sections:
+
+- expression keywords, which are keywords used as operators;
+- declaration keywords, which declare program entities such as variables, classes and functions,
+- modifier keywords which modify such declarations,
+- general keywords which command and control program flow and execution.
+- pre-defined, or dynamic constants and variables.
+
+As for modifier keywords, they are parsed as keywords before a declaration as they modify them. `pub var x = 1` declares a public variable.
+
+<!--  -->
+
+    in of as is new to til thru by del unset
+
+    var val let const decl def fun type sin
+    class enum mod pack struct inter space
+    proc proto macro given style elem field
+    ext pred data trait lemma iter sub prop
+
+    pub priv prot inline final mut immut ghost
+    seal abs intern extern imply exply global local
+    sync async stat dyn lazy eager strong weak
+    vol unsafe unfix bound free opaque trans
+    rec gen oper get set post put rem new del patch early late joint contra
+    prefix suffix infix primary unary left right
+
+    if un elif elun else then
+    for each loop while until when
+    with do from
+    try throw catch fix
+    switch match case fail
+    tandem unison series spawn kill lock
+    break skip redo retry return await label yield goto pass
+    import export using
+    debug assert where
+
+    true false null void nan infin
+    it this that super self target
+    params ctor proto pro
+
+### Identifiers
+
+Trinity defines Unicode letters, combining diacritical or punctuation marks, and decimal digits as identifier characters. A sequence of those would form an identifier, provided they do not start with a combining diacritical mark or a decimal digit.
+
+Tags and attributes used for JSX tags can include dashes, but must not end with any amount of trailing dashes.
+
+#### Naming conventions
+
+Naming conventions follow Java or JavaScript. There are four types of identifiers which Trinity recognizes and highlights accordingly:
+
+- `SHOUT_CASE`, used for constants,
+- `PascalCase` used for classes, modules, namespaces, and types.
+- `camelCase` or `snake_case` used for variables, parameters, functions and methods.
+- `_leading` underscores for special methods and keywords.
+
+#### Identifier Comparison
+
+Variables are compared using their first character, then comparing further characters case-insensitively and ignoring all delimiters. This makes it easier for developers to use varying conventions without having to worry about the variables' exact spelling.
+
+```dart
+proc cmpIdent(a: Str, b: Str): Bool =>
+  a[0] == b[0] &&
+  a.sub(`[^\pL\d]+`g, "").lower() == b.sub(`[^\pL\d]+`g, "").lower();
+```
+
+All keywords are written with all lowercase characters. To strop keywords, add one or more trailing underscores. Keywords also lose their meaing when they are part of a qualified name, not including its source (the leading parts of oa).
+
+```dart
+type Type = {
+  def: Func,
+};
+
+val object_ = new Type({def: |x| x = 10});
+assert object_ is Type;
+assert object_.def == 9;
+
+var var_ = 42;
+val val_ = 8;
+assert var_ + let_ == 50;
+
+val assert_ = true;
+assert assert_;
+```
+
+### Booleans, Null and Void
+
+`Null` and `void` are one and the same.
+
+```dart
+null; void;
+assert null == void
+assert null == void
+```
+
+A boolean data type can only have two values: `true` or `false`. Booleans are mainly used for control flow, and there are a lot of operators that return boolean values.
+
+```dart
+true; false;
+```
+
+All values default to an empty value, which means they yield `false` when converted into booleans. All other values, including non-primitive objects, yield true.
+
+Boolean values also come as a result of comparisons, or other logical operations.
+
+```dart
+val isGreater = 4 > 1 // true
+```
+
+### Numbers
+
+Trinity supports integers and floating-point numbers. Floats compile to regular JavaScript `number`s, [IEEE-754 double-precision floating-point][double] while integers compile to `bigint` (arbitrary-precision integers). Floats are typically distinguished between integers with a dot.
+
+[double]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+
+```dart
+val integer: Int = 123;
+val floating: Float = 12.345;
+```
+
+[double]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+
+Numbers are case-insensitive including its type suffix, and can contain leading zeroes and underscores for readability. Integer and floating-point literals can be written in base 2, 4, 6, 8, 10, 12 or 16:
+
+| Base | Name        | Prefix    | Digits                       |
+| ---- | ----------- | --------- | ---------------------------- |
+| 2    | Binary      | `0b`      | `0` and `1`                  |
+| 4    | Quaternary  | `0q`      | `0` to `3`                   |
+| 6    | Senary      | `0s`      | `0` to `5`                   |
+| 8    | Octal       | `0o`      | `0` to `7`                   |
+| 10   | Decimal     | no prefix | `0` to `9`                   |
+| 12   | Duodecimal  | `0z`      | `0` to `9`, then `a` and `b` |
+| 16   | Hexadecimal | `0x`      | `0` to `9` then `a` to `f`   |
+
+```dart
+val base2 = 0b101010111100000100100011;
+val base4 = 0q320210213202;
+val base6 = 0s125423;
+val base8 = 0o52740443;
+val base10 = 0011256099;
+val base12 = 0z10a37b547ab97;
+val base16 = 0xabcdef123;
+```
+
+Floating-point numbers can allow different kinds of delimiters and separators,
+
+Repeating fractional blocks are separated with a tilde `~`, so `0.3~33` or simply `0.~3` is equal to `0.33333333333333...`. Fractional literals separate their numerator and denominator with a slash `/`.
+
+```dart
+0.3~33 == 0.~3 == 1/3
+```
+
+Exponents are relative to the base, but are written in base 10. Therefore `1 * 16^10` is equal to `0x1^10`. If you want a custom base, use the notation `coefficient*base^power`, where the power is signed.
+
+```dart
+1 * 16^10  == 0x1^10
+```
+
+Precision is delimited using `=n` where `n` is the number of places after the "decimal" point. `!` counts significant figures rather than mantisa digits, while `-` or `+` toggles whether to always round up or down as opposed to automatically.
+
+```dart
+10=10
+```
+
+There is a literal for every numerical type defined. Suffixes beginning with a backslash is called a _type suffix_. The backslash denoting the type suffix cannot be left out.
+
+| Suffix  | Resultant Type | Equivalent C#/D Type |
+| ------- | -------------- | -------------------- |
+| `:i8`   | `I8`           | `sbyte`              |
+| `:i16`  | `I16`          | `short`              |
+| `:i32`  | `I32`          | `int`                |
+| `:i64`  | `I64`          | `long`               |
+| `:i128` | `I128`         | `cent`               |
+| `:u8`   | `U8`           | `byte`               |
+| `:u16`  | `U16`          | `ushort`             |
+| `:u32`  | `U32`          | `uint`               |
+| `:u64`  | `U64`          | `ulong`              |
+| `:u128` | `U128`         | `ucent`              |
+| `:f32`  | `F32`          | `float`              |
+| `:f64`  | `F64`          | `double`             |
+| `:f128` | `F128`         | `decimal`            |
+
+Arbitrary bases can be used, beginning with `nb` where `n` is a positive integer greater than 1. The digits are usually decimal, though any alphanumeric can be used when suffixed with a type.
+
+```dart
+class Base17 < Numeric.Format {
+  field digits: Str | []Char = '0123456789abcdefg';
+  field noUnderscore: Bool = true;
+}
+
+const number = 17b1894398:Base17;
+assert number == 17b1_89__43_98:Base17 == 36268794;
+```
