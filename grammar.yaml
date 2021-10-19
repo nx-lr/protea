@@ -851,7 +851,7 @@ repository:
       - begin: \s*(\\)
         beginCaptures:
           1: {name: punctuation.definition.string.trin}
-        end: (?=\s|,|;|\(|\)|\[|\]|\{|\}|<|>|$|[?!:]:|[?!~]?\.)
+        end: (?=\s|,|;|'|"|`|\(|\)|\[|\]|\{|\}|<|>|/>|$|[?!:]:|[?!~]?\.)
         name: string.unquoted.trin
         patterns:
           - include: "#string-content"
@@ -1775,13 +1775,13 @@ repository:
 
   attribute-name:
     patterns:
-      - comment: Attribute names
-        match: (=)((?![#$][{\w])(?:[^\s'"`<=>\\/]|\\.|/(?!>))*)\s*
-        captures:
-          1: {name: punctuation.separator.key-value.trin}
-          2:
-            name: string.unquoted.attribute-name.trin
-            patterns: [include: "#jsx-properties"]
+      - begin: (?<![^\s<])([\p{Pc}\p{L}][\p{Pd}\w]*)(=)
+        beginCaptures:
+          1: {name: entity.other.attribute-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+        end: (?=\s|,|;|'|"|`|\(|\)|\[|\]|\{|\}|<|>|/>|$|[?!:]:|[?!~]?\.)
+        name: string.unquoted.trin
+        patterns: [include: "#jsx-properties"]
       - comment: Attribute names
         match: (?<![^\s<])([\p{Pc}\p{L}][\p{Pd}\w]*)(?:(=)((?![#$][{\w])(?:[^\s'"`<=>\\/]|\\.|/(?!>))*))?\s*
         captures:
@@ -2797,7 +2797,7 @@ repository:
       - begin: \s*(\\)
         beginCaptures:
           1: {name: punctuation.definition.string.trin}
-        end: (?=\s|,|;|\(|\)|\[|\]|\{|\}|<|>|$|[?!:]:|[?!~]?\.)
+        end: (?=\s|,|;|'|"|`|\(|\)|\[|\]|\{|\}|<|>|/>|$|[?!:]:|[?!~]?\.)
         name: string.unquoted.trin
         patterns:
           - include: "#type-embedded"
