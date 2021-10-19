@@ -3101,7 +3101,7 @@ repository:
       |vol|unsafe|unfix|bound|free|opaque|trans
 
       # property or method modifiers
-      |rec|gen|oper|[gs]et|early|late|joint|contra
+      |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
       |prefix|suffix|infix|primary|unary|left|right
       )
       )\b\s*
@@ -3123,10 +3123,11 @@ repository:
     captures:
       1:
         patterns: &modifier-keywords
-          - match: |
-              (?x)\s*@[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
+          - &decorators
+            match: (?x)\s*@[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
             name: entity.name.class.decorator.trin
-          - match: |
+          - &modifiers
+            match: |
               (?x)\s*
               \s*\b
               (?:
@@ -3139,7 +3140,7 @@ repository:
               |vol|unsafe|unfix|bound|free|opaque|trans
               )|
               (# Property modifiers
-              rec|gen|oper|[gs]et|early|late|joint|contra
+              rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
               |prefix|suffix|infix|primary|unary|left|right
               )
               )\b\s*
@@ -3306,9 +3307,11 @@ repository:
               1: {name: keyword.control.module.trin}
             patterns:
               - include: source.yaml#flow-collection
+              - *modifiers
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)\b\s*
                 name: keyword.control.module.trin
               - include: "#type-keywords"
+              - include: "#declarations"
               - include: "#strings-quoted"
               - include: "#strings-unquoted"
               - include: "#symbols"
@@ -3796,7 +3799,7 @@ repository:
               |vol|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
-              |rec|gen|oper|[gs]et|early|late|joint|contra
+              |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
               |prefix|suffix|infix|primary|unary|left|right
               |# Decorators
               @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
@@ -3832,7 +3835,7 @@ repository:
               |vol|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
-              |rec|gen|oper|[gs]et|early|late|joint|contra
+              |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
               |prefix|suffix|infix|primary|unary|left|right
               |# Decorators
               @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
@@ -3865,7 +3868,7 @@ repository:
               |vol|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
-              |rec|gen|oper|[gs]et|early|late|joint|contra
+              |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
               |prefix|suffix|infix|primary|unary|left|right
               |# Decorators
               @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
@@ -3901,7 +3904,7 @@ repository:
               |vol|unsafe|unfix|bound|free|opaque|trans
 
               # property or method modifiers
-              |rec|gen|oper|[gs]et|early|late|joint|contra
+              |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
               |prefix|suffix|infix|primary|unary|left|right
               |# Decorators
               @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
@@ -4187,7 +4190,7 @@ repository:
           |vol|unsafe|unfix|bound|free|opaque|trans
 
           # property or method modifiers
-          |rec|gen|oper|[gs]et|early|late|joint|contra
+          |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
           |prefix|suffix|infix|primary|unary|left|right
           |# Decorators
           @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
@@ -4223,7 +4226,7 @@ repository:
           |vol|unsafe|unfix|bound|free|opaque|trans
 
           # property or method modifiers
-          |rec|gen|oper|[gs]et|early|late|joint|contra
+          |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
           |prefix|suffix|infix|primary|unary|left|right
           |# Decorators
           @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
