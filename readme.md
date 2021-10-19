@@ -407,32 +407,216 @@ Precision is delimited using `=n` where `n` is the number of places after the "d
 10=10
 ```
 
-There is a literal for every numerical type defined. Suffixes beginning with a backslash is called a _type suffix_. The backslash denoting the type suffix cannot be left out.
+The last component of a numeric literal is called a _type suffix_. The colon denoting the type suffix cannot be left out.
 
-| Suffix  | Resultant Type | Equivalent C#/D Type |
-| ------- | -------------- | -------------------- |
-| `:i8`   | `I8`           | `sbyte`              |
-| `:i16`  | `I16`          | `short`              |
-| `:i32`  | `I32`          | `int`                |
-| `:i64`  | `I64`          | `long`               |
-| `:i128` | `I128`         | `cent`               |
-| `:u8`   | `U8`           | `byte`               |
-| `:u16`  | `U16`          | `ushort`             |
-| `:u32`  | `U32`          | `uint`               |
-| `:u64`  | `U64`          | `ulong`              |
-| `:u128` | `U128`         | `ucent`              |
-| `:f32`  | `F32`          | `float`              |
-| `:f64`  | `F64`          | `double`             |
-| `:f128` | `F128`         | `decimal`            |
+By extending from the class Numeric.Format, arbitrary base values can be used. By default, all digits are decimal, though any alphanumeric character can be used.
 
 Arbitrary bases can be used, beginning with `nb` where `n` is a positive integer greater than 1. The digits are usually decimal, though any alphanumeric can be used when suffixed with a type.
 
 ```dart
 class Base17 < Numeric.Format {
-  field digits: Str | []Char = '0123456789abcdefg';
-  field noUnderscore: Bool = true;
+  swap field digits: Str | []Char = '0123456789abcdefg';
+  swap field under: Bool = false;
 }
 
 const number = 17b1894398:Base17;
 assert number == 17b1_89__43_98:Base17 == 36268794;
+```
+
+### Strings
+
+Strings function the same way as in JavaScript, and are delimited by matching quotes. Only double-quoted strings contain escape sequences which all begin with a backslash. Single-quoted strings are raw, which means that escape sequences are not transformed.
+
+```dart
+var s1 = 'Single quotes work well for string literals.';
+var s2 = "Double quotes work just as well.";
+```
+
+Single-quoted raw strings the escape sequences for double-quoted strings mentioned above are not escaped. To escape a single quote, double it.
+
+```dart
+var daughterOfTheVoid = 'Kai''Sa';
+```
+
+Double quoted string literals can contain the following escape sequences, and can contain the following escape sequences:
+
+| Escape Sequence | Meaning                                        |
+| --------------- | ---------------------------------------------- |
+| `\p`            | platform specific newline (`\r\n`, `\n`, `\r`) |
+| `\r`            | carriage return (`\x9`)                        |
+| `\n`            | line feed (or newline) (`\xA`)                 |
+| `\f`            | form feed (`\xC`)                              |
+| `\t`            | horizontal tabulator (`\x9`)                   |
+| `\v`            | vertical tabulator (`\xB`)                     |
+| `\a`            | alert (`\x7`)                                  |
+| `\b`            | backspace (`\x8`)                              |
+| `\e`            | escape (`\xB`)                                 |
+| `\s`            | space (`\x20`)                                 |
+
+Trinity also supports escapes in even bases up to 16, excluding 14.
+
+| Escape Sequence      | Meaning                                        |
+| -------------------- | ---------------------------------------------- |
+| `\b` (beside 0 or 1) | _Base 2_ - from `0` to `100001111111111111111` |
+| `\q`                 | _Base 4_ - from `0` to `10033333333`           |
+| `\s` (beside 0 to 5) | _Base 6_ - from `0` to `35513531`              |
+| `\o`                 | _Base 8_ - from `0` to `4177777`               |
+| `\d` or `\`          | _Base 10_ - from `0` to `1114111`              |
+| `\z`                 | _Base 12_ - from `0` to `4588A7`               |
+| `\x`                 | _Base 16_ - from `0` to `10FFFF`               |
+| `\u`                 | UTF-8, 16 or 32 code units only                |
+| `\j`                 | Named Unicode characters (more later)          |
+
+The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
+
+```dart
+// "HELLO"
+"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}";
+"\d{72 69 76 76 69}" == "\72\69\76\76\79";
+```
+
+In single quoted strings, to escape single quotes, double them.
+
+```dart
+var s3 = 'It''s easy to escape the string delimiter.';
+var s4 = "It's even easier to use the other delimiter.";
+```
+
+In double-quoted strings, an ending backslash joins the next line _without spaces_.
+
+```dart
+assert "hello \
+        world" == "hello world";
+```
+
+#### Block strings
+
+String literals can also be delimited by at least three single or double quotes, provided they end with _at least_ that many quotes of the same type.
+
+The rules for single- and double-quoted strings also apply.
+
+```dart
+'''
+  "stringified string"
+'''
+""" "stringified string""""
+```
+
+produces:
+
+    "stringified string"
+
+All newlines and whitespace before the first non-line character and after the last non-line character are discarded.
+
+All indentation is determined based on the first line of text (the first non-whitespace character). All indentation after that column is preserved while those before it are discarded.
+
+Newlines are normalized to `\n`.
+
+```dart
+'''
+"stringified
+  string"
+''' ==
+"""
+  "stringified
+    string"
+"""
+```
+
+Any string that does not obey this rule is a compile-time error.
+
+```dart
+"""
+  "stringified
+string"
+"""
+```
+
+#### Backslash strings
+
+Strings can also be delimited using an initial backslash, and do not contain `()[]{}<>.,:;`, so those cannot be included at all in the string. However, you can escape them.
+
+Strings cannot begin in `|`, `>`, `<` or `-`.
+
+```dart
+\word
+func(\word, \word)
+func\word
+[\word]
+{prop: \word}
+```
+
+Block strings begin with a backslash followed by either `|` or `>`, both functioning like block strings. `\|` behaves like the single quote and `\>` the double quote.
+
+Block strings also begin with a backslash followed by either `|` or `>`, both functioning like `|` block strings. `\|` behaves like the single quote and `\>` the double quote.
+
+They can also be appended with a "chomping indicator" `+` or `-` to preserve or remove the line feed, or fold the line past how many spaces.
+
+```dart
+\|
+  this is my very very "very" long-ass string.
+  Love, Trinity.
+\>
+  this is my very very "very" long-\
+  ass string.\nLove, Trinity.
+```
+
+Trinity comes with several avenues to make manipulating, formatting and serializing strings easier.
+
+#### String Interpolation
+
+All forms of string literals, with exception to inline backslash strings, can enable embedding of arbitrary expressions. Embedded expressions are prefixed with the dollar and surrounded by curly brackets.
+
+If the expression is an identifier or qualified name, then the brackets can be left out. Use the `\$` escape sequence if you wish to express the dollar sign itself.
+
+```dart
+"x is $x, in hex $x.toHex, and x+8 is ${x + 8}"
+```
+
+is syntax sugar for:
+
+```dart
+"x is " + x + ", in hex " + x.toHex + ", and x+8 is " + (x + 8)
+```
+
+The hash sign takes several arguments, as placeholders, passed to the `format` method. Arguments can either be named, numbered or keyed.
+
+```dart
+'#0%s is #1 meters tall'.format('James', 1.9)
+// "James is 1.9 meters tall"
+```
+
+#### Macro Strings
+
+Macro strings are used to embed domain-specific languages directly into Trinity, and are functionally the same as JS tagged template literals.
+
+The construct `qualifiedName"string"` denotes a macro call, with a string literal as its only argument. Macro string literals are especially convenient for embedding DSLs directly into Trinity (for example, SQL), then parsing them and doing things with them.
+
+A macro function is defined with the keyword `macro` rather than `fun`, `sub` or `proc`. Macros are functions with up to three arguments. The first argument of a tagged function contains a list of intermediate strings, the second are related to the interpolated values themselves, and the third the formatted result.
+
+```dart
+macro template(strings, keys) = |*values| {
+  let dict = values[-1] ?? {};
+  let values = (from let key in keys
+    select if key is Int => values[key]
+    else => dict[key]) as List
+  return strings.intercalate(keys).join('')
+}
+
+let t1Closure = template"${0}${1}${0}!"
+assert t1Closure("Y", "A") == "YAY!"
+let t2Closure = template"${0} ${"foo"}!"
+assert t2Closure("Hello", {foo: "World"}) == "Hello World!"
+```
+
+#### Format Directives
+
+Trinity also provides an extensive format specifier mini-language for transforming, converting serializing and translating strings, taking its inspiration from Command Prompt.
+
+They look like this: `%float/sci/pow:32/sf:3`. A command immediately after the percent sign, followed by an optional range of switches `/sw` and their optional values `:val`.
+
+```dart
+const prices = { bread: 4.50 }
+'I like bread. It costs $prices.bread%f/cur:SGD.'
+// "I like bread. It costs $4.50."
 ```
