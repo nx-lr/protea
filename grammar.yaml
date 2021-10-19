@@ -73,7 +73,7 @@ define:
     |var|val|let|const|decl|def|fun|type|sin
     |class|enum|mod|pack|struct|inter|space
     |proc|proto|macro|given|style|elem|field
-    |ext|pred|data|trait|lemma|iter|sub
+    |ext|pred|data|trait|lemma|iter|sub|prop
     |if|un|elif|elun|else|then
     |for|each|loop|while|until|when
     |with|do|from
@@ -96,7 +96,7 @@ define:
     |var|val|let|const|decl|def|fun|type|sin
     |class|enum|mod|pack|struct|inter|space
     |proc|proto|macro|given|style|elem|field
-    |ext|pred|data|trait|lemma|iter|sub
+    |ext|pred|data|trait|lemma|iter|sub|prop
     |if|un|elif|elun|else|then
     |for|each|loop|while|until|when
     |with|do|from
@@ -162,7 +162,7 @@ repository:
       |var|val|let|const|decl|def|fun|type|sin
       |class|enum|mod|pack|struct|inter|space
       |proc|proto|macro|given|style|elem|field
-      |ext|pred|data|trait|lemma|iter|sub
+      |ext|pred|data|trait|lemma|iter|sub|prop
       |if|un|elif|elun|else|then
       |for|each|loop|while|until|when
       |with|do|from
@@ -1630,7 +1630,7 @@ repository:
       |var|val|let|const|decl|def|fun|type|sin
       |class|enum|mod|pack|struct|inter|space
       |proc|proto|macro|given|style|elem|field
-      |ext|pred|data|trait|lemma|iter|sub
+      |ext|pred|data|trait|lemma|iter|sub|prop
       |if|un|elif|elun|else|then
       |for|each|loop|while|until|when
       |with|do|from
@@ -1647,11 +1647,8 @@ repository:
     patterns:
       - include: "#tag-element-name"
 
-  jsx-properties:
+  jsx-values:
     patterns:
-      - include: "#constants"
-      - include: "#numbers"
-      - include: "#string-content"
       - include: source.yaml#flow-scalar-plain-out-implicit-type
       - include: source.css#numeric-values
       - include: source.css#property-keywords
@@ -1662,6 +1659,9 @@ repository:
       - include: source.css.scss#constant_important
       - include: source.css.scss#constant_default
       - include: source.css.scss#constant_optional
+      - include: "#constants"
+      - include: "#numbers"
+      - include: "#string-content"
 
   tag-names:
     patterns:
@@ -1747,6 +1747,7 @@ repository:
       - include: "#regexes"
       - include: "#brackets"
       - include: "#comments"
+      - include: "#punctuation"
 
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
@@ -1755,15 +1756,15 @@ repository:
 
   attribute-name:
     patterns:
-      - begin: (?<![^\s<])([\p{Pc}\p{L}][\p{Pd}\w]*)(=)
+      - begin: (?<=<|\s|,|;|\)|\]|\})([\p{Pc}\p{L}][\p{Pd}\w]*)(=)
         beginCaptures:
           1: {name: entity.other.attribute-name.trin}
           2: {name: punctuation.separator.key-value.trin}
         end: (?=\s|,|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
         name: string.unquoted.trin
-        patterns: [include: "#jsx-properties"]
+        patterns: [include: "#jsx-values"]
       - comment: Attribute names
-        match: (?<![^\s<])([\p{Pc}\p{L}][\p{Pd}\w]*)(=)?
+        match: (?<=<|\s|,|;|\)|\]|\})([\p{Pc}\p{L}][\p{Pd}\w]*)(=)?
         captures:
           1: {name: entity.other.attribute-name.trin}
           2: {name: punctuation.separator.key-value.trin}
@@ -2102,7 +2103,7 @@ repository:
           |var|val|let|const|decl|def|fun|type|sin
           |class|enum|mod|pack|struct|inter|space
           |proc|proto|macro|given|style|elem|field
-          |ext|pred|data|trait|lemma|iter|sub
+          |ext|pred|data|trait|lemma|iter|sub|prop
           |if|un|elif|elun|else|then
           |for|each|loop|while|until|when
           |with|do|from
@@ -2131,7 +2132,7 @@ repository:
           |var|val|let|const|decl|def|fun|type|sin
           |class|enum|mod|pack|struct|inter|space
           |proc|proto|macro|given|style|elem|field
-          |ext|pred|data|trait|lemma|iter|sub
+          |ext|pred|data|trait|lemma|iter|sub|prop
           |if|un|elif|elun|else|then
           |for|each|loop|while|until|when
           |with|do|from
@@ -2464,7 +2465,7 @@ repository:
               |var|val|let|const|decl|def|fun|type|sin
               |class|enum|mod|pack|struct|inter|space
               |proc|proto|macro|given|style|elem|field
-              |ext|pred|data|trait|lemma|iter|sub
+              |ext|pred|data|trait|lemma|iter|sub|prop
               |if|un|elif|elun|else|then
               |for|each|loop|while|until|when
               |with|do|from
@@ -2494,7 +2495,7 @@ repository:
                   |var|val|let|const|decl|def|fun|type|sin
                   |class|enum|mod|pack|struct|inter|space
                   |proc|proto|macro|given|style|elem|field
-                  |ext|pred|data|trait|lemma|iter|sub
+                  |ext|pred|data|trait|lemma|iter|sub|prop
                   |if|un|elif|elun|else|then
                   |for|each|loop|while|until|when
                   |with|do|from
@@ -2916,7 +2917,6 @@ repository:
       - match: \s*(<==|<--?|<~~?)
         name: keyword.operator.type.channel.trin
       - include: "#params-clause"
-      - include: "#declarations"
       - include: "#type-keywords"
       - include: "#type-names"
       - include: "#custom-types"
@@ -3005,7 +3005,7 @@ repository:
       |var|val|let|const|decl|def|fun|type|sin
       |class|enum|mod|pack|struct|inter|space
       |proc|proto|macro|given|style|elem|field
-      |ext|pred|data|trait|lemma|iter|sub
+      |ext|pred|data|trait|lemma|iter|sub|prop
       |if|un|elif|elun|else|then
       |for|each|loop|while|until|when
       |with|do|from
@@ -3116,7 +3116,7 @@ repository:
       var|val|let|const|decl|def|fun|type|sin
       |class|enum|mod|pack|struct|inter|space
       |proc|proto|macro|given|style|elem|field
-      |ext|pred|data|trait|lemma|iter|sub
+      |ext|pred|data|trait|lemma|iter|sub|prop
       )
       \b
       )
@@ -3154,6 +3154,8 @@ repository:
         name: keyword.other.declare.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)\b\s*
         name: storage.type.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
+        name: storage.type.style.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fun)\b\s*
         name: storage.type.function.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)\b\s*
@@ -3188,8 +3190,6 @@ repository:
         name: storage.type.type.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)\b\s*
         name: storage.type.given.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
-        name: storage.type.style.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)\b\s*
         name: storage.type.element.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)\b\s*
@@ -3204,6 +3204,8 @@ repository:
         name: storage.type.iterator.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(field)\b\s*
         name: storage.type.field.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)\b\s*
+        name: storage.type.property.trin
 
   general-keywords:
     comment: general keywords
@@ -3421,6 +3423,7 @@ repository:
     patterns:
       - include: "#variable"
       - include: "#declare"
+      - include: "#style"
       - include: "#function"
       - include: "#method"
       - include: "#class"
@@ -3438,7 +3441,6 @@ repository:
       - include: "#macro"
       - include: "#type"
       - include: "#given"
-      - include: "#style"
       - include: "#element"
       - include: "#extends"
       - include: "#subroutine"
@@ -3446,6 +3448,8 @@ repository:
       - include: "#lemma"
       - include: "#iterator"
       - include: "#field"
+      - include: "#property"
+
     repository:
       variable:
         applyEndPatternLast: 1
@@ -3459,6 +3463,18 @@ repository:
         end: (?=.)|$
         beginCaptures:
           1: {name: keyword.other.declare.trin}
+      style:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.style.trin}
+        patterns:
+          - include: "#style-block"
+          - include: "#tag-attributes"
+          - include: "#block-entities"
+          - match: *entity-name
+            name: entity.name.style.trin
       function:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fun)\b\s*
@@ -3629,16 +3645,6 @@ repository:
           - include: "#block-entities"
           - match: *entity-name
             name: entity.name.given.trin
-      style:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.style.trin}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.style.trin
       element:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)\b\s*
@@ -3709,6 +3715,16 @@ repository:
           - include: "#block-entities"
           - match: *entity-name
             name: entity.name.field.trin
+      property:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.property.trin}
+        patterns:
+          - include: "#block-entities"
+          - match: *entity-name
+            name: entity.name.property.trin
 
   params-clause:
     begin: |
@@ -3718,7 +3734,7 @@ repository:
       |var|val|let|const|decl|def|fun|type|sin
       |class|enum|mod|pack|struct|inter|space
       |proc|proto|macro|given|style|elem|field
-      |ext|pred|data|trait|lemma|iter|sub
+      |ext|pred|data|trait|lemma|iter|sub|prop
       |if|un|elif|elun|else|then
       |for|each|loop|while|until|when
       |with|do|from
@@ -4276,6 +4292,28 @@ repository:
       - include: "#code-block"
       - include: "#square-brackets"
       - include: "#round-brackets"
+
+  style-block:
+    begin: \s*(\{)\s*
+    end: \s*(\})
+    captures:
+      1: {name: punctuation.definition.block.trin}
+    patterns:
+      - begin: ^\s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)\s*
+        beginCaptures:
+          1: {name: support.type.property-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+        end: (?=\s|,|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
+        name: string.unquoted.trin
+        patterns: [include: "#jsx-values"]
+      - comment: Attribute names
+        match: ^\s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
+        captures:
+          1: {name: support.type.property-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+      - include: "#jsx-values"
+      - include: source.css.scss#property_list
+      - include: $self
 
   code-block:
     patterns:
