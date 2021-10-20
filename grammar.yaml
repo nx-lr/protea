@@ -3921,7 +3921,12 @@ repository:
         patterns:
           - match: *entity-name
             name: entity.name.instance.trin
-          - include: "#block-entities"
+          - include: "#code-block"
+          - include: "#type-keywords"
+          - include: "#illegal-keywords"
+          - include: "#type-square-brackets"
+          - include: "#parameter-brackets"
+          - include: "#round-brackets"
 
       type-clause:
         patterns:
@@ -4049,6 +4054,7 @@ repository:
                 end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
                 captures:
                   1: {name: keyword.control.match.trin}
+                  2: {name: punctuation.separator.colon.trin}
                 patterns:
                   - include: "#params-clause"
                   - include: "#type-operators"
@@ -4065,10 +4071,11 @@ repository:
                     name: keyword.control.match.trin
                   - include: $self
               - &else-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(else|default)\b\s*
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(else|fail)\b\s*
                 end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
                 captures:
                   1: {name: keyword.control.match.trin}
+                  2: {name: punctuation.separator.colon.trin}
                 patterns:
                   - include: $self
               - include: $self
@@ -4100,6 +4107,7 @@ repository:
                 end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
                 captures:
                   1: {name: keyword.control.switch.trin}
+                  2: {name: punctuation.separator.colon.trin}
                 patterns:
                   - include: "#params-clause"
                   - include: "#type-operators"
@@ -4116,10 +4124,11 @@ repository:
                     name: keyword.control.switch.trin
                   - include: $self
               - &default-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(else|default)\b\s*
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(else|fail)\b\s*
                 end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
                 captures:
                   1: {name: keyword.control.switch.trin}
+                  2: {name: punctuation.separator.colon.trin}
                 patterns:
                   - include: $self
               - include: $self
@@ -4307,18 +4316,40 @@ repository:
       - include: $self
 
   code-block:
+    repository:
+      closures:
+        patterns:
+          - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)\b\s*
+            end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+            captures:
+              1: {name: keyword.control.match.trin}
+              2: {name: punctuation.separator.colon.trin}
+            patterns:
+              - include: "#params-clause"
+              - include: "#type-operators"
+              - include: $self
+          - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)\b\s*
+            end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+            captures:
+              1: {name: keyword.control.match.trin}
+              2: {name: punctuation.separator.colon.trin}
+            patterns:
+              - include: $self
+
     patterns:
       - begin: (\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.section.class.trin}
         patterns:
+          - include: "#closures"
           - include: $self
       - begin: (\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.block.trin}
         patterns:
+          - include: "#closures"
           - include: $self
 
   curly-brackets:
