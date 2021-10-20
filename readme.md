@@ -973,7 +973,7 @@ While loops execute its body code block while its condition is true.
 
 ```dart
 while i < 10 {
-  text += "The number is " + i;
+  text += "The number is $i"
   i += 1;
 }
 ```
@@ -982,19 +982,71 @@ while i < 10 {
 
 ```dart
 loop {
-  text += "The number is " + i;
-  i++;
+  text += "The number is $i"
+  i += 1
 } while i < 10;
 ```
 
-`break` breaks out of the current loop.
+Until loops execute their bodies until the statements become false. Because it makes sense to add `until`. Thanks, Ruby.
 
 ```dart
-while true {
+until i == 10 {
+  text += "The number is $i"
+  i += 1
+}
+
+loop {
+  text += "The number is $i"
+  i += 1
+} until i == 10
+
+loop: text += "The number is $i" && i += 1 until i == 10
+```
+
+Loop block runs indefinitely.
+
+```dart
+loop:
+  print("hello world forever!")
+
+let i = 1;
+loop {
+  print("`i` is now $i")
+  if i > 100: break
+  i *= 2
+}
+assert i == 128;
+```
+
+### Control flow statements
+
+`break` breaks out of the loop altogether (same for `return`).
+
+```dart
+loop {
   if new Random() > 0.3 {
     break && return 1;
   } else {
-    Js.log("Still running")
+    log("Still running")
   }
 }
 ```
+
+### Control flow statements
+
+Trinity has three keywords relating to loops:
+
+- stop and exit a loop or an enumeration using the `break` keyword
+- jump to the next iteration or step using the `next` keyword
+- repeat the current iteration or step using the `redo` keyword
+
+```dart
+label x: loop {
+  if new Random() > 0.3: break x
+  elif new Random() > 0.5: next x
+  elif new Random() > 0.7: redo x
+  else: log("Still running")
+}
+```
+
+All are system calls so they can be interlaced with expressions.
