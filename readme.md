@@ -1020,20 +1020,6 @@ assert i == 128;
 
 ### Control flow statements
 
-`break` breaks out of the loop altogether (same for `return`).
-
-```dart
-loop {
-  if new Random() > 0.3 {
-    break && return 1;
-  } else {
-    log("Still running")
-  }
-}
-```
-
-### Control flow statements
-
 Trinity has three keywords relating to loops:
 
 - stop and exit a loop or an enumeration using the `break` keyword
@@ -1050,3 +1036,37 @@ label x: loop {
 ```
 
 All are system calls so they can be interlaced with expressions.
+
+### For-loops
+
+In its most simple use, a `for` or `each` loop can be used to iterate over the elements in a collection. For example, given an array of integers:
+
+```dart
+val numbers = [1, 2, 3]
+```
+
+you can loop over them and print out their values like this:
+
+```dart
+for val n in numbers: print(n)
+```
+
+A second variable is assigned to their indices (i.e keys):
+
+```dart
+for val number, index in numbers: print(n, x)
+```
+
+You can loop over the keys of a map (or any other keyed collection) with `of` rather than `in`.
+
+```dart
+val list = [4, 5, 6]
+
+for val i in list:
+  print(i) // "0", "1", "2",
+
+for val i of list:
+  print(i) // "4", "5", "6"
+
+for val n of numbers: print(n)
+```
