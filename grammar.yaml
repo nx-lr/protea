@@ -71,7 +71,7 @@ define:
     \b(?:# don't match keywords
     in|of|as|is|new|to|til|thru|by|del|unset
     |var|val|let|const|decl|def|fun|type|sin
-    |class|enum|mod|pack|struct|inter|space
+    |class|enum|mod|pack|struct|inter|space|prag
     |proc|proto|macro|given|style|elem|field
     |ext|pred|data|trait|lemma|iter|sub|prop
     |if|un|elif|elun|else|then
@@ -94,7 +94,7 @@ define:
     \b(?:# don't match keywords
     in|of|as|is|new|to|til|thru|by|del|unset
     |var|val|let|const|decl|def|fun|type|sin
-    |class|enum|mod|pack|struct|inter|space
+    |class|enum|mod|pack|struct|inter|space|prag
     |proc|proto|macro|given|style|elem|field
     |ext|pred|data|trait|lemma|iter|sub|prop
     |if|un|elif|elun|else|then
@@ -117,7 +117,7 @@ define:
     \\p(?:
     # POSIX
     alpha|alnum|ascii|blank|cntrl|x?digit
-    |graph|lower|print|punct|space|upper|word
+    |graph|lower|print|punct|space|prag|upper|word
     # Extended-POSIX
     |symbol|open|close|dash|link|start|final|math|money
     |number|letter|title|mark|modify
@@ -160,7 +160,7 @@ repository:
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
       in|of|as|is|new|to|til|thru|by|del|unset
       |var|val|let|const|decl|def|fun|type|sin
-      |class|enum|mod|pack|struct|inter|space
+      |class|enum|mod|pack|struct|inter|space|prag
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
       |if|un|elif|elun|else|then
@@ -1654,7 +1654,7 @@ repository:
       \b(?:#keywords
       in|of|as|is|new|to|til|thru|by|del|unset
       |var|val|let|const|decl|def|fun|type|sin
-      |class|enum|mod|pack|struct|inter|space
+      |class|enum|mod|pack|struct|inter|space|prag
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
       |if|un|elif|elun|else|then
@@ -2127,7 +2127,7 @@ repository:
           \b(?:# don't match keywords
           in|of|as|is|new|to|til|thru|by|del|unset
           |var|val|let|const|decl|def|fun|type|sin
-          |class|enum|mod|pack|struct|inter|space
+          |class|enum|mod|pack|struct|inter|space|prag
           |proc|proto|macro|given|style|elem|field
           |ext|pred|data|trait|lemma|iter|sub|prop
           |if|un|elif|elun|else|then
@@ -2156,7 +2156,7 @@ repository:
           \b(?:# don't match keywords
           in|of|as|is|new|to|til|thru|by|del|unset
           |var|val|let|const|decl|def|fun|type|sin
-          |class|enum|mod|pack|struct|inter|space
+          |class|enum|mod|pack|struct|inter|space|prag
           |proc|proto|macro|given|style|elem|field
           |ext|pred|data|trait|lemma|iter|sub|prop
           |if|un|elif|elun|else|then
@@ -2487,7 +2487,7 @@ repository:
               \b(?:# don't match keywords
               in|of|as|is|new|to|til|thru|by|del|unset
               |var|val|let|const|decl|def|fun|type|sin
-              |class|enum|mod|pack|struct|inter|space
+              |class|enum|mod|pack|struct|inter|space|prag
               |proc|proto|macro|given|style|elem|field
               |ext|pred|data|trait|lemma|iter|sub|prop
               |if|un|elif|elun|else|then
@@ -2517,7 +2517,7 @@ repository:
                   \b(?:# don't match keywords
                   in|of|as|is|new|to|til|thru|by|del|unset
                   |var|val|let|const|decl|def|fun|type|sin
-                  |class|enum|mod|pack|struct|inter|space
+                  |class|enum|mod|pack|struct|inter|space|prag
                   |proc|proto|macro|given|style|elem|field
                   |ext|pred|data|trait|lemma|iter|sub|prop
                   |if|un|elif|elun|else|then
@@ -3027,7 +3027,7 @@ repository:
       \b(?:# don't match keywords
       in|of|as|is|new|to|til|thru|by|del|unset
       |var|val|let|const|decl|def|fun|type|sin
-      |class|enum|mod|pack|struct|inter|space
+      |class|enum|mod|pack|struct|inter|space|prag
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
       |if|un|elif|elun|else|then
@@ -3138,7 +3138,7 @@ repository:
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:
       var|val|let|const|decl|def|fun|type|sin
-      |class|enum|mod|pack|struct|inter|space
+      |class|enum|mod|pack|struct|inter|space|prag
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
       )
@@ -3231,6 +3231,8 @@ repository:
         name: storage.type.field.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)\b\s*
         name: storage.type.property.trin
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prag)\b\s*
+        name: storage.type.pragma.trin
 
   general-keywords:
     comment: general keywords
@@ -3282,7 +3284,7 @@ repository:
     repository:
       control-expression:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|return|await|label|yield|goto|pass)\b\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|label|goto|pass)\b\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: keyword.control.flow.trin}
@@ -3444,6 +3446,7 @@ repository:
       - include: "#iterator"
       - include: "#field"
       - include: "#property"
+      - include: "#pragma"
 
     repository:
       variable:
@@ -3720,6 +3723,16 @@ repository:
           - include: "#block-entities"
           - match: *entity-name
             name: entity.name.property.trin
+      pragma:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prag)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.pragma.trin}
+        patterns:
+          - include: "#block-entities"
+          - match: *entity-name
+            name: entity.name.pragma.trin
 
   params-clause:
     begin: |
@@ -3727,7 +3740,7 @@ repository:
       (?<=(?:^\s*|\#?[({\[]\s*|(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+)\s+|\b(?:#keywords
       in|of|as|is|new|to|til|thru|by|del|unset
       |var|val|let|const|decl|def|fun|type|sin
-      |class|enum|mod|pack|struct|inter|space
+      |class|enum|mod|pack|struct|inter|space|prag
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
       |if|un|elif|elun|else|then
