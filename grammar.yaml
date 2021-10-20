@@ -201,7 +201,7 @@ repository:
       - comment: Data structure classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          Array|Tuple|(Mut)?(List|Set|Map)|Dict|Func|Iter
+          Array|Tuple|(Mut)?(List|Set|Map|Bag)|Dict|Func|Iter
           |Proc|Seq|Gen|Range|Stack|Heap|Queue|Tree|Trie
           |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
           )\b
@@ -810,6 +810,7 @@ repository:
             patterns: [include: "#format-specifiers"]
         end: ^(?=\S)|(?!\G)
         patterns:
+          - include: "#comments"
           - begin: ^((\s)+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.unquoted.block.trin
@@ -831,6 +832,7 @@ repository:
             patterns: [include: "#format-specifiers"]
         end: ^(?=\S)|(?!\G)
         patterns:
+          - include: "#comments"
           - begin: ^((\s)+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.unquoted.plain.in.trin
@@ -1134,22 +1136,16 @@ repository:
   # Symbols
 
   symbols:
-    match: |
-      (?x)
-      (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
-      (:)(
-      (?:\w|\\.)# identifier
-      (?:[^\s\\(){}\[\]<>.,:;]|\\.)*?# remainder
-      )
-      (?=[\s(){}\[\].,:;]|$)\s*
-    name: meta.symbol.trin
-    captures:
-      1: {name: punctuation.definition.symbol.trin}
-      2:
+    patterns:
+      - match: \s*(:)(?='|"|`)
+        name: punctuation.definition.symbol.trin
+      - begin: \s*(:)(\w|\\.)
+        beginCaptures:
+          1: {name: punctuation.definition.symbol.trin}
+          2: {name: constant.other.symbol.trin}
+        end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
         name: constant.other.symbol.trin
         patterns:
-          - include: "#constants"
-          - include: "#numbers"
           - include: "#string-content"
 
   # Regular expressions
@@ -1193,6 +1189,7 @@ repository:
             patterns: [include: "#format-specifiers"]
         end: ^(?=\S)|(?!\G)
         patterns:
+          - include: "#comments"
           - begin: ^((\s)+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.replace.regexp.trin
@@ -1214,6 +1211,7 @@ repository:
             patterns: [include: "#format-specifiers"]
         end: ^(?=\S)|(?!\G)
         patterns:
+          - include: "#comments"
           - begin: ^((\s)+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.pattern.regexp.trin
@@ -1253,10 +1251,6 @@ repository:
         name: keyword.operator.or.trin
       - match: \&
         name: keyword.operator.compose.trin
-      - match: \!
-        name: keyword.operator.assert.trin
-      - match: \/
-        name: keyword.operator.pipeline.trin
       - match: \.
         name: constant.character.all.trin
       - match: (?i)\\[mM]({\p{L}+})?
@@ -1374,8 +1368,28 @@ repository:
               1: {name: punctuation.definition.group.negative-look-behind.trin}
             patterns:
               - include: "#regexp-patterns"
+          - comment: Match directive
+            begin: (\(\?%)((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?(/)?
+            end: \s*(\))
+            name: meta.group.directive.trin
+            captures:
+              1: {name: punctuation.definition.group.directive.trin}
+              2:
+                name: storage.type.format.trin
+                patterns: [include: "#format-specifiers"]
+              3: {name: punctuation.separator.slash.trin}
+            patterns:
+              - include: "#regexp-patterns"
+          - comment: Longest match
+            begin: (\(\?/)
+            end: \s*(\))
+            name: meta.group.longest.trin
+            captures:
+              1: {name: punctuation.definition.group.longest.trin}
+            patterns:
+              - include: "#regexp-patterns"
           - comment: Flag modifier group
-            begin: (\(\?(?:([+-]?\d+?)|(\p{Upper}+(?:[+-]\p{Upper}+)*)|(\p{Lower}+(?:[+-]\p{Lower}+)*)))\s*(:)?
+            begin: (\(\?\^?(?:([+-]?\d+?)|(\p{Upper}+(?:[+-]\p{Upper}+)*)|(\p{Lower}+(?:[+-]\p{Lower}+)*)))\s*(:)?
             end: \s*(\))
             name: meta.group.flag.trin
             captures:
@@ -2746,6 +2760,7 @@ repository:
             patterns: [include: "#format-specifiers"]
         end: ^(?=\S)|(?!\G)
         patterns:
+          - include: "#comments"
           - begin: ^((\s)+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.unquoted.block.trin
@@ -2767,6 +2782,7 @@ repository:
             patterns: [include: "#format-specifiers"]
         end: ^(?=\S)|(?!\G)
         patterns:
+          - include: "#comments"
           - begin: ^((\s)+)(?!\2)
             end: ^(?!\1|\s*$)
             name: string.unquoted.plain.in.trin
