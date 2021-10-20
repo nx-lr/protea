@@ -2,39 +2,38 @@
 
 > The language of the future.
 
-**Trinity** is an open source, featured and agile language that enables developers, designers and testers to build, test and deploy their projects with less code, no matter the platform or runtime. It provides avenues to access huge ecosystems of libraries and runtimes, without the need for any installation.
+**Trinity** is an open source, fully featured and agile language that enables developers, designers and testers to build, test and deploy their projects with less code, no matter the platform or runtime. It provides avenues to access huge ecosystems of libraries and runtimes, without the need for any installation.
 
 Out of the box, it provides a robust program verifier and type checker that flags any errors to you so you can catch bugs early, and comes with a unified and comprehensive API and core libraries for making everyday or specialised tasks easier.
 
 ```dart
-import Math.[Point, Random];
+import Math.[Point, Random]
+
 // Main function
 async proc main {
-  print("Compute π using the Monte Carlo algorithm");
+  print("Compute π using the Monte Carlo algorithm")
   await for val estimate in computePi().take(100):
-    print("π \x2245 $estimate");
+    print("π \x2245 $estimate")
 }
 
 // Iterator functions (function* in JavaScript)
-async iter computePi(%batch: 1^5): Stream[Float] {
-  var total = 0, count = 0;
+async iter computePi(&batch: 1^5): Stream[Float] {
+  var total = 0, count = 0
   loop {
-    val points = generateRandom().take(batch);
+    val points = generateRandom().take(batch)
     val inside = from val p in points
-                 where p.isInsideCirc();
-
-    total += batch;
-    count += inside.len;
-    val ratio = count / total;
-
-    yield ratio * 4;
+                 where p.isInsideCirc()
+    total += batch
+    count += inside.len
+    val ratio = count / total
+    yield ratio * 4
   }
 }
 
 sync iter generateRandom(*seed: []Int): Point {
-  val random = Random(seed);
+  val random = Random(seed)
   loop:
-    yield Point(random.nextFloat(), random.nextFloat());
+    yield Point(random.nextFloat(), random.nextFloat())
 }
 ```
 
@@ -143,23 +142,23 @@ Script files do not have a `main` function, but they can import other modules an
 Trinity markup is a special branch of Trinity whose syntax is derived from JSX, HTML and Stylus which enable you to build UIs, style them and add functionality. HTML snippets can be interlaced in Trinity module files and passed on as objects.
 
 ```dart
-import Native.{Text, View, StyleSheet, Button, Audio};
+import Native.{Text, View, StyleSheet, Button, Audio}
 
 export pub elem App: View {
   field sound: Audio {
     async del proc unload: Void =
       if !?self:
-        print("Unloading sound") && self = void;
+        print("Unloading sound") && self = void
     async new proc load: Void {
-      print("Loading sound");
-      self = await import "./assets/Hello.mp3";
-      self.play();
+      print("Loading sound")
+      self = await import "./assets/Hello.mp3"
+      self.play()
     }
   }
 
   return <View style=$styles.container>
     <Button title="Play Sound" onPress=sound.load()/>
-  </View>;
+  </View>
 }
 ```
 
@@ -171,12 +170,14 @@ export pub elem App: View {
 
 Trinity is a curly-brace language similar to JavaScript, Rust, Scala and Kotlin, which means that code blocks and closures are delimited using curly brackets.
 
+Semicolons are completely optional though they can be used to terminate multiple statements on the same line. This makes it easier to
+
 #### Comments
 
 Comments start anywhere outside a "string" literal with two slashes, and runs until the end of the line. If the next line only of a comment piece with no other tokens between it and the preceding one, it does not start a new comment.
 
 ```dart
-const x = 10; // This is a single comment over multiple lines.
+const x = 10 // This is a single comment over multiple lines.
 // The scanner merges these two pieces.
 // The comment continues here.
 ```
@@ -217,35 +218,42 @@ A top-level declaration can appear at the top level or outermost scope of a Unis
 - A declaration, like `let x = 42`, or `type Option[a] = None | Some[a]`.
 - An `import`, `export` or `using` clause.
 
-A variable binding begins with `var`, `val`, `let`, or `const`. `var` and `let` declare an mutable variable binding, whereas `val` and `const` declare a mutable variable binding.
+A variable binding begins with `var`, `val`, `let`, or `const`. `var` and `let` declare an mutable variable binding, whereas `val` and `const` declare a mutable variable binding. All bindings are [block-scoped](https://medium.com/@allansendagi/block-scope-in-javascript-8fd2f909e848).
 
 A variable binding looks like this:
 
 ```dart
-var x = 42;
-let x: Int = 42;
+var x = 42
+let x: Int = 42
+```
+
+`let` and `const` bindings can be redeclared, even on the same scoped.
+
+```dart
+var x = 42
+let x: Int = 42
 ```
 
 Multiple variables can be assigned, similar to Python:
 
 ```dart
-val x, y = 0, 0;
+val x, y = 0, 0
 ```
 
 Or unpacked from an iterable, list (array), set or map:
 
 ```dart
-(x, y): (Int, Int) = (42, 42);
-[x, y]: [Int, Int] = [42, 42];
-{x, y}: {[Str]: Int} = {x: 42, y: 42};
-{x, y}: {}Int = {42, 10};
+(x, y): (Int, Int) = (42, 42)
+[x, y]: [Int, Int] = [42, 42]
+{x, y}: {[Str]: Int} = {x: 42, y: 42}
+{x, y}: {}Int = {42, 10}
 ```
 
 ### Keywords
 
 The following are all the keywords of the language. Keywords are grouped into five different sections:
 
-- expression keywords, which are keywords used as operators;
+- expression keywords, which are keywords used as operators
 - declaration keywords, which declare program entities such as variables, classes and functions,
 - modifier keywords which modify such declarations,
 - general keywords which command and control program flow and execution.
@@ -305,7 +313,7 @@ Variables are compared using their first character, then comparing further chara
 ```dart
 proc cmpIdent(a: Str, b: Str): Bool =>
   a[0] == b[0] &&
-  a.sub(`[^\pL\d]+`g, "").lower() == b.sub(`[^\pL\d]+`g, "").lower();
+  a.sub(`[^\pL\d]+`g, "").lower() == b.sub(`[^\pL\d]+`g, "").lower()
 ```
 
 All keywords are written with all lowercase characters. To strop keywords, add one or more trailing underscores. Keywords also lose their meaing when they are part of a qualified name, not including its source (the leading parts of oa).
@@ -313,18 +321,18 @@ All keywords are written with all lowercase characters. To strop keywords, add o
 ```dart
 type Type = {
   def: Func,
-};
+}
 
-val object_ = new Type({def: |x| x = 10});
-assert object_ is Type;
-assert object_.def == 9;
+val object_ = new Type({def: |x| x = 10})
+assert object_ is Type
+assert object_.def == 9
 
-var var_ = 42;
-val val_ = 8;
-assert var_ + let_ == 50;
+var var_ = 42
+val val_ = 8
+assert var_ + let_ == 50
 
-val assert_ = true;
-assert assert_;
+val assert_ = true
+assert assert_
 ```
 
 ### Booleans, Null and Void
@@ -332,7 +340,7 @@ assert assert_;
 `Null` and `void` are one and the same.
 
 ```dart
-null; void;
+null; void
 assert null == void
 assert null == void
 ```
@@ -340,7 +348,7 @@ assert null == void
 A boolean data type can only have two values: `true` or `false`. Booleans are mainly used for control flow, and there are a lot of operators that return boolean values.
 
 ```dart
-true; false;
+true; false
 ```
 
 All values default to an empty value, which means they yield `false` when converted into booleans. All other values, including non-primitive objects, yield true.
@@ -358,8 +366,8 @@ Trinity supports integers and floating-point numbers. Floats compile to regular 
 [double]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 
 ```dart
-val integer: Int = 123;
-val floating: Float = 12.345;
+val integer: Int = 123
+val floating: Float = 12.345
 ```
 
 [double]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
@@ -377,13 +385,13 @@ Numbers are case-insensitive including its type suffix, and can contain leading 
 | 16   | Hexadecimal | `0x`      | `0` to `9` then `a` to `f`   |
 
 ```dart
-val base2 = 0b101010111100000100100011;
-val base4 = 0q320210213202;
-val base6 = 0s125423;
-val base8 = 0o52740443;
-val base10 = 0011256099;
-val base12 = 0z10a37b547ab97;
-val base16 = 0xabcdef123;
+val base2 = 0b101010111100000100100011
+val base4 = 0q320210213202
+val base6 = 0s125423
+val base8 = 0o52740443
+val base10 = 0011256099
+val base12 = 0z10a37b547ab97
+val base16 = 0xabcdef123
 ```
 
 Floating-point numbers can allow different kinds of delimiters and separators,
@@ -397,7 +405,7 @@ Repeating fractional blocks are separated with a tilde `~`, so `0.3~33` or simpl
 Exponents are relative to the base, but are written in base 10. Therefore `1 * 16^10` is equal to `0x1^10`. If you want a custom base, use the notation `coefficient*base^power`, where the power is signed.
 
 ```dart
-1 * 16^10  == 0x1^10
+1 * 16^10 == 0x1^10
 ```
 
 Precision is delimited using `=n` where `n` is the number of places after the "decimal" point. `!` counts significant figures rather than mantisa digits, while `-` or `+` toggles whether to always round up or down as opposed to automatically.
@@ -414,12 +422,12 @@ Arbitrary bases can be used, beginning with `nb` where `n` is a positive integer
 
 ```dart
 class Base17 < Numeric.Format {
-  swap field digits: Str | []Char = '0123456789abcdefg';
-  swap field under: Bool = false;
+  swap field digits: Str | []Char = '0123456789abcdefg'
+  swap field under: Bool = false
 }
 
-const number = 17b1894398:Base17;
-assert number == 17b1_89__43_98:Base17 == 36268794;
+const number = 17b1894398:Base17
+assert number == 17b1_89__43_98:Base17 == 36268794
 ```
 
 ### Strings
@@ -427,14 +435,14 @@ assert number == 17b1_89__43_98:Base17 == 36268794;
 Strings function the same way as in JavaScript, and are delimited by matching quotes. Only double-quoted strings contain escape sequences which all begin with a backslash. Single-quoted strings are raw, which means that escape sequences are not transformed.
 
 ```dart
-var s1 = 'Single quotes work well for string literals.';
-var s2 = "Double quotes work just as well.";
+var s1 = 'Single quotes work well for string literals.'
+var s2 = "Double quotes work just as well."
 ```
 
 Single-quoted raw strings the escape sequences for double-quoted strings mentioned above are not escaped. To escape a single quote, double it.
 
 ```dart
-var daughterOfTheVoid = 'Kai''Sa';
+var daughterOfTheVoid = 'Kai''Sa'
 ```
 
 Double quoted string literals can contain the following escape sequences, and can contain the following escape sequences:
@@ -470,22 +478,22 @@ The same escapes with curly brackets allow you to insert many code points inside
 
 ```dart
 // "HELLO"
-"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}";
-"\d{72 69 76 76 69}" == "\72\69\76\76\79";
+"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
+"\d{72 69 76 76 69}" == "\72\69\76\76\79"
 ```
 
 In single quoted strings, to escape single quotes, double them.
 
 ```dart
-var s3 = 'It''s easy to escape the string delimiter.';
-var s4 = "It's even easier to use the other delimiter.";
+var s3 = 'It''s easy to escape the string delimiter.'
+var s4 = "It's even easier to use the other delimiter."
 ```
 
 In double-quoted strings, an ending backslash joins the next line _without spaces_.
 
 ```dart
 assert "hello \
-        world" == "hello world";
+        world" == "hello world"
 ```
 
 #### Block strings
@@ -589,12 +597,12 @@ Trinity provides an extensive string formatting mini-language for converting, tr
 
 They are composed of the following parts:
 
-- A command: `%command` denoted by a percentage sign;
+- A command: `%command` denoted by a percentage sign
 - An optional range of switches, each denoted by a slash `/switch`,
 - Their optional values, separated by a colon: `/sw:value`.
 
 ```dart
-const prices = { bread: 4.50 };
+const prices = { bread: 4.50 }
 'I like bread. It costs $prices.bread%f/cur:SGD.'
 // "I like bread. It costs $4.50."
 ```
@@ -607,12 +615,12 @@ A macro function is defined with the keyword `macro` rather than `fun`. The firs
 
 ```dart
 macro template(strings, keys) = |*values| {
-  let dict = values[-1] ?? {};
+  let dict = values[-1] ?? {}
   let values = from let key in keys
     select if key is Int: values[key]
-    else: dict[key];
-  values = values as List;
-  return strings.intercalate(keys).join('');
+    else: dict[key]
+  values = values as List
+  return strings.intercalate(keys).join('')
 }
 
 let t1Closure = template"${0}${1}${0}!"
@@ -630,24 +638,24 @@ Escaping rules apply, though in between brackets the backtick need not be escape
 Trinity uses the [Oniguruma](https://github.com/kkos/oniguruma) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. But it adds its own extensions and will be (re)implemented in Trinity.
 
 ```dart
-`\b{wb}(fee|fie|foe|fum)\b{wb}`x;
-`[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] `]`x;
+`\b{wb}(fee|fie|foe|fum)\b{wb}`x
+`[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] `]`x
 `
   \/\* // Match the opening delimiter.
   .*?  // Match a minimal number of characters.
   \*\/ // Match the closing delimiter.
-`;
+`
 ```
 
 Multi-quoted and block regular expressions are also supported.
 
 ````dart
 ```(?/
-  <<= | >>= | \//= | \*\*=
+  <<= | >>= | #= | \*\*=
   | \+= | -= | /= | \@=
   | \*= | %= | ~= | \^= | \&= | \|=
   | =(?!=)
-)```;
+)```
 
 \< x
   (?:[a-zA-Z_]|(?:\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}))(?:[a-zA-Z0-9_]|(?:\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}))*(?=:)
@@ -673,8 +681,8 @@ Lists are indexed collections of values, are surrounded by square brackets and e
 The type signature of a list is `List[Value]` or `{}Value`.
 
 ```dart
-var x: []Int = [10, 20, 30];
-var y = [\a, \b, \c]; // is []Str
+var x: []Int = [10, 20, 30]
+var y = [\a, \b, \c] // is []Str
 ```
 
 The type of the list uses the postfix curly bracket notation, where you can explicitly specify the type of the list.
@@ -692,14 +700,14 @@ assert [1, 2, 3] is []Nat &&
   [1, -2, 3] is []Int &&
   [1, "2", 3] is [](Nat | Str) &&
   [1, 2, 3]{Num} is []Num &&
-  [[10, 20], [30]] is [][]Int;
+  [[10, 20], [30]] is [][]Int
 ```
 
 Often the compiler will infer a list to have a non-nullable type. If the list might store `null` or `void` values, then you will need to explicitly cast it.
 
 ```dart
-[1, 2, 3]; // cannot store null
-[1, 2, 3, null]{?Nat}; // can store null
+[1, 2, 3] // cannot store null
+[1, 2, 3, null]{?Nat} // can store null
 ```
 
 The empty list is denoted using the special syntax `[]`. Often you will specify a type - for example `[]{Str}` is an empty list of strings. If a type is not specified, then the empty list evaluates to a `[]{Any}`.
@@ -711,9 +719,9 @@ Sets are ordered collections of unique, distinct elements, and are surrounded by
 The type signature of a set is `Set[Key]` or `{}Key`.
 
 ```dart
-var x: {}Int = {10, 20, 30};
-var y = {\a, \b, \c}; // is []Str
-var z = {10, '20', '30']{Str|Int};
+var x: {}Int = {10, 20, 30}
+var y = {\a, \b, \c} // is []Str
+var z = {10, '20', '30']{Str|Int}
 ```
 
 If the type is omitted, then type inference is used to determine the type of the items. The type of the items is determined by taking the union type of all the elements of the list. For example:
@@ -729,9 +737,9 @@ The empty set is denoted using the special syntax `{}`. If the type is not speci
 Maps are keyed collections of unique elements, surrounded by curly brackets like sets. Each key is unique and is assigned to a non-distinct value, separated by a colon. Pairs are separated by commas, just like lists and sets.
 
 ```dart
-var x: {Int : Str} = {1: 'one', 2: 'two'};
-var y = {3: 'three', 4: 'four'}; // is []Str
-var z = {10, '20', '30']{Str : Int};
+var x: {Int : Str} = {1: 'one', 2: 'two'}
+var y = {3: 'three', 4: 'four'} // is []Str
+var z = {10, '20', '30']{Str : Int}
 ```
 
 The type signature of a map is `Map[Key, Value]` or `{Key : Value}`. Note the colon is spaced out on both sides. `{Key: Value}` is a map with the string value `Key` which can hold the type `Value`.
@@ -814,4 +822,179 @@ Trinity is a pure object-oriented language in that everything is an object you c
 x.+(y) => x + y
 x.!() => !x
 x.!(,) => x!
+```
+
+## Control Statements
+
+### Introduction: expression-oriented programming
+
+As a brief note about programming in general, when every expression you write returns a value, that style is referred to as expression-oriented programming, or EOP. The examples above are all expressions.
+
+Conversely, lines of code that don't return values are called statements, and they are used for their side-effects. For example, these lines of code don’t return values, so they are used for their side effects:
+
+```dart
+if a == b: doSomething()
+print("Hello")
+```
+
+### Basic closures
+
+Bindings can be scoped through the do-block: `do {}`.
+
+```dart
+let message = do {
+  let part1 = "hello"
+  let part2 = "world"
+  part1 ++ " " ++ part2
+}
+// `part1` and `part2` not accessible here!
+```
+
+The value of the last line of a scope is implicitly returned.
+
+`if`, `while` and functions all use the same block scoping mechanism.
+
+```dart
+if displayGreeting {
+  let message = "Enjoying the docs so far?"
+  print(message)
+}
+// `message` not accessible here!
+```
+
+Instead of a block, whenever there's a single statement, use the colon `:` instead of an opening curly brace.
+
+```dart
+let message = do: 3 + 4
+```
+
+But not both (opening curly brace is a set literal):
+
+```dart
+let message = do: { 3 + 4 }
+assert message is Set
+```
+
+### Conditionals
+
+A basic `if` statement looks like this:
+
+```dart
+if a == b: doSomething()
+```
+
+Or like this:
+
+```dart
+if a == b:
+  doSomething()
+```
+
+or even like this:
+
+```dart
+if a == b {
+  doSomething()
+}
+```
+
+An if-else expression without the final `else` branch implicitly gives `()` (aka the unit type).
+
+```dart
+if showMenu { displayMenu() }
+// is equivalent to
+if showMenu { displayMenu() } else { null }
+```
+
+The if/else construct looks like this:
+
+```dart
+if a == b {
+  doSomething()
+} else {
+  doSomethingElse()
+}
+```
+
+The complete Trinity `if`/`else if`/`else` expression looks like this:
+
+```dart
+if test1 {
+  doX()
+} elif test2 { // not "else if"
+  doY()
+} else {
+  doZ()
+}
+```
+
+Replacing `if` with `un` and `elif` with `elun` for the opposite effect (`un` is short for `unless`).
+
+```dart
+un test1 { // unless; if not
+  doX()
+} elun test2 { // unless; if not
+  doY()
+} else {
+  doZ()
+}
+```
+
+A great thing about the Trinity conditional is that it always returns. You can ignore the result as we did in the previous examples, but a more common approach, especially in functional programming.
+
+You can assign the result to a variable:
+
+```dart
+val minValue = if a < b: a else: b
+```
+
+This is cool for several reasons, including the fact that it means that Scala doesn’t require a special "ternary" operator. Wait, we still provide that for you.
+
+```dart
+val minValue = a < b ? a : b
+val maxValue = a > b ! a : b
+```
+
+#### Alternative Conditional Branch
+
+Trinity's alternative "if" branch takes a set of test-expression pairs, evaluating them one at a time from top to bottom. If a test returns true, its expression is evaluated and does not evaluate any of the other tests or expressions.
+
+```dart
+if {
+  case n < 0: "negative"
+  case n > 0: "positive"
+  case: "zero" // also: "else: 0"
+}
+```
+
+### While Loops
+
+While loops execute its body code block while its condition is true.
+
+```dart
+while i < 10 {
+  text += "The number is " + i;
+  i += 1;
+}
+```
+
+`loop-while` is a variant of `while`. This loop will execute the code block once, before checking if the condition is true, then it will repeat the loop as long as the condition is true.
+
+```dart
+loop {
+  text += "The number is " + i;
+  i++;
+} while i < 10;
+```
+
+`break` breaks out of the current loop.
+
+```dart
+while true {
+  if new Random() > 0.3 {
+    break && return 1;
+  } else {
+    Js.log("Still running")
+  }
+}
 ```
