@@ -42,7 +42,7 @@ sync iter generateRandom(*seed: []Int): Point {
 
 > Update: I have a [Trello](https://trello.com/b/A3NDX7qY/trinity-programming-language) now!
 
-- **Grammar** (see [`grammar.yaml`](https://github.com/TehFynlNyt/TrinityLang/blob/main/grammar.yaml))
+- **Grammar** (see [`grammar.yaml`](https://github.com/NoxVentura/TrinityLang/blob/main/grammar.yaml))
 - Documentation (language and API)
 - Language reference
 - Lexer and parser
@@ -115,7 +115,7 @@ The mission is to create a language that is portable to (lower)-level runtimes s
 
 This document provides everything you need to know about Trinity, from the syntax, operations and features of the language, to its core libraries and modules. This is not meant to be a tutorial or reference, but rather an aid for existing developers coming from other languages who want to learn more about how the language works and have questions to ask.
 
-This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/TehFynlNyt/TrinityLang. Contributions and corrections are welcome.
+This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/NoxVentura/TrinityLang. Contributions and corrections are welcome.
 
 A lot of my work on Trinity is still experimental and ongoing, so I am sharing this repository so I could get all of my ideas together and perhaps invite some of you to contribute your own. Once I get done with it, we can begin work on the compiler.
 
@@ -731,7 +731,7 @@ Maps are keyed collections of unique elements, surrounded by curly brackets like
 ```dart
 var x: {Int : Str} = {1: 'one', 2: 'two'};
 var y = {3: 'three', 4: 'four'}; // is []Str
-var z = {10, '20', '30']{Str : Int}; 
+var z = {10, '20', '30']{Str : Int};
 ```
 
 The type signature of a map is `Map[Key, Value]` or `{Key : Value}`. Note the colon is spaced out on both sides. `{Key: Value}` is a map with the string value `Key` which can hold the type `Value`.
@@ -751,6 +751,67 @@ Note that maps may not be typed with a nullable key. If you are using type infer
 {1: 'one', 2: 'two'}{Int : ?Str} // now it can
 ```
 
-### Iterables
+### Symbols
 
-Iterables look like list or map literals but are delimited using round brackets, like tuples in Python.
+A symbol represents a unique name inside the entire source code. Symbols are interpreted at compile time and cannot be created dynamically.
+
+The only way to create a symbol is by using a symbol literal, denoted by a colon (`:`) followed by an unquoted string beginning with a word character, and follows the same rules as an unquoted string.
+
+The identifier may optionally be enclosed in single or double quotes.
+
+```dart
+:unquoted_symbol
+:"quoted symbol"
+:"a" // identical to :a
+:あ
+```
+
+A quoted identifier can contain any Unicode character including white-spaces and can same escape sequences as a string literal, including interpolation. Use interpolation to create dynamic keys.
+
+```dart
+:question?
+:exclamation!
+```
+
+## Expressions
+
+Trinity's expression syntax is very similar to C, PHP, Java, Elixir, Haskell and others. Trinity has built-in operators:
+
+- Primary: `x.y`, `x!.y`, `x?.y`, `x::y`, `x!:y`, `x?:y`, `x.=y`, `x!.=y`, `x?.=y`, `x::=y`, `x!:=y`, `x?:=y`, `x...y`, `x..<y`, `x>..y`, `x>.<y`, `unset`, `del`
+- Postfix: `x!`, `x?`
+- Prefix: `!x`, `#x`, `$x`, `%x`, `&x`, `*x`, `~x`
+- Infix operators:
+  - Multiplicative: `*`, `**`, `***`, `/`, `#`, `%`, `%%`,
+  - Additive: `+`, `-`, `++`, `--`
+  - Minmax: `*>`, `<*`
+  - Bitwise and: `&`
+  - Bitwise xor: `^`
+  - Bitwise or: `|`
+  - Bitwise shift: `<<`, `>>`
+  - Range: `to`, `til`, `thru`, `by`
+  - Relational: `<`, `>`, `<=`, `>=`, `<=>`, `==`, `!=`, `===`, `!==`,
+  - Membership: `<:`, `<!`, `:<`, `!<`, `~=`, `~!`, `=~`, `!~`, `in`, `!in`, `of`, `!of`
+  - Implication/right-arrow: `->`, `-->`, `=>`, `==>`, `~>`, `~~>`
+  - Channel/backward implication: `<==`, `<-`, `<--`, `<~`, `<~~`
+  - Bothward implication: `<~>`, `<==>`, `<->`
+  - Regex operators: `<>`, `=<`
+  - Type-related: `is`, `is!`, `as`, `as?`, `as!`
+  - Logical and: `&&`
+  - Logical xor: `^^`
+  - Logical or: `||`
+  - Function: `</>`, `<:>`, `<$>`, `<+>`, `<*>`
+  - Application: `|>`, `||>`, `|||>`, `+>`, `$>`
+  - Reverse application: `<|`, `<||`, `<|||`, `<+`, `<$`
+  - Coalescing: `??`, `!!`, `?:`, `!:`
+  - Ternary: `x ? y : z`, `x ! y : z`, `x $ y : z`
+  - Assignment: `=`, `:=`, `+=`, `-=`, etc.
+
+#### Shortcut operators
+
+Trinity is a pure object-oriented language in that everything is an object you can call methods on, even value types such as `Bool` and `Int`.
+
+```dart
+x.+(y) => x + y
+x.!() => !x
+x.!(,) => x!
+```
