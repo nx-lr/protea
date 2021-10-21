@@ -1047,54 +1047,72 @@ The tables below define all of Trinity's operators, and you can define your own.
 
 #### Numeric operators
 
-| Operator | Type   | Meaning                          |
-| -------- | ------ | -------------------------------- |
-| `+`      | Prefix | Numeric casting                  |
-| `+`      | Suffix | Successor                        |
-| `+`      | Infix  | Addition                         |
-| `-`      | Prefix | Negation                         |
-| `-`      | Suffix | Predecessor                      |
-| `-`      | Infix  | Subtraction                      |
-| `*`      | Infix  | Multiplication                   |
-| `**`     | Infix  | Exponentiation                   |
-| `***`    | Infix  | Exponent with integer rounding   |
-| `/`      | Infix  | Division                         |
-| `#`      | Infix  | Division with integer rounding   |
-| `%`      | Infix  | Remainder (Python, R)            |
-| `%%`     | Infix  | Unsigned remainder (C, Java, JS) |
-| `~`      | Prefix | Bitwise not                      |
-| `&`      | Infix  | Bitwise and                      |
-| `\|`     | Infix  | Bitwise or                       |
-| `^`      | Infix  | Bitwise exclusive or             |
-| `<<`     | Infix  | Bitwise signed left shift        |
-| `>>`     | Infix  | Bitwise signed right shift       |
-| `<<<`    | Infix  | Bitwise unsigned left shift      |
-| `>>>`    | Infix  | Bitwise unsigned right shift     |
+| Operator     | Type   | Meaning                          |
+| ------------ | ------ | -------------------------------- |
+| `+`          | Prefix | Numeric casting                  |
+| `+`          | Suffix | Successor                        |
+| `+`          | Infix  | Addition                         |
+| `-`          | Prefix | Negation                         |
+| `-`          | Suffix | Predecessor                      |
+| `-`          | Infix  | Subtraction                      |
+| `*`          | Infix  | Multiplication                   |
+| `**`, `@*`   | Infix  | Exponentiation                   |
+| `***`, `@**` | Infix  | Exponent with integer rounding   |
+| `/`          | Infix  | Division                         |
+| `#`          | Infix  | Division with integer rounding   |
+| `%`          | Infix  | Remainder (Python, R)            |
+| `%%`         | Infix  | Unsigned remainder (C, Java, JS) |
+| `~`          | Prefix | Bitwise not                      |
+| `&`          | Infix  | Bitwise and                      |
+| `\|`         | Infix  | Bitwise or                       |
+| `^`          | Infix  | Bitwise exclusive or             |
+| `<<`         | Infix  | Bitwise signed left shift        |
+| `>>`         | Infix  | Bitwise signed right shift       |
+| `<<<`        | Infix  | Bitwise unsigned left shift      |
+| `>>>`        | Infix  | Bitwise unsigned right shift     |
+| `<`          | Infix  | Lesser than                      |
+| `<=`         | Infix  | Lesser than or equal to          |
+| `>`          | Infix  | Greater than                     |
+| `>=`         | Infix  | Greater than or equal to         |
+| `==`         | Infix  | Equal to                         |
+| `!=`, `<>`   | Infix  | Not equal to                     |
+| `<=>`        | Infix  | Three-way comparison             |
 
 #### String operators
 
-| Operator | Type  | Meaning |
-| -------- | ----- | ------- |
-| `+`      | Infix |         |
+| Operator | Type  | Meaning           |
+| -------- | ----- | ----------------- |
+| `+`      | Infix | Concatenation     |
+| `-`      | Unary | Reversal          |
+| `~=`     | Infix | Matching          |
+| `~!`     | Infix | Negative matching |
+| `*`      | Infix | Repetition        |
+| `/`      | Infix | Splitting         |
+| `#`      | Unary | Length            |
 
 #### Logical operators
 
-| Operator | Type | Meaning |
-| -------- | ---- | ------- |
-| `+`      |      |         |
+| Operator | Type  | Meaning              |
+| -------- | ----- | -------------------- |
+| `&&`     | Infix | Logical and          |
+| `\|\|`   | Infix | Logical or           |
+| `^^`     | Infix | Logical exclusive or |
+| `!`      | Unary | Logical not          |
 
 #### Function operators
 
-| Operator | Type  | Meaning                      |
-| -------- | ----- | ---------------------------- |
-| `+>`     | Infix | Forward function composition |
-| `\|>`    | Infix | Forward function composition |
-| `\|>`    | Infix | Forward function composition |
-| `\|\|>`  | Infix | Forward function composition |
+| Operator  | Type  | Meaning                                |
+| --------- | ----- | -------------------------------------- |
+| `+>`      | Infix | Forward function composition           |
+| `\|>`     | Infix | Forward function piping                |
+| `\|\|>`   | Infix | Forward function piping (asynchronous) |
+| `\|\|\|>` | Infix | Forward function piping (iterable)     |
+| `<+`      | Infix | Forward function composition           |
+| `<\|`     | Infix | Forward function piping                |
+| `<\|\|`   | Infix | Forward function piping (asynchronous) |
+| `<\|\|\|` | Infix | Forward function piping (iterable)     |
 
-#### Iterable operators
-
-#### List operators
+#### Collection operators
 
 ### Custom Operators
 
