@@ -2260,7 +2260,7 @@ repository:
       binary-ops:
         patterns:
           - comment: augmented assignment += -= *= /= etc
-            match: (?<=^|[\s'"`\\({\[])([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+(?<![!:~.<=>])=)(?=$|[\s'"`\\)}\]])
+            match: (?<=^|[\s'"`\\({\[])([\p{S}\p{P}&&[^!:~.<=>,;'"`\\(){}\[\]\p{Pc}]][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*=)(?=$|[\s'"`\\)}\]])
             name: keyword.operator.assignment.augmented.trin
 
           - comment: |
@@ -2314,18 +2314,21 @@ repository:
               (:?=)#1
               |([+-]|\*{1,3}|~?/|%%?|\#\#?|<?\*>?)#2
               |(\+\+|--)#3
-              |([&|^~]{2}|![&|^]|[&|^]!)#4
+              |(&&|\|\||\^\^)#4
               |([&|^~])#5
               |(<<<?|>>>?)#6
               |(\|{1,3}>|<\|{1,3})#7
               |(\+>|<\+)#8
-              |([<>]?[!:][<>]?)#9
-              |([<>]=?)#10
-              |(<>|=<|<?[/*|+$]>?)#11
-              |([!=]==?)#12
-              |(~>|<~|~~>|<~~)#13
-              |(<==|==?>)#14
-              |(--?>|<--?)#15
+              |([<>][!:]|[!:][<>])#9
+              |([<>]=?|<=?>)#10
+              |(=<|<?[/*|+$:]>?)#11
+              |([!=]==?|[!=]~|~[!=])#12
+              |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*~>|
+              <~[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*)#13
+              |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*=>|
+              <=[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*)#14
+              |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*->|
+              <-[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*)#15
               |(\?\?)#16
               |(!!)#17
               |(\?:)#18
@@ -2442,7 +2445,7 @@ repository:
             comment: Suffix operators
             match: |
               (?x)
-              (?<=[\w)}\]'"`]
+              (?<=['"`\w)}\]]
               [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*)
               (?:([*/])#1
               |(\+)#2
@@ -2633,7 +2636,7 @@ repository:
                 name: punctuation.separator.key-value.trin
 
         patterns:
-          - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|^|;|,|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\#\{)\s*
+          - begin: \s*(?<=^|;|,|[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+||[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\#\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.mapping.trin}
@@ -2642,7 +2645,7 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|^|;|,|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\{)\s*
+          - begin: \s*(?<=^|;|,|[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+||[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.dictionary.trin}
@@ -3126,7 +3129,7 @@ repository:
 
       # property or method modifiers
       |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
-      |prefix|suffix|infix|primary|unary|left|right
+      |prefix|suffix|infix|binary|unary|left|right
       )
       )\b\s*
       |# Decorators
@@ -3165,7 +3168,7 @@ repository:
               )|
               (# Property modifiers
               rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
-              |prefix|suffix|infix|primary|unary|left|right
+              |prefix|suffix|infix|binary|unary|left|right
               )
               )\b\s*
             captures:
@@ -3762,7 +3765,6 @@ repository:
 
   clauses:
     patterns:
-      - include: "#params-clause"
       - include: "#for-clause"
       - include: "#if-clause"
       - include: "#switch-clause"
@@ -3775,8 +3777,7 @@ repository:
       - include: "#case-clause"
       - include: "#type-clause"
       - include: "#new-clause"
-      - include: "#method-clause"
-      - include: "#function-clause"
+      - include: "#params-clause"
 
     repository:
       pattern-brackets:
@@ -3786,144 +3787,6 @@ repository:
           1: {name: punctuation.definition.parameters.trin}
         patterns:
           - include: "#function-params"
-
-      method-clause:
-        patterns:
-          - begin: |
-              (?x)(?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
-              ([\p{Pc}\p{L}]\w*)\s+
-              ([?:]?=)\s+
-              (
-              (?:
-              (?:# access modifiers
-              pub|priv|prot|inline|final|mut|immut|ghost
-              |seal|abs|intern|extern|imply|exply|global|local
-
-              # concurrency modifiers
-              |a?sync|stat|dyn|lazy|eager|strong|weak|swap
-              |vol|unsafe|unfix|bound|free|opaque|trans
-
-              # property or method modifiers
-              |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
-              |prefix|suffix|infix|primary|unary|left|right
-              |# Decorators
-              @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
-              )\s*\b)*
-              )\s*
-              (\|)
-              (?!\|)
-            end: (?<!\|)(\|)(?!\|)
-            beginCaptures:
-              1: {name: entity.name.function.method.trin}
-              2: {name: keyword.operator.assignment.trin}
-              3: {patterns: *modifier-keywords}
-              4: {name: punctuation.separator.arguments.trin}
-            endCaptures:
-              1: {name: punctuation.separator.arguments.trin}
-            patterns:
-              - include: "#function-params"
-          - comment: |
-              Method def before function keyword
-              x = def()
-            match: |
-              (?x)\s*(?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
-              ([\p{Pc}\p{L}]\w*)\s+
-              ([?:]?=)\s+
-              ((?:
-              \s*(?:
-              (?:# access modifiers
-              pub|priv|prot|inline|final|mut|immut|ghost
-              |seal|abs|intern|extern|imply|exply|global|local
-
-              # concurrency modifiers
-              |a?sync|stat|dyn|lazy|eager|strong|weak|swap
-              |vol|unsafe|unfix|bound|free|opaque|trans
-
-              # property or method modifiers
-              |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
-              |prefix|suffix|infix|primary|unary|left|right
-              |# Decorators
-              @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
-              ))
-              \s*)*)
-              (?=\s*\b
-              (?:
-              def|fun|proc|macro
-              )\b
-              )
-            captures:
-              1: {name: entity.name.function.method.trin}
-              2: {name: keyword.operator.assignment.trin}
-              3: {patterns: *modifier-keywords}
-
-      function-clause:
-        patterns:
-          - begin: |
-              (?x)\s*
-              ([\p{Pc}\p{L}]\w*)\s+
-              ([?:]?=)\s+
-              (
-              (?:
-              (?:# access modifiers
-              pub|priv|prot|inline|final|mut|immut|ghost
-              |seal|abs|intern|extern|imply|exply|global|local
-
-              # concurrency modifiers
-              |a?sync|stat|dyn|lazy|eager|strong|weak|swap
-              |vol|unsafe|unfix|bound|free|opaque|trans
-
-              # property or method modifiers
-              |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
-              |prefix|suffix|infix|primary|unary|left|right
-              |# Decorators
-              @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
-              )\s*\b)*
-              )\s*
-              (\|)
-              (?!\|)
-            end: (?<!\|)(\|)(?!\|)
-            beginCaptures:
-              1: {name: entity.name.function.trin}
-              2: {name: keyword.operator.assignment.trin}
-              3: {patterns: *modifier-keywords}
-              4: {name: punctuation.separator.arguments.trin}
-            endCaptures:
-              1: {name: punctuation.separator.arguments.trin}
-            patterns:
-              - include: "#function-params"
-          - comment: |
-              Function def before function keyword
-              x = def()
-            match: |
-              (?x)\s*
-              ([\p{Pc}\p{L}]\w*)\s+
-              ([?:]?=)\s+
-              ((?:
-              \s*(?:
-              (?:# access modifiers
-              pub|priv|prot|inline|final|mut|immut|ghost
-              |seal|abs|intern|extern|imply|exply|global|local
-
-              # concurrency modifiers
-              |a?sync|stat|dyn|lazy|eager|strong|weak|swap
-              |vol|unsafe|unfix|bound|free|opaque|trans
-
-              # property or method modifiers
-              |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
-              |prefix|suffix|infix|primary|unary|left|right
-              |# Decorators
-              @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
-              ))
-              \s*)*)
-              (?=\s*\b
-              (?:
-              def|fun|proc|macro
-              )\b
-              )
-            captures:
-              1: {name: entity.name.function.trin}
-              2: {name: keyword.operator.assignment.trin}
-              3: {patterns: *modifier-keywords}
 
       new-clause:
         applyEndPatternLast: 1
@@ -3963,7 +3826,7 @@ repository:
 
       catch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|fix)\b\s*
-        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
         name: meta.catch.trin
         captures:
           1: {name: keyword.control.error.trin}
@@ -3985,7 +3848,7 @@ repository:
 
       thread-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(tandem|unison|series|spawn|kill|lock)\b\s*
-        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
         name: meta.thread.trin
         captures:
           1: {name: keyword.control.thread.trin}
@@ -4007,7 +3870,7 @@ repository:
 
       do-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do)\b\s*
-        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
         name: meta.do.trin
         captures:
           1: {name: keyword.control.do.trin}
@@ -4018,7 +3881,7 @@ repository:
 
       for-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)\b\s*
-        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
         name: meta.for.trin
         captures:
           1: {name: keyword.control.loop.trin}
@@ -4040,7 +3903,7 @@ repository:
 
       if-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)\b\s*
-        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
         name: meta.if.trin
         captures:
           1: {name: keyword.control.conditional.trin}
@@ -4051,7 +3914,7 @@ repository:
 
       match-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)\b\s*
-        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
         name: meta.match.trin
         captures:
           1: {name: keyword.control.match.trin}
@@ -4064,13 +3927,13 @@ repository:
             patterns:
               - &when-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)\b\s*
-                end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+                end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
                 captures:
                   1: {name: keyword.control.match.trin}
                   2: {name: punctuation.separator.colon.trin}
                 patterns:
                   - include: "#params-clause"
-                  - include: "#type-operators"
+                  - include: "#type-keywords"
                   - applyEndPatternLast: 1
                     begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
                     end: (?=.)|$
@@ -4084,8 +3947,8 @@ repository:
                     name: keyword.control.match.trin
                   - include: $self
               - &else-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(else|fail)\b\s*
-                end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)\b\s*
+                end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
                 captures:
                   1: {name: keyword.control.match.trin}
                   2: {name: punctuation.separator.colon.trin}
@@ -4104,7 +3967,7 @@ repository:
 
       switch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)\b\s*
-        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
         name: meta.switch.trin
         captures:
           1: {name: keyword.control.switch.trin}
@@ -4117,13 +3980,13 @@ repository:
             patterns:
               - &case-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)\b\s*
-                end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+                end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
                 captures:
                   1: {name: keyword.control.switch.trin}
                   2: {name: punctuation.separator.colon.trin}
                 patterns:
                   - include: "#params-clause"
-                  - include: "#type-operators"
+                  - include: "#type-keywords"
                   - applyEndPatternLast: 1
                     begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
                     end: (?=.)|$
@@ -4137,8 +4000,8 @@ repository:
                     name: keyword.control.switch.trin
                   - include: $self
               - &default-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(else|fail)\b\s*
-                end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)\b\s*
+                end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
                 captures:
                   1: {name: keyword.control.switch.trin}
                   2: {name: punctuation.separator.colon.trin}
@@ -4157,7 +4020,7 @@ repository:
 
       with-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)\b\s*
-        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+        end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
         name: meta.with.trin
         captures:
           1: {name: keyword.control.with.trin}
@@ -4205,7 +4068,7 @@ repository:
 
           # property or method modifiers
           |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
-          |prefix|suffix|infix|primary|unary|left|right
+          |prefix|suffix|infix|binary|unary|left|right
           |# Decorators
           @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
           ))
@@ -4241,7 +4104,7 @@ repository:
 
           # property or method modifiers
           |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
-          |prefix|suffix|infix|primary|unary|left|right
+          |prefix|suffix|infix|binary|unary|left|right
           |# Decorators
           @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
           )\s*\b)*
@@ -4333,18 +4196,29 @@ repository:
       closures:
         patterns:
           - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)\b\s*
-            end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+            end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
             captures:
-              1: {name: keyword.control.match.trin}
+              1: {name: keyword.control.trin}
               2: {name: punctuation.separator.colon.trin}
             patterns:
               - include: "#params-clause"
-              - include: "#type-operators"
+              - include: "#type-keywords"
+              - applyEndPatternLast: 1
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
+                end: (?=.)|$
+                beginCaptures:
+                  1: {name: keyword.control.trin}
+                patterns:
+                  - include: "#types"
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)\b\s*
+                name: keyword.control.trin
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)\b\s*
+                name: keyword.control.trin
               - include: $self
           - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)\b\s*
-            end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=\b|[)}\]'"`])(:)(?=\s|$)
+            end: (?<=}|;)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
             captures:
-              1: {name: keyword.control.match.trin}
+              1: {name: keyword.control.trin}
               2: {name: punctuation.separator.colon.trin}
             patterns:
               - include: $self
@@ -4389,7 +4263,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|^|;|,|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\#\{)\s*
+      - begin: \s*(?<=^|;|,|(?<=['"`\w)}\]]):|[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+||[({\[])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.trin}
@@ -4397,7 +4271,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|^|;|,|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\{)\s*
+      - begin: \s*(?<=^|;|,|(?<=['"`\w)}\]]):|[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+||[({\[])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
