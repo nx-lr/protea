@@ -896,16 +896,16 @@ These flags go after the regex literal. `f`, `m`, `u`, `e` and `x` are enabled b
 
 #### Replacement String
 
-This syntax applies to the right hand side of the regex literal in regex operations such as `=<` substitution and `</>` transliteration.
+This syntax applies to the second regex literal onward in regex operations such as substitution and transliteration.
 
-| x         | y                                                                                                                                                      |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `$$`      | Inserts a literal "$".                                                                                                                                 |
-| `$0`      | Inserts the entire matched substring into the output                                                                                                   |
-| `$-`      | Inserts the portion of the string that precedes the matched substring.                                                                                 |
-| `$+`      | Inserts the portion of the string that follows the matched substring.                                                                                  |
-| `$n`      | Where `n` is a positive integer, inserts the `n`th parenthesized submatch string. If `n` refers to an invalid group, the result is inserted literally. |
-| `$<name>` | Where name is a capturing group name. If the group is invalid, it is inserted literally.                                                               |
+| Syntax    | Meaning                                                                                                                   |
+| --------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `$$`      | Inserts a literal "$".                                                                                                    |
+| `$0`      | Inserts the entire matched substring into the output.                                                                     |
+| `$-`      | Inserts the portion of the string that precedes the matched substring.                                                    |
+| `$+`      | Inserts the portion of the string that follows the matched substring.                                                     |
+| `$n`      | Where `n` is a positive integer, inserts the `n`th submatch string. If `n` is an invalid group, it is inserted literally. |
+| `$<name>` | Where name is a capturing group name. If the group is invalid, it is inserted literally.                                  |
 
 ## Collections
 
@@ -1028,22 +1028,29 @@ The tables below define all of Trinity's operators, and you can define your own.
 
 #### General operators
 
-| Operator | Type   | Meaning                             |
-| -------- | ------ | ----------------------------------- |
-| `!`      | Unary  | Non-null assertion                  |
-| `?`      | Unary  | Existential operator                |
-| `.`      | Binary | Chaining/accessor                   |
-| `::`     | Binary | Dynamic accessor                    |
-| `!.`     | Binary | Assertive accessor                  |
-| `!:`     | Binary | Assertive dynamic accessor          |
-| `?.`     | Binary | Optional accessor                   |
-| `?:`     | Binary | Optional dynamic accessor           |
-| `.=`     | Binary | Access/assignment                   |
-| `::=`    | Binary | Dynamic access/assignment           |
-| `!.=`    | Binary | Assertive access/assignment         |
-| `!:=`    | Binary | Assertive dynamic access/assignment |
-| `?.=`    | Binary | Optional access/assignment          |
-| `?:=`    | Binary | Optional dynamic access/assignment  |
+| Operator | Type    | Meaning                         |
+| -------- | ------- | ------------------------------- |
+| `!`      | Unary   | Assert that not null            |
+| `?`      | Unary   | Exists                          |
+| `.`      | Binary  | Basic access                    |
+| `::`     | Binary  | Dynamic access                  |
+| `!.`     | Binary  | Assertive access                |
+| `!:`     | Binary  | Assertive dynamic access        |
+| `?.`     | Binary  | Optional access                 |
+| `?:`     | Binary  | Optional dynamic assign         |
+| `.=`     | Binary  | Access-assignment               |
+| `::=`    | Binary  | Dynamic access-assign           |
+| `!.=`    | Binary  | Assertive access-assign         |
+| `!:=`    | Binary  | Assertive dynamic access-assign |
+| `?.=`    | Binary  | Optional access-assign          |
+| `?:=`    | Binary  | Optional dynamic access-assign  |
+| `??`     | Infix   | Basic access                    |
+| `!!`     | Infix   | Dynamic access                  |
+| `?:`     | Infix   | Assertive access                |
+| `!:`     | Infix   | Assertive dynamic access        |
+| `? :`    | Ternary | Conditional                     |
+| `! :`    | Ternary | Inverse conditional             |
+| `$ :`    | Ternary | Infix function call             |
 
 #### Numeric operators
 
@@ -1051,15 +1058,15 @@ The tables below define all of Trinity's operators, and you can define your own.
 | ------------ | ------ | -------------------------------- |
 | `+`          | Prefix | Numeric casting                  |
 | `+`          | Suffix | Successor                        |
-| `+`          | Infix  | Addition                         |
+| `+`          | Infix  | Add                              |
 | `-`          | Prefix | Negation                         |
-| `-`          | Suffix | Predecessor                      |
-| `-`          | Infix  | Subtraction                      |
-| `*`          | Infix  | Multiplication                   |
-| `**`, `@*`   | Infix  | Exponentiation                   |
+| `-`          | Suffix | Previous number                  |
+| `-`          | Infix  | Subtract                         |
+| `*`          | Infix  | Multiply                         |
+| `**`, `@*`   | Infix  | Exponent                         |
 | `***`, `@**` | Infix  | Exponent with integer rounding   |
-| `/`          | Infix  | Division                         |
-| `#`          | Infix  | Division with integer rounding   |
+| `/`          | Infix  | Divide                           |
+| `#`          | Infix  | Divide with integer rounding     |
 | `%`          | Infix  | Remainder (Python, R)            |
 | `%%`         | Infix  | Unsigned remainder (C, Java, JS) |
 | `~`          | Prefix | Bitwise not                      |
@@ -1098,21 +1105,58 @@ The tables below define all of Trinity's operators, and you can define your own.
 | `\|\|`   | Infix | Logical or           |
 | `^^`     | Infix | Logical exclusive or |
 | `!`      | Unary | Logical not          |
+| `~>`     | Infix | Imply                |
+| `<~`     | Infix | Backwards imply      |
+| `<~>`    | Infix | Bothward imply       |
 
 #### Function operators
 
-| Operator  | Type  | Meaning                                |
-| --------- | ----- | -------------------------------------- |
-| `+>`      | Infix | Forward function composition           |
-| `\|>`     | Infix | Forward function piping                |
-| `\|\|>`   | Infix | Forward function piping (asynchronous) |
-| `\|\|\|>` | Infix | Forward function piping (iterable)     |
-| `<+`      | Infix | Forward function composition           |
-| `<\|`     | Infix | Forward function piping                |
-| `<\|\|`   | Infix | Forward function piping (asynchronous) |
-| `<\|\|\|` | Infix | Forward function piping (iterable)     |
+| Operator  | Type  | Meaning                    |
+| --------- | ----- | -------------------------- |
+| `+>`      | Infix | Composition                |
+| `\|>`     | Infix | Pipeline                   |
+| `\|\|>`   | Infix | Iterable pipeline          |
+| `\|\|\|>` | Infix | Async pipeline             |
+| `<+`      | Infix | Backward composition       |
+| `<\|`     | Infix | Backward pipeline          |
+| `<\|\|`   | Infix | Backward iterable pipeline |
+| `<\|\|\|` | Infix | Backward async piping      |
 
 #### Collection operators
+
+| Operator | Type  | Meaning                 |
+| -------- | ----- | ----------------------- |
+| `+`      | Infix | Push or unshift         |
+| `++`     | Infix | Concatenate             |
+| `-`      | Unary | Pop or shift            |
+| `<:`     | Infix | Value in collection     |
+| `<!`     | Infix | Value not in collection |
+| `:<`     | Infix | Value in collection     |
+| `!<`     | Infix | Value not in collection |
+| `*`      | Infix | Repeat (only for lists) |
+| `/`      | Infix | Group by                |
+| `#`      | Unary | Length or cardinality   |
+| `%`      | Infix | Sort by                 |
+| `&`      | Infix | Intersection            |
+| `\|`     | Infix | Union                   |
+| `^`      | Infix | Symmetric difference    |
+| `<->`    | Infix | Filter                  |
+| `</>`    | Infix | Sort                    |
+| `<*>`    | Infix | Map                     |
+| `<+>`    | Infix | Group                   |
+| `<%>`    | Infix | Order by                |
+| `</>`    | Infix | Fold                    |
+| `</`     | Infix | Fold left               |
+| `/>`     | Infix | Fold right              |
+| `<$>`    | Infix | Scan                    |
+| `<$`     | Infix | Scan left               |
+| `$>`     | Infix | Scan right              |
+| `<%>`    | Infix | Take                    |
+| `<%`     | Infix | Take left               |
+| `%>`     | Infix | Take right              |
+| `<~>`    | Infix | Drop                    |
+| `<~`     | Infix | Drop left               |
+| `~>`     | Infix | Drop right              |
 
 ### Custom Operators
 
@@ -1122,7 +1166,7 @@ In Trinity, operators are methods. Any method with a single parameter can be use
 10.+(1)
 ```
 
-However, it’s easier to read as an infix operator:
+However, it's easier to read as an infix operator:
 
 ```dart
 10 + 1
@@ -1167,45 +1211,24 @@ infix def ^^ (x: MyBool, y: MyBool) = x || y && !(x && y)
 
 This helps to make the definition of `xor` more readable.
 
+### Associativity
+
+Binary operators whose first character is `@` are right-associative, all other binary operators are left-associative.
+
+```dart
+right infix def @/ (x, y: Float): Float = result = x / y
+// a right-associative division operator
+print(12 @/ 4 @/ 8) // 24.0 (4 / 8 = 0.5, then 12 / 0.5 = 24.0)
+print(12  / 4  / 8) // 0.375 (12 / 4 = 3.0, then 3 / 8 = 0.375)
+```
+
+A spaced out `?`, `!` and `$` is a ternary expression and has the lowest precedence. The rightmost part is separated with a colon `:`. `$` is the same as infix method calls on identifiers.
+
+```dart
+x.xor(a) == x $ xor : a
+```
+
 #### Precedence
-
-Binary operators such as `x.+(a)` and `x?.y` are parsed first and are evaluated from left to right. They are composed of one or more characters and are not spaced out beside any literal or expansion.
-
-```dart
-binary def?.(a: Any, b: Any): Any = ?a ? void : a[b]
-let a = {1: {c: \d}}
-assert a?.b?.c == void
-assert a?.1?.c == \d
-```
-
-Suffix operators are evaluated from left to right, have a single argument and are composed of only one character. They bind strongly and are evaluated after binary operators.
-
-```dart
-suffix def+ (a: Num): Num = a + 1
-suffix def- (a: Num): Num = a - 1
-let a = 1
-assert a++ == (a+)+ == 3
-assert a-- == (a-)- == -1
-```
-
-Prefix operators function the same way as suffix operators except they are evaluated from right to left. They are evaluated after suffix operators.
-
-```dart
-prefix def -(a: Num): Num = a.neg()
-let a = 1000
-assert --a == -(-a) == a
-```
-
-A unary modifier defines both suffix and prefix operators on its only argument.
-
-```dart
-unary def! !(x: Bool): Bool = !x
-let x = true
-assert !x! == !(x!) == true
-assert x! == !x == false
-```
-
-#### Infix operators
 
 If the operator ends with `=` and its first character is none of `<`, `>`, `!`, `=`, it is an assignment operator which has the second-lowest precedence.
 
@@ -1271,21 +1294,48 @@ Operators ending in either `->`, `~>` or `=>`, or starting with `<-`, `<~` or `<
 ((a + b) ^? (c ?^ d)) $ less : ((a ==> b) | c)
 ```
 
-### Associativity
+#### Binary Operators
 
-Binary operators whose first character is `@` are right-associative, all other binary operators are left-associative.
+Binary operators such as `x.+(a)` and `x?.y` are parsed first and are evaluated from left to right. They are composed of one or more characters and are not spaced out beside any literal or expansion.
 
 ```dart
-right infix def @/ (x, y: Float): Float = result = x / y
-// a right-associative division operator
-print(12 @/ 4 @/ 8) // 24.0 (4 / 8 = 0.5, then 12 / 0.5 = 24.0)
-print(12  / 4  / 8) // 0.375 (12 / 4 = 3.0, then 3 / 8 = 0.375)
+binary def?.(a: Any, b: Any): Any = ?a ? void : a[b]
+let a = {1: {c: \d}}
+assert a?.b?.c == void
+assert a?.1?.c == \d
 ```
 
-A spaced out `?`, `!` and `$` is a ternary expression and has the lowest precedence. The rightmost part is separated with a colon `:`. `$` is the same as infix method calls on identifiers.
+#### Suffix Operators
+
+Suffix operators are evaluated from left to right, have a single argument and are composed of only one character. They bind strongly and are evaluated after binary operators.
 
 ```dart
-x.xor(a) == x $ xor : a
+suffix def+ (a: Num): Num = a + 1
+suffix def- (a: Num): Num = a - 1
+let a = 1
+assert a++ == (a+)+ == 3
+assert a-- == (a-)- == -1
+```
+
+#### Prefix Operators
+
+Prefix operators function the same way as suffix operators except they are evaluated from right to left. They are evaluated after suffix operators.
+
+```dart
+prefix def -(a: Num): Num = a.neg()
+let a = 1000
+assert --a == -(-a) == a
+```
+
+#### Unary Operators
+
+A unary modifier defines both suffix and prefix operators as valid operations on its only argument.
+
+```dart
+unary def! !(x: Bool): Bool = !x
+let x = true
+assert !x! == !(x!) == true
+assert x! == !x == false
 ```
 
 ## Control Statements
