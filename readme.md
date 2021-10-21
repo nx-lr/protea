@@ -1611,7 +1611,7 @@ To demonstrate this, imagine that you want to evaluate "boolean equality" like P
 
 ```dart
 fun isTrue(a: Any) = match a {
-  case 0 | '' | '0': false
+  case 0 or '' or '0': false
   fail: true
 }
 ```
@@ -1619,15 +1619,15 @@ fun isTrue(a: Any) = match a {
 The key part of this solution is that this one case statement lets both 0 and the empty string evaluate to false:
 
 ```dart
-match a { case 0 | '' | '0': false }
+match a { case 0 or '' or '0': false }
 ```
 
 Before we move on, here’s another example that shows many matches in each case statement:
 
 ```dart
 val evenOrOdd = match i {
-  case 1 | 3 | 5 | 7 | 9: print("odd")
-  case 2 | 4 | 6 | 8 | 10: print("even")
+  case 1 or 3 or 5 or 7 or 9: print("odd")
+  case 2 or 4 or 6 or 8 or 10: print("even")
   fail: print("some other number")
 }
 ```
@@ -1636,8 +1636,8 @@ Here's another example that shows how to handle multiple strings in multiple cas
 
 ```dart
 match cmd {
-  case "start" | "go": print("starting")
-  case "stop" | "quit" | "exit": print("stopping")
+  case "start" or "go": print("starting")
+  case "stop" or "quit" or "exit": print("stopping")
   fail: print("doing nothing")
 }
 ```
