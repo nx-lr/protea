@@ -2,6 +2,8 @@
 
 > The language of the future.
 
+![](./banner.png)
+
 **Trinity** is an open source, fully featured and agile language that enables developers, designers and testers to build, test and deploy their projects with less code, no matter the platform or runtime. It provides avenues to access huge ecosystems of libraries and runtimes, without the need for any installation.
 
 Out of the box, it provides a robust program verifier and type checker that flags any errors to you so you can catch bugs early, and comes with a unified and comprehensive API and core libraries for making everyday or specialised tasks easier.
@@ -51,7 +53,6 @@ sync iter generateRandom(*seed: []Int): Point {
 
 ## Overview
 
-Trinity is ap rogramming language designed wit
 Trinity is a programming language designed with web, mobile, desktop and systems in mind. It is strongly typed, compiled, garbage-collected and has explicit support for multiple paradigms, including object-oriented, functional, concurrent and reflective programming.
 
 Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [Scala][scala], [ReScript][rescript], [TypeScript][typescript], [C#][csharp], [Flix][flix], [Gosu][gosu] and [Fantom][fantom] (_not the malware_). With these influences, Trinity advocates for writing readable and expressive code, and enabling you to do in Trinity what you could in other languages.
@@ -77,34 +78,27 @@ The mission is to create a language that is portable to (lower)-level runtimes s
 
 ### Philosophies:
 
-- **General guidelines**: A programming language should follow a set of strict guidelines and principles, fully backed by reasons. By outlining these principles, as Trinity grows , I hope to keep myself honest and to communicate the kind of language it aspires to be.
-
-  - **One language**: Trinity is forever one language. The compiler will not have extra flags or plugins that change how it behaves (even for language supersets like TypeScript or Groovy). We want to avoid fragmentation so to avoid programs written in different "dialects" of the language.
-  - **Fail fast, fail hard**: To aid development and debugging, and to prevent _potential harmful behaviour_, Trinity aborts execution when it encounters an unrecoverable error, or in the presence of concurrency, if a process fails. This ensures that whatever is going on outside gets notified so they can take action.
-  - **Useful error messages and stack traces**: Like Rust, Elixir and Python, Trinity aims to have understandable and human readable error messages. They should describe _what_ went wrong, _why_ it went wrong, _where_ it went wrong and _how_ it went wrong, and to suggest what to do about it.
-  - **No warnings, only errors**: Trinity's compiler never emits warnings, only errors that abort compilation. Warnings in other languages can be suppressed. Sometimes they can be harmless but could cause adverse side effects. In Trinity, any code that seems suspicious or wrong to the compiler should be downright rejected.
-  - **Documentation and unit tests**: Trinity supports useful annotations including comments, and unit test syntax, the latter inspired by Dafny. Such integrations will deeply benefit developers, and any newcomers who are learning how to use software and libraries.
-
-- **Simplicity**: We should not confuse getting things right with making things easy. But we should try to achieve both. By removing or suppressing syntax salt, we can let other things take advantage. This in turn can improve overall developer productivity.
-
-  - **Keyword-based**: Short keywords such as `proto`, `elem` and `def` makes it easy to visually identify the overall structure of code. All keywords are between two and six letters long, are short enough to reason about, and are written entirely in lowercase.
-  - **Uniform function calls**: Trinity supports uniform function calls, where function calls `f(x, y)` can be represented in an object-oriented way, as `x.f(y)`. This is a purely syntactic mechanism and does not influence the semantics of a call.
-  - **Declaration vs expression**: Trinity is functional, so everything is either an expression or declaration. Control flow statements while being statements in other languages are expressions in Trinity. Control flow statements such as `break`, `skip` and `throw` are really program calls.
-  - **Naming conventions**: Trinity employs partial case-insensitivity which enables developers to use varying conventions without the need for others to know the exact spelling of an identifier. types, modules, constants and classes use uppercase, while functions, parameters, methods and variables are lowercase.
-  - **Consistent syntax**: Trinity aims to have consistent and predictable syntax. For example, the syntax for string interpolations, `${}` or `$` are used in regular expressions and JSX. The syntax for types also mirror that of expressions: function application `f(a, b)`; type application `F[a, b]`.
-  - **Spacing and evaluation order**: Spacing means the difference - in line with coding conventions, all operators need to be spaced out depending on how they are evaluated, and helps the parser infer on which types to perform operations on. It also gives you the ability to mold the language into whatever you desire.
-
+- **General guidelines**: A programming language should follow a set of strict guidelines and principles, fully backed by reasons.
+  - **One language**: Trinity is forever one language---no flags or pre-processors. We want to avoid fragmentation so to avoid programs written in different "dialects" of the language.
+  - **Fail fast, fail hard**: To aid development and debugging, and to prevent potential harmful behaviour, Trinity aborts execution when it encounters an unrecoverable error, or in the presence of concurrency, if a process fails.
+  - **Useful error messages and stack traces**: Errors should describe _what_ went wrong, _why_ it went wrong, _where_ it went wrong and _how_ it went wrong, and to suggest what to do about it.
+  - **No warnings, only errors**: Warnings in other languages can be suppressed. Sometimes they can be harmless but could cause adverse side effects. In Trinity, any code that seems suspicious or wrong to the compiler should be downright rejected.
+  - **Documentation and unit tests**: Trinity supports useful annotations, such as comments, types and other constraints, as inspired by Dafny. Such integrations will deeply benefit developers.
+- **Simplicity**: I aim to make Trinity a good language, that both makes things easier and gets things right.
+  - **Keyword-based**: Short keywords such as `proto`, `elem` and `def` makes it easy to visually identify the overall structure of code. All keywords are between two and six letters long.
+  - **Uniform function calls**: Trinity supports uniform function calls, where `f(x, y)` could also be written as `x.f(y)`. This is purely syntax.
+  - **Declaration vs expression**: Trinity is expression-oriented and separates expressions and declarations. Control flow statements like `if`, `for` and `break` are expressions.
+  - **Naming conventions**: Trinity employs partial case-insensitivity, which enables developers use different conventions without knowing its exact spelling. Functions, variables and methods are marked as camelCase, while the rest are PascalCase.
+  - **Consistent syntax**: Trinity aims to have consistent and predictable syntax as much as possible and should be as familiar as possible. The syntax for types mirror that of expressions, for example.
+  - **Spacing and evaluation order**: In line with coding conventions, all operators are spaced depending on how they should be evaluated. It also gives you the ability to mold the language into whatever you desire.
 - **Multi-paradigm**: Trinity supports functional, imperative, concurrent and reflective programming, the last to an extent. And the many constructs of Trinity makes it easy to separate each paradigm from one another.
-
   - **Nothing before `main`**: In Trinity, `main` is the entry point of a program. No (user-defined) code is ever executed before `main`. This makes it easy to reason about startup behavior.
   - **Share memory by communicating**: Trinity follows Go's paradigm of shared memory by communication. Processes should only share immutable messages (and data structures). This significantly reduces the risk of race conditions.
   - **Dead code elimination**: Trinity requires all code to be available at compile-time. This enables a range of compilation techniques, such as program analysis, code optimisation, and tree shaking.
   - **Private by default**: In Trinity, declarations are hidden by default (i.e. private) and cannot be accessed from outside of their namespace (or sub-namespaces). It is important that programmers make a conscious choice about when to make a declaration visible.
   - **Declare before use**: In Trinity things must be defined before they can be used. Declarations make it easy to assign blame; we assume declarations to be correct and check every use against its declaration. Also, unused declarations are flagged at compile time.
   - **No unnecessary declarations**: We believe that a programming language should reduce the volume of declarations it requires. Declarations may be useful and are sometimes necessary, but Trinity aims to minimize its internal dependence on them.
-
 - **The little things**: The beauty of a new language is that it gives you a clean slate to fix all the little things that aggravate you.
-
   - **Default parameters and types**: functions can have default arguments; no need to write more boilerplate code for even convenience functions
   - **Explicit type conversion**: Use `as` to convert between types, and `is` for type checking. In Flix, a value of one type is never implicitly coerced or converted into a value of another type. For example,
   - **Type annotations**: Type annotations are necessary in the sense that they make it easier to read and clear up potential ambiguity. Any expression or declaration as well as their parameters can be annotated with types, and they are thrown away at runtime.
@@ -948,23 +942,11 @@ You can assign the result to a variable:
 val minValue = if a < b: a else: b
 ```
 
-This is cool for several reasons, including the fact that it means that Scala doesn’t require a special "ternary" operator. Wait, we still provide that for you.
+Anyway, Trinity has two ternary conditional operators, which are just syntax sugar for the above if you're not keen on using `if`. That last one, is syntax sugar for `un`...`else`.
 
 ```dart
 val minValue = a < b ? a : b
 val maxValue = a > b ! a : b
-```
-
-#### Alternative Conditional Branch
-
-Trinity's alternative "if" branch takes a set of test-expression pairs, evaluating them one at a time from top to bottom. If a test returns true, its expression is evaluated and does not evaluate any of the other tests or expressions.
-
-```dart
-if {
-  case n < 0: "negative"
-  case n > 0: "positive"
-  case: "zero" // also: "else: 0"
-}
 ```
 
 ### While Loops
@@ -974,7 +956,7 @@ While loops execute its body code block while its condition is true.
 ```dart
 while i < 10 {
   text += "The number is $i"
-  i += 1;
+  i += 1
 }
 ```
 
@@ -984,10 +966,10 @@ while i < 10 {
 loop {
   text += "The number is $i"
   i += 1
-} while i < 10;
+} while i < 10
 ```
 
-Until loops execute their bodies until the statements become false. Because it makes sense to add `until`. Thanks, Ruby.
+Until loops execute their bodies until their statements become false.
 
 ```dart
 until i == 10 {
@@ -1009,16 +991,16 @@ Loop block runs indefinitely.
 loop:
   print("hello world forever!")
 
-let i = 1;
+let i = 1
 loop {
-  print("`i` is now $i")
+  print("i is now $i")
   if i > 100: break
   i *= 2
 }
-assert i == 128;
+assert i == 128
 ```
 
-### Control flow statements
+#### Loop keywords
 
 Trinity has three keywords relating to loops:
 
@@ -1061,12 +1043,109 @@ You can loop over the keys of a map (or any other keyed collection) with `of` ra
 
 ```dart
 val list = [4, 5, 6]
-
 for val i in list:
   print(i) // "0", "1", "2",
-
 for val i of list:
   print(i) // "4", "5", "6"
-
 for val n of numbers: print(n)
+```
+
+### Switch or match
+
+Trinity has a concept of a `match` or `switch` expression. You can use either of which. As shown, with a match expression you write a number of case statements that you use to match possible values.
+
+```dart
+match i {
+  case 1: print("Monday") // when or case
+  case 2: print("Tuesday")
+  case 3: print("Wednesday")
+  case 4: print("Thursday")
+  case 5: print("Friday")
+  case 6: print("Saturday")
+  case 7: print("Sunday")
+  fail: print("Invalid day") // else or fail
+}
+```
+
+Above, we match the integer values 1 through 7. Any other value falls down to the `fail` or blank case, which is the catch-all, default case.
+
+`match`/`switch` expressions are nice because they also return values, so rather than directly printing a string as in that example, you can assign the string result to a new value:
+
+```dart
+// i is an integer
+val dayName = match i {
+  case 1: "Monday"
+  case 2: "Tuesday"
+  case 3: "Wednesday"
+  case 4: "Thursday"
+  case 5: "Friday"
+  case 6: "Saturday"
+  case 7: "Sunday"
+  fail: "Invalid day"
+}
+```
+
+`match`/`switch` expressions let you handle multiple cases.
+
+To demonstrate this, imagine that you want to evaluate "boolean equality" like PHP would: `0`, `''` or `'0'` evaluates to `false`, while everything else evaluates to `true`.
+
+```dart
+fun isTrue(a: Any) = match a {
+  case 0 | '' | '0': false
+  fail: true
+}
+```
+
+The key part of this solution is that this one case statement lets both 0 and the empty string evaluate to false:
+
+```dart
+match a { case 0 | '' | '0': false }
+```
+
+Before we move on, here’s another example that shows many matches in each case statement:
+
+```dart
+val evenOrOdd = match i {
+  case 1 | 3 | 5 | 7 | 9: print("odd")
+  case 2 | 4 | 6 | 8 | 10: print("even")
+  fail: print("some other number")
+}
+```
+
+Here's another example that shows how to handle multiple strings in multiple case statements:
+
+```dart
+match cmd {
+  case "start" | "go": print("starting")
+  case "stop" | "quit" | "exit": print("stopping")
+  fail: print("doing nothing")
+}
+```
+
+#### Guard conditions
+
+Another great thing about match expressions is that you can use `when` clauses to filter conditions.
+
+```dart
+val number = 4:u
+match number {
+  case i if i == 0: print('Zero')
+  case i if i > 0: print("Greater than zero")
+  fail: print("Fell through")
+}
+```
+
+#### Bindings
+
+Indirectly accessing a variable makes it impossible to branch and use that variable without re-binding. `match` provides the `as` sigil for binding values to names:
+
+```dart
+val pair = [2, 2]
+print("Tell me about $pair.")
+match pair {
+  case [x, y] if x == y: print("Twins!")
+  case [x, y] if x + y == 0: print("Opposites!")
+  case [x, _] if x % 2 == 1: print("The first is odd.")
+  fail: print("Nothing special!")
+}
 ```
