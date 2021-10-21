@@ -808,14 +808,178 @@ Trinity's expression syntax is very similar to C, PHP, Java, Elixir, Haskell and
   - Ternary: `x ? y : z`, `x ! y : z`, `x $ y : z`
   - Assignment: `=`, `:=`, `+=`, `-=`, etc.
 
-#### Shortcut operators
+#### Custom Operators
 
-Trinity is a pure object-oriented language in that everything is an object you can call methods on, even value types such as `Bool` and `Int`.
+In Trinity, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot-notation:
 
 ```dart
-x.+(y) => x + y
-x.!() => !x
-x.!(,) => x!
+10.+(1)
+```
+
+However, it’s easier to read as an infix operator:
+
+```dart
+10 + 1
+```
+
+Infix operators are spaced out on both sides. This makes it clear it is an infix operator and not any other.
+
+#### Defining and using operators
+
+You can use any legal identifier as an operator. This includes a name like `add` or a symbol(s) like `+`.
+
+```dart
+ext Vec(x: Float, y: Float) {
+  def + = new Vec(this.x + that.x, this.y + that.y)
+}
+
+val vec1 = new Vec(1.0, 1.0)
+val vec2 = new Vec(2.0, 2.0)
+
+val vec3 = vec1 + vec2
+vec3.x // 3.0
+vec3.y // 3.0
+```
+
+The class `Vec` has a method `+` which we used to add `vec1` and `vec2`. Using parentheses, you can build up complex expressions with readable syntax. Here is the definition of class MyBool which includes methods and and or:
+
+```dart
+ext MyBool(x: Bool) {
+  infix def && (): MyBool = if x: that else: this
+  infix def || (): MyBool = if x: this else: that
+  prefix def !(): MyBool = new MyBool(!x)
+}
+```
+
+It is now possible to use `and` and `or` as infix operators:
+
+```dart
+// def declares a method even outside classes
+prefix def !(x: MyBool) = !x
+infix def ^^ (x: MyBool, y: MyBool) = x || y && !(x && y)
+```
+
+This helps to make the definition of `xor` more readable.
+
+#### Precedence
+
+Binary operators such as `x.+(a)` and `x?.y` are parsed first and are evaluated from left to right. They are composed of one or more characters and are not spaced out beside any literal or expansion.
+
+```dart
+binary def?.(a: Any, b: Any): Any = ?a ? void : a[b]
+let a = {1: {c: \d}}
+assert a?.b?.c == void
+assert a?.1?.c == \d
+```
+
+Suffix operators are evaluated from left to right, have a single argument and are composed of only one character. They bind strongly and are evaluated after binary operators.
+
+```dart
+suffix def+ (a: Num): Num = a + 1
+suffix def- (a: Num): Num = a - 1
+let a = 1
+assert a++ == (a+)+ == 3
+assert a-- == (a-)- == -1
+```
+
+Prefix operators function the same way as suffix operators except they are evaluated from right to left. They are evaluated after suffix operators.
+
+```dart
+prefix def -(a: Num): Num = a.neg()
+let a = 1000
+assert --a == -(-a) == a
+```
+
+A unary modifier defines both suffix and prefix operators on its only argument.
+
+```dart
+unary def! !(x: Bool): Bool = !x
+let x = true
+assert !x! == !(x!) == true
+assert x! == !x == false
+```
+
+#### Infix operators
+
+If the operator ends with `=` and its first character is none of `<`, `>`, `!`, `=`, it is an assignment operator which has the second-lowest precedence.
+
+```dart
+infix def + (x: Num, y: Num): Num = x + y
+infix def - (x: Num, y: Num): Num = x - y
+let a = 1
+a += 1; a == 2
+a -= 1; a == 1
+```
+
+If the operator begins with `<`, `>`, `!` or `=` then it is a relational operator and they can be chained.
+
+```dart
+import Sys.Comparable
+
+infix def <=> (x: Comparable, y: Comparable): Bool = x.cmp(y)
+infix def < (x, y): Bool = x <=> y in [-1]
+infix def <= (x, y): Bool = x <=> y in [-1, 0]
+infix def > (x, y): Bool = x <=> y in [1]
+infix def >= (x, y): Bool = x <=> y in [0, 1]
+infix def == (x, y): Bool = x <=> y in [0]
+infix def <> (x, y): Bool = x <=> y in [-1, 1]
+
+assert (1 <> 2 <> 3) == (1 <> 2 && 2 <> 3)
+```
+
+When an expression uses multiple operators, the operators are evaluated based on the priority of the first character:
+
+```
+(characters not shown below)
+* / % #
++ -
+: ~
+= ! < >
+&
+^
+|
+?
+arrow operators
+$
+assignment operators
+ternary operators ? :, ! :, and $ :
+```
+
+This applies to functions you define. For example, the following expression:
+
+```dart
+a + b ^? c ?^ d $ less : a ==> b | c
+```
+
+Is equivalent to
+
+```dart
+((a + b) ^? (c ?^ d)) $ less : ((a ==> b) | c)
+```
+
+`?^` has the highest precedence because it starts with the character `?`. `+` has the second highest precedence, followed by `==>,` `^?`, `|`, and less.
+
+Operators ending in either `->`, `~>` or `=>`, or starting with `<-`, `<~` or `<=` are called arrow-like, and have a higher precedence than ternary operators.
+
+```dart
+((a + b) ^? (c ?^ d)) $ less : ((a ==> b) | c)
+```
+
+### Associativity
+
+Binary operators whose first character is `@` are right-associative, all other binary operators are left-associative.
+
+```dart
+right infix def @/ (x, y: Float): Float = result = x / y
+// a right-associative division operator
+print(12 @/ 4 @/ 8) // 24.0 (4 / 8 = 0.5, then 12 / 0.5 = 24.0)
+print(12  / 4  / 8) // 0.375 (12 / 4 = 3.0, then 3 / 8 = 0.375)
+```
+
+A spaced out `?`, `!` and `$` is a ternary expression and has the lowest precedence. The rightmost part is separated with a colon `:`. `$` is the same as infix method calls on identifiers.
+
+```dart
+x.xor(a) == x $ xor : a
 ```
 
 ## Control Statements
