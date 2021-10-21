@@ -1,6 +1,6 @@
 # Trinity
 
-> The language of the future.
+> The programming language for the future.
 
 ![](./banner.png)
 
