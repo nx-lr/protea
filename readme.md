@@ -704,32 +704,28 @@ Character sequences in regular expressions are the same as in their string count
 
 ##### Unicode Properties
 
-Properties are case-insensitive. Logical operators such as `&&`, `||`, `^^` and `!`, as well as `==` and `!=`, unary `in` and `!in` , `is` and `!is` can work.
+Properties are case-insensitive. Logical operators `&&`, `||`, `^^` and `!`, can be interspersed to express compound queries.
 
-A short form starting with `Is` indicates a script or binary property:
-
-- `is Latin`, &rarr; `Script=Latin`.
-- `is Alphabetic`, &rarr; `Alphabetic=Yes`.
-
-A short form starting with `In` indicates a block property:
-
-- `InBasicLatin`, &rarr; `Block=BasicLatin` .
-- `\p{in Alphabetic && is Latin}` &rarr; all Latin characters in Unicode
-
-| Syntax                                                                | Description                      |
-| --------------------------------------------------------------------- | -------------------------------- |
-| `\p{property=value}`<br>`\p{property:value}`<br>`\p{property==value}` | Unicode binary property          |
-| `\p{property!=value}`<br>`\P{property:value}`                         | Negated binary property          |
-| `\p{in BasicLatin}`<br>`\P{!in BasicLatin}`                           | Block property                   |
-| `\p{is Latin}`<br>`\p{script==Latin}`                                 | Script property (shorthand `is`) |
-| `\p{value}`                                                           | Short form\*                     |
-| `\p{Cc}`                                                              | Unicode character categories^    |
+| Syntax                                      | Description                                   |
+| ------------------------------------------- | --------------------------------------------- |
+| `\p{prop=value}`<br>`\p{prop==value}`       | `prop` equals `value`                         |
+| `\p{prop!=value}`<br>`\P{prop=value}`       | `prop` does not equal `value`                 |
+| `\p{prop^=value}`                           | `prop` begins with but does not equal `value` |
+| `\p{prop$=value}`                           | `prop` ends with but does not equal `value`   |
+| `\p{prop*=value}`                           | `prop` contains `value`                       |
+| `\p{prop\|=value}`                          | `prop` begins with or equals to `value`       |
+| `\p{prop~=value}`                           | `prop` ends with or equals to `value`         |
+| `\p{prop&=value}`                           | `prop` contains `value`                       |
+| `\p{in BasicLatin}`<br>`\P{!in BasicLatin}` | Block property                                |
+| `\p{is Latin}`<br>`\p{script==Latin}`       | Script or binary property                     |
+| `\p{value}`                                 | Short form\*                                  |
+| `\p{Cc}`                                    | Unicode character categories^                 |
 
 \*Properties are checked in the order: `General_Category`, `Script`, `Block`, binary property:
 
-- `Latin` &rarr; (`Script=Latin`).
-- `BasicLatin` &rarr; (`Block=BasicLatin`).
-- `Alphabetic` &rarr; (`Alphabetic=Yes`).
+- `Latin` &rarr; (`Script==Latin`).
+- `BasicLatin` &rarr; (`Block==BasicLatin`).
+- `Alphabetic` &rarr; (`Alphabetic==Yes`).
 
 ##### POSIX Classes
 
@@ -901,7 +897,7 @@ assert [1, 2, 3] is []Nat &&
   [1, null, 3] is []?Nat &&
   [1., 2., 3.] is []Float &&
   [1, -2, 3] is []Int &&
-  [1, "2", 3] is [](Nat | Str) &&
+  [1, "2", 3] is [](Nat|Str) &&
   [1, 2, 3]{Num} is []Num &&
   [[10, 20], [30]] is [][]Int
 ```
