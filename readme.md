@@ -712,10 +712,10 @@ Properties are case-insensitive. Logical operators `&&`, `||`, `^^` and `!`, can
 | `\p{prop!=value}`<br>`\P{prop=value}`       | `prop` does not equal `value`                 |
 | `\p{prop^=value}`                           | `prop` begins with but does not equal `value` |
 | `\p{prop$=value}`                           | `prop` ends with but does not equal `value`   |
-| `\p{prop*=value}`                           | `prop` contains `value`                       |
+| `\p{prop*=value}`                           | `prop` contains but does not equal `value`    |
 | `\p{prop\|=value}`                          | `prop` begins with or equals to `value`       |
 | `\p{prop~=value}`                           | `prop` ends with or equals to `value`         |
-| `\p{prop&=value}`                           | `prop` contains `value`                       |
+| `\p{prop&=value}`                           | `prop` contains or equals to `value`          |
 | `\p{in BasicLatin}`<br>`\P{!in BasicLatin}` | Block property                                |
 | `\p{is Latin}`<br>`\p{script==Latin}`       | Script or binary property                     |
 | `\p{value}`                                 | Short form\*                                  |
