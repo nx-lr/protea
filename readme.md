@@ -55,7 +55,7 @@ sync iter generateRandom(*seed: []Int): Point {
 
 Trinity is a programming language designed with web, mobile, desktop and systems in mind. It is strongly typed, compiled, garbage-collected and has explicit support for multiple paradigms, including object-oriented, functional, concurrent and reflective programming.
 
-Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [Scala][scala], [ReScript][rescript], [TypeScript][typescript], [C#][csharp], [Flix][flix], [Gosu][gosu] and [Fantom][fantom] (_not the malware_). With these influences, Trinity advocates for writing readable and expressive code, and enabling you to do in Trinity what you could in other languages.
+Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [Scala][scala], [ReScript][rescript], [TypeScript][typescript], [C#][csharp], [Flix][flix], [Gosu][gosu] and [Fantom][fantom]. With these influences, Trinity advocates for writing readable and expressive code, and enabling you to do in Trinity what you could in other languages.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 [go]: https://golang.org/
@@ -69,40 +69,6 @@ Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [
 [csharp]: https://docs.microsoft.com/en-us/dotnet/csharp/
 [flix]: https://flix.dev/
 [gosu]: https://gosu-lang.github.io/
-
-## Origins
-
-Trinity was created in 2020 as a way to write software, apps and games, to run on the web, desktop, mobile and server with a singular language. It grew through tinkering with regular expressions and testing them with themes and writing documentation about them. The name Trinity as there are three aspects to the language: frontend, middle-end and backend.
-
-The mission is to create a language that is portable to (lower)-level runtimes such as Deno, JS, WebAssembly, JVM, .NET, LLVM, Swift and Python, abstracting away these runtimes and UI components into a powerful API. And since this is a completely new language in the works, to enable the analysis and translation of existing code and programs in different languages to Trinity through machine learning.
-
-### Philosophies:
-
-- **General guidelines**: A programming language should follow a set of strict guidelines and principles, fully backed by reasons.
-  - **One language**: Trinity is forever one language---no flags or pre-processors. We want to avoid fragmentation so to avoid programs written in different "dialects" of the language.
-  - **Fail fast, fail hard**: To aid development and debugging, and to prevent potential harmful behaviour, Trinity aborts execution when it encounters an unrecoverable error, or in the presence of concurrency, if a process fails.
-  - **Useful error messages and stack traces**: Errors should describe _what_ went wrong, _why_ it went wrong, _where_ it went wrong and _how_ it went wrong, and to suggest what to do about it.
-  - **No warnings, only errors**: Warnings in other languages can be suppressed. Sometimes they can be harmless but could cause adverse side effects. In Trinity, any code that seems suspicious or wrong to the compiler should be downright rejected.
-  - **Documentation and unit tests**: Trinity supports useful annotations, such as comments, types and other constraints, as inspired by Dafny. Such integrations will deeply benefit developers.
-- **Simplicity**: I aim to make Trinity a good language, that both makes things easier and gets things right.
-  - **Keyword-based**: Short keywords such as `proto`, `elem` and `def` makes it easy to visually identify the overall structure of code. All keywords are between two and six letters long.
-  - **Uniform function calls**: Trinity supports uniform function calls, where `f(x, y)` could also be written as `x.f(y)`. This is purely syntax.
-  - **Declaration vs expression**: Trinity is expression-oriented and separates expressions and declarations. Control flow statements like `if`, `for` and `break` are expressions.
-  - **Naming conventions**: Trinity employs partial case-insensitivity, which enables developers use different conventions without knowing its exact spelling. Functions, variables and methods are marked as camelCase, while the rest are PascalCase.
-  - **Consistent syntax**: Trinity aims to have consistent and predictable syntax as much as possible and should be as familiar as possible. The syntax for types mirror that of expressions, for example.
-  - **Spacing and evaluation order**: In line with coding conventions, all operators are spaced depending on how they should be evaluated. It also gives you the ability to mold the language into whatever you desire.
-- **Multi-paradigm**: Trinity supports functional, imperative, concurrent and reflective programming, the last to an extent. And the many constructs of Trinity makes it easy to separate each paradigm from one another.
-  - **Nothing before `main`**: In Trinity, `main` is the entry point of a program. No (user-defined) code is ever executed before `main`. This makes it easy to reason about startup behavior.
-  - **Share memory by communicating**: Trinity follows Go's paradigm of shared memory by communication. Processes should only share immutable messages (and data structures). This significantly reduces the risk of race conditions.
-  - **Dead code elimination**: Trinity requires all code to be available at compile-time. This enables a range of compilation techniques, such as program analysis, code optimisation, and tree shaking.
-  - **Private by default**: In Trinity, declarations are hidden by default (i.e. private) and cannot be accessed from outside of their namespace (or sub-namespaces). It is important that programmers make a conscious choice about when to make a declaration visible.
-  - **Declare before use**: In Trinity things must be defined before they can be used. Declarations make it easy to assign blame; we assume declarations to be correct and check every use against its declaration. Also, unused declarations are flagged at compile time.
-  - **No unnecessary declarations**: We believe that a programming language should reduce the volume of declarations it requires. Declarations may be useful and are sometimes necessary, but Trinity aims to minimize its internal dependence on them.
-- **The little things**: The beauty of a new language is that it gives you a clean slate to fix all the little things that aggravate you.
-  - **Default parameters and types**: functions can have default arguments; no need to write more boilerplate code for even convenience functions
-  - **Explicit type conversion**: Use `as` to convert between types, and `is` for type checking. In Flix, a value of one type is never implicitly coerced or converted into a value of another type. For example,
-  - **Type annotations**: Type annotations are necessary in the sense that they make it easier to read and clear up potential ambiguity. Any expression or declaration as well as their parameters can be annotated with types, and they are thrown away at runtime.
-  - **Numeric precision**: Trinity only has `Nat`, `Int` and `Float` as the default numeric types. This would eliminate a lot of complexity associated with precision or integer overflow problems such as file lengths, Unicode characters, hash codes or very large lists or strings.
 
 ## Table of Contents
 
@@ -1195,9 +1161,9 @@ The class `Vec` has a method `+` which we used to add `vec1` and `vec2`. Using p
 
 ```dart
 ext MyBool(x: Bool) {
-  infix def && (): MyBool = if x: that else: this
-  infix def || (): MyBool = if x: this else: that
-  prefix def !(): MyBool = new MyBool(!x)
+  def && (): MyBool = if x: that else: this
+  def || (): MyBool = if x: this else: that
+  def !(): MyBool = new MyBool(!x)
 }
 ```
 
@@ -1205,8 +1171,8 @@ It is now possible to use `and` and `or` as infix operators:
 
 ```dart
 // def declares a method even outside classes
-prefix def !(x: MyBool) = !x
-infix def ^^ (x: MyBool, y: MyBool) = x || y && !(x && y)
+def !(x: MyBool) = !x
+def ^^ (x: MyBool, y: MyBool) = x || y && !(x && y)
 ```
 
 This helps to make the definition of `xor` more readable.
@@ -1216,7 +1182,7 @@ This helps to make the definition of `xor` more readable.
 Binary operators whose first character is `@` are right-associative, all other binary operators are left-associative.
 
 ```dart
-right infix def @/ (x, y: Float): Float = result = x / y
+def @/ (x, y: Float): Float = result = x / y
 // a right-associative division operator
 print(12 @/ 4 @/ 8) // 24.0 (4 / 8 = 0.5, then 12 / 0.5 = 24.0)
 print(12  / 4  / 8) // 0.375 (12 / 4 = 3.0, then 3 / 8 = 0.375)
@@ -1233,8 +1199,8 @@ x.xor(a) == x $ xor : a
 If the operator ends with `=` and its first character is none of `<`, `>`, `!`, `=`, it is an assignment operator which has the second-lowest precedence.
 
 ```dart
-infix def + (x: Num, y: Num): Num = x + y
-infix def - (x: Num, y: Num): Num = x - y
+def + (x: Num, y: Num): Num = x + y
+def - (x: Num, y: Num): Num = x - y
 let a = 1
 a += 1; a == 2
 a -= 1; a == 1
@@ -1245,13 +1211,13 @@ If the operator begins with `<`, `>`, `!` or `=` then it is a relational operato
 ```dart
 import Sys.Comparable
 
-infix def <=> (x: Comparable, y: Comparable): Bool = x.cmp(y)
-infix def < (x, y): Bool = x <=> y in [-1]
-infix def <= (x, y): Bool = x <=> y in [-1, 0]
-infix def > (x, y): Bool = x <=> y in [1]
-infix def >= (x, y): Bool = x <=> y in [0, 1]
-infix def == (x, y): Bool = x <=> y in [0]
-infix def <> (x, y): Bool = x <=> y in [-1, 1]
+def <=> (x: Comparable, y: Comparable): Bool = x.cmp(y)
+def < (x, y): Bool = x <=> y in [-1]
+def <= (x, y): Bool = x <=> y in [-1, 0]
+def > (x, y): Bool = x <=> y in [1]
+def >= (x, y): Bool = x <=> y in [0, 1]
+def == (x, y): Bool = x <=> y in [0]
+def <> (x, y): Bool = x <=> y in [-1, 1]
 
 assert (1 <> 2 <> 3) == (1 <> 2 && 2 <> 3)
 ```
@@ -1299,7 +1265,7 @@ Operators ending in either `->`, `~>` or `=>`, or starting with `<-`, `<~` or `<
 Binary operators such as `x.+(a)` and `x?.y` are parsed first and are evaluated from left to right. They are composed of one or more characters and are not spaced out beside any literal or expansion.
 
 ```dart
-binary def?.(a: Any, b: Any): Any = ?a ? void : a[b]
+def?.(a: Any, b: Any): Any = ?a ? void : a[b]
 let a = {1: {c: \d}}
 assert a?.b?.c == void
 assert a?.1?.c == \d
@@ -1310,8 +1276,8 @@ assert a?.1?.c == \d
 Suffix operators are evaluated from left to right, have a single argument and are composed of only one character. They bind strongly and are evaluated after binary operators.
 
 ```dart
-suffix def+ (a: Num): Num = a + 1
-suffix def- (a: Num): Num = a - 1
+def+ (a: Num): Num = a + 1
+def- (a: Num): Num = a - 1
 let a = 1
 assert a++ == (a+)+ == 3
 assert a-- == (a-)- == -1
@@ -1322,7 +1288,7 @@ assert a-- == (a-)- == -1
 Prefix operators function the same way as suffix operators except they are evaluated from right to left. They are evaluated after suffix operators.
 
 ```dart
-prefix def -(a: Num): Num = a.neg()
+def -(a: Num): Num = a.neg()
 let a = 1000
 assert --a == -(-a) == a
 ```
@@ -1332,7 +1298,7 @@ assert --a == -(-a) == a
 A unary modifier defines both suffix and prefix operators as valid operations on its only argument.
 
 ```dart
-unary def! !(x: Bool): Bool = !x
+def! !(x: Bool): Bool = !x
 let x = true
 assert !x! == !(x!) == true
 assert x! == !x == false
