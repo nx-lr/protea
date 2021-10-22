@@ -938,7 +938,7 @@ Maps are keyed collections of unique elements, surrounded by curly brackets like
 ```dart
 var x: {Int : Str} = {1: 'one', 2: 'two'}
 var y = {3: 'three', 4: 'four'} // is []Str
-var z = {10, '20', '30']{Str : Int}
+var z = {10, '20', '30'}{Str : Int}
 ```
 
 The type signature of a map is `Map[Key, Value]` or `{Key : Value}`. Note the colon is spaced out on both sides. `{Key: Value}` is a map with the string value `Key` which can hold the type `Value`.
