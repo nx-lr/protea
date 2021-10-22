@@ -2,7 +2,7 @@
 
 > The programming language for the future.
 
-![](./banner.png)
+![banner](./banner.png)
 
 **Trinity** is an open source, fully featured and agile language that enables developers, designers and testers to build, test and deploy their projects with less code, no matter the platform or runtime. It provides avenues to access huge ecosystems of libraries and runtimes, without the need for any installation.
 
@@ -1116,9 +1116,9 @@ The tables below define all of Trinity's operators, and you can define your own.
 | `<%>`    | Infix | Take                    |
 | `<%`     | Infix | Take left               |
 | `%>`     | Infix | Take right              |
-| `<~>`    | Infix | Drop                    |
-| `<~`     | Infix | Drop left               |
-| `~>`     | Infix | Drop right              |
+| `<#>`    | Infix | Drop                    |
+| `<#`     | Infix | Drop left               |
+| `#>`     | Infix | Drop right              |
 
 ### Custom Operators
 
