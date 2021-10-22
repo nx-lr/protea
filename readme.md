@@ -1046,6 +1046,8 @@ The tables below define all of Trinity's operators, and you can define your own.
 | `==`         | Infix  | Equal to                         |
 | `!=`, `<>`   | Infix  | Not equal to                     |
 | `<=>`        | Infix  | Three-way comparison             |
+| `*>`         | Infix  | Minimum                          |
+| `<*`         | Infix  | Maximum                          |
 
 #### String operators
 
@@ -1103,20 +1105,16 @@ The tables below define all of Trinity's operators, and you can define your own.
 | `\|`     | Infix | Union                   |
 | `^`      | Infix | Symmetric difference    |
 | `<->`    | Infix | Filter                  |
-| `</>`    | Infix | Sort                    |
+| `</>`    | Infix | Reject                  |
 | `<*>`    | Infix | Map                     |
-| `<+>`    | Infix | Group                   |
-| `<%>`    | Infix | Order by                |
-| `</>`    | Infix | Fold                    |
+| `<+>`    | Infix | Sort                    |
+| `<$>`    | Infix | Group                   |
 | `</`     | Infix | Fold left               |
 | `/>`     | Infix | Fold right              |
-| `<$>`    | Infix | Scan                    |
 | `<$`     | Infix | Scan left               |
 | `$>`     | Infix | Scan right              |
-| `<%>`    | Infix | Take                    |
 | `<%`     | Infix | Take left               |
 | `%>`     | Infix | Take right              |
-| `<#>`    | Infix | Drop                    |
 | `<#`     | Infix | Drop left               |
 | `#>`     | Infix | Drop right              |
 
