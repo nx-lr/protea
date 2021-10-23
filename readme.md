@@ -1256,7 +1256,7 @@ Operators ending in either `->`, `~>` or `=>`, or starting with `<-`, `<~` or `<
 
 #### Binary Operators
 
-Binary operators such as `x.+(a)` and `x?.y` are parsed first and are evaluated from left to right. They are composed of one or more characters and are not spaced out beside any literal or expansion.
+Binary operators include interfix and infix operators. Interfix operators are evaluated first, from left to right. 
 
 ```dart
 def?.(a: Any, b: Any): Any = ?a ? void : a[b]
@@ -1611,9 +1611,7 @@ switch x : T {
   case C(x): X
   case C(#[2, 3, x]): x
   case D([]): 2
-  case D([{x: x1, it},
-          {x: x2, it},
-          *_]): x1 + x2
+  case D([{x: x1, _}, {x: x2, _}, *_]): x1 + x2
   case: 42
 }
 ```
