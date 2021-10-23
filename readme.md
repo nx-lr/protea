@@ -1682,11 +1682,11 @@ let p = {x: 2, y: 2};
 let z = 3;
 let k =
   switch (p) {
-    case {x, y: 0} when x == z => 0
-    case {x, y: 0} when f(x) => 1
-    case {x: 2, y} when y < 10 => 2
-    case {x: 2, y} when y < 2 => 3 /* never executed, but no warning */
-    case _ => 4
+    case {x, y: 0} if x == z: 0
+    case {x, y: 0} if f(x): 1
+    case {x: 2, y} if y < 10: 2
+    case {x: 2, y} if y < 2: 3 /* never executed, but no warning */
+    case _: 4
   };
 /* k is 2 */
 ```
