@@ -270,7 +270,7 @@ Naming conventions follow Java or JavaScript. There are four types of identifier
 Variables are compared using their first character, then comparing further characters case-insensitively and ignoring all delimiters. This makes it easier for developers to use varying conventions without having to worry about the variables' exact spelling.
 
 ```dart
-proc cmpIdent(a: Str, b: Str): Bool =>
+proc cmpIdent(a: Str, b: Str): Bool =
   a[0] == b[0] &&
   a.sub(`[^\pL\d]+`g, "").lower() == b.sub(`[^\pL\d]+`g, "").lower()
 ```
@@ -689,8 +689,8 @@ Character sequences in regular expressions are the same as in their string count
 | `\d`   | `\D`    | Digit character `[0-9]`                                           |
 | `\s`   | `\S`    | Space character `[\t\n\v\f\r\20]`                                 |
 | `\h`   | `\H`    | Hexadecimal digit character `[\da-fA-F]`                          |
-| `\u`   | `\U`    | Uppercase letter `[A-Z]`                                          |
-| `\l`   | `\L`    | Lowercase letter `[a-z]`                                          |
+| `\u`   | `\U`    | Uppercaseter `[A-Z]`                                              |
+| `\l`   | `\L`    | Lowercaseter `[a-z]`                                              |
 | `\f`   | `\F`    | Form feed `[\f]`                                                  |
 | `\t`   | `\T`    | Horizontal tab `[\t]`                                             |
 | `\v`   | `\V`    | Form feed `[\v]`                                                  |
@@ -739,13 +739,13 @@ Alternatively, `\p{}` notation can be used instead of `[:]`.
 | `[:cntrl]`  | `[\x00-\x1F\x7F]`                            | `\pCc`              | Control characters                                       |
 | `[:digit]`  | `[0-9]`                                      | `\pNd`              | Digits                                                   |
 | `[:graph]`  | `[\x21-\x7E]`                                | `[^\pZ\pC]`         | Visible characters (anything except spaces and controls) |
-| `[:lower]`  | `[a-z]`                                      | `\pLl`              | Lowercase letters                                        |
+| `[:lower]`  | `[a-z]`                                      | `\pLl`              | Lowercaseters                                            |
 | `[:number]` | `[0-9]`                                      | `\pN`               | Numeric characters                                       |
 | `[:print]`  | `[\x20-\x7E] `                               | `\PC`               | Printable characters (anything except controls)          |
 | `[:punct]`  | `[!"\#$%&'()\*+,\-./:;<=>?@\[\\\]^\_'{\|}~]` | `\pP`               | Punctuation (and symbols).                               |
 | `[:space]`  | `[\pS\t\r\n\v\f]`                            | `[\pZ\t\r\n\v\f]`   | Spacing characters                                       |
 | `[:symbol]` | `[\pS&&[:ascii]]`                            | `\pS`               | Symbols                                                  |
-| `[:upper]`  | `[A-Z]`                                      | `\pLu`              | Uppercase letters                                        |
+| `[:upper]`  | `[A-Z]`                                      | `\pLu`              | Uppercaseters                                            |
 | `[:word]`   | `[A-Za-z0-9_]`                               | `[\pL\pNl\pNd\pPc]` | Word characters                                          |
 | `[:xdigit]` | `[A-Fa-f0-9] `                               | `[A-Fa-f0-9]`       | Hexadecimal digits                                       |
 
@@ -1550,37 +1550,143 @@ A `match` or `switch` expression is valid if:
 - branches must be of the same type as the condition
 - the values of all branches must be the same type
 
-You can match on literal values, or data structures such as tuples, eih other data structures, like tuples, records, lists, arrays, and any nested combination of those structures.
+#### Patterns
+
+Primitive values are checked for equality.
 
 ```dart
-match value {
-  // Catch alls
-  case: doSomethingElse()
-  fail: doSomethingElse()
-  // Basic case
-  case value: exec(value)
-  // Guard conditions
-  case some(value) if value > 10: exec(value)
-  // Literals and optional bindings
-  case as "run" | "stop": exec(x)
-  case let x as "run" | "stop": exec(x)
-  // Types and optional bindings
-  case is Int | Str: exec(x)
-  case let x as Int | Str: exec(x)
-  // Functions or predicates
-  case |x| x > 10: exec(x)
-  // Type strings
-  case '${x: Int when < 10}-dir': exec(x)
-  // Regular expressions
-  case let x in `^(?<alias>\w+&*\.) // alias
-    @ // at sign
-    (?<domain>\w+&*\.)  // domain name
-    \.(?<suffix>\w+)$`: exec(alias, domain, suffix)
-  // Lists
-  case [first, second, *tail]: exec(&first, &second, &tail)
-  // Sets
-  case ({first, second, *rest}): exec(&first, &second, &rest)
-  // Maps
-  case ({x, y: y = 'y'}): exec(x, y)
+switch (x: ?(Bool|Float)) {
+  case true: 'true'
+  case false: 'false'
+  case null: 'null'
+  case infin: 'infin'
+  case nan: 'nan'
 }
+```
+
+Variables can be created from patterns. In the previous examples, the `*` variable acted as a catch-all, matching all remaining values (see Exhaustive warning). You could instead create a variable without a leading underscore to use it later in the block.
+
+```dart
+switch f() {
+  case 0: "zero"
+  case 1: "one"
+  case k: "another number " ++ string_of_int(k)
+}
+```
+
+Note that if a variable with the same name already exists in the scope of the switch, then it will be shadowed by the variable declared in the pattern inside the code after the:. The original variable is not used in the pattern. Variables in patterns are declarations of new variables, not references to existing ones.
+
+```dart
+let k = 60;
+let x = 3;
+
+let y = switch x {
+  case 0: "zero"
+  case 1: "one"
+  case k: "another number " ++ string_of_int(k)
+}
+```
+
+To constrain pattern matching with existing variables, see when clauses.
+
+Variants
+Patterns can also include variants and data held by variant tags.
+
+```dart
+let x: ?Int = Some(3)
+let value = switch x {
+  case None: 0
+  case Some(v): v
+}
+```
+
+Patterns can include other data structures, like lists, sets, maps, and any nested combination of those structures.
+
+```dart
+type R = {x: int, y: int}
+type T = A[[Str, Int]] | B[R] | C[#[]Int] | D[[]R]
+let x = D([{x: 2, y: 1.2}]);
+
+switch x : T {
+  case A(['hi', num]): num
+  case B({x, y: 1.2}): x
+  case C(x): X
+  case C(#[2, 3, x]): x
+  case D([]): 2
+  case D([{x: x1, it},
+          {x: x2, it},
+          *_]): x1 + x2
+  case: 42
+}
+```
+
+`as` can be used to assign part of a pattern to a variable. This is convenient if you need to match on a certain value, but need to reference something that encompasses that value.
+
+```dart
+switch x {
+  case v as A[['hi', num]]: f(v)
+  case r as B[{x: _, y: 1.2}]: g(r)
+  case D([r as {x: _, y: 1.2}, *_]): g(r)
+  case: 42
+}
+```
+
+Pass a tuple/list if you want to match multiple inputs.
+
+```dart
+switch [k1, k2] {
+  case [1, "a"]: 0
+  case [_, "b"]: 1
+  case: 3
+}
+```
+
+A single block of code can be run for multiple patterns by listing them together. Type expressions, beginning with a spaced out `:`, can also be used to list multiple possibilities.
+
+```dart
+let items: []Int = [1, 2, 3, 4]
+
+switch (items) {
+  case [1, 2], [3, 4]: "is [1, 2] or [3, 4]"
+  case [1, 2, 3, 4]: "is [1, 2, 3, 4]"
+  case [5, : 6 | 7, *_]: "starts with 5, then has 6 or 7"
+  case: ""
+}
+```
+
+Matching on strings, regular expressions and functions allow you to extract those data from them.
+
+```dart
+let sample: Str = '10-a'
+switch sample {
+  case '${x: Int}-dir': exec(x)
+  case `(?<x>\d+)-dir`: exec(x)
+  case x if x ~= `^\d+-dir$`: exec(x)
+}
+```
+
+Patterns can also be used outside of switch statements to "unpack" data whenever variables are declared.
+
+```dart
+let data_ = [1, ["red", true]];
+let [a, c as [b, _]] = data_;
+/* a is 1, b is "red", c is ("red", true) */
+
+let f = |p as {x, y}| x + y + p.x + p.y;
+```
+
+`if` or `un` can add extra conditions to patterns. The condition must be satisfied in order to execute the pattern's code, otherwise the pattern is skipped.
+
+```dart
+let p = {x: 2, y: 2};
+let z = 3;
+let k =
+  switch (p) {
+    case {x, y: 0} when x == z => 0
+    case {x, y: 0} when f(x) => 1
+    case {x: 2, y} when y < 10 => 2
+    case {x: 2, y} when y < 2 => 3 /* never executed, but no warning */
+    case _ => 4
+  };
+/* k is 2 */
 ```
