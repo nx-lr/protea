@@ -2637,7 +2637,7 @@ repository:
                 name: punctuation.separator.key-value.trin
 
         patterns:
-          - begin: \s*(?<=^|;|,|[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\#\{)\s*
+          - begin: \s*(?<=^|;|,|(?<=['"`\w)}\]]):|[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|[({\[])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.mapping.trin}
@@ -2646,7 +2646,7 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(?<=^|;|,|[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|[({\[])(?<![\w,;'"`)}\]]\||\s=>)\s*(\{)\s*
+          - begin: \s*(?<=^|;|,|(?<=['"`\w)}\]]):|[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+|[({\[])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.dictionary.trin}
@@ -3934,7 +3934,6 @@ repository:
                   2: {name: punctuation.separator.colon.trin}
                 patterns:
                   - include: "#params-clause"
-                  - include: "#type-keywords"
                   - applyEndPatternLast: 1
                     begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
                     end: (?=.)|$
@@ -3942,6 +3941,7 @@ repository:
                       1: {name: keyword.control.match.trin}
                     patterns:
                       - include: "#types"
+                  - include: "#type-keywords"
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)\b\s*
                     name: keyword.control.match.trin
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)\b\s*
@@ -3989,7 +3989,6 @@ repository:
                   2: {name: punctuation.separator.colon.trin}
                 patterns:
                   - include: "#params-clause"
-                  - include: "#type-keywords"
                   - applyEndPatternLast: 1
                     begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
                     end: (?=.)|$
@@ -3997,6 +3996,7 @@ repository:
                       1: {name: keyword.control.switch.trin}
                     patterns:
                       - include: "#types"
+                  - include: "#type-keywords"
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)\b\s*
                     name: keyword.control.switch.trin
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)\b\s*
@@ -4207,7 +4207,6 @@ repository:
               2: {name: punctuation.separator.colon.trin}
             patterns:
               - include: "#params-clause"
-              - include: "#type-keywords"
               - applyEndPatternLast: 1
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
                 end: (?=.)|$
@@ -4215,6 +4214,7 @@ repository:
                   1: {name: keyword.control.trin}
                 patterns:
                   - include: "#types"
+              - include: "#type-keywords"
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)\b\s*
                 name: keyword.control.trin
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)\b\s*
