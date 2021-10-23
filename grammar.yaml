@@ -1315,284 +1315,283 @@ repository:
       - match: \\.
         name: constant.character.escape.other.trin
 
-    repository:
-      regexp-groups:
+  regexp-groups:
+    patterns:
+      - comment: Embedded expression
+        begin: \(([*+])
+        end: \s*(\))
+        name: constant.other.pcre.trin
+        captures:
+          0: {name: punctuation.section.expression.trin}
         patterns:
-          - comment: Embedded expression
-            begin: \(([*+])
-            end: \s*(\))
-            name: constant.other.pcre.trin
-            captures:
-              0: {name: punctuation.section.expression.trin}
-            patterns:
-              - include: $self
-          - comment: Block comment
-            begin: (\()(\?#)
-            contentName: comment.block.regexp.trin
-            end: \s*(\))
+          - include: $self
+      - comment: Block comment
+        begin: (\()(\?#)
+        contentName: comment.block.regexp.trin
+        end: \s*(\))
+        name: comment.block.regexp.trin
+        captures:
+          1: {name: punctuation.definition.comment.trin}
+        patterns:
+          - match: \\.
             name: comment.block.regexp.trin
-            captures:
-              1: {name: punctuation.definition.comment.trin}
-            patterns:
-              - match: \\.
-                name: comment.block.regexp.trin
-          - comment: Lookahead assertion
-            begin: (\(\?=)
-            end: \s*(\))
-            name: meta.group.look-ahead.trin
-            captures:
-              1: {name: punctuation.definition.group.look-ahead.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Lookbehind assertion
-            begin: (\(\?<=)
-            end: \s*(\))
-            name: meta.group.look-behind.trin
-            captures:
-              1: {name: punctuation.definition.group.look-behind.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Negative lookahead assertion
-            begin: (\(\?!)
-            end: \s*(\))
-            name: meta.group.negative-look-ahead.trin
-            captures:
-              1: {name: punctuation.definition.group.negative-look-ahead.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Negative lookbehind assertion
-            begin: (\(\?<!)
-            end: \s*(\))
-            name: meta.group.negative-look-behind.trin
-            captures:
-              1: {name: punctuation.definition.group.negative-look-behind.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Match directive
-            begin: (\(\?%)((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?(/)?
-            end: \s*(\))
-            name: meta.group.directive.trin
-            captures:
-              1: {name: punctuation.definition.group.directive.trin}
-              2:
-                name: storage.type.format.trin
-                patterns: [include: "#format-specifiers"]
-              3: {name: punctuation.separator.slash.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Longest match
-            begin: (\(\?/)
-            end: \s*(\))
-            name: meta.group.longest.trin
-            captures:
-              1: {name: punctuation.definition.group.longest.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Flag modifier group
-            begin: (\(\?\^?(?:([+-]?\d+?)|(\p{Upper}+(?:[+-]\p{Upper}+)*)|(\p{Lower}+(?:[+-]\p{Lower}+)*)))\s*(:)?
-            end: \s*(\))
-            name: meta.group.flag.trin
-            captures:
-              0: {name: punctuation.definition.group.flag.trin}
-              1: {name: punctuation.definition.group.flag.trin}
-              2: {name: constant.numeric.index.trin}
-              3: {name: keyword.control.recursion.trin}
-              4: {name: keyword.other.flag.trin}
-              5: {name: punctuation.separator.colon.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Callouts
-            begin: (\(\?)(?={)
-            end: \s*(\))
-            name: meta.group.call-out.trin
+      - comment: Lookahead assertion
+        begin: (\(\?=)
+        end: \s*(\))
+        name: meta.group.look-ahead.trin
+        captures:
+          1: {name: punctuation.definition.group.look-ahead.trin}
+        patterns:
+          - include: "#regexp-patterns"
+      - comment: Lookbehind assertion
+        begin: (\(\?<=)
+        end: \s*(\))
+        name: meta.group.look-behind.trin
+        captures:
+          1: {name: punctuation.definition.group.look-behind.trin}
+        patterns:
+          - include: "#regexp-patterns"
+      - comment: Negative lookahead assertion
+        begin: (\(\?!)
+        end: \s*(\))
+        name: meta.group.negative-look-ahead.trin
+        captures:
+          1: {name: punctuation.definition.group.negative-look-ahead.trin}
+        patterns:
+          - include: "#regexp-patterns"
+      - comment: Negative lookbehind assertion
+        begin: (\(\?<!)
+        end: \s*(\))
+        name: meta.group.negative-look-behind.trin
+        captures:
+          1: {name: punctuation.definition.group.negative-look-behind.trin}
+        patterns:
+          - include: "#regexp-patterns"
+      - comment: Match directive
+        begin: (\(\?%)((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?(/)?
+        end: \s*(\))
+        name: meta.group.directive.trin
+        captures:
+          1: {name: punctuation.definition.group.directive.trin}
+          2:
+            name: storage.type.format.trin
+            patterns: [include: "#format-specifiers"]
+          3: {name: punctuation.separator.slash.trin}
+        patterns:
+          - include: "#regexp-patterns"
+      - comment: Longest match
+        begin: (\(\?/)
+        end: \s*(\))
+        name: meta.group.longest.trin
+        captures:
+          1: {name: punctuation.definition.group.longest.trin}
+        patterns:
+          - include: "#regexp-patterns"
+      - comment: Flag modifier group
+        begin: (\(\?\^?(?:([+-]?\d+?)|(\p{Upper}+(?:[+-]\p{Upper}+)*)|(\p{Lower}+(?:[+-]\p{Lower}+)*)))\s*(:)?
+        end: \s*(\))
+        name: meta.group.flag.trin
+        captures:
+          0: {name: punctuation.definition.group.flag.trin}
+          1: {name: punctuation.definition.group.flag.trin}
+          2: {name: constant.numeric.index.trin}
+          3: {name: keyword.control.recursion.trin}
+          4: {name: keyword.other.flag.trin}
+          5: {name: punctuation.separator.colon.trin}
+        patterns:
+          - include: "#regexp-patterns"
+      - comment: Callouts
+        begin: (\(\?)(?={)
+        end: \s*(\))
+        name: meta.group.call-out.trin
+        captures:
+          1: {name: punctuation.definition.group.call-out.trin}
+        patterns:
+          - begin: (?<=\(\?)({)
+            end: \s*(\})([<*>])?(?:(\[)(.*?)(\]))?
+            name: punctuation.definition.group.call-out.trin
             captures:
               1: {name: punctuation.definition.group.call-out.trin}
+              2: {name: keyword.operator.range.trin}
+              3: {name: punctuation.definition.tag.trin}
+              4: {patterns: [include: "#function-names"]}
+              5: {name: punctuation.definition.tag.trin}
             patterns:
-              - begin: (?<=\(\?)({)
-                end: \s*(\})([<*>])?(?:(\[)(.*?)(\]))?
-                name: punctuation.definition.group.call-out.trin
-                captures:
-                  1: {name: punctuation.definition.group.call-out.trin}
-                  2: {name: keyword.operator.range.trin}
-                  3: {name: punctuation.definition.tag.trin}
-                  4: {patterns: [include: "#function-names"]}
-                  5: {name: punctuation.definition.tag.trin}
-                patterns:
-                  - include: $self
-              - include: "#regexp-patterns"
-          - comment: Atomic groups
-            begin: (\(\?>)
-            end: \s*(\))
-            name: meta.group.atomic.trin
-            captures:
-              1: {name: punctuation.definition.group.atomic.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Non-capturing groups
-            begin: (\(\?:)
-            end: \s*(\))
-            name: meta.group.non-capturing.trin
-            captures:
-              1: {name: punctuation.definition.group.non-capturing.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Branch groups
-            begin: (\(\?)(?=[(|])
-            end: \s*(\))
-            name: meta.group.branch.trin
-            captures:
-              1: {name: punctuation.definition.group.branch.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Atomic groups
-            begin: (\(\?~)
-            end: \s*(\))
-            name: meta.group.absent.trin
-            captures:
-              1: {name: punctuation.definition.group.absent.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Back-reference groups
-            begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}]\w*)))(:)?
-            end: \s*\)
-            name: meta.group.back-reference.trin
-            captures:
-              0: {name: punctuation.definition.group.back-reference.trin}
-              1: {name: punctuation.definition.group.back-reference.trin}
-              2: {name: constant.numeric.index.trin}
-              3: {patterns: [include: "#function-names"]}
-              4: {name: punctuation.separator.colon.trin}
-            patterns:
-              - include: "#regexp-patterns"
-          - comment: Named groups (angle-brackets)
-            begin: \(\?(?=<(?![!=]))
-            end: \s*(\))
-            name: meta.group.named.trin
-            captures:
-              0: {name: punctuation.definition.group.named.trin}
-            patterns:
-              - begin: (?<=\(\?)(<)
-                end: \s*(>)
-                name: constant.other.group.trin
-                captures:
-                  1: {name: punctuation.definition.group.named.trin}
-                patterns: *regex-back-references
-              - include: "#regexp-patterns"
-          - comment: Named groups (single or double-quotes)
-            begin: \(\?(?=['"])
-            end: \s*(\))
-            name: meta.group.named.trin
-            captures:
-              0: {name: punctuation.definition.group.named.trin}
-            patterns:
-              - begin: (?<=\(\?)(['"])
-                end: \s*(\1)
-                name: constant.other.group.trin
-                captures:
-                  1: {name: punctuation.definition.group.named.trin}
-                patterns: *regex-back-references
-              - include: "#regexp-patterns"
-          - comment: Unnamed groups
-            begin: (\()
-            end: (\s*\))
-            name: meta.group.trin
-            captures:
-              1: {name: punctuation.definition.group.trin}
-            patterns:
-              - include: "#regexp-patterns"
-
-      regexp-char-class:
+              - include: $self
+          - include: "#regexp-patterns"
+      - comment: Atomic groups
+        begin: (\(\?>)
+        end: \s*(\))
+        name: meta.group.atomic.trin
+        captures:
+          1: {name: punctuation.definition.group.atomic.trin}
         patterns:
-          - match: \\(?=\s*$)
-            name: constant.character.escape.newline.trin
-          - begin: (?i)\\p{
-            end: \s*}
-            name: constant.other.character-class.unicode.trin
-            patterns:
-              - include: "#unicode-query"
-          - begin: \\j{
-            end: \s*}
-            name: constant.character.entity.named.trin
-            patterns:
-              - include: "#named-char-notation"
-          - include: "#numeric-escapes"
-          - match: (?i)\\([cm][a-z]|r)
-            name: constant.character.control.trin
-          - match: *posix-class
-            name: constant.other.character-class.posix.trin
-          - match: (?i)\\p(c[cfos]?|l[motlu]?|m[cen]?|n[dlo]?|p[c-fios]?|s[mock]?|z[lps]?)
-            name: constant.other.character-class.unicode.trin
-          - match: (?i)\\[ci]({\w+})?
-            name: constant.other.character-class.xml.trin
-          - match: (?x)\\[a-z]
-            name: constant.other.character-class.trin
-          - match: (?x)\\[A-Z]
-            name: constant.other.character-class.negated.trin
-          - match: (?i)\\n{[\w\s]+}
-            name: constant.character.escape.unicode.name.trin
-          - match: (?i)\\[a-z]
-            name: constant.character.escape.trin
-          - match: (?x)\\[\p{S}\p{P}]
-            name: constant.character.escape.symbol.trin
-          - match: (?x)\\\p{Z}
-            name: constant.character.escape.other.trin
-          - match: (?x)\\[\p{L}\p{N}\p{C}]
-            name: invalid.illegal.unknown-escape.trin
-          - include: "#embedded"
-
-      regexp-char-ops:
+          - include: "#regexp-patterns"
+      - comment: Non-capturing groups
+        begin: (\(\?:)
+        end: \s*(\))
+        name: meta.group.non-capturing.trin
+        captures:
+          1: {name: punctuation.definition.group.non-capturing.trin}
         patterns:
-          - match: (?<!\|)\|\|(?!\|)
-            name: keyword.operator.union.trin
-          - match: (?<!&)&&(?!&)
-            name: keyword.operator.intersection.trin
-          - match: (?<!\^)\^\^(?!\^)
-            name: keyword.operator.symmetric.trin
-          - match: (?<!~)~~(?!~)
-            name: keyword.operator.negation.trin
-          - match: (?<!-)--(?!-)
-            name: keyword.operator.difference.trin
-          - match: (?<![^\\][\\\[])-(?![-\[\]])
-            name: keyword.operator.range.trin
-          - match: ([^-\\\[\]]|\\.)(?<!-+)(?=(?<!\\)-)
-            name: constant.other.character-class.range.from.trin
-          - match: (?<=[^\\]-)(?!-+)([^-\\\[\]]|\\.)
-            name: constant.other.character-class.range.to.trin
-          - match: \\.
-            name: constant.character.escape.other.trin
-
-      regexp-char-set:
+          - include: "#regexp-patterns"
+      - comment: Branch groups
+        begin: (\(\?)(?=[(|])
+        end: \s*(\))
+        name: meta.group.branch.trin
+        captures:
+          1: {name: punctuation.definition.group.branch.trin}
         patterns:
-          - begin: (\[[.:=])
-            end: (\])
-            name: constant.other.character-class.posix.trin
+          - include: "#regexp-patterns"
+      - comment: Atomic groups
+        begin: (\(\?~)
+        end: \s*(\))
+        name: meta.group.absent.trin
+        captures:
+          1: {name: punctuation.definition.group.absent.trin}
+        patterns:
+          - include: "#regexp-patterns"
+      - comment: Back-reference groups
+        begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}]\w*)))(:)?
+        end: \s*\)
+        name: meta.group.back-reference.trin
+        captures:
+          0: {name: punctuation.definition.group.back-reference.trin}
+          1: {name: punctuation.definition.group.back-reference.trin}
+          2: {name: constant.numeric.index.trin}
+          3: {patterns: [include: "#function-names"]}
+          4: {name: punctuation.separator.colon.trin}
+        patterns:
+          - include: "#regexp-patterns"
+      - comment: Named groups (angle-brackets)
+        begin: \(\?(?=<(?![!=]))
+        end: \s*(\))
+        name: meta.group.named.trin
+        captures:
+          0: {name: punctuation.definition.group.named.trin}
+        patterns:
+          - begin: (?<=\(\?)(<)
+            end: \s*(>)
+            name: constant.other.group.trin
             captures:
-              1: {name: punctuation.definition.character-class.posix.trin}
-            patterns:
-              - include: "#comments"
-              - include: "#variables"
-              - include: "#operators"
-              - include: "#regexp-patterns"
-          - begin: (\[[!~^])
-            end: (\])
-            name: constant.other.character-class.negated.trin
+              1: {name: punctuation.definition.group.named.trin}
+            patterns: *regex-back-references
+          - include: "#regexp-patterns"
+      - comment: Named groups (single or double-quotes)
+        begin: \(\?(?=['"])
+        end: \s*(\))
+        name: meta.group.named.trin
+        captures:
+          0: {name: punctuation.definition.group.named.trin}
+        patterns:
+          - begin: (?<=\(\?)(['"])
+            end: \s*(\1)
+            name: constant.other.group.trin
             captures:
-              1: {name: punctuation.definition.character-class.negated.trin}
-            patterns:
-              - include: "#comments"
-              - include: "#regexp-char-class"
-              - include: "#regexp-char-ops"
-              - include: "#regexp-char-set"
-          - begin: (\[)
-            end: (\])
-            name: constant.other.character-class.trin
-            captures:
-              1: {name: punctuation.definition.character-class.trin}
-            patterns:
-              - include: "#comments"
-              - include: "#regexp-char-class"
-              - include: "#regexp-char-ops"
-              - include: "#regexp-char-set"
+              1: {name: punctuation.definition.group.named.trin}
+            patterns: *regex-back-references
+          - include: "#regexp-patterns"
+      - comment: Unnamed groups
+        begin: (\()
+        end: (\s*\))
+        name: meta.group.trin
+        captures:
+          1: {name: punctuation.definition.group.trin}
+        patterns:
+          - include: "#regexp-patterns"
+
+  regexp-char-class:
+    patterns:
+      - match: \\(?=\s*$)
+        name: constant.character.escape.newline.trin
+      - begin: (?i)\\p{
+        end: \s*}
+        name: constant.other.character-class.unicode.trin
+        patterns:
+          - include: "#unicode-query"
+      - begin: \\j{
+        end: \s*}
+        name: constant.character.entity.named.trin
+        patterns:
+          - include: "#named-char-notation"
+      - include: "#numeric-escapes"
+      - match: (?i)\\([cm][a-z]|r)
+        name: constant.character.control.trin
+      - match: *posix-class
+        name: constant.other.character-class.posix.trin
+      - match: (?i)\\p(c[cfos]?|l[motlu]?|m[cen]?|n[dlo]?|p[c-fios]?|s[mock]?|z[lps]?)
+        name: constant.other.character-class.unicode.trin
+      - match: (?i)\\[ci]({\w+})?
+        name: constant.other.character-class.xml.trin
+      - match: (?x)\\[a-z]
+        name: constant.other.character-class.trin
+      - match: (?x)\\[A-Z]
+        name: constant.other.character-class.negated.trin
+      - match: (?i)\\n{[\w\s]+}
+        name: constant.character.escape.unicode.name.trin
+      - match: (?i)\\[a-z]
+        name: constant.character.escape.trin
+      - match: (?x)\\[\p{S}\p{P}]
+        name: constant.character.escape.symbol.trin
+      - match: (?x)\\\p{Z}
+        name: constant.character.escape.other.trin
+      - match: (?x)\\[\p{L}\p{N}\p{C}]
+        name: invalid.illegal.unknown-escape.trin
+      - include: "#embedded"
+
+  regexp-char-ops:
+    patterns:
+      - match: (?<!\|)\|\|(?!\|)
+        name: keyword.operator.union.trin
+      - match: (?<!&)&&(?!&)
+        name: keyword.operator.intersection.trin
+      - match: (?<!\^)\^\^(?!\^)
+        name: keyword.operator.symmetric.trin
+      - match: (?<!~)~~(?!~)
+        name: keyword.operator.negation.trin
+      - match: (?<!-)--(?!-)
+        name: keyword.operator.difference.trin
+      - match: (?<![^\\][\\\[])-(?![-\[\]])
+        name: keyword.operator.range.trin
+      - match: ([^-\\\[\]]|\\.)(?<!-+)(?=(?<!\\)-)
+        name: constant.other.character-class.range.from.trin
+      - match: (?<=[^\\]-)(?!-+)([^-\\\[\]]|\\.)
+        name: constant.other.character-class.range.to.trin
+      - match: \\.
+        name: constant.character.escape.other.trin
+
+  regexp-char-set:
+    patterns:
+      - begin: (\[[.:=])
+        end: (\])
+        name: constant.other.character-class.posix.trin
+        captures:
+          1: {name: punctuation.definition.character-class.posix.trin}
+        patterns:
+          - include: "#comments"
+          - include: "#variables"
+          - include: "#operators"
+          - include: "#regexp-patterns"
+      - begin: (\[[!~^])
+        end: (\])
+        name: constant.other.character-class.negated.trin
+        captures:
+          1: {name: punctuation.definition.character-class.negated.trin}
+        patterns:
+          - include: "#comments"
+          - include: "#regexp-char-class"
+          - include: "#regexp-char-ops"
+          - include: "#regexp-char-set"
+      - begin: (\[)
+        end: (\])
+        name: constant.other.character-class.trin
+        captures:
+          1: {name: punctuation.definition.character-class.trin}
+        patterns:
+          - include: "#comments"
+          - include: "#regexp-char-class"
+          - include: "#regexp-char-ops"
+          - include: "#regexp-char-set"
 
   unicode-query:
     patterns:
@@ -3903,7 +3902,7 @@ repository:
 
       match-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)\b\s*
-        end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
+        end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
         name: meta.match.trin
         captures:
           1: {name: keyword.control.match.trin}
@@ -3958,7 +3957,7 @@ repository:
 
       switch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)\b\s*
-        end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
+        end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
         name: meta.switch.trin
         captures:
           1: {name: keyword.control.switch.trin}
@@ -4161,6 +4160,28 @@ repository:
       - include: "#round-brackets"
 
   style-block:
+    begin: \s*(\{)\s*
+    end: \s*(\})
+    captures:
+      1: {name: punctuation.definition.block.trin}
+    patterns:
+      - begin: ^\s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)\s*
+        beginCaptures:
+          1: {name: support.type.property-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+        end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
+        name: string.unquoted.trin
+        patterns: [include: "#jsx-values"]
+      - comment: Attribute names
+        match: ^\s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
+        captures:
+          1: {name: support.type.property-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+      - include: "#jsx-values"
+      - include: source.css.scss#property_list
+      - include: $self
+
+  route-block:
     begin: \s*(\{)\s*
     end: \s*(\})
     captures:
