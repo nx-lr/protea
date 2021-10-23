@@ -15,7 +15,7 @@ import Math.[Point, Random]
 async proc main {
   print("Compute π using the Monte Carlo algorithm")
   await for val estimate in computePi().take(100):
-    print("π \x2245 $estimate")
+    print("π ~= $estimate")
 }
 
 // Iterator functions (function* in JavaScript)
@@ -55,7 +55,7 @@ sync iter generateRandom(*seed: []Int): Point {
 
 Trinity is a programming language designed with web, mobile, desktop and systems in mind. It is strongly typed, compiled, garbage-collected and has explicit support for multiple paradigms, including object-oriented, functional, concurrent and reflective programming.
 
-Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [Scala][scala], [ReScript][rescript], [TypeScript][typescript], [C#][csharp], [Flix][flix], [Gosu][gosu] and [Fantom][fantom]. With these influences, Trinity advocates for writing readable and expressive code, and enabling you to do in Trinity what you could in other languages.
+Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [Scala][scala], [ReScript][rescript], [TypeScript][typescript], [C#][csharp], [Flix][flix] and [Gosu][gosu]. With these influences, Trinity advocates for writing readable and expressive code, and enabling you to do in Trinity what you could in other languages.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 [go]: https://golang.org/
@@ -65,7 +65,6 @@ Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [
 [scala]: https://www.scala-lang.org/
 [swift]: https://swift.org/
 [typescript]: https://www.typescriptlang.org/
-[fantom]: https://fantom.org/
 [csharp]: https://docs.microsoft.com/en-us/dotnet/csharp/
 [flix]: https://flix.dev/
 [gosu]: https://gosu-lang.github.io/
@@ -1501,7 +1500,7 @@ All are system calls so they can be interlaced with expressions.
 
 ### For-loops
 
-In its most simple use, a `for` or `each` loop can be used to iterate over the elements in a collection. For example, given an array of integers:
+In its most simple use, a `for` or `each` loop can be used to iterate over the elements in a collection. For example, given a list of integers:
 
 ```dart
 val numbers = [1, 2, 3]
@@ -1532,100 +1531,56 @@ for val n of numbers: print(n)
 
 ### Switch or match
 
-Trinity has a concept of a `match` or `switch` expression. You can use either of which. As shown, with a match expression you write a number of case statements that you use to match possible values.
+Pattern matching provides a way to conditionally execute code when the shape of some data matches a particular pattern. It is similar to `switch`-`case` statements in other languages, but it can be more expressive and includes some extra safeguards.
+
+A `match` expression looks like below. You can also use `switch` rather than `match`; they are one and the same.
 
 ```dart
-match i {
-  case 1: print("Monday") // when or case
-  case 2: print("Tuesday")
-  case 3: print("Wednesday")
-  case 4: print("Thursday")
-  case 5: print("Friday")
-  case 6: print("Saturday")
-  case 7: print("Sunday")
-  fail: print("Invalid day") // else or fail
+match expression {
+  case case1: value1
+  case case2: value2
+  case case3: value3
+  case: defaultValue
 }
 ```
 
-Above, we match the integer values 1 through 7. Any other value falls down to the `fail` or blank case, which is the catch-all, default case.
+A `match` or `switch` expression is valid if:
 
-`match`/`switch` expressions are nice because they also return values, so rather than directly printing a string as in that example, you can assign the string result to a new value:
+- the condition should be any type
+- branches must be of the same type as the condition
+- the values of all branches must be the same type
 
-```dart
-// i is an integer
-val dayName = match i {
-  case 1: "Monday"
-  case 2: "Tuesday"
-  case 3: "Wednesday"
-  case 4: "Thursday"
-  case 5: "Friday"
-  case 6: "Saturday"
-  case 7: "Sunday"
-  fail: "Invalid day"
-}
-```
-
-`match`/`switch` expressions let you handle multiple cases.
-
-To demonstrate this, imagine that you want to evaluate "boolean equality" like PHP would: `0`, `''` or `'0'` evaluates to `false`, while everything else evaluates to `true`.
+You can match on literal values, or data structures such as tuples, eih other data structures, like tuples, records, lists, arrays, and any nested combination of those structures.
 
 ```dart
-fun isTrue(a: Any) = match a {
-  case 0 or '' or '0': false
-  fail: true
-}
-```
-
-The key part of this solution is that this one case statement lets both 0 and the empty string evaluate to false:
-
-```dart
-match a { case 0 or '' or '0': false }
-```
-
-Before we move on, here’s another example that shows many matches in each case statement:
-
-```dart
-val evenOrOdd = match i {
-  case 1 or 3 or 5 or 7 or 9: print("odd")
-  case 2 or 4 or 6 or 8 or 10: print("even")
-  fail: print("some other number")
-}
-```
-
-Here's another example that shows how to handle multiple strings in multiple case statements:
-
-```dart
-match cmd {
-  case "start" or "go": print("starting")
-  case "stop" or "quit" or "exit": print("stopping")
-  fail: print("doing nothing")
-}
-```
-
-#### Guard conditions
-
-Another great thing about match expressions is that you can use `when` clauses to filter conditions.
-
-```dart
-val number = 4:u
-match number {
-  case i if i == 0: print('Zero')
-  case i if i > 0: print("Greater than zero")
-  fail: print("Fell through")
-}
-```
-
-#### Bindings
-
-Indirectly accessing a variable makes it impossible to branch and use that variable without re-binding. `match` provides the `as` sigil for binding values to names:
-
-```dart
-val pair = [2, 2]
-print("Tell me about $pair.")
-match pair {
-  case [x, y] if x == y: print("Twins!")
-  case [x, y] if x + y == 0: print("Opposites!")
-  case [x, _] if x % 2 == 1: print("The first is odd.")
-  fail: print("Nothing special!")
+match value {
+  // Catch alls
+  case: doSomethingElse()
+  fail: doSomethingElse()
+  // Basic case
+  case value: exec(value)
+  // Guard conditions
+  case some(value) if value > 10: exec(value)
+  // Literals and optional bindings
+  case as "run" | "stop": exec(x)
+  case let x as "run" | "stop": exec(x)
+  // Types and optional bindings
+  case is Int | Str: exec(x)
+  case let x as Int | Str: exec(x)
+  // Functions or predicates
+  case |x| x > 10: exec(x)
+  // Type strings
+  case '${x: Int when < 10}-dir': exec(x)
+  // Regular expressions
+  case let x in `^(?<alias>\w+&*\.) // alias
+    @ // at sign
+    (?<domain>\w+&*\.)  // domain name
+    \.(?<suffix>\w+)$`: exec(alias, domain, suffix)
+  // Lists
+  case [first, second, *tail]: exec(&first, &second, &tail)
+  // Sets
+  case ({first, second, *rest}): exec(&first, &second, &rest)
+  // Maps
+  case ({x, y: y = 'y'}): exec(x, y)
 }
 ```
