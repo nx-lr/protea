@@ -55,7 +55,7 @@ sync iter generateRandom(*seed: []Int): Point {
 
 Trinity is a programming language designed with web, mobile, desktop and systems in mind. It is strongly typed, compiled, garbage-collected and has explicit support for multiple paradigms, including object-oriented, functional, concurrent and reflective programming.
 
-Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [Scala][scala], [ReScript][rescript], [TypeScript][typescript], [C#][csharp], [Flix][flix] and [Gosu][gosu]. With these influences, Trinity advocates for writing readable and expressive code, and enabling you to do in Trinity what you could in other languages.
+Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [Scala][scala], [ReScript][rescript]/[ReasonML][reasonml], [TypeScript][typescript], [C#][csharp], [Flix][flix] and [Gosu][gosu]. With these influences, Trinity advocates for writing readable and expressive code, and enabling you to do in Trinity what you could in other languages.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 [go]: https://golang.org/
@@ -68,6 +68,7 @@ Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [
 [csharp]: https://docs.microsoft.com/en-us/dotnet/csharp/
 [flix]: https://flix.dev/
 [gosu]: https://gosu-lang.github.io/
+[reasonml]: https://reasonml.github.io/
 
 ## Table of Contents
 
@@ -174,7 +175,7 @@ Multiline documentation comments also exist and support nesting too. They begin 
 
 A top-level declaration can appear at the top level or outermost scope of a Unison file. It can be one of the following forms:
 
-- A declaration, like `let x = 42`, or `type Option[a] = None | Some[a]`.
+- A declaration, like `val x = 42`, or `type Option[a] = None | Some[a]`.
 - An `import`, `export` or `using` clause.
 
 A variable binding begins with `var`, `val`, `let`, or `const`. `var` and `let` declare an mutable variable binding, whereas `val` and `const` declare a mutable variable binding. All bindings are [block-scoped](https://medium.com/@allansendagi/block-scope-in-javascript-8fd2f909e848).
@@ -183,14 +184,14 @@ A variable binding looks like this:
 
 ```dart
 var x = 42
-let x: Int = 42
+val x: Int = 42
 ```
 
 `let` and `const` bindings can be redeclared, even on the same scoped.
 
 ```dart
 var x = 42
-let x: Int = 42
+val x: Int = 42
 ```
 
 Multiple variables can be assigned, similar to Python:
@@ -224,7 +225,7 @@ As for modifier keywords, they are parsed as keywords before a declaration as th
 
     in of as is new to til thru by del unset
 
-    var val let const decl def fun type sin
+    var val val const decl def fun type sin
     class enum mod pack struct inter space
     proc proto macro given style elem field
     ext pred data trait lemma iter sub prop
@@ -574,17 +575,17 @@ A macro function is defined with the keyword `macro` rather than `fun`. The firs
 
 ```dart
 macro template(strings, keys) = |*values| {
-  let dict = values[-1] ?? {}
-  let values = from let key in keys
+  val dict = values[-1] ?? {}
+  val values = from val key in keys
     select if key is Int: values[key]
     else: dict[key]
   values = values as List
   return strings.intercalate(keys).join('')
 }
 
-let t1Closure = template"${0}${1}${0}!"
+val t1Closure = template"${0}${1}${0}!"
 assert t1Closure("Y", "A") == "YAY!"
-let t2Closure = template"${0} ${"foo"}!"
+val t2Closure = template"${0} ${"foo"}!"
 assert t2Closure("Hello", {foo: "World"}) == "Hello World!"
 ```
 
@@ -833,11 +834,10 @@ These flags go after the regex literal. `f`, `m`, `u`, `e` and `x` are enabled b
 
 | Flag | Description                                                                  |
 | ---- | ---------------------------------------------------------------------------- |
-| `a`  | Astral mode - `\p` supports the past the BMP                                 |
-| `c`  | Case-sensitive mode.                                                         |
+| `a`  | Astral mode - Unicode quotes support code points past the BMP                |
+| `c`  | Case-sensitive mode                                                          |
 | `d`  | Treat only `\n` as a line break                                              |
 | `e`  | Safe mode - escape all interpolations                                        |
-| `f`  | First match only                                                             |
 | `g`  | Global. Enabled by default                                                   |
 | `i`  | Case-insensitive mode                                                        |
 | `j`  | Switches definitions of `()` and `(?:)`                                      |
@@ -848,7 +848,7 @@ These flags go after the regex literal. `f`, `m`, `u`, `e` and `x` are enabled b
 | `o`  | Unsafe mode - coerces interpolations into strings                            |
 | `p`  | `^` and `$` match at the start/end of line                                   |
 | `q`  | Quote all metacharacters                                                     |
-| `s`  | "Dot-all" - `.` matches all characters                                       |
+| `s`  | Dotall --- `.` matches all characters                                        |
 | `t`  | Strict spacing mode                                                          |
 | `u`  | Unicode mode - POSIX class definitions also expanded                         |
 | `w`  | `^` and `$` match at the start/end of string, `.` does not match line breaks |
@@ -857,20 +857,20 @@ These flags go after the regex literal. `f`, `m`, `u`, `e` and `x` are enabled b
 
 #### Replacement String
 
-This syntax applies to the second regex literal onward in regex operations such as substitution and transliteration.
+This syntax applies to the second regex literal onward in regex operations such as substitution and transliteration. If any group referenced in the index before is invalid group, it is inserted literally.
 
-| Syntax    | Meaning                                                                                                                   |
-| --------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `$$`      | Inserts a literal "$".                                                                                                    |
-| `$0`      | Inserts the entire matched substring into the output.                                                                     |
-| `$-`      | Inserts the portion of the string that precedes the matched substring.                                                    |
-| `$+`      | Inserts the portion of the string that follows the matched substring.                                                     |
-| `$n`      | Where `n` is a positive integer, inserts the `n`th submatch string. If `n` is an invalid group, it is inserted literally. |
-| `$<name>` | Where name is a capturing group name. If the group is invalid, it is inserted literally.                                  |
+| Syntax    | Meaning                                                                        |
+| --------- | ------------------------------------------------------------------------------ |
+| `$$`      | Inserts a literal "$".                                                         |
+| `$0`      | Inserts the entire matched substring into the output.                          |
+| `$-`      | Inserts the portion of the string that precedes the matched substring.         |
+| `$+`      | Inserts the portion of the string that follows the matched substring.          |
+| `$n`      | Where `n` is a positive integer, inserts the `n`th submatch.                   |
+| `$<name>` | Where name is a capturing group name, inserts the submatch assigned to `name`. |
 
 ## Collections
 
-Trinity comes with four different collection literals: lists `[]`, sets `{}`, maps `{:}`. All collection literals are immutable, and a `Mut` prefix makes them mutable.
+Trinity comes with four different collection literals: lists `[]`, sets `{}`, maps `{:}`. All collection literals are immutable. A `Mut` prefix on its type or a hash `#` right before the literal makes them mutable, and allows you to mutate them directly.
 
 ### Lists
 
@@ -942,11 +942,12 @@ var z = {10, '20', '30'}{Str : Int}
 
 The type signature of a map is `Map[Key, Value]` or `{Key : Value}`. Note the colon is spaced out on both sides. `{Key: Value}` is a map with the string value `Key` which can hold the type `Value`.
 
-The type of keys are determined by their first character:
+The type of keys are determined as follows:
 
-- If a key is a constant value, say `true`, `false`, `null`, `void`, `infin` or `nan`, it will be parsed as its value.
-- If a key begins with a number it is implicitly a number.
-- If a key begins with a letter or a non-punctuation symbol character, and the key does not contain spaces, the key is considered a string.
+- If a key is a constant, i.e. `true`, `false`, `null`, `void`, `infin` or `nan`, it will be parsed as its value.
+- If a key can be parsed as a number it is a number.
+- If a key begins with `:`, `'`, `"`, `:'`, `:"`, `` ` ``, `[`, `(`, `{`, `#[`, `#(`, `#{`, it would not be treated as an unquoted string.
+- ANy other ihtirh
 
 The empty map is denoted using the special syntax `{:}` so not to be confused with the empty set syntax. If there is no explicit type, it is inferred to be `{Any : Any}`.
 
@@ -1194,7 +1195,7 @@ If the operator ends with `=` and its first character is none of `<`, `>`, `!`, 
 ```dart
 def + (x: Num, y: Num): Num = x + y
 def - (x: Num, y: Num): Num = x - y
-let a = 1
+val a = 1
 a += 1; a == 2
 a -= 1; a == 1
 ```
@@ -1259,7 +1260,7 @@ Binary operators such as `x.+(a)` and `x?.y` are parsed first and are evaluated 
 
 ```dart
 def?.(a: Any, b: Any): Any = ?a ? void : a[b]
-let a = {1: {c: \d}}
+val a = {1: {c: \d}}
 assert a?.b?.c == void
 assert a?.1?.c == \d
 ```
@@ -1271,7 +1272,7 @@ Suffix operators are evaluated from left to right, have a single argument and ar
 ```dart
 def+ (a: Num): Num = a + 1
 def- (a: Num): Num = a - 1
-let a = 1
+val a = 1
 assert a++ == (a+)+ == 3
 assert a-- == (a-)- == -1
 ```
@@ -1282,7 +1283,7 @@ Prefix operators function the same way as suffix operators except they are evalu
 
 ```dart
 def -(a: Num): Num = a.neg()
-let a = 1000
+val a = 1000
 assert --a == -(-a) == a
 ```
 
@@ -1292,7 +1293,7 @@ A unary modifier defines both suffix and prefix operators as valid operations on
 
 ```dart
 def! !(x: Bool): Bool = !x
-let x = true
+val x = true
 assert !x! == !(x!) == true
 assert x! == !x == false
 ```
@@ -1315,9 +1316,9 @@ print("Hello")
 Bindings can be scoped through the do-block: `do {}`.
 
 ```dart
-let message = do {
-  let part1 = "hello"
-  let part2 = "world"
+val message = do {
+  val part1 = "hello"
+  val part2 = "world"
   part1 ++ " " ++ part2
 }
 // `part1` and `part2` not accessible here!
@@ -1329,7 +1330,7 @@ The value of the last line of a scope is implicitly returned.
 
 ```dart
 if displayGreeting {
-  let message = "Enjoying the docs so far?"
+  val message = "Enjoying the docs so far?"
   print(message)
 }
 // `message` not accessible here!
@@ -1338,13 +1339,13 @@ if displayGreeting {
 Instead of a block, whenever there's a single statement, use the colon `:` instead of an opening curly brace.
 
 ```dart
-let message = do: 3 + 4
+val message = do: 3 + 4
 ```
 
 But not both (opening curly brace is a set literal):
 
 ```dart
-let message = do: { 3 + 4 }
+val message = do: { 3 + 4 }
 assert message is Set
 ```
 
@@ -1470,7 +1471,7 @@ Loop block runs indefinitely.
 loop:
   print("hello world forever!")
 
-let i = 1
+val i = 1
 loop {
   print("i is now $i")
   if i > 100: break
@@ -1564,7 +1565,7 @@ switch (x: ?(Bool|Float)) {
 }
 ```
 
-Variables can be created from patterns. In the previous examples, the `*` variable acted as a catch-all, matching all remaining values (see Exhaustive warning). You could instead create a variable without a leading underscore to use it later in the block.
+Variables can be created from patterns. In the previous examples, the `_` variable acted as a catch-all. You could instead create a variable without a leading underscore to use it later in the block.
 
 ```dart
 switch f() {
@@ -1577,26 +1578,23 @@ switch f() {
 Note that if a variable with the same name already exists in the scope of the switch, then it will be shadowed by the variable declared in the pattern inside the code after the:. The original variable is not used in the pattern. Variables in patterns are declarations of new variables, not references to existing ones.
 
 ```dart
-let k = 60;
-let x = 3;
+val k = 60;
+val x = 3;
 
-let y = switch x {
+val y = switch x {
   case 0: "zero"
   case 1: "one"
   case k: "another number " ++ string_of_int(k)
 }
 ```
 
-To constrain pattern matching with existing variables, see when clauses.
-
-Variants
-Patterns can also include variants and data held by variant tags.
+Patterns can also include variants and data held by variant tags. For example, matching against an optional type:
 
 ```dart
-let x: ?Int = Some(3)
-let value = switch x {
-  case None: 0
-  case Some(v): v
+val x: ?Int = Some(3)
+val value = switch x {
+  case null: 0
+  case ?v: v
 }
 ```
 
@@ -1605,7 +1603,7 @@ Patterns can include other data structures, like lists, sets, maps, and any nest
 ```dart
 type R = {x: int, y: int}
 type T = A[[Str, Int]] | B[R] | C[#[]Int] | D[[]R]
-let x = D([{x: 2, y: 1.2}]);
+val x = D([{x: 2, y: 1.2}]);
 
 switch x : T {
   case A(['hi', num]): num
@@ -1644,7 +1642,7 @@ switch [k1, k2] {
 A single block of code can be run for multiple patterns by listing them together. Type expressions, beginning with a spaced out `:`, can also be used to list multiple possibilities.
 
 ```dart
-let items: []Int = [1, 2, 3, 4]
+val items: []Int = [1, 2, 3, 4]
 
 switch (items) {
   case [1, 2], [3, 4]: "is [1, 2] or [3, 4]"
@@ -1657,7 +1655,7 @@ switch (items) {
 Matching on strings, regular expressions and functions allow you to extract those data from them.
 
 ```dart
-let sample: Str = '10-a'
+val sample: Str = '10-a'
 switch sample {
   case '${x: Int}-dir': exec(x)
   case `(?<x>\d+)-dir`: exec(x)
@@ -1668,25 +1666,24 @@ switch sample {
 Patterns can also be used outside of switch statements to "unpack" data whenever variables are declared.
 
 ```dart
-let data_ = [1, ["red", true]];
-let [a, c as [b, _]] = data_;
+val data_ = [1, ["red", true]];
+val [a, c: [b, _]] = data_;
 /* a is 1, b is "red", c is ("red", true) */
 
-let f = |p as {x, y}| x + y + p.x + p.y;
+val f = |p :| x + y + p.x + p.y;
 ```
 
 `if` or `un` can add extra conditions to patterns. The condition must be satisfied in order to execute the pattern's code, otherwise the pattern is skipped.
 
 ```dart
-let p = {x: 2, y: 2};
-let z = 3;
-let k =
-  switch (p) {
-    case {x, y: 0} if x == z: 0
-    case {x, y: 0} if f(x): 1
-    case {x: 2, y} if y < 10: 2
-    case {x: 2, y} if y < 2: 3 /* never executed, but no warning */
-    case _: 4
-  };
+val p = {x: 2, y: 2}
+val z = 3
+val k = switch p {
+  case ({x, y: 0}) if x == z: 0
+  case ({x, y: 0}) if f(x): 1
+  case ({x: 2, y}) if y < 10: 2
+  case ({x: 2, y}) if y < 2: 3 /* never executed, but no warning */
+  case _: 4
+}
 /* k is 2 */
 ```
