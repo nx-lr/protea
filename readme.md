@@ -12,12 +12,12 @@
 - Static type checking, program verification and useful error messages make it easy to catch or remediate errors and harmful behaviour.
 
 ```dart
-export class MyElement extends LitElement {
+export elem my-element {
   style styles {
-    style .someclass {
+    style .some-class {
        border: 1px solid red
        padding: 4px }
-    style .anotherclass {
+    style .another-class {
       background-color: navy }
   }
   const moreStyles = style {
