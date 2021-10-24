@@ -1784,37 +1784,25 @@ repository:
         name: punctuation.accessor.trin
 
   tag-element-name:
+    comment: "Tags that end > are trapped in #tag-termination"
+    name: markup.jsx.trin
+    contentName: markup.jsx.trin
+    begin: |
+      (?x)\s*+(<)#start tag begin
+      ([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.\p{Pd}][\p{Pc}\p{L}][\w\p{Pd}]*)*)#tag name
+      (?=[\/>\s])(?![:])(?<!\.|:)
+    end: \s*(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>
+    beginCaptures:
+      1: {name: punctuation.definition.tag.trin}
+      2: {patterns: [include: "#tag-names"]}
+    endCaptures:
+      1: {patterns: [include: "#tag-names"]}
+      2: {name: punctuation.definition.tag.trin}
+      3: {name: punctuation.definition.tag.trin}
+      4: {name: invalid.illegal.termination.trin}
     patterns:
-      - comment: JSX Fragment
-        name: meta.tag.trin
-        contentName: meta.tag.trin
-        begin: \s*+(<)\s*(?=>)
-        end: (?<=</)(>)
-        beginCaptures:
-          1: {name: punctuation.definition.tag.trin}
-        endCaptures:
-          1: {name: punctuation.definition.tag.trin}
-        patterns:
-          - include: "#tag-termination"
-      - comment: "Tags that end > are trapped in #tag-termination"
-        name: meta.tag.trin
-        contentName: meta.tag.trin
-        begin: |
-          (?x)\s*+(<)#start tag begin
-          ([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.\p{Pd}][\p{Pc}\p{L}][\w\p{Pd}]*)*)#tag name
-          (?=[\/>\s])(?![:])(?<!\.|:)
-        end: \s*(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>
-        beginCaptures:
-          1: {name: punctuation.definition.tag.trin}
-          2: {patterns: [include: "#tag-names"]}
-        endCaptures:
-          1: {patterns: [include: "#tag-names"]}
-          2: {name: punctuation.definition.tag.trin}
-          3: {name: punctuation.definition.tag.trin}
-          4: {name: invalid.illegal.termination.trin}
-        patterns:
-          - include: "#tag-termination"
-          - include: "#tag-attributes"
+      - include: "#tag-termination"
+      - include: "#tag-attributes"
 
   tag-termination:
     comment: uses non consuming search for </ in </tag>
