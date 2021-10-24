@@ -1636,19 +1636,11 @@ repository:
 
   html-properties:
     patterns:
-      - include: source.yaml#flow-scalar-plain-out-implicit-type
-      - include: source.css.scss#constant_functions
-      - include: source.css.scss#constant_sass_functions
-      - include: source.css.scss#constant_important
-      - include: source.css.scss#constant_default
-      - include: source.css.scss#constant_optional
-      - include: source.css#numeric-values
-      - include: source.css#property-keywords
-      - include: source.css#color-keywords
-      - include: source.css#property-names
       - include: "#constants"
-      - include: "#numbers"
-      - include: "#string-content"
+      - include: "#strings"
+      - include: "#clauses"
+      - include: source.css.scss#property_values
+      - include: "#literals"
 
   style-properties:
     patterns:
@@ -1659,7 +1651,7 @@ repository:
         beginCaptures:
           1: {name: support.type.property-name.trin}
           2: {name: punctuation.separator.key-value.trin}
-        end: (?=,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
+        end: (?=,|;|'|"|`|\)|\]|\})
         name: string.unquoted.trin
         patterns: [include: "#html-properties"]
       - comment: Attribute names
