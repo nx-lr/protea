@@ -13,20 +13,16 @@
 
 ```dart
 export elem my-element {
-  style styles {
-    style .some-class {
-       border: 1px solid red
-       padding: 4px }
-    style .another-class {
-      background-color: navy }
-  }
-  style more-styles {
-    color: lightgreen
-    font-family: \Roboto
-  }
+  style .some-class {
+      border: 1px solid red
+      padding: 4px }
+  style .another-class {
+    background-color: navy }
+
   def render() {
     <div .some-class .another-class
-      style=$more-styles
+      color=lightgreen
+      font-family=\Roboto
     >
       Some content
     </div>
