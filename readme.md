@@ -20,9 +20,9 @@ export elem my-element {
     style .another-class {
       background-color: navy }
   }
-  const moreStyles = style {
-    color: 'lightgreen'
-    fontFamily: 'Roboto'
+  style moreStyles {
+    color: lightgreen
+    fontFamily: \Roboto
   }
   def render() {
     <div .some-class .another-class
