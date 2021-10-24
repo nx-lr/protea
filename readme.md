@@ -4,9 +4,7 @@
 
 ![banner](./banner.png)
 
-**3nity** (pronounced as "Trinity") is an open source, fully featured and agile language that enables developers to build, deploy and test software on desktop, mobile, web or servers. It provides avenues to access huge ecosystems of libraries and runtimes
-
-Out of the box, it provides a robust program verifier and type checker that flags any errors to you so you can catch bugs early, and comes with a unified and comprehensive API and core libraries for making everyday or specialised tasks easier.
+**3nity** (pronounced as "Trinity") is an open source, fully featured and agile language that enables developers to build, deploy and test software on desktop, mobile, web or servers. Its static types, program verification and useful errors make it easy to catch and fix bugs, and its comprehensive APIs and portable runtime make it easy to integrate with vast ecosystems of software and libraries.
 
 ```dart
 import Math.[Point, Random]
@@ -112,17 +110,20 @@ elem MyElem as my-elem {
 
   async def onClick(e) {
     whales += 1;
-    await updateComplete();
-    dispatchEvent(new CustomEvent('whales', {detail: {whales: this.whales}}))
+    await updateComplete()
+    new Event(
+      :whales
+      {detail: {whales: this.whales}}
+    ).dispatch()
   }
 
   style :host { display: block }
   style :host(:hidden) { display: none }
 
-  stat def render() = [
-    <h4>Foo: ${this.foo}</h4>,
-    <div>whales: ${'🐳'.repeat(this.whales)}</div>,
-    <slot></slot>,
+  stat def render = [
+    <h4>Foo: ${this.foo}</h4>
+    <div>whales: ${\🅱️ * whales}</div>
+    <slot></slot>
   ]
 }
 ```
