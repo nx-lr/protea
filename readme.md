@@ -1,10 +1,10 @@
-# Trinity
+# 3nity
 
 > The programming language for the future.
 
 ![banner](./banner.png)
 
-**Trinity** is an open source, fully featured and agile language that enables developers, designers and testers to build, test and deploy their projects with less code, no matter the platform or runtime. It provides avenues to access huge ecosystems of libraries and runtimes, without the need for any installation.
+**3nity** (pronounced as "Trinity") is an open source, fully featured and agile language that enables developers to build, deploy and test software on desktop, mobile, web or servers. It provides avenues to access huge ecosystems of libraries and runtimes
 
 Out of the box, it provides a robust program verifier and type checker that flags any errors to you so you can catch bugs early, and comes with a unified and comprehensive API and core libraries for making everyday or specialised tasks easier.
 
@@ -41,9 +41,9 @@ sync iter generateRandom(*seed: []Int): Point {
 
 ### Roadmap
 
-> Update: I have a [Trello](https://trello.com/b/A3NDX7qY/trinity-programming-language) now!
+> Update: I have a [Trello](https://trello.com/b/A3NDX7qY/3nity-programming-language) now!
 
-- **Grammar** (see [`grammar.yaml`](https://github.com/NoxVentura/TrinityLang/blob/main/grammar.yaml))
+- **Grammar** (see [`grammar.yaml`](https://github.com/NoxVentura/3nityLang/blob/main/grammar.yaml))
 - Documentation (language and API)
 - Language reference
 - Lexer and parser
@@ -53,9 +53,13 @@ sync iter generateRandom(*seed: []Int): Point {
 
 ## Overview
 
-Trinity is a programming language designed with web, mobile, desktop and systems in mind. It is strongly typed, compiled, garbage-collected and has explicit support for multiple paradigms, including object-oriented, functional, concurrent and reflective programming.
+3nity is a language designed for writing multi-platform applications and software, using techniques applied from web development. Similar to Dart/Flutter, it is a compiler and framework combined to provide a great developer experience, while allowing to write safe, readable and maintainable code.
 
-Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [Scala][scala], [ReScript][rescript]/[ReasonML][reasonml], [TypeScript][typescript], [C#][csharp], [Flix][flix] and [Gosu][gosu]. With these influences, Trinity advocates for writing readable and expressive code, and enabling you to do in Trinity what you could in other languages.
+3nity was born out of the frustration of the JavaScript language, making it easy to write error-prone code. It also does not have the tools to create web apps out of the box, and you would need frameworks, compilers, and build tools that increase complexity.
+
+3nity is a programming language designed with web, mobile, desktop and systems in mind.
+
+3nity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [Scala][scala], [ReScript][rescript]/[ReasonML][reasonml], [TypeScript][typescript], [C#][csharp], [Flix][flix] and [Gosu][gosu]. With these influences, 3nity advocates for writing readable and expressive code, and enabling you to do in 3nity what you could in other languages.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 [go]: https://golang.org/
@@ -72,53 +76,54 @@ Trinity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [
 
 ## Table of Contents
 
-This document provides everything you need to know about Trinity, from the syntax, operations and features of the language, to its core libraries and modules. This is not meant to be a tutorial or reference, but rather an aid for existing developers coming from other languages who want to learn more about how the language works and have questions to ask.
+This document provides everything you need to know about 3nity, from the syntax, operations and features of the language, to its core libraries and modules. This is not meant to be a tutorial or reference, but rather an aid for existing developers coming from other languages who want to learn more about how the language works and have questions to ask.
 
-This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/NoxVentura/TrinityLang. Contributions and corrections are welcome.
+This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/NoxVentura/3nityLang. Contributions and corrections are welcome.
 
-A lot of my work on Trinity is still experimental and ongoing, so I am sharing this repository so I could get all of my ideas together and perhaps invite some of you to contribute your own. Once I get done with it, we can begin work on the compiler.
+A lot of my work on 3nity is still experimental and ongoing, so I am sharing this repository so I could get all of my ideas together and perhaps invite some of you to contribute your own. Once I get done with it, we can begin work on the compiler.
 
 ### A little disclaimer
 
-Trinity is a language in which programs are not text. That is, the source of truth for a program is not its textual representation as source code, but its structured representation as an abstract syntax tree (AST).
+3nity is a language in which programs are not text. That is, the source of truth for a program is not its textual representation as source code, but its structured representation as an abstract syntax tree (AST).
 
-This document describes Trinity in terms of its default (and currently, only) textual rendering into source code.
+This document describes 3nity in terms of its default (and currently, only) textual rendering into source code.
 
-Trinity only encodes text in UTF-8; other encodings are not supported. Any of the standard line termination sequences can be used, depending on the platform: `\r`, `\n` or `\r\n`.
+3nity only encodes text in UTF-8; other encodings are not supported. Any of the standard line termination sequences can be used, depending on the platform: `\r`, `\n` or `\r\n`.
 
-Trinity has only three file types: module (`*.3n`), script (`*.3s`), config (`*.3c`) and markup (`*.3m`).
+3nity has only three file types: module (`*.3n`), script (`*.3s`), config (`*.3c`) and markup (`*.3m`).
 
-Module files are the most commonly used as they can be imported and exported through packages. The entry point of a Trinity module is defined in the `main` function.
+Module files are the most commonly used as they can be imported and exported through packages. The entry point of a 3nity module is defined in the `main` function.
 
 ```dart
 /// @file main.3n
-fun main(*args: []Str): Void { /*...*/ }
+func main(*args: []Str): Void { /*...*/ }
 ```
 
 The type annotations or the spread `*args` declaration can be left out, so it can be `fun main {}` instead.
 
 Script files do not have a `main` function, but they can import other modules and files.
 
-Trinity markup is a special branch of Trinity whose syntax is derived from JSX, HTML and Stylus which enable you to build UIs, style them and add functionality. HTML snippets can be interlaced in Trinity module files and passed on as objects.
+3nity markup is a special branch of 3nity whose syntax is derived from JSX, HTML and Stylus which enable you to build UIs, style them and add functionality. HTML snippets can be interlaced in 3nity module files and passed on as objects.
 
 ```dart
-import Native.{Text, View, StyleSheet, Button, Audio}
+elem MyElem as my-elem {
+  field foo = 'foo'
+  field whales: Int = 5
 
-export pub elem App: View {
-  field sound: Audio {
-    async del proc unload: Void =
-      if !?self:
-        print("Unloading sound") && self = void
-    async new proc load: Void {
-      print("Loading sound")
-      self = await import "./assets/Hello.mp3"
-      self.play()
-    }
+  async def onClick(e) {
+    whales += 1;
+    await updateComplete();
+    dispatchEvent(new CustomEvent('whales', {detail: {whales: this.whales}}))
   }
 
-  return <View style=$styles.container>
-    <Button title="Play Sound" onPress=sound.load()/>
-  </View>
+  style :host { display: block }
+  style :host(:hidden) { display: none }
+
+  stat def render() = [
+    <h4>Foo: ${this.foo}</h4>,
+    <div>whales: ${'🐳'.repeat(this.whales)}</div>,
+    <slot></slot>,
+  ]
 }
 ```
 
@@ -128,7 +133,7 @@ export pub elem App: View {
 
 #### Syntax
 
-Trinity is a curly-brace language similar to JavaScript, Rust, Scala and Kotlin, which means that code blocks and closures are delimited using curly brackets.
+3nity is a curly-brace language similar to JavaScript, Rust, Scala and Kotlin, which means that code blocks and closures are delimited using curly brackets.
 
 Semicolons are completely optional though they can be used to terminate multiple statements on the same line. This makes it easier to
 
@@ -148,7 +153,7 @@ Documentation comments are comments that start with three slashes `///` rather t
 1 /// This is a documentation comment
 ```
 
-Trinity supports two types of multi-line comments beginning with `/*` and ending in `*/`.
+3nity supports two types of multi-line comments beginning with `/*` and ending in `*/`.
 
 ```dart
 /*  Comment here.
@@ -253,13 +258,13 @@ As for modifier keywords, they are parsed as keywords before a declaration as th
 
 ### Identifiers
 
-Trinity defines Unicode letters, combining diacritical or punctuation marks, and decimal digits as identifier characters. A sequence of those would form an identifier, provided they do not start with a combining diacritical mark or a decimal digit.
+3nity defines Unicode letters, combining diacritical or punctuation marks, and decimal digits as identifier characters. A sequence of those would form an identifier, provided they do not start with a combining diacritical mark or a decimal digit.
 
 Tags and attributes used for JSX tags can include dashes, but must not end with any amount of trailing dashes.
 
 #### Naming conventions
 
-Naming conventions follow Java or JavaScript. There are four types of identifiers which Trinity recognizes and highlights accordingly:
+Naming conventions follow Java or JavaScript. There are four types of identifiers which 3nity recognizes and highlights accordingly:
 
 - `SHOUT_CASE`, used for constants,
 - `PascalCase` used for classes, modules, namespaces, and types.
@@ -321,7 +326,7 @@ val isGreater = 4 > 1 // true
 
 ### Numbers
 
-Trinity supports integers and floating-point numbers. Floats compile to regular JavaScript `number`s, [IEEE-754 double-precision floating-point][double] while integers compile to `bigint` (arbitrary-precision integers). Floats are typically distinguished between integers with a dot.
+3nity supports integers and floating-point numbers. Floats compile to regular JavaScript `number`s, [IEEE-754 double-precision floating-point][double] while integers compile to `bigint` (arbitrary-precision integers). Floats are typically distinguished between integers with a dot.
 
 [double]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 
@@ -420,7 +425,7 @@ Double quoted string literals can contain the following escape sequences, and ca
 | `\e`            | escape (`\xB`)                                 |
 | `\s`            | space (`\x20`)                                 |
 
-Trinity also supports escapes in even bases up to 16, excluding 14.
+3nity also supports escapes in even bases up to 16, excluding 14.
 
 | Escape Sequence      | Meaning                                        |
 | -------------------- | ---------------------------------------------- |
@@ -520,13 +525,13 @@ Like YAML, backslash block strings can also be appended with a "chomping indicat
 ```dart
 \|
   this is my very very "very" long-ass string.
-  Love, Trinity.
+  Love, 3nity.
 \>
   this is my very very "very" long-\
-  ass string.\nLove, Trinity.
+  ass string.\nLove, 3nity.
 ```
 
-Trinity comes with several avenues to make manipulating, formatting and serializing strings easier.
+3nity comes with several avenues to make manipulating, formatting and serializing strings easier.
 
 #### String Interpolation
 
@@ -553,7 +558,7 @@ The hash sign takes several arguments, as placeholders, passed to the `format` m
 
 #### Format Directives
 
-Trinity provides an extensive string formatting mini-language for converting, transforming, transl(iter)ating and serialising strings. Its syntax derives from Command Prompt.
+3nity provides an extensive string formatting mini-language for converting, transforming, transl(iter)ating and serialising strings. Its syntax derives from Command Prompt.
 
 They are composed of the following parts:
 
@@ -569,7 +574,7 @@ const prices = { bread: 4.50 }
 
 #### Macro Strings
 
-Macro strings are used to embed domain-specific languages directly into Trinity, and are functionally the same as tagged template literals. The construct `name"string"` or `name("string")`, denotes a macro call with a string as its own argument.
+Macro strings are used to embed domain-specific languages directly into 3nity, and are functionally the same as tagged template literals. The construct `name"string"` or `name("string")`, denotes a macro call with a string as its own argument.
 
 A macro function is defined with the keyword `macro` rather than `fun`. The first argument of a `macro` contains a list of intermediate strings, the second being the interpolated values or placeholders, and the third being the formatting metadata.
 
@@ -595,7 +600,7 @@ Regular expressions function like strings, except delimited using backticks `` `
 
 Escaping rules apply, though in between brackets the backtick need not be escaped. Interpolation and formatting also applies but the interpolated result is usually escaped so to prevent generating invalid regular expressions.
 
-Trinity uses the [Oniguruma](https://github.com/kkos/oniguruma) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. But it adds its own extensions and will be (re)implemented in Trinity.
+3nity uses the [Oniguruma](https://github.com/kkos/oniguruma) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. But it adds its own extensions and will be (re)implemented in 3nity.
 
 ```dart
 `\b{wb}(fee|fie|foe|fum)\b{wb}`x
@@ -614,7 +619,7 @@ Multi-quoted and block regular expressions are also supported.
   <<= | >>= | #= | \*\*=
   | \+= | -= | /= | \@=
   | \*= | %= | ~= | \^= | \&= | \|=
-  | =(?!=)
+  | =(?!=) \p{is Latin}
 )```
 
 \< x
@@ -630,7 +635,7 @@ val newStr = str =< `(\w+)\W+(\w+)` `My name is $2, $0!`
 // 'My name is Bond, James Bond'
 ```
 
-The following section serves as a summary to the regular expression syntax of Trinity, as well as some of the more unique features that Nova has over other regex flavors.
+The following section serves as a summary to the regular expression syntax of 3nity, as well as some of the more unique features that Nova has over other regex flavors.
 
 #### Basic Syntax Elements
 
@@ -653,17 +658,17 @@ The following section serves as a summary to the regular expression syntax of Tr
 
 Most of these characters also appear the same way as in string literals.
 
-| Syntax                         | Description and Use                     |
-| ------------------------------ | --------------------------------------- |
-| `\a`                           | \*Alert/bell character (inside `[]`)    |
-| `\b`                           | \*Backspace character (inside `[]`)     |
-| `\e`                           | Escape character (Unicode `U+`)         |
-| `\f`                           | Form feed (Unicode `U+`)                |
-| `\n`                           | New line (Unicode `U+`)                 |
-| `\r`                           | Carriage return (Unicode `U+`)          |
-| `\t`                           | Horizontal tab (Unicode `U+`)           |
-| `\v`                           | Vertical tab (Unicode `U+`)             |
-| `\cA`...`\cZ`<br>`\ca`...`\cz` | Control character from `U+01` to `U+1A` |
+| Syntax                         | Description and Use                       |
+| ------------------------------ | ----------------------------------------- |
+| `\a`                           | \*Alert/bell character (inside `[]`)      |
+| `\b`                           | \*Backspace character (inside `[]`)       |
+| `\e`                           | Escape                                    |
+| `\f`                           | Form feed                                 |
+| `\n`                           | New line                                  |
+| `\r`                           | Carriage return                           |
+| `\t`                           | Horizontal tab                            |
+| `\v`                           | Vertical tab                              |
+| `\cA`...`\cZ`<br>`\ca`...`\cz` | Control character (from `U+01` to `U+1A`) |
 
 The following can only be used inside square brackets.
 
@@ -706,20 +711,20 @@ Character sequences in regular expressions are the same as in their string count
 
 Properties are case-insensitive. Logical operators `&&`, `||`, `^^` and `!`, can be interspersed to express compound queries.
 
-| Syntax                                      | Description                                   |
-| ------------------------------------------- | --------------------------------------------- |
-| `\p{prop=value}`<br>`\p{prop==value}`       | `prop` equals `value`                         |
-| `\p{prop!=value}`<br>`\P{prop=value}`       | `prop` does not equal `value`                 |
-| `\p{prop^=value}`                           | `prop` begins with but does not equal `value` |
-| `\p{prop$=value}`                           | `prop` ends with but does not equal `value`   |
-| `\p{prop*=value}`                           | `prop` contains but does not equal `value`    |
-| `\p{prop\|=value}`                          | `prop` begins with or equals to `value`       |
-| `\p{prop~=value}`                           | `prop` ends with or equals to `value`         |
-| `\p{prop&=value}`                           | `prop` contains or equals to `value`          |
-| `\p{in BasicLatin}`<br>`\P{!in BasicLatin}` | Block property                                |
-| `\p{is Latin}`<br>`\p{script==Latin}`       | Script or binary property                     |
-| `\p{value}`                                 | Short form\*                                  |
-| `\p{Cc}`                                    | Unicode character categories^                 |
+| Syntax                        | Description                                   |
+| ----------------------------- | --------------------------------------------- |
+| `\p{p=v}`<br>`\p{p==v}`       | `prop` equals `value`                         |
+| `\p{p!=v}`<br>`\P{p=v}`       | `prop` does not equal `value`                 |
+| `\p{p^=v}`                    | `prop` begins with but does not equal `value` |
+| `\p{p$=v}`                    | `prop` ends with but does not equal `value`   |
+| `\p{p*=v}`                    | `prop` contains but does not equal `value`    |
+| `\p{p\|=v}`                   | `prop` begins with or equals to `value`       |
+| `\p{p~=v}`                    | `prop` ends with or equals to `value`         |
+| `\p{p&=v}`                    | `prop` contains or equals to `value`          |
+| `\p{in Blk}`<br>`\P{!in Blk}` | Block property                                |
+| `\p{is Scr}`<br>`\P{is! Scr}` | Script or binary property                     |
+| `\p{value}`                   | Short form\*                                  |
+| `\p{Cc}`                      | Unicode character categories^                 |
 
 \*Properties are checked in the order: `General_Category`, `Script`, `Block`, binary property:
 
@@ -870,7 +875,7 @@ This syntax applies to the second regex literal onward in regex operations such 
 
 ## Collections
 
-Trinity comes with four different collection literals: lists `[]`, sets `{}`, maps `{:}`. All collection literals are immutable. A `Mut` prefix on its type or a hash `#` right before the literal makes them mutable, and allows you to mutate them directly.
+3nity comes with four different collection literals: lists `[]`, sets `{}`, maps `{:}`. All collection literals are immutable. A `Mut` prefix on its type or a hash `#` right before the literal makes them mutable, and allows you to mutate them directly.
 
 ### Lists
 
@@ -982,11 +987,11 @@ A quoted identifier can contain any Unicode character including white-spaces and
 
 ## Expressions
 
-Trinity's expression syntax is very similar to C, PHP, Java, Elixir, Haskell and others. Trinity has built-in operators:
+3nity's expression syntax is very similar to C, PHP, Java, Elixir, Haskell and others. 3nity has built-in operators:
 
 ### Operators
 
-The tables below define all of Trinity's operators, and you can define your own.
+The tables below define all of 3nity's operators, and you can define your own.
 
 #### General operators
 
@@ -1120,7 +1125,7 @@ The tables below define all of Trinity's operators, and you can define your own.
 
 ### Custom Operators
 
-In Trinity, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot-notation:
+In 3nity, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot-notation:
 
 ```dart
 10.+(1)
@@ -1256,7 +1261,7 @@ Operators ending in either `->`, `~>` or `=>`, or starting with `<-`, `<~` or `<
 
 #### Binary Operators
 
-Binary operators include interfix and infix operators. Interfix operators are evaluated first, from left to right. 
+Binary operators include interfix and infix operators. Interfix operators are evaluated first, from left to right.
 
 ```dart
 def?.(a: Any, b: Any): Any = ?a ? void : a[b]
@@ -1390,7 +1395,7 @@ if a == b {
 }
 ```
 
-The complete Trinity `if`/`else if`/`else` expression looks like this:
+The complete 3nity `if`/`else if`/`else` expression looks like this:
 
 ```dart
 if test1 {
@@ -1414,7 +1419,7 @@ un test1 { // unless; if not
 }
 ```
 
-A great thing about the Trinity conditional is that it always returns. You can ignore the result as we did in the previous examples, but a more common approach, especially in functional programming.
+A great thing about the 3nity conditional is that it always returns. You can ignore the result as we did in the previous examples, but a more common approach, especially in functional programming.
 
 You can assign the result to a variable:
 
@@ -1422,7 +1427,7 @@ You can assign the result to a variable:
 val minValue = if a < b: a else: b
 ```
 
-Anyway, Trinity has two ternary conditional operators, which are just syntax sugar for the above if you're not keen on using `if`. That last one, is syntax sugar for `un`...`else`.
+Anyway, 3nity has two ternary conditional operators, which are just syntax sugar for the above if you're not keen on using `if`. That last one, is syntax sugar for `un`...`else`.
 
 ```dart
 val minValue = a < b ? a : b
@@ -1482,7 +1487,7 @@ assert i == 128
 
 #### Loop keywords
 
-Trinity has three keywords relating to loops:
+3nity has three keywords relating to loops:
 
 - stop and exit a loop or an enumeration using the `break` keyword
 - jump to the next iteration or step using the `next` keyword
