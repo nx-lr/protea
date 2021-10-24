@@ -1636,11 +1636,18 @@ repository:
 
   html-properties:
     patterns:
-      - include: "#constants"
-      - include: "#strings"
       - include: "#clauses"
+      - include: "#declarations"
+      - include: "#constants"
+      - include: "#strings-quoted"
+      - include: "#symbols"
+      - include: "#regexps"
       - include: source.css.scss#property_values
+      - include: "#string-content"
+      - include: "#strings-unquoted"
       - include: "#literals"
+      - include: "#brackets"
+      - include: "#punctuation"
 
   style-properties:
     patterns:
@@ -1651,9 +1658,11 @@ repository:
         beginCaptures:
           1: {name: support.type.property-name.trin}
           2: {name: punctuation.separator.key-value.trin}
-        end: (?=,|;|'|"|`|\)|\]|\})
+        end: (?=.)|$
         name: string.unquoted.trin
-        patterns: [include: "#html-properties"]
+        patterns:
+          - include: "#html-properties"
+          - include: $self
       - comment: Attribute names
         match: \s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
         captures:
@@ -3531,7 +3540,7 @@ repository:
       style:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.style.trin}
         patterns:
@@ -3557,7 +3566,7 @@ repository:
       function:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.function.trin}
         patterns:
@@ -3567,7 +3576,7 @@ repository:
       method:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.method.trin}
         patterns:
@@ -3577,7 +3586,7 @@ repository:
       class:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.class.trin}
         patterns:
@@ -3587,7 +3596,7 @@ repository:
       enum:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.enum.trin}
         patterns:
@@ -3597,7 +3606,7 @@ repository:
       module:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.module.trin}
         patterns:
@@ -3607,7 +3616,7 @@ repository:
       package:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pack)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.package.trin}
         patterns:
@@ -3617,7 +3626,7 @@ repository:
       interface:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inter)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.interface.trin}
         patterns:
@@ -3627,7 +3636,7 @@ repository:
       namespace:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(space)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.namespace.trin}
         patterns:
@@ -3637,7 +3646,7 @@ repository:
       structure:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.structure.trin}
         patterns:
@@ -3647,7 +3656,7 @@ repository:
       object:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.object.trin}
         patterns:
@@ -3657,7 +3666,7 @@ repository:
       data:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.data.trin}
         patterns:
@@ -3667,7 +3676,7 @@ repository:
       trait:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.trait.trin}
         patterns:
@@ -3677,7 +3686,7 @@ repository:
       procedure:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.procedure.trin}
         patterns:
@@ -3687,7 +3696,7 @@ repository:
       protocol:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.protocol.trin}
         patterns:
@@ -3697,7 +3706,7 @@ repository:
       macro:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.macro.trin}
         patterns:
@@ -3707,7 +3716,7 @@ repository:
       given:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.given.trin}
         patterns:
@@ -3717,7 +3726,7 @@ repository:
       element:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.element.trin}
         patterns:
@@ -3727,7 +3736,7 @@ repository:
       extends:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.extends.trin}
         patterns:
@@ -3737,7 +3746,7 @@ repository:
       subroutine:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sub)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.subroutine.trin}
         patterns:
@@ -3747,7 +3756,7 @@ repository:
       predicate:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pred)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.predicate.trin}
         patterns:
@@ -3757,7 +3766,7 @@ repository:
       lemma:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(lemma)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.lemma.trin}
         patterns:
@@ -3767,7 +3776,7 @@ repository:
       iterator:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.iterator.trin}
         patterns:
@@ -3777,7 +3786,7 @@ repository:
       field:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(field)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.field.trin}
         patterns:
@@ -3787,7 +3796,7 @@ repository:
       property:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.property.trin}
         patterns:
@@ -3797,7 +3806,7 @@ repository:
       pragma:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pragma)\b\s*
-        end: $|(?=.)
+        end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.pragma.trin}
         patterns:
