@@ -1638,23 +1638,23 @@ repository:
     patterns:
       - include: "#clauses"
       - include: "#declarations"
+      - include: source.css.scss#property_values
       - include: "#constants"
       - include: "#strings-quoted"
       - include: "#symbols"
       - include: "#regexps"
-      - include: source.css.scss#property_values
       - include: "#string-content"
       - include: "#strings-unquoted"
       - include: "#literals"
       - include: "#brackets"
-      - include: "#punctuation"
 
   style-properties:
     patterns:
       - include: "#clauses"
       - include: "#declarations"
       - include: "#style-block"
-      - begin: \s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
+      - applyEndPatternLast: 1
+        begin: \s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
         beginCaptures:
           1: {name: support.type.property-name.trin}
           2: {name: punctuation.separator.key-value.trin}
@@ -1662,13 +1662,6 @@ repository:
         name: string.unquoted.trin
         patterns:
           - include: "#html-properties"
-          - include: $self
-      - comment: Attribute names
-        match: \s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
-        captures:
-          1: {name: support.type.property-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
-      - include: "#html-properties"
       - include: $self
 
   style-rules:
@@ -1677,7 +1670,6 @@ repository:
       - include: "#css-attrib"
       - include: "#tag-names"
       - include: "#css-operators"
-
     repository:
       css-operators:
         begin: \s*(\()\s*
@@ -1685,8 +1677,7 @@ repository:
         captures:
           1: {name: punctuation.definition.parameters.trin}
         patterns:
-          - include: "#attribute-selectors"
-
+          - include: "#style-properties"
       css-attrib:
         begin: \s*(\[)\s*
         end: \s*(\])
@@ -1694,7 +1685,6 @@ repository:
           1: {name: punctuation.definition.selector.trin}
         patterns:
           - include: "#attribute-selectors"
-
       css-selectors:
         patterns:
           - include: "#format-specifiers"
@@ -1849,57 +1839,30 @@ repository:
 
   tag-attributes:
     patterns:
-      - include: "#evaluated-code"
-      - include: "#attribute-name"
-      - include: source.css.scss#selectors
-      - include: source.yaml#flow-collection
-      - include: "#spread-attribute"
-      - include: "#string-content"
-      - include: "#numbers"
-      - include: "#strings-quoted"
-      - include: "#regexes"
-      - include: "#brackets"
+      - include: "#attributes"
       - include: "#comments"
-      - include: "#punctuation"
+
+  attributes:
+    patterns:
+      - applyEndPatternLast: 1
+        begin: \b([\p{Pc}\p{L}][\p{Pd}\w]*)\s*(=)\s*
+        beginCaptures:
+          1: {name: entity.other.attribute-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+        end: (?=.)|$
+        name: string.unquoted.attribute-name.trin
+        patterns:
+          - include: "#html-properties"
+      - comment: Attribute names
+        match: \b([\p{Pc}\p{L}][\p{Pd}\w]*)\s*(=)?\s*
+        captures:
+          1: {name: entity.other.attribute-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
 
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
     match: (?<!\*)\*(?!\*)
     name: keyword.operator.spread.trin
-
-  attribute-name:
-    patterns:
-      - begin: (?<=<|\s|,|;|\)|\]|\})([\p{Pc}\p{L}][\p{Pd}\w]*)(=)
-        beginCaptures:
-          1: {name: entity.other.attribute-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
-        end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
-        name: string.unquoted.trin
-        patterns: [include: "#html-properties"]
-      - comment: Attribute names
-        match: (?<=<|\s|,|;|\)|\]|\})([\p{Pc}\p{L}][\p{Pd}\w]*)(=)?
-        captures:
-          1: {name: entity.other.attribute-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
-
-  evaluated-code:
-    patterns:
-      - comment: Style attribute
-        begin: \s*(#{)\s*
-        end: \s*(})\s*
-        captures:
-          1: {name: punctuation.section.embedded.trin}
-        patterns:
-          - include: source.css.scss#flow_control
-          - include: source.css.scss#rules
-          - include: source.css.scss#properties
-          - include: source.css.scss
-      - begin: \s*(\${)\s*
-        end: \s*(})\s*
-        captures:
-          1: {name: punctuation.section.embedded.trin}
-        patterns:
-          - include: $self
 
   jsx-entities:
     patterns:
