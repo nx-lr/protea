@@ -86,7 +86,11 @@ A lot of my work on 3nity is still experimental and ongoing, so I am sharing thi
 
 This document describes 3nity in terms of its default (and currently, only) textual rendering into source code.
 
+#### Text encoding
+
 3nity only encodes text in UTF-8; other encodings are not supported. Any of the standard line termination sequences can be used, depending on the platform: `\r`, `\n` or `\r\n`.
+
+#### File types
 
 3nity has only three file types: module (`*.3n`), script (`*.3s`), config (`*.3c`) and markup (`*.3m`).
 
@@ -97,7 +101,7 @@ Module files are the most commonly used as they can be imported and exported thr
 func main(*args: []Str): Void { /*...*/ }
 ```
 
-The type annotations or the spread `*args` declaration can be left out, so it can be `fun main {}` instead.
+The type annotations or the spread `*args` declaration can be left out, so it can be `func main {}` instead.
 
 Script files do not have a `main` function, but they can import other modules and files.
 
@@ -109,7 +113,7 @@ elem MyElem as my-elem {
   field whales: Int = 5
 
   async def onClick(e) {
-    whales += 1;
+    whales += 1
     await updateComplete()
     new Event(
       :whales
@@ -117,14 +121,16 @@ elem MyElem as my-elem {
     ).dispatch()
   }
 
-  style :host { display: block }
-  style :host(:hidden) { display: none }
+  style :host {
+    display: block
+    style :hidden { display: none }
+  }
 
-  stat def render = [
-    <h4>Foo: ${this.foo}</h4>
-    <div>whales: ${\🅱️ * whales}</div>
-    <slot></slot>
-  ]
+  stat def render = <Frag>
+    <h4>Foo: ${this.foo}</>
+    <div>whales: ${\🅱️ * whales}</>
+    <slot></>
+  </>
 }
 ```
 
@@ -134,9 +140,11 @@ elem MyElem as my-elem {
 
 #### Syntax
 
-3nity is a curly-brace language similar to JavaScript, Rust, Scala and Kotlin, which means that code blocks and closures are delimited using curly brackets.
+3nity is a curly brace language similar to JavaScript, Rust and Kotlin, which means that code blocks are delimited mostly using curly brackets.
 
-Semicolons are completely optional though they can be used to terminate multiple statements on the same line. This makes it easier to
+Semicolons are completely optional though they can be used to terminate multiple statements on the same line. The same rules apply to commas in collection literals.
+
+Check the samples above, and you can see how sparse they are.
 
 #### Comments
 
