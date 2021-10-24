@@ -7,33 +7,24 @@
 **3nity** (pronounced as "Trinity") is an open source, fully featured and agile language that enables developers to build, deploy and test software on desktop, mobile, web or servers. Its static types, program verification and useful errors make it easy to catch and fix bugs, and its comprehensive APIs and portable runtime make it easy to integrate with vast ecosystems of software and libraries.
 
 ```dart
-import Math.[Point, Random]
-
-// Main function
-async proc main {
-  print("Compute π using the Monte Carlo algorithm")
-  await for val estimate in computePi().take(100):
-    print("π ~= $estimate")
-}
-
-// Iterator functions (function* in JavaScript)
-async iter computePi(&batch: 1^5): Stream[Float] {
-  var total = 0, count = 0
-  loop {
-    val points = generateRandom().take(batch)
-    val inside = from val p in points
-                 where p.isInsideCirc()
-    total += batch
-    count += inside.len
-    val ratio = count / total
-    yield ratio * 4
+elem Rotate {
+  // Create the keyframes
+  const rotate = style keyframes {
+    style from { transform: rotate(0deg) }
+    style to { transform: rotate(360deg) }
   }
-}
 
-sync iter generateRandom(*seed: []Int): Point {
-  val random = Random(seed)
-  loop:
-    yield Point(random.nextFloat(), random.nextFloat())
+  // Here we create a component that will rotate everything we pass in over two seconds
+  const Rotate = style div {
+    display: inline-block
+    animation: $rotate 2s linear infinite
+    padding: 2rem 1rem
+    font-size: 1.2rem
+  }
+
+  def render = (
+    <Rotate>&lt; 💅🏾 &gt;</Rotate>
+  )
 }
 ```
 
@@ -117,7 +108,7 @@ elem MyElem as my-elem {
     await updateComplete()
     new Event(
       :whales
-      {detail: {whales: this.whales}}
+      { detail: { whales: this.whales } }
     ).dispatch()
   }
 
