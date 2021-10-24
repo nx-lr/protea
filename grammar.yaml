@@ -85,7 +85,7 @@ define:
     |debug|assert|where
     )\b
     )
-    ([\p{Pc}\p{L}]\w*)
+    ([\p{Pc}\p{L}][\w\p{Pd}]*)
     \b
 
   entity-name: &entity-name |
@@ -108,7 +108,7 @@ define:
     |debug|assert|where
     )\b
     )
-    ([\p{Pc}\p{L}]\w*)
+    ([\p{Pc}\p{L}][\w\p{Pd}]*)
     \b
 
   posix-class: &posix-class |
@@ -246,7 +246,7 @@ repository:
         match: (?x)\s*\bis(\p{Lu}[\w&&\P{Lu}]*)+\b\s*
         name: support.function.predicate.trin
       - comment: magic functions
-        match: (?x)\s*\b_+([\p{Pc}\p{L}]\w*)+_+\b\s*
+        match: (?x)\s*\b_+([\p{Pc}\p{L}][\w\p{Pd}]*)+_+\b\s*
         name: support.function.magic.trin
       - comment: Swift
       - include: source.swift#builtin-functions
@@ -263,25 +263,25 @@ repository:
           (?x)\b(?:
           (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
           (?:# Properties (note all properties are by default, symbols)
-          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
           ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-          ([\p{Pc}\p{L}]\w*)
+          ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
           |
           (?:# Objects and maps
-          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
           ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-          ([\p{Pc}\p{L}]\w*)
+          ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
           (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
           |
           (?:# Regular variables
-          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
           ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-          ([\p{Pc}\p{L}]\w*)
+          ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
           )\b
         captures:
@@ -371,7 +371,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.trin}
@@ -393,7 +393,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.trin}
@@ -415,7 +415,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.binary.trin}
@@ -437,7 +437,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.binary.trin}
@@ -459,7 +459,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.trin}
@@ -481,7 +481,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.trin}
@@ -503,7 +503,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.senary.trin}
@@ -525,7 +525,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.senary.trin}
@@ -547,7 +547,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.octal.trin}
@@ -569,7 +569,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.octal.trin}
@@ -591,7 +591,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.trin}
@@ -613,7 +613,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.trin}
@@ -635,7 +635,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.trin}
@@ -657,7 +657,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.trin}
@@ -679,7 +679,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.trin}
@@ -701,7 +701,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.trin}
@@ -723,7 +723,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: invalid.illegal.numeric.trin}
@@ -745,7 +745,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}]\w*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
           0: {name: invalid.illegal.numeric.trin}
@@ -965,7 +965,7 @@ repository:
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {name: constant.numeric.decimal.trin}
-      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}]\w*)
+      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {patterns: [include: "#placeholder-variables"]}
@@ -979,9 +979,9 @@ repository:
           (?xi)
           (\$)# prefix
           (
-          [\p{Pc}\p{L}]\w*
+          [\p{Pc}\p{L}][\w\p{Pd}]*
           (?:(?:[?!]?\.|[?!:]:)
-          (?:(?:[\p{Pc}\p{L}]\w*)))*
+          (?:(?:[\p{Pc}\p{L}][\w\p{Pd}]*)))*
           )# variable
         captures:
           1: {name: punctuation.section.embedded.trin}
@@ -1002,7 +1002,7 @@ repository:
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {name: constant.numeric.decimal.trin}
-      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}]\w*)
+      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {patterns: [include: "#placeholder-variables"]}
@@ -1016,9 +1016,9 @@ repository:
           (?xi)
           (\$)# prefix
           (
-          [\p{Pc}\p{L}]\w*
+          [\p{Pc}\p{L}][\w\p{Pd}]*
           (?:(?:[?!]?\.|[?!:]:)
-          (?:(?:[\p{Pc}\p{L}]\w*)))*
+          (?:(?:[\p{Pc}\p{L}][\w\p{Pd}]*)))*
           )# variable
         captures:
           1: {name: punctuation.section.embedded.trin}
@@ -1057,7 +1057,7 @@ repository:
         match: (?<=[^\\%]%)\w+
         name: entity.other.attribute-name.trin
       - comment: Format switch with value /x:24
-        match: (?<!\\)(/)([\p{Pc}\p{L}]\w*)(:)((?:[^\s'"`<=>\\/]|\\.|(?<!\w)/(?!>))*)
+        match: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)(:)((?:[^\s'"`<=>\\/]|\\.|(?<!\w)/(?!>))*)
         captures:
           1: {name: punctuation.separator.mapping.trin}
           2: {name: entity.other.attribute-name.class.trin}
@@ -1066,7 +1066,7 @@ repository:
             name: string.unquoted.attribute-name.trin
             patterns: [include: "#attribute-values"]
       - comment: Format switch with value /x:24
-        match: (?<!\\)(/)([\p{Pc}\p{L}]\w*)
+        match: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
           1: {name: punctuation.separator.mapping.trin}
           2: {name: entity.other.attribute-name.id.trin}
@@ -1452,7 +1452,7 @@ repository:
         patterns:
           - include: "#regexp-patterns"
       - comment: Back-reference groups
-        begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}]\w*)))(:)?
+        begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}][\w\p{Pd}]*)))(:)?
         end: \s*\)
         name: meta.group.back-reference.trin
         captures:
@@ -1639,13 +1639,8 @@ repository:
       - include: "#clauses"
       - include: "#declarations"
       - include: source.css.scss#property_values
-      - include: "#constants"
-      - include: "#strings-quoted"
-      - include: "#symbols"
-      - include: "#regexps"
-      - include: "#string-content"
-      - include: "#strings-unquoted"
       - include: "#literals"
+      - include: "#embedded"
       - include: "#brackets"
 
   style-properties:
@@ -1742,7 +1737,7 @@ repository:
       (?<=(?:
       ^\s*|,\s*|;\s*|
       \#?[({\[]\s*|
-      [\p{Pc}\p{L}]\w*|
+      [\p{Pc}\p{L}][\w\p{Pd}]*|
       (?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+)\s+|
       \b(?:#keywords
       in|of|as|is|new|to|til|thru|by|del|unset
@@ -1773,7 +1768,7 @@ repository:
       - match: |
           (?x)\b
           (?:# Regular variables
-          (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+)|[\p{Pc}\p{L}][\p{Pd}\w&&\P{Pc}]*\p{Pc}+)|
+          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+)|[\p{Pc}\p{L}][\p{Pd}\w&&\P{Pc}]*\p{Pc}+)|
           ([\p{L}&&\P{Ll}][\p{Pd}\w&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\p{Pd}\w&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\p{Pd}\w]*)
@@ -1806,7 +1801,7 @@ repository:
         contentName: meta.tag.trin
         begin: |
           (?x)\s*+(<)#start tag begin
-          ([\p{Pc}\p{L}]\w*(?:[:.\p{Pd}][\p{Pc}\p{L}]\w*)*)#tag name
+          ([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.\p{Pd}][\p{Pc}\p{L}][\w\p{Pd}]*)*)#tag name
           (?=[\/>\s])(?![:])(?<!\.|:)
         end: \s*(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>
         beginCaptures:
@@ -2112,7 +2107,7 @@ repository:
           0: {name: meta.brace.curly.jsdoc}
         patterns:
           - include: "#jsdoc-typedef-primitives"
-          - match: \b([\p{Pc}\p{L}]\w*)\s*(:)
+          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(:)
             captures:
               1: {name: variable.other.readwrite.jsdoc}
           - include: "#jsdoc-name-path-scopes"
@@ -2133,19 +2128,19 @@ repository:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*(?=[\p{Pc}\p{L}])
             captures:
               1: {name: keyword.as.jsdoc}
-          - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}]\w*))(?=[\s\-~.#]|$)
+          - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}][\w\p{Pd}]*))(?=[\s\-~.#]|$)
             captures:
               1: {name: entity.name.class.jsdoc}
               2: {name: entity.name.function.jsdoc}
-          - match: (\.)([\p{Pc}\p{L}]\w*)(?=\s|$|\")
+          - match: (\.)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
             captures:
               1: {name: keyword.operator.accessor.jsdoc}
               2: {name: entity.name.function.method.static.jsdoc}
-          - match: (\#)([\p{Pc}\p{L}]\w*)(?=\s|$|\")
+          - match: (\#)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
             captures:
               1: {name: keyword.operator.accessor.jsdoc}
               2: {name: entity.name.function.method.instance.jsdoc}
-          - match: (~|-)([\p{Pc}\p{L}]\w*)(?=\s|$|\")
+          - match: (~|-)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
             captures:
               1: {name: keyword.operator.accessor.jsdoc}
               2: {name: entity.name.function.method.inner.jsdoc}
@@ -2191,7 +2186,7 @@ repository:
           |debug|assert|where
           )\b
           )
-          [\p{Pc}\p{L}]\w*
+          [\p{Pc}\p{L}][\w\p{Pd}]*
           )
           \b\s+
           (?=<\|{1,3}\s+|<\+\s+)
@@ -2220,7 +2215,7 @@ repository:
           |debug|assert|where
           )\b
           )
-          [\p{Pc}\p{L}]\w*
+          [\p{Pc}\p{L}][\w\p{Pd}]*
           )
           \b
           (?=
@@ -2235,17 +2230,17 @@ repository:
 
   placeholder-variables:
     patterns:
-      - match: (?i)\s*\?[\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.optional.trin
-      - match: (?i)\s*\*[\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*\*[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.spread.trin
-      - match: (?i)\s*[&~][\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*[&~][\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.name.trin
-      - match: (?i)\s*\%[\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*\%[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.reference.trin
-      - match: (?i)\s*\$[\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*\$[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.other.trin
-      - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*
+      - match: (?i)\s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.trin
 
   variables:
@@ -2262,25 +2257,25 @@ repository:
       (?:
       (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
       (?:# Properties (note all properties are by default, symbols)
-      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-      ([\p{Pc}\p{L}]\w*)
+      ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       |
       (?:# Objects and maps
-      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-      ([\p{Pc}\p{L}]\w*)
+      ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
       |
       (?:# Regular variables
-      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-      ([\p{Pc}\p{L}]\w*)
+      ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       )
       \b\s*
@@ -2586,26 +2581,26 @@ repository:
                   )
                   (?:
                   (?:# Objects and maps
-                  (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+                  (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
                   ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
                   ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-                  ([\p{Pc}\p{L}]\w*)
+                  ([\p{Pc}\p{L}][\w\p{Pd}]*)
                   )
                   (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
                   |
                   (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
                   (?:# Properties (note all properties are by default, symbols)
-                  (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+                  (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
                   ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
                   ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-                  ([\p{Pc}\p{L}]\w*)
+                  ([\p{Pc}\p{L}][\w\p{Pd}]*)
                   )
                   |
                   (?:# Regular variables
-                  (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+                  (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
                   ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
                   ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-                  ([\p{Pc}\p{L}]\w*)
+                  ([\p{Pc}\p{L}][\w\p{Pd}]*)
                   )
                   )\b
                 captures:
@@ -2631,7 +2626,7 @@ repository:
             captures:
               1: {name: keyword.operator.conditional.trin}
             patterns:
-              - begin: \s*(?=([\p{Pc}\p{L}]\w*)\s*:)
+              - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
                 end: \s*(?=:\s|$)
                 patterns:
                   - include: "#constants"
@@ -2642,7 +2637,7 @@ repository:
             captures:
               1: {name: keyword.operator.ternary.trin}
             patterns:
-              - begin: \s*(?=([\p{Pc}\p{L}]\w*)\s*:)
+              - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
                 end: \s*(?=:\s|$)
                 patterns:
                   - include: "#constants"
@@ -2653,7 +2648,7 @@ repository:
             captures:
               1: {name: keyword.operator.macro.dollar.trin}
             patterns:
-              - begin: \s*(?=([\p{Pc}\p{L}]\w*)\s*:)
+              - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
                 end: \s*(?=:\s|$)
                 name: entity.name.function.trin
               - include: $self
@@ -2686,7 +2681,7 @@ repository:
                 name: punctuation.separator.key-value.trin
 
         patterns:
-          - begin: \s*(?<=^|;|,|\(|\[|\{|(?<=['"`\w)}\]]):|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
+          - begin: \s*(?<=^|;|,|\(|\[|\{|(?<=['"`\w)}\]]):\s+|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.mapping.trin}
@@ -2695,7 +2690,7 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(?<=^|;|,|\(|\[|\{|(?<=['"`\w)}\]]):|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
+          - begin: \s*(?<=^|;|,|\(|\[|\{|(?<=['"`\w)}\]]):\s+|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.dictionary.trin}
@@ -2857,7 +2852,7 @@ repository:
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {name: constant.numeric.decimal.trin}
-      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}]\w*)
+      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {patterns: [include: "#placeholder-variables"]}
@@ -2869,9 +2864,9 @@ repository:
           (?xi)
           (\$)# prefix
           (
-          [\p{Pc}\p{L}]\w*
+          [\p{Pc}\p{L}][\w\p{Pd}]*
           (?:(?:[?!]?\.|[?!:]:)
-          (?:(?:[\p{Pc}\p{L}]\w*)))*
+          (?:(?:[\p{Pc}\p{L}][\w\p{Pd}]*)))*
           )# variable
         captures:
           1: {name: punctuation.section.embedded.trin}
@@ -2891,7 +2886,7 @@ repository:
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {name: constant.numeric.decimal.trin}
-      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}]\w*)
+      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {patterns: [include: "#placeholder-variables"]}
@@ -2903,9 +2898,9 @@ repository:
           (?xi)
           (\$)# prefix
           (
-          [\p{Pc}\p{L}]\w*
+          [\p{Pc}\p{L}][\w\p{Pd}]*
           (?:(?:[?!]?\.|[?!:]:)
-          (?:(?:[\p{Pc}\p{L}]\w*)))*
+          (?:(?:[\p{Pc}\p{L}][\w\p{Pd}]*)))*
           )# variable
         captures:
           1: {name: punctuation.section.embedded.trin}
@@ -3015,7 +3010,7 @@ repository:
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
-          \s*\?[\p{Pc}\p{L}]\w*\b\s*
+          \s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:
           [,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
@@ -3023,7 +3018,7 @@ repository:
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
-          \s*\*[\p{Pc}\p{L}]\w*\b\s*
+          \s*\*[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:
           [,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
@@ -3031,7 +3026,7 @@ repository:
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
-          \s*\&[\p{Pc}\p{L}]\w*\b\s*
+          \s*\&[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:
           [,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
@@ -3039,7 +3034,7 @@ repository:
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
-          \s*\%[\p{Pc}\p{L}]\w*\b\s*
+          \s*\%[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:
           [,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
@@ -3047,7 +3042,7 @@ repository:
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
-          \s*\$[\p{Pc}\p{L}]\w*\b\s*
+          \s*\$[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:
           [,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
@@ -3055,7 +3050,7 @@ repository:
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
-          \s*\b[\p{Pc}\p{L}]\w*\b\s*
+          \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:
           [,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
@@ -3096,25 +3091,25 @@ repository:
       (?:
       (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
       (?:# Properties (note all properties are by default, symbols)
-      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-      ([\p{Pc}\p{L}]\w*)
+      ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       |
       (?:# Objects and maps
-      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-      ([\p{Pc}\p{L}]\w*)
+      ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
       |
       (?:# Regular variables
-      (\p{Pc}+[\p{Pc}\p{L}]\w*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w&&\P{Lu}]*)+)|
-      ([\p{Pc}\p{L}]\w*)
+      ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       )\b
     captures: &custom-types
@@ -3184,7 +3179,7 @@ repository:
       )
       )\b\s*
       |# Decorators
-      @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
+      @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
       )*
       )
       (?=
@@ -3201,7 +3196,7 @@ repository:
       1:
         patterns: &modifier-keywords
           - &decorators
-            match: (?x)\s*@[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
+            match: (?x)\s*@[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
             name: entity.name.class.decorator.trin
           - &modifiers
             match: |
@@ -4093,7 +4088,7 @@ repository:
           |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
           |prefix|suffix|infix|binary|unary|left|right
           |# Decorators
-          @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
+          @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
           ))
           \s*)*)
           (?=\s*\b
@@ -4129,7 +4124,7 @@ repository:
           |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
           |prefix|suffix|infix|binary|unary|left|right
           |# Decorators
-          @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
+          @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
           )\s*\b)*
           )\s*
           (\|)
@@ -4247,7 +4242,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=^|;|,|\(|\[|\{|(?<=['"`\w)}\]]):|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
+      - begin: \s*(?<=^|;|,|\(|\[|\{|(?<=['"`\w)}\]]):\s+|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.trin}
@@ -4255,7 +4250,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=^|;|,|\(|\[|\{|(?<=['"`\w)}\]]):|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
+      - begin: \s*(?<=^|;|,|\(|\[|\{|(?<=['"`\w)}\]]):\s+|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
