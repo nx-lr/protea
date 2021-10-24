@@ -22,7 +22,7 @@ export elem my-element {
   }
   style moreStyles {
     color: lightgreen
-    fontFamily: \Roboto
+    font-family: \Roboto
   }
   def render() {
     <div .some-class .another-class
