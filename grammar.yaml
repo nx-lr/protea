@@ -1641,7 +1641,15 @@ repository:
       - include: "#clauses"
       - include: "#declarations"
       - include: "#brackets"
-      - include: source.css.scss#property_values
+      - include: source.css.scss#constant_functions
+      - include: source.css.scss#constant_sass_functions
+      - include: source.css.scss#constant_important
+      - include: source.css.scss#constant_default
+      - include: source.css.scss#constant_optional
+      - include: source.css#numeric-values
+      - include: source.css#property-keywords
+      - include: source.css#color-keywords
+      - include: source.css#property-names
       - include: "#literals"
       - include: "#embedded"
 
@@ -1667,38 +1675,38 @@ repository:
       - include: "#css-attrib"
       - include: "#tag-names"
       - include: "#css-operators"
-    repository:
-      css-operators:
-        begin: \s*(\()\s*
-        end: \s*(\))
-        captures:
-          1: {name: punctuation.definition.parameters.trin}
-        patterns:
-          - include: "#style-properties"
-      css-attrib:
-        begin: \s*(\[)\s*
-        end: \s*(\])
-        captures:
-          1: {name: punctuation.definition.selector.trin}
-        patterns:
-          - include: "#attribute-selectors"
-      css-selectors:
-        patterns:
-          - include: "#format-specifiers"
-          - match: \s*(\@|\#|\$|\&|\*|\.|\:|::)\b
-            name: punctuation.definition.entity.trin
-          - match: \s*(?<=\@)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-            name: keyword.control.at-rule.trin
-          - match: \s*(?<=\#)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-            name: entity.other.attribute-name.id.trin
-          - match: \s*(?<=\&)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-            name: entity.name.type.anchor.trin
-          - match: \s*(?<=\.)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-            name: entity.other.attribute-name.class.trin
-          - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-            name: entity.other.attribute-name.pseudo-element.trin
-          - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-            name: entity.other.attribute-name.pseudo-element.trin
+
+  css-operators:
+    begin: \s*(\()\s*
+    end: \s*(\))
+    captures:
+      1: {name: punctuation.definition.parameters.trin}
+    patterns:
+      - include: "#style-properties"
+  css-attrib:
+    begin: \s*(\[)\s*
+    end: \s*(\])
+    captures:
+      1: {name: punctuation.definition.selector.trin}
+    patterns:
+      - include: "#attribute-selectors"
+  css-selectors:
+    patterns:
+      - include: "#format-specifiers"
+      - match: \s*(\@|\#|\$|\&|\*|\.|\:|::)\b
+        name: punctuation.definition.entity.trin
+      - match: \s*(?<=\@)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+        name: keyword.control.at-rule.trin
+      - match: \s*(?<=\#)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+        name: entity.other.attribute-name.id.trin
+      - match: \s*(?<=\&)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+        name: entity.name.type.anchor.trin
+      - match: \s*(?<=\.)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+        name: entity.other.attribute-name.class.trin
+      - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+        name: entity.other.attribute-name.pseudo-element.trin
+      - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+        name: entity.other.attribute-name.pseudo-element.trin
 
   style-block:
     begin: \s*(\{)\s*
@@ -1823,6 +1831,7 @@ repository:
 
   tag-attributes:
     patterns:
+      - include: "#css-selectors"
       - include: "#attributes"
       - include: "#comments"
 
