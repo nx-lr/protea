@@ -20,13 +20,13 @@ export elem my-element {
     style .another-class {
       background-color: navy }
   }
-  style moreStyles {
+  style more-styles {
     color: lightgreen
     font-family: \Roboto
   }
   def render() {
     <div .some-class .another-class
-      style=$moreStyles
+      style=$more-styles
     >
       Some content
     </div>
