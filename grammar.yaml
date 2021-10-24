@@ -1508,7 +1508,7 @@ repository:
         end: \s*}
         name: constant.other.character-class.unicode.trin
         patterns:
-          - include: "#unicode-query"
+          - include: "#attribute-selectors"
       - begin: \\j{
         end: \s*}
         name: constant.character.entity.named.trin
@@ -1593,43 +1593,36 @@ repository:
           - include: "#regexp-char-ops"
           - include: "#regexp-char-set"
 
-  unicode-query:
+  attribute-selectors:
     patterns:
+      - match: ","
+        name: punctuation.separator.sequence.trin
       - include: "#comments"
-      - include: "#operators"
-      - include: "#expression-keywords"
-      - include: "#literals"
-      - captures:
-          1: {name: storage.modifier.ignore-case.trin}
-        match: (?<=["'\s]|^|[*+/]/)\s*([iI])\s*(?=[\s}]|/\*|$)
-      - captures:
-          1:
-            name: string.unquoted.attribute-value.trin
-            patterns: [include: "#string-escapes"]
-        match: (?x)(?<==)\s*((?!/[*+/])(?:[^\\`"'\s}]|\\.)+)
+      - include: "#strings-unquoted"
+      - include: "#strings-quoted"
+      - match: (?xi)\b[is]\b(?=\)|\]|\}|&&|\|\||\^\^)
+        name: storage.modifier.ignore-case.trin
       - include: "#string-escapes"
       - match: "[~|^$!&*=]?="
         name: keyword.operator.pattern.trin
-      - match: \|
-        name: punctuation.separator.trin
-      - captures:
-          1:
-            name: entity.other.namespace-prefix.trin
-            patterns: [include: "#string-escapes"]
-        match: |-
-          (?x)
-          # Qualified namespace prefix
-          (-?(?!\d)(?:[\w-]|[^\x00-\x7F]|\\(?:\h{1,6}|.))+|\*)
-          # Lookahead to ensure there's a valid identifier ahead
-          (?=\|(?!\s|=|$|\])(?:-?(?!\d)|[\\\w-]|[^\x00-\x7F]))
-      - captures:
-          1:
-            name: entity.other.attribute-name.trin
-            patterns: [include: "#string-escapes"]
-        match: |-
-          (?x)
-          (-?(?!\d)(?>[\w-]|[^\x00-\x7F]|\\(?:\h{1,6}|.))+)\s*
-          (?=[}~|^$!&*=]|/[*+/])
+      - match: ([&|^])\1|!
+        name: keyword.operator.logical.trin
+      - match: \b(i[ns])\b
+        name: keyword.operator.expression.$1.trin
+      - begin: \b([\p{Pc}\p{L}][\p{Pd}\w]*)([~|^$!&*=]?=)
+        beginCaptures:
+          1: {name: entity.other.attribute-name.trin}
+          2: {name: keyword.operator.pattern.trin}
+        end: (?=&&|\|\||\^\^|\s|,|:|;|'|"|`|\(|\)|\[|\]|\{|\})
+        name: string.unquoted.attribute-name.trin
+        patterns:
+          - include: "#html-properties"
+      - comment: Attribute names
+        match: \b([\p{Pc}\p{L}][\p{Pd}\w]*)\b
+        captures:
+          1: {name: entity.other.attribute-name.trin}
+          2: {name: keyword.operator.pattern.trin}
+      - include: $self
 
   # Markdown
 
@@ -1638,6 +1631,116 @@ repository:
       HAML, Textile and more.
       Coming soon.
     patterns: []
+
+  # Special code blocks
+
+  html-properties:
+    patterns:
+      - include: source.yaml#flow-scalar-plain-out-implicit-type
+      - include: source.css.scss#constant_functions
+      - include: source.css.scss#constant_sass_functions
+      - include: source.css.scss#constant_important
+      - include: source.css.scss#constant_default
+      - include: source.css.scss#constant_optional
+      - include: source.css#numeric-values
+      - include: source.css#property-keywords
+      - include: source.css#color-keywords
+      - include: source.css#property-names
+      - include: "#constants"
+      - include: "#numbers"
+      - include: "#string-content"
+
+  style-properties:
+    patterns:
+      - include: "#clauses"
+      - include: "#declarations"
+      - include: "#style-block"
+      - begin: \s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
+        beginCaptures:
+          1: {name: support.type.property-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+        end: (?=,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
+        name: string.unquoted.trin
+        patterns: [include: "#html-properties"]
+      - comment: Attribute names
+        match: \s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
+        captures:
+          1: {name: support.type.property-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+      - include: "#html-properties"
+      - include: $self
+
+  style-rules:
+    patterns:
+      - include: "#css-selectors"
+      - include: "#css-attrib"
+      - include: "#tag-names"
+      - include: "#css-operators"
+
+    repository:
+      css-operators:
+        begin: \s*(\()\s*
+        end: \s*(\))
+        captures:
+          1: {name: punctuation.definition.parameters.trin}
+        patterns:
+          - include: "#attribute-selectors"
+
+      css-attrib:
+        begin: \s*(\[)\s*
+        end: \s*(\])
+        captures:
+          1: {name: punctuation.definition.selector.trin}
+        patterns:
+          - include: "#attribute-selectors"
+
+      css-selectors:
+        patterns:
+          - include: "#format-specifiers"
+          - match: \s*(\@|\#|\$|\&|\*|\.|\:|::)\b
+            name: punctuation.definition.entity.trin
+          - match: \s*(?<=\@)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+            name: keyword.control.at-rule.trin
+          - match: \s*(?<=\#)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+            name: entity.other.attribute-name.id.trin
+          - match: \s*(?<=\&)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+            name: entity.name.type.anchor.trin
+          - match: \s*(?<=\.)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+            name: entity.other.attribute-name.class.trin
+          - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+            name: entity.other.attribute-name.pseudo-element.trin
+          - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+            name: entity.other.attribute-name.pseudo-element.trin
+
+  style-block:
+    begin: \s*(\{)\s*
+    end: \s*(\})
+    captures:
+      1: {name: punctuation.definition.block.trin}
+    patterns:
+      - include: "#style-properties"
+
+  route-block:
+    begin: \s*(\{)\s*
+    end: \s*(\})
+    captures:
+      1: {name: punctuation.definition.block.trin}
+    patterns:
+      - begin: ^\s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)\s*
+        beginCaptures:
+          1: {name: support.type.property-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+        end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
+        name: string.unquoted.trin
+        patterns: [include: "#html-properties"]
+      - comment: Attribute names
+        match: ^\s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
+        captures:
+          1: {name: support.type.property-name.trin}
+          2: {name: punctuation.separator.key-value.trin}
+      - include: "#html-properties"
+      - include: source.css.scss#property_list
+      - include: $self
 
   # JSX
 
@@ -1671,22 +1774,6 @@ repository:
     applyEndPatternLast: 1
     patterns:
       - include: "#tag-element-name"
-
-  jsx-values:
-    patterns:
-      - include: source.yaml#flow-scalar-plain-out-implicit-type
-      - include: source.css#numeric-values
-      - include: source.css#property-keywords
-      - include: source.css#color-keywords
-      - include: source.css#property-names
-      - include: source.css.scss#constant_functions
-      - include: source.css.scss#constant_sass_functions
-      - include: source.css.scss#constant_important
-      - include: source.css.scss#constant_default
-      - include: source.css.scss#constant_optional
-      - include: "#constants"
-      - include: "#numbers"
-      - include: "#string-content"
 
   tag-names:
     patterns:
@@ -1787,7 +1874,7 @@ repository:
           2: {name: punctuation.separator.key-value.trin}
         end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
         name: string.unquoted.trin
-        patterns: [include: "#jsx-values"]
+        patterns: [include: "#html-properties"]
       - comment: Attribute names
         match: (?<=<|\s|,|;|\)|\]|\})([\p{Pc}\p{L}][\p{Pd}\w]*)(=)?
         captures:
@@ -3100,13 +3187,16 @@ repository:
         name: keyword.generator.asterisk.trin
       - include: "#type-operators"
       - include: "#operators"
+      - include: "#literals"
       - applyEndPatternLast: 1
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]))
         end: (?=.)|$
         beginCaptures:
           1: {name: punctuation.definition.annotation.trin}
-        patterns:
-          - include: "#types"
+        patterns: [include: "#types"]
+      - include: "#comments"
+      - include: "#brackets"
+      - include: "#punctuation"
 
   modifier-keywords:
     match: |
@@ -3133,7 +3223,6 @@ repository:
       @[\p{Pc}\p{L}]\w*(?:(?:\.|::)[\p{Pc}\p{L}]\w*)*\s*
       )*
       )
-
       (?=
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:
@@ -3211,8 +3300,6 @@ repository:
         name: storage.type.protocol.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
         name: storage.type.macro.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)\b\s*
-        name: storage.type.type.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)\b\s*
         name: storage.type.given.trin
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)\b\s*
@@ -3449,6 +3536,19 @@ repository:
       - include: "#pragma"
 
     repository:
+      style:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
+        end: $|(?=.)
+        beginCaptures:
+          1: {name: storage.type.style.trin}
+        patterns:
+          - include: "#style-block"
+          - include: "#style-rules"
+          - include: "#block-entities"
+          - match: *entity-name
+            name: entity.name.style.trin
+
       variable:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)\b\s*
@@ -3461,22 +3561,11 @@ repository:
         end: (?=.)|$
         beginCaptures:
           1: {name: keyword.other.declare.trin}
-      style:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.style.trin}
-        patterns:
-          - include: "#style-block"
-          - include: "#tag-attributes"
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.style.trin
+
       function:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.function.trin}
         patterns:
@@ -3486,7 +3575,7 @@ repository:
       method:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.method.trin}
         patterns:
@@ -3496,7 +3585,7 @@ repository:
       class:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.class.trin}
         patterns:
@@ -3506,7 +3595,7 @@ repository:
       enum:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.enum.trin}
         patterns:
@@ -3516,7 +3605,7 @@ repository:
       module:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.module.trin}
         patterns:
@@ -3526,7 +3615,7 @@ repository:
       package:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pack)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.package.trin}
         patterns:
@@ -3536,7 +3625,7 @@ repository:
       interface:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inter)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.interface.trin}
         patterns:
@@ -3546,7 +3635,7 @@ repository:
       namespace:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(space)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.namespace.trin}
         patterns:
@@ -3556,7 +3645,7 @@ repository:
       structure:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.structure.trin}
         patterns:
@@ -3566,7 +3655,7 @@ repository:
       object:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.object.trin}
         patterns:
@@ -3576,7 +3665,7 @@ repository:
       data:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.data.trin}
         patterns:
@@ -3586,7 +3675,7 @@ repository:
       trait:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.trait.trin}
         patterns:
@@ -3596,7 +3685,7 @@ repository:
       procedure:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.procedure.trin}
         patterns:
@@ -3606,7 +3695,7 @@ repository:
       protocol:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.protocol.trin}
         patterns:
@@ -3616,27 +3705,17 @@ repository:
       macro:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.macro.trin}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
             name: entity.name.macro.trin
-      type:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)\b\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.type.trin}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.type.trin
       given:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.given.trin}
         patterns:
@@ -3646,7 +3725,7 @@ repository:
       element:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.element.trin}
         patterns:
@@ -3656,7 +3735,7 @@ repository:
       extends:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.extends.trin}
         patterns:
@@ -3666,7 +3745,7 @@ repository:
       subroutine:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sub)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.subroutine.trin}
         patterns:
@@ -3676,7 +3755,7 @@ repository:
       predicate:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pred)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.predicate.trin}
         patterns:
@@ -3686,7 +3765,7 @@ repository:
       lemma:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(lemma)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.lemma.trin}
         patterns:
@@ -3696,7 +3775,7 @@ repository:
       iterator:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.iterator.trin}
         patterns:
@@ -3706,7 +3785,7 @@ repository:
       field:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(field)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.field.trin}
         patterns:
@@ -3716,7 +3795,7 @@ repository:
       property:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.property.trin}
         patterns:
@@ -3726,7 +3805,7 @@ repository:
       pragma:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pragma)\b\s*
-        end: (?=.)|$
+        end: $|(?=.)
         beginCaptures:
           1: {name: storage.type.pragma.trin}
         patterns:
@@ -3784,7 +3863,6 @@ repository:
           1: {name: punctuation.definition.parameters.trin}
         patterns:
           - include: "#function-params"
-
       new-clause:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(new)\b
@@ -3799,7 +3877,6 @@ repository:
           - include: "#type-square-brackets"
           - include: "#parameter-brackets"
           - include: "#round-brackets"
-
       type-clause:
         patterns:
           - applyEndPatternLast: 1
@@ -3819,7 +3896,6 @@ repository:
                 captures:
                   1: {name: keyword.operator.assignment.trin}
               - include: "#types"
-
       catch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|final)\b\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
@@ -3839,7 +3915,6 @@ repository:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
             name: keyword.control.error.trin
           - include: $self
-
       thread-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(race|some|every|done|spawn|kill|lock)\b\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
@@ -3859,7 +3934,6 @@ repository:
               - *thread-clause-keywords
               - include: $self
           - include: $self
-
       do-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do)\b\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
@@ -3869,7 +3943,6 @@ repository:
           2: {name: punctuation.separator.colon.trin}
         patterns:
           - include: $self
-
       for-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)\b\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
@@ -3889,7 +3962,6 @@ repository:
               - *for-clause-keywords
               - include: $self
           - include: $self
-
       if-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)\b\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
@@ -3899,7 +3971,6 @@ repository:
           2: {name: punctuation.separator.colon.trin}
         patterns:
           - include: $self
-
       match-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)\b\s*
         end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
@@ -3954,7 +4025,6 @@ repository:
               - *else-clause
               - include: $self
           - include: $self
-
       switch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)\b\s*
         end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
@@ -4009,7 +4079,6 @@ repository:
               - *default-clause
               - include: $self
           - include: $self
-
       with-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)\b\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)\b|(?<=['"`\w)}\]])(:)(?=\s|$)
@@ -4158,50 +4227,6 @@ repository:
       - include: "#curly-brackets"
       - include: "#square-brackets"
       - include: "#round-brackets"
-
-  style-block:
-    begin: \s*(\{)\s*
-    end: \s*(\})
-    captures:
-      1: {name: punctuation.definition.block.trin}
-    patterns:
-      - begin: ^\s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)\s*
-        beginCaptures:
-          1: {name: support.type.property-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
-        end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
-        name: string.unquoted.trin
-        patterns: [include: "#jsx-values"]
-      - comment: Attribute names
-        match: ^\s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
-        captures:
-          1: {name: support.type.property-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
-      - include: "#jsx-values"
-      - include: source.css.scss#property_list
-      - include: $self
-
-  route-block:
-    begin: \s*(\{)\s*
-    end: \s*(\})
-    captures:
-      1: {name: punctuation.definition.block.trin}
-    patterns:
-      - begin: ^\s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)\s*
-        beginCaptures:
-          1: {name: support.type.property-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
-        end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/>|::|!:|\?:|\.|!\.|\?\.)
-        name: string.unquoted.trin
-        patterns: [include: "#jsx-values"]
-      - comment: Attribute names
-        match: ^\s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
-        captures:
-          1: {name: support.type.property-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
-      - include: "#jsx-values"
-      - include: source.css.scss#property_list
-      - include: $self
 
   curly-brackets:
     repository:
