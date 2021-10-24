@@ -4,27 +4,33 @@
 
 ![banner](./banner.png)
 
-**3nity** (pronounced as "Trinity") is an open source, fully featured and agile language that enables developers to build, deploy and test software on desktop, mobile, web or servers. Its static types, program verification and useful errors make it easy to catch and fix bugs, and its comprehensive APIs and portable runtime make it easy to integrate with vast ecosystems of software and libraries.
+**_3nity_** is a multi-paradigm, multi-platform language that enables developers to **build**, **test**, **deploy**, **scale** and **maintain** software.
+
+- A familiar but less noisy/salty syntax makes it easier to write beautiful and expressive code, while flattening the learning curve.
+- A comprehensive API tied to every runtime make it easy to run programs and integrate with vast ecosystems of software and libraries.
+- Built-in markup, styles, routing, queries and schemas allow you to use the power of the language for the entire stack from the client to the server.
+- Static type checking, program verification and useful error messages make it easy to catch or remediate errors and harmful behaviour.
 
 ```dart
-elem Rotate {
-  // Create the keyframes
-  const rotate = style keyframes {
-    style from { transform: rotate(0deg) }
-    style to { transform: rotate(360deg) }
+export class MyElement extends LitElement {
+  style styles {
+    style .someclass {
+       border: 1px solid red
+       padding: 4px }
+    style .anotherclass {
+      background-color: navy }
   }
-
-  // Here we create a component that will rotate everything we pass in over two seconds
-  const Rotate = style div {
-    display: inline-block
-    animation: $rotate 2s linear infinite
-    padding: 2rem 1rem
-    font-size: 1.2rem
+  const moreStyles = style {
+    color: 'lightgreen'
+    fontFamily: 'Roboto'
   }
-
-  def render = (
-    <Rotate>&lt; 💅🏾 &gt;</Rotate>
-  )
+  def render() {
+    <div .some-class .another-class
+      style=$moreStyles
+    >
+      Some content
+    </div>
+  }
 }
 ```
 
@@ -42,11 +48,7 @@ elem Rotate {
 
 ## Overview
 
-3nity is a language designed for writing multi-platform applications and software, using techniques applied from web development. Similar to Dart/Flutter, it is a compiler and framework combined to provide a great developer experience, while allowing to write safe, readable and maintainable code.
-
-3nity was born out of the frustration of the JavaScript language, making it easy to write error-prone code. It also does not have the tools to create web apps out of the box, and you would need frameworks, compilers, and build tools that increase complexity.
-
-3nity is a programming language designed with web, mobile, desktop and systems in mind.
+3nity was born out of the frustration of the JavaScript language, making it easy to write error-prone code. It also does not have the tools to create web apps out of the box, and you would need frameworks, compilers, and build tools that increase complexity. 3nity is a programming language designed with web, mobile, desktop and systems in mind.
 
 3nity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [Scala][scala], [ReScript][rescript]/[ReasonML][reasonml], [TypeScript][typescript], [C#][csharp], [Flix][flix] and [Gosu][gosu]. With these influences, 3nity advocates for writing readable and expressive code, and enabling you to do in 3nity what you could in other languages.
 
