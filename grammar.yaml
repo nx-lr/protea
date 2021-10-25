@@ -1634,6 +1634,14 @@ repository:
 
   # Special code blocks
 
+  style-block:
+    begin: \s*(\{)\s*
+    end: \s*(\})
+    captures:
+      1: {name: punctuation.definition.block.trin}
+    patterns:
+      - include: "#style-properties"
+
   html-properties:
     patterns:
       - match: \s+
@@ -1656,8 +1664,8 @@ repository:
   style-properties:
     patterns:
       - include: "#clauses"
-      - include: "#declarations"
       - include: "#style-block"
+      - include: "#style-rules"
       - applyEndPatternLast: 1
         begin: \s*([\p{Pc}\p{L}][\p{Pd}\w]*)(:)?\s*
         beginCaptures:
@@ -1667,30 +1675,30 @@ repository:
         name: string.unquoted.trin
         patterns:
           - include: "#html-properties"
+      - include: "#declarations"
       - include: $self
 
   style-rules:
     patterns:
-      - include: "#css-selectors"
-      - include: "#css-attrib"
+      - include: "#style-attributes"
+      - include: "#style-parameters"
+      - include: "#style-selectors"
       - include: "#tag-names"
-      - include: "#css-operators"
-
-  css-operators:
+  style-parameters:
     begin: \s*(\()\s*
     end: \s*(\))
     captures:
       1: {name: punctuation.definition.parameters.trin}
     patterns:
       - include: "#style-properties"
-  css-attrib:
+  style-attributes:
     begin: \s*(\[)\s*
     end: \s*(\])
     captures:
       1: {name: punctuation.definition.selector.trin}
     patterns:
       - include: "#attribute-selectors"
-  css-selectors:
+  style-selectors:
     patterns:
       - include: "#format-specifiers"
       - match: \s*(\@|\#|\$|\&|\*|\.|\:|::)\b
@@ -1707,14 +1715,6 @@ repository:
         name: entity.other.attribute-name.pseudo-element.trin
       - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: entity.other.attribute-name.pseudo-element.trin
-
-  style-block:
-    begin: \s*(\{)\s*
-    end: \s*(\})
-    captures:
-      1: {name: punctuation.definition.block.trin}
-    patterns:
-      - include: "#style-properties"
 
   route-block:
     begin: \s*(\{)\s*
@@ -1831,7 +1831,7 @@ repository:
 
   tag-attributes:
     patterns:
-      - include: "#css-selectors"
+      - include: "#style-selectors"
       - include: "#attributes"
       - include: "#comments"
 
@@ -3164,7 +3164,7 @@ repository:
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:
       # access modifiers
-      pub|priv|prot|inline|final|mut|immut|ghost
+      pub|priv|prot|inline|final|mut|immut|ghost|early|late|joint|contra
       |seal|abs|intern|extern|imply|exply|global|local
 
       # concurrency modifiers
@@ -3172,7 +3172,7 @@ repository:
       |vol|unsafe|unfix|bound|free|opaque|trans
 
       # property or method modifiers
-      |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
+      |rec|gen|oper|get|set|post|put|rem|new|del|patch
       |prefix|suffix|infix|binary|unary|left|right
       )
       )\b\s*
@@ -3202,7 +3202,7 @@ repository:
               \s*\b
               (?:
               (# Access modifiers
-              pub|priv|prot|inline|final|mut|immut|ghost
+              pub|priv|prot|inline|final|mut|immut|ghost|early|late|joint|contra
               |seal|abs|intern|extern|imply|exply|global|local
               )|
               (# Function or method modifiers
@@ -3210,7 +3210,7 @@ repository:
               |vol|unsafe|unfix|bound|free|opaque|trans
               )|
               (# Property modifiers
-              rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
+              rec|gen|oper|get|set|post|put|rem|new|del|patch
               |prefix|suffix|infix|binary|unary|left|right
               )
               )\b\s*
@@ -4075,7 +4075,7 @@ repository:
           ((?:
           \s*(?:
           (?:# access modifiers
-          pub|priv|prot|inline|final|mut|immut|ghost
+          pub|priv|prot|inline|final|mut|immut|ghost|early|late|joint|contra
           |seal|abs|intern|extern|imply|exply|global|local
 
           # concurrency modifiers
@@ -4083,7 +4083,7 @@ repository:
           |vol|unsafe|unfix|bound|free|opaque|trans
 
           # property or method modifiers
-          |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
+          |rec|gen|oper|get|set|post|put|rem|new|del|patch
           |prefix|suffix|infix|binary|unary|left|right
           |# Decorators
           @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
@@ -4111,7 +4111,7 @@ repository:
           (
           (?:
           (?:# access modifiers
-          pub|priv|prot|inline|final|mut|immut|ghost
+          pub|priv|prot|inline|final|mut|immut|ghost|early|late|joint|contra
           |seal|abs|intern|extern|imply|exply|global|local
 
           # concurrency modifiers
@@ -4119,7 +4119,7 @@ repository:
           |vol|unsafe|unfix|bound|free|opaque|trans
 
           # property or method modifiers
-          |rec|gen|oper|get|set|post|put|rem|new|del|patch|early|late|joint|contra
+          |rec|gen|oper|get|set|post|put|rem|new|del|patch
           |prefix|suffix|infix|binary|unary|left|right
           |# Decorators
           @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
