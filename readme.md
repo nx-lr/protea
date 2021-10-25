@@ -19,7 +19,7 @@ export elem my-element {
   style .another-class {
     background-color: navy }
 
-  def render() {
+  def render {
     <div .some-class .another-class
       color=lightgreen
       font-family=\Roboto
@@ -90,11 +90,7 @@ Module files are the most commonly used as they can be imported and exported thr
 func main(*args: []Str): Void { /*...*/ }
 ```
 
-The type annotations or the spread `*args` declaration can be left out, so it can be `func main {}` instead.
-
-Script files do not have a `main` function, but they can import other modules and files.
-
-3nity markup is a special branch of 3nity whose syntax is derived from JSX, HTML and Stylus which enable you to build UIs, style them and add functionality. HTML snippets can be interlaced in 3nity module files and passed on as objects.
+The type annotations or the spread `*args` declaration can be left out, so it can be `func main {}` instead. This is a sample web component.
 
 ```dart
 elem MyElem as my-elem {
@@ -112,7 +108,7 @@ elem MyElem as my-elem {
 
   style :host {
     display: block
-    style :hidden { display: none }
+    :hidden { display: none }
   }
 
   stat def render = <Frag>
@@ -122,6 +118,15 @@ elem MyElem as my-elem {
   </>
 }
 ```
+
+Script files do not have a `main` function, but they can import and access other module and script files.
+
+```dart
+print("Hello", params(1))
+exit(42)
+```
+
+3nity markup is a special branch of 3nity whose syntax is derived from JSX, HTML and Stylus which enable you to build UIs, style them and add functionality. HTML snippets can be interlaced in 3nity module files and passed on as objects.
 
 ## Syntax
 
