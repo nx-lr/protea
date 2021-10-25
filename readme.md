@@ -2,95 +2,14 @@
 
 > The programming language for the future.
 
-![banner](./banner.png)
+![banner](./banner.svg)
 
 **_3nity_** is a multi-paradigm, multi-platform language that enables developers to **build**, **test**, **deploy**, **scale** and **maintain** software.
 
 - A familiar but less noisy/salty syntax makes it easier to write beautiful and expressive code, while flattening the learning curve.
-- A comprehensive API tied to every runtime make it easy to run programs and integrate with vast ecosystems of software and libraries.
-- Built-in markup, styles, routing, queries and schemas allow you to use the power of the language for the entire stack from the client to the server.
-- Static type checking, program verification and useful error messages make it easy to catch or remediate errors and harmful behaviour.
-
-```dart
-export elem my-element {
-  style .some-class {
-      border: 1px solid red
-      padding: 4px }
-  style .another-class {
-    background-color: navy }
-
-  def render {
-    <div .some-class .another-class
-      color=lightgreen
-      font-family=\Roboto
-    >
-      Some content
-    </div>
-  }
-}
-```
-
-### Roadmap
-
-> Update: I have a [Trello](https://trello.com/b/A3NDX7qY/3nity-programming-language) now!
-
-- **Grammar** (see [`grammar.yaml`](https://github.com/NoxVentura/3nityLang/blob/main/grammar.yaml))
-- Documentation (language and API)
-- Language reference
-- Lexer and parser
-- Trans-compiler
-- Tooling (VSCode, Atom and Nova)
-- Theme, branding and website
-
-## Overview
-
-3nity was born out of the frustration of the JavaScript language, making it easy to write error-prone code. It also does not have the tools to create web apps out of the box, and you would need frameworks, compilers, and build tools that increase complexity. 3nity is a programming language designed with web, mobile, desktop and systems in mind.
-
-3nity takes on its influences from [Go][go], [Kotlin][kotlin], [Rust][rust], [Scala][scala], [ReScript][rescript]/[ReasonML][reasonml], [TypeScript][typescript], [C#][csharp], [Flix][flix] and [Gosu][gosu]. With these influences, 3nity advocates for writing readable and expressive code, and enabling you to do in 3nity what you could in other languages.
-
-[wtfjs]: https://github.com/denysdovhan/wtfjs/
-[go]: https://golang.org/
-[kotlin]: https://kotlinlang.org/
-[rust]: https://www.rust-lang.org/
-[rescript]: https://rescript-lang.org/
-[scala]: https://www.scala-lang.org/
-[swift]: https://swift.org/
-[typescript]: https://www.typescriptlang.org/
-[csharp]: https://docs.microsoft.com/en-us/dotnet/csharp/
-[flix]: https://flix.dev/
-[gosu]: https://gosu-lang.github.io/
-[reasonml]: https://reasonml.github.io/
-
-## Table of Contents
-
-This document provides everything you need to know about 3nity, from the syntax, operations and features of the language, to its core libraries and modules. This is not meant to be a tutorial or reference, but rather an aid for existing developers coming from other languages who want to learn more about how the language works and have questions to ask.
-
-This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/NoxVentura/3nityLang. Contributions and corrections are welcome.
-
-A lot of my work on 3nity is still experimental and ongoing, so I am sharing this repository so I could get all of my ideas together and perhaps invite some of you to contribute your own. Once I get done with it, we can begin work on the compiler.
-
-### A little disclaimer
-
-3nity is a language in which programs are not text. That is, the source of truth for a program is not its textual representation as source code, but its structured representation as an abstract syntax tree (AST).
-
-This document describes 3nity in terms of its default (and currently, only) textual rendering into source code.
-
-#### Text encoding
-
-3nity only encodes text in UTF-8; other encodings are not supported. Any of the standard line termination sequences can be used, depending on the platform: `\r`, `\n` or `\r\n`.
-
-#### File types
-
-3nity has only three file types: module (`*.3n`), script (`*.3s`), config (`*.3c`) and markup (`*.3m`).
-
-Module files are the most commonly used as they can be imported and exported through packages. The entry point of a 3nity module is defined in the `main` function.
-
-```dart
-/// @file main.3n
-func main(*args: []Str): Void { /*...*/ }
-```
-
-The type annotations or the spread `*args` declaration can be left out, so it can be `func main {}` instead. This is a sample web component.
+- Comprehensive APIs tied to every runtime make it easy to run programs and integrate with vast ecosystems of software and libraries.
+- Built-in markup, styles, routing, queries and schemas allow you to use the language on the entire stack.
+- Static type checking, program verification and useful error messages make it easy to catch or remediate errors and suppress potential harmful behaviour.
 
 ```dart
 elem MyElem as my-elem {
@@ -119,14 +38,77 @@ elem MyElem as my-elem {
 }
 ```
 
-Script files do not have a `main` function, but they can import and access other module and script files.
+### Roadmap
+
+> Update: I have a [Trello](https://trello.com/b/A3NDX7qY/3nity-programming-language) now!
+
+- **Grammar** (see [`grammar.yaml`](https://github.com/NoxVentura/3nityLang/blob/main/grammar.yaml))
+- Documentation (language and API)
+- Language reference
+- Lexer and parser
+- Trans-compiler
+- Tooling (VSCode, Atom and Nova)
+- Theme, branding and website
+
+## Overview
+
+Often, programming with a new language is hard. We have to waste time choosing or learning a completely different language, or go through the pains of installing and setting up SDKS in order to program with them.
+
+The JavaScript language is quite fundamentally flawed, both in terms of language design and the ecosystem that surrounds it. It's not strongly typed, leading to unexpected consequences. And some frameworks require a thousand different NPM packages in order to work (a create-react-app blank app has more than 1,500 packages).
+
+[wtfjs]: https://github.com/denysdovhan/wtfjs/
+[go]: https://golang.org/
+[kotlin]: https://kotlinlang.org/
+[rust]: https://www.rust-lang.org/
+[rescript]: https://rescript-lang.org/
+[scala]: https://www.scala-lang.org
+[swift]: https://swift.org
+[typescript]: https://www.typescriptlang.org
+[flix]: https://flix.dev
+[reasonml]: https://reasonml.github.io/
+[mint]: https://mint-lang.com
+
+## Table of Contents
+
+3nity is a multi-purpose, multi-paradigm language created to hopefully replace JavaScript, and to make it better. With it, you can do anything, from developing apps and games, to communicating with databases and running server-side code.
+
+Learning from other languages like [Scala][scala], [Dart][dart], [Fantom][fantom], [Rust][rust], [ReScript][rescript], [Flix][flix], [React][react] and [Go][go], 3nity functions as both a framework and compiler to allow developers to write faster, expressive and error-free code for the entire stack, all with the same programming language.
+
+This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/NoxVentura/3nityLang. Contributions and corrections are welcome.
+
+A lot of my work on 3nity is still experimental and ongoing, so I am sharing this repository so I could get all of my ideas together and perhaps invite some of you to contribute your own. Once I get done with it, we can begin work on the compiler.
+
+### A little disclaimer
+
+As of now, 3nity does not have a language spec. This document will describe 3nity in terms of its textual rendering into source code.
+
+3nity will be implemented in JavaScript.
+
+#### Text encoding
+
+3nity only encodes text in UTF-8; other encodings are not supported. Any of the standard line termination sequences can be used, depending on the platform: `\r`, `\n` or `\r\n`.
+
+#### File types
+
+3nity has only three file types: module (`*.3n`), script (`*.3s`).
+
+The entry point of a 3nity module is defined in the `main` function. This makes it easy to reason about startup behavior.
+
+Module files are the default. This allows easy importing, exporting and accessing other modules. You can put anything into them, such as stylesheets, web components, constants, types and functions.
+
+```dart
+/// @file main.3n
+func main(*args: []Str): Void { /*...*/ }
+```
+
+The type annotations or the spread `*args` declaration can be left out, so it can be `func main {}` instead.
+
+Script files do not have a `main` function, similar to batch or Bash files. Script files can import module files, and can run other script files externally.
 
 ```dart
 print("Hello", params(1))
 exit(42)
 ```
-
-3nity markup is a special branch of 3nity whose syntax is derived from JSX, HTML and Stylus which enable you to build UIs, style them and add functionality. HTML snippets can be interlaced in 3nity module files and passed on as objects.
 
 ## Syntax
 
@@ -134,87 +116,65 @@ exit(42)
 
 #### Syntax
 
-3nity is a curly brace language similar to JavaScript, Rust and Kotlin, which means that code blocks are delimited mostly using curly brackets.
+Like JavaScript, 3nity is a curly-brace language. Code blocks are delimited usually with curly braces.
 
-Semicolons are completely optional though they can be used to terminate multiple statements on the same line. The same rules apply to commas in collection literals.
+Semicolons are completely optional though they can be used to separate multiple statements on the same line. The same rules apply to commas in function arguments or collection literals.
 
-Check the samples above, and you can see how sparse they are.
+If a line ends in an **infix operator**, such as `!in` or `&&`, or otherwise explicitly with `\`, the resultant line is joined.
+
+```dart
+print("Hello", params(1))
+exit(42)
+```
 
 #### Comments
 
-Comments start anywhere outside a "string" literal with two slashes, and runs until the end of the line. If the next line only of a comment piece with no other tokens between it and the preceding one, it does not start a new comment.
+3nity supports C-style comments.
 
 ```dart
-const x = 10 // This is a single comment over multiple lines.
-// The scanner merges these two pieces.
-// The comment continues here.
+// line comment
+/* block comment */
+/+ nested comment +/
+/// line comment
+/** block comment */
+/++ nested comment +/
 ```
 
-Documentation comments are comments that start with three slashes `///` rather than two. Documentation comments are tokens; they are only allowed at certain places in the input file as they belong to the syntax tree!
+### Variable bindings
 
-```dart
-1 /// This is a documentation comment
-```
-
-3nity supports two types of multi-line comments beginning with `/*` and ending in `*/`.
-
-```dart
-/*  Comment here.
-    Multiple lines
-    are not a problem. */
-```
-
-`/+ +/` allow nesting.
-
-```dart
-/+
-/+ Multiline comment in already commented out code. +/
-+/
-```
-
-Multiline documentation comments also exist and support nesting too. They begin with two asterisks or plus signs (`/**` `/++`) instead of one, and end in only one of each type.
-
-```dart
-/** this is a multi-line documentation comment */
-/++ and this is its nested cousin +/
-```
-
-### Top-level declarations
-
-A top-level declaration can appear at the top level or outermost scope of a Unison file. It can be one of the following forms:
-
-- A declaration, like `val x = 42`, or `type Option[a] = None | Some[a]`.
-- An `import`, `export` or `using` clause.
-
-A variable binding begins with `var`, `val`, `let`, or `const`. `var` and `let` declare an mutable variable binding, whereas `val` and `const` declare a mutable variable binding. All bindings are [block-scoped](https://medium.com/@allansendagi/block-scope-in-javascript-8fd2f909e848).
-
-A variable binding looks like this:
+A variable binding, or otherwise a declaration, begin with any one of `var`, `val`, `let` or `const`. All bindings are "scoped" to the block in which they are defined in, and all inner blocks.
 
 ```dart
 var x = 42
-val x: Int = 42
+val y: Int = 42
+y = 10
 ```
 
-`let` and `const` bindings can be redeclared, even on the same scoped.
+`let` and `const` bindings can be redeclared, even on the same scope.
 
 ```dart
-var x = 42
-val x: Int = 42
+let x = 1
+let x = 2 // x is now 2
 ```
 
-Multiple variables can be assigned, similar to Python:
+### Assigning multiple variables
+
+There are many ways to assign variables:
 
 ```dart
-val x, y = 0, 0
+let x, y, z = 1, a = 2
+x = 1; y = 2
 ```
 
-Or unpacked from an iterable, list (array), set or map:
+You can also unpack them from regular expressions or data structures:
 
 ```dart
-(x, y): (Int, Int) = (42, 42)
-[x, y]: [Int, Int] = [42, 42]
-{x, y}: {[Str]: Int} = {x: 42, y: 42}
-{x, y}: {}Int = {42, 10}
+let `(?'x'.+)` = 'a' // x == 'a'
+
+let (x, y) = (1, 2) // seq
+let [x, y] = [1, 2] // list
+let {x, y} = {x: 1, y: 2} // map
+let {x, y} = {1, 2} // set
 ```
 
 ### Keywords
@@ -233,25 +193,18 @@ As for modifier keywords, they are parsed as keywords before a declaration as th
 
     in of as is new to til thru by del unset
 
-    var val val const decl def fun type sin
-    class enum mod pack struct inter space
+    var val let const decl def func type object
+    class enum module pack struct inter space pragma
     proc proto macro given style elem field
     ext pred data trait lemma iter sub prop
-
-    pub priv prot inline final mut immut ghost
-    seal abs intern extern imply exply global local
-    sync async stat dyn lazy eager strong weak
-    vol unsafe unfix bound free opaque trans
-    rec gen oper get set post put rem new del patch early late joint contra
-    prefix suffix infix primary unary left right
 
     if un elif elun else then
     for each loop while until when
     with do from
-    try throw catch fix
+    try throw catch final
     switch match case fail
-    tandem unison series spawn kill lock
-    break skip redo retry return await label yield goto pass
+    race some every done spawn kill lock
+    break next redo retry return await label yield goto pass
     import export using
     debug assert where
 
@@ -279,7 +232,7 @@ Naming conventions follow Java or JavaScript. There are four types of identifier
 Variables are compared using their first character, then comparing further characters case-insensitively and ignoring all delimiters. This makes it easier for developers to use varying conventions without having to worry about the variables' exact spelling.
 
 ```dart
-proc cmpIdent(a: Str, b: Str): Bool =
+proc cmpIdent(a: Str, b: S-tr): Bool =
   a[0] == b[0] &&
   a.sub(`[^\pL\d]+`g, "").lower() == b.sub(`[^\pL\d]+`g, "").lower()
 ```
@@ -288,7 +241,7 @@ All keywords are written with all lowercase characters. To strop keywords, add o
 
 ```dart
 type Type = {
-  def: Func,
+  def: Func
 }
 
 val object_ = new Type({def: |x| x = 10})
