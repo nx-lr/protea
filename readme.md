@@ -2,7 +2,7 @@
 
 > The programming language for the future.
 
-![banner](./3nity banner.svg)
+![banner](./3nity-banner.svg)
 
 **_3nity_** is a multi-paradigm, multi-platform language that enables developers to **build**, **test**, **deploy**, **scale** and **maintain** software.
 
