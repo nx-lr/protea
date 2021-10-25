@@ -264,23 +264,23 @@ repository:
           (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
           (?:# Properties (note all properties are by default, symbols)
           (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-          ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-          ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+          ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+          ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
           |
           (?:# Objects and maps
           (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-          ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-          ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+          ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+          ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
           (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
           |
           (?:# Regular variables
           (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-          ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-          ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+          ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+          ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
           )\b
@@ -1152,7 +1152,7 @@ repository:
 
   regexps:
     patterns:
-      - comment: Block regex
+      - comment: Replacement section
         begin: (?<=`+)\s*(```+|`)
         end: \s*(?:(\1)(?!`+))(\p{Alnum}*)
         contentName: string.replace.regexp.trin
@@ -1162,7 +1162,7 @@ repository:
         patterns:
           - include: "#back-references"
           - include: "#string-content"
-      - comment: Block regex
+      - comment: Pattern section 
         begin: \s*(\p{Alnum}*)(?<!`+)(```+|`)
         end: \s*(?:(\2)(?!`+))(\p{Alnum}*)
         contentName: string.pattern.regexp.trin
@@ -1231,7 +1231,7 @@ repository:
         captures:
           1: {name: keyword.other.back-reference.trin}
         patterns: &regex-back-references
-          - include: "#function-names"
+          - include: "#variables"
           - include: "#numbers"
           - include: "#operators"
           - include: "#string-content"
@@ -1459,7 +1459,7 @@ repository:
           0: {name: punctuation.definition.group.back-reference.trin}
           1: {name: punctuation.definition.group.back-reference.trin}
           2: {name: constant.numeric.index.trin}
-          3: {patterns: [include: "#function-names"]}
+          3: {patterns: [include: '#variables']}
           4: {name: punctuation.separator.colon.trin}
         patterns:
           - include: "#regexp-patterns"
@@ -2256,23 +2256,23 @@ repository:
       (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
       (?:# Properties (note all properties are by default, symbols)
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       |
       (?:# Objects and maps
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
       |
       (?:# Regular variables
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       )
@@ -2580,8 +2580,8 @@ repository:
                   (?:
                   (?:# Objects and maps
                   (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-                  ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-                  ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+                  ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+                  ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
                   ([\p{Pc}\p{L}][\w\p{Pd}]*)
                   )
                   (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
@@ -2589,15 +2589,15 @@ repository:
                   (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
                   (?:# Properties (note all properties are by default, symbols)
                   (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-                  ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-                  ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+                  ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+                  ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
                   ([\p{Pc}\p{L}][\w\p{Pd}]*)
                   )
                   |
                   (?:# Regular variables
                   (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-                  ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-                  ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+                  ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+                  ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
                   ([\p{Pc}\p{L}][\w\p{Pd}]*)
                   )
                   )\b
@@ -3090,23 +3090,23 @@ repository:
       (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
       (?:# Properties (note all properties are by default, symbols)
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       |
       (?:# Objects and maps
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
       |
       (?:# Regular variables
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-      ((?:[\p{Pc}\p{L}&&\P{Ll}]+[\w\p{Pd}&&\P{Lu}]*)+)|
+      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       )\b
