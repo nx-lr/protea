@@ -48,11 +48,15 @@ comment: |
     - PHP (needs a bit of cleanup)
 
   Done:
-  - Reworked keywords. Should be enough; added support for decorators too.
+  - Changed from indentation to curly bracket.
+  - `\` is now an operator.
+  - Reworked keywords. Should be enough.
   - Syntax changed, mirrors C# now.
   - Oniguruma uses \w to refer to _\d\p{L}\p{M}, use character
-    set operations && and ^ to perform set subtractions
-  - Added extended JSX syntax (might still need some modifications)
+    set operations && and ^ to perform subtractions
+  - Added extended JSX and SCSS syntax
+  - Removed unquoted strings; they are too complicated to explain
+  - Reworked unquoted string syntax
 
 define:
   number-literal: &number-literal
@@ -781,60 +785,6 @@ repository:
         patterns:
           - include: "#string-content"
 
-  strings-unquoted:
-    patterns:
-      - begin: |
-          (?x)\s*
-          (\\\|)\s*
-          ([-+*~=<>])?\s*
-          ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          \s*
-        beginCaptures:
-          1: {name: keyword.control.flow.block-scalar.literal.trin}
-          2: {name: storage.modifier.chomping-indicator.trin}
-          3:
-            name: storage.type.format.trin
-            patterns: [include: "#format-language"]
-        end: ^(?=\S)|(?!\G)
-        patterns:
-          - include: "#comments"
-          - begin: ^((\s)+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: string.unquoted.block.trin
-            patterns:
-              - include: "#embedded-raw"
-              - include: text.html.markdown#inline
-          - include: $self
-      - begin: |
-          (?x)\s*
-          (\\\>)\s*
-          ([-+*~=<>])?\s*
-          ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          \s*
-        beginCaptures:
-          1: {name: keyword.control.flow.block-scalar.folded.trin}
-          2: {name: storage.modifier.chomping-indicator.trin}
-          3:
-            name: storage.type.format.trin
-            patterns: [include: "#format-language"]
-        end: ^(?=\S)|(?!\G)
-        patterns:
-          - include: "#comments"
-          - begin: ^((\s)+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: string.unquoted.plain.in.trin
-            patterns:
-              - include: "#string-content"
-              - include: text.html.markdown#inline
-          - include: $self
-      - begin: \s*(\\)
-        beginCaptures:
-          1: {name: punctuation.definition.string.trin}
-        end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/|::|!:|\?:|\.|!\.|\?\.)
-        name: string.unquoted.trin
-        patterns:
-          - include: "#string-content"
-
   string-content:
     patterns:
       - include: "#string-escapes"
@@ -946,20 +896,16 @@ repository:
       - match: (?x)\\[\p{L}\p{N}\p{C}]
         name: invalid.illegal.unknown-escape.trin
 
-  format-specifier:
+  embedded-variable:
     match: |
-      (?x)(%)
-      (
-      (?<ident>\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
-      (?<sw>
-      \/\g<ident>
-      (?<val>\:
+      (?x)(\$)
+      (\b[\p{Pc}\p{L}]
       (?<expr>
       # Match all brackets recursively
       (?<b>
-      \((?:[^'"`(){}\[\]]+|\p{Z}|\g<s>|\g<b>)*\)|
-      \[(?:[^'"`(){}\[\]]+|\p{Z}|\g<s>|\g<b>)*\]|
-      \{(?:[^'"`(){}\[\]]+|\p{Z}|\g<s>|\g<b>)*\}
+      \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+      \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+      \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
       )|
       (?<s>
       # Strings
@@ -967,8 +913,37 @@ repository:
       (?<q2>["`])[^\\.]*\g<q2>|
       (?<q1>')(?:[^']|'')*\g<q1>
       )|
-      # Alphanumerics
-      [^\s:\/'"`(){}\[\]]*|\\.
+      # Everything nice
+      [^'"`\s(){}\[\]]*
+      )*
+      )
+    captures:
+      1: {name: punctuation.section.embedded.trin}
+      2: {patterns: [include: $self]}
+
+  format-specifier:
+    match: |
+      (?x)(%)
+      (
+      (?<ident>\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
+      (?<sw>
+      /\g<ident>
+      (?<val> \:
+      (?<expr>
+      # Match all brackets recursively
+      (?<b>
+      \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+      \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+      \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+      )|
+      (?<s>
+      # Strings
+      (?<q3>'''+|"""+|```+).*\g<q3>|
+      (?<q2>["`])[^\\.]*\g<q2>|
+      (?<q1>')(?:[^']|'')*\g<q1>
+      )|
+      # Everything nice
+      [^'"`\s/:(){}\[\]]*
       )
       )?
       )*
@@ -992,52 +967,34 @@ repository:
           1: {name: punctuation.definition.anchor.trin}
           2: {patterns: [include: "#placeholder-variables"]}
       - include: "#format-specifier"
-      - match: |
-          (?xi)
-          (\$)# prefix
-          (
-          [\p{Pc}\p{L}][\w\p{Pd}]*
-          (?:(?:[?!]?\.|[?!:]:)
-          (?:(?:[\p{Pc}\p{L}][\w\p{Pd}]*)))*
-          )# variable
-        captures:
-          1: {name: punctuation.section.embedded.trin}
-          2: {patterns: [include: $self]}
       - begin: (\${)\s*
         end: (})
         name: entity.quasi.element.trin
         captures:
           1: {name: punctuation.section.embedded.trin}
-        patterns:
-          - include: $self
+        patterns: [include: $self]
+      - include: "#embedded-variable"
 
   embedded-raw:
     patterns:
-      - match: \$\$|%%|##
+      - match: \$\$|\%\%\|#\#
         name: constant.character.escape.trin
       - match: (\#)([+-]?\d+)
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {name: constant.numeric.decimal.trin}
-      - include: "#format-specifier"
-      - match: |
-          (?xi)
-          (\$)# prefix
-          (
-          [\p{Pc}\p{L}][\w\p{Pd}]*
-          (?:(?:[?!]?\.|[?!:]:)
-          (?:(?:[\p{Pc}\p{L}][\w\p{Pd}]*)))*
-          )# variable
+      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
-          1: {name: punctuation.section.embedded.trin}
-          2: {patterns: [include: $self]}
+          1: {name: punctuation.definition.anchor.trin}
+          2: {patterns: [include: "#placeholder-variables"]}
+      - include: "#format-specifier"
       - begin: (\${)\s*
         end: (})
         name: entity.quasi.element.trin
         captures:
           1: {name: punctuation.section.embedded.trin}
-        patterns:
-          - include: $self
+        patterns: [include: $self]
+      - include: "#embedded-variable"
 
   # Format Specifier Language
 
@@ -1167,52 +1124,6 @@ repository:
         patterns:
           - include: "#comments"
           - include: "#regexp-patterns"
-
-  regexps-unquoted:
-    patterns:
-      - begin: |
-          (?x)\s*
-          (\\\=)\s*
-          ([-+*~=<>])?\s*
-          ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          \s*
-        beginCaptures:
-          1: {name: keyword.control.flow.block-scalar.replace.trin}
-          2: {name: storage.modifier.chomping-indicator.trin}
-          3:
-            name: storage.type.format.trin
-            patterns: [include: "#format-language"]
-        end: ^(?=\S)|(?!\G)
-        patterns:
-          - include: "#comments"
-          - begin: ^((\s)+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: string.replace.regexp.trin
-            patterns:
-              - include: "#back-references"
-              - include: "#string-content"
-          - include: $self
-      - begin: |
-          (?x)\s*
-          (\\\<)\s*
-          ([-+*~=<>])?\s*
-          ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          \s*
-        beginCaptures:
-          1: {name: keyword.control.flow.block-scalar.regexp.trin}
-          2: {name: storage.modifier.chomping-indicator.trin}
-          3:
-            name: storage.type.format.trin
-            patterns: [include: "#format-language"]
-        end: ^(?=\S)|(?!\G)
-        patterns:
-          - include: "#comments"
-          - begin: ^((\s)+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: string.pattern.regexp.trin
-            patterns:
-              - include: "#regexp-patterns"
-          - include: $self
 
   back-references:
     patterns:
@@ -2781,60 +2692,6 @@ repository:
           1: {name: punctuation.definition.string.trin}
         patterns:
           - include: "#string-escapes"
-          - include: "#type-embedded"
-
-  type-strings-unquoted:
-    patterns:
-      - begin: |
-          (?x)\s*
-          (\\\|)\s*
-          ([-+*~=<>])?\s*
-          ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          \s*
-        beginCaptures:
-          1: {name: keyword.control.flow.block-scalar.literal.trin}
-          2: {name: storage.modifier.chomping-indicator.trin}
-          3:
-            name: storage.type.format.trin
-            patterns: [include: "#format-language"]
-        end: ^(?=\S)|(?!\G)
-        patterns:
-          - include: "#comments"
-          - begin: ^((\s)+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: string.unquoted.block.trin
-            patterns:
-              - include: "#type-embedded-raw"
-              - include: text.html.markdown#inline
-          - include: $self
-      - begin: |
-          (?x)\s*
-          (\\\>)\s*
-          ([-+*~=<>])?\s*
-          ((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?\s*
-          \s*
-        beginCaptures:
-          1: {name: keyword.control.flow.block-scalar.folded.trin}
-          2: {name: storage.modifier.chomping-indicator.trin}
-          3:
-            name: storage.type.format.trin
-            patterns: [include: "#format-language"]
-        end: ^(?=\S)|(?!\G)
-        patterns:
-          - include: "#comments"
-          - begin: ^((\s)+)(?!\2)
-            end: ^(?!\1|\s*$)
-            name: string.unquoted.plain.in.trin
-            patterns:
-              - include: "#type-embedded"
-              - include: text.html.markdown#inline
-          - include: $self
-      - begin: \s*(\\)
-        beginCaptures:
-          1: {name: punctuation.definition.string.trin}
-        end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/|::|!:|\?:|\.|!\.|\?\.)
-        name: string.unquoted.trin
-        patterns:
           - include: "#type-embedded"
 
   type-embedded-raw:
