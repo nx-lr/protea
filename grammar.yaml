@@ -3233,7 +3233,7 @@ repository:
           - include: "#reduce-clause"
         repository:
           join-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:full|part)?\b\s*\b(?:inner|outer|left|right)?\b\s*\bjoin)\b\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?![\w\p{Pd}])\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:full|part)?(?![\w\p{Pd}])\s*\b(?:inner|outer|left|right)?(?![\w\p{Pd}])\s*\bjoin)\b\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?![\w\p{Pd}])\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
               2: {patterns: [include: $self]}
@@ -3253,7 +3253,7 @@ repository:
               - include: "#query-body"
               - include: $self
           sort-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sort\b\s*\b(?:asc|desc)?\b\s*\b(?:by|with)?)\b\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sort(?![\w\p{Pd}])\s*\b(?:asc|desc)?(?![\w\p{Pd}])\s*\b(?:by|with)?)\b\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?<=})|(?=[,;)\]])
@@ -3261,7 +3261,7 @@ repository:
               - include: "#query-body"
               - include: $self
           select-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(select\b\s*\b(?:unique|any|all)?)\b\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(select(?![\w\p{Pd}])\s*\b(?:unique|any|all)?)\b\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?<=})|(?=[,;)\]])
@@ -3271,7 +3271,7 @@ repository:
               - include: "#query-body"
               - include: $self
           limit-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit)\b\s*\b(?:first|last|head|tail)?)\b\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit)(?![\w\p{Pd}])\s*\b(?:first|last|head|tail)?)\b\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?<=})|(?=[,;)\]])
@@ -3281,7 +3281,7 @@ repository:
               - include: "#query-body"
               - include: $self
           reduce-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)\b\s*\b(?:left|right)?)\b\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)(?![\w\p{Pd}])\s*\b(?:left|right)?)\b\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?<=})|(?=[,;)\]])
