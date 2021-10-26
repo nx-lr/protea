@@ -111,19 +111,6 @@ define:
     ([\p{Pc}\p{L}][\w\p{Pd}]*)
     \b
 
-  posix-class: &posix-class |
-    (?xi)
-    \\o|
-    \\p(?:
-    # POSIX
-    alpha|alnum|ascii|blank|cntrl|x?digit
-    |graph|lower|print|punct|space|pragma|upper|word
-    # Extended-POSIX
-    |symbol|open|close|dash|link|start|final|math|money
-    |number|letter|title|mark|modify
-    |bin|qua|sen|oct|dec|doz|hex
-    )
-
 repository:
   core:
     patterns:
@@ -371,7 +358,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.trin}
@@ -381,7 +368,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           ((?:[2-9]|[1-9]\d+)b)# radix prefix
@@ -393,7 +382,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.arbitrary-radix.trin}
@@ -403,7 +392,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0b)# radix/base prefix
@@ -415,7 +406,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.binary.trin}
@@ -425,7 +416,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0b)# radix prefix
@@ -437,7 +430,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.binary.trin}
@@ -447,7 +440,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0q)# radix/base prefix
@@ -459,7 +454,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.trin}
@@ -469,7 +464,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0q)# radix prefix
@@ -481,7 +478,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.quaternary.trin}
@@ -491,7 +488,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0s)# radix/base prefix
@@ -503,7 +502,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.senary.trin}
@@ -513,7 +512,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0s)# radix prefix
@@ -525,7 +526,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.senary.trin}
@@ -535,7 +536,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0o)# radix/base prefix
@@ -547,7 +550,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.octal.trin}
@@ -557,7 +560,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0o)# radix prefix
@@ -569,7 +574,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.octal.trin}
@@ -579,7 +584,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0z)# radix/base prefix
@@ -591,7 +598,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.trin}
@@ -601,7 +608,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0z)# radix prefix
@@ -613,7 +622,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.duodecimal.trin}
@@ -623,7 +632,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0x)# radix/base prefix
@@ -635,7 +646,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.trin}
@@ -645,7 +656,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (0x)# radix prefix
@@ -657,7 +670,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.hexadecimal.trin}
@@ -667,7 +680,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           ()# radix/base prefix
@@ -679,7 +694,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.trin}
@@ -689,7 +704,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           ()# radix prefix
@@ -701,7 +718,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: constant.numeric.decimal.trin}
@@ -711,7 +728,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (\d+(?=\w+))# radix/base prefix
@@ -723,7 +742,7 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: invalid.illegal.numeric.trin}
@@ -733,7 +752,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
       - match: |
           (?ix)\s*\b
           (\d+(?=\w+))# radix prefix
@@ -745,7 +766,7 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (:(?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?# type suffix
           \b\s*
         captures:
           0: {name: invalid.illegal.numeric.trin}
@@ -755,7 +776,9 @@ repository:
           4: {name: punctuation.separator.decimal.fraction.trin}
           5: {name: constant.numeric.other.exponent.trin}
           6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          7:
+            patterns: [include: "#format-specifiers"]
+            name: storage.type.numeric.trin
 
   strings-quoted:
     patterns:
@@ -1162,7 +1185,7 @@ repository:
         patterns:
           - include: "#back-references"
           - include: "#string-content"
-      - comment: Pattern section 
+      - comment: Pattern section
         begin: \s*(\p{Alnum}*)(?<!`+)(```+|`)
         end: \s*(?:(\2)(?!`+))(\p{Alnum}*)
         contentName: string.pattern.regexp.trin
@@ -1459,7 +1482,7 @@ repository:
           0: {name: punctuation.definition.group.back-reference.trin}
           1: {name: punctuation.definition.group.back-reference.trin}
           2: {name: constant.numeric.index.trin}
-          3: {patterns: [include: '#variables']}
+          3: {patterns: [include: "#variables"]}
           4: {name: punctuation.separator.colon.trin}
         patterns:
           - include: "#regexp-patterns"
@@ -1517,9 +1540,7 @@ repository:
       - include: "#numeric-escapes"
       - match: (?i)\\([cm][a-z]|r)
         name: constant.character.control.trin
-      - match: *posix-class
-        name: constant.other.character-class.posix.trin
-      - match: (?i)\\p(c[cfos]?|l[motlu]?|m[cen]?|n[dlo]?|p[c-fios]?|s[mock]?|z[lps]?)
+      - match: (?i)\\p(\w\w?)
         name: constant.other.character-class.unicode.trin
       - match: (?i)\\[ci]({\w+})?
         name: constant.other.character-class.xml.trin
