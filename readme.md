@@ -1,4 +1,4 @@
-# 3nity
+# [3nity](https://github.com/noxventura/3nitylang)
 
 > The programming language for the future.
 
@@ -12,31 +12,25 @@
 - Static type checking, program verification and useful error messages make it easy to catch or remediate errors and suppress potential harmful behaviour.
 
 ```dart
-elem MyElem as my-elem {
-  field foo = 'foo'
-  field whales: Int = 5
+elem B-Block(&text: Str) as b-block {
+  pub field text: Str = text || ''
 
-  async def onClick(e) {
-    whales += 1
-    await updateComplete()
-    new Event(
-      :whales
-      { detail: { whales: this.whales } }
-    ).dispatch()
+  async def onHover(e) {
+    text = text.replace(`\b[bgkmpt]`gi, "\xe533")
   }
 
   style :host {
     display: block
+    color: red
+    font-family: ["Roboto", "Arial", "Helvetica", "sans-serif"]
+    font-weight: 900
+    font-size: 1px
     :hidden {
       display: none
     }
   }
 
-  stat def render = <Frag>
-    <h4>Foo: ${this.foo}</>
-    <div>whales: ${🅱️ * whales}</>
-    <slot></>
-  </>
+  stat def render = <span>$text</span>
 }
 ```
 
@@ -65,25 +59,23 @@ The language is flawed, as many would point out. The lack of types would yield s
 [kotlin]: https://kotlinlang.org/
 [rust]: https://www.rust-lang.org/
 [rescript]: https://rescript-lang.org/
-[scala]: https://www.scala-lang.org
-[swift]: https://swift.org
-[typescript]: https://www.typescriptlang.org
-[flix]: https://flix.dev
+[scala]: https://www.scala-lang.org/
+[swift]: https://swift.org/
+[typescript]: https://www.typescriptlang.org/
+[flix]: https://flix.dev/
 [reasonml]: https://reasonml.github.io/
-[mint]: https://mint-lang.com
+[mint]: https://mint-lang.com/
 [fantom]: https://fantom.org/
 [dart]: https://dart.dev/
 [react]: https://reactjs.org/
 
 ## Table of Contents
 
-3nity is a multi-purpose, multi-paradigm and multi-platform language I'm creating to hopefully replace JavaScript and its runtime, to serve its domains, and to make the language better. With it, you could write apps or games, or develop
+3nity is a multi-purpose, multi-paradigm and multi-platform language I'm creating to hopefully replace JavaScript and its runtime, to serve its domains, and to make the language better. With it, you could write apps, games and more, without the need for setting up or installing dependencies.
 
 Learning from other languages like [Scala][scala], [Dart][dart], [Fantom][fantom], [Rust][rust], [ReScript][rescript], [Flix][flix], [React][react] and [Go][go], 3nity functions as both a framework and compiler to allow developers to write faster, expressive and error-free code for the entire stack, all with the same programming language.
 
 ---
-
-This reference is currently WIP and will be improved over time. See the GitHub repository over ihtireh
 
 This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/NoxVentura/3nityLang. Contributions and corrections are welcome.
 
@@ -193,13 +185,7 @@ let {x, y} = {1, 2} // set
 
 ### Keywords
 
-The following are all the keywords of the language. Keywords are grouped into five different sections:
-
-- keyword operators
-- declaration, which declare program entities such as variables, classes and functions,
-- modifier which modify such declarations,
-- general which command and control program flow and execution.
-- pre-defined, or dynamic constants and variables.
+The following are all the keywords of the language. Keywords are grouped into four different categories: operator keywords, declaration keywords, modifier keywords, and control keywords.
 
 As for modifier keywords, they are parsed as keywords before a declaration as they modify them. `pub var x = 1` declares a public variable.
 
@@ -229,13 +215,11 @@ As for modifier keywords, they are parsed as keywords before a declaration as th
     import export using
     debug assert where
 
-    true false null void nan infin
-    it this that super self target
-    params ctor proto pro
+An identifier should not begin with any number of keywords in any order as mentioned above, otherwise it is a syntax error. This is a special case both for the grammar and the parser.
 
 ### Identifiers
 
-3nity defines an identifier as any sequence of letters, digits, combining marks, underscores (Unicode `Pc`) and dashes (Unicode `Pd`), provided that it starts with a letter or underscore, and does not end in a dash.
+3nity defines an identifier as any sequence of letters, digits, combining marks, underscores (Unicode `Pc`) and dashes (Unicode `Pd`), provided that it starts with a letter or underscore, and does not end in any number of trailing dashes.
 
 The regular expression is:
 
@@ -286,7 +270,7 @@ assert assert_
 
 ## Data Types
 
-3nity has all the data types you would expect from a programming language: booleans, numbers, strings, some way to represent null, among others.
+3nity has all the data types you would expect from a programming language: booleans, numbers, strings, null values, collections, regexps, among others. All data types are immutable.
 
 ### Booleans, Null and Void
 
@@ -348,17 +332,17 @@ A type suffix is an identifier after the numeric literal, in order to explicitly
 
 ### Strings
 
-Strings are delimited by matching quotes. Just like in YAML, only double quoted strings can contain escape sequences. Single quoted strings are verbatim.
+Strings are delimited by matching quotes. Just like in YAML, only double quoted strings can contain escape sequences. Single quoted strings are _raw_, which means that they do not interpret any escape sequences.
 
 ```dart
 var s1 = 'Single quotes work well for string literals.'
 var s2 = "Double quotes work just as well."
 ```
 
-Single-quoted raw strings the escape sequences for double-quoted strings mentioned above are not escaped. To escape a single quote, double it.
+To escape a single quote, double it.
 
 ```dart
-var daughterOfTheVoid = ''' Kai'Sa%x/x:\'x\'/y/y '''
+var voidDaughter = 'Kai''Sa'
 ```
 
 Double quoted string literals can contain the following escape sequences, and can contain the following escape sequences:
@@ -455,32 +439,7 @@ string"
 """
 ```
 
-#### Backslash strings
-
-Strings can also be delimited using an initial backslash. Strings cannot contain any sequence of `\s`, `\n` `,`, `;`, `'`, `"`, `` ` ``, `<`, `>`, `$`, `(`, `)`, `{`, `}`, `[`, `]`, `/>`, `::`, `!:`, `?:`, `.`, `!.`, and `?.`.
-
-```dart
-\word
-fun(\word, \word)
-fun\word
-[\word]
-{prop: \word}
-```
-
-Backslash block strings also begin with a backslash followed by either `|` or `>`, both functioning like block strings. `\|` behaves like the single quote and `\>` the double quote.
-
-Block strings also begin with a backslash followed by either `|` or `>`, both functioning like `|` block strings. `\|` behaves like the single quote and `\>` the double quote.
-
-Like YAML, backslash block strings can also be appended with a "chomping indicator" `+` or `-` to preserve or remove the line feed, or fold the line past how many spaces.
-
-```dart
-\|
-  this is my very very "very" long-ass string.
-  Love, 3nity.
-\>
-  this is my very very "very" long-\
-  ass string.\nLove, 3nity.
-```
+### String Manipulation
 
 3nity comes with several avenues to make manipulating, formatting and serializing strings easier.
 
@@ -519,7 +478,7 @@ They are composed of the following parts:
 
 ```dart
 const prices = { bread: 4.50 }
-'I like bread. It costs $prices.bread%f/cur:SGD.'
+'I like bread. It costs $prices.bread%f/cur:"SGD".'
 // "I like bread. It costs $4.50."
 ```
 
@@ -1624,7 +1583,7 @@ val data_ = [1, ["red", true]];
 val [a, c: [b, _]] = data_;
 /* a is 1, b is "red", c is ("red", true) */
 
-val f = |p :| x + y + p.x + p.y;
+val f = |p| x + y + p.x + p.y;
 ```
 
 `if` or `un` can add extra conditions to patterns. The condition must be satisfied in order to execute the pattern's code, otherwise the pattern is skipped.
