@@ -27,12 +27,14 @@ elem MyElem as my-elem {
 
   style :host {
     display: block
-    :hidden { display: none }
+    :hidden {
+      display: none
+    }
   }
 
   stat def render = <Frag>
     <h4>Foo: ${this.foo}</>
-    <div>whales: ${\🅱️ * whales}</>
+    <div>whales: ${🅱️ * whales}</>
     <slot></>
   </>
 }
@@ -52,9 +54,11 @@ elem MyElem as my-elem {
 
 ## Overview
 
-Often, programming with a new language is hard. We have to waste time choosing or learning a completely different language, or go through the pains of installing and setting up SDKS in order to program with them.
+Learning a new programming language is hard: new toolchains to download, frameworks and tools to learn, and APIs to memorize. And in each domain, the languages performing best would long surpass other languages that will soon follow. The insurgence of new, modern and fully-featured languages like Rust, Kotlin and Go, would break these.
 
-The JavaScript language is quite fundamentally flawed, both in terms of language design and the ecosystem that surrounds it. It's not strongly typed, leading to unexpected consequences. And some frameworks require a thousand different NPM packages in order to work (a create-react-app blank app has more than 1,500 packages).
+JavaScript was no different. Given the circumstances that made it, it was not designed to be used for more complex projects such as enterprise-scale software. Still, people kept on pushing for new ideas and developing tools for them, and those got incorporated into the language and its ecosystem. However, it would not (yet) change the way we fundamentally think about JavaScript.
+
+The language is flawed, as many would point out. The lack of types would yield somewhat crazy results, some of which could ["turn our everyday job into a nightmare"][wtfjs]. Projects get bloated with hundreds, if not thousands of NPM packages in order to work and run smoothly, resulting in increasingly laggy build times.
 
 [wtfjs]: https://github.com/denysdovhan/wtfjs/
 [go]: https://golang.org/
@@ -67,12 +71,19 @@ The JavaScript language is quite fundamentally flawed, both in terms of language
 [flix]: https://flix.dev
 [reasonml]: https://reasonml.github.io/
 [mint]: https://mint-lang.com
+[fantom]: https://fantom.org/
+[dart]: https://dart.dev/
+[react]: https://reactjs.org/
 
 ## Table of Contents
 
-3nity is a multi-purpose, multi-paradigm language created to hopefully replace JavaScript, and to make it better. With it, you can do anything, from developing apps and games, to communicating with databases and running server-side code.
+3nity is a multi-purpose, multi-paradigm and multi-platform language I'm creating to hopefully replace JavaScript and its runtime, to serve its domains, and to make the language better. With it, you could write apps or games, or develop
 
 Learning from other languages like [Scala][scala], [Dart][dart], [Fantom][fantom], [Rust][rust], [ReScript][rescript], [Flix][flix], [React][react] and [Go][go], 3nity functions as both a framework and compiler to allow developers to write faster, expressive and error-free code for the entire stack, all with the same programming language.
+
+---
+
+This reference is currently WIP and will be improved over time. See the GitHub repository over ihtireh
 
 This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/NoxVentura/3nityLang. Contributions and corrections are welcome.
 
@@ -120,16 +131,19 @@ Like JavaScript, 3nity is a curly-brace language. Code blocks are delimited usua
 
 Semicolons are completely optional though they can be used to separate multiple statements on the same line. The same rules apply to commas in function arguments or collection literals.
 
-If a line ends in an **infix operator**, such as `!in` or `&&`, or otherwise explicitly with `\`, the resultant line is joined.
+If a line ends in an **infix operator**, such as `!in` or `&&`, or otherwise explicitly with `\`, the resultant line is joined. If the next line also begins with an infix operator, it is joined to the previous line.
 
 ```dart
-print("Hello", params(1))
-exit(42)
+x +  // joined
+y
+
+x // joined
++ y
 ```
 
 #### Comments
 
-3nity supports C-style comments.
+3nity supports C-style comments. Comments `/+` and `/++` can be nested.
 
 ```dart
 // line comment
@@ -181,10 +195,10 @@ let {x, y} = {1, 2} // set
 
 The following are all the keywords of the language. Keywords are grouped into five different sections:
 
-- expression keywords, which are keywords used as operators
-- declaration keywords, which declare program entities such as variables, classes and functions,
-- modifier keywords which modify such declarations,
-- general keywords which command and control program flow and execution.
+- keyword operators
+- declaration, which declare program entities such as variables, classes and functions,
+- modifier which modify such declarations,
+- general which command and control program flow and execution.
 - pre-defined, or dynamic constants and variables.
 
 As for modifier keywords, they are parsed as keywords before a declaration as they modify them. `pub var x = 1` declares a public variable.
@@ -197,6 +211,13 @@ As for modifier keywords, they are parsed as keywords before a declaration as th
     class enum module pack struct inter space pragma
     proc proto macro given style elem field
     ext pred data trait lemma iter sub prop
+
+    pub priv prot inline final mut immut ghost early late joint contra
+    seal abs intern extern imply exply global local
+    async sync stat dyn lazy eager strong weak swap
+    vol unsafe unfix bound free opaque trans
+    rec gen oper get set post put rem new del patch
+    prefix suffix infix binary unary left right
 
     if un elif elun else then
     for each loop while until when
@@ -214,30 +235,37 @@ As for modifier keywords, they are parsed as keywords before a declaration as th
 
 ### Identifiers
 
-3nity defines Unicode letters, combining diacritical or punctuation marks, and decimal digits as identifier characters. A sequence of those would form an identifier, provided they do not start with a combining diacritical mark or a decimal digit.
+3nity defines an identifier as any sequence of letters, digits, combining marks, underscores (Unicode `Pc`) and dashes (Unicode `Pd`), provided that it starts with a letter or underscore, and does not end in a dash.
 
-Tags and attributes used for JSX tags can include dashes, but must not end with any amount of trailing dashes.
+The regular expression is:
+
+```js
+const regex = /\b[\p{Pc}\p{L}][\d\p{L}\p{M}\p{Pc}\p{Pd}]*\b/;
+```
 
 #### Naming conventions
 
-Naming conventions follow Java or JavaScript. There are four types of identifiers which 3nity recognizes and highlights accordingly:
+3nity recognizes four different kinds of naming conventions:
 
-- `SHOUT_CASE`, used for constants,
-- `PascalCase` used for classes, modules, namespaces, and types.
-- `camelCase` or `snake_case` used for variables, parameters, functions and methods.
-- `_leading` underscores for special methods and keywords.
+- Leading underscores: `__dirname` or `__main__`
+- All-uppercase: `PACKED-DECIMAL` or `T_SL`
+- First character uppercase: `IOStream`, `Get-Variable` or `UnityEngine`
+- First character lowercase: `split`, `bit-or` or `toString`.
 
 #### Identifier Comparison
 
-Variables are compared using their first character, then comparing further characters case-insensitively and ignoring all delimiters. This makes it easier for developers to use varying conventions without having to worry about the variables' exact spelling.
+Variables are compared using their first character, then comparing further characters case-insensitively and ignoring all non-alphanumeric characters.
+
+This approach, called "partial case insensitivity", makes it easier for developers to use varying conventions without having to worry about the variables' exact spelling.
 
 ```dart
-proc cmpIdent(a: Str, b: S-tr): Bool =
-  a[0] == b[0] &&
-  a.sub(`[^\pL\d]+`g, "").lower() == b.sub(`[^\pL\d]+`g, "").lower()
+func transform(x) = x[1:].sub(`\p{Alnum}`g, '').lower()
+proc cmpIdent(a: Str, b: Str): Bool = a[0] == b[0] && transform(a) == transform(b)
 ```
 
-All keywords are written with all lowercase characters. To strop keywords, add one or more trailing underscores. Keywords also lose their meaing when they are part of a qualified name, not including its source (the leading parts of oa).
+All keywords are written in all lowercase. To strop them, add one or more trailing underscores.
+
+Keywords also lose their meaning when they are part of a qualified name, such as a key, property or method.
 
 ```dart
 type Type = {
@@ -256,6 +284,10 @@ val assert_ = true
 assert assert_
 ```
 
+## Data Types
+
+3nity has all the data types you would expect from a programming language: booleans, numbers, strings, some way to represent null, among others.
+
 ### Booleans, Null and Void
 
 `Null` and `void` are one and the same.
@@ -266,94 +298,57 @@ assert null == void
 assert null == void
 ```
 
-A boolean data type can only have two values: `true` or `false`. Booleans are mainly used for control flow, and there are a lot of operators that return boolean values.
+A boolean can only have one of two values: `true` or `false`. Booleans are mainly used for control flow, and there are a lot of operators that return boolean values.
 
 ```dart
 true; false
 ```
 
-All values default to an empty value, which means they yield `false` when converted into booleans. All other values, including non-primitive objects, yield true.
-
-Boolean values also come as a result of comparisons, or other logical operations.
-
-```dart
-val isGreater = 4 > 1 // true
-```
+When cast into booleans, anything that suggests something is empty, such as 0, the empty string, list, set, etc. All others yield `true`.
 
 ### Numbers
 
-3nity supports integers and floating-point numbers. Floats compile to regular JavaScript `number`s, [IEEE-754 double-precision floating-point][double] while integers compile to `bigint` (arbitrary-precision integers). Floats are typically distinguished between integers with a dot.
-
-[double]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+3nity supports three data types, all 64-bit. This avoids a lot of complexity associated with numeric precision such as file lengths, Unicode strings or very large lists.
 
 ```dart
 val integer: Int = 123
-val floating: Float = 12.345
+val floating: Float = 0x12.345
 ```
 
-[double]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+Numbers are case insensitive. They can contain leading zeroes or underscores for easy readability (of course, after the prefix).
 
-Numbers are case-insensitive including its type suffix, and can contain leading zeroes and underscores for readability. Integer and floating-point literals can be written in base 2, 4, 6, 8, 10, 12 or 16:
-
-| Base | Name        | Prefix    | Digits                       |
-| ---- | ----------- | --------- | ---------------------------- |
-| 2    | Binary      | `0b`      | `0` and `1`                  |
-| 4    | Quaternary  | `0q`      | `0` to `3`                   |
-| 6    | Senary      | `0s`      | `0` to `5`                   |
-| 8    | Octal       | `0o`      | `0` to `7`                   |
-| 10   | Decimal     | no prefix | `0` to `9`                   |
-| 12   | Duodecimal  | `0z`      | `0` to `9`, then `a` and `b` |
-| 16   | Hexadecimal | `0x`      | `0` to `9` then `a` to `f`   |
+Literals can be written in base 2, 4, 6, 8, 10, 12 or 16:
 
 ```dart
-val base2 = 0b101010111100000100100011
-val base4 = 0q320210213202
-val base6 = 0s125423
-val base8 = 0o52740443
-val base10 = 0011256099
-val base12 = 0z10a37b547ab97
-val base16 = 0xabcdef123
+val base2 = 0b10
+val base4 = 0q123
+val base6 = 0s12345
+val base8 = 0o1234567
+val base10 = 0123456789
+val base12 = 0z0123456789ab
+val base16 = 0x0123456789abcdef
 ```
 
-Floating-point numbers can allow different kinds of delimiters and separators,
-
-Repeating fractional blocks are separated with a tilde `~`, so `0.3~33` or simply `0.~3` is equal to `0.33333333333333...`. Fractional literals separate their numerator and denominator with a slash `/`.
+Floating-point numbers can allow different kinds of delimiters and separators.
 
 ```dart
-0.3~33 == 0.~3 == 1/3
+0.3 // Basic literal (3/10)
+3/10 // Fraction
+0.~3 // Repeating digits
+1^10 // Exponent
+1^-10 // Signed exponent
+0.1*16^+10 // Scientific notation
+1=10 // Rounding
+1=+10 // Round up
+1=-10 // Round down
+1=!-10 // Significant figures
 ```
 
-Exponents are relative to the base, but are written in base 10. Therefore `1 * 16^10` is equal to `0x1^10`. If you want a custom base, use the notation `coefficient*base^power`, where the power is signed.
-
-```dart
-1 * 16^10 == 0x1^10
-```
-
-Precision is delimited using `=n` where `n` is the number of places after the "decimal" point. `!` counts significant figures rather than mantisa digits, while `-` or `+` toggles whether to always round up or down as opposed to automatically.
-
-```dart
-10=10
-```
-
-The last component of a numeric literal is called a _type suffix_. The colon denoting the type suffix cannot be left out.
-
-By extending from the class `Numeric.Format`, arbitrary base values can be used. By default, all digits are decimal, though any alphanumeric character can be used.
-
-Arbitrary bases can be used, beginning with `nb` where `n` is a positive integer greater than 1. The digits are usually decimal, though any alphanumeric can be used when suffixed with a type.
-
-```dart
-class Base17 < Numeric.Format {
-  swap field digits: Str | []Char = '0123456789abcdefg'
-  swap field under: Bool = false
-}
-
-const number = 17b1894398:Base17
-assert number == 17b1_89__43_98:Base17 == 36268794
-```
+A type suffix is an identifier after the numeric literal, in order to explicitly specify its type.
 
 ### Strings
 
-Strings function the same way as in JavaScript, and are delimited by matching quotes. Only double-quoted strings contain escape sequences which all begin with a backslash. Single-quoted strings are raw, which means that escape sequences are not transformed.
+Strings are delimited by matching quotes. Just like in YAML, only double quoted strings can contain escape sequences. Single quoted strings are verbatim.
 
 ```dart
 var s1 = 'Single quotes work well for string literals.'
@@ -363,7 +358,7 @@ var s2 = "Double quotes work just as well."
 Single-quoted raw strings the escape sequences for double-quoted strings mentioned above are not escaped. To escape a single quote, double it.
 
 ```dart
-var daughterOfTheVoid = 'Kai''Sa'
+var daughterOfTheVoid = ''' Kai'Sa%x/x:\'x\'/y/y '''
 ```
 
 Double quoted string literals can contain the following escape sequences, and can contain the following escape sequences:
@@ -466,8 +461,8 @@ Strings can also be delimited using an initial backslash. Strings cannot contain
 
 ```dart
 \word
-func(\word, \word)
-func\word
+fun(\word, \word)
+fun\word
 [\word]
 {prop: \word}
 ```
