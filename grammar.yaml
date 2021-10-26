@@ -153,7 +153,7 @@ repository:
       |break|next|redo|retry|return|await|label|yield|goto|pass
       |import|export|using
       |debug|assert|where
-      )\b\s*
+      )(?![\w\p{Pd}])\s*
     name: invalid.illegal.keyword.trin
 
   # Support
@@ -3017,7 +3017,7 @@ repository:
       |rec|gen|oper|get|set|post|put|rem|new|del|patch
       |prefix|suffix|infix|binary|unary|left|right
       )
-      )\b\s*
+      )(?![\w\p{Pd}])\s*
       |# Decorators
       @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
       )*
@@ -3055,7 +3055,7 @@ repository:
               rec|gen|oper|get|set|post|put|rem|new|del|patch
               |prefix|suffix|infix|binary|unary|left|right
               )
-              )\b\s*
+              )(?![\w\p{Pd}])\s*
             captures:
               1: {name: storage.modifier.trin}
               2: {name: storage.type.accessor.trin}
@@ -3188,7 +3188,7 @@ repository:
             patterns:
               - include: source.yaml#flow-collection
               - *modifiers
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)\b\s*
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
                 name: keyword.control.module.trin
               - include: "#type-keywords"
               - include: "#declarations"
@@ -3208,7 +3208,7 @@ repository:
         patterns:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pre|post|need|know|check|test|read|write|till|same)(?![\w\p{Pd}])\s*
             name: keyword.control.validate.trin
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)\b\s*
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)(?![\w\p{Pd}])\s*
             name: keyword.control.validate.trin
           - include: $self
 
@@ -3253,7 +3253,7 @@ repository:
               - include: "#query-body"
               - include: $self
           sort-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sort(?![\w\p{Pd}])\s*\b(?:asc|desc)?(?![\w\p{Pd}])\s*\b(?:by|with)?)\b\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sort(?![\w\p{Pd}])\s*\b(?:asc|desc)?(?![\w\p{Pd}])\s*\b(?:by|with)?)(?![\w\p{Pd}])\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?<=})|(?=[,;)\]])
@@ -3261,7 +3261,7 @@ repository:
               - include: "#query-body"
               - include: $self
           select-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(select(?![\w\p{Pd}])\s*\b(?:unique|any|all)?)\b\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(select(?![\w\p{Pd}])\s*\b(?:unique|any|all)?)(?![\w\p{Pd}])\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?<=})|(?=[,;)\]])
@@ -3271,7 +3271,7 @@ repository:
               - include: "#query-body"
               - include: $self
           limit-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit)(?![\w\p{Pd}])\s*\b(?:first|last|head|tail)?)\b\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit)(?![\w\p{Pd}])\s*\b(?:first|last|head|tail)?)(?![\w\p{Pd}])\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?<=})|(?=[,;)\]])
@@ -3281,7 +3281,7 @@ repository:
               - include: "#query-body"
               - include: $self
           reduce-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)(?![\w\p{Pd}])\s*\b(?:left|right)?)\b\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)(?![\w\p{Pd}])\s*\b(?:left|right)?)(?![\w\p{Pd}])\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?<=})|(?=[,;)\]])
@@ -3802,7 +3802,7 @@ repository:
                     name: keyword.control.match.trin
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
                     name: keyword.control.match.trin
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)\b\s*
+                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
                     name: keyword.control.match.trin
                   - include: $self
               - &else-clause
@@ -3856,7 +3856,7 @@ repository:
                     name: keyword.control.switch.trin
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
                     name: keyword.control.switch.trin
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)\b\s*
+                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
                     name: keyword.control.switch.trin
                   - include: $self
               - &default-clause
@@ -4055,7 +4055,7 @@ repository:
                 name: keyword.control.trin
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
                 name: keyword.control.trin
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)\b\s*
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
                 name: keyword.control.switch.trin
               - include: $self
           - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
@@ -4320,5 +4320,5 @@ repository:
           |vAlign|value|valueType|vendor|vendorSub|version|visibility|vspace|whiteSpace|width|X[MS]LDocument|zIndex)
           \b\s*(?!\()
         name: support.variable.property.dom.js
-      - match: (?x)(?<=\.|::)\s*\b(module|exports|id|filename|loaded|parent|children)\b\s*
+      - match: (?x)(?<=\.|::)\s*\b(module|exports|id|filename|loaded|parent|children)(?![\w\p{Pd}])\s*
         name: support.type.object.module.js
