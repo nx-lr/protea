@@ -903,7 +903,11 @@ repository:
       (?<q1>')(?:[^']|'')*\g<q1>
       )|
       # Rest of identifier characters
-      [\p{Pd}\w]*
+      (
+      [\p{S}\p{P}&&[^,;'"`</>(){}\[\]\p{Pc}]]|
+      /(?!>)|<(?!/>?)
+      )*
+      [\p{Pd}\w]*\b
       )*
       )
     captures:
@@ -933,7 +937,11 @@ repository:
       (?<q1>')(?:[^']|'')*\g<q1>
       )|
       # Everything nice
-      [\p{Pd}\w]*
+      (
+      [\p{S}\p{P}&&[^,;'"`</>(){}\[\]\p{Pc}]]|
+      /(?!>)|<(?!/>?)
+      )*
+      [\p{Pd}\w]*\b
       )
       )?
       )*
