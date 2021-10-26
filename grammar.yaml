@@ -957,18 +957,18 @@ repository:
       (?<expr>
       # Match all brackets recursively
       (?<b>
-      \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-      \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-      \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+      \((?:[^'"`(){}\[\]]+|\p{Z}|\g<s>|\g<b>)*\)|
+      \[(?:[^'"`(){}\[\]]+|\p{Z}|\g<s>|\g<b>)*\]|
+      \{(?:[^'"`(){}\[\]]+|\p{Z}|\g<s>|\g<b>)*\}
       )|
       (?<s>
       # Strings
-      (?<q3>'''|"""|```).*\g<q3>|
+      (?<q3>'''+|"""+|```+).*\g<q3>|
       (?<q2>["`])[^\\.]*\g<q2>|
       (?<q1>')(?:[^']|'')*\g<q1>
       )|
       # Alphanumerics
-      [^\s:\/\\'"`(){}\[\]]*|\\.
+      [^\s:\/'"`(){}\[\]]*|\\.
       )
       )?
       )*
@@ -1740,7 +1740,7 @@ repository:
       ^\s*|,\s*|;\s*|
       \#?[({\[]\s*|
       [\p{Pc}\p{L}][\w\p{Pd}]*|
-      (?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+)\s+|
+      (?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s+|
       \b(?:#keywords
       in|of|as|is|new|to|til|thru|by|del|unset
       |var|val|let|const|decl|def|func|type|object
@@ -2295,7 +2295,7 @@ repository:
       binary-ops:
         patterns:
           - comment: augmented assignment += -= *= /= etc
-            match: (?<=^|[\s'"`\\({\[])([\p{S}\p{P}&&[^!:~.<=>,;'"`\\(){}\[\]\p{Pc}]][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*=)(?=$|[\s'"`\\)}\]])
+            match: (?<=^|[\s'"`({\[])([\p{S}\p{P}&&[^!:~.<=>,;'"`(){}\[\]\p{Pc}]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=)(?=$|[\s'"`)}\]])
             name: keyword.operator.assignment.augmented.trin
 
           - comment: |
@@ -2344,7 +2344,7 @@ repository:
               20: {name: keyword.operator.macro.dollar.trin}
             match: |
               (?x)
-              (?<=^|[\s'"`\\({\[])# opening
+              (?<=^|[\s'"`({\[])# opening
               (?:
               (:?=)#1
               |([+-]|\*{1,3}|~?/|%%?|\#\#?|<?\*>?)#2
@@ -2358,19 +2358,19 @@ repository:
               |([<>]=?|<=?>)#10
               |(=<|<?[/*|+$:]>?)#11
               |([!=]==?|[!=]~|~[!=])#12
-              |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*~>|
-              <~[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*)#13
-              |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*=>|
-              <=[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*)#14
-              |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*->|
-              <-[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*)#15
+              |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*~>|
+              <~[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#13
+              |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=>|
+              <=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#14
+              |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*->|
+              <-[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#15
               |(\?\?)#16
               |(!!)#17
               |(\?:)#18
               |(!:)#19
               |(\$:)#20
               )
-              (?=$|[\s'"`\\)}\]])# closing
+              (?=$|[\s'"`)}\]])# closing
 
           - comment: |
               CUSTOM OPERATORS
@@ -2400,36 +2400,36 @@ repository:
               11: {name: keyword.operator.infix.custom.trin}
             match: |
               (?x)
-              (?<=^|[\s'"`\\({\[])# opening
+              (?<=^|[\s'"`({\[])# opening
               (?:
-              ([&|^~][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#1
-              |([+\-*/%][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#2
-              |([@:][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#3
-              |(\.[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#3
-              |([!=][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#4
-              |([<>][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#5
-              |([?\#][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#6
-              |(\p{Sm}[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#7
-              |(\p{Sc}[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#8
-              |([\p{S}\p{P}&&[\x80-\xFF]][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#9
-              |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#10
+              ([&|^~][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#1
+              |([+\-*/%][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#2
+              |([@:][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#3
+              |(\.[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#3
+              |([!=][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#4
+              |([<>][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#5
+              |([?\#][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#6
+              |(\p{Sm}[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#7
+              |(\p{Sc}[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#8
+              |([\p{S}\p{P}&&[\x80-\xFF]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#9
+              |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#10
               )
-              (?=$|[\s'"`\\)}\]])# closing
+              (?=$|[\s'"`)}\]])# closing
 
       unary-ops:
         patterns:
           - &primary-operators
             comment: Primary binary operators
             match: |
-              (?x)(?<=\b|['"`\\)}\]])# closing
+              (?x)(?<=\b|['"`)}\]])# closing
               (?:
               ([>.]\.[.<])#1
               |(\?[.:]=?)#2
               |(![.:]=?)#3
               |((?:::|\.)=?)#4
-              |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)#5
+              |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#5
               )
-              (?=\b|['"`\\({\[])# opening
+              (?=\b|['"`({\[])# opening
             captures:
               1: {name: keyword.operator.range.trin}
               2: {name: keyword.operator.optional.trin}
@@ -2455,8 +2455,8 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]])#15
-              (?=[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*
+              |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
+              (?=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
               [\w({\['"`])
             name: keyword.operator.prefix.trin
             captures:
@@ -2481,7 +2481,7 @@ repository:
             match: |
               (?x)
               (?<=[)}\]\w'"`]
-              [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*)
+              [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)
               (?:([*/])#1
               |(\+)#2
               |(\-)#3
@@ -2496,7 +2496,7 @@ repository:
               |(\=)#12
               |(\$)#13
               |(\#)#14
-              |[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]])#15
+              |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
             name: keyword.operator.suffix.trin
             captures:
               1: {name: keyword.operator.module.all.trin}
@@ -2520,7 +2520,7 @@ repository:
           - applyEndPatternLast: 1
             begin: |
               (?x)\s*(?:(\+>)|(\|{1,3}>))(?=\s*(
-              [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*# prefix
+              [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
               (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
               \b(?:# don't match keywords
               in|of|as|is|new|to|til|thru|by|del|unset
@@ -2540,9 +2540,9 @@ repository:
               )\b
               )
               [\w]+
-              (?:[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*# primary
+              (?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# primary
               [\w]+)*
-              [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*# suffix
+              [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# suffix
               )\s*([^(]|$|;))
             end: (?=.)|$
             beginCaptures:
@@ -2671,7 +2671,7 @@ repository:
                 name: punctuation.separator.key-value.trin
 
         patterns:
-          - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
+          - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.mapping.trin}
@@ -2680,7 +2680,7 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
+          - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.dictionary.trin}
@@ -2719,7 +2719,7 @@ repository:
         repository:
           punctuation:
             patterns:
-              - match: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
+              - match: (?<![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)
                 captures:
                   1: {name: punctuation.separator.slice.trin}
               - match: ","
@@ -3135,7 +3135,7 @@ repository:
       - include: "#operators"
       - include: "#literals"
       - applyEndPatternLast: 1
-        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]))
+        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]))
         end: (?=.)|$
         beginCaptures:
           1: {name: punctuation.definition.annotation.trin}
@@ -3761,7 +3761,7 @@ repository:
   params-clause:
     begin: |
       (?x)
-      (?<=(?:^\s*|\#?[({\[]\s*|(?:[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]]+)\s+|\b(?:#keywords
+      (?<=(?:^\s*|\#?[({\[]\s*|(?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s+|\b(?:#keywords
       in|of|as|is|new|to|til|thru|by|del|unset
       |var|val|let|const|decl|def|func|type|object
       |class|enum|module|pack|struct|inter|space|pragma
@@ -4055,7 +4055,7 @@ repository:
           (?x)
           (?<=^|{|;|,|\s)\s*
           (
-          |[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*# prefix
+          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
           (?:\w|\\.)# identifier
           (?:[^\s\\(){}\[\]<>.,:;]|\\.)*?# remainder
           )
@@ -4091,7 +4091,7 @@ repository:
           (?x)
           (?<=^|{|;|,|\s)\s*
           (
-          |[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*# prefix
+          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
           (?:\w|\\.)# identifier
           (?:[^\s\\(){}\[\]<>.,:;]|\\.)*?# remainder
           )
@@ -4129,7 +4129,7 @@ repository:
           (?x)
           (?<=^|{|;|,|\s)\s*
           (
-          |[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*# prefix
+          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
           (?:\w|\\.)# identifier
           (?:[^\s\\(){}\[\]<>.,:;]|\\.)*?# remainder
           )
@@ -4228,7 +4228,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
+      - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.trin}
@@ -4236,7 +4236,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`\\p{Pc}(){}\[\]]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
+      - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
@@ -4296,7 +4296,7 @@ repository:
     repository:
       punctuation:
         patterns:
-          - match: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
+          - match: (?<![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)
             captures:
               1: {name: punctuation.separator.slice.trin}
           - match: ","
