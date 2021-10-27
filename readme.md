@@ -536,7 +536,7 @@ Multi-quoted and block regular expressions are also supported.
 | // Alternate/ordered choice
 () // Capturing group
 [] // Character class (can be nested)
-[^] [!] [~] // Negated character class
+[^] [!] // Negated character class
 $a ${} // Interpolated expression
 #a #{} // Placeholder expression
 {,} // Quantifier
@@ -545,21 +545,25 @@ $a ${} // Interpolated expression
 \1 \k<1> \k'1' \k"1" // Back-reference
 
 /** Characters */
-\w \W /* Word character */
-\s \S /* Whitespace */
-\d \D /* Decimal digit */
-\h \H /* Hexadecimal digit */
-\u \U /* Uppercase letter */
-\l \L /* Lowercase letter */
-\f \F /* Form feed */
-\q \Q /* Combining marks */
-\p \P /* Punctuation marks */
-\t \T /* Tab characters */
-\v \V /* Symbols */
-\n \N /* Newline */
-\o \O /* Any character */
-\c \C /* First character in identifier */
-\R /* First character in identifier */
+\w \W /* Word character */ [\pL\pN]
+\s \S /* Whitespace */ [\t\n\v\f\r] \pZ
+\d \D /* Decimal digit */ [0-9] \pPd
+\e \E /* Numeric character */ \pN
+\h \H /* Hexadecimal digit */ [\da-f]
+\u \U /* Uppercase letter */ [A-Z] \pLu
+\l \L /* Lowercase letter */ [a-z] \pLu
+\q \Q /* Diacritical marks */ \pM
+\p \P /* Punctuation */ \pP
+\t \T /* Tabs */ [\t\v]
+\n \N /* Newline */ [\w]
+\j \J /* Special characters */ \pC
+\c \C /* First character in identifier */ [\pL\pD]
+\i \I /* First character in identifier */ [\w]
+\R /* Line feed */ (\r&\n)
+\O /* Any character */
+\X /* Unicode text segment */
+\F /* Unused */
+\V /* Unused */
 
 /** Quantifiers */
 ? // Zero or one times
@@ -571,9 +575,15 @@ $a ${} // Interpolated expression
 {3,5} // Between 3 and 5 times
 
 /* Modifiers */
-? // Reluctant: shortest match
+? // Reluctant: returns shortest match
 + // Possessive: no backtracking
 * // Greedy: returns longest match
+
+/* Join shorthands */
+a&b /* => */ (a|b|ab)
+a&?b/* => */  a(ba)?
+a&+b /* => */ a(ba)+
+a&*b /* => */ (a(ba)*)?
 
 /** Groups */
 () // Numbered capturing group
@@ -609,7 +619,7 @@ $ // Ending of line
 \M // Not line boundary
 \y // Text segment boundary
 \Y // Not text segment boundary
-\G // Chained matching
+\G // Match boundary
 \K // Keep text out of the match
 
 /** POSIX expressions */
@@ -625,8 +635,11 @@ $ // Ending of line
 /** Unicode properties */
 \p{in block} \p{!in block} // Block
 \p{is script} \p{!is script} // Script or binary property
-\p{Script}
+\p{Script} // Shorthand property
 
+// Properties are checked in the order: `General_Category`, `Script`, `Block`, binary property
+
+/* Logical operators `&&` `||` `^^` `!` also work */
 \p{p=v} \p{p==v} // Property equals value
 \p{p!=v} \P{p=v} // Does not equal
 \p{p^=v} // Begins with but does not equal
@@ -701,14 +714,14 @@ The type signature of a set is `Set[Key]` or `{}Key`.
 
 ```dart
 var x: {}Int = {10, 20, 30}
-var y = {\a, \b, \c} // is []Str
+var y = {'a', 'b', 'c'} // is []Str
 var z = {10, '20', '30']{Str|Int}
 ```
 
 If the type is omitted, then type inference is used to determine the type of the items. The type of the items is determined by taking the union type of all the elements of the list. For example:
 
 ```dart
-assert {1, '2', 3, :4} is {}(Int|Str|Sym)
+assert {1, '2', 3, :4} is Int|Str|Sym
 ```
 
 The empty set is denoted using the special syntax `{}`. If the type is not specified, the set is automatically `{}{Any}`.
