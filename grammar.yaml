@@ -76,7 +76,7 @@ define:
     |break|next|redo|retry|return|await|label|yield|goto|pass
     |import|export|using
     |debug|assert|where
-    )\b
+    )(?![\w\p{Pd}])
     )
     ([\p{Pc}\p{L}][\w\p{Pd}]*)
     \b
@@ -99,7 +99,7 @@ define:
     |break|next|redo|retry|return|await|label|yield|goto|pass
     |import|export|using
     |debug|assert|where
-    )\b
+    )(?![\w\p{Pd}])
     )
     ([\p{Pc}\p{L}][\w\p{Pd}]*)
     \b
@@ -2089,7 +2089,7 @@ repository:
           |break|next|redo|retry|return|await|label|yield|goto|pass
           |import|export|using
           |debug|assert|where
-          )\b
+          )(?![\w\p{Pd}])
           )
           [\p{Pc}\p{L}][\w\p{Pd}]*
           )
@@ -2118,7 +2118,7 @@ repository:
           |break|next|redo|retry|return|await|label|yield|goto|pass
           |import|export|using
           |debug|assert|where
-          )\b
+          )(?![\w\p{Pd}])
           )
           [\p{Pc}\p{L}][\w\p{Pd}]*
           )
@@ -2452,7 +2452,7 @@ repository:
               |break|next|redo|retry|return|await|label|yield|goto|pass
               |import|export|using
               |debug|assert|where
-              )\b
+              )(?![\w\p{Pd}])
               )
               [\w]+
               (?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# primary
@@ -2482,7 +2482,7 @@ repository:
                   |break|next|redo|retry|return|await|label|yield|goto|pass
                   |import|export|using
                   |debug|assert|where
-                  )\b
+                  )(?![\w\p{Pd}])
                   )
                   (?:
                   (?:# Objects and maps
@@ -2857,42 +2857,42 @@ repository:
       - include: "#keywords"
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,])
+          (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
         name: variable.parameter.optional.3n
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,])
+          (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\*[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
         name: variable.parameter.spread.3n
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,])
+          (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\&[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
         name: variable.parameter.name.3n
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,])
+          (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\%[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
         name: variable.parameter.reference.3n
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,])
+          (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\$[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
         name: variable.parameter.other.3n
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,])
+          (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
@@ -2928,7 +2928,7 @@ repository:
       |break|next|redo|retry|return|await|label|yield|goto|pass
       |import|export|using
       |debug|assert|where
-      )\b
+      )(?![\w\p{Pd}])
       )
       (?:
       (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
