@@ -484,15 +484,14 @@ A macro function is defined with the keyword `macro`, and typically have four ar
 
 ```dart
 macro template(
-  &strings: Str[], %values | &keys: []Any
-): Str =
-  |&values|: Str {
-    val dict = values[-1] ?? {}
-    val values = (for val key in keys:
-      if key is Int: values[key]
-      else: dict[key]).toList()
-    return strings.intersperse(keys).join('')
-  }
+  &strings: []Str, %values; &keys: []Any
+): Str = |&values|: Str {
+  val dict = values[-1] ?? {}
+  val values = (for val key in keys:
+    if key is Int: values[key]
+    else: dict[key]).toList()
+  return strings.intersperse(keys).join('')
+}
 
 val t1Closure = template"${0}${1}${0}!"
 assert t1Closure("Y", "A") == "YAY!"
@@ -525,9 +524,9 @@ Multi-quoted and block regular expressions are also supported.
 )```
 ````
 
-[oniguruma]: https://github.com/kkos/oniguruma
+3nity uses a variant of the [Oniguruma][oniguruma] regex syntax, the same syntax as that of Rust and PHP7. Aosm eirt
 
-3nity uses a variant of the [Oniguruma][oniguruma] regex syntax, the same syntax as that of Rust and PHP7. It encompasses features from different regular expression implementations that traditionally exist in different languages.
+[oniguruma]: https://github.com/kkos/oniguruma
 
 ```dart
 `
@@ -545,25 +544,32 @@ $a ${} // Interpolated expression
 \1 \k<1> \k'1' \k"1" // Back-reference
 
 /** Characters */
-\w \W /* Word character */ [\pL\pN]
+\w \W /* Word character */ [\pL\pM\pPc\pNd]
 \s \S /* Whitespace */ [\t\n\v\f\r] \pZ
-\d \D /* Decimal digit */ [0-9] \pPd
-\e \E /* Numeric character */ \pN
+\d \D /* Decimal digit */ [0-9] \pNd
 \h \H /* Hexadecimal digit */ [\da-f]
 \u \U /* Uppercase letter */ [A-Z] \pLu
-\l \L /* Lowercase letter */ [a-z] \pLu
-\q \Q /* Diacritical marks */ \pM
+\l \L /* Lowercase letter */ [a-z] \pLl
+\q \Q /* Combining marks */ \pM
 \p \P /* Punctuation */ \pP
-\t \T /* Tabs */ [\t\v]
-\n \N /* Newline */ [\w]
-\j \J /* Special characters */ \pC
+\j \J /* Numeric character */ \pN
 \c \C /* First character in identifier */ [\pL\pD]
 \i \I /* First character in identifier */ [\w]
 \R /* Line feed */ (\r&\n)
-\O /* Any character */
 \X /* Unicode text segment */
-\F /* Unused */
-\V /* Unused */
+\O /* Any character */
+
+/** Escapes */
+\a ([\A]) // Alert character
+[\b] ([\B]) // Backspace character
+\e (\E) // Escape character
+\f (\F) // Form feed
+\n (\N) // Newline
+\r ([\R]) // Carriage return
+\t (\T) // Horizontal tab
+\v (\V) // Vertical tab
+\cA (\CA) // Control character (from \x01 to \x1a
+[\mA] ([\MA]) // Meta-control character
 
 /** Quantifiers */
 ? // Zero or one times
@@ -598,10 +604,12 @@ a&*b /* => */ (a(ba)*)?
 (?>) // Atomic group (no backtracking)
 (?()) // Conditional branching
 (?|) // ...with alternatives
+(?/) // Shortest match
+(?/=) // Longest match
 (?{}) (?{}[tag]) // Call-out (embedded code)
 (?y) // Mode enabler
 (?-y) // Mode disabler
-(?~) // Absent expression (stops matching)
+(?~) // Absent expression
 (?#...) // Comment
 (?1) // Numbered or relative back-reference
 (?&-1) (?&+1) // Relative back-reference
@@ -622,8 +630,28 @@ $ // Ending of line
 \G // Match boundary
 \K // Keep text out of the match
 
-/** POSIX expressions */
-// Coming soon:
+/** POSIX character classes */
+[:!alpha] // alphabetic
+[:!alnum] // alphanumerics
+[:ascii] // ASCII characters
+[:blank] // non-spacing characters
+[:cntrl] // control characters
+[:dash] // dash punctuation
+[:delim] // combining punctuation
+[:digit] // decimal digits
+[:graph] // visible character
+[:lower] // lowercase letters
+[:mark] // diacritical marks
+[:number] // numbers
+[:print] // printable
+[:priva] // private use
+[:punct] // punctuation
+[:space] // spacing characters
+[:symbol] // symbol characters
+[:title] // title-case letters
+[:upper] // uppercase letters
+[:word] // word characters
+[:xdigit] // hexadecimal digits
 
 /** Character classes */
 [x||x] // Union (lowest precedence)
@@ -633,11 +661,12 @@ $ // Ending of line
 [x-y] // Range (highest precedence)
 
 /** Unicode properties */
-\p{in block} \p{!in block} // Block
-\p{is script} \p{!is script} // Script or binary property
+\p{in Block} \p{!in Block} // Block
+\p{is Script} \p{!is Script} // Script or boolean property
 \p{Script} // Shorthand property
 
-// Properties are checked in the order: `General_Category`, `Script`, `Block`, binary property
+/* Properties are checked in the order:
+`General_Category`, `Script`, `Block`, binary property */
 
 /* Logical operators `&&` `||` `^^` `!` also work */
 \p{p=v} \p{p==v} // Property equals value
@@ -721,7 +750,7 @@ var z = {10, '20', '30']{Str|Int}
 If the type is omitted, then type inference is used to determine the type of the items. The type of the items is determined by taking the union type of all the elements of the list. For example:
 
 ```dart
-assert {1, '2', 3, :4} is Int|Str|Sym
+assert {1, '2', 3, :4} is {}(Int|Str|Sym)
 ```
 
 The empty set is denoted using the special syntax `{}`. If the type is not specified, the set is automatically `{}{Any}`.
@@ -925,10 +954,10 @@ Operators ending in either `->`, `~>` or `=>`, or starting with `<-`, `<~` or `<
 Binary operators include interfix and infix operators. Interfix operators are evaluated first, from left to right.
 
 ```dart
-def?.(a: Any, b: Any): Any = ?a ? void : a[b]
-val a = {1: {c: \d}}
+def []?.[] (a: Any, b: Any): Any = ?a ? void : a[b]
+val a = {1: {c: 'd'}}
 assert a?.b?.c == void
-assert a?.1?.c == \d
+assert a?.1?.c == 'd'
 ```
 
 #### Suffix Operators
@@ -936,8 +965,8 @@ assert a?.1?.c == \d
 Suffix operators are evaluated from left to right, have a single argument and are composed of only one character. They bind strongly and are evaluated after binary operators.
 
 ```dart
-def+ (a: Num): Num = a + 1
-def- (a: Num): Num = a - 1
+def []+ (a: Num): Num = a + 1
+def []- (a: Num): Num = a - 1
 val a = 1
 assert a++ == (a+)+ == 3
 assert a-- == (a-)- == -1
@@ -948,7 +977,7 @@ assert a-- == (a-)- == -1
 Prefix operators function the same way as suffix operators except they are evaluated from right to left. They are evaluated after suffix operators.
 
 ```dart
-def -(a: Num): Num = a.neg()
+def -[] (a: Num): Num = a.neg()
 val a = 1000
 assert --a == -(-a) == a
 ```
@@ -958,7 +987,7 @@ assert --a == -(-a) == a
 A unary modifier defines both suffix and prefix operators as valid operations on its only argument.
 
 ```dart
-def! !(x: Bool): Bool = !x
+def ![]! (x: Bool): Bool = !x
 val x = true
 assert !x! == !(x!) == true
 assert x! == !x == false
