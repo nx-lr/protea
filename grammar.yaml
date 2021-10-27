@@ -988,7 +988,7 @@ repository:
         end: (})
         name: entity.quasi.element.3n
         captures:
-          1: {name: punctuation.section.embedded.3n}
+          1: {name: punctuation.definition.anchor.3n}
         patterns:
           - include: "#placeholder-variables"
           - include: $self
@@ -1169,11 +1169,11 @@ repository:
         name: keyword.operator.compose.3n
       - match: \.
         name: constant.character.all.3n
-      - match: (?i)\\[mM]({\p{L}+})?
+      - match: \\[mM]({[\w\s]+})?
         name: keyword.control.anchor.3n
-      - match: \$|(?i)\\[yz]({\p{L}+})?
+      - match: \$|\\[yYzZ]({[\w\s]+})?
         name: keyword.control.end.3n}
-      - match: \^|(?i)\\[ab]({\p{L}+})?
+      - match: \^|\\[AbB]({[\w\s]+})?
         name: keyword.control.begin.3n
       - match: \\K
         name: keyword.control.keepout.3n
@@ -1203,13 +1203,13 @@ repository:
         captures:
           1: {name: keyword.other.subroutine.3n}
         patterns: *regex-back-references
-      - begin: (\\k(['"]))
+      - begin: (\\k('''+|"""+|'|"))
         end: \s*(\2)
         name: constant.other.back-reference.3n
         captures:
           1: {name: keyword.other.back-reference.3n}
         patterns: *regex-back-references
-      - begin: (\\g(['"]))
+      - begin: (\\g('''+|"""+|'|"))
         end: \s*(\2)
         name: constant.other.subroutine.3n
         captures:
@@ -1304,7 +1304,7 @@ repository:
         patterns:
           - include: "#regexp-patterns"
       - comment: Flag modifier group
-        begin: (\(\?\^?(?:([+-]?\d+?)|(\p{Upper}+(?:[+-]\p{Upper}+)*)|(\p{Lower}+(?:[+-]\p{Lower}+)*)))\s*(:)?
+        begin: (\(\?\^?(?:([+-]?\d+?)|((?:[+-]\p{Lu}+)+|\p{Lu}+(?:[+-]\p{Lu}+)*)|((?:[+-]\p{Ll}+)+|\p{Ll}+(?:[+-]\p{Ll}+)*)))\s*(:)?
         end: \s*(\))
         name: meta.group.flag.3n
         captures:
@@ -1400,7 +1400,7 @@ repository:
         captures:
           0: {name: punctuation.definition.group.named.3n}
         patterns:
-          - begin: (?<=\(\?)(['"])
+          - begin: (?<=\(\?)('''+|"""+|'|")
             end: \s*(\1)
             name: constant.other.group.3n
             captures:
@@ -1431,15 +1431,15 @@ repository:
         patterns:
           - include: "#named-char-notation"
       - include: "#numeric-escapes"
-      - match: (?i)\\([cm][a-z]|r)
+      - match: \\R|(?i)\\([cm][a-z])
         name: constant.character.control.3n
       - match: (?i)\\p(\w\w?)
         name: constant.other.character-class.unicode.3n
       - match: (?i)\\[ci]({\w+})?
         name: constant.other.character-class.xml.3n
-      - match: (?x)\\[a-z]
+      - match: (?x)\\[a-z&&[^fv]]|\\[FV]
         name: constant.other.character-class.3n
-      - match: (?x)\\[A-Z]
+      - match: (?x)\\[A-Z&&[^fv]]
         name: constant.other.character-class.negated.3n
       - match: (?i)\\n{[\w\s]+}
         name: constant.character.escape.unicode.name.3n
@@ -1486,7 +1486,7 @@ repository:
           - include: "#variables"
           - include: "#operators"
           - include: "#regexp-patterns"
-      - begin: (\[[!~^])
+      - begin: (\[[!^])
         end: (\])
         name: constant.other.character-class.negated.3n
         captures:
@@ -1682,25 +1682,29 @@ repository:
 
   tag-names:
     patterns:
-      - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-        name: entity.name.tag.namespace.3n
-      - match: |
-          (?x)\b
-          (?:
-          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-          ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-          ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
-          ([\p{Pc}\p{L}][\w\p{Pd}]*)
-          )\b
+      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)([:.][\p{Pc}\p{L}][\w\p{Pd}]*)?\b
         captures:
-          1: {name: entity.name.tag.style.3n}
-          2: {name: entity.name.tag.script.3n}
-          3: {name: entity.name.tag.3n support.class.component.3n}
-          4: {name: entity.name.tag.3n}
-      - match: ":"
-        name: punctuation.separator.namespace.3n
-      - match: \.
-        name: punctuation.accessor.3n
+          1:
+            patterns:
+              - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
+                name: entity.name.tag.namespace.3n
+              - match: |
+                  (?x)\b
+                  (?:
+                  (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+                  ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+                  ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
+                  ([\p{Pc}\p{L}][\w\p{Pd}]*)
+                  )\b
+                captures:
+                  1: {name: entity.name.tag.style.3n}
+                  2: {name: entity.name.tag.script.3n}
+                  3: {name: entity.name.tag.3n support.class.component.3n}
+                  4: {name: entity.name.tag.3n}
+              - match: ':\b'
+                name: punctuation.separator.namespace.3n
+              - match: \.\b
+                name: punctuation.accessor.3n
 
   tag-element-name:
     comment: "Tags that end > are trapped in #tag-termination"
