@@ -274,34 +274,37 @@ assert assert_
 
 ### Booleans, Null and Void
 
-`null` and `void` are one and the same. `null` compiles to its equivalent in JavaScript while `void` compiles to `undefined`.
+The `Null` type is used to represent the absence of a value, similar to `null` in other languages. It only has a single value:
 
 ```dart
-null; void
-assert null == void
-assert null == void
+null
 ```
 
-A boolean can only have one of two values: `true` or `false`. Booleans are mainly used for control flow, and there are a lot of operators that return boolean values.
+3nity also has `void`, for compatibility purposes. `void` is equal to `null`, but compiles to JavaScript `undefined`. You should use `void` in place of `null`.
+
+### Bool
+
+Bool has only two possible values: `true` and `false`. They are constructed using the following literals:
 
 ```dart
-true; false
+true
+false
 ```
 
 When cast into booleans, anything that suggests something is empty, such as 0, the empty string, list, set, etc is `false`. All others yield`true`.
 
 ### Numbers
 
-3nity supports three data types, all 64-bit. This avoids a lot of complexity associated with numeric precision such as file lengths, Unicode strings or very large lists.
+3nity supports three numeric data types, `Nat`, `Int` and `Float`, all 64-bit. This avoids a lot of complexity associated with numeric precision such as file lengths, Unicode strings or very large lists.
 
 ```dart
 val integer: Int = 123
 val floating: Float = 0x12.345
 ```
 
-Numbers are case insensitive. They can contain leading zeroes or underscores for easy readability (of course, after the prefix).
+As for signs, the prefix `+` and `-` are not part of the literal.
 
-Literals can be written in base 2, 4, 6, 8, 10, 12 or 16:
+Numbers are case insensitive. They can contain leading zeroes or underscores for easy readability. Literals can be written in base 2, 4, 6, 8, 10, 12 or 16:
 
 ```dart
 val base2 = 0b10
@@ -325,10 +328,49 @@ Floating-point numbers can allow different kinds of delimiters and separators.
 1=10 // Rounding
 1=+10 // Round up
 1=-10 // Round down
-1=!-10 // Significant figures
+1=!10 // Significant figures
 ```
 
-A type suffix is an identifier after the numeric literal, in order to explicitly specify its type.
+A floating literal consists of the following:
+
+- A sequence of alphanumerics as digits, or underscores to represent the **integer** part\*;
+- A dot `.` to indicate the "decimal point",
+- More, though optional, alphanumerics or underscores\*;
+- An optional tilde `~` to indicate **repeating** digits;
+- More, though optional, alphanumerics or underscores\*;
+- An optional **base** suffix, consisting of `*` and a signed decimal integer;
+- An optional **exponent** suffix, beginning with `^` and a decimal integer with an optional sign;
+- An optional **rounding** and **precision** suffix, which consists of the following:
+  - an equal sign;
+  - an optional `!` to indicate whether to count digits before the decimal point as part of the final rounding;
+  - `+` or `-` to always round up or down respectively, leaving it out to round up if the last digit is half the base and above;
+  - A base 10 positive integer.
+
+Multi-base digits can use either alphanumerics or digits. The digits are specified with a formatting modifier, `%`.
+
+```dart
+1%d/digits:10 
+```
+
+Here are some examples of valid numeric literals:
+
+```dart
+1    0b10    00010    65_536    1.0    1.01_3    0x0.1    0s0.1^10    0z1/3    0.~3    1*16^10    1=16    0.1=+16    0x0.1~3*16^10=+16:Int    10000b10_100__1000_40     16bca_fe__ba_be      1:f32
+```
+
+And invalid numeric literals:
+
+```dart
+0b2    1e10    0x1f40g   40s10*10^16 // wrong digits
+0&10    0!10 // invalid symbols
+1_10_    _1_10    1._10_  // misplaced underscores
+```
+
+A type suffix is used after both integers and floats to specify the resultant type of the numeric literal in question, in order to explicitly specify its type.
+
+```dart
+assert 1:u is Nat
+```
 
 ### Strings
 
@@ -379,7 +421,7 @@ Double quoted string literals can contain the following escape sequences, and al
 "\d1114111" // or "\1114111"
 "\z4588A7"
 "\x10FFFF" // or "\u10fffff"
-"\j{\x{x:a}}" // LaTeX expressions
+"\j{\x{x}}" // LaTeX expressions
 ```
 
 The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
@@ -501,183 +543,73 @@ assert t2Closure("Hello", {foo: "World"}) == "Hello World!"
 
 ### Regular expressions
 
-Regular expressions, or in short, regexes, begin with backticks (`` ` ``) as opposed to single or double quotes. Whitespace and comments are allowed, inspired by Perl's `/xx` modifier, and go a long way to make them more readable .
-
-Escaping rules apply though inside brackets, quotes and comments, they do not apply. Interpolation and formatting also apply but the result is usually quoted so to prevent generating invalid regexes.
+3nity's regexes, delimited using backticks, are way more powerful, editable and readable than their JavaScript counterparts. Free spacing and comments make it very easy to work and reason about with regular expressions.
 
 ```dart
 `
-  (?<element> \g<stag> \g<content>* \g<etag> ){0}
-  (?<stag> < \g<name> \s* > ){0}
-  (?<name> [a-zA-Z_:]+ ){0}
-  (?<content> [^<&]+ (\g<element> | [^<&]+)* ){0}
-  (?<etag> </ \k<name+1> >){0}
-  \g<element>
-`
+  (?1 %)
+  (?2
+    (?<ident>\b [\pPc\pL] [\pPd\w]* \b)
+    (
+      (?<switch> / \g<ident> (?<val> : (?<expr>
+        (?<bracket> // Brackets (recursive)
+          \( (?:[^'"`(){}\[\]]+ | \g<string> | \g<bracket>)*\) |
+          \[ (?:[^'"`(){}\[\]]+ | \g<string> | \g<bracket>)*\] |
+          \{ (?:[^'"`(){}\[\]]+ | \g<string> | \g<bracket>)*\}
+        ) |
+        (?<string> // Strings
+          (?<q3> \"{3,} | \"{3,} | `{3,}).*\g<q3> |
+          (?<q2> [" `]) [^\\.]* \g<q2> |
+          (?<q1> \') (?: [^\'] | \'{2})* \g<q1>
+        ) |
+        // Identifiers
+        ([?!]?\. | [?!:]:)? [\pPc\pL] [\pPd\w]* \b
+      ) )? )*
+    )?
+  )
+`n
 ```
 
 Multi-quoted and block regular expressions are also supported.
 
 ````dart
-```(?/
-  (?:[a-zA-Z_]|(?:\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}))(?:[a-zA-Z0-9_]|(?:\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}))*(?=:)
+```(?xi
+  \s*
+  (?<=(?:^|[^|])\||[({\[;,]|^)
+  \s*\&[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+  (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+  )|\s+:?=\s+)
 )```
 ````
 
-3nity uses a variant of the [Oniguruma][oniguruma] regex syntax, the same syntax as that of Rust and PHP7. Aosm eirt
+Interpolation and formatting also applies but the interpolated result is usually escaped so to prevent generating invalid regular expressions.
+
+3nity uses the [Oniguruma](https://github.com/kkos/oniguruma) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. But it adds its own extensions and will be (re)implemented in Trinity.
 
 [oniguruma]: https://github.com/kkos/oniguruma
 
+The following section serves as a summary to the regular expression syntax of 3nity, as well as some of the more unique features that 3nity has over other regex flavors.
+
+### Symbols
+
+A symbol represents a unique name inside the entire source code. Symbols are interpreted at compile time and cannot be created dynamically.
+
+The only way to create a symbol is by using a symbol literal, denoted by a colon (`:`) followed by an unquoted string beginning with a word character, and follows the same rules as an unquoted string.
+
+The identifier may optionally be enclosed in single or double quotes.
+
 ```dart
-`
-/** Meta-characters and basic syntax elements */
-\ // Escape
-| // Alternate/ordered choice
-() // Capturing group
-[] // Character class (can be nested)
-[^] [!] // Negated character class
-$a ${} // Interpolated expression
-#a #{} // Placeholder expression
-{,} // Quantifier
-"" '' // Quoting
-\g<1> \g'1' \g"1" // Subroutine
-\1 \k<1> \k'1' \k"1" // Back-reference
+:unquoted_symbol
+:"quoted symbol"
+:"a" // identical to :a
+:あ
+```
 
-/** Characters */
-\w \W /* Word character */ [\pL\pM\pPc\pNd]
-\s \S /* Whitespace */ [\t\n\v\f\r] \pZ
-\d \D /* Decimal digit */ [0-9] \pNd
-\h \H /* Hexadecimal digit */ [\da-f]
-\u \U /* Uppercase letter */ [A-Z] \pLu
-\l \L /* Lowercase letter */ [a-z] \pLl
-\q \Q /* Combining marks */ \pM
-\p \P /* Punctuation */ \pP
-\j \J /* Numeric character */ \pN
-\c \C /* First character in identifier */ [\pL\pD]
-\i \I /* First character in identifier */ [\w]
-\R /* Line feed */ (\r&\n)
-\X /* Unicode text segment */
-\O /* Any character */
+A quoted identifier can contain any Unicode character including white-spaces and can same escape sequences as a string literal, including interpolation. Use interpolation to create dynamic keys.
 
-/** Escapes */
-\a ([\A]) // Alert character
-[\b] ([\B]) // Backspace character
-\e (\E) // Escape character
-\f (\F) // Form feed
-\n (\N) // Newline
-\r ([\R]) // Carriage return
-\t (\T) // Horizontal tab
-\v (\V) // Vertical tab
-\cA (\CA) // Control character (from \x01 to \x1a
-[\mA] ([\MA]) // Meta-control character
-
-/** Quantifiers */
-? // Zero or one times
-+ // One or many times
-* // Zero or many times
-{5} // Exactly 5 times
-{5,} // At least 5 times
-{,5} // Up to 5 times
-{3,5} // Between 3 and 5 times
-
-/* Modifiers */
-? // Reluctant: returns shortest match
-+ // Possessive: no backtracking
-* // Greedy: returns longest match
-
-/* Join shorthands */
-a&b /* => */ (a|b|ab)
-a&?b/* => */  a(ba)?
-a&+b /* => */ a(ba)+
-a&*b /* => */ (a(ba)*)?
-
-/** Groups */
-() // Numbered capturing group
-(?:) // Non-capturing group
-(?<x>) (?'x') (?"x") // Named capturing group
-(?<-x>) // Balancing group
-(?<x-x>) // Balancing pair
-(?=) // Positive look-ahead
-(?!) // Negative look-ahead
-(?<=) // Positive look-behind
-(?<!) // Negative look-behind
-(?>) // Atomic group (no backtracking)
-(?()) // Conditional branching
-(?|) // ...with alternatives
-(?/) // Shortest match
-(?/=) // Longest match
-(?{}) (?{}[tag]) // Call-out (embedded code)
-(?y) // Mode enabler
-(?-y) // Mode disabler
-(?~) // Absent expression
-(?#...) // Comment
-(?1) // Numbered or relative back-reference
-(?&-1) (?&+1) // Relative back-reference
-(?&name) // Named back-reference
-
-/** Anchors & Assertions */
-^ // Start of line
-$ // Ending of line
-\A // Start of string
-\z // End of string
-\Z // Not end of string
-\b // Word boundary
-\B // Not word boundary
-\m // Line boundary
-\M // Not line boundary
-\y // Text segment boundary
-\Y // Not text segment boundary
-\G // Match boundary
-\K // Keep text out of the match
-
-/** POSIX character classes */
-[:!alpha] // alphabetic
-[:!alnum] // alphanumerics
-[:ascii] // ASCII characters
-[:blank] // non-spacing characters
-[:cntrl] // control characters
-[:dash] // dash punctuation
-[:delim] // combining punctuation
-[:digit] // decimal digits
-[:graph] // visible character
-[:lower] // lowercase letters
-[:mark] // diacritical marks
-[:number] // numbers
-[:print] // printable
-[:priva] // private use
-[:punct] // punctuation
-[:space] // spacing characters
-[:symbol] // symbol characters
-[:title] // title-case letters
-[:upper] // uppercase letters
-[:word] // word characters
-[:xdigit] // hexadecimal digits
-
-/** Character classes */
-[x||x] // Union (lowest precedence)
-[x^^x] // Symmetric difference
-[x&&x] // Intersection
-[x~~x] // Difference
-[x-y] // Range (highest precedence)
-
-/** Unicode properties */
-\p{in Block} \p{!in Block} // Block
-\p{is Script} \p{!is Script} // Script or boolean property
-\p{Script} // Shorthand property
-
-/* Properties are checked in the order:
-`General_Category`, `Script`, `Block`, binary property */
-
-/* Logical operators `&&` `||` `^^` `!` also work */
-\p{p=v} \p{p==v} // Property equals value
-\p{p!=v} \P{p=v} // Does not equal
-\p{p^=v} // Begins with but does not equal
-\p{p$=v} // Ends with but does not equal
-\p{p*=v} // Contains but does not equal
-\p{p|=v} // Begins with or equals
-\p{p&=v} // Ends with or equals
-\p{p~=v} // Contains or equals
-`
+```dart
+:question?
+:exclamation!
 ```
 
 #### Replacement strings
@@ -691,7 +623,16 @@ val newStr = str =< `(\w+)\W+(\w+)` `My name is $2, $0!`
 // 'My name is Bond, James Bond'
 ```
 
-The following section serves as a summary to the regular expression syntax of 3nity, as well as some of the more unique features that 3nity has over other regex flavors.
+```dart
+`` `
+$& $0   ${/* Entire match */}
+$-      ${/* Before matched substring */}
+$+      ${/* After matched substring */}
+$1      ${/* Numbered capture group */}
+$+1     ${/* Relative group */}
+$<name> ${/* Named capture group */}
+`
+```
 
 ## Collections
 
@@ -781,28 +722,6 @@ Note that maps may not be typed with a nullable key. If you are using type infer
 ```dart
 {1: 'one', 2: 'two'} // cannot store null
 {1: 'one', 2: 'two'}{Int : ?Str} // now it can
-```
-
-### Symbols
-
-A symbol represents a unique name inside the entire source code. Symbols are interpreted at compile time and cannot be created dynamically.
-
-The only way to create a symbol is by using a symbol literal, denoted by a colon (`:`) followed by an unquoted string beginning with a word character, and follows the same rules as an unquoted string.
-
-The identifier may optionally be enclosed in single or double quotes.
-
-```dart
-:unquoted_symbol
-:"quoted symbol"
-:"a" // identical to :a
-:あ
-```
-
-A quoted identifier can contain any Unicode character including white-spaces and can same escape sequences as a string literal, including interpolation. Use interpolation to create dynamic keys.
-
-```dart
-:question?
-:exclamation!
 ```
 
 ## Expressions
