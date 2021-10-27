@@ -13,7 +13,7 @@ Information for Contributors: |
   and I will be very happy to receive it/them.
 
   Go visit my Trello to find out what I'm working on:
-  https://trello.com/b/A3NDX7qY/trinity-language
+  https://trello.com/b/A3NDX7qY/
 
   Some parts such as numeric literals, HTML character entities and more
   are partially or entirely generated through code by means of compressed
@@ -1088,9 +1088,9 @@ repository:
 
   symbols:
     patterns:
-      - match: \s*(:)(?=['"])
+      - match: \s*\B(:)(?=['"])
         name: punctuation.definition.symbol.3n
-      - begin: \s*(:)(\w|\\.)
+      - begin: \s*\B(:)(\w|\\.)
         beginCaptures:
           1: {name: punctuation.definition.symbol.3n}
           2: {name: constant.other.symbol.3n}
@@ -1129,10 +1129,8 @@ repository:
 
   back-references:
     patterns:
-      - match: \$(\d+|[&+-])
+      - match: \$(\d+|[+-]\d*|&)
         name: keyword.other.back-reference.3n
-      - match: \${2}
-        name: constant.character.escape.3n
       - begin: (\$<)\s*
         end: \s*(>)
         name: keyword.other.back-reference.3n
@@ -2873,20 +2871,7 @@ repository:
           13: {name: keyword.operator.private.3n}
           14: {name: keyword.operator.class.3n}
 
-  types:
-    patterns:
-      - match: \s*(==?>|--?>|~~?>)
-        name: keyword.operator.type.function.3n
-      - match: \s*(<==|<--?|<~~?)
-        name: keyword.operator.type.channel.3n
-      - include: "#params-clause"
-      - include: "#type-keywords"
-      - include: "#type-names"
-      - include: "#custom-types"
-      - include: "#type-brackets"
-      - include: "#type-operators"
-      - include: "#type-strings"
-      - include: "#literals"
+  # Function brackets (early here as not to break things)
 
   parameter-brackets:
     begin: \s*(\()
@@ -2941,6 +2926,23 @@ repository:
           )|\s+:?=\s+)
         name: variable.parameter.3n
       - include: "$self"
+
+  # Types
+
+  types:
+    patterns:
+      - match: \s*(==?>|--?>|~~?>)
+        name: keyword.operator.type.function.3n
+      - match: \s*(<==|<--?|<~~?)
+        name: keyword.operator.type.channel.3n
+      - include: "#params-clause"
+      - include: "#type-keywords"
+      - include: "#type-names"
+      - include: "#custom-types"
+      - include: "#type-brackets"
+      - include: "#type-operators"
+      - include: "#type-strings"
+      - include: "#literals"
 
   custom-types:
     comment: |
