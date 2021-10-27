@@ -950,7 +950,7 @@ repository:
       (?<q2>["`])[^\\.]*\g<q2>|
       (?<q1>')(?:[^']|'')*\g<q1>
       )|
-      # Everything nice
+      # Everything else
       ([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b
       )
       )?
@@ -1295,7 +1295,7 @@ repository:
           (?<q2>["`])[^\\.]*\g<q2>|
           (?<q1>')(?:[^']|'')*\g<q1>
           )|
-          # Everything nice
+          # Everything else
           ([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b
           )
           )?
@@ -1522,13 +1522,13 @@ repository:
       - match: (?xi)\b[is]\b(?=\)|\]|\}|&&|\|\||\^\^)
         name: storage.modifier.ignore-case.3n
       - include: "#string-escapes"
-      - match: "[.:=!</>^$%?*+]?="
+      - match: "[:!=</>.^$%?*+|&~]?="
         name: keyword.operator.pattern.3n
       - match: ([&|^])\1|!
         name: keyword.operator.logical.3n
       - match: \b(i[ns])\b
         name: keyword.operator.expression.$1.3n
-      - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)([.:=!</>^$%?*+]?=)
+      - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)([:!=</>.^$%?*+|&~]?=)
         beginCaptures:
           1: {name: entity.other.attribute-name.3n}
           2: {name: keyword.operator.pattern.3n}
@@ -2755,7 +2755,7 @@ repository:
       (?<q2>["`])[^\\.]*\g<q2>|
       (?<q1>')(?:[^']|'')*\g<q1>
       )|
-      # Everything nice
+      # Everything else
       ([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b
       )
       )?
