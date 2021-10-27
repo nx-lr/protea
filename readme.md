@@ -379,7 +379,7 @@ Double quoted string literals can contain the following escape sequences, and al
 "\d1114111" // or "\1114111"
 "\z4588A7"
 "\x10FFFF" // or "\u10fffff"
-"\j{\x{x}}" // LaTeX expressions
+"\j{\x{x:a}}" // LaTeX expressions
 ```
 
 The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
@@ -462,7 +462,7 @@ The hash sign takes several arguments, as placeholders, passed to the `format` m
 
 #### Format Directives
 
-3nity provide an extensive string formatting mini-language for converting, transforming, transliterating and serialising objects in strings, with a syntax derived from Command Prompt.
+3nity has an extensive string formatting mini-language for converting, transforming, transliterating and serialising objects in strings, with a syntax derived from Command Prompt.
 
 They are composed of the following parts:
 
@@ -484,9 +484,9 @@ A macro function is defined with the keyword `macro`, and typically have four ar
 
 ```dart
 macro template(
-  &strings: Str[], %values | &keys: Any[]
-): => Str =
-  |&values = values|: Str {
+  &strings: Str[], %values | &keys: []Any
+): Str =
+  |&values|: Str {
     val dict = values[-1] ?? {}
     val values = (for val key in keys:
       if key is Int: values[key]
@@ -502,19 +502,18 @@ assert t2Closure("Hello", {foo: "World"}) == "Hello World!"
 
 ### Regular expressions
 
-Regular expressions function like strings, except delimited using backticks `` ` `` as opposed to quotes. Regular expressions allow free spacing and embedded comments. Escaping rules apply though between `()` and `[]` the backtick itself need not be escaped.
+Regular expressions, or in short, regexes, begin with backticks (`` ` ``) as opposed to single or double quotes. Whitespace and comments are allowed, inspired by Perl's `/xx` modifier, and go a long way to make them more readable .
 
-Escaping rules apply, though in between brackets the backtick need not be escaped. Interpolation and formatting also applies but the interpolated result is usually escaped so to prevent generating invalid regular expressions.
-
-3nity uses the [Oniguruma](https://github.com/kkos/oniguruma) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. But it adds its own extensions and will be (re)implemented in 3nity.
+Escaping rules apply though inside brackets, quotes and comments, they do not apply. Interpolation and formatting also apply but the result is usually quoted so to prevent generating invalid regexes.
 
 ```dart
-`\b{wb}(fee|fie|foe|fum)\b{wb}`x
-`[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] `]`x
 `
-  \/\* // Match the opening delimiter.
-  .*?  // Match a minimal number of characters.
-  \*\/ // Match the closing delimiter.
+  (?<element> \g<stag> \g<content>* \g<etag> ){0}
+  (?<stag> < \g<name> \s* > ){0}
+  (?<name> [a-zA-Z_:]+ ){0}
+  (?<content> [^<&]+ (\g<element> | [^<&]+)* ){0}
+  (?<etag> </ \k<name+1> >){0}
+  \g<element>
 `
 ```
 
@@ -526,6 +525,121 @@ Multi-quoted and block regular expressions are also supported.
 )```
 ````
 
+[oniguruma]: https://github.com/kkos/oniguruma
+
+3nity uses a variant of the [Oniguruma][oniguruma] regex syntax, the same syntax as that of Rust and PHP7. It encompasses features from different regular expression implementations that traditionally exist in different languages.
+
+```dart
+`
+/** Meta-characters and basic syntax elements */
+\ // Escape
+| // Alternate/ordered choice
+() // Capturing group
+[] // Character class (can be nested)
+[^] [!] [~] // Negated character class
+$a ${} // Interpolated expression
+#a #{} // Placeholder expression
+{,} // Quantifier
+"" '' // Quoting
+\g<1> \g'1' \g"1" // Subroutine
+\1 \k<1> \k'1' \k"1" // Back-reference
+
+/** Characters */
+\w \W /* Word character */
+\s \S /* Whitespace */
+\d \D /* Decimal digit */
+\h \H /* Hexadecimal digit */
+\u \U /* Uppercase letter */
+\l \L /* Lowercase letter */
+\f \F /* Form feed */
+\q \Q /* Combining marks */
+\p \P /* Punctuation marks */
+\t \T /* Tab characters */
+\v \V /* Symbols */
+\n \N /* Newline */
+\o \O /* Any character */
+\c \C /* First character in identifier */
+\R /* First character in identifier */
+
+/** Quantifiers */
+? // Zero or one times
++ // One or many times
+* // Zero or many times
+{5} // Exactly 5 times
+{5,} // At least 5 times
+{,5} // Up to 5 times
+{3,5} // Between 3 and 5 times
+
+/* Modifiers */
+? // Reluctant: shortest match
++ // Possessive: no backtracking
+* // Greedy: returns longest match
+
+/** Groups */
+() // Numbered capturing group
+(?:) // Non-capturing group
+(?<x>) (?'x') (?"x") // Named capturing group
+(?<-x>) // Balancing group
+(?<x-x>) // Balancing pair
+(?=) // Positive look-ahead
+(?!) // Negative look-ahead
+(?<=) // Positive look-behind
+(?<!) // Negative look-behind
+(?>) // Atomic group (no backtracking)
+(?()) // Conditional branching
+(?|) // ...with alternatives
+(?{}) (?{}[tag]) // Call-out (embedded code)
+(?y) // Mode enabler
+(?-y) // Mode disabler
+(?~) // Absent expression (stops matching)
+(?#...) // Comment
+(?1) // Numbered or relative back-reference
+(?&-1) (?&+1) // Relative back-reference
+(?&name) // Named back-reference
+
+/** Anchors & Assertions */
+^ // Start of line
+$ // Ending of line
+\A // Start of string
+\z // End of string
+\Z // Not end of string
+\b // Word boundary
+\B // Not word boundary
+\m // Line boundary
+\M // Not line boundary
+\y // Text segment boundary
+\Y // Not text segment boundary
+\G // Chained matching
+\K // Keep text out of the match
+
+/** POSIX expressions */
+// Coming soon:
+
+/** Character classes */
+[x||x] // Union (lowest precedence)
+[x^^x] // Symmetric difference
+[x&&x] // Intersection
+[x~~x] // Difference
+[x-y] // Range (highest precedence)
+
+/** Unicode properties */
+\p{in block} \p{!in block} // Block
+\p{is script} \p{!is script} // Script or binary property
+\p{Script}
+
+\p{p=v} \p{p==v} // Property equals value
+\p{p!=v} \P{p=v} // Does not equal
+\p{p^=v} // Begins with but does not equal
+\p{p$=v} // Ends with but does not equal
+\p{p*=v} // Contains but does not equal
+\p{p|=v} // Begins with or equals
+\p{p&=v} // Ends with or equals
+\p{p~=v} // Contains or equals
+`
+```
+
+#### Replacement strings
+
 If there are two adjacent regular expression literals on one side, then the one on the right is the substitution (template) string for the regular expression on the left.
 
 ```dart
@@ -535,243 +649,7 @@ val newStr = str =< `(\w+)\W+(\w+)` `My name is $2, $0!`
 // 'My name is Bond, James Bond'
 ```
 
-The following section serves as a summary to the regular expression syntax of 3nity, as well as some of the more unique features that Nova has over other regex flavors.
-
-#### Basic Syntax Elements
-
-| Syntax      | Description                                     |
-| ----------- | ----------------------------------------------- |
-| `\`         | Escape (disable) a metacharacter                |
-| `\|`        | Alternation                                     |
-| `/`         | Alternation: try out matches in the given order |
-| `(...)`     | Capturing group                                 |
-| `[...]`     | Character class (can be nested)                 |
-| `${...}`    | Embedded expression                             |
-| `{,}`       | Quantifier token (LHS 0, RHS &infin;)           |
-| `"..."`     | Raw quoted literal                              |
-| `'...'`     | Quoted literal                                  |
-| `\0` onward | Numeric back-reference (0-indexed)              |
-| `$...%...`  | String interpolation syntax                     |
-| `#...`      | String anchor syntax                            |
-
-#### Characters
-
-Most of these characters also appear the same way as in string literals.
-
-| Syntax                         | Description and Use                       |
-| ------------------------------ | ----------------------------------------- |
-| `\a`                           | \*Alert/bell character (inside `[]`)      |
-| `\b`                           | \*Backspace character (inside `[]`)       |
-| `\e`                           | Escape                                    |
-| `\f`                           | Form feed                                 |
-| `\n`                           | New line                                  |
-| `\r`                           | Carriage return                           |
-| `\t`                           | Horizontal tab                            |
-| `\v`                           | Vertical tab                              |
-| `\cA`...`\cZ`<br>`\ca`...`\cz` | Control character (from `U+01` to `U+1A`) |
-
-The following can only be used inside square brackets.
-
-| Syntax               | Description and Use                            |
-| -------------------- | ---------------------------------------------- |
-| `\b` (beside 0 or 1) | _Base 2_ - from `0` to `100001111111111111111` |
-| `\q`                 | _Base 4_ - from `0` to `10033333333`           |
-| `\s` (beside 0 to 5) | _Base 6_ - from `0` to `35513531`              |
-| `\o`                 | _Base 8_ - from `0` to `4177777`               |
-| `\d` or `\`          | _Base 10_ - from `0` to `1114111`              |
-| `\z`                 | _Base 12_ - from `0` to `4588A7`               |
-| `\x`                 | _Base 16_ - from `0` to `10FFFF`               |
-
-#### Character Sequences
-
-Character sequences in regular expressions are the same as in their string counterparts, with exception to `\b{}` outside `[]`.
-
-#### Character Classes and Sequences
-
-| Syntax | Inverse | Description                                                       |
-| ------ | ------- | ----------------------------------------------------------------- |
-| `.`    | None    | Hexadecimal code point (1-8 digits)                               |
-| `\w`   | `\W`    | Word character `[\d]`                                             |
-| `\d`   | `\D`    | Digit character `[0-9]`                                           |
-| `\s`   | `\S`    | Space character `[\t\n\v\f\r\20]`                                 |
-| `\h`   | `\H`    | Hexadecimal digit character `[\da-fA-F]`                          |
-| `\u`   | `\U`    | Uppercaseter `[A-Z]`                                              |
-| `\l`   | `\L`    | Lowercaseter `[a-z]`                                              |
-| `\f`   | `\F`    | Form feed `[\f]`                                                  |
-| `\t`   | `\T`    | Horizontal tab `[\t]`                                             |
-| `\v`   | `\V`    | Form feed `[\v]`                                                  |
-| `\n`   | `\N`    | Newline `[\n]`                                                    |
-|        | `\O`    | Any character `[^]`                                               |
-| `\R`   |         | General line break (CR + LF, etc)                                 |
-| `\c`   | `\C`    | First character of identifier; `[\pL\pPc]` by default             |
-| `\i`   | `\I`    | Subsequent characters of identifier `[\pL\pPc\pM\pNd]` by default |
-| `\x`   | `\X`    | Extended grapheme cluster                                         |
-
-##### Unicode Properties
-
-Properties are case-insensitive. Logical operators `&&`, `||`, `^^` and `!`, can be interspersed to express compound queries.
-
-| Syntax                        | Description                                   |
-| ----------------------------- | --------------------------------------------- |
-| `\p{p=v}`<br>`\p{p==v}`       | `prop` equals `value`                         |
-| `\p{p!=v}`<br>`\P{p=v}`       | `prop` does not equal `value`                 |
-| `\p{p^=v}`                    | `prop` begins with but does not equal `value` |
-| `\p{p$=v}`                    | `prop` ends with but does not equal `value`   |
-| `\p{p*=v}`                    | `prop` contains but does not equal `value`    |
-| `\p{p\|=v}`                   | `prop` begins with or equals to `value`       |
-| `\p{p~=v}`                    | `prop` ends with or equals to `value`         |
-| `\p{p&=v}`                    | `prop` contains or equals to `value`          |
-| `\p{in Blk}`<br>`\P{!in Blk}` | Block property                                |
-| `\p{is Scr}`<br>`\P{is! Scr}` | Script or binary property                     |
-| `\p{value}`                   | Short form\*                                  |
-| `\p{Cc}`                      | Unicode character categories^                 |
-
-\*Properties are checked in the order: `General_Category`, `Script`, `Block`, binary property:
-
-- `Latin` &rarr; (`Script==Latin`).
-- `BasicLatin` &rarr; (`Block==BasicLatin`).
-- `Alphabetic` &rarr; (`Alphabetic==Yes`).
-
-##### POSIX Classes
-
-Alternatively, `\p{}` notation can be used instead of `[:]`.
-
-| Syntax | ASCII | Unicode (`/u` flag) | Description |
-| --- | --- | --- | --- |
-| `[:alnum]` | `[a-zA-Z0-9]` | `[\pL\pNl}\pNd]` | Alphanumeric characters |
-| `[:alpha]` | `[a-zA-Z]` | `[\pL\pNl]` | Alphabetic characters |
-| `[:ascii]` | `[\x00-\x7F]` | `[\x00-\xFF]` | ASCII characters |
-| `[:blank]` | `[\x20\t]` | `[\pZs\t]` | Space and tab |
-| `[:cntrl]` | `[\x00-\x1F\x7F]` | `\pCc` | Control characters |
-| `[:digit]` | `[0-9]` | `\pNd` | Digits |
-| `[:graph]` | `[\x21-\x7E]` | `[^\pZ\pC]` | Visible characters (anything except spaces and controls) |
-| `[:lower]` | `[a-z]` | `\pLl` | Lowercaseters |
-| `[:number]` | `[0-9]` | `\pN` | Numeric characters |
-| `[:print]` | `[\x20-\x7E] ` | `\PC` | Printable characters (anything except controls) |
-| `[:punct]` | `[!"\#$%&'()\*+,\-./:;<=>?@\[\\\]^\_'{\|}~]` | `\pP` | Punctuation (and symbols). |
-| `[:space]` | `[\pS\t\r\n\v\f]` | `[\pZ\t\r\n\v\f]` | Spacing characters |
-| `[:symbol]` | `[\pS&&[:ascii]]` | `\pS` | Symbols |
-| `[:upper]` | `[A-Z]` | `\pLu` | Uppercaseters |
-| `[:word]` | `[A-Za-z0-9_]` | `[\pL\pNl\pNd\pPc]` | Word characters |
-| `[:xdigit]` | `[A-Fa-f0-9] ` | `[A-Fa-f0-9]` | Hexadecimal digits |
-
-#### Character Sets
-
-A set `[...]` can include nested sets. The operators below are listed in increasing precedence, meaning they are evaluated first.
-
-| Syntax                 | Description                                                    |
-| ---------------------- | -------------------------------------------------------------- |
-| `^...`, `~...`, `!...` | Negated (complement) character class                           |
-| `x-y`                  | Range (from x to y)                                            |
-| `\|\|`                 | Union (`x \|\| y` &rArr; "x or y")                             |
-| `&&`                   | Intersection (`x && y` &rArr; "x and y" )                      |
-| `^^`                   | Symmetric difference (`x ^^ y` &rArr; "x and y, but not both") |
-| `--`                   | Difference (`x ~~ y` &rArr; "x but not y")                     |
-
-#### Anchors
-
-| Syntax | Inverse | Description                                  |
-| ------ | ------- | -------------------------------------------- |
-| `^`    | None    | Beginning of the string/line                 |
-| `$`    | None    | End of the string/line                       |
-| `\b`   | `\B`    | Word boundary                                |
-| `\a`   | `\A`    | Beginning of the string/line                 |
-| `\z`   | `\Z`    | End of the string/before new line            |
-|        | `\G`    | Where the current search attempt begins/ends |
-|        | `\K`    | Keep start/end position of the result string |
-| `\m`   | `\M`    | Line boundary                                |
-| `\y`   | `\Y`    | Text segment boundary                        |
-
-#### Quantifiers
-
-| Syntax | Reluctant `?` (returns shortest match) | Possessive `+` (returns nothing) | Greedy `*` (returns longest match) | Description |
-| --- | --- | --- | --- | --- |
-| `?` | `??` | `?+` | `?*` | 1 or 0 times |
-| `+` | `+?` | `++` | `+*` | 1 or more times |
-| `*`, `{,}`, `{}` | `*?`, `{,}?`, `{}?` | `*+`, `{,}+`, `{}+` | `**`, `{,}*`, `{}*` | 0 or more times |
-| `{n,m}` | `{n,m}?` | `{n,m}+` | `{n,m}*` | At least `n` but no more than `m` times |
-| `{n,}` | `{n,}?` | `{n,}+` | `{n,}*` | At least `n` times |
-| `{,m}` | `{,m}?` | `{,m}+` | `{,m}*` | Up to `m` times |
-| `{n}` | `{n}?` | `{n}+` | `{n}*` | Exactly `n` times |
-
-#### Groups
-
-`(?'')`, `(?"")` notation can also be used.
-
-| Syntax                      | Description                       |
-| --------------------------- | --------------------------------- |
-| `(?#...)`                   | Comment                           |
-| `(?x-y:...)`<br>`(?x-y)...` | Mode modifier                     |
-| `(?:...)`                   | Non-capturing (passive) group     |
-| `(...)`                     | Capturing group (numbered from 1) |
-| `(?<name>...)`              | Named capturing group             |
-| `(?<-x>...)`                | Balancing group                   |
-| `(?<x-x>...)`               | Balancing group pair              |
-| `(?=...)`                   | Positive lookahead                |
-| `(?!...)`                   | Negative lookahead                |
-| `(?<=...)`                  | Positive lookbehind               |
-| `(?<!...)`                  | Negative lookbehind               |
-| `(?>...)`                   | Atomic group (no backtracking)    |
-| `(?~...)`                   | Sub-expression                    |
-| `(?()\|...\|...)`           | Conditional branching             |
-| `(?~\|...\|...)`            | Absent expression                 |
-| `(?~\|...)`                 | Absent repeater                   |
-| `(?~...)`                   | Absent stopper                    |
-| `(?~\|)`                    | Range clear                       |
-
-#### Backreferences and Calls
-
-`\k''`, `\k""` can also be used.
-
-| Syntax     | Description                                               |
-| ---------- | --------------------------------------------------------- |
-| `\1`       | Specific numbered backreference                           |
-| `\k<1>`    | Specific numbered backreference                           |
-| `\k<-1>`   | Relative numbered backreference (`+` ahead, `-` behind)   |
-| `\k<name>` | Specific named backreference                              |
-| `\g<1>`    | Specific numbered subroutine call                         |
-| `\g<-1>`   | Relative numbered subroutine call (`+` ahead, `-` behind) |
-| `\g<name>` | Specific named subroutine call                            |
-
-#### Flags
-
-These flags go after the regex literal. `f`, `m`, `u`, `e` and `x` are enabled by default.
-
-| Flag | Description                                                                  |
-| ---- | ---------------------------------------------------------------------------- |
-| `a`  | Astral mode - Unicode quotes support code points past the BMP                |
-| `c`  | Case-sensitive mode                                                          |
-| `d`  | Treat only `\n` as a line break                                              |
-| `e`  | Safe mode - escape all interpolations                                        |
-| `g`  | Global. Enabled by default                                                   |
-| `i`  | Case-insensitive mode                                                        |
-| `j`  | Switches definitions of `()` and `(?:)`                                      |
-| `k`  | Allows duplicate named groups                                                |
-| `l`  | Last match only                                                              |
-| `m`  | Multiline - `^`/`$` match at every line                                      |
-| `n`  | Named capturing groups only - all unnamed groups become non-capturing        |
-| `o`  | Unsafe mode - coerces interpolations into strings                            |
-| `p`  | `^` and `$` match at the start/end of line                                   |
-| `q`  | Quote all metacharacters                                                     |
-| `s`  | Dotall --- `.` matches all characters                                        |
-| `t`  | Strict spacing mode                                                          |
-| `u`  | Unicode mode - POSIX class definitions also expanded                         |
-| `w`  | `^` and `$` match at the start/end of string, `.` does not match line breaks |
-| `x`  | Free-spacing mode                                                            |
-| `y`  | Sticky mode - search begins from specified index on LHS of regex             |
-
-#### Replacement String
-
-This syntax applies to the second regex literal onward in regex operations such as substitution and transliteration. If any group referenced in the index before is invalid group, it is inserted literally.
-
-| Syntax    | Meaning                                                                        |
-| --------- | ------------------------------------------------------------------------------ |
-| `$$`      | Inserts a literal "$".                                                         |
-| `$0`      | Inserts the entire matched substring into the output.                          |
-| `$-`      | Inserts the portion of the string that precedes the matched substring.         |
-| `$+`      | Inserts the portion of the string that follows the matched substring.          |
-| `$n`      | Where `n` is a positive integer, inserts the `n`th submatch.                   |
-| `$<name>` | Where name is a capturing group name, inserts the submatch assigned to `name`. |
+The following section serves as a summary to the regular expression syntax of 3nity, as well as some of the more unique features that 3nity has over other regex flavors.
 
 ## Collections
 
@@ -785,7 +663,7 @@ The type signature of a list is `List[Value]` or `{}Value`.
 
 ```dart
 var x: []Int = [10, 20, 30]
-var y = [\a, \b, \c] // is []Str
+var y = ['a', 'b', 'c'] // is []Str
 ```
 
 The type of the list uses the postfix curly bracket notation, where you can explicitly specify the type of the list.
@@ -892,136 +770,6 @@ A quoted identifier can contain any Unicode character including white-spaces and
 ### Operators
 
 The tables below define all of 3nity's operators, and you can define your own.
-
-#### General operators
-
-| Operator | Type    | Meaning                         |
-| -------- | ------- | ------------------------------- |
-| `!`      | Unary   | Assert that not null            |
-| `?`      | Unary   | Exists                          |
-| `.`      | Binary  | Basic access                    |
-| `::`     | Binary  | Dynamic access                  |
-| `!.`     | Binary  | Assertive access                |
-| `!:`     | Binary  | Assertive dynamic access        |
-| `?.`     | Binary  | Optional access                 |
-| `?:`     | Binary  | Optional dynamic assign         |
-| `.=`     | Binary  | Access-assignment               |
-| `::=`    | Binary  | Dynamic access-assign           |
-| `!.=`    | Binary  | Assertive access-assign         |
-| `!:=`    | Binary  | Assertive dynamic access-assign |
-| `?.=`    | Binary  | Optional access-assign          |
-| `?:=`    | Binary  | Optional dynamic access-assign  |
-| `??`     | Infix   | Basic access                    |
-| `!!`     | Infix   | Dynamic access                  |
-| `?:`     | Infix   | Assertive access                |
-| `!:`     | Infix   | Assertive dynamic access        |
-| `? :`    | Ternary | Conditional                     |
-| `! :`    | Ternary | Inverse conditional             |
-| `$ :`    | Ternary | Infix function call             |
-
-#### Numeric operators
-
-| Operator     | Type   | Meaning                          |
-| ------------ | ------ | -------------------------------- |
-| `+`          | Prefix | Numeric casting                  |
-| `+`          | Suffix | Successor                        |
-| `+`          | Infix  | Add                              |
-| `-`          | Prefix | Negation                         |
-| `-`          | Suffix | Previous number                  |
-| `-`          | Infix  | Subtract                         |
-| `*`          | Infix  | Multiply                         |
-| `**`, `@*`   | Infix  | Exponent                         |
-| `***`, `@**` | Infix  | Exponent with integer rounding   |
-| `/`          | Infix  | Divide                           |
-| `#`          | Infix  | Divide with integer rounding     |
-| `%`          | Infix  | Remainder (Python, R)            |
-| `%%`         | Infix  | Unsigned remainder (C, Java, JS) |
-| `~`          | Prefix | Bitwise not                      |
-| `&`          | Infix  | Bitwise and                      |
-| `\|`         | Infix  | Bitwise or                       |
-| `^`          | Infix  | Bitwise exclusive or             |
-| `<<`         | Infix  | Bitwise signed left shift        |
-| `>>`         | Infix  | Bitwise signed right shift       |
-| `<<<`        | Infix  | Bitwise unsigned left shift      |
-| `>>>`        | Infix  | Bitwise unsigned right shift     |
-| `<`          | Infix  | Lesser than                      |
-| `<=`         | Infix  | Lesser than or equal to          |
-| `>`          | Infix  | Greater than                     |
-| `>=`         | Infix  | Greater than or equal to         |
-| `==`         | Infix  | Equal to                         |
-| `!=`, `<>`   | Infix  | Not equal to                     |
-| `<=>`        | Infix  | Three-way comparison             |
-| `*>`         | Infix  | Minimum                          |
-| `<*`         | Infix  | Maximum                          |
-
-#### String operators
-
-| Operator | Type  | Meaning           |
-| -------- | ----- | ----------------- |
-| `+`      | Infix | Concatenation     |
-| `-`      | Unary | Reversal          |
-| `~=`     | Infix | Matching          |
-| `~!`     | Infix | Negative matching |
-| `*`      | Infix | Repetition        |
-| `/`      | Infix | Splitting         |
-| `#`      | Unary | Length            |
-
-#### Logical operators
-
-| Operator | Type  | Meaning              |
-| -------- | ----- | -------------------- |
-| `&&`     | Infix | Logical and          |
-| `\|\|`   | Infix | Logical or           |
-| `^^`     | Infix | Logical exclusive or |
-| `!`      | Unary | Logical not          |
-| `~>`     | Infix | Imply                |
-| `<~`     | Infix | Backwards imply      |
-| `<~>`    | Infix | Bothward imply       |
-
-#### Function operators
-
-| Operator  | Type  | Meaning                    |
-| --------- | ----- | -------------------------- |
-| `+>`      | Infix | Composition                |
-| `\|>`     | Infix | Pipeline                   |
-| `\|\|>`   | Infix | Iterable pipeline          |
-| `\|\|\|>` | Infix | Async pipeline             |
-| `<+`      | Infix | Backward composition       |
-| `<\|`     | Infix | Backward pipeline          |
-| `<\|\|`   | Infix | Backward iterable pipeline |
-| `<\|\|\|` | Infix | Backward async piping      |
-
-#### Collection operators
-
-| Operator | Type  | Meaning                 |
-| -------- | ----- | ----------------------- |
-| `+`      | Infix | Push or unshift         |
-| `++`     | Infix | Concatenate             |
-| `-`      | Unary | Pop or shift            |
-| `<:`     | Infix | Value in collection     |
-| `<!`     | Infix | Value not in collection |
-| `:<`     | Infix | Value in collection     |
-| `!<`     | Infix | Value not in collection |
-| `*`      | Infix | Repeat (only for lists) |
-| `/`      | Infix | Group by                |
-| `#`      | Unary | Length or cardinality   |
-| `%`      | Infix | Sort by                 |
-| `&`      | Infix | Intersection            |
-| `\|`     | Infix | Union                   |
-| `^`      | Infix | Symmetric difference    |
-| `<->`    | Infix | Filter                  |
-| `</>`    | Infix | Reject                  |
-| `<*>`    | Infix | Map                     |
-| `<+>`    | Infix | Sort                    |
-| `<$>`    | Infix | Group                   |
-| `</`     | Infix | Fold left               |
-| `/>`     | Infix | Fold right              |
-| `<$`     | Infix | Scan left               |
-| `$>`     | Infix | Scan right              |
-| `<%`     | Infix | Take left               |
-| `%>`     | Infix | Take right              |
-| `<#`     | Infix | Drop left               |
-| `#>`     | Infix | Drop right              |
 
 ### Custom Operators
 
