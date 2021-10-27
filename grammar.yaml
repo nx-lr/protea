@@ -1252,52 +1252,75 @@ repository:
         name: meta.group.look-ahead.3n
         captures:
           1: {name: punctuation.definition.group.look-ahead.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
       - comment: Lookbehind assertion
         begin: (\(\?<=)
         end: \s*(\))
         name: meta.group.look-behind.3n
         captures:
           1: {name: punctuation.definition.group.look-behind.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
       - comment: Negative lookahead assertion
         begin: (\(\?!)
         end: \s*(\))
         name: meta.group.negative-look-ahead.3n
         captures:
           1: {name: punctuation.definition.group.negative-look-ahead.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
       - comment: Negative lookbehind assertion
         begin: (\(\?<!)
         end: \s*(\))
         name: meta.group.negative-look-behind.3n
         captures:
           1: {name: punctuation.definition.group.negative-look-behind.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
       - comment: Match directive
-        begin: (\(\?%)((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?(/)?
-        end: \s*(\))
-        name: meta.group.directive.3n
+        begin: |
+          (?x)(\(\?%)
+          (
+          (?<ident>\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
+          (
+          (?<sw>
+          /\g<ident>
+          (?<val>:
+          (?<expr>
+          # Match all brackets recursively
+          (?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>["`])[^\\.]*\g<q2>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Everything nice
+          ([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )
+          )?
+          )*
+          )?
+          )
         captures:
-          1: {name: punctuation.definition.group.directive.3n}
+          1: {name: punctuation.definition.directive.3n}
           2:
             name: storage.type.format.3n
-            patterns: [include: "#format-language"]
-          3: {name: punctuation.separator.slash.3n}
-        patterns:
-          - include: "#regexp-patterns"
+            patterns:
+              - include: "#format-language"
+              - match: .+
+                name: string.other.format.3n
+        end: \s*(\))
+        name: meta.group.directive.3n
+        patterns: [include: "#regexp-patterns"]
       - comment: Longest match
-        begin: (\(\?/)
+        begin: (\(\?/=?)
         end: \s*(\))
         name: meta.group.longest.3n
         captures:
           1: {name: punctuation.definition.group.longest.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
       - comment: Flag modifier group
         begin: (\(\?\^?(?:([+-]?\d+?)|((?:[+-]\p{Lu}+)+|\p{Lu}+(?:[+-]\p{Lu}+)*)|((?:[+-]\p{Ll}+)+|\p{Ll}+(?:[+-]\p{Ll}+)*)))\s*(:)?
         end: \s*(\))
@@ -1309,8 +1332,7 @@ repository:
           3: {name: keyword.control.recursion.3n}
           4: {name: keyword.other.flag.3n}
           5: {name: punctuation.separator.colon.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
       - comment: Callouts
         begin: (\(\?)(?={)
         end: \s*(\))
@@ -1336,32 +1358,28 @@ repository:
         name: meta.group.atomic.3n
         captures:
           1: {name: punctuation.definition.group.atomic.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
       - comment: Non-capturing groups
         begin: (\(\?:)
         end: \s*(\))
         name: meta.group.non-capturing.3n
         captures:
           1: {name: punctuation.definition.group.non-capturing.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
       - comment: Branch groups
         begin: (\(\?)(?=[(|])
         end: \s*(\))
         name: meta.group.branch.3n
         captures:
           1: {name: punctuation.definition.group.branch.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
       - comment: Atomic groups
         begin: (\(\?~)
         end: \s*(\))
         name: meta.group.absent.3n
         captures:
           1: {name: punctuation.definition.group.absent.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
       - comment: Back-reference groups
         begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}][\w\p{Pd}]*)))(:)?
         end: \s*\)
@@ -1372,8 +1390,7 @@ repository:
           2: {name: constant.numeric.index.3n}
           3: {patterns: [include: "#variables"]}
           4: {name: punctuation.separator.colon.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
       - comment: Named groups (angle-brackets)
         begin: \(\?(?=<(?![!=]))
         end: \s*(\))
@@ -1408,8 +1425,7 @@ repository:
         name: meta.group.3n
         captures:
           1: {name: punctuation.definition.group.3n}
-        patterns:
-          - include: "#regexp-patterns"
+        patterns: [include: "#regexp-patterns"]
 
   regexp-char-class:
     patterns:
@@ -2852,42 +2868,42 @@ repository:
           (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+          )|\s+:?=\s+)
         name: variable.parameter.optional.3n
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\*[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+          )|\s+:?=\s+)
         name: variable.parameter.spread.3n
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\&[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+          )|\s+:?=\s+)
         name: variable.parameter.name.3n
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\%[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+          )|\s+:?=\s+)
         name: variable.parameter.reference.3n
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\$[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+          )|\s+:?=\s+)
         name: variable.parameter.other.3n
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+          )|\s+:?=\s+)
         name: variable.parameter.3n
       - include: "$self"
 
