@@ -4,20 +4,13 @@ fileTypes: [dart, trin]
 patterns: [include: "#core"]
 
 Information for Contributors: |
-  Trinity is a typed, multi-paradigm and multi-faceted programming language, and can be used to safely
-  build and test complex software, apps and libraries for web, desktop and mobile; or for the frontend,
-  API and backend. Trinity will be entirely implemented and integrated with JavaScript and the web
-  ecosystem.
+  This is the grammar for the Trinity programming language. The grammar
+  is about 80% complete though there still need to be some fixes.
 
-  The language is very similar to Go, Swift, Kotlin or Scala, tied with a unified, comprehensive and
-  clean API with minimal abstractions, supported out of the box.
-
-  Should you want to provide a final or improvement, or perhaps to change or add a new feature, or even
-  some general constructive feedback, make a pull request, or an issue on this very repository, and I will
-  be very happy to receive it/them.
-
-  This grammar is still under construction, and there would be a couple of features being planned. I'm
-  currently working on the language spec, so hold a while.
+  Should you want to provide a fix improvement, or perhaps to
+  change or add a new feature, or even some general constructive
+  feedback, make a pull request, or an issue on this very repository,
+  and I will be very happy to receive it/them.
 
   Go visit my Trello to find out what I'm working on:
   https://trello.com/b/A3NDX7qY/trinity-language
@@ -1179,6 +1172,8 @@ repository:
         name: keyword.control.keepout.3n
       - match: \\G
         name: keyword.control.search.3n
+      - match: \\R
+        name: constant.character.control.3n
       - match: \\[XO]
         name: constant.character.unicode.3n
       - match: (\\\()(?:(\?)|(\+)|(\*))
@@ -1431,7 +1426,7 @@ repository:
         patterns:
           - include: "#named-char-notation"
       - include: "#numeric-escapes"
-      - match: \\R|(?i)\\([cm][a-z])
+      - match: (?i)\\([cm][a-z])
         name: constant.character.control.3n
       - match: (?i)\\p(\w\w?)
         name: constant.other.character-class.unicode.3n
@@ -1481,11 +1476,7 @@ repository:
         name: constant.other.character-class.posix.3n
         captures:
           1: {name: punctuation.definition.character-class.posix.3n}
-        patterns:
-          - include: "#comments"
-          - include: "#variables"
-          - include: "#operators"
-          - include: "#regexp-patterns"
+        patterns: [include: "#attribute-selectors"]
       - begin: (\[[!^])
         end: (\])
         name: constant.other.character-class.negated.3n
@@ -1516,13 +1507,13 @@ repository:
       - match: (?xi)\b[is]\b(?=\)|\]|\}|&&|\|\||\^\^)
         name: storage.modifier.ignore-case.3n
       - include: "#string-escapes"
-      - match: "[~|^$!&*=]?="
+      - match: "[.:=!</>^$%?*+]?="
         name: keyword.operator.pattern.3n
       - match: ([&|^])\1|!
         name: keyword.operator.logical.3n
       - match: \b(i[ns])\b
         name: keyword.operator.expression.$1.3n
-      - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)([~|^$!&*=]?=)
+      - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)([.:=!</>^$%?*+]?=)
         beginCaptures:
           1: {name: entity.other.attribute-name.3n}
           2: {name: keyword.operator.pattern.3n}
@@ -1535,7 +1526,7 @@ repository:
         captures:
           1: {name: entity.other.attribute-name.3n}
           2: {name: keyword.operator.pattern.3n}
-      - include: $self
+      - include: "#operators"
 
   # Markdown
 
@@ -1920,153 +1911,151 @@ repository:
       - comment: additional jsdoc keywords
         match: (?<!\w)@(accessor|alternateClassName|aside|cfg|chainable|docauthor|evented|experimental|ftype|hide|inheritable|localdoc|markdown|mixins|new|override|preventable|ptype|removed|scss mixin|object|template|uses|xtype)\b
         name: storage.type.class.jsdoc
-
-    repository:
-      jsdoc-access:
-        comment: "@tag protected...."
-        match: (@(access))\s*(private|protected|public)?(?=\s|$)
+  jsdoc-access:
+    comment: "@tag protected...."
+    match: (@(access))\s*(private|protected|public)?(?=\s|$)
+    captures:
+      1: {name: storage.type.class.jsdoc}
+      3: {name: storage.modifier.jsdoc}
+  jsdoc-module:
+    comment: "@tag {optional type} module:file"
+    begin: (@(exports|module|listens|requires)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(\S*)([\S\s]*))
+    end: ^|(?=\*/)|(?=\5$)
+    beginCaptures:
+      1: {name: storage.type.class.jsdoc}
+    patterns:
+      - include: "#jsdoc-typedef-scopes"
+      - match: (?:(module)(:))?(((?!\*/)\S)+)
+        captures:
+          1: {name: keyword.module.jsdoc}
+          2: {name: punctuation.jsdoc}
+          3: {name: string.modulename.jsdoc}
+  jsdoc-as-name-path:
+    comment: to terminate the block
+    begin: (@(borrows|lends)\b)\s*(?=(?!\*/)\S+(?:(?:\s*\bas\b\s*(?!\*/)\S+)?)?([\S\s]*))
+    end: ^|(?=\*/)|(?=\3$)
+    beginCaptures:
+      1: {name: storage.type.class.jsdoc}
+    patterns:
+      - include: "#jsdoc-name-path-scopes"
+  jsdoc-simple:
+    comment: "@tag"
+    match: (@(abstract|author|classdesc|copyright|default|defaultvalue|deprecated|description|desc|example|external|fileoverview|file|global|host|ignore|inheritdoc|inner|instance|license|override|overview|readonly|see|since|static|summary|todo|tutorial|virtual|variation|version)\b)(?=$|\s)
+    captures:
+      1: {name: storage.type.class.jsdoc}
+  jsdoc-simple-name-path:
+    comment: "@tag {opt type} Class#xxx or Class#Event:aaaa etc"
+    begin: (@(alias|augments|callback|extends|emits|event|fires|interface|memberof|mixes|name|property|prop|this|typedef)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*\S*([\S*\s]*))
+    end: ^|(?=\*/)|(?=\4$)
+    beginCaptures:
+      1: {name: storage.type.class.jsdoc}
+    patterns:
+      - include: "#jsdoc-typedef-scopes"
+      - include: "#jsdoc-name-path-scopes"
+  jsdoc-type-name:
+    comment: "@tag {optional type} name"
+    begin: (@(arg|argument|class|constant|constructor|constructs|const|function|func|kind|member|method|mixin|namespace|param|var)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(((\[(?:(?>[^\[\]]+)|\g<-1>)*\])|\S)+)?([\S\s]*))
+    end: ^|(?=\*/)|(?=\7$)
+    beginCaptures:
+      1: {name: storage.type.class.jsdoc}
+    patterns:
+      - include: "#jsdoc-typedef-scopes"
+      - include: "#jsdoc-name-scopes"
+  jsdoc-type-no-name:
+    comment: "@tag {types}"
+    begin: (@(enum|exception|implements|private|protected|public|returns|return|throws|type)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*([\S\s]*))
+    end: ^|(?=\*/)|(?=\4$)
+    beginCaptures:
+      1: {name: storage.type.class.jsdoc}
+    patterns:
+      - include: "#jsdoc-typedef-scopes"
+  jsdoc-inline-tags:
+    name: meta.tag.inline.jsdoc
+    begin: (\[(?:(?>[^\[\]]+)|\g<-1>)*\])?({)(?=@)
+    end: (})
+    beginCaptures:
+      1: {name: string.linktext.jsdoc}
+      2: {name: meta.brace.curly.jsdoc}
+    endCaptures:
+      1: {name: meta.brace.curly.jsdoc}
+    patterns:
+      - match: (@(link|tutorial))\b([^}]*)
         captures:
           1: {name: storage.type.class.jsdoc}
-          3: {name: storage.modifier.jsdoc}
-      jsdoc-module:
-        comment: "@tag {optional type} module:file"
-        begin: (@(exports|module|listens|requires)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(\S*)([\S\s]*))
-        end: ^|(?=\*/)|(?=\5$)
-        beginCaptures:
-          1: {name: storage.type.class.jsdoc}
-        patterns:
-          - include: "#jsdoc-typedef-scopes"
-          - match: (?:(module)(:))?(((?!\*/)\S)+)
-            captures:
-              1: {name: keyword.module.jsdoc}
-              2: {name: punctuation.jsdoc}
-              3: {name: string.modulename.jsdoc}
-      jsdoc-as-name-path:
-        comment: to terminate the block
-        begin: (@(borrows|lends)\b)\s*(?=(?!\*/)\S+(?:(?:\s*\bas\b\s*(?!\*/)\S+)?)?([\S\s]*))
-        end: ^|(?=\*/)|(?=\3$)
-        beginCaptures:
-          1: {name: storage.type.class.jsdoc}
-        patterns:
-          - include: "#jsdoc-name-path-scopes"
-      jsdoc-simple:
-        comment: "@tag"
-        match: (@(abstract|author|classdesc|copyright|default|defaultvalue|deprecated|description|desc|example|external|fileoverview|file|global|host|ignore|inheritdoc|inner|instance|license|override|overview|readonly|see|since|static|summary|todo|tutorial|virtual|variation|version)\b)(?=$|\s)
+          3: {name: string.jsdoc}
+  jsdoc-typedef-scopes:
+    name: entity.name.type.instance.jsdoc
+    begin: "{"
+    end: "}|^"
+    captures:
+      0: {name: meta.brace.curly.jsdoc}
+    patterns:
+      - include: "#jsdoc-typedef-primitives"
+      - include: "#jsdoc-name-path-scopes"
+      - include: "#jsdoc-typedef-obj"
+  jsdoc-typedef-primitives:
+    match: \b(null|undefined|boolean|string|number)\b
+    captures:
+      1: {name: support.type.builtin.primitive.jsdoc}
+  jsdoc-typedef-obj:
+    comment: typedef object
+    begin: "{"
+    end: "}|^"
+    captures:
+      0: {name: meta.brace.curly.jsdoc}
+    patterns:
+      - include: "#jsdoc-typedef-primitives"
+      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(:)
         captures:
-          1: {name: storage.type.class.jsdoc}
-      jsdoc-simple-name-path:
-        comment: "@tag {opt type} Class#xxx or Class#Event:aaaa etc"
-        begin: (@(alias|augments|callback|extends|emits|event|fires|interface|memberof|mixes|name|property|prop|this|typedef)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*\S*([\S*\s]*))
-        end: ^|(?=\*/)|(?=\4$)
-        beginCaptures:
-          1: {name: storage.type.class.jsdoc}
+          1: {name: variable.other.readwrite.jsdoc}
+      - include: "#jsdoc-name-path-scopes"
+      - include: "#jsdoc-typedef-obj"
+  jsdoc-name-scopes:
+    patterns:
+      - match: ((?!\*/)[\S&&[^\[\]"']])+
+        captures:
+          0: {name: variable.other.jsdoc}
+      - name: variable.other.jsdoc
+        begin: \[
+        end: \]|^
         patterns:
-          - include: "#jsdoc-typedef-scopes"
-          - include: "#jsdoc-name-path-scopes"
-      jsdoc-type-name:
-        comment: "@tag {optional type} name"
-        begin: (@(arg|argument|class|constant|constructor|constructs|const|function|func|kind|member|method|mixin|namespace|param|var)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(((\[(?:(?>[^\[\]]+)|\g<-1>)*\])|\S)+)?([\S\s]*))
-        end: ^|(?=\*/)|(?=\7$)
-        beginCaptures:
-          1: {name: storage.type.class.jsdoc}
-        patterns:
-          - include: "#jsdoc-typedef-scopes"
+          - include: "#jsdoc-string"
           - include: "#jsdoc-name-scopes"
-      jsdoc-type-no-name:
-        comment: "@tag {types}"
-        begin: (@(enum|exception|implements|private|protected|public|returns|return|throws|type)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*([\S\s]*))
-        end: ^|(?=\*/)|(?=\4$)
-        beginCaptures:
-          1: {name: storage.type.class.jsdoc}
-        patterns:
-          - include: "#jsdoc-typedef-scopes"
-      jsdoc-inline-tags:
-        name: meta.tag.inline.jsdoc
-        begin: (\[(?:(?>[^\[\]]+)|\g<-1>)*\])?({)(?=@)
-        end: (})
-        beginCaptures:
-          1: {name: string.linktext.jsdoc}
-          2: {name: meta.brace.curly.jsdoc}
-        endCaptures:
-          1: {name: meta.brace.curly.jsdoc}
-        patterns:
-          - match: (@(link|tutorial))\b([^}]*)
-            captures:
-              1: {name: storage.type.class.jsdoc}
-              3: {name: string.jsdoc}
-      jsdoc-typedef-scopes:
-        name: entity.name.type.instance.jsdoc
-        begin: "{"
-        end: "}|^"
+  jsdoc-name-path-scopes:
+    patterns:
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*(?=[\p{Pc}\p{L}])
         captures:
-          0: {name: meta.brace.curly.jsdoc}
-        patterns:
-          - include: "#jsdoc-typedef-primitives"
-          - include: "#jsdoc-name-path-scopes"
-          - include: "#jsdoc-typedef-obj"
-      jsdoc-typedef-primitives:
-        match: \b(null|undefined|boolean|string|number)\b
+          1: {name: keyword.as.jsdoc}
+      - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}][\w\p{Pd}]*))(?=[\s\-~.#]|$)
         captures:
-          1: {name: support.type.builtin.primitive.jsdoc}
-      jsdoc-typedef-obj:
-        comment: typedef object
-        begin: "{"
-        end: "}|^"
+          1: {name: entity.name.class.jsdoc}
+          2: {name: entity.name.function.jsdoc}
+      - match: (\.)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
         captures:
-          0: {name: meta.brace.curly.jsdoc}
+          1: {name: keyword.operator.accessor.jsdoc}
+          2: {name: entity.name.function.method.static.jsdoc}
+      - match: (\#)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
+        captures:
+          1: {name: keyword.operator.accessor.jsdoc}
+          2: {name: entity.name.function.method.instance.jsdoc}
+      - match: (~|-)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
+        captures:
+          1: {name: keyword.operator.accessor.jsdoc}
+          2: {name: entity.name.function.method.inner.jsdoc}
+      - match: (\#)(event)(:)
+        captures:
+          1: {name: keyword.operator.accessor.jsdoc}
+          2: {name: keyword.event.jsdoc}
+          3: {name: keyword.operator.jsdoc}
+      - name: string.method.jsdoc
+        begin: \.(?="|')
+        end: (?=.)
+        applyEndPatternLast: 1
         patterns:
-          - include: "#jsdoc-typedef-primitives"
-          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(:)
-            captures:
-              1: {name: variable.other.readwrite.jsdoc}
-          - include: "#jsdoc-name-path-scopes"
-          - include: "#jsdoc-typedef-obj"
-      jsdoc-name-scopes:
-        patterns:
-          - match: ((?!\*/)[\S&&[^\[\]"']])+
-            captures:
-              0: {name: variable.other.jsdoc}
-          - name: variable.other.jsdoc
-            begin: \[
-            end: \]|^
-            patterns:
-              - include: "#jsdoc-string"
-              - include: "#jsdoc-name-scopes"
-      jsdoc-name-path-scopes:
-        patterns:
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*(?=[\p{Pc}\p{L}])
-            captures:
-              1: {name: keyword.as.jsdoc}
-          - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}][\w\p{Pd}]*))(?=[\s\-~.#]|$)
-            captures:
-              1: {name: entity.name.class.jsdoc}
-              2: {name: entity.name.function.jsdoc}
-          - match: (\.)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
-            captures:
-              1: {name: keyword.operator.accessor.jsdoc}
-              2: {name: entity.name.function.method.static.jsdoc}
-          - match: (\#)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
-            captures:
-              1: {name: keyword.operator.accessor.jsdoc}
-              2: {name: entity.name.function.method.instance.jsdoc}
-          - match: (~|-)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
-            captures:
-              1: {name: keyword.operator.accessor.jsdoc}
-              2: {name: entity.name.function.method.inner.jsdoc}
-          - match: (\#)(event)(:)
-            captures:
-              1: {name: keyword.operator.accessor.jsdoc}
-              2: {name: keyword.event.jsdoc}
-              3: {name: keyword.operator.jsdoc}
-          - name: string.method.jsdoc
-            begin: \.(?="|')
-            end: (?=.)
-            applyEndPatternLast: 1
-            patterns:
-              - include: "#jsdoc-string"
-      jsdoc-string:
-        name: string.jsdoc
-        match: \"(\\"|[^"])*"|'(\\'|[^'])*'
+          - include: "#jsdoc-string"
+  jsdoc-string:
+    name: string.jsdoc
+    match: \"(\\"|[^"])*"|'(\\'|[^'])*'
 
   # Function and method calls
 
@@ -2210,236 +2199,265 @@ repository:
       - include: "#unary-ops"
       - include: "#binary-ops"
 
-    repository:
-      binary-ops:
+  binary-ops:
+    patterns:
+      - comment: augmented assignment += -= *= /= etc
+        match: (?<=^|[\s'"`({\[])([\p{S}\p{P}&&[^!:~.<=>,;'"`(){}\[\]\p{Pc}]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=)(?=$|[\s'"`)}\]])
+        name: keyword.operator.assignment.augmented.3n
+
+      - comment: |
+          BUILT-IN OPERATORS
+
+          1: assignment : :=
+          2: arithmetic + - * ** *** / // /// % %% *> <*
+          3: increment/decrement ++ --
+          4: logical && || ^^ !& !| !^ &| &!
+          5: bitwise & | ^ ~
+          6: bitwise shift << >> <<< >>>
+          7: function pipeline <| |> <|| ||> <||| |||>
+          8: function composition +> <+
+          9: class <: :> :< >: <:< >:> <:> >:< <! !> !< >! <!< >!> <!> >!<
+          10: relational < > <= >=
+          11: regex =< <> </ /> <$ $> <+> <*> </> <$>
+          12: equality == != === !==
+          13: wavy operators ~> <~ ~~> <~~
+          14: fat arrow-like => ==> <==
+          15: skinny arrow-like -> --> <- <--
+          16: null-coalescing ??
+          17: non-null coalescing !!
+          18: compact ternary operator ?:
+          19: inverse ternary operator !:
+          20: infix function call $:
+        captures:
+          1: {name: keyword.operator.assignment.3n}
+          2: {name: keyword.operator.arithmetic.3n}
+          3: {name: keyword.operator.successor.3n}
+          4: {name: keyword.operator.logical.3n}
+          5: {name: keyword.operator.bitwise.3n}
+          6: {name: keyword.operator.bitwise.shift.3n}
+          7: {name: keyword.operator.pipeline.3n}
+          8: {name: keyword.operator.compose.3n}
+          9: {name: keyword.operator.class.3n}
+          10: {name: keyword.operator.relational.3n}
+          11: {name: keyword.operator.regexp.3n}
+          12: {name: keyword.operator.comparison.3n}
+          13: {name: keyword.operator.similarity.3n}
+          14: {name: keyword.operator.arrow.fat.3n}
+          15: {name: keyword.operator.arrow.skinny.3n}
+          16: {name: keyword.operator.null-coalescing.3n}
+          17: {name: keyword.operator.coalescing.3n}
+          18: {name: keyword.operator.conditional.3n}
+          19: {name: keyword.operator.ternary.3n}
+          20: {name: keyword.operator.macro.dollar.3n}
+        match: |
+          (?x)
+          (?<=^|[\s'"`({\[])# opening
+          (?:
+          (:?=)#1
+          |([+-]|\*{1,3}|~?/|%%?|\#\#?|<?\*>?)#2
+          |(\+\+|--)#3
+          |(&&|\|\||\^\^)#4
+          |([&|^~])#5
+          |(<<<?|>>>?)#6
+          |(\|{1,3}>|<\|{1,3})#7
+          |(\+>|<\+)#8
+          |([<>][!:]|[!:][<>])#9
+          |([<>]=?|<=?>)#10
+          |(=<|<?[/*|+$:]>?)#11
+          |([!=]==?|[!=]~|~[!=])#12
+          |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*~>|
+          <~[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#13
+          |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=>|
+          <=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#14
+          |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*->|
+          <-[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#15
+          |(\?\?)#16
+          |(!!)#17
+          |(\?:)#18
+          |(!:)#19
+          |(\$:)#20
+          )
+          (?=$|[\s'"`)}\]])# closing
+
+      - comment: |
+          CUSTOM OPERATORS
+
+          1: custom bitwise (& | ^ ~)
+          2: custom arithmetic (+ - * / %)
+          3: custom prototype (:)
+          4: custom accessor (.)
+          5: custom equality (= !)
+          6: custom comparison (< >)
+          7: custom private (? #)
+          8: custom mathematical (Unicode Sm)
+          9: custom currency (Unicode Sc)
+          10: custom ASCII (between \x80 and \xff)
+          11: custom infix operators (all other chars)
+        captures:
+          1: {name: keyword.operator.bitwise.custom.3n}
+          2: {name: keyword.operator.arithmetic.custom.3n}
+          3: {name: keyword.operator.prototype.custom.3n}
+          4: {name: keyword.operator.accessor.custom.3n}
+          5: {name: keyword.operator.comparison.custom.3n}
+          6: {name: keyword.operator.relational.custom.3n}
+          7: {name: keyword.operator.private.custom.3n}
+          8: {name: keyword.operator.math.custom.3n}
+          9: {name: keyword.operator.currency.custom.3n}
+          10: {name: keyword.operator.ascii.custom.3n}
+          11: {name: keyword.operator.infix.custom.3n}
+        match: |
+          (?x)
+          (?<=^|[\s'"`({\[])# opening
+          (?:
+          ([&|^~][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#1
+          |([+\-*/%][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#2
+          |([@:][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#3
+          |(\.[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#3
+          |([!=][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#4
+          |([<>][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#5
+          |([?\#][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#6
+          |(\p{Sm}[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#7
+          |(\p{Sc}[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#8
+          |([\p{S}\p{P}&&[\x80-\xFF]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#9
+          |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#10
+          )
+          (?=$|[\s'"`)}\]])# closing
+
+  unary-ops:
+    patterns:
+      - &primary-operators
+        comment: Primary binary operators
+        match: |
+          (?x)(?<=\b|['"`)}\]])# closing
+          (?:
+          ([>.]\.[.<])#1
+          |(\?[.:]=?)#2
+          |(![.:]=?)#3
+          |((?:::|\.)=?)#4
+          |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#5
+          )
+          (?=\b|['"`({\[])# opening
+        captures:
+          1: {name: keyword.operator.range.3n}
+          2: {name: keyword.operator.optional.3n}
+          3: {name: keyword.operator.assert.3n}
+          4: {name: keyword.operator.accessor.3n}
+          5: {name: keyword.operator.primary.3n}
+
+      - &prefix-operators
+        comment: Prefix operators
+        match: |
+          (?x)
+          (?:([*/])#1
+          |(\+)#2
+          |(\-)#3
+          |(\&)#4
+          |(\|)#5
+          |(\^)#6
+          |(\!)#7
+          |(\$)#8
+          |(\@)#9
+          |(\~)#10
+          |(\?)#11
+          |(\=)#12
+          |(\$)#13
+          |(\#)#14
+          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
+          (?=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
+          [\w({\['"`])
+        name: keyword.operator.prefix.3n
+        captures:
+          1: {name: keyword.operator.module.all.3n}
+          2: {name: keyword.operator.increment.3n}
+          3: {name: keyword.operator.decrement.3n}
+          4: {name: keyword.operator.intersection.3n}
+          5: {name: keyword.operator.union.3n}
+          6: {name: keyword.operator.symmetric.3n}
+          7: {name: keyword.operator.logical.3n}
+          8: {name: keyword.operator.private.3n}
+          9: {name: keyword.operator.decorator.3n}
+          10: {name: keyword.operator.bitwise.not.3n}
+          11: {name: keyword.operator.existential.3n}
+          12: {name: keyword.operator.assignment.3n}
+          13: {name: keyword.operator.pipeline.3n}
+          14: {name: keyword.operator.private.3n}
+          15: {name: keyword.operator.prefix.3n}
+
+      - &suffix-operators
+        comment: Suffix operators
+        match: |
+          (?x)
+          (?<=[)}\]\w'"`]
+          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)
+          (?:([*/])#1
+          |(\+)#2
+          |(\-)#3
+          |(\&)#4
+          |(\|)#5
+          |(\^)#6
+          |(\!)#7
+          |(\$)#8
+          |(\@)#9
+          |(\~)#10
+          |(\?)#11
+          |(\=)#12
+          |(\$)#13
+          |(\#)#14
+          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
+        name: keyword.operator.suffix.3n
+        captures:
+          1: {name: keyword.operator.module.all.3n}
+          2: {name: keyword.operator.increment.3n}
+          3: {name: keyword.operator.decrement.3n}
+          4: {name: keyword.operator.intersection.3n}
+          5: {name: keyword.operator.union.3n}
+          6: {name: keyword.operator.symmetric.3n}
+          7: {name: keyword.operator.assert.3n}
+          8: {name: keyword.operator.private.3n}
+          9: {name: keyword.operator.decorator.3n}
+          10: {name: keyword.operator.bitwise.3n}
+          11: {name: keyword.operator.optional.3n}
+          12: {name: keyword.operator.assignment.3n}
+          13: {name: keyword.operator.pipeline.3n}
+          14: {name: keyword.operator.private.3n}
+          15: {name: keyword.operator.suffix.3n}
+
+  pipeline-operator:
+    patterns:
+      - applyEndPatternLast: 1
+        begin: |
+          (?x)\s*(?:(\+>)|(\|{1,3}>))(?=\s*(
+          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
+          (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
+          \b(?:# don't match keywords
+          in|of|as|is|new|to|til|thru|by|del|unset
+          |var|val|let|const|decl|def|func|type|object
+          |class|enum|module|pack|struct|inter|space|pragma
+          |proc|proto|macro|given|style|elem|field
+          |ext|pred|data|trait|lemma|iter|sub|prop
+          |if|un|elif|elun|else|then
+          |for|each|loop|while|until|when
+          |with|do|from
+          |try|throw|catch|final
+          |switch|match|case|fail
+          |race|some|every|done|spawn|kill|lock
+          |break|next|redo|retry|return|await|label|yield|goto|pass
+          |import|export|using
+          |debug|assert|where
+          )(?![\w\p{Pd}])
+          )
+          [\w]+
+          (?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# primary
+          [\w]+)*
+          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# suffix
+          )\s*([^(]|$|;))
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: keyword.operator.compose.3n}
+          2: {name: keyword.operator.pipeline.3n}
         patterns:
-          - comment: augmented assignment += -= *= /= etc
-            match: (?<=^|[\s'"`({\[])([\p{S}\p{P}&&[^!:~.<=>,;'"`(){}\[\]\p{Pc}]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=)(?=$|[\s'"`)}\]])
-            name: keyword.operator.assignment.augmented.3n
-
-          - comment: |
-              BUILT-IN OPERATORS
-
-              1: assignment : :=
-              2: arithmetic + - * ** *** / // /// % %% *> <*
-              3: increment/decrement ++ --
-              4: logical && || ^^ !& !| !^ &| &!
-              5: bitwise & | ^ ~
-              6: bitwise shift << >> <<< >>>
-              7: function pipeline <| |> <|| ||> <||| |||>
-              8: function composition +> <+
-              9: class <: :> :< >: <:< >:> <:> >:< <! !> !< >! <!< >!> <!> >!<
-              10: relational < > <= >=
-              11: regex =< <> </ /> <$ $> <+> <*> </> <$>
-              12: equality == != === !==
-              13: wavy operators ~> <~ ~~> <~~
-              14: fat arrow-like => ==> <==
-              15: skinny arrow-like -> --> <- <--
-              16: null-coalescing ??
-              17: non-null coalescing !!
-              18: compact ternary operator ?:
-              19: inverse ternary operator !:
-              20: infix function call $:
-            captures:
-              1: {name: keyword.operator.assignment.3n}
-              2: {name: keyword.operator.arithmetic.3n}
-              3: {name: keyword.operator.successor.3n}
-              4: {name: keyword.operator.logical.3n}
-              5: {name: keyword.operator.bitwise.3n}
-              6: {name: keyword.operator.bitwise.shift.3n}
-              7: {name: keyword.operator.pipeline.3n}
-              8: {name: keyword.operator.compose.3n}
-              9: {name: keyword.operator.class.3n}
-              10: {name: keyword.operator.relational.3n}
-              11: {name: keyword.operator.regexp.3n}
-              12: {name: keyword.operator.comparison.3n}
-              13: {name: keyword.operator.similarity.3n}
-              14: {name: keyword.operator.arrow.fat.3n}
-              15: {name: keyword.operator.arrow.skinny.3n}
-              16: {name: keyword.operator.null-coalescing.3n}
-              17: {name: keyword.operator.coalescing.3n}
-              18: {name: keyword.operator.conditional.3n}
-              19: {name: keyword.operator.ternary.3n}
-              20: {name: keyword.operator.macro.dollar.3n}
-            match: |
-              (?x)
-              (?<=^|[\s'"`({\[])# opening
-              (?:
-              (:?=)#1
-              |([+-]|\*{1,3}|~?/|%%?|\#\#?|<?\*>?)#2
-              |(\+\+|--)#3
-              |(&&|\|\||\^\^)#4
-              |([&|^~])#5
-              |(<<<?|>>>?)#6
-              |(\|{1,3}>|<\|{1,3})#7
-              |(\+>|<\+)#8
-              |([<>][!:]|[!:][<>])#9
-              |([<>]=?|<=?>)#10
-              |(=<|<?[/*|+$:]>?)#11
-              |([!=]==?|[!=]~|~[!=])#12
-              |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*~>|
-              <~[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#13
-              |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=>|
-              <=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#14
-              |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*->|
-              <-[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#15
-              |(\?\?)#16
-              |(!!)#17
-              |(\?:)#18
-              |(!:)#19
-              |(\$:)#20
-              )
-              (?=$|[\s'"`)}\]])# closing
-
-          - comment: |
-              CUSTOM OPERATORS
-
-              1: custom bitwise (& | ^ ~)
-              2: custom arithmetic (+ - * / %)
-              3: custom prototype (:)
-              4: custom accessor (.)
-              5: custom equality (= !)
-              6: custom comparison (< >)
-              7: custom private (? #)
-              8: custom mathematical (Unicode Sm)
-              9: custom currency (Unicode Sc)
-              10: custom ASCII (between \x80 and \xff)
-              11: custom infix operators (all other chars)
-            captures:
-              1: {name: keyword.operator.bitwise.custom.3n}
-              2: {name: keyword.operator.arithmetic.custom.3n}
-              3: {name: keyword.operator.prototype.custom.3n}
-              4: {name: keyword.operator.accessor.custom.3n}
-              5: {name: keyword.operator.comparison.custom.3n}
-              6: {name: keyword.operator.relational.custom.3n}
-              7: {name: keyword.operator.private.custom.3n}
-              8: {name: keyword.operator.math.custom.3n}
-              9: {name: keyword.operator.currency.custom.3n}
-              10: {name: keyword.operator.ascii.custom.3n}
-              11: {name: keyword.operator.infix.custom.3n}
-            match: |
-              (?x)
-              (?<=^|[\s'"`({\[])# opening
-              (?:
-              ([&|^~][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#1
-              |([+\-*/%][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#2
-              |([@:][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#3
-              |(\.[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#3
-              |([!=][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#4
-              |([<>][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#5
-              |([?\#][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#6
-              |(\p{Sm}[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#7
-              |(\p{Sc}[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#8
-              |([\p{S}\p{P}&&[\x80-\xFF]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#9
-              |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#10
-              )
-              (?=$|[\s'"`)}\]])# closing
-
-      unary-ops:
-        patterns:
-          - &primary-operators
-            comment: Primary binary operators
-            match: |
-              (?x)(?<=\b|['"`)}\]])# closing
-              (?:
-              ([>.]\.[.<])#1
-              |(\?[.:]=?)#2
-              |(![.:]=?)#3
-              |((?:::|\.)=?)#4
-              |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#5
-              )
-              (?=\b|['"`({\[])# opening
-            captures:
-              1: {name: keyword.operator.range.3n}
-              2: {name: keyword.operator.optional.3n}
-              3: {name: keyword.operator.assert.3n}
-              4: {name: keyword.operator.accessor.3n}
-              5: {name: keyword.operator.primary.3n}
-
-          - &prefix-operators
-            comment: Prefix operators
-            match: |
-              (?x)
-              (?:([*/])#1
-              |(\+)#2
-              |(\-)#3
-              |(\&)#4
-              |(\|)#5
-              |(\^)#6
-              |(\!)#7
-              |(\$)#8
-              |(\@)#9
-              |(\~)#10
-              |(\?)#11
-              |(\=)#12
-              |(\$)#13
-              |(\#)#14
-              |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
-              (?=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
-              [\w({\['"`])
-            name: keyword.operator.prefix.3n
-            captures:
-              1: {name: keyword.operator.module.all.3n}
-              2: {name: keyword.operator.increment.3n}
-              3: {name: keyword.operator.decrement.3n}
-              4: {name: keyword.operator.intersection.3n}
-              5: {name: keyword.operator.union.3n}
-              6: {name: keyword.operator.symmetric.3n}
-              7: {name: keyword.operator.logical.3n}
-              8: {name: keyword.operator.private.3n}
-              9: {name: keyword.operator.decorator.3n}
-              10: {name: keyword.operator.bitwise.not.3n}
-              11: {name: keyword.operator.existential.3n}
-              12: {name: keyword.operator.assignment.3n}
-              13: {name: keyword.operator.pipeline.3n}
-              14: {name: keyword.operator.private.3n}
-              15: {name: keyword.operator.prefix.3n}
-
-          - &suffix-operators
-            comment: Suffix operators
-            match: |
-              (?x)
-              (?<=[)}\]\w'"`]
-              [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)
-              (?:([*/])#1
-              |(\+)#2
-              |(\-)#3
-              |(\&)#4
-              |(\|)#5
-              |(\^)#6
-              |(\!)#7
-              |(\$)#8
-              |(\@)#9
-              |(\~)#10
-              |(\?)#11
-              |(\=)#12
-              |(\$)#13
-              |(\#)#14
-              |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
-            name: keyword.operator.suffix.3n
-            captures:
-              1: {name: keyword.operator.module.all.3n}
-              2: {name: keyword.operator.increment.3n}
-              3: {name: keyword.operator.decrement.3n}
-              4: {name: keyword.operator.intersection.3n}
-              5: {name: keyword.operator.union.3n}
-              6: {name: keyword.operator.symmetric.3n}
-              7: {name: keyword.operator.assert.3n}
-              8: {name: keyword.operator.private.3n}
-              9: {name: keyword.operator.decorator.3n}
-              10: {name: keyword.operator.bitwise.3n}
-              11: {name: keyword.operator.optional.3n}
-              12: {name: keyword.operator.assignment.3n}
-              13: {name: keyword.operator.pipeline.3n}
-              14: {name: keyword.operator.private.3n}
-              15: {name: keyword.operator.suffix.3n}
-
-      pipeline-operator:
-        patterns:
-          - applyEndPatternLast: 1
-            begin: |
-              (?x)\s*(?:(\+>)|(\|{1,3}>))(?=\s*(
-              [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
+          - match: |
+              (?x)\s*\b
               (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
               \b(?:# don't match keywords
               in|of|as|is|new|to|til|thru|by|del|unset
@@ -2458,109 +2476,79 @@ repository:
               |debug|assert|where
               )(?![\w\p{Pd}])
               )
-              [\w]+
-              (?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# primary
-              [\w]+)*
-              [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# suffix
-              )\s*([^(]|$|;))
-            end: (?=.)|$
-            beginCaptures:
-              1: {name: keyword.operator.compose.3n}
-              2: {name: keyword.operator.pipeline.3n}
-            patterns:
-              - match: |
-                  (?x)\s*\b
-                  (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
-                  \b(?:# don't match keywords
-                  in|of|as|is|new|to|til|thru|by|del|unset
-                  |var|val|let|const|decl|def|func|type|object
-                  |class|enum|module|pack|struct|inter|space|pragma
-                  |proc|proto|macro|given|style|elem|field
-                  |ext|pred|data|trait|lemma|iter|sub|prop
-                  |if|un|elif|elun|else|then
-                  |for|each|loop|while|until|when
-                  |with|do|from
-                  |try|throw|catch|final
-                  |switch|match|case|fail
-                  |race|some|every|done|spawn|kill|lock
-                  |break|next|redo|retry|return|await|label|yield|goto|pass
-                  |import|export|using
-                  |debug|assert|where
-                  )(?![\w\p{Pd}])
-                  )
-                  (?:
-                  (?:# Objects and maps
-                  (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-                  ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-                  ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
-                  ([\p{Pc}\p{L}][\w\p{Pd}]*)
-                  )
-                  (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
-                  |
-                  (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
-                  (?:# Properties
-                  (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-                  ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-                  ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
-                  ([\p{Pc}\p{L}][\w\p{Pd}]*)
-                  )
-                  |
-                  (?:# Regular variables
-                  (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-                  ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-                  ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
-                  ([\p{Pc}\p{L}][\w\p{Pd}]*)
-                  )
-                  )\b
-                captures:
-                  1: {name: variable.other.global.3n}
-                  2: {name: variable.other.constant.object.3n}
-                  3: {name: variable.other.conditional.3n}
-                  4: {name: variable.other.object.3n}
-                  5: {name: entity.name.tag.3n}
-                  6: {name: entity.name.tag.3n support.class.component.3n}
-                  7: {name: entity.name.class.builtin.3n}
-                  8: {name: entity.name.function.method.3n}
-                  9: {name: entity.name.function.tagged-template.3n}
-                  10: {name: entity.name.type.3n}
-                  11: {name: entity.name.class.3n}
-                  12: {name: entity.name.function.3n}
-              - *primary-operators
+              (?:
+              (?:# Objects and maps
+              (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+              ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+              ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
+              ([\p{Pc}\p{L}][\w\p{Pd}]*)
+              )
+              (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
+              |
+              (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
+              (?:# Properties
+              (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+              ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+              ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
+              ([\p{Pc}\p{L}][\w\p{Pd}]*)
+              )
+              |
+              (?:# Regular variables
+              (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+              ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+              ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
+              ([\p{Pc}\p{L}][\w\p{Pd}]*)
+              )
+              )\b
+            captures:
+              1: {name: variable.other.global.3n}
+              2: {name: variable.other.constant.object.3n}
+              3: {name: variable.other.conditional.3n}
+              4: {name: variable.other.object.3n}
+              5: {name: entity.name.tag.3n}
+              6: {name: entity.name.tag.3n support.class.component.3n}
+              7: {name: entity.name.class.builtin.3n}
+              8: {name: entity.name.function.method.3n}
+              9: {name: entity.name.function.tagged-template.3n}
+              10: {name: entity.name.type.3n}
+              11: {name: entity.name.class.3n}
+              12: {name: entity.name.function.3n}
+          - *primary-operators
 
-      special-operators:
+  special-operators:
+    patterns:
+      - include: "#pipeline-operator"
+      - begin: (?<=\s)(\?)(?=\s)
+        end: (?<=^|\s)(:)(?=\s|$)
+        captures:
+          1: {name: keyword.operator.conditional.3n}
         patterns:
-          - include: "#pipeline-operator"
-          - begin: (?<=\s)(\?)(?=\s)
-            end: (?<=^|\s)(:)(?=\s|$)
-            captures:
-              1: {name: keyword.operator.conditional.3n}
+          - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
+            end: \s*(?=:\s|$)
             patterns:
-              - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
-                end: \s*(?=:\s|$)
-                patterns:
-                  - include: "#constants"
-                  - include: "#variables"
-              - include: $self
-          - begin: (?<=\s)(\!)(?=\s)
-            end: (?<=^|\s)(:)(?=\s|$)
-            captures:
-              1: {name: keyword.operator.ternary.3n}
+              - include: "#constants"
+              - include: "#variables"
+          - include: $self
+      - begin: (?<=\s)(\!)(?=\s)
+        end: (?<=^|\s)(:)(?=\s|$)
+        captures:
+          1: {name: keyword.operator.ternary.3n}
+        patterns:
+          - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
+            end: \s*(?=:\s|$)
             patterns:
-              - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
-                end: \s*(?=:\s|$)
-                patterns:
-                  - include: "#constants"
-                  - include: "#variables"
-              - include: $self
-          - begin: (?<=\s)(\$)(?=\s)
-            end: (?<=^|\s)(:)(?=\s|$)
-            captures:
-              1: {name: keyword.operator.macro.dollar.3n}
-            patterns:
-              - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
-                end: \s*(?=:\s|$)
-                name: entity.name.function.3n
-              - include: $self
+              - include: "#constants"
+              - include: "#variables"
+          - include: $self
+      - begin: (?<=\s)(\$)(?=\s)
+        end: (?<=^|\s)(:)(?=\s|$)
+        captures:
+          1: {name: keyword.operator.macro.dollar.3n}
+        patterns:
+          - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
+            end: \s*(?=:\s|$)
+            name: entity.name.function.3n
+          - include: $self
 
   # Types
 
