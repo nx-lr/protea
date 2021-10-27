@@ -349,7 +349,7 @@ A floating literal consists of the following:
 Multi-base digits can use either alphanumerics or digits. The digits are specified with a formatting modifier, `%`.
 
 ```dart
-1%d/digits:10 
+1%d/digits:10
 ```
 
 Here are some examples of valid numeric literals:
@@ -373,6 +373,14 @@ assert 1:u is Nat
 ```
 
 ### Strings
+
+A string represents an immutable sequence of UTF-8 characters.
+
+A string is typically created with a string literal enclosing UTF-8 characters either in single (`'`) or double quotes (`"`):
+
+```dart
+"hello world"
+```
 
 Strings are delimited by matching quotes. Just like in YAML, only double quoted strings can contain escape sequences. Single quoted strings are _raw_, which means that they do not interpret any escape sequences.
 
