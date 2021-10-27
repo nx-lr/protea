@@ -21,11 +21,10 @@ Information for Contributors: |
 
 comment: |
   To-Do:
-
   - Add route blocks
 
   Done:
-  - Changed from indent back to curly bracket syntax
+  - Changed from indentation to curly bracket syntax
   - Map/set syntax should only activate next to an opening bracket, or
     non-suffix operator
   - Freed backslash to be an operator character
@@ -35,8 +34,8 @@ comment: |
   - Removed unquoted strings, especially YAML ones
   - Added CSS keyword and function properties
   - Reworked JSX syntax
-  - Reworked format directives and embedded expressions, with a little help
-    from recursion
+  - Reworked format directives and embedded expressions, with a little
+    help from recursion
   - Reworked number literals
   - Revamped JSX literals following
 
@@ -2568,13 +2567,11 @@ repository:
       1: {name: punctuation.definition.annotation.3n}
     patterns:
       - include: "#types"
-
   type-brackets:
     patterns:
       - include: "#curly-brackets"
       - include: "#square-brackets"
       - include: "#round-brackets"
-
     repository:
       curly-brackets: &type-curly-brackets
         repository:
@@ -2584,8 +2581,16 @@ repository:
                 name: punctuation.separator.mapping.3n
               - match: (?<!\s):(?!:)
                 name: punctuation.separator.key-value.3n
-
         patterns:
+          - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
+            end: \s*(\})
+            captures:
+              1: {name: punctuation.definition.binding-pattern.object.3n}
+            patterns:
+              - include: "#labels"
+              - include: "#punctuation"
+              - include: "#types"
+              - include: $self
           - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
             end: \s*(\})
             captures:
@@ -2604,7 +2609,6 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-
       round-brackets: &type-round-brackets
         repository:
           punctuation:
@@ -2629,7 +2633,6 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-
       square-brackets: &type-square-brackets
         repository:
           punctuation:
