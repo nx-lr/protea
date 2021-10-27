@@ -1,4 +1,4 @@
-# [3nity](https://github.com/noxventura/3nitylang)
+# [3nity](https://github.com/noxventura/3nity-language)
 
 > The programming language for the future.
 
@@ -30,7 +30,7 @@ elem B-Block(&text: Str) as b-block {
     }
   }
 
-  stat def render = <span>$text</span>
+  stat def render = <span>$text.x.y.z</span>
 }
 ```
 
@@ -38,7 +38,7 @@ elem B-Block(&text: Str) as b-block {
 
 > Update: I have a [Trello](https://trello.com/b/A3NDX7qY/3nity-programming-language) now!
 
-- **Grammar** (see [`grammar.yaml`](https://github.com/NoxVentura/3nityLang/blob/main/grammar.yaml))
+- **Grammar** (see [`grammar.yaml`](https://github.com/NoxVentura/3nity-Language/blob/main/grammar.yaml))
 - Documentation (language and API)
 - Language reference
 - Lexer and parser
@@ -77,7 +77,7 @@ Learning from other languages like [Scala][scala], [Dart][dart], [Fantom][fantom
 
 ---
 
-This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/NoxVentura/3nityLang. Contributions and corrections are welcome.
+This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/NoxVentura/3nity-Language. Contributions and corrections are welcome.
 
 A lot of my work on 3nity is still experimental and ongoing, so I am sharing this repository so I could get all of my ideas together and perhaps invite some of you to contribute your own. Once I get done with it, we can begin work on the compiler.
 
@@ -105,6 +105,8 @@ func main(*args: []Str): Void { /*...*/ }
 ```
 
 The type annotations or the spread `*args` declaration can be left out, so it can be `func main {}` instead.
+
+Script files do not have a `main` function, similar to
 
 Script files do not have a `main` function, similar to batch or Bash files. Script files can import module files, and can run other script files externally.
 
@@ -185,9 +187,9 @@ let {x, y} = {1, 2} // set
 
 ### Keywords
 
-The following are all the keywords of the language. Keywords are grouped into four different categories: operator keywords, declaration keywords, modifier keywords, and control keywords.
+The following are all the keywords of the language. Keywords are grouped into four different categories: operators, declarations, modifiers, and control keywords.
 
-As for modifier keywords, they are parsed as keywords before a declaration as they modify them. `pub var x = 1` declares a public variable.
+As for modifiers, they are parsed as keywords before a declaration as they modify them. `pub var x = 1` declares a public variable.
 
 <!--  -->
 
@@ -214,8 +216,6 @@ As for modifier keywords, they are parsed as keywords before a declaration as th
     break next redo retry return await label yield goto pass
     import export using
     debug assert where
-
-An identifier should not begin with any number of keywords in any order as mentioned above, otherwise it is a syntax error. This is a special case both for the grammar and the parser.
 
 ### Identifiers
 
@@ -270,11 +270,11 @@ assert assert_
 
 ## Data Types
 
-3nity has all the data types you would expect from a programming language: booleans, numbers, strings, null values, collections, regexps, among others. All data types are immutable.
+3nity has several data types you would expect from a programming language: booleans, numbers, strings, null, collections, regular expressions, functions, among others. All data types are immutable, unless explicitly told otherwise.
 
 ### Booleans, Null and Void
 
-`Null` and `void` are one and the same.
+`null` and `void` are one and the same. `null` compiles to its equivalent in JavaScript while `void` compiles to `undefined`.
 
 ```dart
 null; void
@@ -288,7 +288,7 @@ A boolean can only have one of two values: `true` or `false`. Booleans are mainl
 true; false
 ```
 
-When cast into booleans, anything that suggests something is empty, such as 0, the empty string, list, set, etc. All others yield `true`.
+When cast into booleans, anything that suggests something is empty, such as 0, the empty string, list, set, etc is `false`. All others yield`true`.
 
 ### Numbers
 
@@ -345,34 +345,42 @@ To escape a single quote, double it.
 var voidDaughter = 'Kai''Sa'
 ```
 
-Double quoted string literals can contain the following escape sequences, and can contain the following escape sequences:
+In double-quoted strings, an ending backslash joins the next line _without spaces_.
 
-| Escape Sequence | Meaning                                        |
-| --------------- | ---------------------------------------------- |
-| `\p`            | platform specific newline (`\r\n`, `\n`, `\r`) |
-| `\r`            | carriage return (`\x9`)                        |
-| `\n`            | line feed (or newline) (`\xA`)                 |
-| `\f`            | form feed (`\xC`)                              |
-| `\t`            | horizontal tabulator (`\x9`)                   |
-| `\v`            | vertical tabulator (`\xB`)                     |
-| `\a`            | alert (`\x7`)                                  |
-| `\b`            | backspace (`\x8`)                              |
-| `\e`            | escape (`\xB`)                                 |
-| `\s`            | space (`\x20`)                                 |
+```dart
+assert "hello \
+        world" == "hello world"
+```
+
+Double quoted string literals can contain the following escape sequences, and all of them are case-insensitive:
+
+```dart
+"\p" // platform specific newline
+"\r" // carriage return
+"\n" // newline
+"\f" // form feed
+"\t" // horizontal tab
+"\v" // vertical tab
+"\a" // alert (bell)
+"\b" // backspace
+"\e" // escape
+"\s" // space
+
+"\cA" // control character from A (#U+01) to Z (#U+1A)
+```
 
 3nity also supports escapes in even bases up to 16, excluding 14.
 
-| Escape Sequence      | Meaning                                        |
-| -------------------- | ---------------------------------------------- |
-| `\b` (beside 0 or 1) | _Base 2_ - from `0` to `100001111111111111111` |
-| `\q`                 | _Base 4_ - from `0` to `10033333333`           |
-| `\s` (beside 0 to 5) | _Base 6_ - from `0` to `35513531`              |
-| `\o`                 | _Base 8_ - from `0` to `4177777`               |
-| `\d` or `\`          | _Base 10_ - from `0` to `1114111`              |
-| `\z`                 | _Base 12_ - from `0` to `4588A7`               |
-| `\x`                 | _Base 16_ - from `0` to `10FFFF`               |
-| `\u`                 | UTF-8, 16 or 32 code units only                |
-| `\j`                 | Named Unicode characters and LaTeX expressions |
+```dart
+"\b100001111111111111111"
+"\q10033333333"
+"\s35513531"
+"\o4177777"
+"\d1114111" // or "\1114111"
+"\z4588A7"
+"\x10FFFF" // or "\u10fffff"
+"\j{\x{x}}" // LaTeX expressions
+```
 
 The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
 
@@ -382,25 +390,11 @@ The same escapes with curly brackets allow you to insert many code points inside
 "\d{72 69 76 76 69}" == "\72\69\76\76\79"
 ```
 
-In single quoted strings, to escape single quotes, double them.
-
-```dart
-var s3 = 'It''s easy to escape the string delimiter.'
-var s4 = "It's even easier to use the other delimiter."
-```
-
-In double-quoted strings, an ending backslash joins the next line _without spaces_.
-
-```dart
-assert "hello \
-        world" == "hello world"
-```
-
 #### Block strings
 
-String literals can also be delimited by at least three single or double quotes, provided they end with _at least_ that many quotes of the same type.
+String literals can also be delimited with at least three single or double quotes in a row, provided they end with at least that many quotes.
 
-The rules for single- and double-quoted strings also apply.
+Escaping rules for single- and double-quoted strings also apply.
 
 ```dart
 '''
@@ -413,11 +407,11 @@ produces:
 
     "stringified string"
 
-All newlines and whitespace before the first non-line character and after the last non-line character are discarded.
+All Unicode spacing characters before the first and the last non-spacing characters are discarded.
 
-All indentation is determined based on the first line of text (the first non-whitespace character). All indentation after that column is preserved while those before it are discarded.
+All indentation is determined based on the column of the first line of text, discarding any whitespace before that column.
 
-Newlines are normalized to `\n`.
+Newlines are normalized to `\p` depending on the platform.
 
 ```dart
 '''
@@ -441,11 +435,11 @@ string"
 
 ### String Manipulation
 
-3nity comes with several avenues to make manipulating, formatting and serializing strings easier.
+3nity comes with several string manipulation tactics to make manipulating, formatting and serialising strings easier.
 
 #### String Interpolation
 
-All forms of string literals, with exception to inline backslash strings, can enable embedding of arbitrary expressions. Embedded expressions are prefixed with the dollar and surrounded by curly brackets.
+All forms of strings, can enable embedding of expressions. Expressions are prefixed with the dollar and surrounded by curly brackets.
 
 If the expression is an identifier or qualified name, then the brackets can be left out. Use the `\$` escape sequence if you wish to express the dollar sign itself.
 
@@ -456,10 +450,10 @@ If the expression is an identifier or qualified name, then the brackets can be l
 is syntax sugar for:
 
 ```dart
-"x is " + x + ", in hex " + x.toHex + ", and x+8 is " + (x + 8)
+"x is " ++ x ++ ", in hex " ++ x.toHex ++ ", and x+8 is " ++ (x + 8)
 ```
 
-The hash sign takes several arguments, as placeholders, passed to the `format` method. Arguments can either be named, numbered or keyed.
+The hash sign takes several arguments, as placeholders, passed to the `format` method, should you want to use it as a template string.
 
 ```dart
 '#0%s is #1 meters tall'.format('James', 1.9)
@@ -468,7 +462,7 @@ The hash sign takes several arguments, as placeholders, passed to the `format` m
 
 #### Format Directives
 
-3nity provides an extensive string formatting mini-language for converting, transforming, transl(iter)ating and serialising strings. Its syntax derives from Command Prompt.
+3nity provide an extensive string formatting mini-language for converting, transforming, transliterating and serialising objects in strings, with a syntax derived from Command Prompt.
 
 They are composed of the following parts:
 
@@ -477,26 +471,28 @@ They are composed of the following parts:
 - Their optional values, separated by a colon: `/sw:value`.
 
 ```dart
-const prices = { bread: 4.50 }
-'I like bread. It costs $prices.bread%f/cur:"SGD".'
-// "I like bread. It costs $4.50."
+const Everest = {height: 8848}
+"Mount Everest is $Everest.height%f/unit:'m'/long tall."
+// "Mount Everest is 8,848 meters tall."
 ```
 
 #### Macro Strings
 
-Macro strings are used to embed domain-specific languages directly into 3nity, and are functionally the same as tagged template literals. The construct `name"string"` or `name("string")`, denotes a macro call with a string as its own argument.
+Macro strings embed domain-specific constructions. Macro calls use the construction `name'string'`, i.e. a prefixed string literal, or a function call with its own argument.
 
-A macro function is defined with the keyword `macro` rather than `fun`. The first argument of a `macro` contains a list of intermediate strings, the second being the interpolated values or placeholders, and the third being the formatting metadata.
+A macro function is defined with the keyword `macro`, and typically have four arguments which can be combined in any order: the passed `%values`, placeholder `%arguments`, formatting `%metadata` and intermediate `%strings`.
 
 ```dart
-macro template(strings, keys) = |*values| {
-  val dict = values[-1] ?? {}
-  val values = from val key in keys
-    select if key is Int: values[key]
-    else: dict[key]
-  values = values as List
-  return strings.intercalate(keys).join('')
-}
+macro template(
+  &strings: Str[], %values | &keys: Any[]
+): => Str =
+  |&values = values|: Str {
+    val dict = values[-1] ?? {}
+    val values = (for val key in keys:
+      if key is Int: values[key]
+      else: dict[key]).toList()
+    return strings.intersperse(keys).join('')
+  }
 
 val t1Closure = template"${0}${1}${0}!"
 assert t1Closure("Y", "A") == "YAY!"
@@ -526,14 +522,8 @@ Multi-quoted and block regular expressions are also supported.
 
 ````dart
 ```(?/
-  <<= | >>= | #= | \*\*=
-  | \+= | -= | /= | \@=
-  | \*= | %= | ~= | \^= | \&= | \|=
-  | =(?!=) \p{is Latin}
-)```
-
-\< x
   (?:[a-zA-Z_]|(?:\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}))(?:[a-zA-Z0-9_]|(?:\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}))*(?=:)
+)```
 ````
 
 If there are two adjacent regular expression literals on one side, then the one on the right is the substitution (template) string for the regular expression on the left.
@@ -646,24 +636,24 @@ Properties are case-insensitive. Logical operators `&&`, `||`, `^^` and `!`, can
 
 Alternatively, `\p{}` notation can be used instead of `[:]`.
 
-| Syntax      | ASCII                                        | Unicode (`/u` flag) | Description                                              |
-| ----------- | -------------------------------------------- | ------------------- | -------------------------------------------------------- |
-| `[:alnum]`  | `[a-zA-Z0-9]`                                | `[\pL\pNl}\pNd]`    | Alphanumeric characters                                  |
-| `[:alpha]`  | `[a-zA-Z]`                                   | `[\pL\pNl]`         | Alphabetic characters                                    |
-| `[:ascii]`  | `[\x00-\x7F]`                                | `[\x00-\xFF]`       | ASCII characters                                         |
-| `[:blank]`  | `[\x20\t]`                                   | `[\pZs\t]`          | Space and tab                                            |
-| `[:cntrl]`  | `[\x00-\x1F\x7F]`                            | `\pCc`              | Control characters                                       |
-| `[:digit]`  | `[0-9]`                                      | `\pNd`              | Digits                                                   |
-| `[:graph]`  | `[\x21-\x7E]`                                | `[^\pZ\pC]`         | Visible characters (anything except spaces and controls) |
-| `[:lower]`  | `[a-z]`                                      | `\pLl`              | Lowercaseters                                            |
-| `[:number]` | `[0-9]`                                      | `\pN`               | Numeric characters                                       |
-| `[:print]`  | `[\x20-\x7E] `                               | `\PC`               | Printable characters (anything except controls)          |
-| `[:punct]`  | `[!"\#$%&'()\*+,\-./:;<=>?@\[\\\]^\_'{\|}~]` | `\pP`               | Punctuation (and symbols).                               |
-| `[:space]`  | `[\pS\t\r\n\v\f]`                            | `[\pZ\t\r\n\v\f]`   | Spacing characters                                       |
-| `[:symbol]` | `[\pS&&[:ascii]]`                            | `\pS`               | Symbols                                                  |
-| `[:upper]`  | `[A-Z]`                                      | `\pLu`              | Uppercaseters                                            |
-| `[:word]`   | `[A-Za-z0-9_]`                               | `[\pL\pNl\pNd\pPc]` | Word characters                                          |
-| `[:xdigit]` | `[A-Fa-f0-9] `                               | `[A-Fa-f0-9]`       | Hexadecimal digits                                       |
+| Syntax | ASCII | Unicode (`/u` flag) | Description |
+| --- | --- | --- | --- |
+| `[:alnum]` | `[a-zA-Z0-9]` | `[\pL\pNl}\pNd]` | Alphanumeric characters |
+| `[:alpha]` | `[a-zA-Z]` | `[\pL\pNl]` | Alphabetic characters |
+| `[:ascii]` | `[\x00-\x7F]` | `[\x00-\xFF]` | ASCII characters |
+| `[:blank]` | `[\x20\t]` | `[\pZs\t]` | Space and tab |
+| `[:cntrl]` | `[\x00-\x1F\x7F]` | `\pCc` | Control characters |
+| `[:digit]` | `[0-9]` | `\pNd` | Digits |
+| `[:graph]` | `[\x21-\x7E]` | `[^\pZ\pC]` | Visible characters (anything except spaces and controls) |
+| `[:lower]` | `[a-z]` | `\pLl` | Lowercaseters |
+| `[:number]` | `[0-9]` | `\pN` | Numeric characters |
+| `[:print]` | `[\x20-\x7E] ` | `\PC` | Printable characters (anything except controls) |
+| `[:punct]` | `[!"\#$%&'()\*+,\-./:;<=>?@\[\\\]^\_'{\|}~]` | `\pP` | Punctuation (and symbols). |
+| `[:space]` | `[\pS\t\r\n\v\f]` | `[\pZ\t\r\n\v\f]` | Spacing characters |
+| `[:symbol]` | `[\pS&&[:ascii]]` | `\pS` | Symbols |
+| `[:upper]` | `[A-Z]` | `\pLu` | Uppercaseters |
+| `[:word]` | `[A-Za-z0-9_]` | `[\pL\pNl\pNd\pPc]` | Word characters |
+| `[:xdigit]` | `[A-Fa-f0-9] ` | `[A-Fa-f0-9]` | Hexadecimal digits |
 
 #### Character Sets
 
@@ -694,15 +684,15 @@ A set `[...]` can include nested sets. The operators below are listed in increas
 
 #### Quantifiers
 
-| Syntax           | Reluctant `?` (returns shortest match) | Possessive `+` (returns nothing) | Greedy `*` (returns longest match) | Description                             |
-| ---------------- | -------------------------------------- | -------------------------------- | ---------------------------------- | --------------------------------------- |
-| `?`              | `??`                                   | `?+`                             | `?*`                               | 1 or 0 times                            |
-| `+`              | `+?`                                   | `++`                             | `+*`                               | 1 or more times                         |
-| `*`, `{,}`, `{}` | `*?`, `{,}?`, `{}?`                    | `*+`, `{,}+`, `{}+`              | `**`, `{,}*`, `{}*`                | 0 or more times                         |
-| `{n,m}`          | `{n,m}?`                               | `{n,m}+`                         | `{n,m}*`                           | At least `n` but no more than `m` times |
-| `{n,}`           | `{n,}?`                                | `{n,}+`                          | `{n,}*`                            | At least `n` times                      |
-| `{,m}`           | `{,m}?`                                | `{,m}+`                          | `{,m}*`                            | Up to `m` times                         |
-| `{n}`            | `{n}?`                                 | `{n}+`                           | `{n}*`                             | Exactly `n` times                       |
+| Syntax | Reluctant `?` (returns shortest match) | Possessive `+` (returns nothing) | Greedy `*` (returns longest match) | Description |
+| --- | --- | --- | --- | --- |
+| `?` | `??` | `?+` | `?*` | 1 or 0 times |
+| `+` | `+?` | `++` | `+*` | 1 or more times |
+| `*`, `{,}`, `{}` | `*?`, `{,}?`, `{}?` | `*+`, `{,}+`, `{}+` | `**`, `{,}*`, `{}*` | 0 or more times |
+| `{n,m}` | `{n,m}?` | `{n,m}+` | `{n,m}*` | At least `n` but no more than `m` times |
+| `{n,}` | `{n,}?` | `{n,}+` | `{n,}*` | At least `n` times |
+| `{,m}` | `{,m}?` | `{,m}+` | `{,m}*` | Up to `m` times |
+| `{n}` | `{n}?` | `{n}+` | `{n}*` | Exactly `n` times |
 
 #### Groups
 
