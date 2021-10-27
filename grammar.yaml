@@ -2214,13 +2214,45 @@ repository:
       - include: "#special-operators"
       - include: "#unary-ops"
       - include: "#binary-ops"
-
+  special-operators:
+    patterns:
+      - include: "#pipeline-operator"
+      - begin: (?<=^|\s)(\?)(?=\s|$)
+        end: (?<=^|\s)(:)(?=\s|$)
+        captures:
+          1: {name: keyword.operator.conditional.3n}
+        patterns:
+          - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
+            end: \s*(?=:\s|$)
+            patterns:
+              - include: "#constants"
+              - include: "#variables"
+          - include: $self
+      - begin: (?<=^|\s)(\!)(?=\s|$)
+        end: (?<=^|\s)(:)(?=\s|$)
+        captures:
+          1: {name: keyword.operator.ternary.3n}
+        patterns:
+          - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
+            end: \s*(?=:\s|$)
+            patterns:
+              - include: "#constants"
+              - include: "#variables"
+          - include: $self
+      - begin: (?<=^|\s)(\$)(?=\s|$)
+        end: (?<=^|\s)(:)(?=\s|$)
+        captures:
+          1: {name: keyword.operator.macro.dollar.3n}
+        patterns:
+          - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
+            end: \s*(?=:\s|$)
+            name: entity.name.function.3n
+          - include: $self
   binary-ops:
     patterns:
       - comment: augmented assignment += -= *= /= etc
         match: (?<=^|[\s'"`({\[])([\p{S}\p{P}&&[^!:~.<=>,;'"`(){}\[\]\p{Pc}]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=)(?=$|[\s'"`)}\]])
         name: keyword.operator.assignment.augmented.3n
-
       - comment: |
           BUILT-IN OPERATORS
 
@@ -2294,7 +2326,6 @@ repository:
           |(\$:)#20
           )
           (?=$|[\s'"`)}\]])# closing
-
       - comment: |
           CUSTOM OPERATORS
 
@@ -2338,7 +2369,6 @@ repository:
           |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#10
           )
           (?=$|[\s'"`)}\]])# closing
-
   unary-ops:
     patterns:
       - &primary-operators
@@ -2359,7 +2389,6 @@ repository:
           3: {name: keyword.operator.assert.3n}
           4: {name: keyword.operator.accessor.3n}
           5: {name: keyword.operator.primary.3n}
-
       - &prefix-operators
         comment: Prefix operators
         match: |
@@ -2398,7 +2427,6 @@ repository:
           13: {name: keyword.operator.pipeline.3n}
           14: {name: keyword.operator.private.3n}
           15: {name: keyword.operator.prefix.3n}
-
       - &suffix-operators
         comment: Suffix operators
         match: |
@@ -2437,7 +2465,6 @@ repository:
           13: {name: keyword.operator.pipeline.3n}
           14: {name: keyword.operator.private.3n}
           15: {name: keyword.operator.suffix.3n}
-
   pipeline-operator:
     patterns:
       - applyEndPatternLast: 1
@@ -2530,41 +2557,6 @@ repository:
               11: {name: entity.name.class.3n}
               12: {name: entity.name.function.3n}
           - *primary-operators
-
-  special-operators:
-    patterns:
-      - include: "#pipeline-operator"
-      - begin: (?<=\s)(\?)(?=\s)
-        end: (?<=^|\s)(:)(?=\s|$)
-        captures:
-          1: {name: keyword.operator.conditional.3n}
-        patterns:
-          - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
-            end: \s*(?=:\s|$)
-            patterns:
-              - include: "#constants"
-              - include: "#variables"
-          - include: $self
-      - begin: (?<=\s)(\!)(?=\s)
-        end: (?<=^|\s)(:)(?=\s|$)
-        captures:
-          1: {name: keyword.operator.ternary.3n}
-        patterns:
-          - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
-            end: \s*(?=:\s|$)
-            patterns:
-              - include: "#constants"
-              - include: "#variables"
-          - include: $self
-      - begin: (?<=\s)(\$)(?=\s)
-        end: (?<=^|\s)(:)(?=\s|$)
-        captures:
-          1: {name: keyword.operator.macro.dollar.3n}
-        patterns:
-          - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
-            end: \s*(?=:\s|$)
-            name: entity.name.function.3n
-          - include: $self
 
   # Types
 
@@ -2706,10 +2698,78 @@ repository:
           - include: "#string-escapes"
           - include: "#type-embedded"
 
-  type-embedded-raw:
+  type-embedded-expression:
     patterns:
-      - match: \$\$|%%|##
-        name: constant.character.escape.3n
+      - begin: (\${)\s*
+        end: (})
+        name: entity.quasi.element.3n
+        captures:
+          1: {name: punctuation.section.embedded.3n}
+        patterns: [include: $self]
+      - match: |
+          (?x)(\$)
+          (\b[\p{Pc}\p{L}]
+          (?<expr>
+          # Recursive brackets
+          (?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>["`])[^\\.]*\g<q2>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          ([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )*
+          )
+        captures:
+          1: {name: punctuation.section.embedded.3n}
+          2: {patterns: [include: "#everything-but-comments"]}
+
+  type-format-specifier:
+    match: |
+      (?x)(%)
+      (
+      (?<ident>\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
+      (
+      (?<sw>
+      /\g<ident>
+      (?<val>:
+      (?<expr>
+      # Recursive brackets
+      (?<b>
+      \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+      \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+      \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+      )|
+      (?<s>
+      # Strings
+      (?<q3>'''+|"""+|```+).*\g<q3>|
+      (?<q2>["`])[^\\.]*\g<q2>|
+      (?<q1>')(?:[^']|'')*\g<q1>
+      )|
+      # Everything nice
+      ([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+      )
+      )?
+      )*
+      )?
+      )
+    captures:
+      1: {name: punctuation.definition.directive.3n}
+      2:
+        name: storage.type.format.3n
+        patterns:
+          - include: "#format-language"
+          - match: .+
+            name: string.other.format.3n
+
+  type-embedded-placeholder:
+    patterns:
       - match: (\#)([+-]?\d+)
         captures:
           1: {name: punctuation.definition.anchor.3n}
@@ -2718,57 +2778,28 @@ repository:
         captures:
           1: {name: punctuation.definition.anchor.3n}
           2: {patterns: [include: "#placeholder-variables"]}
-      - include: "#format-specifier"
-      - match: |
-          (?xi)
-          (\$)# prefix
-          (
-          [\p{Pc}\p{L}][\w\p{Pd}]*
-          (?:(?:[?!]?\.|[?!:]:)
-          (?:(?:[\p{Pc}\p{L}][\w\p{Pd}]*)))*
-          )# variable
-        captures:
-          1: {name: punctuation.section.embedded.3n}
-          2: {patterns: [{include: "#types"}, {include: "#self"}]}
-      - begin: (\${)\s*
+      - begin: (\#{)\s*
         end: (})
         name: entity.quasi.element.3n
         captures:
-          1: {name: punctuation.section.embedded.3n}
+          1: {name: punctuation.definition.anchor.3n}
         patterns:
-          - include: "#types"
-          - include: "#self"
+          - include: "#placeholder-variables"
+          - include: $self
 
   type-embedded:
     patterns:
-      - match: (\#)([+-]?\d+)
-        captures:
-          1: {name: punctuation.definition.anchor.3n}
-          2: {name: constant.numeric.decimal.3n}
-      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
-        captures:
-          1: {name: punctuation.definition.anchor.3n}
-          2: {patterns: [include: "#placeholder-variables"]}
       - include: "#format-specifier"
-      - match: |
-          (?xi)
-          (\$)# prefix
-          (
-          [\p{Pc}\p{L}][\w\p{Pd}]*
-          (?:(?:[?!]?\.|[?!:]:)
-          (?:(?:[\p{Pc}\p{L}][\w\p{Pd}]*)))*
-          )# variable
-        captures:
-          1: {name: punctuation.section.embedded.3n}
-          2: {patterns: [{include: "#types"}, {include: "#self"}]}
-      - begin: (\${)\s*
-        end: (})
-        name: entity.quasi.element.3n
-        captures:
-          1: {name: punctuation.section.embedded.3n}
-        patterns:
-          - include: "#types"
-          - include: "#self"
+      - include: "#type-embedded-placeholder"
+      - include: "#type-embedded-expression"
+
+  type-embedded-raw:
+    patterns:
+      - match: \$\$|\%\%\|#\#
+        name: constant.character.escape.3n
+      - include: "#format-specifier"
+      - include: "#type-embedded-placeholder"
+      - include: "#type-embedded-expression"
 
   type-keywords:
     patterns:
