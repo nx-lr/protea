@@ -1094,7 +1094,7 @@ repository:
         beginCaptures:
           1: {name: punctuation.definition.symbol.3n}
           2: {name: constant.other.symbol.3n}
-        end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/|::|!:|\?:|\.|!\.|\?\.)
+        end: (?=[\s.,:;'"`</>(){}\[\]]|$|[?!:]:|[!?]\.)
         name: constant.other.symbol.3n
         patterns:
           - include: "#string-content"
@@ -1517,7 +1517,7 @@ repository:
         name: punctuation.separator.sequence.3n
       - include: "#comments"
       - include: "#strings-quoted"
-      - match: (?xi)\b[is]\b(?=\)|\]|\}|&&|\|\||\^\^)
+      - match: (?xi)\b[is]\b(?=[)}\]]|&&|\|\||\^\^)
         name: storage.modifier.ignore-case.3n
       - include: "#string-escapes"
       - match: "[:!=</>.^$%?*+|&~]?="
@@ -1530,7 +1530,7 @@ repository:
         beginCaptures:
           1: {name: entity.other.attribute-name.3n}
           2: {name: keyword.operator.pattern.3n}
-        end: (?=&&|\|\||\^\^|\s|,|:|;|'|"|`|\(|\)|\[|\]|\{|\})
+        end: (?=&&|\|\||\^\^|[\s,:;'"`(){}\[\]])
         name: string.unquoted.attribute-name.3n
         patterns:
           - include: "#html-properties"
