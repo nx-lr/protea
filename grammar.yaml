@@ -49,12 +49,12 @@ comment: |
 
 define:
   number-literal: &number-literal
-    1: {name: storage.type.numeric.trin}
-    2: {name: punctuation.separator.decimal.period.trin}
-    3: {name: punctuation.separator.decimal.fraction.trin}
-    4: {name: constant.numeric.other.exponent.trin}
-    5: {name: constant.numeric.other.density.trin}
-    6: {name: storage.type.numeric.trin}
+    1: {name: storage.type.numeric.3n}
+    2: {name: punctuation.separator.decimal.period.3n}
+    3: {name: punctuation.separator.decimal.fraction.3n}
+    4: {name: constant.numeric.other.exponent.3n}
+    5: {name: constant.numeric.other.density.3n}
+    6: {name: storage.type.numeric.3n}
 
   entity-name-clause: &entity-name-clause |
     (?x)\s*\b
@@ -123,18 +123,35 @@ repository:
       - include: "#variables"
       - include: "#illegal"
 
+  everything-but-comments:
+    patterns:
+      - include: "#clauses"
+      - include: "#declarations"
+      - include: "#keywords"
+      - include: "#jsx"
+      - include: "#brackets"
+      - include: "#punctuation"
+      - include: "#type-annotation"
+      - include: "#format-specifier"
+      - include: "#symbols"
+      - include: "#operators"
+      - include: "#literals"
+      - include: "#calls"
+      - include: "#variables"
+      - include: "#illegal"
+
   # Illegal Syntax
 
   illegal:
     patterns:
       - match: \p{N}[\w.+-/\\]*?
-        name: invalid.illegal.numeric.other.trin
+        name: invalid.illegal.numeric.other.3n
       - match: '[\w]+?'
-        name: invalid.illegal.variable.other.trin
+        name: invalid.illegal.variable.other.3n
       - match: '[(){}\[\]]+?'
-        name: invalid.illegal.missing-bracket.trin
+        name: invalid.illegal.missing-bracket.3n
       - match: \S+?
-        name: invalid.illegal.syntax.trin
+        name: invalid.illegal.syntax.3n
 
   illegal-keywords:
     match: |
@@ -154,7 +171,7 @@ repository:
       |import|export|using
       |debug|assert|where
       )(?![\w\p{Pd}])\s*
-    name: invalid.illegal.keyword.trin
+    name: invalid.illegal.keyword.3n
 
   # Support
 
@@ -178,7 +195,7 @@ repository:
           |[UI](8|16|32|64|128)
           |[CI]?F(16|32|64|128)
           )(?![\w\p{Pd}])
-        name: support.type.builtin.primitive.trin
+        name: support.type.builtin.primitive.3n
       - comment: Data structure classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
@@ -186,7 +203,7 @@ repository:
           |Proc|Seq|Gen|Range|Stack|Heap|Queue|Tree|Trie
           |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
           )(?![\w\p{Pd}])
-        name: support.type.builtin.trin
+        name: support.type.builtin.3n
       - comment: Constant/algebraic classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
@@ -196,20 +213,20 @@ repository:
           |Frag|Nspace|Data|Trait|Proto|Proc|Macro|Type|Given
           |Raw|Style|Comp|Elem|Decl|Ext|Impl|Sub|Chan
           )(?![\w\p{Pd}])
-        name: support.type.primitive.trin
+        name: support.type.primitive.3n
 
       - comment: Interface classes | IEnumerable, etc
         match: \s*\bI((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)\b
-        name: entity.name.interface.trin
+        name: entity.name.interface.3n
       - comment: Namespace classes | NSString, etc
         match: \s*\bNS((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)\b
-        name: entity.name.namespace.trin
+        name: entity.name.namespace.3n
       - comment: Error classes | BaseError, etc
         match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)?(Error|Exception)\b
-        name: support.class.error.trin
+        name: support.class.error.3n
       - comment: Trait classes | Serializable, Loggable etc
         match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)able\b
-        name: support.class.trait.trin
+        name: support.class.trait.3n
 
       - comment: Swift
       - include: source.swift#builtin-types
@@ -225,10 +242,10 @@ repository:
     patterns:
       - comment: isName functions
         match: (?x)\s*\bis(\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+\b\s*
-        name: support.function.predicate.trin
+        name: support.function.predicate.3n
       - comment: magic functions
         match: (?x)\s*\b_+([\p{Pc}\p{L}][\w\p{Pd}]*)+_+\b\s*
-        name: support.function.magic.trin
+        name: support.function.magic.3n
       - comment: Swift
       - include: source.swift#builtin-functions
       - comment: JavaScript
@@ -266,18 +283,18 @@ repository:
           )
           )\b
         captures:
-          1: {name: entity.name.tag.trin}
-          2: {name: entity.name.tag.trin support.class.component.trin}
-          3: {name: entity.name.class.builtin.trin}
-          4: {name: entity.name.function.method.trin}
-          5: {name: variable.other.global.trin}
-          6: {name: variable.other.constant.object.trin}
-          7: {name: variable.other.conditional.trin}
-          8: {name: variable.other.object.trin}
-          9: {name: entity.name.function.tagged-template.trin}
-          10: {name: entity.name.type.trin}
-          11: {name: entity.name.class.trin}
-          12: {name: entity.name.function.trin}
+          1: {name: entity.name.tag.3n}
+          2: {name: entity.name.tag.3n support.class.component.3n}
+          3: {name: entity.name.class.builtin.3n}
+          4: {name: entity.name.function.method.3n}
+          5: {name: variable.other.global.3n}
+          6: {name: variable.other.constant.object.3n}
+          7: {name: variable.other.conditional.3n}
+          8: {name: variable.other.object.3n}
+          9: {name: entity.name.function.tagged-template.3n}
+          10: {name: entity.name.type.3n}
+          11: {name: entity.name.class.3n}
+          12: {name: entity.name.function.3n}
       - include: $self
 
   constant-names:
@@ -313,12 +330,12 @@ repository:
           (true)|(false)|(null)|(void)|(nan)|(infin)
           )(?![\w\p{Pd}])\s*
         captures:
-          1: {name: constant.language.boolean.true.trin}
-          2: {name: constant.language.boolean.false.trin}
-          3: {name: constant.language.null.trin}
-          4: {name: constant.language.undefined.trin}
-          5: {name: constant.language.nan.trin}
-          6: {name: constant.language.infinity.trin}
+          1: {name: constant.language.boolean.true.3n}
+          2: {name: constant.language.boolean.false.3n}
+          3: {name: constant.language.null.3n}
+          4: {name: constant.language.undefined.3n}
+          5: {name: constant.language.nan.3n}
+          6: {name: constant.language.infinity.3n}
       - match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(?:
           (it|this|that|super|self|target)#1
@@ -328,18 +345,18 @@ repository:
           |(pro)#5
           )(?![\w\p{Pd}])\s*
         captures:
-          1: {name: variable.language.$1.trin}
-          2: {name: variable.language.arguments.trin}
-          3: {name: variable.language.constructor.trin}
-          4: {name: variable.language.prototype.trin}
-          5: {name: variable.language.proto.trin}
+          1: {name: variable.language.$1.3n}
+          2: {name: variable.language.arguments.3n}
+          3: {name: variable.language.constructor.3n}
+          4: {name: variable.language.prototype.3n}
+          5: {name: variable.language.proto.3n}
 
   numbers:
     patterns:
       - match: (?<=(^|[({\[])\s*\d\w*)\.
-        name: punctuation.separator.decimal.period.trin
+        name: punctuation.separator.decimal.period.3n
       - match: (?<=(^|[({\[])\s*|\s)\.(?=\d)
-        name: punctuation.separator.decimal.period.trin
+        name: punctuation.separator.decimal.period.3n
       - match: |
           (?ix)\s*\b
           ((?:[2-9]|[1-9]\d+)b)# radix/base prefix
@@ -354,14 +371,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.arbitrary-radix.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.arbitrary-radix.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           ((?:[2-9]|[1-9]\d+)b)# radix prefix
@@ -376,14 +393,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.arbitrary-radix.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.arbitrary-radix.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0b)# radix/base prefix
@@ -398,14 +415,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.binary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.binary.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0b)# radix prefix
@@ -420,14 +437,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.binary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.binary.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0q)# radix/base prefix
@@ -442,14 +459,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.quaternary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.quaternary.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0q)# radix prefix
@@ -464,14 +481,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.quaternary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.quaternary.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0s)# radix/base prefix
@@ -486,14 +503,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.senary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.senary.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0s)# radix prefix
@@ -508,14 +525,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.senary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.senary.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0o)# radix/base prefix
@@ -530,14 +547,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.octal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.octal.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0o)# radix prefix
@@ -552,14 +569,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.octal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.octal.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0z)# radix/base prefix
@@ -574,14 +591,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.duodecimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.duodecimal.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0z)# radix prefix
@@ -596,14 +613,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.duodecimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.duodecimal.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0x)# radix/base prefix
@@ -618,14 +635,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.hexadecimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.hexadecimal.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (0x)# radix prefix
@@ -640,14 +657,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.hexadecimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.hexadecimal.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           ()# radix/base prefix
@@ -662,14 +679,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.decimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.decimal.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           ()# radix prefix
@@ -684,14 +701,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.decimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.decimal.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (\d+(?=\w+))# radix/base prefix
@@ -706,14 +723,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: invalid.illegal.numeric.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: invalid.illegal.numeric.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
       - match: |
           (?ix)\s*\b
           (\d+(?=\w+))# radix prefix
@@ -728,49 +745,49 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
           \b\s*
         captures:
-          0: {name: invalid.illegal.numeric.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: invalid.illegal.numeric.3n}
+          1: {name: storage.type.numeric.3n}
+          2: {name: punctuation.separator.decimal.period.3n}
+          3: {name: punctuation.separator.decimal.repeating.3n}
+          4: {name: punctuation.separator.decimal.fraction.3n}
+          5: {name: constant.numeric.other.exponent.3n}
+          6: {name: constant.numeric.other.precision.3n}
+          7: {name: storage.type.numeric.3n}
 
   strings-quoted:
     patterns:
       - comment: multi-single quoted string
         begin: (?<!'+)\s*('''+)
-        contentName: string.quoted.single.trin
+        contentName: string.quoted.single.3n
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.3n}
         patterns:
           - include: "#embedded-raw"
       - comment: single quoted string
         begin: (?<!'+)\s*(')
-        contentName: string.quoted.single.trin
+        contentName: string.quoted.single.3n
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.3n}
         patterns:
           - match: "''"
-            name: constant.character.escape.trin
+            name: constant.character.escape.3n
           - include: "#embedded-raw"
       - comment: multi-double quoted string
         begin: (?<!"+)\s*("""+)
-        contentName: string.quoted.double.trin
+        contentName: string.quoted.double.3n
         end: \s*((\1)(?!"+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.3n}
         patterns:
           - include: "#string-content"
       - comment: double quoted string
         begin: (?<!"+)\s*(")
-        contentName: string.quoted.double.trin
+        contentName: string.quoted.double.3n
         end: \s*((\1)(?!"+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.3n}
         patterns:
           - include: "#string-content"
 
@@ -783,136 +800,141 @@ repository:
     patterns:
       - comment: Binary escape sequences
         match: (?ix)\\b[01]{1,21}
-        name: constant.character.escape.binary.trin
+        name: constant.character.escape.binary.3n
       - comment: Binary escape sequences
         begin: (?ix)\\b{
         end: \s*}
-        name: constant.character.escape.binary.trin
+        name: constant.character.escape.binary.3n
         patterns:
           - match: \b[01]{1,21}\b
-            name: constant.character.escape.binary.trin
+            name: constant.character.escape.binary.3n
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.3n
       - comment: Quaternary escape sequences
         match: (?ix)\\q[0-3]{1,11}
-        name: constant.character.escape.quaternary.trin
+        name: constant.character.escape.quaternary.3n
       - comment: Quaternary escape sequences
         begin: (?ix)\\q{
         end: \s*}
-        name: constant.character.escape.quaternary.trin
+        name: constant.character.escape.quaternary.3n
         patterns:
           - match: \b[0-3]{1,11}\b
-            name: constant.character.escape.quaternary.trin
+            name: constant.character.escape.quaternary.3n
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.3n
       - comment: Senary escape sequences
         match: (?ix)\\s[0-5]{1,8}
-        name: constant.character.escape.senary.trin
+        name: constant.character.escape.senary.3n
       - comment: Senary escape sequences
         begin: (?ix)\\s{
         end: \s*}
-        name: constant.character.escape.senary.trin
+        name: constant.character.escape.senary.3n
         patterns:
           - match: \b[0-5]{1,8}\b
-            name: constant.character.escape.senary.trin
+            name: constant.character.escape.senary.3n
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.3n
       - comment: Octal escape sequences
         match: (?ix)\\o[0-7]{1,7}
-        name: constant.character.escape.octal.trin
+        name: constant.character.escape.octal.3n
       - comment: Octal escape sequences
         begin: (?ix)\\o{
         end: \s*}
-        name: constant.character.escape.octal.trin
+        name: constant.character.escape.octal.3n
         patterns:
           - match: \b[0-7]{1,7}\b
-            name: constant.character.escape.octal.trin
+            name: constant.character.escape.octal.3n
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.3n
       - comment: Decimal escape sequences
         match: (?ix)\\d?\d{1,7}
-        name: constant.character.escape.decimal.trin
+        name: constant.character.escape.decimal.3n
       - comment: Decimal escape sequences
         begin: (?ix)\\d{
         end: \s*}
-        name: constant.character.escape.decimal.trin
+        name: constant.character.escape.decimal.3n
         patterns:
           - match: \b\d{1,7}\b
-            name: constant.character.escape.decimal.trin
+            name: constant.character.escape.decimal.3n
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.3n
       - comment: Duodecimal escape sequences
         match: (?ix)\\z[\dab]{1,6}
-        name: constant.character.escape.duodecimal.trin
+        name: constant.character.escape.duodecimal.3n
       - comment: Duodecimal escape sequences
         begin: (?ix)\\z{
         end: \s*}
-        name: constant.character.escape.duodecimal.trin
+        name: constant.character.escape.duodecimal.3n
         patterns:
           - match: \b[\dab]{1,6}\b
-            name: constant.character.escape.duodecimal.trin
+            name: constant.character.escape.duodecimal.3n
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.3n
       - comment: Hexadecimal escape sequences
         match: (?ix)\\[ux]\h{1,6}
-        name: constant.character.escape.hexadecimal.trin
+        name: constant.character.escape.hexadecimal.3n
       - comment: Hexadecimal escape sequences
         begin: (?ix)\\[ux]{
         end: \s*}
-        name: constant.character.escape.hexadecimal.trin
+        name: constant.character.escape.hexadecimal.3n
         patterns:
           - match: \b\h{1,6}\b
-            name: constant.character.escape.hexadecimal.trin
+            name: constant.character.escape.hexadecimal.3n
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.3n
 
   string-escapes:
     patterns:
       - match: \\(?=\s*$)
-        name: constant.character.escape.newline.trin
+        name: constant.character.escape.newline.3n
       - begin: (?i)\\j{
         end: \s*}
-        name: constant.character.entity.named.trin
+        name: constant.character.entity.named.3n
         patterns:
           - include: "#named-char-notation"
       - include: "#numeric-escapes"
+      - match: (?i)\\([cm][a-z])
+        name: constant.character.control.3n
       - match: (?i)\\[a-z]
-        name: constant.character.escape.trin
+        name: constant.character.escape.3n
       - match: (?x)\\[\p{S}\p{P}]
-        name: constant.character.escape.symbol.trin
+        name: constant.character.escape.symbol.3n
       - match: (?x)\\\p{Z}
-        name: constant.character.escape.other.trin
+        name: constant.character.escape.other.3n
       - match: (?x)\\[\p{L}\p{N}\p{C}]
-        name: invalid.illegal.unknown-escape.trin
+        name: invalid.illegal.unknown-escape.3n
 
-  embedded-variable:
-    match: |
-      (?x)(\$)
-      (\b[\p{Pc}\p{L}]
-      (?<expr>
-      # Match all brackets recursively
-      (?<b>
-      \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-      \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-      \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-      )|
-      (?<s>
-      # Strings
-      (?<q3>'''+|"""+|```+).*\g<q3>|
-      (?<q2>["`])[^\\.]*\g<q2>|
-      (?<q1>')(?:[^']|'')*\g<q1>
-      )|
-      # Rest of identifier characters
-      (
-      [\p{S}\p{P}&&[^,;'"`</>(){}\[\]\p{Pc}]]|
-      /(?!>)|<(?!/>?)
-      )*
-      [\p{Pd}\w]*\b
-      )*
-      )
-    captures:
-      1: {name: punctuation.section.embedded.trin}
-      2: {patterns: [include: $self]}
+  embedded-expression:
+    patterns:
+      - begin: (\${)\s*
+        end: (})
+        name: entity.quasi.element.3n
+        captures:
+          1: {name: punctuation.section.embedded.3n}
+        patterns: [include: $self]
+      - match: |
+          (?x)(\$)
+          (\b[\p{Pc}\p{L}]
+          (?<expr>
+          # Match all brackets recursively
+          (?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>["`])[^\\.]*\g<q2>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          ([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )*
+          )
+        captures:
+          1: {name: punctuation.section.embedded.3n}
+          2: {patterns: [include: "#everything-but-comments"]}
 
   format-specifier:
     match: |
@@ -922,7 +944,7 @@ repository:
       (
       (?<sw>
       /\g<ident>
-      (?<val>\:
+      (?<val>:
       (?<expr>
       # Match all brackets recursively
       (?<b>
@@ -937,87 +959,76 @@ repository:
       (?<q1>')(?:[^']|'')*\g<q1>
       )|
       # Everything nice
-      (
-      [\p{S}\p{P}&&[^,;'"`</>(){}\[\]\p{Pc}]]|
-      /(?!>)|<(?!/>?)
-      )*
-      [\p{Pd}\w]*\b
+      ([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b
       )
       )?
       )*
       )?
       )
     captures:
-      1: {name: punctuation.definition.directive.trin}
+      1: {name: punctuation.definition.directive.3n}
       2:
-        name: storage.type.format.trin
+        name: storage.type.format.3n
         patterns:
           - include: "#format-language"
-          - include: "#illegal"
+          - match: .+
+            name: string.other.format.3n
 
-  embedded:
+  embedded-placeholder:
     patterns:
       - match: (\#)([+-]?\d+)
         captures:
-          1: {name: punctuation.definition.anchor.trin}
-          2: {name: constant.numeric.decimal.trin}
+          1: {name: punctuation.definition.anchor.3n}
+          2: {name: constant.numeric.decimal.3n}
       - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
-          1: {name: punctuation.definition.anchor.trin}
+          1: {name: punctuation.definition.anchor.3n}
           2: {patterns: [include: "#placeholder-variables"]}
-      - include: "#format-specifier"
-      - begin: (\${)\s*
+      - begin: (\#{)\s*
         end: (})
-        name: entity.quasi.element.trin
+        name: entity.quasi.element.3n
         captures:
-          1: {name: punctuation.section.embedded.trin}
-        patterns: [include: $self]
-      - include: "#embedded-variable"
+          1: {name: punctuation.section.embedded.3n}
+        patterns:
+          - include: "#placeholder-variables"
+          - include: $self
+
+  embedded:
+    patterns:
+      - include: "#format-specifier"
+      - include: "#embedded-placeholder"
+      - include: "#embedded-expression"
 
   embedded-raw:
     patterns:
       - match: \$\$|\%\%\|#\#
-        name: constant.character.escape.trin
-      - match: (\#)([+-]?\d+)
-        captures:
-          1: {name: punctuation.definition.anchor.trin}
-          2: {name: constant.numeric.decimal.trin}
-      - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
-        captures:
-          1: {name: punctuation.definition.anchor.trin}
-          2: {patterns: [include: "#placeholder-variables"]}
+        name: constant.character.escape.3n
       - include: "#format-specifier"
-      - begin: (\${)\s*
-        end: (})
-        name: entity.quasi.element.trin
-        captures:
-          1: {name: punctuation.section.embedded.trin}
-        patterns: [include: $self]
-      - include: "#embedded-variable"
+      - include: "#embedded-placeholder"
+      - include: "#embedded-expression"
 
   # Format Specifier Language
 
   format-language:
-    comment: Grammar for Trinity's format specifier language, inspired by
-      MS-DOS, Bash and Python's f-strings.
+    comment: Grammar for Trinity's format specifier language, inspired by MS-DOS, Bash and Python's f-strings.
     patterns:
       - comment: type specifier
         match: (?<=[^\\%]%)\w+
-        name: entity.other.attribute-name.trin
+        name: entity.other.attribute-name.3n
       - comment: Format switch with value /x:24
         applyEndPatternLast: 1
         begin: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)(:)
         beginCaptures:
-          1: {name: punctuation.separator.mapping.trin}
-          2: {name: entity.other.attribute-name.class.trin}
-          3: {name: punctuation.separator.key-value.trin}
+          1: {name: punctuation.separator.mapping.3n}
+          2: {name: entity.other.attribute-name.class.3n}
+          3: {name: punctuation.separator.key-value.3n}
         end: (?=.)|$
         patterns: [include: "#html-properties"]
       - comment: Format switch without value
         match: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
-          1: {name: punctuation.separator.mapping.trin}
-          2: {name: entity.other.attribute-name.id.trin}
+          1: {name: punctuation.separator.mapping.3n}
+          2: {name: entity.other.attribute-name.id.3n}
 
   # Unicode Named Character Language
 
@@ -1027,53 +1038,53 @@ repository:
       character-names:
         patterns:
           - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-            name: entity.name.tag.namespace.trin
+            name: entity.name.tag.namespace.3n
           - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)
-            name: entity.name.tag.trin
+            name: entity.name.tag.3n
           - match: ":"
-            name: punctuation.separator.namespace.trin
+            name: punctuation.separator.namespace.3n
           - match: \.
-            name: punctuation.accessor.trin
+            name: punctuation.accessor.3n
       latex-notation:
         patterns:
-          - name: comment.line.math.trin
+          - name: comment.line.math.3n
             match: (%)(.+)$
             captures:
-              1: {name: punctuation.definition.comment.math.trin}
-          - name: line.separator.math.trin
+              1: {name: punctuation.definition.comment.math.3n}
+          - name: line.separator.math.3n
             match: (\\\\)$
             captures:
-              1: {name: punctuation.line.separator.math.trin}
-          - name: meta.function.math.trin
+              1: {name: punctuation.line.separator.math.3n}
+          - name: meta.function.math.3n
             begin: ((\\)([\p{Pc}\p{L}][\w\p{Pd}]*))(\{)
             beginCaptures:
-              1: {name: storage.type.function.math.trin}
-              2: {name: punctuation.definition.function.math.trin}
-              3: {name: entity.name.function.math.trin}
-              4: {name: punctuation.definition.arguments.begin.math.trin}
+              1: {name: storage.type.function.math.3n}
+              2: {name: punctuation.definition.function.math.3n}
+              3: {name: entity.name.function.math.3n}
+              4: {name: punctuation.definition.arguments.begin.math.3n}
             end: \}
             endCaptures:
-              0: {name: punctuation.definition.arguments.end.math.trin}
+              0: {name: punctuation.definition.arguments.end.math.3n}
             patterns:
               - include: "#named-char-notation"
           - captures:
-              1: {name: punctuation.definition.constant.math.trin}
+              1: {name: punctuation.definition.constant.math.3n}
             match: (\\)([\p{Pc}\p{L}][\w\p{Pd}]*)\b
-            name: constant.character.math.trin
+            name: constant.character.math.3n
           - captures:
-              1: {name: punctuation.definition.constant.math.trin}
+              1: {name: punctuation.definition.constant.math.3n}
             match: (\\)(?!begin\{|verb)([\p{Pc}\p{L}][\w\p{Pd}]*)
-            name: constant.other.general.math.trin
+            name: constant.other.general.math.3n
           - match: (?<!\\)\{
-            name: meta.brace.curly.trin
+            name: meta.brace.curly.3n
           - match: (?<!\\)\}
-            name: meta.brace.curly.trin
+            name: meta.brace.curly.3n
           - match: \(
-            name: meta.brace.round.trin
+            name: meta.brace.round.3n
           - match: \)
-            name: meta.brace.round.trin
+            name: meta.brace.round.3n
           - match: (([0-9]*[\.][0-9]+)|[0-9]+)
-            name: constant.numeric.math.trin
+            name: constant.numeric.math.3n
           - match: "[-+*/^]"
             name: punctuation.math.operator.latex
     patterns:
@@ -1086,13 +1097,13 @@ repository:
   symbols:
     patterns:
       - match: \s*(:)(?=['"])
-        name: punctuation.definition.symbol.trin
+        name: punctuation.definition.symbol.3n
       - begin: \s*(:)(\w|\\.)
         beginCaptures:
-          1: {name: punctuation.definition.symbol.trin}
-          2: {name: constant.other.symbol.trin}
+          1: {name: punctuation.definition.symbol.3n}
+          2: {name: constant.other.symbol.3n}
         end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/|::|!:|\?:|\.|!\.|\?\.)
-        name: constant.other.symbol.trin
+        name: constant.other.symbol.3n
         patterns:
           - include: "#string-content"
 
@@ -1103,23 +1114,23 @@ repository:
       - comment: Replacement section
         begin: (?<=`+)\s*(```+|`)
         end: \s*(?:(\1)(?!`+))(\p{Alnum}*)
-        contentName: string.replace.regexp.trin
+        contentName: string.replace.regexp.3n
         captures:
-          1: {name: punctuation.section.regexp.end.trin}
-          2: {name: keyword.other.flag.trin}
+          1: {name: punctuation.section.regexp.end.3n}
+          2: {name: keyword.other.flag.3n}
         patterns:
           - include: "#back-references"
           - include: "#string-content"
       - comment: Pattern section
         begin: \s*(\p{Alnum}*)(?<!`+)(```+|`)
         end: \s*(?:(\2)(?!`+))(\p{Alnum}*)
-        contentName: string.pattern.regexp.trin
+        contentName: string.pattern.regexp.3n
         beginCaptures:
-          1: {name: keyword.modifier.trin}
-          2: {name: punctuation.section.regexp.begin.trin}
+          1: {name: keyword.modifier.3n}
+          2: {name: punctuation.section.regexp.begin.3n}
         endCaptures:
-          1: {name: punctuation.section.regexp.end.trin}
-          2: {name: keyword.other.flag.trin}
+          1: {name: punctuation.section.regexp.end.3n}
+          2: {name: keyword.other.flag.3n}
         patterns:
           - include: "#comments"
           - include: "#regexp-patterns"
@@ -1127,14 +1138,14 @@ repository:
   back-references:
     patterns:
       - match: \$(\d+|[&+-])
-        name: keyword.other.back-reference.trin
+        name: keyword.other.back-reference.3n
       - match: \${2}
-        name: constant.character.escape.trin
+        name: constant.character.escape.3n
       - begin: (\$<)\s*
         end: \s*(>)
-        name: keyword.other.back-reference.trin
+        name: keyword.other.back-reference.3n
         captures:
-          1: {name: keyword.other.back-reference.trin}
+          1: {name: keyword.other.back-reference.3n}
         patterns: &regex-back-references
           - include: "#variables"
           - include: "#numbers"
@@ -1142,9 +1153,9 @@ repository:
           - include: "#string-content"
       - begin: (\$(['"]))\s*
         end: \s*(\2)
-        name: keyword.other.back-reference.trin
+        name: keyword.other.back-reference.3n
         captures:
-          1: {name: keyword.other.back-reference.trin}
+          1: {name: keyword.other.back-reference.3n}
         patterns: *regex-back-references
 
   regexp-patterns:
@@ -1153,323 +1164,323 @@ repository:
       - include: "#comments"
       - include: "#strings-quoted"
       - match: \|
-        name: keyword.operator.or.trin
+        name: keyword.operator.or.3n
       - match: \&
-        name: keyword.operator.compose.trin
+        name: keyword.operator.compose.3n
       - match: \.
-        name: constant.character.all.trin
+        name: constant.character.all.3n
       - match: (?i)\\[mM]({\p{L}+})?
-        name: keyword.control.anchor.trin
+        name: keyword.control.anchor.3n
       - match: \$|(?i)\\[yz]({\p{L}+})?
-        name: keyword.control.end.trin}
+        name: keyword.control.end.3n}
       - match: \^|(?i)\\[ab]({\p{L}+})?
-        name: keyword.control.begin.trin
+        name: keyword.control.begin.3n
       - match: \\K
-        name: keyword.control.keepout.trin
+        name: keyword.control.keepout.3n
       - match: \\G
-        name: keyword.control.search.trin
+        name: keyword.control.search.3n
       - match: \\[XO]
-        name: constant.character.unicode.trin
+        name: constant.character.unicode.3n
       - match: (\\\()(?:(\?)|(\+)|(\*))
         captures:
-          1: {name: constant.character.escape.other.trin}
-          2: {name: keyword.operator.quantifier.lazy.trin}
-          3: {name: keyword.operator.quantifier.eager.trin}
-          4: {name: keyword.operator.quantifier.greedy.trin}
+          1: {name: constant.character.escape.other.3n}
+          2: {name: keyword.operator.quantifier.lazy.3n}
+          3: {name: keyword.operator.quantifier.eager.3n}
+          4: {name: keyword.operator.quantifier.greedy.3n}
       - match: \\\d+
-        name: keyword.other.back-reference.trin
+        name: keyword.other.back-reference.3n
       - match: \{(\s*\d*\s*(?:,?\s*\d*\s*)*)\}
-        name: keyword.operator.quantifier.trin
+        name: keyword.operator.quantifier.3n
       - begin: (\\k<)
         end: \s*(>)
-        name: constant.other.back-reference.trin
+        name: constant.other.back-reference.3n
         captures:
-          1: {name: keyword.other.back-reference.trin}
+          1: {name: keyword.other.back-reference.3n}
         patterns: *regex-back-references
       - begin: (\\g<)
         end: \s*(>)
-        name: constant.other.subroutine.trin
+        name: constant.other.subroutine.3n
         captures:
-          1: {name: keyword.other.subroutine.trin}
+          1: {name: keyword.other.subroutine.3n}
         patterns: *regex-back-references
       - begin: (\\k(['"]))
         end: \s*(\2)
-        name: constant.other.back-reference.trin
+        name: constant.other.back-reference.3n
         captures:
-          1: {name: keyword.other.back-reference.trin}
+          1: {name: keyword.other.back-reference.3n}
         patterns: *regex-back-references
       - begin: (\\g(['"]))
         end: \s*(\2)
-        name: constant.other.subroutine.trin
+        name: constant.other.subroutine.3n
         captures:
-          1: {name: keyword.other.subroutine.trin}
+          1: {name: keyword.other.subroutine.3n}
         patterns: *regex-back-references
       - match: (?<=[^\\][*+?}])(?:(\?)|(\+)|(\*))
         captures:
-          1: {name: keyword.operator.modifier.lazy.trin}
-          2: {name: keyword.operator.modifier.eager.trin}
-          3: {name: keyword.operator.modifier.greedy.trin}
+          1: {name: keyword.operator.modifier.lazy.3n}
+          2: {name: keyword.operator.modifier.eager.3n}
+          3: {name: keyword.operator.modifier.greedy.3n}
       - match: (\?)|(\+)|(\*)
         captures:
-          1: {name: keyword.operator.quantifier.lazy.trin}
-          2: {name: keyword.operator.quantifier.eager.trin}
-          3: {name: keyword.operator.quantifier.greedy.trin}
+          1: {name: keyword.operator.quantifier.lazy.3n}
+          2: {name: keyword.operator.quantifier.eager.3n}
+          3: {name: keyword.operator.quantifier.greedy.3n}
       - include: "#regexp-groups"
       - include: "#regexp-char-set"
       - include: "#regexp-char-class"
       - match: \\.
-        name: constant.character.escape.other.trin
+        name: constant.character.escape.other.3n
 
   regexp-groups:
     patterns:
       - comment: Embedded expression
         begin: \(([*+])
         end: \s*(\))
-        name: constant.other.pcre.trin
+        name: constant.other.pcre.3n
         captures:
-          0: {name: punctuation.section.expression.trin}
+          0: {name: punctuation.section.expression.3n}
         patterns:
           - include: $self
       - comment: Block comment
         begin: (\()(\?#)
-        contentName: comment.block.regexp.trin
+        contentName: comment.block.regexp.3n
         end: \s*(\))
-        name: comment.block.regexp.trin
+        name: comment.block.regexp.3n
         captures:
-          1: {name: punctuation.definition.comment.trin}
+          1: {name: punctuation.definition.comment.3n}
         patterns:
           - match: \\.
-            name: comment.block.regexp.trin
+            name: comment.block.regexp.3n
       - comment: Lookahead assertion
         begin: (\(\?=)
         end: \s*(\))
-        name: meta.group.look-ahead.trin
+        name: meta.group.look-ahead.3n
         captures:
-          1: {name: punctuation.definition.group.look-ahead.trin}
+          1: {name: punctuation.definition.group.look-ahead.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Lookbehind assertion
         begin: (\(\?<=)
         end: \s*(\))
-        name: meta.group.look-behind.trin
+        name: meta.group.look-behind.3n
         captures:
-          1: {name: punctuation.definition.group.look-behind.trin}
+          1: {name: punctuation.definition.group.look-behind.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Negative lookahead assertion
         begin: (\(\?!)
         end: \s*(\))
-        name: meta.group.negative-look-ahead.trin
+        name: meta.group.negative-look-ahead.3n
         captures:
-          1: {name: punctuation.definition.group.negative-look-ahead.trin}
+          1: {name: punctuation.definition.group.negative-look-ahead.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Negative lookbehind assertion
         begin: (\(\?<!)
         end: \s*(\))
-        name: meta.group.negative-look-behind.trin
+        name: meta.group.negative-look-behind.3n
         captures:
-          1: {name: punctuation.definition.group.negative-look-behind.trin}
+          1: {name: punctuation.definition.group.negative-look-behind.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Match directive
         begin: (\(\?%)((?:\w|\\.)+(?:(?:[^\s'"`\\\[\](){}<>]|\\.)*(?:\w|\\.)+)?)?(/)?
         end: \s*(\))
-        name: meta.group.directive.trin
+        name: meta.group.directive.3n
         captures:
-          1: {name: punctuation.definition.group.directive.trin}
+          1: {name: punctuation.definition.group.directive.3n}
           2:
-            name: storage.type.format.trin
+            name: storage.type.format.3n
             patterns: [include: "#format-language"]
-          3: {name: punctuation.separator.slash.trin}
+          3: {name: punctuation.separator.slash.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Longest match
         begin: (\(\?/)
         end: \s*(\))
-        name: meta.group.longest.trin
+        name: meta.group.longest.3n
         captures:
-          1: {name: punctuation.definition.group.longest.trin}
+          1: {name: punctuation.definition.group.longest.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Flag modifier group
         begin: (\(\?\^?(?:([+-]?\d+?)|(\p{Upper}+(?:[+-]\p{Upper}+)*)|(\p{Lower}+(?:[+-]\p{Lower}+)*)))\s*(:)?
         end: \s*(\))
-        name: meta.group.flag.trin
+        name: meta.group.flag.3n
         captures:
-          0: {name: punctuation.definition.group.flag.trin}
-          1: {name: punctuation.definition.group.flag.trin}
-          2: {name: constant.numeric.index.trin}
-          3: {name: keyword.control.recursion.trin}
-          4: {name: keyword.other.flag.trin}
-          5: {name: punctuation.separator.colon.trin}
+          0: {name: punctuation.definition.group.flag.3n}
+          1: {name: punctuation.definition.group.flag.3n}
+          2: {name: constant.numeric.index.3n}
+          3: {name: keyword.control.recursion.3n}
+          4: {name: keyword.other.flag.3n}
+          5: {name: punctuation.separator.colon.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Callouts
         begin: (\(\?)(?={)
         end: \s*(\))
-        name: meta.group.call-out.trin
+        name: meta.group.call-out.3n
         captures:
-          1: {name: punctuation.definition.group.call-out.trin}
+          1: {name: punctuation.definition.group.call-out.3n}
         patterns:
           - begin: (?<=\(\?)({)
             end: \s*(\})([<*>])?(?:(\[)(.*?)(\]))?
-            name: punctuation.definition.group.call-out.trin
+            name: punctuation.definition.group.call-out.3n
             captures:
-              1: {name: punctuation.definition.group.call-out.trin}
-              2: {name: keyword.operator.range.trin}
-              3: {name: punctuation.definition.tag.trin}
+              1: {name: punctuation.definition.group.call-out.3n}
+              2: {name: keyword.operator.range.3n}
+              3: {name: punctuation.definition.tag.3n}
               4: {patterns: [include: "#function-names"]}
-              5: {name: punctuation.definition.tag.trin}
+              5: {name: punctuation.definition.tag.3n}
             patterns:
               - include: $self
           - include: "#regexp-patterns"
       - comment: Atomic groups
         begin: (\(\?>)
         end: \s*(\))
-        name: meta.group.atomic.trin
+        name: meta.group.atomic.3n
         captures:
-          1: {name: punctuation.definition.group.atomic.trin}
+          1: {name: punctuation.definition.group.atomic.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Non-capturing groups
         begin: (\(\?:)
         end: \s*(\))
-        name: meta.group.non-capturing.trin
+        name: meta.group.non-capturing.3n
         captures:
-          1: {name: punctuation.definition.group.non-capturing.trin}
+          1: {name: punctuation.definition.group.non-capturing.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Branch groups
         begin: (\(\?)(?=[(|])
         end: \s*(\))
-        name: meta.group.branch.trin
+        name: meta.group.branch.3n
         captures:
-          1: {name: punctuation.definition.group.branch.trin}
+          1: {name: punctuation.definition.group.branch.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Atomic groups
         begin: (\(\?~)
         end: \s*(\))
-        name: meta.group.absent.trin
+        name: meta.group.absent.3n
         captures:
-          1: {name: punctuation.definition.group.absent.trin}
+          1: {name: punctuation.definition.group.absent.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Back-reference groups
         begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}][\w\p{Pd}]*)))(:)?
         end: \s*\)
-        name: meta.group.back-reference.trin
+        name: meta.group.back-reference.3n
         captures:
-          0: {name: punctuation.definition.group.back-reference.trin}
-          1: {name: punctuation.definition.group.back-reference.trin}
-          2: {name: constant.numeric.index.trin}
+          0: {name: punctuation.definition.group.back-reference.3n}
+          1: {name: punctuation.definition.group.back-reference.3n}
+          2: {name: constant.numeric.index.3n}
           3: {patterns: [include: "#variables"]}
-          4: {name: punctuation.separator.colon.trin}
+          4: {name: punctuation.separator.colon.3n}
         patterns:
           - include: "#regexp-patterns"
       - comment: Named groups (angle-brackets)
         begin: \(\?(?=<(?![!=]))
         end: \s*(\))
-        name: meta.group.named.trin
+        name: meta.group.named.3n
         captures:
-          0: {name: punctuation.definition.group.named.trin}
+          0: {name: punctuation.definition.group.named.3n}
         patterns:
           - begin: (?<=\(\?)(<)
             end: \s*(>)
-            name: constant.other.group.trin
+            name: constant.other.group.3n
             captures:
-              1: {name: punctuation.definition.group.named.trin}
+              1: {name: punctuation.definition.group.named.3n}
             patterns: *regex-back-references
           - include: "#regexp-patterns"
       - comment: Named groups (single or double-quotes)
         begin: \(\?(?=['"])
         end: \s*(\))
-        name: meta.group.named.trin
+        name: meta.group.named.3n
         captures:
-          0: {name: punctuation.definition.group.named.trin}
+          0: {name: punctuation.definition.group.named.3n}
         patterns:
           - begin: (?<=\(\?)(['"])
             end: \s*(\1)
-            name: constant.other.group.trin
+            name: constant.other.group.3n
             captures:
-              1: {name: punctuation.definition.group.named.trin}
+              1: {name: punctuation.definition.group.named.3n}
             patterns: *regex-back-references
           - include: "#regexp-patterns"
       - comment: Unnamed groups
         begin: (\()
         end: (\s*\))
-        name: meta.group.trin
+        name: meta.group.3n
         captures:
-          1: {name: punctuation.definition.group.trin}
+          1: {name: punctuation.definition.group.3n}
         patterns:
           - include: "#regexp-patterns"
 
   regexp-char-class:
     patterns:
       - match: \\(?=\s*$)
-        name: constant.character.escape.newline.trin
+        name: constant.character.escape.newline.3n
       - begin: (?i)\\p{
         end: \s*}
-        name: constant.other.character-class.unicode.trin
+        name: constant.other.character-class.unicode.3n
         patterns:
           - include: "#attribute-selectors"
       - begin: \\j{
         end: \s*}
-        name: constant.character.entity.named.trin
+        name: constant.character.entity.named.3n
         patterns:
           - include: "#named-char-notation"
       - include: "#numeric-escapes"
       - match: (?i)\\([cm][a-z]|r)
-        name: constant.character.control.trin
+        name: constant.character.control.3n
       - match: (?i)\\p(\w\w?)
-        name: constant.other.character-class.unicode.trin
+        name: constant.other.character-class.unicode.3n
       - match: (?i)\\[ci]({\w+})?
-        name: constant.other.character-class.xml.trin
+        name: constant.other.character-class.xml.3n
       - match: (?x)\\[a-z]
-        name: constant.other.character-class.trin
+        name: constant.other.character-class.3n
       - match: (?x)\\[A-Z]
-        name: constant.other.character-class.negated.trin
+        name: constant.other.character-class.negated.3n
       - match: (?i)\\n{[\w\s]+}
-        name: constant.character.escape.unicode.name.trin
+        name: constant.character.escape.unicode.name.3n
       - match: (?i)\\[a-z]
-        name: constant.character.escape.trin
+        name: constant.character.escape.3n
       - match: (?x)\\[\p{S}\p{P}]
-        name: constant.character.escape.symbol.trin
+        name: constant.character.escape.symbol.3n
       - match: (?x)\\\p{Z}
-        name: constant.character.escape.other.trin
+        name: constant.character.escape.other.3n
       - match: (?x)\\[\p{L}\p{N}\p{C}]
-        name: invalid.illegal.unknown-escape.trin
+        name: invalid.illegal.unknown-escape.3n
       - include: "#embedded"
 
   regexp-char-ops:
     patterns:
       - match: (?<!\|)\|\|(?!\|)
-        name: keyword.operator.union.trin
+        name: keyword.operator.union.3n
       - match: (?<!&)&&(?!&)
-        name: keyword.operator.intersection.trin
+        name: keyword.operator.intersection.3n
       - match: (?<!\^)\^\^(?!\^)
-        name: keyword.operator.symmetric.trin
+        name: keyword.operator.symmetric.3n
       - match: (?<!~)~~(?!~)
-        name: keyword.operator.negation.trin
+        name: keyword.operator.negation.3n
       - match: (?<!-)--(?!-)
-        name: keyword.operator.difference.trin
+        name: keyword.operator.difference.3n
       - match: (?<![^\\][\\\[])-(?![-\[\]])
-        name: keyword.operator.range.trin
+        name: keyword.operator.range.3n
       - match: ([^-\\\[\]]|\\.)(?<!-+)(?=(?<!\\)-)
-        name: constant.other.character-class.range.from.trin
+        name: constant.other.character-class.range.from.3n
       - match: (?<=[^\\]-)(?!-+)([^-\\\[\]]|\\.)
-        name: constant.other.character-class.range.to.trin
+        name: constant.other.character-class.range.to.3n
       - match: \\.
-        name: constant.character.escape.other.trin
+        name: constant.character.escape.other.3n
 
   regexp-char-set:
     patterns:
       - begin: (\[[.:=])
         end: (\])
-        name: constant.other.character-class.posix.trin
+        name: constant.other.character-class.posix.3n
         captures:
-          1: {name: punctuation.definition.character-class.posix.trin}
+          1: {name: punctuation.definition.character-class.posix.3n}
         patterns:
           - include: "#comments"
           - include: "#variables"
@@ -1477,9 +1488,9 @@ repository:
           - include: "#regexp-patterns"
       - begin: (\[[!~^])
         end: (\])
-        name: constant.other.character-class.negated.trin
+        name: constant.other.character-class.negated.3n
         captures:
-          1: {name: punctuation.definition.character-class.negated.trin}
+          1: {name: punctuation.definition.character-class.negated.3n}
         patterns:
           - include: "#comments"
           - include: "#regexp-char-class"
@@ -1487,9 +1498,9 @@ repository:
           - include: "#regexp-char-set"
       - begin: (\[)
         end: (\])
-        name: constant.other.character-class.trin
+        name: constant.other.character-class.3n
         captures:
-          1: {name: punctuation.definition.character-class.trin}
+          1: {name: punctuation.definition.character-class.3n}
         patterns:
           - include: "#comments"
           - include: "#regexp-char-class"
@@ -1499,46 +1510,45 @@ repository:
   attribute-selectors:
     patterns:
       - match: ","
-        name: punctuation.separator.sequence.trin
+        name: punctuation.separator.sequence.3n
       - include: "#comments"
       - include: "#strings-quoted"
       - match: (?xi)\b[is]\b(?=\)|\]|\}|&&|\|\||\^\^)
-        name: storage.modifier.ignore-case.trin
+        name: storage.modifier.ignore-case.3n
       - include: "#string-escapes"
       - match: "[~|^$!&*=]?="
-        name: keyword.operator.pattern.trin
+        name: keyword.operator.pattern.3n
       - match: ([&|^])\1|!
-        name: keyword.operator.logical.trin
+        name: keyword.operator.logical.3n
       - match: \b(i[ns])\b
-        name: keyword.operator.expression.$1.trin
+        name: keyword.operator.expression.$1.3n
       - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)([~|^$!&*=]?=)
         beginCaptures:
-          1: {name: entity.other.attribute-name.trin}
-          2: {name: keyword.operator.pattern.trin}
+          1: {name: entity.other.attribute-name.3n}
+          2: {name: keyword.operator.pattern.3n}
         end: (?=&&|\|\||\^\^|\s|,|:|;|'|"|`|\(|\)|\[|\]|\{|\})
-        name: string.unquoted.attribute-name.trin
+        name: string.unquoted.attribute-name.3n
         patterns:
           - include: "#html-properties"
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         captures:
-          1: {name: entity.other.attribute-name.trin}
-          2: {name: keyword.operator.pattern.trin}
+          1: {name: entity.other.attribute-name.3n}
+          2: {name: keyword.operator.pattern.3n}
       - include: $self
 
   # Markdown
 
   markdown:
-    comment: Only inline Markdown syntax would be supported, plus some enhancements
-      HAML, Textile and more.
-      Coming soon.
+    comment: Only inline Markdown syntax would be supported, plus some enhancements HAML, Textile and more. Coming soon.
     patterns: []
 
   # Special code blocks
+
   html-properties:
     patterns:
       - match: \s+
-        name: meta.var.expr.trin
+        name: meta.var.expr.3n
       - include: "#clauses"
       - include: "#declarations"
       - include: "#brackets"
@@ -1558,7 +1568,7 @@ repository:
     begin: \s*(\{)\s*
     end: \s*(\})
     captures:
-      1: {name: punctuation.definition.block.trin}
+      1: {name: punctuation.definition.block.3n}
     patterns:
       - include: "#style-properties"
   style-properties:
@@ -1569,10 +1579,10 @@ repository:
       - applyEndPatternLast: 1
         begin: \s*([\p{Pc}\p{L}][\w\p{Pd}]*)(:)?\s*
         beginCaptures:
-          1: {name: support.type.property-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: support.type.property-name.3n}
+          2: {name: punctuation.separator.key-value.3n}
         end: (?=.)|$
-        name: string.unquoted.trin
+        name: string.unquoted.3n
         patterns:
           - include: "#html-properties"
       - include: "#declarations"
@@ -1587,52 +1597,52 @@ repository:
     begin: \s*(\()\s*
     end: \s*(\))
     captures:
-      1: {name: punctuation.definition.parameters.trin}
+      1: {name: punctuation.definition.parameters.3n}
     patterns:
       - include: "#style-properties"
   style-attributes:
     begin: \s*(\[)\s*
     end: \s*(\])
     captures:
-      1: {name: punctuation.definition.selector.trin}
+      1: {name: punctuation.definition.selector.3n}
     patterns:
       - include: "#attribute-selectors"
   style-selectors:
     patterns:
       - include: "#format-language"
       - match: \s*(\@|\#|\$|\&|\*|\.|\:|::)\b
-        name: punctuation.definition.entity.trin
+        name: punctuation.definition.entity.3n
       - match: \s*(?<=\@)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: keyword.control.at-rule.trin
+        name: keyword.control.at-rule.3n
       - match: \s*(?<=\#)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.id.trin
+        name: entity.other.attribute-name.id.3n
       - match: \s*(?<=\&)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.name.type.anchor.trin
+        name: entity.name.type.anchor.3n
       - match: \s*(?<=\.)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.class.trin
+        name: entity.other.attribute-name.class.3n
       - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.pseudo-element.trin
+        name: entity.other.attribute-name.pseudo-element.3n
       - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.pseudo-element.trin
+        name: entity.other.attribute-name.pseudo-element.3n
 
   route-block:
     begin: \s*(\{)\s*
     end: \s*(\})
     captures:
-      1: {name: punctuation.definition.block.trin}
+      1: {name: punctuation.definition.block.3n}
     patterns:
       - begin: ^\s*([\p{Pc}\p{L}][\w\p{Pd}]*)(:)\s*
         beginCaptures:
-          1: {name: support.type.property-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: support.type.property-name.3n}
+          2: {name: punctuation.separator.key-value.3n}
         end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/|::|!:|\?:|\.|!\.|\?\.)
-        name: string.unquoted.trin
+        name: string.unquoted.3n
         patterns: [include: "#html-properties"]
       - comment: Attribute names
         match: ^\s*([\p{Pc}\p{L}][\w\p{Pd}]*)(:)?\s*
         captures:
-          1: {name: support.type.property-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: support.type.property-name.3n}
+          2: {name: punctuation.separator.key-value.3n}
       - include: "#html-properties"
       - include: source.css.scss#property_list
       - include: $self
@@ -1673,7 +1683,7 @@ repository:
   tag-names:
     patterns:
       - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-        name: entity.name.tag.namespace.trin
+        name: entity.name.tag.namespace.3n
       - match: |
           (?x)\b
           (?:
@@ -1683,43 +1693,43 @@ repository:
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )\b
         captures:
-          1: {name: entity.name.tag.style.trin}
-          2: {name: entity.name.tag.script.trin}
-          3: {name: entity.name.tag.trin support.class.component.trin}
-          4: {name: entity.name.tag.trin}
+          1: {name: entity.name.tag.style.3n}
+          2: {name: entity.name.tag.script.3n}
+          3: {name: entity.name.tag.3n support.class.component.3n}
+          4: {name: entity.name.tag.3n}
       - match: ":"
-        name: punctuation.separator.namespace.trin
+        name: punctuation.separator.namespace.3n
       - match: \.
-        name: punctuation.accessor.trin
+        name: punctuation.accessor.3n
 
   tag-element-name:
     comment: "Tags that end > are trapped in #tag-termination"
-    contentName: string.unquoted.html.trin
+    contentName: string.unquoted.html.3n
     begin: |
       (?x)\s*+(<)#start tag begin
       ([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.\p{Pd}][\p{Pc}\p{L}][\w\p{Pd}]*)*)#tag name
       (?=[\/>\s])(?![:])(?<!\.|:)
     end: \s*(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>
     beginCaptures:
-      1: {name: punctuation.definition.tag.trin}
+      1: {name: punctuation.definition.tag.3n}
       2: {patterns: [include: "#tag-names"]}
     endCaptures:
       1: {patterns: [include: "#tag-names"]}
-      2: {name: punctuation.definition.tag.trin}
-      3: {name: punctuation.definition.tag.trin}
-      4: {name: invalid.illegal.termination.trin}
+      2: {name: punctuation.definition.tag.3n}
+      3: {name: punctuation.definition.tag.3n}
+      4: {name: invalid.illegal.termination.3n}
     patterns:
       - include: "#tag-termination"
       - include: "#tag-attributes"
 
   tag-termination:
     comment: uses non consuming search for </ in </tag>
-    contentName: meta.jsx.children.trin
-    name: meta.jsx.children.trin
+    contentName: meta.jsx.children.3n
+    name: meta.jsx.children.3n
     begin: (>)
     end: (</)
     captures:
-      0: {name: punctuation.definition.tag.trin}
+      0: {name: punctuation.definition.tag.3n}
     patterns:
       - include: "#evaluated-code"
       - include: "#jsx-entities"
@@ -1739,59 +1749,59 @@ repository:
       - applyEndPatternLast: 1
         begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(=)\s*
         beginCaptures:
-          1: {name: entity.other.attribute-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: entity.other.attribute-name.3n}
+          2: {name: punctuation.separator.key-value.3n}
         end: (?=.)|$
-        name: string.unquoted.attribute-name.trin
+        name: string.unquoted.attribute-name.3n
         patterns:
           - include: "#html-properties"
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(=)?\s*
         captures:
-          1: {name: entity.other.attribute-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: entity.other.attribute-name.3n}
+          2: {name: punctuation.separator.key-value.3n}
 
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
     match: (?<!\*)\*(?!\*)
-    name: keyword.operator.spread.trin
+    name: keyword.operator.spread.3n
 
   jsx-entities:
     patterns:
       - captures: &jsx-entities
-          1: {name: punctuation.definition.entity.trin}
-          2: {name: punctuation.definition.entity.trin}
+          1: {name: punctuation.definition.entity.3n}
+          2: {name: punctuation.definition.entity.3n}
         match: (&)#\d+(;)
-        name: constant.character.escape.decimal.trin
+        name: constant.character.escape.decimal.3n
       - captures: *jsx-entities
         match: (?i)(&)#x\h+(;)
-        name: constant.character.escape.hexadecimal.trin
+        name: constant.character.escape.hexadecimal.3n
       - captures: *jsx-entities
         match: (?i)(&)#b[01]+(;)
-        name: constant.character.escape.binary.trin
+        name: constant.character.escape.binary.3n
       - captures: *jsx-entities
         match: (?i)(&)#q[0-3]\h+(;)
-        name: constant.character.escape.quaternary.trin
+        name: constant.character.escape.quaternary.3n
       - captures: *jsx-entities
         match: (?i)(&)#s[0-5]\h+(;)
-        name: constant.character.escape.senary.trin
+        name: constant.character.escape.senary.3n
       - captures: *jsx-entities
         match: (?i)(&)#o[0-7]\h+(;)
-        name: constant.character.escape.octal.trin
+        name: constant.character.escape.octal.3n
       - captures: *jsx-entities
         match: (?i)(&)#o[0-7]\h+(;)
-        name: constant.character.escape.octal.trin
+        name: constant.character.escape.octal.3n
       - captures: *jsx-entities
         match: (?i)(&)#z[\dab]\h+(;)
-        name: constant.character.escape.duodecimal.trin
+        name: constant.character.escape.duodecimal.3n
       - captures: *jsx-entities
         match: (&)(?:\\.|[^(){}\[\]\s;])+?(;)
         name: constant.character.entity.xml
       - match: '&(?=\w*;)'
-        name: invalid.illegal.ambiguous-ampersand.trin
+        name: invalid.illegal.ambiguous-ampersand.3n
       - comment: Entity with & and invalid name
         match: '&\s*+;'
-        name: invalid.illegal.bad-ampersand.trin
+        name: invalid.illegal.bad-ampersand.3n
 
   # Comments
 
@@ -1805,20 +1815,20 @@ repository:
     patterns:
       - begin: \s*((/\+\+))
         end: (\s*(\+/))
-        name: comment.block.documentation.nested.trin
+        name: comment.block.documentation.nested.3n
         captures:
-          1: {name: comment.block.documentation.trin}
-          2: {name: punctuation.definition.comment.trin}
+          1: {name: comment.block.documentation.3n}
+          2: {name: punctuation.definition.comment.3n}
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
           - include: "#nested-jsdoc"
       - begin: \s*((/\+))
         end: (\s*(\+/))
-        name: comment.block.nested.trin
+        name: comment.block.nested.3n
         captures:
-          1: {name: comment.block.nested.trin}
-          2: {name: punctuation.definition.comment.trin}
+          1: {name: comment.block.nested.3n}
+          2: {name: punctuation.definition.comment.3n}
         patterns:
           - include: text.html.markdown#inline
           - include: "#nested"
@@ -1827,19 +1837,19 @@ repository:
     patterns:
       - begin: \s*((/\*\*))
         end: (\s*(\*/))
-        name: comment.block.documentation.trin
+        name: comment.block.documentation.3n
         captures:
-          1: {name: comment.block.documentation.trin}
-          2: {name: punctuation.definition.comment.trin}
+          1: {name: comment.block.documentation.3n}
+          2: {name: punctuation.definition.comment.3n}
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
       - begin: \s*((/\*))
         end: (\s*(\*/))
-        name: comment.block.trin
+        name: comment.block.3n
         captures:
-          1: {name: comment.block.trin}
-          2: {name: punctuation.definition.comment.trin}
+          1: {name: comment.block.3n}
+          2: {name: punctuation.definition.comment.3n}
         patterns:
           - include: text.html.markdown#inline
 
@@ -1847,34 +1857,34 @@ repository:
     patterns:
       - begin: ((^\s*)|\s*)((///))
         end: \s*$
-        name: comment.line.documentation.trin
+        name: comment.line.documentation.3n
         beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.documentation.trin}
-          4: {name: punctuation.definition.comment.trin}
+          2: {name: punctuation.whitespace.comment.leading.3n}
+          3: {name: comment.line.documentation.3n}
+          4: {name: punctuation.definition.comment.3n}
         endCaptures:
-          0: {name: comment.line.documentation.trin}
+          0: {name: comment.line.documentation.3n}
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
       - begin: ((^\s*)|\s*)((//))
         end: \s*$
-        name: comment.line.number-sign.trin
+        name: comment.line.number-sign.3n
         beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.double-slash.trin}
-          4: {name: punctuation.definition.comment.trin}
+          2: {name: punctuation.whitespace.comment.leading.3n}
+          3: {name: comment.line.double-slash.3n}
+          4: {name: punctuation.definition.comment.3n}
         endCaptures:
-          0: {name: comment.line.number-sign.trin}
+          0: {name: comment.line.number-sign.3n}
         patterns:
           - include: text.html.markdown#inline
 
   nested-jsdoc:
     begin: (/\+\+?)\s*
     end: \s*(\+/)
-    name: comment.block.documentation.nested.trin
+    name: comment.block.documentation.nested.3n
     captures:
-      1: {name: punctuation.definition.comment.trin}
+      1: {name: punctuation.definition.comment.3n}
     patterns:
       - include: "#jsdoc"
       - include: text.html.markdown#inline
@@ -1883,9 +1893,9 @@ repository:
   nested:
     begin: (/\+)\s*
     end: \s*(\+/)
-    name: comment.block.nested.trin
+    name: comment.block.nested.3n
     captures:
-      1: {name: punctuation.definition.comment.trin}
+      1: {name: punctuation.definition.comment.3n}
     patterns:
       - include: text.html.markdown#inline
       - include: "#nested"
@@ -1904,9 +1914,7 @@ repository:
         match: (?<!\w)@(add|api|body|codeend|codestart|demo|download|group|hide|iframe|image|inherits|option|outline|page|parent|signature|tag)\b
         name: storage.type.class.jsdoc
       - comment: additional jsdoc keywords
-        match:
-          (?<!\w)@(accessor|alternateClassName|aside|cfg|chainable|docauthor|evented|experimental|ftype|hide|inheritable|localdoc|markdown|mixins|new|override|preventable|ptype|removed|scss
-          mixin|object|template|uses|xtype)\b
+        match: (?<!\w)@(accessor|alternateClassName|aside|cfg|chainable|docauthor|evented|experimental|ftype|hide|inheritable|localdoc|markdown|mixins|new|override|preventable|ptype|removed|scss mixin|object|template|uses|xtype)\b
         name: storage.type.class.jsdoc
 
     repository:
@@ -2128,17 +2136,17 @@ repository:
   placeholder-variables:
     patterns:
       - match: (?i)\s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.optional.trin
+        name: variable.parameter.optional.3n
       - match: (?i)\s*\*[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.spread.trin
+        name: variable.parameter.spread.3n
       - match: (?i)\s*[&~][\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.name.trin
+        name: variable.parameter.name.3n
       - match: (?i)\s*\%[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.reference.trin
+        name: variable.parameter.reference.3n
       - match: (?i)\s*\$[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.other.trin
+        name: variable.parameter.other.3n
       - match: (?i)\s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.trin
+        name: variable.parameter.3n
 
   variables:
     comment: |
@@ -2177,18 +2185,18 @@ repository:
       )
       \b\s*
     captures:
-      1: {name: variable.other.index.trin}
-      2: {name: variable.other.constant.property.trin}
-      3: {name: variable.other.property.static.trin}
-      4: {name: variable.other.property.trin}
-      5: {name: variable.other.global.trin}
-      6: {name: variable.other.constant.object.trin}
-      7: {name: variable.other.conditional.trin}
-      8: {name: variable.other.object.trin}
-      9: {name: variable.other.dollar.trin}
-      10: {name: variable.other.constant.trin}
-      11: {name: variable.other.class.trin}
-      12: {name: variable.other.readwrite.trin}
+      1: {name: variable.other.index.3n}
+      2: {name: variable.other.constant.property.3n}
+      3: {name: variable.other.property.static.3n}
+      4: {name: variable.other.property.3n}
+      5: {name: variable.other.global.3n}
+      6: {name: variable.other.constant.object.3n}
+      7: {name: variable.other.conditional.3n}
+      8: {name: variable.other.object.3n}
+      9: {name: variable.other.dollar.3n}
+      10: {name: variable.other.constant.3n}
+      11: {name: variable.other.class.3n}
+      12: {name: variable.other.readwrite.3n}
 
   # Operators
 
@@ -2203,7 +2211,7 @@ repository:
         patterns:
           - comment: augmented assignment += -= *= /= etc
             match: (?<=^|[\s'"`({\[])([\p{S}\p{P}&&[^!:~.<=>,;'"`(){}\[\]\p{Pc}]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=)(?=$|[\s'"`)}\]])
-            name: keyword.operator.assignment.augmented.trin
+            name: keyword.operator.assignment.augmented.3n
 
           - comment: |
               BUILT-IN OPERATORS
@@ -2229,26 +2237,26 @@ repository:
               19: inverse ternary operator !:
               20: infix function call $:
             captures:
-              1: {name: keyword.operator.assignment.trin}
-              2: {name: keyword.operator.arithmetic.trin}
-              3: {name: keyword.operator.successor.trin}
-              4: {name: keyword.operator.logical.trin}
-              5: {name: keyword.operator.bitwise.trin}
-              6: {name: keyword.operator.bitwise.shift.trin}
-              7: {name: keyword.operator.pipeline.trin}
-              8: {name: keyword.operator.compose.trin}
-              9: {name: keyword.operator.class.trin}
-              10: {name: keyword.operator.relational.trin}
-              11: {name: keyword.operator.regexp.trin}
-              12: {name: keyword.operator.comparison.trin}
-              13: {name: keyword.operator.similarity.trin}
-              14: {name: keyword.operator.arrow.fat.trin}
-              15: {name: keyword.operator.arrow.skinny.trin}
-              16: {name: keyword.operator.null-coalescing.trin}
-              17: {name: keyword.operator.coalescing.trin}
-              18: {name: keyword.operator.conditional.trin}
-              19: {name: keyword.operator.ternary.trin}
-              20: {name: keyword.operator.macro.dollar.trin}
+              1: {name: keyword.operator.assignment.3n}
+              2: {name: keyword.operator.arithmetic.3n}
+              3: {name: keyword.operator.successor.3n}
+              4: {name: keyword.operator.logical.3n}
+              5: {name: keyword.operator.bitwise.3n}
+              6: {name: keyword.operator.bitwise.shift.3n}
+              7: {name: keyword.operator.pipeline.3n}
+              8: {name: keyword.operator.compose.3n}
+              9: {name: keyword.operator.class.3n}
+              10: {name: keyword.operator.relational.3n}
+              11: {name: keyword.operator.regexp.3n}
+              12: {name: keyword.operator.comparison.3n}
+              13: {name: keyword.operator.similarity.3n}
+              14: {name: keyword.operator.arrow.fat.3n}
+              15: {name: keyword.operator.arrow.skinny.3n}
+              16: {name: keyword.operator.null-coalescing.3n}
+              17: {name: keyword.operator.coalescing.3n}
+              18: {name: keyword.operator.conditional.3n}
+              19: {name: keyword.operator.ternary.3n}
+              20: {name: keyword.operator.macro.dollar.3n}
             match: |
               (?x)
               (?<=^|[\s'"`({\[])# opening
@@ -2294,17 +2302,17 @@ repository:
               10: custom ASCII (between \x80 and \xff)
               11: custom infix operators (all other chars)
             captures:
-              1: {name: keyword.operator.bitwise.custom.trin}
-              2: {name: keyword.operator.arithmetic.custom.trin}
-              3: {name: keyword.operator.prototype.custom.trin}
-              4: {name: keyword.operator.accessor.custom.trin}
-              5: {name: keyword.operator.comparison.custom.trin}
-              6: {name: keyword.operator.relational.custom.trin}
-              7: {name: keyword.operator.private.custom.trin}
-              8: {name: keyword.operator.math.custom.trin}
-              9: {name: keyword.operator.currency.custom.trin}
-              10: {name: keyword.operator.ascii.custom.trin}
-              11: {name: keyword.operator.infix.custom.trin}
+              1: {name: keyword.operator.bitwise.custom.3n}
+              2: {name: keyword.operator.arithmetic.custom.3n}
+              3: {name: keyword.operator.prototype.custom.3n}
+              4: {name: keyword.operator.accessor.custom.3n}
+              5: {name: keyword.operator.comparison.custom.3n}
+              6: {name: keyword.operator.relational.custom.3n}
+              7: {name: keyword.operator.private.custom.3n}
+              8: {name: keyword.operator.math.custom.3n}
+              9: {name: keyword.operator.currency.custom.3n}
+              10: {name: keyword.operator.ascii.custom.3n}
+              11: {name: keyword.operator.infix.custom.3n}
             match: |
               (?x)
               (?<=^|[\s'"`({\[])# opening
@@ -2338,11 +2346,11 @@ repository:
               )
               (?=\b|['"`({\[])# opening
             captures:
-              1: {name: keyword.operator.range.trin}
-              2: {name: keyword.operator.optional.trin}
-              3: {name: keyword.operator.assert.trin}
-              4: {name: keyword.operator.accessor.trin}
-              5: {name: keyword.operator.primary.trin}
+              1: {name: keyword.operator.range.3n}
+              2: {name: keyword.operator.optional.3n}
+              3: {name: keyword.operator.assert.3n}
+              4: {name: keyword.operator.accessor.3n}
+              5: {name: keyword.operator.primary.3n}
 
           - &prefix-operators
             comment: Prefix operators
@@ -2365,23 +2373,23 @@ repository:
               |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
               (?=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
               [\w({\['"`])
-            name: keyword.operator.prefix.trin
+            name: keyword.operator.prefix.3n
             captures:
-              1: {name: keyword.operator.module.all.trin}
-              2: {name: keyword.operator.increment.trin}
-              3: {name: keyword.operator.decrement.trin}
-              4: {name: keyword.operator.intersection.trin}
-              5: {name: keyword.operator.union.trin}
-              6: {name: keyword.operator.symmetric.trin}
-              7: {name: keyword.operator.logical.trin}
-              8: {name: keyword.operator.private.trin}
-              9: {name: keyword.operator.decorator.trin}
-              10: {name: keyword.operator.bitwise.not.trin}
-              11: {name: keyword.operator.existential.trin}
-              12: {name: keyword.operator.assignment.trin}
-              13: {name: keyword.operator.pipeline.trin}
-              14: {name: keyword.operator.private.trin}
-              15: {name: keyword.operator.prefix.trin}
+              1: {name: keyword.operator.module.all.3n}
+              2: {name: keyword.operator.increment.3n}
+              3: {name: keyword.operator.decrement.3n}
+              4: {name: keyword.operator.intersection.3n}
+              5: {name: keyword.operator.union.3n}
+              6: {name: keyword.operator.symmetric.3n}
+              7: {name: keyword.operator.logical.3n}
+              8: {name: keyword.operator.private.3n}
+              9: {name: keyword.operator.decorator.3n}
+              10: {name: keyword.operator.bitwise.not.3n}
+              11: {name: keyword.operator.existential.3n}
+              12: {name: keyword.operator.assignment.3n}
+              13: {name: keyword.operator.pipeline.3n}
+              14: {name: keyword.operator.private.3n}
+              15: {name: keyword.operator.prefix.3n}
 
           - &suffix-operators
             comment: Suffix operators
@@ -2404,23 +2412,23 @@ repository:
               |(\$)#13
               |(\#)#14
               |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
-            name: keyword.operator.suffix.trin
+            name: keyword.operator.suffix.3n
             captures:
-              1: {name: keyword.operator.module.all.trin}
-              2: {name: keyword.operator.increment.trin}
-              3: {name: keyword.operator.decrement.trin}
-              4: {name: keyword.operator.intersection.trin}
-              5: {name: keyword.operator.union.trin}
-              6: {name: keyword.operator.symmetric.trin}
-              7: {name: keyword.operator.assert.trin}
-              8: {name: keyword.operator.private.trin}
-              9: {name: keyword.operator.decorator.trin}
-              10: {name: keyword.operator.bitwise.trin}
-              11: {name: keyword.operator.optional.trin}
-              12: {name: keyword.operator.assignment.trin}
-              13: {name: keyword.operator.pipeline.trin}
-              14: {name: keyword.operator.private.trin}
-              15: {name: keyword.operator.suffix.trin}
+              1: {name: keyword.operator.module.all.3n}
+              2: {name: keyword.operator.increment.3n}
+              3: {name: keyword.operator.decrement.3n}
+              4: {name: keyword.operator.intersection.3n}
+              5: {name: keyword.operator.union.3n}
+              6: {name: keyword.operator.symmetric.3n}
+              7: {name: keyword.operator.assert.3n}
+              8: {name: keyword.operator.private.3n}
+              9: {name: keyword.operator.decorator.3n}
+              10: {name: keyword.operator.bitwise.3n}
+              11: {name: keyword.operator.optional.3n}
+              12: {name: keyword.operator.assignment.3n}
+              13: {name: keyword.operator.pipeline.3n}
+              14: {name: keyword.operator.private.3n}
+              15: {name: keyword.operator.suffix.3n}
 
       pipeline-operator:
         patterns:
@@ -2453,8 +2461,8 @@ repository:
               )\s*([^(]|$|;))
             end: (?=.)|$
             beginCaptures:
-              1: {name: keyword.operator.compose.trin}
-              2: {name: keyword.operator.pipeline.trin}
+              1: {name: keyword.operator.compose.3n}
+              2: {name: keyword.operator.pipeline.3n}
             patterns:
               - match: |
                   (?x)\s*\b
@@ -2501,18 +2509,18 @@ repository:
                   )
                   )\b
                 captures:
-                  1: {name: variable.other.global.trin}
-                  2: {name: variable.other.constant.object.trin}
-                  3: {name: variable.other.conditional.trin}
-                  4: {name: variable.other.object.trin}
-                  5: {name: entity.name.tag.trin}
-                  6: {name: entity.name.tag.trin support.class.component.trin}
-                  7: {name: entity.name.class.builtin.trin}
-                  8: {name: entity.name.function.method.trin}
-                  9: {name: entity.name.function.tagged-template.trin}
-                  10: {name: entity.name.type.trin}
-                  11: {name: entity.name.class.trin}
-                  12: {name: entity.name.function.trin}
+                  1: {name: variable.other.global.3n}
+                  2: {name: variable.other.constant.object.3n}
+                  3: {name: variable.other.conditional.3n}
+                  4: {name: variable.other.object.3n}
+                  5: {name: entity.name.tag.3n}
+                  6: {name: entity.name.tag.3n support.class.component.3n}
+                  7: {name: entity.name.class.builtin.3n}
+                  8: {name: entity.name.function.method.3n}
+                  9: {name: entity.name.function.tagged-template.3n}
+                  10: {name: entity.name.type.3n}
+                  11: {name: entity.name.class.3n}
+                  12: {name: entity.name.function.3n}
               - *primary-operators
 
       special-operators:
@@ -2521,7 +2529,7 @@ repository:
           - begin: (?<=\s)(\?)(?=\s)
             end: (?<=^|\s)(:)(?=\s|$)
             captures:
-              1: {name: keyword.operator.conditional.trin}
+              1: {name: keyword.operator.conditional.3n}
             patterns:
               - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
                 end: \s*(?=:\s|$)
@@ -2532,7 +2540,7 @@ repository:
           - begin: (?<=\s)(\!)(?=\s)
             end: (?<=^|\s)(:)(?=\s|$)
             captures:
-              1: {name: keyword.operator.ternary.trin}
+              1: {name: keyword.operator.ternary.3n}
             patterns:
               - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
                 end: \s*(?=:\s|$)
@@ -2543,11 +2551,11 @@ repository:
           - begin: (?<=\s)(\$)(?=\s)
             end: (?<=^|\s)(:)(?=\s|$)
             captures:
-              1: {name: keyword.operator.macro.dollar.trin}
+              1: {name: keyword.operator.macro.dollar.3n}
             patterns:
               - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
                 end: \s*(?=:\s|$)
-                name: entity.name.function.trin
+                name: entity.name.function.3n
               - include: $self
 
   # Types
@@ -2557,7 +2565,7 @@ repository:
     begin: (:)(?=\s|$)
     end: (?=.)|$
     beginCaptures:
-      1: {name: punctuation.definition.annotation.trin}
+      1: {name: punctuation.definition.annotation.3n}
     patterns:
       - include: "#types"
 
@@ -2573,15 +2581,15 @@ repository:
           punctuation:
             patterns:
               - match: ","
-                name: punctuation.separator.mapping.trin
+                name: punctuation.separator.mapping.3n
               - match: (?<!\s):(?!:)
-                name: punctuation.separator.key-value.trin
+                name: punctuation.separator.key-value.3n
 
         patterns:
           - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.mapping.trin}
+              1: {name: punctuation.definition.mapping.3n}
             patterns:
               - include: "#labels"
               - include: "#punctuation"
@@ -2590,7 +2598,7 @@ repository:
           - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.dictionary.trin}
+              1: {name: punctuation.definition.dictionary.3n}
             patterns:
               - include: "#labels"
               - include: "#punctuation"
@@ -2602,12 +2610,12 @@ repository:
           punctuation:
             patterns:
               - match: ","
-                name: punctuation.separator.arguments.trin
+                name: punctuation.separator.arguments.3n
         patterns:
           - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.parameters.trin}
+              1: {name: punctuation.definition.parameters.3n}
             patterns:
               - include: "#punctuation"
               - include: "#function-params"
@@ -2616,7 +2624,7 @@ repository:
           - begin: \s*(\#?\()\s*
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.trin}
+              1: {name: punctuation.definition.expression.3n}
             patterns:
               - include: "#punctuation"
               - include: "#types"
@@ -2628,14 +2636,14 @@ repository:
             patterns:
               - match: (?<![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)
                 captures:
-                  1: {name: punctuation.separator.slice.trin}
+                  1: {name: punctuation.separator.slice.3n}
               - match: ","
-                name: punctuation.separator.sequence.trin
+                name: punctuation.separator.sequence.3n
         patterns:
           - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
             end: \s*(\])
             captures:
-              1: {name: punctuation.definition.attribute-selector.trin}
+              1: {name: punctuation.definition.attribute-selector.3n}
             patterns:
               - include: "#punctuation"
               - include: "#types"
@@ -2643,19 +2651,19 @@ repository:
           - begin: \s*(\#\[)\s*
             end: \s*(\])
             captures:
-              1: {name: punctuation.definition.sequence.trin}
+              1: {name: punctuation.definition.sequence.3n}
             patterns:
               - match: ","
-                name: punctuation.separator.sequence.trin
+                name: punctuation.separator.sequence.3n
               - include: "#types"
               - include: $self
           - begin: \s*(\[)\s*
             end: \s*(\])
             captures:
-              1: {name: punctuation.definition.array.trin}
+              1: {name: punctuation.definition.array.3n}
             patterns:
               - match: ","
-                name: punctuation.separator.sequence.trin
+                name: punctuation.separator.sequence.3n
               - include: "#types"
               - include: $self
 
@@ -2664,28 +2672,28 @@ repository:
     patterns:
       - comment: single quoted raw string
         begin: (?<!'+)\s*('''+)
-        contentName: string.quoted.single.trin
+        contentName: string.quoted.single.3n
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.3n}
         patterns:
           - include: "#type-embedded-raw"
       - comment: simple single quoted raw string
         begin: (?<!'+)\s*(')
-        contentName: string.quoted.single.trin
+        contentName: string.quoted.single.3n
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.3n}
         patterns:
           - match: "''"
-            name: constant.character.escape.trin
+            name: constant.character.escape.3n
           - include: "#type-embedded-raw"
       - comment: double quoted standard string
         begin: (?<!"+)\s*("""+|")
-        contentName: string.quoted.double.trin
+        contentName: string.quoted.double.3n
         end: \s*((\1)(?!"+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.3n}
         patterns:
           - include: "#string-escapes"
           - include: "#type-embedded"
@@ -2693,14 +2701,14 @@ repository:
   type-embedded-raw:
     patterns:
       - match: \$\$|%%|##
-        name: constant.character.escape.trin
+        name: constant.character.escape.3n
       - match: (\#)([+-]?\d+)
         captures:
-          1: {name: punctuation.definition.anchor.trin}
-          2: {name: constant.numeric.decimal.trin}
+          1: {name: punctuation.definition.anchor.3n}
+          2: {name: constant.numeric.decimal.3n}
       - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
-          1: {name: punctuation.definition.anchor.trin}
+          1: {name: punctuation.definition.anchor.3n}
           2: {patterns: [include: "#placeholder-variables"]}
       - include: "#format-specifier"
       - match: |
@@ -2712,13 +2720,13 @@ repository:
           (?:(?:[\p{Pc}\p{L}][\w\p{Pd}]*)))*
           )# variable
         captures:
-          1: {name: punctuation.section.embedded.trin}
+          1: {name: punctuation.section.embedded.3n}
           2: {patterns: [{include: "#types"}, {include: "#self"}]}
       - begin: (\${)\s*
         end: (})
-        name: entity.quasi.element.trin
+        name: entity.quasi.element.3n
         captures:
-          1: {name: punctuation.section.embedded.trin}
+          1: {name: punctuation.section.embedded.3n}
         patterns:
           - include: "#types"
           - include: "#self"
@@ -2727,11 +2735,11 @@ repository:
     patterns:
       - match: (\#)([+-]?\d+)
         captures:
-          1: {name: punctuation.definition.anchor.trin}
-          2: {name: constant.numeric.decimal.trin}
+          1: {name: punctuation.definition.anchor.3n}
+          2: {name: constant.numeric.decimal.3n}
       - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
-          1: {name: punctuation.definition.anchor.trin}
+          1: {name: punctuation.definition.anchor.3n}
           2: {patterns: [include: "#placeholder-variables"]}
       - include: "#format-specifier"
       - match: |
@@ -2743,13 +2751,13 @@ repository:
           (?:(?:[\p{Pc}\p{L}][\w\p{Pd}]*)))*
           )# variable
         captures:
-          1: {name: punctuation.section.embedded.trin}
+          1: {name: punctuation.section.embedded.3n}
           2: {patterns: [{include: "#types"}, {include: "#self"}]}
       - begin: (\${)\s*
         end: (})
-        name: entity.quasi.element.trin
+        name: entity.quasi.element.3n
         captures:
-          1: {name: punctuation.section.embedded.trin}
+          1: {name: punctuation.section.embedded.3n}
         patterns:
           - include: "#types"
           - include: "#self"
@@ -2757,15 +2765,15 @@ repository:
   type-keywords:
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)(?![\w\p{Pd}])\s*
-        name: storage.type.extends.trin
+        name: storage.type.extends.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(impl)(?![\w\p{Pd}])\s*
-        name: storage.type.implements.trin
+        name: storage.type.implements.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(typeof|nameof|sizeof|keyof|pairof|infer|as|is)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.$1.trin
+        name: keyword.operator.expression.$1.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(instof)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.instanceof.trin
+        name: keyword.operator.expression.instanceof.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(valof)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.valueof.trin
+        name: keyword.operator.expression.valueof.3n
 
   type-operators:
     patterns:
@@ -2781,10 +2789,10 @@ repository:
           )
           (?=\b|['"`\\({\[])
         captures:
-          1: {name: keyword.operator.range.trin}
-          2: {name: keyword.operator.optional.trin}
-          3: {name: keyword.operator.assert.trin}
-          4: {name: keyword.operator.accessor.trin}
+          1: {name: keyword.operator.range.3n}
+          2: {name: keyword.operator.optional.3n}
+          3: {name: keyword.operator.assert.3n}
+          4: {name: keyword.operator.accessor.3n}
 
       - comment: type operators
         match: |
@@ -2807,27 +2815,27 @@ repository:
           )
           (?=$|[({\[\w'"\s])
         captures:
-          1: {name: keyword.operator.sum.trin}
-          2: {name: keyword.operator.difference.trin}
-          3: {name: keyword.operator.product.trin}
-          4: {name: keyword.operator.quotient.trin}
-          5: {name: keyword.operator.remainder.trin}
-          6: {name: keyword.operator.only.trin}
-          7: {name: keyword.operator.maybe.trin}
-          8: {name: keyword.operator.intersection.trin}
-          9: {name: keyword.operator.union.trin}
-          10: {name: keyword.operator.symmetric.trin}
-          11: {name: keyword.operator.negation.trin}
-          12: {name: keyword.operator.macro.dollar.trin}
-          13: {name: keyword.operator.private.trin}
-          14: {name: keyword.operator.class.trin}
+          1: {name: keyword.operator.sum.3n}
+          2: {name: keyword.operator.difference.3n}
+          3: {name: keyword.operator.product.3n}
+          4: {name: keyword.operator.quotient.3n}
+          5: {name: keyword.operator.remainder.3n}
+          6: {name: keyword.operator.only.3n}
+          7: {name: keyword.operator.maybe.3n}
+          8: {name: keyword.operator.intersection.3n}
+          9: {name: keyword.operator.union.3n}
+          10: {name: keyword.operator.symmetric.3n}
+          11: {name: keyword.operator.negation.3n}
+          12: {name: keyword.operator.macro.dollar.3n}
+          13: {name: keyword.operator.private.3n}
+          14: {name: keyword.operator.class.3n}
 
   types:
     patterns:
       - match: \s*(==?>|--?>|~~?>)
-        name: keyword.operator.type.function.trin
+        name: keyword.operator.type.function.3n
       - match: \s*(<==|<--?|<~~?)
-        name: keyword.operator.type.channel.trin
+        name: keyword.operator.type.channel.3n
       - include: "#params-clause"
       - include: "#type-keywords"
       - include: "#type-names"
@@ -2841,7 +2849,7 @@ repository:
     begin: \s*(\()
     end: \s*(\))
     captures:
-      1: {name: punctuation.definition.parameters.trin}
+      1: {name: punctuation.definition.parameters.3n}
     patterns: &function-params
       - include: "#clauses"
       - include: "#constants"
@@ -2851,50 +2859,44 @@ repository:
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
           \s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:
-          [,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.optional.trin
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+        name: variable.parameter.optional.3n
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
           \s*\*[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:
-          [,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.spread.trin
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+        name: variable.parameter.spread.3n
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
           \s*\&[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:
-          [,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.name.trin
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+        name: variable.parameter.name.3n
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
           \s*\%[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:
-          [,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.reference.trin
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+        name: variable.parameter.reference.3n
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
           \s*\$[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:
-          [,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.other.trin
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+        name: variable.parameter.other.3n
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,])
           \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:
-          [,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.trin
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+(?::?=\s+|[?*&~%$]?[\p{Pc}\p{L}]))
+        name: variable.parameter.3n
       - include: "$self"
 
   custom-types:
@@ -2953,18 +2955,18 @@ repository:
       )
       )\b
     captures: &custom-types
-      1: {name: entity.name.module.trin}
-      2: {name: entity.name.tag.trin}
-      3: {name: entity.name.namespace.trin}
-      4: {name: entity.name.interface.trin}
-      5: {name: entity.name.tag.block.trin}
-      6: {name: entity.name.tag.script.trin}
-      7: {name: entity.name.tag.style.trin}
-      8: {name: entity.name.tag.inline.trin}
-      9: {name: entity.name.label.trin}
-      10: {name: entity.name.project.trin}
-      11: {name: entity.name.class.trin}
-      12: {name: entity.name.type.trin}
+      1: {name: entity.name.module.3n}
+      2: {name: entity.name.tag.3n}
+      3: {name: entity.name.namespace.3n}
+      4: {name: entity.name.interface.3n}
+      5: {name: entity.name.tag.block.3n}
+      6: {name: entity.name.tag.script.3n}
+      7: {name: entity.name.tag.style.3n}
+      8: {name: entity.name.tag.inline.3n}
+      9: {name: entity.name.label.3n}
+      10: {name: entity.name.project.3n}
+      11: {name: entity.name.class.3n}
+      12: {name: entity.name.type.3n}
 
   # Clauses and Keywords
 
@@ -2983,7 +2985,7 @@ repository:
       - include: "#round-brackets"
       - include: "#type-annotation"
       - match: \s*(?<!\*)\*(?!\*)\s*
-        name: keyword.generator.asterisk.trin
+        name: keyword.generator.asterisk.3n
       - include: "#type-operators"
       - include: "#operators"
       - include: "#literals"
@@ -2991,7 +2993,7 @@ repository:
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]))
         end: (?=.)|$
         beginCaptures:
-          1: {name: punctuation.definition.annotation.trin}
+          1: {name: punctuation.definition.annotation.3n}
         patterns: [include: "#types"]
       - include: "#comments"
       - include: "#brackets"
@@ -3037,7 +3039,7 @@ repository:
         patterns: &modifier-keywords
           - &decorators
             match: (?x)\s*@[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
-            name: entity.name.class.decorator.trin
+            name: entity.name.class.decorator.3n
           - &modifiers
             match: |
               (?x)\s*
@@ -3057,104 +3059,104 @@ repository:
               )
               )(?![\w\p{Pd}])\s*
             captures:
-              1: {name: storage.modifier.trin}
-              2: {name: storage.type.accessor.trin}
-              3: {name: storage.type.property.trin}
+              1: {name: storage.modifier.3n}
+              2: {name: storage.type.accessor.3n}
+              3: {name: storage.type.property.3n}
 
   declaration-keywords:
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)(?![\w\p{Pd}])\s*
-        name: keyword.other.declare.trin
+        name: keyword.other.declare.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)(?![\w\p{Pd}])\s*
-        name: storage.type.trin
+        name: storage.type.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?![\w\p{Pd}])\s*
-        name: storage.type.style.trin
+        name: storage.type.style.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)(?![\w\p{Pd}])\s*
-        name: storage.type.function.trin
+        name: storage.type.function.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?![\w\p{Pd}])\s*
-        name: storage.type.method.trin
+        name: storage.type.method.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)(?![\w\p{Pd}])\s*
-        name: storage.type.class.trin
+        name: storage.type.class.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)(?![\w\p{Pd}])\s*
-        name: storage.type.enum.trin
+        name: storage.type.enum.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)(?![\w\p{Pd}])\s*
-        name: storage.type.module.trin
+        name: storage.type.module.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pack)(?![\w\p{Pd}])\s*
-        name: storage.type.package.trin
+        name: storage.type.package.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inter)(?![\w\p{Pd}])\s*
-        name: storage.type.interface.trin
+        name: storage.type.interface.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(space)(?![\w\p{Pd}])\s*
-        name: storage.type.namespace.trin
+        name: storage.type.namespace.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)(?![\w\p{Pd}])\s*
-        name: storage.type.structure.trin
+        name: storage.type.structure.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)(?![\w\p{Pd}])\s*
-        name: storage.type.object.trin
+        name: storage.type.object.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)(?![\w\p{Pd}])\s*
-        name: storage.type.data.trin
+        name: storage.type.data.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)(?![\w\p{Pd}])\s*
-        name: storage.type.trait.trin
+        name: storage.type.trait.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)(?![\w\p{Pd}])\s*
-        name: storage.type.procedure.trin
+        name: storage.type.procedure.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)(?![\w\p{Pd}])\s*
-        name: storage.type.protocol.trin
+        name: storage.type.protocol.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)(?![\w\p{Pd}])\s*
-        name: storage.type.macro.trin
+        name: storage.type.macro.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)(?![\w\p{Pd}])\s*
-        name: storage.type.given.trin
+        name: storage.type.given.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)(?![\w\p{Pd}])\s*
-        name: storage.type.element.trin
+        name: storage.type.element.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)(?![\w\p{Pd}])\s*
-        name: storage.type.extends.trin
+        name: storage.type.extends.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sub)(?![\w\p{Pd}])\s*
-        name: storage.type.subroutine.trin
+        name: storage.type.subroutine.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pred)(?![\w\p{Pd}])\s*
-        name: storage.type.predicate.trin
+        name: storage.type.predicate.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(lemma)(?![\w\p{Pd}])\s*
-        name: storage.type.lemma.trin
+        name: storage.type.lemma.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)(?![\w\p{Pd}])\s*
-        name: storage.type.iterator.trin
+        name: storage.type.iterator.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(field)(?![\w\p{Pd}])\s*
-        name: storage.type.field.trin
+        name: storage.type.field.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)(?![\w\p{Pd}])\s*
-        name: storage.type.property.trin
+        name: storage.type.property.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pragma)(?![\w\p{Pd}])\s*
-        name: storage.type.pragma.trin
+        name: storage.type.pragma.3n
 
   general-keywords:
     comment: general keywords
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)(?![\w\p{Pd}])\s*
-        name: keyword.control.conditional.trin
+        name: keyword.control.conditional.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)(?![\w\p{Pd}])\s*
-        name: keyword.control.loop.trin
+        name: keyword.control.loop.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|final)(?![\w\p{Pd}])\s*
-        name: keyword.control.trycatch.trin
+        name: keyword.control.trycatch.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch|case|fail)(?![\w\p{Pd}])\s*
-        name: keyword.control.switch.trin
+        name: keyword.control.switch.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|when)(?![\w\p{Pd}])\s*
-        name: keyword.control.match.trin
+        name: keyword.control.match.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(race|some|every|done|spawn|kill|lock)(?![\w\p{Pd}])\s*
-        name: keyword.control.thread.trin
+        name: keyword.control.thread.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?![\w\p{Pd}])\s*
-        name: keyword.control.flow.trin
+        name: keyword.control.flow.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|using)(?![\w\p{Pd}])\s*
-        name: keyword.control.module.trin
+        name: keyword.control.module.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|do|from)(?![\w\p{Pd}])\s*
-        name: keyword.control.$1.trin
+        name: keyword.control.$1.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|assert|where)(?![\w\p{Pd}])\s*
-        name: keyword.other.$1.trin
+        name: keyword.other.$1.3n
 
   expression-keywords:
     comment: expression keywords
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of|as|is|new)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.$1.trin
+        name: keyword.operator.expression.$1.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(del)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.delete.trin
+        name: keyword.operator.expression.delete.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(to|til|till|thru|by)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.range.trin
+        name: keyword.operator.expression.range.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unset)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.void.trin
+        name: keyword.operator.expression.void.3n
 
   keywords:
     patterns:
@@ -3173,10 +3175,10 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|label|goto|pass)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: keyword.control.flow.trin}
+          1: {name: keyword.control.flow.3n}
         patterns:
           - match: *entity-name
-            name: constant.other.label.trin
+            name: constant.other.label.3n
 
       module-expression:
         patterns:
@@ -3184,40 +3186,40 @@ repository:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|using)(?![\w\p{Pd}])\s*
             end: (?=.)|$
             beginCaptures:
-              1: {name: keyword.control.module.trin}
+              1: {name: keyword.control.module.3n}
             patterns:
               - include: source.yaml#flow-collection
               - *modifiers
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                name: keyword.control.module.trin
+                name: keyword.control.module.3n
               - include: "#type-keywords"
               - include: "#declarations"
               - include: "#strings-quoted"
               - include: "#symbols"
               - include: "#type-operators"
               - match: ","
-                name: punctuation.separator.comma.trin
+                name: punctuation.separator.comma.3n
               - match: *entity-name
-                name: variable.other.readwrite.alias.trin
+                name: variable.other.readwrite.alias.3n
 
       validation-expression:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where)(?![\w\p{Pd}])\s*
         beginCaptures:
-          1: {name: keyword.control.validate.trin}
+          1: {name: keyword.control.validate.3n}
         end: (?<=})|(?=[,;)\]])
         patterns:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pre|post|need|know|check|test|read|write|till|same)(?![\w\p{Pd}])\s*
-            name: keyword.control.validate.trin
+            name: keyword.control.validate.3n
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)(?![\w\p{Pd}])\s*
-            name: keyword.control.validate.trin
+            name: keyword.control.validate.3n
           - include: $self
 
       query-expression:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)(?![\w\p{Pd}])\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?![\w\p{Pd}])\s*
         beginCaptures:
-          1: {name: keyword.control.query.trin}
+          1: {name: keyword.control.query.3n}
           2: {patterns: [include: $self]}
-          3: {name: keyword.control.query.trin}
+          3: {name: keyword.control.query.3n}
         end: (?<=})|(?=[,;)\]])
         patterns:
           - include: "#query-body"
@@ -3235,19 +3237,19 @@ repository:
           join-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:full|part)?(?![\w\p{Pd}])\s*\b(?:inner|outer|left|right)?(?![\w\p{Pd}])\s*\bjoin)\b\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.3n}
               2: {patterns: [include: $self]}
-              3: {name: keyword.control.query.trin}
+              3: {name: keyword.control.query.3n}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(on|equals|into)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.trin
+                name: keyword.control.query.3n
               - include: "#query-body"
               - include: $self
           where-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where|having)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.3n}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - include: "#query-body"
@@ -3255,7 +3257,7 @@ repository:
           sort-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sort(?![\w\p{Pd}])\s*\b(?:asc|desc)?(?![\w\p{Pd}])\s*\b(?:by|with)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.3n}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - include: "#query-body"
@@ -3263,41 +3265,41 @@ repository:
           select-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(select(?![\w\p{Pd}])\s*\b(?:unique|any|all)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.3n}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.trin
+                name: keyword.control.query.3n
               - include: "#query-body"
               - include: $self
           limit-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit)(?![\w\p{Pd}])\s*\b(?:first|last|head|tail)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.3n}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.trin
+                name: keyword.control.query.3n
               - include: "#query-body"
               - include: $self
           reduce-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)(?![\w\p{Pd}])\s*\b(?:left|right)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.3n}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.trin
+                name: keyword.control.query.3n
               - include: "#query-body"
               - include: $self
           group-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(group)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.3n}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|into)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.trin
+                name: keyword.control.query.3n
               - include: "#query-body"
               - include: $self
 
@@ -3339,277 +3341,277 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.style.trin}
+          1: {name: storage.type.style.3n}
         patterns:
           - include: "#style-block"
           - include: "#style-rules"
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.style.trin
+            name: entity.name.style.3n
 
       variable:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.variable.trin}
+          1: {name: storage.type.variable.3n}
       declare:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: keyword.other.declare.trin}
+          1: {name: keyword.other.declare.3n}
 
       function:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.function.trin}
+          1: {name: storage.type.function.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.function.trin
+            name: entity.name.function.3n
       method:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.method.trin}
+          1: {name: storage.type.method.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.method.trin
+            name: entity.name.method.3n
       class:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.class.trin}
+          1: {name: storage.type.class.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.class.trin
+            name: entity.name.class.3n
       enum:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.enum.trin}
+          1: {name: storage.type.enum.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.enum.trin
+            name: entity.name.enum.3n
       module:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.module.trin}
+          1: {name: storage.type.module.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.module.trin
+            name: entity.name.module.3n
       package:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pack)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.package.trin}
+          1: {name: storage.type.package.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.package.trin
+            name: entity.name.package.3n
       interface:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inter)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.interface.trin}
+          1: {name: storage.type.interface.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.interface.trin
+            name: entity.name.interface.3n
       namespace:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(space)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.namespace.trin}
+          1: {name: storage.type.namespace.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.namespace.trin
+            name: entity.name.namespace.3n
       structure:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.structure.trin}
+          1: {name: storage.type.structure.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.structure.trin
+            name: entity.name.structure.3n
       object:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.object.trin}
+          1: {name: storage.type.object.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.object.trin
+            name: entity.name.object.3n
       data:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.data.trin}
+          1: {name: storage.type.data.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.data.trin
+            name: entity.name.data.3n
       trait:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.trait.trin}
+          1: {name: storage.type.trait.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.trait.trin
+            name: entity.name.trait.3n
       procedure:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.procedure.trin}
+          1: {name: storage.type.procedure.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.procedure.trin
+            name: entity.name.procedure.3n
       protocol:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.protocol.trin}
+          1: {name: storage.type.protocol.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.protocol.trin
+            name: entity.name.protocol.3n
       macro:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.macro.trin}
+          1: {name: storage.type.macro.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.macro.trin
+            name: entity.name.macro.3n
       given:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.given.trin}
+          1: {name: storage.type.given.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.given.trin
+            name: entity.name.given.3n
       element:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.element.trin}
+          1: {name: storage.type.element.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.element.trin
+            name: entity.name.element.3n
       extends:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.extends.trin}
+          1: {name: storage.type.extends.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.extends.trin
+            name: entity.name.extends.3n
       subroutine:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sub)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.subroutine.trin}
+          1: {name: storage.type.subroutine.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.subroutine.trin
+            name: entity.name.subroutine.3n
       predicate:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pred)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.predicate.trin}
+          1: {name: storage.type.predicate.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.predicate.trin
+            name: entity.name.predicate.3n
       lemma:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(lemma)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.lemma.trin}
+          1: {name: storage.type.lemma.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.lemma.trin
+            name: entity.name.lemma.3n
       iterator:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.iterator.trin}
+          1: {name: storage.type.iterator.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.iterator.trin
+            name: entity.name.iterator.3n
       field:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(field)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.field.trin}
+          1: {name: storage.type.field.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.field.trin
+            name: entity.name.field.3n
       property:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.property.trin}
+          1: {name: storage.type.property.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.property.trin
+            name: entity.name.property.3n
       pragma:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pragma)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.pragma.trin}
+          1: {name: storage.type.pragma.3n}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.pragma.trin
+            name: entity.name.pragma.3n
 
   params-clause:
     begin: |
@@ -3633,7 +3635,7 @@ repository:
       (\|)
       (?!\|)
     captures:
-      1: {name: punctuation.separator.arguments.trin}
+      1: {name: punctuation.separator.arguments.3n}
     end: (?<!\|)(\|)(?!\|)
     patterns: *function-params
 
@@ -3658,7 +3660,7 @@ repository:
         begin: \s*(\()
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.parameters.trin}
+          1: {name: punctuation.definition.parameters.3n}
         patterns:
           - include: "#function-params"
       new-clause:
@@ -3666,10 +3668,10 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(new)(?![\w\p{Pd}])
         end: (?=.)|$
         beginCaptures:
-          1: {name: keyword.operator.expression.$1.trin}
+          1: {name: keyword.operator.expression.$1.3n}
         patterns:
           - match: *entity-name
-            name: entity.name.instance.trin
+            name: entity.name.instance.3n
           - include: "#type-keywords"
           - include: "#illegal-keywords"
           - include: "#type-square-brackets"
@@ -3681,53 +3683,53 @@ repository:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?![\w\p{Pd}])\s*
             end: (?=.)|$
             beginCaptures:
-              1: {name: keyword.operator.expression.$1.trin}
+              1: {name: keyword.operator.expression.$1.3n}
             patterns:
               - include: "#types"
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)(?![\w\p{Pd}])\s*
             end: (?=.)|$
             captures:
-              1: {name: keyword.other.typedef.trin}
+              1: {name: keyword.other.typedef.3n}
             patterns:
               - match: \s*([?:]?=)\s*
                 captures:
-                  1: {name: keyword.operator.assignment.trin}
+                  1: {name: keyword.operator.assignment.3n}
               - include: "#types"
       catch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|final)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.catch.trin
+        name: meta.catch.3n
         captures:
-          1: {name: keyword.control.error.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.error.3n}
+          2: {name: punctuation.separator.colon.3n}
         patterns:
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.trin}
+              1: {name: punctuation.definition.expression.3n}
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-                name: keyword.control.error.trin
+                name: keyword.control.error.3n
               - include: $self
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-            name: keyword.control.error.trin
+            name: keyword.control.error.3n
           - include: $self
       thread-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(race|some|every|done|spawn|kill|lock)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.thread.trin
+        name: meta.thread.3n
         captures:
-          1: {name: keyword.control.thread.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.thread.3n}
+          2: {name: punctuation.separator.colon.3n}
         patterns:
           - &thread-clause-keywords
             match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-            name: keyword.control.thread.trin
+            name: keyword.control.thread.3n
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.trin}
+              1: {name: punctuation.definition.expression.3n}
             patterns:
               - *thread-clause-keywords
               - include: $self
@@ -3735,27 +3737,27 @@ repository:
       do-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.do.trin
+        name: meta.do.3n
         captures:
-          1: {name: keyword.control.do.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.do.3n}
+          2: {name: punctuation.separator.colon.3n}
         patterns:
           - include: $self
       for-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.for.trin
+        name: meta.for.3n
         captures:
-          1: {name: keyword.control.loop.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.loop.3n}
+          2: {name: punctuation.separator.colon.3n}
         patterns:
           - &for-clause-keywords
             match: \s*\b(in|of)\b
-            name: keyword.control.loop.trin
+            name: keyword.control.loop.3n
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.trin}
+              1: {name: punctuation.definition.expression.3n}
             patterns:
               - *for-clause-keywords
               - include: $self
@@ -3763,61 +3765,61 @@ repository:
       if-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.if.trin
+        name: meta.if.3n
         captures:
-          1: {name: keyword.control.conditional.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.conditional.3n}
+          2: {name: punctuation.separator.colon.3n}
         patterns:
           - include: $self
       match-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?![\w\p{Pd}])\s*
         end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.match.trin
+        name: meta.match.3n
         captures:
-          1: {name: keyword.control.match.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.match.3n}
+          2: {name: punctuation.separator.colon.3n}
         patterns:
           - begin: (\#\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.section.class.trin}
+              1: {name: punctuation.section.class.3n}
             patterns:
               - &when-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)(?![\w\p{Pd}])\s*
                 end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
                 captures:
-                  1: {name: keyword.control.match.trin}
-                  2: {name: punctuation.separator.colon.trin}
+                  1: {name: keyword.control.match.3n}
+                  2: {name: punctuation.separator.colon.3n}
                 patterns:
                   - include: "#params-clause"
                   - applyEndPatternLast: 1
                     begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?![\w\p{Pd}])\s*
                     end: (?=.)|$
                     beginCaptures:
-                      1: {name: keyword.control.match.trin}
+                      1: {name: keyword.control.match.3n}
                     patterns:
                       - include: "#types"
                   - include: "#type-keywords"
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)(?![\w\p{Pd}])\s*
-                    name: keyword.control.match.trin
+                    name: keyword.control.match.3n
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
-                    name: keyword.control.match.trin
+                    name: keyword.control.match.3n
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                    name: keyword.control.match.trin
+                    name: keyword.control.match.3n
                   - include: $self
               - &else-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
                 end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
                 captures:
-                  1: {name: keyword.control.match.trin}
-                  2: {name: punctuation.separator.colon.trin}
+                  1: {name: keyword.control.match.3n}
+                  2: {name: punctuation.separator.colon.3n}
                 patterns:
                   - include: $self
               - include: $self
           - begin: (\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.block.trin}
+              1: {name: punctuation.definition.block.3n}
             patterns:
               - *when-clause
               - *else-clause
@@ -3826,52 +3828,52 @@ repository:
       switch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)(?![\w\p{Pd}])\s*
         end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.switch.trin
+        name: meta.switch.3n
         captures:
-          1: {name: keyword.control.switch.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.switch.3n}
+          2: {name: punctuation.separator.colon.3n}
         patterns:
           - begin: (\#\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.section.class.trin}
+              1: {name: punctuation.section.class.3n}
             patterns:
               - &case-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)(?![\w\p{Pd}])\s*
                 end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
                 captures:
-                  1: {name: keyword.control.switch.trin}
-                  2: {name: punctuation.separator.colon.trin}
+                  1: {name: keyword.control.switch.3n}
+                  2: {name: punctuation.separator.colon.3n}
                 patterns:
                   - include: "#params-clause"
                   - applyEndPatternLast: 1
                     begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?![\w\p{Pd}])\s*
                     end: (?=.)|$
                     beginCaptures:
-                      1: {name: keyword.control.switch.trin}
+                      1: {name: keyword.control.switch.3n}
                     patterns:
                       - include: "#types"
                   - include: "#type-keywords"
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)(?![\w\p{Pd}])\s*
-                    name: keyword.control.switch.trin
+                    name: keyword.control.switch.3n
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
-                    name: keyword.control.switch.trin
+                    name: keyword.control.switch.3n
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                    name: keyword.control.switch.trin
+                    name: keyword.control.switch.3n
                   - include: $self
               - &default-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
                 end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
                 captures:
-                  1: {name: keyword.control.switch.trin}
-                  2: {name: punctuation.separator.colon.trin}
+                  1: {name: keyword.control.switch.3n}
+                  2: {name: punctuation.separator.colon.3n}
                 patterns:
                   - include: $self
               - include: $self
           - begin: (\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.block.trin}
+              1: {name: punctuation.definition.block.3n}
             patterns:
               - *case-clause
               - *default-clause
@@ -3880,18 +3882,18 @@ repository:
       with-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.with.trin
+        name: meta.with.3n
         captures:
-          1: {name: keyword.control.with.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.with.3n}
+          2: {name: punctuation.separator.colon.3n}
         patterns:
           - &with-clause-keywords
             match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-            name: keyword.control.with.trin
+            name: keyword.control.with.3n
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.trin}
+              1: {name: punctuation.definition.expression.3n}
             patterns:
               - *with-clause-keywords
               - include: $self
@@ -3935,10 +3937,10 @@ repository:
           def|func|proc|macro
           )\b
           )
-        name: meta.object-literal.key.trin
+        name: meta.object-literal.key.3n
         captures:
-          1: {name: entity.name.function.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: entity.name.function.3n}
+          2: {name: punctuation.separator.key-value.3n}
           3: {patterns: *modifier-keywords}
       - begin: |
           (?x)
@@ -3969,14 +3971,14 @@ repository:
           (\|)
           (?!\|)
         end: (?<!\|)(\|)(?!\|)
-        name: meta.object-literal.key.trin
+        name: meta.object-literal.key.3n
         captures:
-          1: {name: entity.name.function.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: entity.name.function.3n}
+          2: {name: punctuation.separator.key-value.3n}
           3: {patterns: *modifier-keywords}
-          4: {name: punctuation.separator.arguments.trin}
+          4: {name: punctuation.separator.arguments.3n}
         endCaptures:
-          1: {name: punctuation.separator.arguments.trin}
+          1: {name: punctuation.separator.arguments.3n}
         patterns: *function-params
       - match: |
           (?x)
@@ -3987,16 +3989,16 @@ repository:
           (?:[^\s\\(){}\[\]<>.,:;]|\\.)*?# remainder
           )
           (:)\s+
-        name: meta.object-literal.key.trin
+        name: meta.object-literal.key.3n
         captures:
           1:
-            name: constant.other.object.key.trin
+            name: constant.other.object.key.3n
             patterns:
               - include: "#constants"
               - include: "#numbers"
               - include: "#symbols"
               - include: "#string-content"
-          2: {name: punctuation.separator.key-value.trin}
+          2: {name: punctuation.separator.key-value.3n}
 
   # Punctuation
 
@@ -4009,16 +4011,16 @@ repository:
     repository:
       line-continuation:
         match: (\\)\s*(?=/[/*+]|$)
-        name: punctuation.separator.continuation.line.trin
+        name: punctuation.separator.continuation.line.3n
       comma:
         match: \s*(,)
-        name: punctuation.separator.comma.trin
+        name: punctuation.separator.comma.3n
       double-semi:
         match: \s*(;;)
-        name: punctuation.terminator.expression.trin
+        name: punctuation.terminator.expression.3n
       semicolon:
         match: \s*(;)
-        name: punctuation.terminator.statement.trin
+        name: punctuation.terminator.statement.3n
 
   brackets:
     patterns:
@@ -4031,52 +4033,52 @@ repository:
       punctuation:
         patterns:
           - match: ","
-            name: punctuation.separator.mapping.trin
+            name: punctuation.separator.mapping.3n
           - match: (?<!\s):(?!:)
-            name: punctuation.separator.key-value.trin
+            name: punctuation.separator.key-value.3n
       closures:
         patterns:
           - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)(?![\w\p{Pd}])\s*
             end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
             captures:
-              1: {name: keyword.control.trin}
-              2: {name: punctuation.separator.colon.trin}
+              1: {name: keyword.control.3n}
+              2: {name: punctuation.separator.colon.3n}
             patterns:
               - include: "#params-clause"
               - applyEndPatternLast: 1
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?![\w\p{Pd}])\s*
                 end: (?=.)|$
                 beginCaptures:
-                  1: {name: keyword.control.trin}
+                  1: {name: keyword.control.3n}
                 patterns:
                   - include: "#types"
               - include: "#type-keywords"
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)(?![\w\p{Pd}])\s*
-                name: keyword.control.trin
+                name: keyword.control.3n
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
-                name: keyword.control.trin
+                name: keyword.control.3n
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                name: keyword.control.switch.trin
+                name: keyword.control.switch.3n
               - include: $self
           - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
             end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
             captures:
-              1: {name: keyword.control.trin}
-              2: {name: punctuation.separator.colon.trin}
+              1: {name: keyword.control.3n}
+              2: {name: punctuation.separator.colon.3n}
             patterns:
               - include: $self
     patterns:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.typeparameters.trin}
+          1: {name: punctuation.definition.typeparameters.3n}
         patterns:
           - include: "#types"
           - include: $self
       - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.binding-pattern.object.trin}
+          1: {name: punctuation.definition.binding-pattern.object.3n}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4084,7 +4086,7 @@ repository:
       - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.mapping.trin}
+          1: {name: punctuation.definition.mapping.3n}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4092,7 +4094,7 @@ repository:
       - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.dictionary.trin}
+          1: {name: punctuation.definition.dictionary.3n}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4100,14 +4102,14 @@ repository:
       - begin: (\#\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.section.class.trin}
+          1: {name: punctuation.section.class.3n}
         patterns:
           - include: "#closures"
           - include: $self
       - begin: (\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.block.trin}
+          1: {name: punctuation.definition.block.3n}
         patterns:
           - include: "#closures"
           - include: $self
@@ -4117,14 +4119,14 @@ repository:
       punctuation:
         patterns:
           - match: ","
-            name: punctuation.separator.arguments.trin
+            name: punctuation.separator.arguments.3n
       function-params:
         patterns: *function-params
     patterns:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.parameters.trin}
+          1: {name: punctuation.definition.parameters.3n}
         patterns:
           - include: "#punctuation"
           - include: "#function-params"
@@ -4132,7 +4134,7 @@ repository:
       - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.binding-pattern.tuple.trin}
+          1: {name: punctuation.definition.binding-pattern.tuple.3n}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4140,7 +4142,7 @@ repository:
       - begin: \s*(\#?\()\s*
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.expression.trin}
+          1: {name: punctuation.definition.expression.3n}
         patterns:
           - include: "#punctuation"
           - include: $self
@@ -4151,14 +4153,14 @@ repository:
         patterns:
           - match: (?<![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)
             captures:
-              1: {name: punctuation.separator.slice.trin}
+              1: {name: punctuation.separator.slice.3n}
           - match: ","
-            name: punctuation.separator.sequence.trin
+            name: punctuation.separator.sequence.3n
     patterns:
       - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.binding-pattern.array.trin}
+          1: {name: punctuation.definition.binding-pattern.array.3n}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4166,25 +4168,25 @@ repository:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.attribute-selector.trin}
+          1: {name: punctuation.definition.attribute-selector.3n}
         patterns:
           - include: "#punctuation"
           - include: $self
       - begin: \s*(\#\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.sequence.trin}
+          1: {name: punctuation.definition.sequence.3n}
         patterns:
           - match: ","
-            name: punctuation.separator.sequence.trin
+            name: punctuation.separator.sequence.3n
           - include: $self
       - begin: \s*(\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.array.trin}
+          1: {name: punctuation.definition.array.3n}
         patterns:
           - match: ","
-            name: punctuation.separator.sequence.trin
+            name: punctuation.separator.sequence.3n
           - include: $self
 
   support-js:
