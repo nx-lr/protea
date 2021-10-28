@@ -917,7 +917,8 @@ repository:
           (?<s>
           # Strings
           (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>["`])[^\\.]*\g<q2>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
           )|
           # Rest of identifier characters
@@ -947,7 +948,8 @@ repository:
       (?<s>
       # Strings
       (?<q3>'''+|"""+|```+).*\g<q3>|
-      (?<q2>["`])[^\\.]*\g<q2>|
+      (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+      (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
       (?<q1>')(?:[^']|'')*\g<q1>
       )|
       # Everything else
@@ -1290,7 +1292,8 @@ repository:
           (?<s>
           # Strings
           (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>["`])[^\\.]*\g<q2>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
           )|
           # Everything else
@@ -2682,7 +2685,8 @@ repository:
           (?<s>
           # Strings
           (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>["`])[^\\.]*\g<q2>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
           )|
           # Rest of identifier characters
@@ -3159,7 +3163,7 @@ repository:
             patterns:
               - include: source.yaml#flow-collection
               - *modifiers
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
                 name: keyword.control.module.3n
               - include: "#type-keywords"
               - include: "#declarations"
@@ -3773,7 +3777,7 @@ repository:
                     name: keyword.control.match.3n
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
                     name: keyword.control.match.3n
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
+                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
                     name: keyword.control.match.3n
                   - include: $self
               - &else-clause
@@ -3827,7 +3831,7 @@ repository:
                     name: keyword.control.switch.3n
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
                     name: keyword.control.switch.3n
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
+                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
                     name: keyword.control.switch.3n
                   - include: $self
               - &default-clause
@@ -4019,7 +4023,7 @@ repository:
                 name: keyword.control.3n
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
                 name: keyword.control.3n
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
                 name: keyword.control.switch.3n
               - include: $self
           - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
