@@ -66,7 +66,7 @@ define:
     |switch|match|case|fail
     |race|some|every|done|spawn|kill|lock
     |break|next|redo|retry|return|await|label|yield|goto|pass
-    |import|export|using
+    |import|export|using|route
     |debug|assert|where
     )(?![\w\p{Pd}])
     )
@@ -89,7 +89,7 @@ define:
     |switch|match|case|fail
     |race|some|every|done|spawn|kill|lock
     |break|next|redo|retry|return|await|label|yield|goto|pass
-    |import|export|using
+    |import|export|using|route
     |debug|assert|where
     )(?![\w\p{Pd}])
     )
@@ -160,7 +160,7 @@ repository:
       |switch|match|case|fail
       |race|some|every|done|spawn|kill|lock
       |break|next|redo|retry|return|await|label|yield|goto|pass
-      |import|export|using
+      |import|export|using|route
       |debug|assert|where
       )(?![\w\p{Pd}])\s*
     name: invalid.illegal.keyword.3n
@@ -1579,10 +1579,9 @@ repository:
   style-properties:
     patterns:
       - include: "#clauses"
-      - include: "#style-block"
-      - include: "#style-rules"
+      - include: "#declarations"
       - applyEndPatternLast: 1
-        begin: \s*([\p{Pc}\p{L}][\w\p{Pd}]*)(:)?\s*
+        begin: (?<=^|;|{)\s*([\p{Pc}\p{L}][\w\p{Pd}]*)(:)?\s*
         beginCaptures:
           1: {name: support.type.property-name.3n}
           2: {name: punctuation.separator.key-value.3n}
@@ -1590,7 +1589,8 @@ repository:
         name: string.unquoted.3n
         patterns:
           - include: "#html-properties"
-      - include: "#declarations"
+      - include: "#style-block"
+      - include: "#style-rules"
       - include: $self
   style-rules:
     patterns:
@@ -1630,28 +1630,6 @@ repository:
       - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: entity.other.attribute-name.pseudo-element.3n
 
-  route-block:
-    begin: \s*(\{)\s*
-    end: \s*(\})
-    captures:
-      1: {name: punctuation.definition.block.3n}
-    patterns:
-      - begin: ^\s*([\p{Pc}\p{L}][\w\p{Pd}]*)(:)\s*
-        beginCaptures:
-          1: {name: support.type.property-name.3n}
-          2: {name: punctuation.separator.key-value.3n}
-        end: (?=\s|,|:|;|'|"|`|<|>|$|\(|\)|\[|\]|\{|\}|/|::|!:|\?:|\.|!\.|\?\.)
-        name: string.unquoted.3n
-        patterns: [include: "#html-properties"]
-      - comment: Attribute names
-        match: ^\s*([\p{Pc}\p{L}][\w\p{Pd}]*)(:)?\s*
-        captures:
-          1: {name: support.type.property-name.3n}
-          2: {name: punctuation.separator.key-value.3n}
-      - include: "#html-properties"
-      - include: source.css.scss#property_list
-      - include: $self
-
   # JSX
 
   jsx:
@@ -1676,7 +1654,7 @@ repository:
       |switch|match|case|fail
       |race|some|every|done|spawn|kill|lock
       |break|next|redo|retry|return|await|label|yield|goto|pass
-      |import|export|using
+      |import|export|using|route
       |debug|assert|where
       )\b)\s*)
       (?=<[\p{Pc}\p{L}])
@@ -1684,7 +1662,6 @@ repository:
     applyEndPatternLast: 1
     patterns:
       - include: "#tag-element-name"
-
   tag-names:
     patterns:
       - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)([:.][\p{Pc}\p{L}][\w\p{Pd}]*)?\b
@@ -1710,7 +1687,6 @@ repository:
                 name: punctuation.separator.namespace.3n
               - match: \.\b
                 name: punctuation.accessor.3n
-
   tag-element-name:
     comment: "Tags that end > are trapped in #tag-termination"
     contentName: string.unquoted.html.3n
@@ -1730,7 +1706,6 @@ repository:
     patterns:
       - include: "#tag-termination"
       - include: "#tag-attributes"
-
   tag-termination:
     comment: uses non consuming search for </ in </tag>
     contentName: meta.jsx.children.3n
@@ -1746,13 +1721,11 @@ repository:
       - include: "#string-content"
       - include: markdown.math.block
       - include: text.html.markdown#inline
-
   tag-attributes:
     patterns:
       - include: "#style-selectors"
       - include: "#attributes"
       - include: "#comments"
-
   attributes:
     patterns:
       - applyEndPatternLast: 1
@@ -1769,12 +1742,10 @@ repository:
         captures:
           1: {name: entity.other.attribute-name.3n}
           2: {name: punctuation.separator.key-value.3n}
-
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
     match: (?<!\*)\*(?!\*)
     name: keyword.operator.spread.3n
-
   jsx-entities:
     patterns:
       - captures: &jsx-entities
@@ -1819,49 +1790,42 @@ repository:
       - include: "#block-comments"
       - include: "#line-comments"
       - include: "#nested-comments"
-
   nested-comments:
     patterns:
-      - begin: \s*((/\+\+))
-        end: (\s*(\+/))
+      - begin: \s*(/\+\+)
+        end: \s*(\+/)
         name: comment.block.documentation.nested.3n
         captures:
-          1: {name: comment.block.documentation.3n}
-          2: {name: punctuation.definition.comment.3n}
+          1: {name: punctuation.definition.comment.3n}
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
           - include: "#nested-jsdoc"
-      - begin: \s*((/\+))
-        end: (\s*(\+/))
+      - begin: \s*(/\+)
+        end: \s*(\+/)
         name: comment.block.nested.3n
         captures:
-          1: {name: comment.block.nested.3n}
-          2: {name: punctuation.definition.comment.3n}
+          1: {name: punctuation.definition.comment.3n}
         patterns:
           - include: text.html.markdown#inline
-          - include: "#nested"
-
+          - include: "#nested-block"
   block-comments:
     patterns:
-      - begin: \s*((/\*\*))
-        end: (\s*(\*/))
+      - begin: \s*(/\*\*)
+        end: \s*(\*/)
         name: comment.block.documentation.3n
         captures:
-          1: {name: comment.block.documentation.3n}
-          2: {name: punctuation.definition.comment.3n}
+          1: {name: punctuation.definition.comment.3n}
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
-      - begin: \s*((/\*))
-        end: (\s*(\*/))
+      - begin: \s*(/\*)
+        end: \s*(\*/)
         name: comment.block.3n
         captures:
-          1: {name: comment.block.3n}
-          2: {name: punctuation.definition.comment.3n}
+          1: {name: punctuation.definition.comment.3n}
         patterns:
           - include: text.html.markdown#inline
-
   line-comments:
     patterns:
       - begin: ((^\s*)|\s*)((///))
@@ -1887,7 +1851,6 @@ repository:
           0: {name: comment.line.number-sign.3n}
         patterns:
           - include: text.html.markdown#inline
-
   nested-jsdoc:
     begin: (/\+\+?)\s*
     end: \s*(\+/)
@@ -1898,8 +1861,7 @@ repository:
       - include: "#jsdoc"
       - include: text.html.markdown#inline
       - include: "#nested-jsdoc"
-
-  nested:
+  nested-block:
     begin: (/\+)\s*
     end: \s*(\+/)
     name: comment.block.nested.3n
@@ -1907,8 +1869,7 @@ repository:
       1: {name: punctuation.definition.comment.3n}
     patterns:
       - include: text.html.markdown#inline
-      - include: "#nested"
-
+      - include: "#nested-block"
   jsdoc:
     patterns:
       - include: "#jsdoc-inline-tags"
@@ -2094,7 +2055,7 @@ repository:
           |switch|match|case|fail
           |race|some|every|done|spawn|kill|lock
           |break|next|redo|retry|return|await|label|yield|goto|pass
-          |import|export|using
+          |import|export|using|route
           |debug|assert|where
           )(?![\w\p{Pd}])
           )
@@ -2123,7 +2084,7 @@ repository:
           |switch|match|case|fail
           |race|some|every|done|spawn|kill|lock
           |break|next|redo|retry|return|await|label|yield|goto|pass
-          |import|export|using
+          |import|export|using|route
           |debug|assert|where
           )(?![\w\p{Pd}])
           )
@@ -2483,7 +2444,7 @@ repository:
           |switch|match|case|fail
           |race|some|every|done|spawn|kill|lock
           |break|next|redo|retry|return|await|label|yield|goto|pass
-          |import|export|using
+          |import|export|using|route
           |debug|assert|where
           )(?![\w\p{Pd}])
           )
@@ -2513,7 +2474,7 @@ repository:
               |switch|match|case|fail
               |race|some|every|done|spawn|kill|lock
               |break|next|redo|retry|return|await|label|yield|goto|pass
-              |import|export|using
+              |import|export|using|route
               |debug|assert|where
               )(?![\w\p{Pd}])
               )
@@ -2933,7 +2894,7 @@ repository:
       |switch|match|case|fail
       |race|some|every|done|spawn|kill|lock
       |break|next|redo|retry|return|await|label|yield|goto|pass
-      |import|export|using
+      |import|export|using|route
       |debug|assert|where
       )(?![\w\p{Pd}])
       )
@@ -3004,7 +2965,8 @@ repository:
         patterns: [include: "#types"]
       - include: "#comments"
       - include: "#brackets"
-      - include: "#punctuation"
+      - include: "#line-continuation"
+      - include: "#comma"
 
   modifier-keywords:
     match: |
@@ -3146,7 +3108,7 @@ repository:
         name: keyword.control.thread.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?![\w\p{Pd}])\s*
         name: keyword.control.flow.3n
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|using)(?![\w\p{Pd}])\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|using|route)(?![\w\p{Pd}])\s*
         name: keyword.control.module.3n
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|do|from)(?![\w\p{Pd}])\s*
         name: keyword.control.$1.3n
@@ -3190,7 +3152,7 @@ repository:
       module-expression:
         patterns:
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|using)(?![\w\p{Pd}])\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|using|route)(?![\w\p{Pd}])\s*
             end: (?=.)|$
             beginCaptures:
               1: {name: keyword.control.module.3n}
@@ -3636,7 +3598,7 @@ repository:
       |switch|match|case|fail
       |race|some|every|done|spawn|kill|lock
       |break|next|redo|retry|return|await|label|yield|goto|pass
-      |import|export|using
+      |import|export|using|route
       |debug|assert|where
       )\b)\s*)
       (\|)
@@ -4009,19 +3971,18 @@ repository:
       - include: "#comma"
       - include: "#semicolon"
 
-    repository:
-      line-continuation:
-        match: (\\)\s*(?=/[/*+]|$)
-        name: punctuation.separator.continuation.line.3n
-      comma:
-        match: \s*(,)
-        name: punctuation.separator.comma.3n
-      double-semi:
-        match: \s*(;;)
-        name: punctuation.terminator.expression.3n
-      semicolon:
-        match: \s*(;)
-        name: punctuation.terminator.statement.3n
+  line-continuation:
+    match: (\\)\s*(?=/[/*+]|$)
+    name: punctuation.separator.continuation.line.3n
+  comma:
+    match: \s*(,)
+    name: punctuation.separator.comma.3n
+  double-semi:
+    match: \s*(;;)
+    name: punctuation.terminator.expression.3n
+  semicolon:
+    match: \s*(;)
+    name: punctuation.terminator.statement.3n
 
   brackets:
     patterns:
