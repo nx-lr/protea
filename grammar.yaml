@@ -929,7 +929,7 @@ repository:
           2: {patterns: [include: "#everything-but-comments"]}
 
   format-specifier:
-    match: |
+    match: &format-pattern |
       (?x)(%)
       (
       (?<ident>\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
@@ -1426,6 +1426,7 @@ repository:
 
   regexp-char-class:
     patterns:
+      - include: "#embedded"
       - match: \\(?=\s*$)
         name: constant.character.escape.newline.3n
       - begin: (?i)\\p{
@@ -1459,7 +1460,6 @@ repository:
         name: constant.character.escape.other.3n
       - match: (?x)\\\p{C}
         name: invalid.illegal.unknown-escape.3n
-      - include: "#embedded"
 
   regexp-char-ops:
     patterns:
@@ -2582,7 +2582,7 @@ repository:
                 name: punctuation.separator.key-value.3n
         patterns:
           - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
-            end: \s*(\})
+            end: \s*(})
             captures:
               1: {name: punctuation.definition.binding-pattern.object.3n}
             patterns:
@@ -2590,7 +2590,7 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
+          - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.mapping.3n}
@@ -2599,7 +2599,7 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
+          - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
             end: \s*(\})
             captures:
               1: {name: punctuation.definition.dictionary.3n}
@@ -2707,7 +2707,7 @@ repository:
         name: entity.quasi.element.3n
         captures:
           1: {name: punctuation.section.embedded.3n}
-        patterns: [include: $self]
+        patterns: [include: "types", include: $self]
       - match: |
           (?x)(\$)
           (\b[\p{Pc}\p{L}]
@@ -2730,45 +2730,7 @@ repository:
           )
         captures:
           1: {name: punctuation.section.embedded.3n}
-          2: {patterns: [include: "#everything-but-comments"]}
-
-  type-format-specifier:
-    match: |
-      (?x)(%)
-      (
-      (?<ident>\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
-      (
-      (?<sw>
-      /\g<ident>
-      (?<val>:
-      (?<expr>
-      # Recursive brackets
-      (?<b>
-      \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-      \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-      \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-      )|
-      (?<s>
-      # Strings
-      (?<q3>'''+|"""+|```+).*\g<q3>|
-      (?<q2>["`])[^\\.]*\g<q2>|
-      (?<q1>')(?:[^']|'')*\g<q1>
-      )|
-      # Everything else
-      ([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-      )
-      )?
-      )*
-      )?
-      )
-    captures:
-      1: {name: punctuation.definition.directive.3n}
-      2:
-        name: storage.type.format.3n
-        patterns:
-          - include: "#format-language"
-          - match: .+
-            name: string.other.format.3n
+          2: {patterns: [include: "#types", include: "#everything-but-comments"]}
 
   type-embedded-placeholder:
     patterns:
@@ -3955,9 +3917,7 @@ repository:
           (?x)
           (?<=^|{|;|,|\s)\s*
           (
-          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
-          (?:\w|\\.)# identifier
-          (?:[^\s\\(){}\[\]<>.,:;]|\\.)*?# remainder
+          \b[\p{Pc}\p{L}][\p{Pd}\w]*\b
           )
           (:)\s+
           ((?:
@@ -3991,9 +3951,7 @@ repository:
           (?x)
           (?<=^|{|;|,|\s)\s*
           (
-          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
-          (?:\w|\\.)# identifier
-          (?:[^\s\\(){}\[\]<>.,:;]|\\.)*?# remainder
+          \b[\p{Pc}\p{L}][\p{Pd}\w]*\b
           )
           (:)\s+
           (
@@ -4029,9 +3987,7 @@ repository:
           (?x)
           (?<=^|{|;|,|\s)\s*
           (
-          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
-          (?:\w|\\.)# identifier
-          (?:[^\s\\(){}\[\]<>.,:;]|\\.)*?# remainder
+          \b[\p{Pc}\p{L}][\p{Pd}\w]*\b
           )
           (:)\s+
         name: meta.object-literal.key.3n
@@ -4128,7 +4084,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\#\{)\s*
+      - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.3n}
@@ -4136,7 +4092,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=^|;|,|\(|\[|\{|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])(?<![\w,;'"`)}\]]\|)\s*(\{)\s*
+      - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.3n}
