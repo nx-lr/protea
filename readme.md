@@ -1,44 +1,40 @@
-# [3nity](https://github.com/noxventura/3nity-language)
+# [Threenity](https://github.com/noxventura/Threenity-language)
 
 > The programming language for the future.
 
-![banner](./3nity-banner.svg)
+![banner](./Threenity-banner.svg)
 
-**_3nity_** is a multi-paradigm, multi-platform language that enables developers to **build**, **test**, **deploy**, **scale** and **maintain** software.
-
-- A familiar but less noisy/salty syntax makes it easier to write beautiful and expressive code, while flattening the learning curve.
-- Comprehensive APIs tied to every runtime make it easy to run programs and integrate with vast ecosystems of software and libraries.
-- Built-in markup, styles, routing, queries and schemas allow you to use the language on the entire stack.
-- Static type checking, program verification and useful error messages make it easy to catch or remediate errors and suppress potential harmful behaviour.
+Threenity will be a powerful, multi-platform, multi-paradigm language designed for developers to build, test and deploy software on all three levels of the tech stack, from the frontend to the backend.
 
 ```dart
-elem B-Block(&text: Str) as b-block {
-  pub field text: Str = text || ''
-
-  async def onHover(e) {
-    text = text.replace(`\b[bgkmpt]`gi, "\xe533")
+elem Button {
+  style button {
+    background: transparent
+    border-radius: 3px
+    border: 2px solid midnightblue
+    color: midnightblue
+    margin: 0 1em
+    padding: 0.25em 1em
   }
 
-  style :host {
-    display: block
-    color: red
-    font-family: ["Roboto", "Arial", "Helvetica", "sans-serif"]
-    font-weight: 900
-    font-size: 1px
-    :hidden {
-      display: none
+  @React def make(count: Int) {
+    val times = switch count {
+      case 1: "once"
+      case 2: "twice"
+      case 3: "thrice"
+      case n: "$n times"
     }
+    val msg = "Click me " ++ times
+    return <button>$msg</button>
   }
-
-  stat def render = <span>$text.x.y.z</span>
 }
 ```
 
 ### Roadmap
 
-> Update: I have a [Trello](https://trello.com/b/A3NDX7qY/3nity-programming-language) now!
+> Update: I have a [Trello](https://trello.com/b/A3NDX7qY/Threenity-programming-language) now!
 
-- **Grammar** (see [`grammar.yaml`](https://github.com/NoxVentura/3nity-Language/blob/main/grammar.yaml))
+- **Grammar** (see [`grammar.yaml`](https://github.com/NoxVentura/Threenity-Language/blob/main/grammar.yaml))
 - Documentation (language and API)
 - Language reference
 - Lexer and parser
@@ -48,67 +44,65 @@ elem B-Block(&text: Str) as b-block {
 
 ## Overview
 
-Learning a new programming language is hard: new toolchains to download, frameworks and tools to learn, and APIs to memorize. And in each domain, the languages performing best would long surpass other languages that will soon follow. The insurgence of new, modern and fully-featured languages like Rust, Kotlin and Go, would break these.
+JavaScript is undoubtedly the most popular programming language in the world (second being Python). Almost every device with a browser runs JavaScript, plus it's being ran on servers and on mobile devices. But sometimes the little things in JavaScript could trip us sometimes.
 
-JavaScript was no different. Given the circumstances that made it, it was not designed to be used for more complex projects such as enterprise-scale software. Still, people kept on pushing for new ideas and developing tools for them, and those got incorporated into the language and its ecosystem. However, it would not (yet) change the way we fundamentally think about JavaScript.
+Its weak typing, where operations and processes that would otherwise be impossible in other languages, would pass silently in JavaScript. This is the source of many errors and pitfalls that would introduce unwanted problems later on, and s this has been the subject of either intense criticism and mockery on the Internet.
 
-The language is flawed, as many would point out. The lack of types would yield somewhat crazy results, some of which could ["turn our everyday job into a nightmare"][wtfjs]. Projects get bloated with hundreds, if not thousands of NPM packages in order to work and run smoothly, resulting in increasingly laggy build times.
+Then there's the ecosystem. Projects get bloated with hundreds, if not thousands of NPM packages need to be installed in order to work and run smoothly, resulting in tons of dead code, unwanted program complexity and laggy build times.
 
-[wtfjs]: https://github.com/denysdovhan/wtfjs/
-[go]: https://golang.org/
-[kotlin]: https://kotlinlang.org/
-[rust]: https://www.rust-lang.org/
-[rescript]: https://rescript-lang.org/
-[scala]: https://www.scala-lang.org/
-[swift]: https://swift.org/
-[typescript]: https://www.typescriptlang.org/
-[flix]: https://flix.dev/
-[reasonml]: https://reasonml.github.io/
-[mint]: https://mint-lang.com/
-[fantom]: https://fantom.org/
-[dart]: https://dart.dev/
-[react]: https://reactjs.org/
+Many new languages, frameworks and transpilers of existing languages have cropped up over the years, in an attempt to abstract away most of the APIs that otherwise would be a mess to handle with in plain HTML/CSS/JS.
 
-## Table of Contents
+Still, people kept on pushing for new ideas and developing tools for them, incorporating themselves into the language and its ecosystem. The language is growing and evolving with new features, but this would not (yet) change the way we fundamentally think about JavaScript.
 
-3nity is a multi-purpose, multi-paradigm and multi-platform language I'm creating to hopefully replace JavaScript and its runtime, to serve its domains, and to make the language better. With it, you could write apps, games and more, without the need for setting up or installing dependencies.
+## About the Project
 
-Learning from other languages like [Scala][scala], [Dart][dart], [Fantom][fantom], [Rust][rust], [ReScript][rescript], [Flix][flix], [React][react] and [Go][go], 3nity functions as both a framework and compiler to allow developers to write faster, expressive and error-free code for the entire stack, all with the same programming language.
+Threenity started out as a side project in 2021 as a little dialect of JavaScript aimed at frontend, middle-end and backend development. I took features from a variety of curly-bracket languages, including Scala, Kotlin, Rust and Go, and intermixing it with syntax from Ruby and Python.
+
+Inspired by React, Elm and Mint I decided to extend the language by adding markup, styling, queries and schemas from HTML, CSS, SQL and GraphQL, respectively. That means, components and styles can be freely exchanged, schemas can be exported and used elsewhere, while query expressions can manipulate, verify and send incoming data.
+
+```dart
+style body {
+  font-family: [SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif];
+  padding: 20px 20px 60px
+  max-width: 680px
+  margin: 0 auto
+}
+```
+
+Meanwhile, static type checking, program verification and useful error messages make it easy to catch or remediate errors and suppress potential harmful behaviour.
 
 ---
 
-This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/NoxVentura/3nity-Language. Contributions and corrections are welcome.
+This reference is a work in progress and will be improved over time. See the GitHub repository at https://github.com/NoxVentura/Threenity-Language. Contributions and corrections are welcome.
 
-A lot of my work on 3nity is still experimental and ongoing, so I am sharing this repository so I could get all of my ideas together and perhaps invite some of you to contribute your own. Once I get done with it, we can begin work on the compiler.
+A lot of my work on Threenity is still experimental and ongoing, so I am sharing this repository so I could get all of my ideas together and perhaps invite some of you to contribute your own. Once I get done with it, we can begin work on the compiler.
 
 ### A little disclaimer
 
-As of now, 3nity does not have a language spec. This document will describe 3nity in terms of its textual rendering into source code.
+As of now, Threenity does not have a language spec. This document will describe Threenity in terms of its textual rendering into source code.
 
-3nity will be implemented in JavaScript.
+Threenity will be implemented in JavaScript.
 
 #### Text encoding
 
-3nity only encodes text in UTF-8; other encodings are not supported. Any of the standard line termination sequences can be used, depending on the platform: `\r`, `\n` or `\r\n`.
+Threenity only encodes text in UTF-8; other encodings are not supported. Any of the standard line termination sequences can be used, depending on the platform: `\r`, `\n` or `\r\n`.
 
 #### File types
 
-3nity has only three file types: module (`*.3n`), script (`*.3s`).
+Threenity has only three file types: module (`*.3n`), script (`*.3s`).
 
-The entry point of a 3nity module is defined in the `main` function. This makes it easy to reason about startup behavior.
+The entry point of a Threenity module is defined in the `main` function. This makes it easy to reason about startup behavior.
 
 Module files are the default. This allows easy importing, exporting and accessing other modules. You can put anything into them, such as stylesheets, web components, constants, types and functions.
 
 ```dart
-/// @file main.3n
+/// @file index.3n (default module file)
 func main(*args: []Str): Void { /*...*/ }
 ```
 
 The type annotations or the spread `*args` declaration can be left out, so it can be `func main {}` instead.
 
-Script files do not have a `main` function, similar to
-
-Script files do not have a `main` function, similar to batch or Bash files. Script files can import module files, and can run other script files externally.
+Script files do not have a `main` function, just like script files. Script files can import module files, and can run other script files externally.
 
 ```dart
 print("Hello", params(1))
@@ -121,7 +115,7 @@ exit(42)
 
 #### Syntax
 
-Like JavaScript, 3nity is a curly-brace language. Code blocks are delimited usually with curly braces.
+Like JavaScript, Threenity is a curly-brace language. Code blocks are delimited usually with curly braces.
 
 Semicolons are completely optional though they can be used to separate multiple statements on the same line. The same rules apply to commas in function arguments or collection literals.
 
@@ -137,7 +131,7 @@ x // joined
 
 #### Comments
 
-3nity supports C-style comments. Comments `/+` and `/++` can be nested.
+Threenity supports C-style comments. Comments `/+` and `/++` can be nested.
 
 ```dart
 // line comment
@@ -178,7 +172,6 @@ You can also unpack them from regular expressions or data structures:
 
 ```dart
 let `(?'x'.+)` = 'a' // x == 'a'
-
 let (x, y) = (1, 2) // seq
 let [x, y] = [1, 2] // list
 let {x, y} = {x: 1, y: 2} // map
@@ -187,7 +180,7 @@ let {x, y} = {1, 2} // set
 
 ### Keywords
 
-The following are all the keywords of the language. Keywords are grouped into four different categories: operators, declarations, modifiers, and control keywords.
+The following are all the keywords of the language. Keywords are grouped into four different categories: operators, declarations, modifiers, and control keywords. Some of these keywords, such as `lemma`, `pragma` and all, are reserved for future use and should not be used in this regard.
 
 As for modifiers, they are parsed as keywords before a declaration as they modify them. `pub var x = 1` declares a public variable.
 
@@ -219,7 +212,7 @@ As for modifiers, they are parsed as keywords before a declaration as they modif
 
 ### Identifiers
 
-3nity defines an identifier as any sequence of letters, digits, combining marks, underscores (Unicode `Pc`) and dashes (Unicode `Pd`), provided that it starts with a letter or underscore, and does not end in any number of trailing dashes.
+Threenity defines an identifier as any sequence of letters, digits, combining marks, underscores (Unicode `Pc`) and dashes (Unicode `Pd`), provided that it starts with a letter or underscore, and does not end in any number of trailing dashes.
 
 The regular expression is:
 
@@ -229,7 +222,7 @@ const regex = /\b[\p{Pc}\p{L}][\d\p{L}\p{M}\p{Pc}\p{Pd}]*\b/;
 
 #### Naming conventions
 
-3nity recognizes four different kinds of naming conventions:
+Threenity recognizes four different kinds of naming conventions:
 
 - Leading underscores: `__dirname` or `__main__`
 - All-uppercase: `PACKED-DECIMAL` or `T_SL`
@@ -243,8 +236,10 @@ Variables are compared using their first character, then comparing further chara
 This approach, called "partial case insensitivity", makes it easier for developers to use varying conventions without having to worry about the variables' exact spelling.
 
 ```dart
-func transform(x) = x[1:].sub(`\p{Alnum}`g, '').lower()
-proc cmpIdent(a: Str, b: Str): Bool = a[0] == b[0] && transform(a) == transform(b)
+func transform(x) =
+  x.sub(`\p{Alnum}`g, '').lower()
+func cmpIdent(a: Str, b: Str): Bool =
+  a[0] == b[0] && transform(a[1:]) == transform(b[1:])
 ```
 
 All keywords are written in all lowercase. To strop them, add one or more trailing underscores.
@@ -270,7 +265,7 @@ assert assert_
 
 ## Data Types
 
-3nity has several data types you would expect from a programming language: booleans, numbers, strings, null, collections, regular expressions, functions, among others. All data types are immutable, unless explicitly told otherwise.
+Threenity has several data types you would expect from a programming language: booleans, numbers, strings, null, collections, regular expressions, functions, among others. All data types are immutable, unless explicitly told otherwise.
 
 ### Booleans, Null and Void
 
@@ -280,7 +275,7 @@ The `Null` type is used to represent the absence of a value, similar to `null` i
 null
 ```
 
-3nity also has `void`, for compatibility purposes. `void` is equal to `null`, but compiles to JavaScript `undefined`. You should use `void` in place of `null`.
+Threenity also has `void`, for compatibility purposes. `void` is equal to `null`, but compiles to JavaScript `undefined`. You should use `void` in place of `null`.
 
 ### Bool
 
@@ -295,7 +290,7 @@ When cast into booleans, anything that suggests something is empty, such as 0, t
 
 ### Numbers
 
-3nity supports three numeric data types, `Nat`, `Int` and `Float`, all 64-bit. This avoids a lot of complexity associated with numeric precision such as file lengths, Unicode strings or very large lists.
+Threenity supports three numeric data types, `Nat`, `Int` and `Float`, all 64-bit. This avoids a lot of complexity associated with numeric precision such as file lengths, Unicode strings or very large lists.
 
 ```dart
 val integer: Int = 123
@@ -333,23 +328,20 @@ Floating-point numbers can allow different kinds of delimiters and separators.
 
 A floating literal consists of the following:
 
-- A sequence of alphanumerics as digits, or underscores to represent the **integer** part\*;
-- A dot `.` to indicate the "decimal point",
-- More, though optional, alphanumerics or underscores\*;
-- An optional tilde `~` to indicate **repeating** digits;
-- More, though optional, alphanumerics or underscores\*;
-- An optional **base** suffix, consisting of `*` and a signed decimal integer;
-- An optional **exponent** suffix, beginning with `^` and a decimal integer with an optional sign;
-- An optional **rounding** and **precision** suffix, which consists of the following:
-  - an equal sign;
-  - an optional `!` to indicate whether to count digits before the decimal point as part of the final rounding;
-  - `+` or `-` to always round up or down respectively, leaving it out to round up if the last digit is half the base and above;
+- A floating-point literal with an integer part, followed by a dot `.`, then an optional fractional  part;
+- An optional `~` to indicate repeating digits;
+- A base suffix, consisting of `*` and a signed decimal integer;
+- An exponent suffix, beginning with `^` and a decimal integer with an optional sign;
+- A rounding or precision suffix, which consists of the following:
+  - An equal sign;
+  - An optional `!` to indicate whether to count digits before the decimal point as part of the final rounding;
+  - An optional `+` or `-` to always round up or down respectively, leaving it out to round automatically;
   - A base 10 positive integer.
 
 Multi-base digits can use either alphanumerics or digits. The digits are specified with a formatting modifier, `%`.
 
 ```dart
-1%d/digits:10
+
 ```
 
 Here are some examples of valid numeric literals:
@@ -419,7 +411,7 @@ Double quoted string literals can contain the following escape sequences, and al
 "\cA" // control character from A (#U+01) to Z (#U+1A)
 ```
 
-3nity also supports escapes in even bases up to 16, excluding 14.
+Threenity also supports escapes in even bases up to 16, excluding 14.
 
 ```dart
 "\b100001111111111111111"
@@ -485,7 +477,7 @@ string"
 
 ### String Manipulation
 
-3nity comes with several string manipulation tactics to make manipulating, formatting and serialising strings easier.
+Threenity comes with several string manipulation tactics to make manipulating, formatting and serialising strings easier.
 
 #### String Interpolation
 
@@ -512,7 +504,7 @@ The hash sign takes several arguments, as placeholders, passed to the `format` m
 
 #### Format Directives
 
-3nity has an extensive string formatting mini-language for converting, transforming, transliterating and serialising objects in strings, with a syntax derived from Command Prompt.
+Threenity has an extensive string formatting mini-language for converting, transforming, transliterating and serialising objects in strings, with a syntax derived from Command Prompt.
 
 They are composed of the following parts:
 
@@ -540,7 +532,7 @@ macro template(
   val values = (for val key in keys:
     if key is Int: values[key]
     else: dict[key]).toList()
-  return strings.intersperse(keys).join('')
+  return strings.weave(keys).join('')
 }
 
 val t1Closure = template"${0}${1}${0}!"
@@ -551,52 +543,63 @@ assert t2Closure("Hello", {foo: "World"}) == "Hello World!"
 
 ### Regular expressions
 
-3nity's regexes, delimited using backticks, are way more powerful, editable and readable than their JavaScript counterparts. Free spacing and comments make it very easy to work and reason about with regular expressions.
+Threenity's regular expressions are delimited using backticks like Go. Free spacing, quoting and comments make it very easy to understand and work with regular expressions.
+
+Threenity uses the [Oniguruma](https://github.com/kkos/oniguruma) regular expression flavor by default, the same regex engine that powers Ruby and PHP7, adding its own extensions.
 
 ```dart
-`
-  (?1 %)
-  (?2
-    (?<ident>\b [\pPc\pL] [\pPd\w]* \b)
-    (
-      (?<switch> / \g<ident> (?<val> : (?<expr>
+`(?1 %)
+(?2
+  (?<ident> \b \c\i* \b)
+  (
+    (?<switch>
+      / \g<ident> |
+      / \g<ident> : (?<val>
         (?<bracket> // Brackets (recursive)
           \( (?:[^'"`(){}\[\]]+ | \g<string> | \g<bracket>)*\) |
           \[ (?:[^'"`(){}\[\]]+ | \g<string> | \g<bracket>)*\] |
           \{ (?:[^'"`(){}\[\]]+ | \g<string> | \g<bracket>)*\}
         ) |
         (?<string> // Strings
-          (?<q3> \"{3,} | \"{3,} | `{3,}).*\g<q3> |
-          (?<q2> [" `]) [^\\.]* \g<q2> |
-          (?<q1> \') (?: [^\'] | \'{2})* \g<q1>
+          (?<multi> "'"{3,} | "\""{3,} | "`"{3,}) .* \g<multi>
+          (?<double> ["`]) [^\\.]* \g<double> |
+          (?<single> '"') (?: [^'] | '"'{2})* \g<single>
         ) |
-        // Identifiers
-        ([?!]?\. | [?!:]:)? [\pPc\pL] [\pPd\w]* \b
-      ) )? )*
-    )?
-  )
-`n
+        // Compound identifier
+        ([?!]?\. | [?!:]:)? \c \i* \b
+      )
+    )
+  )*
+)`n
 ```
-
-Multi-quoted and block regular expressions are also supported.
-
-````dart
-```(?xi
-  \s*
-  (?<=(?:^|[^|])\||[({\[;,]|^)
-  \s*\&[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-  (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-  )|\s+:?=\s+)
-)```
-````
 
 Interpolation and formatting also applies but the interpolated result is usually escaped so to prevent generating invalid regular expressions.
 
-3nity uses the [Oniguruma](https://github.com/kkos/oniguruma) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. But it adds its own extensions and will be (re)implemented in Trinity.
+#### Replacement strings
+
+If there are two adjacent regular expression literals on one side, then the one on the right is the substitution (template) string for the regular expression on the left.
+
+```dart
+val str = 'James Bond'
+val newStr = str.sub(`(\w+)\W+(\w+)` `$2, $1`) // 'Bond, James'
+val newStr = str.sub(`(\w+)\W+(\w+)` `My name is $2, $0!`)
+// 'My name is Bond, James Bond'
+```
+
+```dart
+`((()))` `
+$& $0   ${/* Entire match */}
+$-      ${/* Before matched substring */}
+$+      ${/* After matched substring */}
+$1      ${/* Numbered capture group */}
+$+1     ${/* Relative group */}
+$<name> ${/* Named capture group */}
+`
+```
 
 [oniguruma]: https://github.com/kkos/oniguruma
 
-The following section serves as a summary to the regular expression syntax of 3nity, as well as some of the more unique features that 3nity has over other regex flavors.
+The following section serves as a summary to the regular expression syntax of Threenity, as well as some of the more unique features that Threenity has over other regex flavors.
 
 ### Symbols
 
@@ -620,93 +623,47 @@ A quoted identifier can contain any Unicode character including white-spaces and
 :exclamation!
 ```
 
-#### Replacement strings
-
-If there are two adjacent regular expression literals on one side, then the one on the right is the substitution (template) string for the regular expression on the left.
-
-```dart
-val str = 'James Bond'
-val newStr = str =< `(\w+)\W+(\w+)` `$2, $1` // 'Bond, James'
-val newStr = str =< `(\w+)\W+(\w+)` `My name is $2, $0!`
-// 'My name is Bond, James Bond'
-```
-
-```dart
-`` `
-$& $0   ${/* Entire match */}
-$-      ${/* Before matched substring */}
-$+      ${/* After matched substring */}
-$1      ${/* Numbered capture group */}
-$+1     ${/* Relative group */}
-$<name> ${/* Named capture group */}
-`
-```
-
 ## Collections
 
-3nity comes with four different collection literals: lists `[]`, sets `{}`, maps `{:}`. All collection literals are immutable. A `Mut` prefix on its type or a hash `#` right before the literal makes them mutable, and allows you to mutate them directly.
+Threenity comes with two different collection literals: lists `[]`, and maps `{:}`. All collection literals are immutable.
+
+A `Mut` prefix on its type or a hash `#` right before the literal makes them mutable, and allows you to mutate them directly.
 
 ### Lists
 
 Lists are indexed collections of values, are surrounded by square brackets and each element is separated by commas.
 
-The type signature of a list is `List[Value]` or `{}Value`.
+The type signature of a list is `List[Value]` or `[]T`, where `T` is the type of all the elements in the list.
 
 ```dart
 var x: []Int = [10, 20, 30]
 var y = ['a', 'b', 'c'] // is []Str
+
+[] // an empty list
 ```
 
-The type of the list uses the postfix curly bracket notation, where you can explicitly specify the type of the list.
+An explicit type can be specified by immediately following the closing angle with a type encased in curly brackets, without a space.
+
+This overwrites the inferred type and can be used for example to create an array that holds only some types initially but can accept other types later.
 
 ```dart
 var z = [10, '20', '30']{Str|Int} // with type casting operator
 ```
 
-If the type is omitted, then type inference is used to determine the type of the items. The type of the items is determined by taking the union type of all the elements of the list. For example:
-
-```dart
-assert [1, 2, 3] is []Nat &&
-  [1, null, 3] is []?Nat &&
-  [1., 2., 3.] is []Float &&
-  [1, -2, 3] is []Int &&
-  [1, "2", 3] is [](Nat|Str) &&
-  [1, 2, 3]{Num} is []Num &&
-  [[10, 20], [30]] is [][]Int
-```
-
-Often the compiler will infer a list to have a non-nullable type. If the list might store `null` or `void` values, then you will need to explicitly cast it.
+Often the compiler will infer a list to have a non-nullable type. If the list might store `null` values, then you will need to explicitly cast it.
 
 ```dart
 [1, 2, 3] // cannot store null
 [1, 2, 3, null]{?Nat} // can store null
 ```
 
-The empty list is denoted using the special syntax `[]`. Often you will specify a type - for example `[]{Str}` is an empty list of strings. If a type is not specified, then the empty list evaluates to a `[]{Any}`.
+The empty list is denoted using the special syntax `[]`. Often you will specify a type - for example `[]{Str}` is an empty list of strings. If a type is not specified, then the empty list is an `[]{Any}`.
 
-### Sets
-
-Sets are ordered collections of unique, distinct elements, and are surrounded by curly brackets, with each element is separated by commas.
-
-The type signature of a set is `Set[Key]` or `{}Key`.
-
-```dart
-var x: {}Int = {10, 20, 30}
-var y = {'a', 'b', 'c'} // is []Str
-var z = {10, '20', '30']{Str|Int}
-```
-
-If the type is omitted, then type inference is used to determine the type of the items. The type of the items is determined by taking the union type of all the elements of the list. For example:
-
-```dart
-assert {1, '2', 3, :4} is {}(Int|Str|Sym)
-```
-
-The empty set is denoted using the special syntax `{}`. If the type is not specified, the set is automatically `{}{Any}`.
+Lists are converted into maps using this approach:
 
 ### Maps
 
-Maps are keyed collections of unique elements, surrounded by curly brackets like sets. Each key is unique and is assigned to a non-distinct value, separated by a colon. Pairs are separated by commas, just like lists and sets.
+Maps are collections of key-value pairs, with each pair separated with a colon between the key and the value. Each pair is separated with a comma.
 
 ```dart
 var x: {Int : Str} = {1: 'one', 2: 'two'}
@@ -714,16 +671,14 @@ var y = {3: 'three', 4: 'four'} // is []Str
 var z = {10, '20', '30'}{Str : Int}
 ```
 
-The type signature of a map is `Map[Key, Value]` or `{Key : Value}`. Note the colon is spaced out on both sides. `{Key: Value}` is a map with the string value `Key` which can hold the type `Value`.
+The type signature of a map is `Map[Key, Value]` or literally as `{Key : Value}`, with the colon spaced out on both sides.
 
-The type of keys are determined as follows:
+If the key is not a special identifier, and is placed directly before the colon without spacing, it will be parsed as a string, with no need for quoting. Any other value is parsed as an expression.
 
-- If a key is a constant, i.e. `true`, `false`, `null`, `void`, `infin` or `nan`, it will be parsed as its value.
-- If a key can be parsed as a number it is a number.
-- If a key begins with `:`, `'`, `"`, `:'`, `:"`, `` ` ``, `[`, `(`, `{`, `#[`, `#(`, `#{`, it would not be treated as an unquoted string.
-- ANy other ihtirh
-
-The empty map is denoted using the special syntax `{:}` so not to be confused with the empty set syntax. If there is no explicit type, it is inferred to be `{Any : Any}`.
+```dart
+x = { int: 1, 2: 2 }
+x.(:int)
+```
 
 Note that maps may not be typed with a nullable key. If you are using type inference, you might need to explicitly type a map which will store null:
 
@@ -732,17 +687,30 @@ Note that maps may not be typed with a nullable key. If you are using type infer
 {1: 'one', 2: 'two'}{Int : ?Str} // now it can
 ```
 
+The empty map is denoted using the special syntax `{}`. Often you will specify a type - for example `{}{Str}` is an empty map of strings. If a type is not specified, then the empty map evaluates to `{}{Any}`.
+
+If a key and value are the same, then they may not be repeated.
+
+```dart
+
+{1, 2, int} == {1: 1, 2: 2, int: int}
+```
+
+### Sets
+
+A set is a special type of map in which the keys map to their own values.
+
 ## Expressions
 
-3nity's expression syntax is very similar to C, PHP, Java, Elixir, Haskell and others. 3nity has built-in operators:
+Threenity's expression syntax is very similar to C, PHP, Java, Elixir, Haskell and others. Threenity has built-in operators:
 
 ### Operators
 
-The tables below define all of 3nity's operators, and you can define your own.
+The tables below define all of Threenity's operators, and you can define your own.
 
 ### Custom Operators
 
-In 3nity, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot-notation:
+In Threenity, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot-notation:
 
 ```dart
 10.+(1)
@@ -1012,7 +980,7 @@ if a == b {
 }
 ```
 
-The complete 3nity `if`/`else if`/`else` expression looks like this:
+The complete Threenity `if`/`else if`/`else` expression looks like this:
 
 ```dart
 if test1 {
@@ -1036,7 +1004,7 @@ un test1 { // unless; if not
 }
 ```
 
-A great thing about the 3nity conditional is that it always returns. You can ignore the result as we did in the previous examples, but a more common approach, especially in functional programming.
+A great thing about the Threenity conditional is that it always returns. You can ignore the result as we did in the previous examples, but a more common approach, especially in functional programming.
 
 You can assign the result to a variable:
 
@@ -1044,7 +1012,7 @@ You can assign the result to a variable:
 val minValue = if a < b: a else: b
 ```
 
-Anyway, 3nity has two ternary conditional operators, which are just syntax sugar for the above if you're not keen on using `if`. That last one, is syntax sugar for `un`...`else`.
+Anyway, Threenity has two ternary conditional operators, which are just syntax sugar for the above if you're not keen on using `if`. That last one, is syntax sugar for `un`...`else`.
 
 ```dart
 val minValue = a < b ? a : b
@@ -1104,7 +1072,7 @@ assert i == 128
 
 #### Loop keywords
 
-3nity has three keywords relating to loops:
+Threenity has three keywords relating to loops:
 
 - stop and exit a loop or an enumeration using the `break` keyword
 - jump to the next iteration or step using the `next` keyword
@@ -1307,3 +1275,22 @@ val k = switch p {
 }
 /* k is 2 */
 ```
+
+---
+
+### References
+
+[wtfjs]: https://github.com/denysdovhan/wtfjs/
+[go]: https://golang.org/
+[kotlin]: https://kotlinlang.org/
+[rust]: https://www.rust-lang.org/
+[rescript]: https://rescript-lang.org/
+[scala]: https://www.scala-lang.org/
+[swift]: https://swift.org/
+[typescript]: https://www.typescriptlang.org/
+[flix]: https://flix.dev/
+[reasonml]: https://reasonml.github.io/
+[mint]: https://mint-lang.com/
+[fantom]: https://fantom.org/
+[dart]: https://dart.dev/
+[react]: https://reactjs.org/
