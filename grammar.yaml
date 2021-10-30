@@ -52,7 +52,7 @@ define:
     (?<=(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(?:ext|impl)\b|\s*[<>]\s+)\s*
 
     (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
-    \b(?:# don't match keywords
+    \b(?:# keywords
     in|of|as|is|new|to|til|thru|by|del|unset
     |var|val|let|const|decl|def|func|type|object
     |class|enum|module|pack|struct|schema|space|pragma
@@ -75,7 +75,7 @@ define:
   entity-name: &entity-name |
     (?x)\s*\b
     (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
-    \b(?:# don't match keywords
+    \b(?:# keywords
     in|of|as|is|new|to|til|thru|by|del|unset
     |var|val|let|const|decl|def|func|type|object
     |class|enum|module|pack|struct|schema|space|pragma
@@ -882,7 +882,7 @@ repository:
         end: \s*}
         name: constant.character.entity.named.trin
         patterns:
-          - include: "#named-char-notation"
+          - include: "#latex-sublanguage"
       - include: "#numeric-escapes"
       - match: (?i)\\([cm][a-z])
         name: constant.character.control.trin
@@ -1025,57 +1025,50 @@ repository:
 
   # Unicode Named Character Language
 
-  named-char-notation:
+  latex-sublanguage:
     comment: Grammar for the Unicode Named Character Mini-Language.
-    repository:
-      latex-notation:
-        patterns:
-          - name: comment.line.math.trin
-            match: (%)(.+)$
-            captures:
-              1: {name: punctuation.definition.comment.math.trin}
-          - name: line.separator.math.trin
-            match: (\\\\)$
-            captures:
-              1: {name: punctuation.line.separator.math.trin}
-          - name: meta.function.math.trin
-            begin: ((\\)([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*))(\{)
-            beginCaptures:
-              1: {name: storage.type.function.math.trin}
-              2: {name: punctuation.definition.function.math.trin}
-              3:
-                patterns:
-                  - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-                    name: entity.name.namespace.trin
-                  - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
-                    name: entity.name.function.trin
-                  - match: \b\:\b
-                    name: punctuation.separator.namespace.trin
-                  - match: \b\.\b
-                    name: punctuation.accessor.trin
-              4: {name: punctuation.definition.arguments.begin.math.trin}
-            end: \}
-            endCaptures:
-              0: {name: punctuation.definition.arguments.end.math.trin}
-            patterns:
-              - include: "#named-char-notation"
-          - match: (\\)\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
-            captures:
-              1: {name: punctuation.definition.constant.trin}
-              2:
-                patterns:
-                  - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-                    name: constant.other.namespace.trin
-                  - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
-                    name: constant.character.math.trin
-                  - match: \b\:\b
-                    name: punctuation.separator.namespace.trin
-                  - match: \b\.\b
-                    name: punctuation.accessor.trin
-          - match: "[-+*/^]"
-            name: punctuation.math.operator.latex
     patterns:
-      - include: "#latex-notation"
+      - include: "#embedded"
+      - name: line.separator.math.trin
+        match: (\\\\)$
+        captures:
+          1: {name: punctuation.line.separator.math.trin}
+      - name: meta.function.math.trin
+        begin: ((\\)([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*))(\{)
+        beginCaptures:
+          1: {name: storage.type.function.math.trin}
+          2: {name: punctuation.definition.function.math.trin}
+          3:
+            patterns:
+              - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
+                name: entity.name.namespace.trin
+              - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+                name: entity.name.function.trin
+              - match: \b\:\b
+                name: punctuation.separator.namespace.trin
+              - match: \b\.\b
+                name: punctuation.accessor.trin
+          4: {name: punctuation.definition.arguments.begin.math.trin}
+        end: \}
+        endCaptures:
+          0: {name: punctuation.definition.arguments.end.math.trin}
+        patterns:
+          - include: "#latex-sublanguage"
+      - match: (\\)\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
+        captures:
+          1: {name: punctuation.definition.constant.trin}
+          2:
+            patterns:
+              - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
+                name: constant.other.namespace.trin
+              - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+                name: constant.character.math.trin
+              - match: \b\:\b
+                name: punctuation.separator.namespace.trin
+              - match: \b\.\b
+                name: punctuation.accessor.trin
+      - match: "[-+*/^]"
+        name: punctuation.math.operator.latex
       - include: "#string-escapes"
       - include: source.yaml#flow-scalar
 
@@ -1121,7 +1114,6 @@ repository:
         patterns:
           - include: "#comments"
           - include: "#regexp-patterns"
-
   back-references:
     patterns:
       - match: \$(\d+|[+-]\d*|&)
@@ -1142,7 +1134,6 @@ repository:
         captures:
           1: {name: keyword.other.back-reference.trin}
         patterns: *regex-back-references
-
   regexp-patterns:
     patterns:
       - include: "#embedded"
@@ -1217,7 +1208,6 @@ repository:
       - include: "#regexp-char-class"
       - match: \\.
         name: constant.character.escape.other.trin
-
   regexp-groups:
     patterns:
       - comment: Embedded expression
@@ -1277,12 +1267,12 @@ repository:
           (?<val>:
           (?<expr>
           # Recursive brackets
-          (?<b>
+          ([?!]?\.|[?!:]:)?(?<b>
           \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
           \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
           \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
           )|
-          (?<s>
+          ([?!]?\.|[?!:]:)?(?<s>
           # Strings
           (?<q3>'''+|"""+|```+).*\g<q3>|
           (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
@@ -1434,7 +1424,7 @@ repository:
         end: \s*}
         name: constant.character.entity.named.trin
         patterns:
-          - include: "#named-char-notation"
+          - include: "#latex-sublanguage"
       - include: "#numeric-escapes"
       - match: (?i)\\([cm][a-z])
         name: constant.character.control.trin
@@ -2019,7 +2009,7 @@ repository:
           (?x)\s*\b
           (
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
-          \b(?:# don't match keywords
+          \b(?:# keywords
           in|of|as|is|new|to|til|thru|by|del|unset
           |var|val|let|const|decl|def|func|type|object
           |class|enum|module|pack|struct|schema|space|pragma
@@ -2048,7 +2038,7 @@ repository:
           (?x)\s*\b
           (
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
-          \b(?:# don't match keywords
+          \b(?:# keywords
           in|of|as|is|new|to|til|thru|by|del|unset
           |var|val|let|const|decl|def|func|type|object
           |class|enum|module|pack|struct|schema|space|pragma
@@ -2095,13 +2085,11 @@ repository:
 
   variables:
     comment: |
-      For testing only
-      _int int_ _int._int INT INT.INT Int Int.Int int int.int
       Four types of variables:
-      - underscore variables (either surrounded by _ on one end or both)
-      - constant variables: in SHOUT_SNAKE_CASE
-      - class variables: in PascalCase
-      - regular variables: in camelCase
+      - Leading underscore: _int
+      - Uppercase: INT
+      - PascalCase
+      - camelCase
     match: |
       (?x)\s*\b
       (?:
@@ -2408,7 +2396,7 @@ repository:
           (?x)\s*(?:(\+>)|(\|{1,3}>))(?=\s*(
           [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
-          \b(?:# don't match keywords
+          \b(?:# keywords
           in|of|as|is|new|to|til|thru|by|del|unset
           |var|val|let|const|decl|def|func|type|object
           |class|enum|module|pack|struct|schema|space|pragma
@@ -2438,7 +2426,7 @@ repository:
           - match: |
               (?x)\s*\b
               (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
-              \b(?:# don't match keywords
+              \b(?:# keywords
               in|of|as|is|new|to|til|thru|by|del|unset
               |var|val|let|const|decl|def|func|type|object
               |class|enum|module|pack|struct|schema|space|pragma
@@ -2847,19 +2835,16 @@ repository:
 
   custom-types:
     comment: |
-      For testing only
-      _int int_ _int._int INT INT.INT Int Int.Int int int.int
-
       Four types of variables:
-      - underscore variables (either surrounded by _ on one end or both)
-      - constant variables: in SHOUT_SNAKE_CASE
-      - class variables: in PascalCase
-      - regular variables: in camelCase
+      - Leading underscore: _int
+      - Uppercase: INT
+      - PascalCase
+      - camelCase
     match: |
       (?x)\s*\b
 
       (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
-      \b(?:# don't match keywords
+      \b(?:# keywords
       in|of|as|is|new|to|til|thru|by|del|unset
       |var|val|let|const|decl|def|func|type|object
       |class|enum|module|pack|struct|schema|space|pragma
