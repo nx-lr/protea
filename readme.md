@@ -1,6 +1,6 @@
 # Trinity
 
-The programming language of the future
+> The new way to build advanced applications.
 
 Trinity will be a powerful multi-platform and multi-paradigm programming language designed for developers to build, test and deploy software and libraries for and on all levels of the tech stack.
 
@@ -365,7 +365,7 @@ The special `\j{}` syntax (curly braces compulsory) allow you to insert LaTeX ex
     \maketitle
     Hello world!
   \end{document}
-}"
+}";
 ```
 
 #### Block strings
@@ -409,13 +409,10 @@ Escaping rules for single- and double-quoted strings also apply.
 
 ### String interpolation
 
-Strings can be interpolated, i.e. embedded inside strings as they are evaluated. To do so, surround your expressions with a pair of curly brackets, prefixing that with a dollar.
-
-If an expression is a simple variable, compound identifier or method call, you can leave out the curly brackets.
+Expressions can be interpolated inside strings as they are evaluated. To do so, surround your expressions with `${}`. You can leave out the curly brackets if your expression is a simple variable, a compound identifier, or a function or method call.
 
 ```dart
-var quality = "superhero"
-final age = 52
-var sentence = "A developer is a $quality, if he is ${age <= 42 ? "young" : "seasoned"}"
-println sentence
+"I have $apples apples"
+"I have ${apples + bananas} fruits"
+"I have $apples%d apples"
 ```
