@@ -1828,27 +1828,19 @@ repository:
           - include: text.html.markdown#inline
   line-comments:
     patterns:
-      - begin: ((^\s*)|\s*)((///))
+      - begin: \s*(///)
         end: \s*$
         name: comment.line.documentation.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.documentation.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          0: {name: comment.line.documentation.trin}
+        captures:
+          1: {name: punctuation.definition.comment.trin}
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
-      - begin: ((^\s*)|\s*)((//))
+      - begin: \s*(//)
         end: \s*$
         name: comment.line.number-sign.trin
-        beginCaptures:
-          2: {name: punctuation.whitespace.comment.leading.trin}
-          3: {name: comment.line.double-slash.trin}
-          4: {name: punctuation.definition.comment.trin}
-        endCaptures:
-          0: {name: comment.line.number-sign.trin}
+        captures:
+          1: {name: punctuation.definition.comment.trin}
         patterns:
           - include: text.html.markdown#inline
   nested-jsdoc:
