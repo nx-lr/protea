@@ -365,7 +365,7 @@ The special `\j{}` syntax (curly braces compulsory) allow you to insert LaTeX ex
     \maketitle
     Hello world!
   \end{document}
-}";
+}"
 ```
 
 #### Block strings
