@@ -172,7 +172,6 @@ repository:
       - include: "#constant-names"
       - include: "#type-names"
       - include: "#variable-names"
-
   type-names:
     comment: Names for built-in types
     patterns:
@@ -205,7 +204,6 @@ repository:
           |Ext|Pred|Data|Trait|Lemma|Iter|Sub|Prop
           )(?![\w\p{Pd}])
         name: support.type.primitive.trin
-
       - comment: Interface classes | IEnumerable, etc
         match: \s*\bI((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)\b
         name: entity.name.interface.trin
@@ -218,7 +216,6 @@ repository:
       - comment: Trait classes | Serializable, Loggable etc
         match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)able\b
         name: support.class.trait.trin
-
       - comment: Swift
       - include: source.swift#builtin-types
       - comment: Python
@@ -227,7 +224,6 @@ repository:
       - includes: "#support-js"
       - comment: PHP
       - include: source.php#class-builtin
-
   function-names:
     comment: Names for built-in functions (initial dump)
     patterns:
@@ -287,24 +283,23 @@ repository:
           11: {name: entity.name.class.trin}
           12: {name: entity.name.function.trin}
       - include: $self
-
   constant-names:
     comment: Names for constants, symbols and static properties
     patterns:
       - comment: Python
       - include: source.python#magic-variable-names
-
   variable-names:
     comment: Standard Library variable names
     patterns:
       - comment: Python
       - include: source.python#magic-function-names
-
   property-names:
     comment: Standard Library property names
     patterns:
       - comment: Swift
       - include: source.swift#builtin-properties
+
+  # Literals and Constants
 
   literals:
     patterns:
@@ -313,7 +308,6 @@ repository:
       - include: "#symbols"
       - include: "#numbers"
       - include: "#constants"
-
   constants:
     patterns:
       - match: |
@@ -341,6 +335,20 @@ repository:
           3: {name: variable.language.constructor.trin}
           4: {name: variable.language.prototype.trin}
           5: {name: variable.language.proto.trin}
+  symbols:
+    patterns:
+      - match: \s*\B(:)(?=['"])
+        name: punctuation.definition.symbol.trin
+      - begin: \s*\B(:)(\w|\\.)
+        beginCaptures:
+          1: {name: punctuation.definition.symbol.trin}
+          2: {name: constant.other.symbol.trin}
+        end: (?=[\s.,:;'"`</>(){}\[\]]|$|[?!:]:|[!?]\.)
+        name: constant.other.symbol.trin
+        patterns:
+          - include: "#string-content"
+
+  # Numbers
 
   numbers:
     patterns:
@@ -905,7 +913,26 @@ repository:
         patterns: [include: $self]
       - match: |
           (?x)(\$)
-          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          (
+          (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
+          \b(?:# keywords
+          in|of|as|is|new|to|til|thru|by|del|unset
+          |var|val|let|const|decl|def|func|type|object
+          |class|enum|module|pack|struct|schema|space|pragma
+          |proc|proto|macro|given|style|elem|field
+          |ext|pred|data|trait|lemma|iter|sub|prop
+          |if|un|elif|elun|else|then
+          |for|each|loop|while|until|when
+          |with|do|from
+          |try|throw|catch|final
+          |switch|match|case|fail
+          |race|some|every|done|spawn|kill|lock
+          |break|next|redo|retry|return|await|label|yield|goto|pass
+          |import|export|using|route
+          |debug|assert|where
+          )(?![\w\p{Pd}])
+          )
+          \b[\p{Pc}\p{L}][\p{Pd}\w]*\b
           (?<expr>
           # Recursive brackets
           ([?!]?\.|[?!:]:)?(?<b>
@@ -1071,21 +1098,6 @@ repository:
         name: punctuation.math.operator.latex
       - include: "#string-escapes"
       - include: source.yaml#flow-scalar
-
-  # Symbols
-
-  symbols:
-    patterns:
-      - match: \s*\B(:)(?=['"])
-        name: punctuation.definition.symbol.trin
-      - begin: \s*\B(:)(\w|\\.)
-        beginCaptures:
-          1: {name: punctuation.definition.symbol.trin}
-          2: {name: constant.other.symbol.trin}
-        end: (?=[\s.,:;'"`</>(){}\[\]]|$|[?!:]:|[!?]\.)
-        name: constant.other.symbol.trin
-        patterns:
-          - include: "#string-content"
 
   # Regular expressions
 
