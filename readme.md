@@ -2,7 +2,7 @@
 
 > The new way to build advanced applications.
 
-Trinity will be a powerful multi-platform and multi-paradigm programming language designed for developers to build, test and deploy software and libraries for and on all levels of the tech stack.
+Trinity is a powerful multi-platform and multi-paradigm programming language designed for developers to build, test and deploy applications, software and libraries for and on all levels of the tech stack, from the frontend to the backend.
 
 ```dart
 elem Button {
@@ -39,23 +39,27 @@ I wanted the language to serve the same domains as JavaScript, yet still allowin
 
 ## An Introduction
 
-Trinity has only two file types: module `.3n` or script `.3s` files. A typical Trinity project would contain this file structure:
+The file extension of Trinity code is `.3n`. A script file is distinguished from the module file if the beginning line contains a shebang `#!` at the first character position of the file.
+
+A typical Trinity project would contain this file structure:
 
 ```
 my-app/
 |- lib/ -- all installed modules
 |- src/ -- backend codes
 |- app/ -- frontend codes
-| |- index.3n -- main file (default)
 ├─ .gitignore
 |- package.3n
 ├─ package.json
 ├─ README.md
+|- index.3n
 ```
 
-Modules form the core of every Trinity application. Modules can be accessed, installed, loaded, imported and exported to and from other modules. You can put anything into a module file, such as styles, components, constants, types, functions and classes.
+Modules form the core of every Trinity project. They can be accessed, installed, loaded, and passed around to and from other modules.
 
-The entry point of a module, or a project, is the `main` process. All code runs from `main`.
+You can put virtually anything into a module file, including constants, variables, types, functions, classes, components, constants, and more.
+
+The entry point of a project is the `main` function, defined in a special file called `index.3n`, at the project's root directory. All code is executed within `main`.
 
 ```dart
 proc main {}
@@ -73,8 +77,6 @@ Script files do not have a main function, similar to other languages. They can i
 
 ### The Basics
 
-#### Syntax
-
 Like JavaScript, Trinity is a curly-bracket language. Almost everything is delimited with curly brackets.
 
 ```dart
@@ -83,7 +85,7 @@ style keyframe(my-move) {
 }
 ```
 
-Semicolons are completely optional though they can be used to separate multiple statements on the same line. The same rule applies to commas in function calls or collections.
+Semicolons and commas are completely optional as they are used to separate multiple statements on the same line. The same rule applies for commas in function calls or collection literals.
 
 ```dart
 def make(count: Int) {
@@ -93,12 +95,12 @@ def make(count: Int) {
     case 3: "thrice"
     case n: "$n times"
   }
-  val msg = "Click me " ++ times
+  val msg = "Click me $times"
   return <button>$msg</button>
 }
 ```
 
-If a line ends in an infix operator, meaning an operator separated with spaces on either end, the resultant line is joined. If the next line also begins in one, it is joined to the previous.
+The only time a line is joined is when a line ends or begins in an infix operator, i.e. an operator separated with spaces, brackets, or newlines on either end.
 
 ```dart
 x + // joined
@@ -110,7 +112,7 @@ x // joined
 
 #### Comments
 
-Threenity supports C-style comments. Comments with a plus sign can be nested.
+Trinity supports C-style comments. Comments with a plus sign can be nested.
 
 ```dart
 // line comment
@@ -154,7 +156,7 @@ print(x, y) // 1, 2
 
 ### Keywords
 
-Keywords are grouped into four categories: operators, declarations, modifiers and control keywords. Some of these keywords are reserved for future use and should never be used as ordinary identifiers at all.
+Keywords are grouped into four categories: operators, declarations, modifiers and control keywords. Some of these keywords are reserved for future use.
 
 Modifiers only come before declarations. They can be used as regular identifiers everywhere else.
 
@@ -192,43 +194,52 @@ The regular expression is:
 const regex = /\b[\p{Pc}\p{L}][\d\p{L}\p{M}\p{Pc}\p{Pd}]*\b/;
 ```
 
-Trinity recognises four different naming conventions: `_leading_underscores`, `ALL_UPPERCASE`, `FirstCharacterUpperCase`, and `first_character_lower_case`.
+Trinity recognises four different naming conventions: `_leading_underscores`, `ALL_UPPERCASE`, `FirstCharacterUpperCase`, and `firstCharacterLowerCase`.
 
-VAriables are compared using their first character, then comparing further characters case-insensitively and completely ignoring any non-alphanumeric characters.
+Variables are compared using their first character, then comparing further characters case-insensitively and completely ignoring any non-alphanumeric characters. A special case is reserved for all-uppercase identifiers.
 
 ```dart
 func cmpIdent(a: Str, b: Str): Bool {
   let a1
   if (a1 = a.sub(`\P{Alnum}`g, '')) ~= `\p{Upper}+`:
-    a1 == b.sub(`\P{Alnum}`g, '');
+    a1 == b.sub(`\P{Alnum}`g, '')
   else:
     a[0] == b[0] -> (
       a[1:].sub(`\P{Alnum}`g, '') ==
       b[1:].sub(`\P{Alnum}`g, '')
-    );
+    )
 }
 ```
 
-This rather unorthodox approach is called partial insensitivity and allows devs to use any convention they like without having to worry about the exact spelling of an identifier.
+This unorthodox approach is called partial case-insensitive comparison and allows developers to use any convention they prefer without having to worry about the exact spelling of an identifier.
 
-All keywords are written in all-lowercase, so to strop them, add one or more trailing underscores. Keywords also are stropped when they are part of the inner members of a qualified name, such as a symbol, key, property or method.
+All keywords are written in lowercase and are not affected by the above rule, so they are stropped with one or more trailing underscores.
+
+Keywords are also stropped when they are part of the inner members of a qualified name, i.e. an object or map key.
 
 ```dart
-type Type = { def: |x| Func }
+type Type = { def_: Func }
 var var_ = 42, val_ = 8
-const assert = var_ + val_ == 50
+const assert_ = var_ + val_ == 50
 assert assert_
 ```
 
 ## Data Types
 
-Trinity has several data types: booleans, numbers, strings, collections, regular expressions, arrays, sets, maps, functions and more. All data types are constant and immutable, which means they cannot be directly changed.
+Trinity has several data types, most of which are very familiar to JavaScript developers. They are:
+
+- Booleans: `Bool`;
+- Numbers: `Nat`, `Int` and `Float`;
+- Strings: `Str` and `Char`,
+- Collections: `List`, `Set` and `Map`
+- Regular expressions: `RegEx`
+- Functions: `Func`
 
 ### Null
 
 Null is used to represent the absence of a value. Same for void. It is recommended that you use void instead of null, as that would compile to JavaScript's undefined.
 
-### Bool
+### Booleans
 
 Bool has only two possible values: `true` and `false`. They are constructed using the following literals:
 
@@ -409,10 +420,60 @@ Escaping rules for single- and double-quoted strings also apply.
 
 ### String interpolation
 
-Expressions can be interpolated inside strings as they are evaluated. To do so, surround your expressions with `${}`. You can leave out the curly brackets if your expression is a simple variable, a compound identifier, or a function or method call.
+String interpolation allows expressions to be evaluated and embedded as strings without having to manually convert everything into strings. To interpolate a value inside a string, prefix it with a dollar sign.
+
+You can leave out the curly braces if your expression is a simple variable, a nested value, or a function or method call.
 
 ```dart
 "I have $apples apples"
 "I have ${apples + bananas} fruits"
 "I have $apples%d apples"
+```
+
+### String formatting
+
+Trinity has an extensive string formatting mini-language for converting, transforming and serialising values inside strings, with a syntax derived from Command Prompt.
+
+- A command: `%command` denoted by a percentage sign
+- An optional range of switches, each denoted by a slash `/switch`,
+- Their optional values, separated by a colon: `/sw:value`.
+
+```dart
+const Everest = {height: 8848}
+"Mount Everest is $Everest.height%f/unit:'m'/style:'long' tall."
+// "Mount Everest is 8,848 meters tall."
+```
+
+### Placeholder strings
+
+<!-- ?#{}# {} {| |} -->
+
+Placeholder strings are functions that return strings. Their arguments are transformed using the value
+
+### Macro strings
+
+Macro strings allow you to embed domain-specific constructions, usually in the form `name'string'` or `name('string')` which is equivalent.
+
+A macro function is defined with the keyword `macro` and consist of four built-in arguments:
+
+- the passed `%values`; and
+- placeholder `%arguments: Any`; and
+- formatting `%metadata {directive: Str, keys: [][Str, Any]`; and
+- intermediate `%strings: []Str`.
+
+```dart
+macro template(
+  &strings: []Str, %values; &keys: []Any
+): Str = |&values|: Str {
+  val dict = values[-1] ?? {}
+  val values = (for val key in keys:
+    if key is Int: values[key]
+    else: dict[key]).toList()
+  return strings.weave(keys).join('')
+}
+
+val t1Closure = template"${0}${1}${0}!"
+assert t1Closure("Y", "A") == "YAY!"
+val t2Closure = template"${0} ${"foo"}!"
+assert t2Closure("Hello", {foo: "World"}) == "Hello World!"
 ```
