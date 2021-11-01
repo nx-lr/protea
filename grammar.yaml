@@ -131,6 +131,62 @@ repository:
       - include: "#variables"
       - include: "#illegal"
 
+  # Function brackets (early here as not to break things)
+
+  parameter-brackets:
+    begin: \s*(\()
+    end: \s*(\))
+    captures:
+      1: {name: punctuation.definition.parameters.trin}
+    patterns: &function-params
+      - include: "#clauses"
+      - include: "#constants"
+      - include: "#declarations"
+      - include: "#keywords"
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,]|^)
+          \s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
+        name: variable.parameter.optional.trin
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,]|^)
+          \s*\*[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
+        name: variable.parameter.spread.trin
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,]|^)
+          \s*\&[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
+        name: variable.parameter.name.trin
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,]|^)
+          \s*\%[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
+        name: variable.parameter.reference.trin
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,]|^)
+          \s*\$[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
+        name: variable.parameter.other.trin
+      - match: |
+          (?xi)\s*
+          (?<=(?:^|[^|])\||[({\[;,]|^)
+          \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
+          )|\s+:?=\s+)
+        name: variable.parameter.trin
+      - include: "$self"
+
   # Illegal Syntax
 
   illegal:
@@ -995,6 +1051,9 @@ repository:
             name: string.other.format.trin
 
   embedded-placeholder:
+    repository:
+      function-params:
+        patterns: *function-params
     patterns:
       - match: (\#)([+-]?\d+)
         captures:
@@ -1010,7 +1069,7 @@ repository:
         captures:
           1: {name: punctuation.definition.anchor.trin}
         patterns:
-          - include: "#placeholder-variables"
+          - include: "#function-params"
           - include: $self
 
   embedded:
@@ -2761,62 +2820,6 @@ repository:
           12: {name: keyword.operator.macro.dollar.trin}
           13: {name: keyword.operator.private.trin}
           14: {name: keyword.operator.class.trin}
-
-  # Function brackets (early here as not to break things)
-
-  parameter-brackets:
-    begin: \s*(\()
-    end: \s*(\))
-    captures:
-      1: {name: punctuation.definition.parameters.trin}
-    patterns: &function-params
-      - include: "#clauses"
-      - include: "#constants"
-      - include: "#declarations"
-      - include: "#keywords"
-      - match: |
-          (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^)
-          \s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.optional.trin
-      - match: |
-          (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^)
-          \s*\*[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.spread.trin
-      - match: |
-          (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^)
-          \s*\&[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.name.trin
-      - match: |
-          (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^)
-          \s*\%[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.reference.trin
-      - match: |
-          (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^)
-          \s*\$[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.other.trin
-      - match: |
-          (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^)
-          \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
-          )|\s+:?=\s+)
-        name: variable.parameter.trin
-      - include: "$self"
 
   # Types
 
