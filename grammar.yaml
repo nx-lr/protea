@@ -1409,7 +1409,6 @@ repository:
         captures:
           1: {name: punctuation.definition.group.trin}
         patterns: [include: "#regexp-patterns"]
-
   regexp-char-class:
     patterns:
       - include: "#embedded"
@@ -1446,7 +1445,6 @@ repository:
         name: constant.character.escape.other.trin
       - match: (?x)\\\p{C}
         name: invalid.illegal.unknown-escape.trin
-
   regexp-char-ops:
     patterns:
       - match: (?<!\|)\|\|(?!\|)
@@ -1467,10 +1465,9 @@ repository:
         name: constant.other.character-class.range.to.trin
       - match: \\.
         name: constant.character.escape.other.trin
-
   regexp-char-set:
     patterns:
-      - begin: (\[[.:=])
+      - begin: (\[[.:])
         end: (\])
         name: constant.other.character-class.posix.trin
         captures:
@@ -1518,8 +1515,7 @@ repository:
           2: {name: keyword.operator.pattern.trin}
         end: (?=&&|\|\||\^\^|[\s,:;'"`(){}\[\]])
         name: string.unquoted.attribute-name.trin
-        patterns:
-          - include: "#html-properties"
+        patterns: [include: "#html-properties"]
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         captures:
@@ -1574,8 +1570,7 @@ repository:
     end: \s*(\})
     captures:
       1: {name: punctuation.definition.block.trin}
-    patterns:
-      - include: "#style-properties"
+    patterns: [include: "#style-properties"]
   style-properties:
     patterns:
       - include: "#clauses"
@@ -1587,8 +1582,7 @@ repository:
           2: {name: punctuation.separator.key-value.trin}
         end: (?=.)|$
         name: string.unquoted.trin
-        patterns:
-          - include: "#html-properties"
+        patterns: [include: "#html-properties"]
       - include: "#style-block"
       - include: "#style-rules"
       - include: $self
@@ -1603,15 +1597,13 @@ repository:
     end: \s*(\))
     captures:
       1: {name: punctuation.definition.parameters.trin}
-    patterns:
-      - include: "#style-properties"
+    patterns: [include: "#style-properties"]
   style-attributes:
     begin: \s*(\[)\s*
     end: \s*(\])
     captures:
       1: {name: punctuation.definition.selector.trin}
-    patterns:
-      - include: "#attribute-selectors"
+    patterns: [include: "#attribute-selectors"]
   style-selectors:
     patterns:
       - include: "#format-language"
@@ -1660,8 +1652,7 @@ repository:
       (?=<[\p{Pc}\p{L}])
     end: (?=.)|$
     applyEndPatternLast: 1
-    patterns:
-      - include: "#tag-element-name"
+    patterns: [include: "#tag-element-name"]
   tag-element-name:
     comment: "Tags that end > are trapped in #tag-termination"
     contentName: string.unquoted.html.trin
@@ -1710,8 +1701,7 @@ repository:
           2: {name: punctuation.separator.key-value.trin}
         end: (?=.)|$
         name: string.unquoted.attribute-name.trin
-        patterns:
-          - include: "#html-properties"
+        patterns: [include: "#html-properties"]
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(=)?\s*
         captures:
