@@ -1644,6 +1644,7 @@ repository:
       - include: "#embedded"
   tag-names:
     match: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b\s*
+    name: entity.name.tag.saga
     captures:
       1:
         patterns:
@@ -1680,24 +1681,16 @@ repository:
       - include: $self
   style-rules:
     patterns:
-      - include: "#style-attributes"
-      - include: "#style-parameters"
-      - include: "#style-selectors"
-      - include: "#tag-names"
-  style-parameters:
-    begin: \s*(\()\s*
-    end: \s*(\))
-    captures:
-      1: {name: punctuation.definition.parameters.saga}
-    patterns: [include: "#style-properties"]
-  style-attributes:
-    begin: \s*(\[)\s*
-    end: \s*(\])
-    captures:
-      1: {name: punctuation.definition.selector.saga}
-    patterns: [include: "#attribute-selectors"]
-  style-selectors:
-    patterns:
+      - begin: \s*(\()\s*
+        end: \s*(\))
+        captures:
+          1: {name: punctuation.definition.parameters.saga}
+        patterns: [include: "#style-properties"]
+      - begin: \s*(\[)\s*
+        end: \s*(\])
+        captures:
+          1: {name: punctuation.definition.selector.saga}
+        patterns: [include: "#attribute-selectors"]
       - match: \s*(\@|\#|\$|\&|\*|\.|\:|::)\b
         name: punctuation.definition.entity.saga
       - match: \s*(?<=\@)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
@@ -1713,6 +1706,7 @@ repository:
       - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: entity.other.attribute-name.pseudo-element.saga
       - include: "#format-language"
+      - include: "#tag-names"
 
   # JSX
 
@@ -3277,8 +3271,8 @@ repository:
         beginCaptures:
           1: {name: storage.type.style.saga}
         patterns:
-          - include: "#style-block"
           - include: "#style-rules"
+          - include: "#style-block"
           - include: "#block-entities"
           - match: *entity-name
             name: entity.name.style.saga
