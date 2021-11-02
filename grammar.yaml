@@ -2564,6 +2564,85 @@ repository:
 
   # Types
 
+  types:
+    patterns:
+      - match: \s*(==?>|--?>|~~?>)
+        name: keyword.operator.type.function.saga
+      - match: \s*(<==|<--?|<~~?)
+        name: keyword.operator.type.channel.saga
+      - include: "#params-clause"
+      - include: "#type-keywords"
+      - include: "#type-names"
+      - include: "#type-variables"
+      - include: "#type-brackets"
+      - include: "#type-operators"
+      - include: "#type-strings"
+      - include: "#literals"
+  type-variables:
+    comment: |
+      Four types of variables:
+      - _lead_underscore
+      - UPPERCASE
+      - PascalCase
+      - camelCase
+    match: |
+      (?x)\s*\b
+
+      (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
+      \b(?:# keywords
+      in|of|as|is|new|to|til|thru|by|del|unset
+      |var|val|let|const|decl|def|func|type|object
+      |class|enum|module|pack|struct|schema|space|pragma
+      |proc|proto|macro|given|style|elem|field
+      |ext|pred|data|trait|lemma|iter|sub|prop
+      |if|un|elif|elun|else
+      |for|each|loop|while|until|when
+      |with|then|do|from|ref
+      |try|throw|catch|final
+      |switch|match|case|fail
+      |race|some|every|done|spawn|kill|lock
+      |break|next|redo|retry|return|await|label|yield|goto|pass
+      |import|export|using|route
+      |debug|assert|where
+      )(?![\w\p{Pd}])
+      )
+      (?:
+      (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
+      (?:# Properties
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+      ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
+      ([\p{Pc}\p{L}][\w\p{Pd}]*)
+      )
+      |
+      (?:# Objects and maps
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+      ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
+      ([\p{Pc}\p{L}][\w\p{Pd}]*)
+      )
+      (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
+      |
+      (?:# Regular variables
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+      ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
+      ([\p{Pc}\p{L}][\w\p{Pd}]*)
+      )
+      )\b
+    captures: &type-variables
+      1: {name: entity.name.module.saga}
+      2: {name: entity.name.tag.saga}
+      3: {name: entity.name.namespace.saga}
+      4: {name: entity.name.interface.saga}
+      5: {name: entity.name.tag.block.saga}
+      6: {name: entity.name.tag.script.saga}
+      7: {name: entity.name.tag.style.saga}
+      8: {name: entity.name.tag.inline.saga}
+      9: {name: entity.name.label.saga}
+      10: {name: entity.name.project.saga}
+      11: {name: entity.name.class.saga}
+      12: {name: entity.name.type.saga}
   type-annotation:
     applyEndPatternLast: 1
     begin: (:)(?=\s|$)
@@ -2784,7 +2863,6 @@ repository:
           2: {name: keyword.operator.optional.saga}
           3: {name: keyword.operator.assert.saga}
           4: {name: keyword.operator.accessor.saga}
-
       - comment: type operators
         match: |
           (?x)\s*
@@ -2820,89 +2898,6 @@ repository:
           12: {name: keyword.operator.macro.dollar.saga}
           13: {name: keyword.operator.private.saga}
           14: {name: keyword.operator.class.saga}
-
-  # Types
-
-  types:
-    patterns:
-      - match: \s*(==?>|--?>|~~?>)
-        name: keyword.operator.type.function.saga
-      - match: \s*(<==|<--?|<~~?)
-        name: keyword.operator.type.channel.saga
-      - include: "#params-clause"
-      - include: "#type-keywords"
-      - include: "#type-names"
-      - include: "#custom-types"
-      - include: "#type-brackets"
-      - include: "#type-operators"
-      - include: "#type-strings"
-      - include: "#literals"
-
-  custom-types:
-    comment: |
-      Four types of variables:
-      - _lead_underscore
-      - UPPERCASE
-      - PascalCase
-      - camelCase
-    match: |
-      (?x)\s*\b
-
-      (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
-      \b(?:# keywords
-      in|of|as|is|new|to|til|thru|by|del|unset
-      |var|val|let|const|decl|def|func|type|object
-      |class|enum|module|pack|struct|schema|space|pragma
-      |proc|proto|macro|given|style|elem|field
-      |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|un|elif|elun|else
-      |for|each|loop|while|until|when
-      |with|then|do|from|ref
-      |try|throw|catch|final
-      |switch|match|case|fail
-      |race|some|every|done|spawn|kill|lock
-      |break|next|redo|retry|return|await|label|yield|goto|pass
-      |import|export|using|route
-      |debug|assert|where
-      )(?![\w\p{Pd}])
-      )
-      (?:
-      (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
-      (?:# Properties
-      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
-      ([\p{Pc}\p{L}][\w\p{Pd}]*)
-      )
-      |
-      (?:# Objects and maps
-      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
-      ([\p{Pc}\p{L}][\w\p{Pd}]*)
-      )
-      (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
-      |
-      (?:# Regular variables
-      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}]\w+\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
-      ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)|
-      ([\p{Pc}\p{L}][\w\p{Pd}]*)
-      )
-      )\b
-    captures: &custom-types
-      1: {name: entity.name.module.saga}
-      2: {name: entity.name.tag.saga}
-      3: {name: entity.name.namespace.saga}
-      4: {name: entity.name.interface.saga}
-      5: {name: entity.name.tag.block.saga}
-      6: {name: entity.name.tag.script.saga}
-      7: {name: entity.name.tag.style.saga}
-      8: {name: entity.name.tag.inline.saga}
-      9: {name: entity.name.label.saga}
-      10: {name: entity.name.project.saga}
-      11: {name: entity.name.class.saga}
-      12: {name: entity.name.type.saga}
 
   # Clauses and Keywords
 
