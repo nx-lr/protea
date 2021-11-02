@@ -1,205 +1,225 @@
-# Trinity
+# Saga
 
-> The new way to build advanced applications.
+> Your dream programming language.
 
-Trinity is a powerful multi-platform and multi-paradigm programming language designed for developers to build, test and deploy applications, software and libraries for and on all levels of the tech stack, from the frontend to the backend.
+Saga is a multi-platform general-purpose programming language containing everything you need for building, testing and deploying applications, systems and libraries across the entire tech stack. Combining object-oriented and functional programming in one concise, high-level language, allowing you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
 ```dart
-elem Button {
-  style button {
-    background: midnightblue
-    border: 2px solid midnightblue
-    color: white
-  }
+using React
 
-  @React def make(count: Int) {
-    val times = switch count {
-      case 1: "once"
-      case 2: "twice"
-      case 3: "thrice"
-      case n: "$n times"
-    }
-    val msg = "Click me " ++ times
-    return <button>$msg</button>
+style GlobalStyle {
+  style $body {
+    color: ${|{theme}| theme == "purple"
+      ? "purple"
+      : "white"}
   }
+}
+
+const Section = style section {
+  margin: 3rem auto;
+  max-width: 600px;
+}
+
+export main elem Layout({ children }) {
+  <React.Fragment>
+    <GlobalStyle theme="purple" />
+    $children
+  </React.Fragment>
 }
 ```
 
 ### Overview
 
-JavaScript is undoubtedly the most used programming language in the world, with all sorts of devices running it. However there are many things that would frustrate us as developers: weak typing, overly bloated projects and decision fatigue. Yet, people still develop awesome applications in it.
+JavaScript is undoubtedly the most popular programming language in the world, with a large ecosystem, and most of all, a great community. And with Node.JS allowing full-stack applications to be developed with a single programming language, has in turn contributed to its success. But at the same time, we all know the language itself is drowned in many imperfections, and has many complicated or weird quirks that can sometimes throw us off. It's quite apparent that the language was drafted in ten days, yet it still became the technology that impacts every person on the planet. It's a language that's evolving, constantly adapting to suit the needs of its developers.
 
-Trinity aims to serve the same domains as JavaScript, but with a slightly cleaner syntax, and with features specific to frontend and backend development. It is a compiler and a framework combined (i.e. a domain-specific language) to provide great developer experience while allowing to write safe, readable and maintainable code.
+The ecosystem is equally as frightening. Overly bloated projects and too many choices on which framework and built tool to use. Yet, people still brave the pain and develop awesome applications in it, pushing it to its limits. Also, JS does not perform as well compared to rival languages and the domains they serve in. While it is normally used as an alternative, JS is not designed to be used to develop apps that could fit those workloads. That's why JS is not used as a tool to build machine learning systems or full blown 3D games than their equivalents in C++/C#, Rust or Python.
 
 ### About the Project
 
-Trinity was born as a side project in July this year. I took features from my favorite languages. I sifted through documentation, wrote some of my own, and implemented many of my own features by hacking regexes. Over the months, I extended Trinity with its own dialect of CSS, HTML, SQL and GraphQL all within the same language.
+Saga (formerly Trinity) aims to serve the same domains as JavaScript, but exceeds JavaScript in terms of execution and compilation speed, and memory management, so to deliver significant performance that rivals that of other languages like Java and C#. With that, Saga aims to provide a great developer experience while allowing to write safe, readable and maintainable code.
 
-I wanted the language to serve the same domains as JavaScript, yet still allowing developers to apply their own language patterns and paradigms throughout their codebase. Trinity also comes with other useful but important features such as string formatting, advanced regular expressions, types, and program validation features. As of now, Threenity does not have a specification as this project is still ongoing.
+It has a syntax that is similar to JavaScript and other curly-brace languages such as Rust, Go, Swift and Kotlin, fully embraces the functional and object-oriented paradigms, is fully extensible, and contains a lot of powerful language constructs, some specific to frontend and backend development (and everything in between).
+
+Saga started out as a side project in June 2021 and has since grown from there. Here's the full list of features I aim for Saga to cover:
+
+- familiar JS-like syntax
+- built-in JSX, CSS-in-JS and GraphQL
+- JSDoc documentation support
+- language-integrated query (LINQ)
+- DSL strings
+- keyword-based syntax
+- concurrency, asynchrony and error-handling constructs
+- pattern matching
+- type annotations and aliases
+- uniform function call syntax
+- (im)mutable data structures
+- Perl-compatible regular expressions
+- string formatting
+- Unicode named characters
+- algebraic data types
+- advanced type inference
+- JIT and AOT compilation
+- extensible numbers and operators
+- portable runtime
+- multiple targets: JS, C#, Python, JVM and LLVM/Swift
+- opaque types and type aliases
+- full tail call elimination
+- human friendly errors
+- a Rust compiler
+- a core standard library
+- an interactive REPL
+- comprehensive editor support
 
 ## An Introduction
 
-The file extension of Trinity code is `.3n`. A script file is distinguished from the module file if the beginning line contains a shebang `#!` at the first character position of the file.
+Script files contain a shebang at the beginning of the file. They can use modules, but also act as script files.
 
-A typical Trinity project would contain this file structure:
+A typical Saga project would contain this file structure:
 
 ```
 my-app/
-|- lib/ -- all installed modules
-|- src/ -- backend codes
-|- app/ -- frontend codes
-├─ .gitignore
-|- package.3n
-├─ package.json
-├─ README.md
-|- index.3n
+|- lib/ -> all installed modules
+|- src/ -> backend codes
+|- app/ -> frontend codes
+|- .gitignore
+|- index.saga
+|- package.json
+|- README.saga
+|- modules.saga
 ```
 
-Modules form the core of every Trinity project. They can be accessed, installed, loaded, and passed around to and from other modules.
-
-You can put virtually anything into a module file, including constants, variables, types, functions, classes, components, constants, and more.
-
-The entry point of a project is the `main` function, defined in a special file called `index.3n`, at the project's root directory. All code is executed within `main`.
+The entry point of a program is defined in the `main` function. `args` is a specific variable used to define the program arguments.
 
 ```dart
-proc main {}
+func main(*args: []str): void { /* code here */ }
 ```
 
-The `main` process can accept arguments:
+### Syntax
 
 ```dart
-proc main(*args: []Str): Void { /* code here */ }
+// Saga is a curly bracket language
+switch (x) {
+  case true: f("t")
+  case false: g("f")
+};
+
+// Semicolons are optional
+var a = 1; var b = 2
+
+// Commas too
+var list = [
+  1
+  2
+  3
+]
+
+// Special cases when a line is joined
+x + y
++ z +
+a
+
+x + y + z + a
 ```
 
-Script files do not have a main function, similar to other languages. They can import and use modules, and can call and open other script files.
+### Comments
 
-## Syntax
-
-### The Basics
-
-Like JavaScript, Trinity is a curly-bracket language. Almost everything is delimited with curly brackets.
-
-```dart
-style keyframe(my-move) {
-  @from {background: red} @to {background: blue}
-}
-```
-
-Semicolons and commas are completely optional as they are used to separate multiple statements on the same line. The same rule applies for commas in function calls or collection literals.
-
-```dart
-def make(count: Int) {
-  val times = switch count {
-    case 1: "once"
-    case 2: "twice"
-    case 3: "thrice"
-    case n: "$n times"
-  }
-  val msg = "Click me $times"
-  return <button>$msg</button>
-}
-```
-
-The only time a line is joined is when a line ends or begins in an infix operator, i.e. an operator separated with spaces, brackets, or newlines on either end.
-
-```dart
-x + // joined
-y
-
-x // joined
-+ y
-```
-
-#### Comments
-
-Trinity supports C-style comments. Comments with a plus sign can be nested.
+Comments with a plus sign can be nested.
 
 ```dart
 // line comment
 /* block comment */
 /+ nested comment +/
-/// line comment
-/** block comment */
-/++ nested comment +/
+/// line documentation comment
+/** block documentation comment */
+/++ nested documentation comment +/
 ```
 
-#### Variables
+### Variables
 
-A variable declaration can begin with `var` or `val` (`let` or `const` also can too). All bindings are block scoped, which means they are accessible only within the block they are defined in.
+All variable bindings are block scoped.
 
 ```dart
-var x = 42 // mutable variable
-val y: Int = 42 // immutable variable
-x = 10; y = 11 // throws
+var x = 42 // mutable
+val y: Int = 42 // immutable
+x = 10 // works
+y = 11 // error
+let x = 42 // mutable
+const y: Int = 42 // immutable
 
-do {
-  val x = 1 // 1
-  print(x)
+x := 1 // shorthand for `var x = 1`
+
+val message = do {
+  val part1 = "hello"
+  val part2 = "world"
+  part1 ++ " " ++ part2
 }
+// `part1` and `part2` not accessible
 
-print(x) // 10
-```
-
-You can declare multiple variables without having to repeat the `var` or `val` keyword. Each variable is separated with a comma.
-
-```dart
+// Declaring and assigning
 val x, y, z
-x = y = z = 1 // chained assignment
-```
+x = y = z = 1
 
-You can also unpack them from regular expressions or collections.
+val x = 1, y = 2
 
-```dart
-let [x, y] = [1, 2]
+// Unpacking assignment
+val [x, y] = [1, 2]
 print(x, y) // 1, 2
 ```
 
 ### Keywords
 
-Keywords are grouped into four categories: operators, declarations, modifiers and control keywords. Some of these keywords are reserved for future use.
+Expression keywords:
 
-Modifiers only come before declarations. They can be used as regular identifiers everywhere else.
+```
+in of as is new to til thru by del unset
+```
 
-    in of as is new to til thru by del unset
+Declaration keywords:
 
-    var val let const decl def func type object
-    class enum module pack struct inter space pragma
-    proc proto macro given style elem field
-    ext pred data trait lemma iter sub prop
+```
+var val let const decl def func type object
+class enum module pack struct inter space pragma
+proc proto macro given style elem field
+ext pred data trait lemma iter sub prop
+```
 
-    pub priv prot inline final mut immut ghost early late joint contra
-    seal abs intern extern imply exply global local
-    async sync stat dyn lazy eager strong weak swap
-    vol unsafe unfix bound free opaque trans
-    rec gen oper get set post put rem new del patch
-    prefix suffix infix binary unary left right
+Control keywords:
 
-    if un elif elun else then
-    for each loop while until when
-    with do from
-    try throw catch final
-    switch match case fail
-    race some every done spawn kill lock
-    break next redo retry return await label yield goto pass
-    import export using
-    debug assert where
+```
+if un elif elun else then
+for each loop while until when
+with do from ref
+try throw catch final
+switch match case fail
+race some every done spawn kill lock
+break next redo retry return await label yield goto pass
+import export using
+debug assert where
+```
+
+These are contextual keywords used to modify declarations:
+
+```
+pub priv prot inline final mut immut ghost early late joint contra
+seal abs intern extern imply exply global local
+async sync stat dyn lazy eager strong weak swap
+vol unsafe unfix bound free opaque trans
+rec gen oper get set post put rem new del patch
+prefix suffix infix binary unary left right
+```
 
 ### Identifiers
 
-An identifier in Trinity is any sequence of letters, digits, combining marks, underscores and dashes, provided they start with a letter or underscore, and does not end with a dash.
-
-The regular expression is:
+An identifier can contain any sequence of letters, digits, marks,underscores, and dashes, provided it starts with a letter or underscore, and does not end in any number of dashes.
 
 ```js
 const regex = /\b[\p{Pc}\p{L}][\d\p{L}\p{M}\p{Pc}\p{Pd}]*\b/;
 ```
 
-Trinity recognises four different naming conventions: `_leading_underscores`, `ALL_UPPERCASE`, `FirstCharacterUpperCase`, and `firstCharacterLowerCase`.
-
-Variables are compared using their first character, then comparing further characters case-insensitively and completely ignoring any non-alphanumeric characters. A special case is reserved for all-uppercase identifiers.
+Identifiers are compared using an approach known as partial case-insensitivity.
 
 ```dart
-func cmpIdent(a: Str, b: Str): Bool {
+func cmpIdent(a: str, b: str): bool {
   let a1
   if (a1 = a.sub(`\P{Alnum}`g, '')) ~= `\p{Upper}+`:
     a1 == b.sub(`\P{Alnum}`g, '')
@@ -211,11 +231,7 @@ func cmpIdent(a: Str, b: Str): Bool {
 }
 ```
 
-This unorthodox approach is called partial case-insensitive comparison and allows developers to use any convention they prefer without having to worry about the exact spelling of an identifier.
-
-All keywords are written in lowercase and are not affected by the above rule, so they are stropped with one or more trailing underscores.
-
-Keywords are also stropped when they are part of the inner members of a qualified name, i.e. an object or map key.
+To "strop" keywords, append a trailing underscore.
 
 ```dart
 type Type = { def_: Func }
@@ -224,47 +240,32 @@ const assert_ = var_ + val_ == 50
 assert assert_
 ```
 
-## Data Types
+### Numbers
 
-Trinity has several data types, most of which are very familiar to JavaScript developers. They are:
+Null and void (JS `undefined`):
 
-- Booleans: `Bool`;
-- Numbers: `Nat`, `Int` and `Float`;
-- Strings: `Str` and `Char`,
-- Collections: `List`, `Set` and `Map`
-- Regular expressions: `RegEx`
-- Functions: `Func`
+```dart
+assert null !== void
+assert null == void
+```
 
-### Null
+Null and void are their own types.
 
-Null is used to represent the absence of a value. Same for void. It is recommended that you use void instead of null, as that would compile to JavaScript's undefined.
-
-### Booleans
-
-Bool has only two possible values: `true` and `false`. They are constructed using the following literals:
+Boolean values (type `bool`):
 
 ```dart
 true
 false
 ```
 
-When cast into booleans, anything that suggests something is empty, such as `null`, `void`, the empty string, list, set, map, etc is `false`. All others yield `true`.
-
-### Nat, Int and Float
-
-Trinity supports three numeric data types: `Nat`, `Int` and `Float`, all of which are 64-bit. This avoids a lot of complexity associated with numeric precision such as file lengths, Unicode or large lists.
+Three numeric data types: `Nat`, `Int` and `Float`, all are 64-bit.
 
 ```dart
 var int: Int = 123
 var nat: Nat = 123:u
 var float: Float = 123.0
-```
 
-As for signs, the prefix `+` or `-` is not part of the literal.
-
-All numeric literals can contain leading 0s or underscores. They can be written in base 2, 4, 6, 8, 10, 12 or 16.
-
-```dart
+/* Different radixes */
 val base2 = 0b10
 val base4 = 0q123
 val base6 = 0s12345
@@ -272,62 +273,54 @@ val base8 = 0o1234567
 val base10 = 0123456789
 val base12 = 0z0123456789ab
 val base16 = 0x0123456789abcdef
-```
 
-Floating-point numbers can allow different kinds of delimiters and separators.
-
-```dart
+/* For floats only: */
 0.3 // Basic literal (3/10)
 3/10 // Fraction
 0.~3 // Repeating digits
 1^10 // Exponent
 1^-10 // Signed exponent
 0.1*16^+10 // Scientific notation
-1=10 // Rounding to 10 decimal places
+1=10 // Round to 10 decimal places
 1=+10 // Round up 10 d.p
 1=-10 // Round down 10 d.p
 1=!10 // Round to 10 significant figures
 1=!+10 // Round up to 10 s.f
 1=!-10 // Round down to 10 s.f
-```
 
-The fractional, repeating, exponent, rounding and type-suffix part appear in that specific order, and are all optional.
+// Parts of a float: all optional
+/* fraction => repeating => exponent => rounding => suffix */
+/* denominator => exponent => rounding => suffix */
 
-Multi-base digits can use either alphanumerics or digits. The digits are specified with a formatting modifier, `%`.
-
-```dart
-val base17 = 17b0123456789abcdefg%num/digits:'0123456789abcdefg'
-```
-
-You can use a type suffix to cast a numeric literal into another type.
-
-```dart
+// Type suffix: with colon
 assert 1:u is Nat
+
+// Multi-base literals
+val base100 = 100b0_99_99
+assert base100 == 9999
+
+// With custom digits
+const base17Digits = '0123456789abcdefg'
+val base17 = 17b0123456789abcdefg%num/digits:(base17Digits)
 ```
 
 ### Strings
 
-A string literal is enclosed between single or double quotes on both sides. Just like in YAML, double quoted strings support escape sequences (beginning with a backslash), while single quoted strings are _verbatim_ and do not interpret any escapes.
-
 ```dart
-var s1 = 'Single quotes work well for string literals.'
-var s2 = "Double quotes work just as well."
+'all single quoted strings are verbatim'
+'this \ backslash also does not need to be escaped'
+'same for the " double quote'
+'to express one single quote, use '' two of them'
+
+"here we can use predefined escape sequences like \t \n \b"
+"or generic escape sequences \x0b \u0041 \U00000041"
+"the double quote \" needs to be escaped"
+"just like the \\ backslash"
+"the single quote ' and other characters can be escaped,
+but they are completely optional"
 ```
 
-To escape a single quote in a single-quoted string, double it.
-
-```dart
-var voidDaughter = 'Kai''Sa'
-```
-
-In double-quoted strings, an ending backslash joins the next line _without spaces_.
-
-```dart
-assert "hello \
-        world" == "hello world"
-```
-
-Double quoted string literals can contain the following escape sequences, and all of them are case-insensitive:
+Double quoted predefined escapes are:
 
 ```dart
 "\p" // platform specific newline
@@ -342,11 +335,8 @@ Double quoted string literals can contain the following escape sequences, and al
 "\s" // space
 
 "\cA" // control character from A (#U+01) to Z (#U+1A)
-```
 
-Trinity also supports escapes in many bases.
-
-```dart
+// Multi-base escapes
 "\b100001111111111111111"
 "\q10033333333"
 "\s35513531"
@@ -354,19 +344,12 @@ Trinity also supports escapes in many bases.
 "\d1114111" // or "\1114111"
 "\z4588A7"
 "\x10FFFF" // or "\u10fffff"
-```
 
-The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces.
-
-```dart
 // "HELLO"
 "\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
 "\d{72 69 76 76 69}" == "\72\69\76\76\79"
-```
 
-The special `\j{}` syntax (curly braces compulsory) allow you to insert LaTeX expressions.
-
-```dart
+// LaTeX expressions:
 "\j{
   \documentclass{article}
   \title{Cartesian closed categories and the price of eggs}
@@ -379,15 +362,17 @@ The special `\j{}` syntax (curly braces compulsory) allow you to insert LaTeX ex
 }"
 ```
 
-#### Block strings
-
-Trinity supports multi-quoted string literals. Here, a string can be delimited with at least three quote characters in a row, provided they end with at least that many quotes.
-
-All Unicode spacing characters before the first and last non-space characters are are discarded. All newlines are normalized to `\p` depending on the platform.
-
-Indentation is determined by the number of spaces between the opening quotes and the first non-space character.
+Multi-quoted strings are defined with three or more quotes of the same type and end in the same opening sequence.
 
 ```dart
+// All `[\s\n]` are discarded between the text and the quotes
+'''We're fine'''
+""""""""""We're fine""""""""""
+
+// Strings can end in more than the opening number of quotes
+"""x""""
+
+// Indentation is preserved based on the first line of text
 '''
 "stringified
   string"
@@ -396,22 +381,10 @@ Indentation is determined by the number of spaces between the opening quotes and
   "stringified
     string"
 """
-```
 
-Any string that does not obey this rule is a compile-time error.
-
-```dart
-"""
-  "stringified
-string"
-"""
-```
-
-Escaping rules for single- and double-quoted strings also apply.
-
-```dart
+// Escaping rules apply in all string literals
 '''
-  no escapes!
+  no escapes needed!
 '''
 """
   \\escape\ with\ me
@@ -420,60 +393,35 @@ Escaping rules for single- and double-quoted strings also apply.
 
 ### String interpolation
 
-String interpolation allows expressions to be evaluated and embedded as strings without having to manually convert everything into strings. To interpolate a value inside a string, prefix it with a dollar sign.
-
-You can leave out the curly braces if your expression is a simple variable, a nested value, or a function or method call.
-
 ```dart
-"I have $apples apples"
-"I have ${apples + bananas} fruits"
-"I have $apples%d apples"
+"simple $variable"
+"$object_.property or $deeply.nested[property]"
+"$type_{casting}"
+"$function() or $method.call(with_, args)"
+"${expression}"
 ```
 
 ### String formatting
 
-Trinity has an extensive string formatting mini-language for converting, transforming and serialising values inside strings, with a syntax derived from Command Prompt.
-
-- A command: `%command` denoted by a percentage sign
-- An optional range of switches, each denoted by a slash `/switch`,
-- Their optional values, separated by a colon: `/sw:value`.
-
 ```dart
-const Everest = {height: 8848}
-"Mount Everest is $Everest.height%f/unit:'m'/style:'long' tall."
-// "Mount Everest is 8,848 meters tall."
+"%type/switch/switch:'value'/switch:(expression)"
+
+// Types of values
+"%x/x:#10ffff numeric (positive only)"
+"%x/color:lang(x) CSS property"
+"%x/x:blue other variable"
+"%x/x:'' string"
+"%x/x:`` regex"
+"%x/x:() expression"
+"%x/x:[] array"
+"%x/x:{} object"
 ```
 
-### Placeholder strings
-
-<!-- ?#{}# {} {| |} -->
-
-Placeholder strings are functions that return strings. Their arguments are transformed using the value
-
-### Macro strings
-
-Macro strings allow you to embed domain-specific constructions, usually in the form `name'string'` or `name('string')` which is equivalent.
-
-A macro function is defined with the keyword `macro` and consist of four built-in arguments:
-
-- the passed `%values`; and
-- placeholder `%arguments: Any`; and
-- formatting `%metadata {directive: Str, keys: [][Str, Any]`; and
-- intermediate `%strings: []Str`.
+### String placeholder variables
 
 ```dart
-macro template(
-  &strings: []Str, %values; &keys: []Any
-): Str = |&values|: Str {
-  val dict = values[-1] ?? {}
-  val values = (for val key in keys:
-    if key is Int: values[key]
-    else: dict[key]).toList()
-  return strings.weave(keys).join('')
-}
-
-val t1Closure = template"${0}${1}${0}!"
-assert t1Closure("Y", "A") == "YAY!"
-val t2Closure = template"${0} ${"foo"}!"
-assert t2Closure("Hello", {foo: "World"}) == "Hello World!"
+"#key"
+"#0 positive (zero-indexed"
+"#-1 negative (from end)"
+"#*spread"
 ```
