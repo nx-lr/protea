@@ -1368,12 +1368,14 @@ repository:
           (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
           )|
-          # Everything else
-          ([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )
-          )?
+          # Rest of identifier characters
+          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
+          (\w+[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)*
+          (?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)
           )*
           )?
+          )*
+          )
           )
         captures:
           1: {name: punctuation.definition.directive.saga}
