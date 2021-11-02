@@ -1,10 +1,10 @@
-name: Trinity
+name: Saga
 scopeName: source.dart
-fileTypes: [dart, trin]
+fileTypes: [dart, saga]
 patterns: [include: "#core"]
 
 Information for Contributors: |
-  This is the grammar for the Trinity programming language. The grammar
+  This is the grammar for the Saga programming language. The grammar
   is about 80% complete though there still need to be some fixes.
 
   Should you want to provide a fix or improvement, or perhaps to
@@ -40,12 +40,12 @@ comment: |
 
 define:
   number-literal: &number-literal
-    1: {name: storage.type.numeric.trin}
-    2: {name: punctuation.separator.decimal.period.trin}
-    3: {name: punctuation.separator.decimal.fraction.trin}
-    4: {name: constant.numeric.other.exponent.trin}
-    5: {name: constant.numeric.other.density.trin}
-    6: {name: storage.type.numeric.trin}
+    1: {name: storage.type.numeric.saga}
+    2: {name: punctuation.separator.decimal.period.saga}
+    3: {name: punctuation.separator.decimal.fraction.saga}
+    4: {name: constant.numeric.other.exponent.saga}
+    5: {name: constant.numeric.other.density.saga}
+    6: {name: storage.type.numeric.saga}
 
   entity-name-clause: &entity-name-clause |
     (?x)\s*\b
@@ -58,9 +58,9 @@ define:
     |class|enum|module|pack|struct|schema|space|pragma
     |proc|proto|macro|given|style|elem|field
     |ext|pred|data|trait|lemma|iter|sub|prop
-    |if|un|elif|elun|else|then
+    |if|un|elif|elun|else
     |for|each|loop|while|until|when
-    |with|do|from
+    |with|then|do|from|ref
     |try|throw|catch|final
     |switch|match|case|fail
     |race|some|every|done|spawn|kill|lock
@@ -81,9 +81,9 @@ define:
     |class|enum|module|pack|struct|schema|space|pragma
     |proc|proto|macro|given|style|elem|field
     |ext|pred|data|trait|lemma|iter|sub|prop
-    |if|un|elif|elun|else|then
+    |if|un|elif|elun|else
     |for|each|loop|while|until|when
-    |with|do|from
+    |with|then|do|from|ref
     |try|throw|catch|final
     |switch|match|case|fail
     |race|some|every|done|spawn|kill|lock
@@ -137,7 +137,7 @@ repository:
     begin: \s*(\()
     end: \s*(\))
     captures:
-      1: {name: punctuation.definition.parameters.trin}
+      1: {name: punctuation.definition.parameters.saga}
     patterns: &function-params
       - include: "#clauses"
       - include: "#constants"
@@ -149,42 +149,42 @@ repository:
           \s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
-        name: variable.parameter.optional.trin
+        name: variable.parameter.optional.saga
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\*[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
-        name: variable.parameter.spread.trin
+        name: variable.parameter.spread.saga
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\&[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
-        name: variable.parameter.name.trin
+        name: variable.parameter.name.saga
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\%[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
-        name: variable.parameter.reference.trin
+        name: variable.parameter.reference.saga
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\$[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
-        name: variable.parameter.other.trin
+        name: variable.parameter.other.saga
       - match: |
           (?xi)\s*
           (?<=(?:^|[^|])\||[({\[;,]|^)
           \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|)
           )|\s+:?=\s+)
-        name: variable.parameter.trin
+        name: variable.parameter.saga
       - include: "$self"
 
   # Illegal Syntax
@@ -192,13 +192,13 @@ repository:
   illegal:
     patterns:
       - match: \p{N}[\w.+-/\\]*?
-        name: invalid.illegal.numeric.other.trin
+        name: invalid.illegal.numeric.other.saga
       - match: '[\w]+?'
-        name: invalid.illegal.variable.other.trin
+        name: invalid.illegal.variable.other.saga
       - match: '[(){}\[\]]+?'
-        name: invalid.illegal.missing-bracket.trin
+        name: invalid.illegal.missing-bracket.saga
       - match: \S+?
-        name: invalid.illegal.syntax.trin
+        name: invalid.illegal.syntax.saga
 
   illegal-keywords:
     match: |
@@ -208,9 +208,9 @@ repository:
       |class|enum|module|pack|struct|schema|space|pragma
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|un|elif|elun|else|then
+      |if|un|elif|elun|else
       |for|each|loop|while|until|when
-      |with|do|from
+      |with|then|do|from|ref
       |try|throw|catch|final
       |switch|match|case|fail
       |race|some|every|done|spawn|kill|lock
@@ -218,7 +218,7 @@ repository:
       |import|export|using|route
       |debug|assert|where
       )(?![\w\p{Pd}])\s*
-    name: invalid.illegal.keyword.trin
+    name: invalid.illegal.keyword.saga
 
   # Support
 
@@ -240,38 +240,52 @@ repository:
           |[CI]?Float(16|32|64|128)
           |[UI](8|16|32|64|128)
           |[CI]?F(16|32|64|128)
+          # lowerFlatCase
+          |bool|[nr]at|real|num|(big)?(u?int|float|nat)
+          |imag|comp|char|rune|str|sym
+          |u?int(8|16|32|64|128)
+          |[ci]?float(16|32|64|128)
+          |[ui](8|16|32|64|128)
+          |[ci]?f(16|32|64|128)
           )(?![\w\p{Pd}])
-        name: support.type.builtin.primitive.trin
+        name: support.type.builtin.primitive.saga
       - comment: Data structure classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
           Array|Tuple|(Mut)?(List|Set|Map|Bag)|Dict|Func|Iter
           |Proc|Seq|Gen|Range|Stack|Heap|Queue|Tree|Trie
           |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
+          # lowerFlatCase
+          |array|tuple|(mut)?(list|set|map|bag)|dict|func|iter
+          |proc|seq|gen|range|stack|heap|queue|tree|trie
+          |future|stream|regexp?|func|buf|strbuf|bytes
           )(?![\w\p{Pd}])
-        name: support.type.builtin.trin
+        name: support.type.builtin.saga
       - comment: Constant/algebraic classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
           True|False|Null|Void|NaN|Infin|Empty|Unit
-          |Any|Mixed|Just|Some|None|Never|Const|(Im)?pure
+          |Any|Mixed|Just|Some|None|Never|(Im)?pure
           |Class|Enum|Module|Pack|Struct|Schema|Space|Pragma
           |Proc|Proto|Macro|Given|Style|Elem|Field
           |Ext|Pred|Data|Trait|Lemma|Iter|Sub|Prop
+          # lowerFlatCase
+          |true|false|null|void|nan|infin|empty|unit
+          |any|mixed|just|some|none|never|(im)?pure
           )(?![\w\p{Pd}])
-        name: support.type.primitive.trin
+        name: support.type.primitive.saga
       - comment: Interface classes | IEnumerable, etc
         match: \s*\bI((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)\b
-        name: entity.name.interface.trin
+        name: entity.name.interface.saga
       - comment: Namespace classes | NSString, etc
         match: \s*\bNS((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)\b
-        name: entity.name.namespace.trin
+        name: entity.name.namespace.saga
       - comment: Error classes | BaseError, etc
         match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)?(Error|Exception)\b
-        name: support.class.error.trin
+        name: support.class.error.saga
       - comment: Trait classes | Serializable, Loggable etc
         match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)able\b
-        name: support.class.trait.trin
+        name: support.class.trait.saga
       - comment: Swift
       - include: source.swift#builtin-types
       - comment: Python
@@ -285,10 +299,10 @@ repository:
     patterns:
       - comment: isName functions
         match: (?x)\s*\bis(\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+\b\s*
-        name: support.function.predicate.trin
+        name: support.function.predicate.saga
       - comment: magic functions
         match: (?x)\s*\b_+([\p{Pc}\p{L}][\w\p{Pd}]*)+_+\b\s*
-        name: support.function.magic.trin
+        name: support.function.magic.saga
       - comment: Swift
       - include: source.swift#builtin-functions
       - comment: JavaScript
@@ -326,18 +340,18 @@ repository:
           )
           )\b
         captures:
-          1: {name: entity.name.tag.trin}
-          2: {name: entity.name.tag.trin support.class.component.trin}
-          3: {name: entity.name.class.builtin.trin}
-          4: {name: entity.name.function.method.trin}
-          5: {name: variable.other.global.trin}
-          6: {name: variable.other.constant.object.trin}
-          7: {name: variable.other.conditional.trin}
-          8: {name: variable.other.object.trin}
-          9: {name: entity.name.function.tagged-template.trin}
-          10: {name: entity.name.type.trin}
-          11: {name: entity.name.class.trin}
-          12: {name: entity.name.function.trin}
+          1: {name: entity.name.tag.saga}
+          2: {name: entity.name.tag.saga support.class.component.saga}
+          3: {name: entity.name.class.builtin.saga}
+          4: {name: entity.name.function.method.saga}
+          5: {name: variable.other.global.saga}
+          6: {name: variable.other.constant.object.saga}
+          7: {name: variable.other.conditional.saga}
+          8: {name: variable.other.object.saga}
+          9: {name: entity.name.function.tagged-template.saga}
+          10: {name: entity.name.type.saga}
+          11: {name: entity.name.class.saga}
+          12: {name: entity.name.function.saga}
       - include: $self
   constant-names:
     comment: Names for constants, symbols and static properties
@@ -371,12 +385,12 @@ repository:
           (true)|(false)|(null)|(void)|(nan)|(infin)
           )(?![\w\p{Pd}])\s*
         captures:
-          1: {name: constant.language.boolean.true.trin}
-          2: {name: constant.language.boolean.false.trin}
-          3: {name: constant.language.null.trin}
-          4: {name: constant.language.undefined.trin}
-          5: {name: constant.language.nan.trin}
-          6: {name: constant.language.infinity.trin}
+          1: {name: constant.language.boolean.true.saga}
+          2: {name: constant.language.boolean.false.saga}
+          3: {name: constant.language.null.saga}
+          4: {name: constant.language.undefined.saga}
+          5: {name: constant.language.nan.saga}
+          6: {name: constant.language.infinity.saga}
       - match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(?:
           (it|this|that|super|self)#1
@@ -386,21 +400,23 @@ repository:
           |(pro)#5
           )(?![\w\p{Pd}])\s*
         captures:
-          1: {name: variable.language.$1.trin}
-          2: {name: variable.language.arguments.trin}
-          3: {name: variable.language.constructor.trin}
-          4: {name: variable.language.prototype.trin}
-          5: {name: variable.language.proto.trin}
+          1: {name: variable.language.$1.saga}
+          2: {name: variable.language.arguments.saga}
+          3: {name: variable.language.constructor.saga}
+          4: {name: variable.language.prototype.saga}
+          5: {name: variable.language.proto.saga}
   symbols:
     patterns:
+      - match: (?x)\s*@[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
+        name: entity.name.class.decorator.saga
       - match: \s*\B(:)(?=['"])
-        name: punctuation.definition.symbol.trin
+        name: punctuation.definition.symbol.saga
       - begin: \s*\B(:)(\w|\\.)
         beginCaptures:
-          1: {name: punctuation.definition.symbol.trin}
-          2: {name: constant.other.symbol.trin}
+          1: {name: punctuation.definition.symbol.saga}
+          2: {name: constant.other.symbol.saga}
         end: (?=[\s.,:;'"`</>(){}\[\]]|$|[?!:]:|[!?]\.)
-        name: constant.other.symbol.trin
+        name: constant.other.symbol.saga
         patterns:
           - include: "#string-content"
 
@@ -409,9 +425,9 @@ repository:
   numbers:
     patterns:
       - match: (?<=(^|[({\[])\s*\d\w*)\.
-        name: punctuation.separator.decimal.period.trin
+        name: punctuation.separator.decimal.period.saga
       - match: (?<=(^|[({\[])\s*|\s)\.(?=\d)
-        name: punctuation.separator.decimal.period.trin
+        name: punctuation.separator.decimal.period.saga
       - match: |
           (?ix)\s*\b
           ((?:[2-9]|[1-9]\d+)b)# radix/base prefix
@@ -423,17 +439,17 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.arbitrary-radix.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.arbitrary-radix.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           ((?:[2-9]|[1-9]\d+)b)# radix prefix
@@ -445,17 +461,17 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.arbitrary-radix.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.arbitrary-radix.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0b)# radix/base prefix
@@ -467,17 +483,17 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.binary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.binary.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0b)# radix prefix
@@ -489,17 +505,17 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.binary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.binary.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0q)# radix/base prefix
@@ -511,17 +527,17 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.quaternary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.quaternary.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0q)# radix prefix
@@ -533,17 +549,17 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.quaternary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.quaternary.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0s)# radix/base prefix
@@ -555,17 +571,17 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.senary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.senary.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0s)# radix prefix
@@ -577,17 +593,17 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.senary.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.senary.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0o)# radix/base prefix
@@ -599,17 +615,17 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.octal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.octal.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0o)# radix prefix
@@ -621,17 +637,17 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.octal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.octal.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0z)# radix/base prefix
@@ -643,17 +659,17 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.duodecimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.duodecimal.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0z)# radix prefix
@@ -665,17 +681,17 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.duodecimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.duodecimal.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0x)# radix/base prefix
@@ -687,17 +703,17 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.hexadecimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.hexadecimal.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (0x)# radix prefix
@@ -709,17 +725,17 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.hexadecimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.hexadecimal.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           ()# radix/base prefix
@@ -731,17 +747,17 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.decimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.decimal.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           ()# radix prefix
@@ -753,17 +769,17 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.decimal.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: constant.numeric.decimal.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (\d+(?=\w+))# radix/base prefix
@@ -775,17 +791,17 @@ repository:
           )?
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: invalid.illegal.numeric.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: invalid.illegal.numeric.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
       - match: |
           (?ix)\s*\b
           (\d+(?=\w+))# radix prefix
@@ -797,52 +813,52 @@ repository:
           )
           ((?:\*(?:0|[1-9]\d*))?\^[+-]?(?:0|[1-9]\d*))?# exponential part
           (\=\!?[+-]?(?:0|[1-9]\d*))?# significant figure part
-          (\:[\p{Pc}\p{L}][\w\p{Pd}]*)?# type suffix
+          (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: invalid.illegal.numeric.trin}
-          1: {name: storage.type.numeric.trin}
-          2: {name: punctuation.separator.decimal.period.trin}
-          3: {name: punctuation.separator.decimal.repeating.trin}
-          4: {name: punctuation.separator.decimal.fraction.trin}
-          5: {name: constant.numeric.other.exponent.trin}
-          6: {name: constant.numeric.other.precision.trin}
-          7: {name: storage.type.numeric.trin}
+          0: {name: invalid.illegal.numeric.saga}
+          1: {name: storage.type.numeric.saga}
+          2: {name: punctuation.separator.decimal.period.saga}
+          3: {name: punctuation.separator.decimal.repeating.saga}
+          4: {name: punctuation.separator.decimal.fraction.saga}
+          5: {name: constant.numeric.other.exponent.saga}
+          6: {name: constant.numeric.other.precision.saga}
+          7: {name: storage.type.numeric.saga}
 
   strings-quoted:
     patterns:
       - comment: multi-single quoted string
         begin: (?<!'+)\s*('''+)
-        contentName: string.quoted.single.trin
+        contentName: string.quoted.single.saga
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.saga}
         patterns:
           - include: "#embedded-raw"
       - comment: single quoted string
         begin: (?<!'+)\s*(')
-        contentName: string.quoted.single.trin
+        contentName: string.quoted.single.saga
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.saga}
         patterns:
           - match: "''"
-            name: constant.character.escape.trin
+            name: constant.character.escape.saga
           - include: "#embedded-raw"
       - comment: multi-double quoted string
         begin: (?<!"+)\s*("""+)
-        contentName: string.quoted.double.trin
+        contentName: string.quoted.double.saga
         end: \s*((\1)(?!"+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.saga}
         patterns:
           - include: "#string-content"
       - comment: double quoted string
         begin: (?<!"+)\s*(")
-        contentName: string.quoted.double.trin
+        contentName: string.quoted.double.saga
         end: \s*((\1)(?!"+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.saga}
         patterns:
           - include: "#string-content"
 
@@ -855,117 +871,117 @@ repository:
     patterns:
       - comment: Binary escape sequences
         match: (?ix)\\b[01]{1,21}
-        name: constant.character.escape.binary.trin
+        name: constant.character.escape.binary.saga
       - comment: Binary escape sequences
         begin: (?ix)\\b{
         end: \s*}
-        name: constant.character.escape.binary.trin
+        name: constant.character.escape.binary.saga
         patterns:
           - match: \b[01]{1,21}\b
-            name: constant.character.escape.binary.trin
+            name: constant.character.escape.binary.saga
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.saga
       - comment: Quaternary escape sequences
         match: (?ix)\\q[0-3]{1,11}
-        name: constant.character.escape.quaternary.trin
+        name: constant.character.escape.quaternary.saga
       - comment: Quaternary escape sequences
         begin: (?ix)\\q{
         end: \s*}
-        name: constant.character.escape.quaternary.trin
+        name: constant.character.escape.quaternary.saga
         patterns:
           - match: \b[0-3]{1,11}\b
-            name: constant.character.escape.quaternary.trin
+            name: constant.character.escape.quaternary.saga
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.saga
       - comment: Senary escape sequences
         match: (?ix)\\s[0-5]{1,8}
-        name: constant.character.escape.senary.trin
+        name: constant.character.escape.senary.saga
       - comment: Senary escape sequences
         begin: (?ix)\\s{
         end: \s*}
-        name: constant.character.escape.senary.trin
+        name: constant.character.escape.senary.saga
         patterns:
           - match: \b[0-5]{1,8}\b
-            name: constant.character.escape.senary.trin
+            name: constant.character.escape.senary.saga
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.saga
       - comment: Octal escape sequences
         match: (?ix)\\o[0-7]{1,7}
-        name: constant.character.escape.octal.trin
+        name: constant.character.escape.octal.saga
       - comment: Octal escape sequences
         begin: (?ix)\\o{
         end: \s*}
-        name: constant.character.escape.octal.trin
+        name: constant.character.escape.octal.saga
         patterns:
           - match: \b[0-7]{1,7}\b
-            name: constant.character.escape.octal.trin
+            name: constant.character.escape.octal.saga
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.saga
       - comment: Decimal escape sequences
         match: (?ix)\\d?\d{1,7}
-        name: constant.character.escape.decimal.trin
+        name: constant.character.escape.decimal.saga
       - comment: Decimal escape sequences
         begin: (?ix)\\d{
         end: \s*}
-        name: constant.character.escape.decimal.trin
+        name: constant.character.escape.decimal.saga
         patterns:
           - match: \b\d{1,7}\b
-            name: constant.character.escape.decimal.trin
+            name: constant.character.escape.decimal.saga
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.saga
       - comment: Duodecimal escape sequences
         match: (?ix)\\z[\dab]{1,6}
-        name: constant.character.escape.duodecimal.trin
+        name: constant.character.escape.duodecimal.saga
       - comment: Duodecimal escape sequences
         begin: (?ix)\\z{
         end: \s*}
-        name: constant.character.escape.duodecimal.trin
+        name: constant.character.escape.duodecimal.saga
         patterns:
           - match: \b[\dab]{1,6}\b
-            name: constant.character.escape.duodecimal.trin
+            name: constant.character.escape.duodecimal.saga
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.saga
       - comment: Hexadecimal escape sequences
         match: (?ix)\\[ux]\h{1,6}
-        name: constant.character.escape.hexadecimal.trin
+        name: constant.character.escape.hexadecimal.saga
       - comment: Hexadecimal escape sequences
         begin: (?ix)\\[ux]{
         end: \s*}
-        name: constant.character.escape.hexadecimal.trin
+        name: constant.character.escape.hexadecimal.saga
         patterns:
           - match: \b\h{1,6}\b
-            name: constant.character.escape.hexadecimal.trin
+            name: constant.character.escape.hexadecimal.saga
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.unrecognized-string-escape.saga
 
   string-escapes:
     patterns:
       - match: \\(?=\s*$)
-        name: constant.character.escape.newline.trin
+        name: constant.character.escape.newline.saga
       - begin: (?i)\\j{
         end: \s*}
-        name: constant.character.entity.named.trin
+        name: constant.character.entity.named.saga
         patterns:
           - include: "#latex-sublanguage"
       - include: "#numeric-escapes"
       - match: (?i)\\([cm][a-z])
-        name: constant.character.control.trin
+        name: constant.character.control.saga
       - match: (?i)\\[a-z]
-        name: constant.character.escape.trin
+        name: constant.character.escape.saga
       - match: (?x)\\[\p{S}\p{P}]
-        name: constant.character.escape.symbol.trin
+        name: constant.character.escape.symbol.saga
       - match: (?x)\\\p{Z}
-        name: constant.character.escape.other.trin
+        name: constant.character.escape.other.saga
       - match: (?x)\\[\p{L}\p{N}\p{C}]
-        name: invalid.illegal.unknown-escape.trin
+        name: invalid.illegal.unknown-escape.saga
 
   embedded-expression:
     patterns:
       - begin: (\${)\s*
         end: (})
-        name: entity.quasi.element.trin
+        name: entity.quasi.element.saga
         captures:
-          1: {name: punctuation.section.embedded.trin}
+          1: {name: punctuation.section.embedded.saga}
         patterns: [include: $self]
       - match: |
           (?x)(\$)
@@ -977,9 +993,9 @@ repository:
           |class|enum|module|pack|struct|schema|space|pragma
           |proc|proto|macro|given|style|elem|field
           |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|un|elif|elun|else|then
+          |if|un|elif|elun|else
           |for|each|loop|while|until|when
-          |with|do|from
+          |with|then|do|from|ref
           |try|throw|catch|final
           |switch|match|case|fail
           |race|some|every|done|spawn|kill|lock
@@ -1008,11 +1024,11 @@ repository:
           )*
           )
         captures:
-          1: {name: punctuation.section.embedded.trin}
+          1: {name: punctuation.section.embedded.saga}
           2: {patterns: [include: "#everything-but-comments"]}
 
   format-specifier:
-    match: &format-pattern |
+    match: |
       (?x)(%)
       (
       (?<ident>\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
@@ -1035,20 +1051,20 @@ repository:
       (?<q1>')(?:[^']|'')*\g<q1>
       )|
       # Everything else
-      ([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+      \w+|[$\#@%]?(([?!]?\.|[?!:]:)?[\p{Pc}\p{L}][\p{Pd}\w]*\b)*
       )
       )?
       )*
       )?
       )
     captures:
-      1: {name: punctuation.definition.directive.trin}
+      1: {name: punctuation.definition.directive.saga}
       2:
-        name: storage.type.format.trin
+        name: storage.type.format.saga
         patterns:
           - include: "#format-language"
           - match: .+
-            name: string.other.format.trin
+            name: string.other.format.saga
 
   embedded-placeholder:
     repository:
@@ -1057,17 +1073,17 @@ repository:
     patterns:
       - match: (\#)([+-]?\d+)
         captures:
-          1: {name: punctuation.definition.anchor.trin}
-          2: {name: constant.numeric.decimal.trin}
+          1: {name: punctuation.definition.anchor.saga}
+          2: {name: constant.numeric.decimal.saga}
       - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
-          1: {name: punctuation.definition.anchor.trin}
+          1: {name: punctuation.definition.anchor.saga}
           2: {patterns: [include: "#placeholder-variables"]}
       - begin: (\#{)\s*
         end: (})
-        name: entity.quasi.element.trin
+        name: entity.quasi.element.saga
         captures:
-          1: {name: punctuation.definition.anchor.trin}
+          1: {name: punctuation.definition.anchor.saga}
         patterns:
           - include: "#function-params"
           - include: $self
@@ -1081,7 +1097,7 @@ repository:
   embedded-raw:
     patterns:
       - match: \$\$|\%\%\|#\#
-        name: constant.character.escape.trin
+        name: constant.character.escape.saga
       - include: "#format-specifier"
       - include: "#embedded-placeholder"
       - include: "#embedded-expression"
@@ -1089,25 +1105,25 @@ repository:
   # Format Specifier Language
 
   format-language:
-    comment: Grammar for Trinity's format specifier language, inspired by MS-DOS, Bash and Python's f-strings.
+    comment: Grammar for Saga's format specifier language, inspired by MS-DOS, Bash and Python's f-strings.
     patterns:
       - comment: type specifier
         match: (?<=[^\\%]%)\w+
-        name: entity.other.attribute-name.trin
+        name: entity.other.attribute-name.saga
       - comment: Format switch with value /x:24
         applyEndPatternLast: 1
         begin: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)(:)
         beginCaptures:
-          1: {name: punctuation.separator.mapping.trin}
-          2: {name: entity.other.attribute-name.class.trin}
-          3: {name: punctuation.separator.key-value.trin}
+          1: {name: punctuation.separator.mapping.saga}
+          2: {name: entity.other.attribute-name.class.saga}
+          3: {name: punctuation.separator.key-value.saga}
         end: (?=.)|$
         patterns: [include: "#html-properties"]
       - comment: Format switch without value
         match: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
-          1: {name: punctuation.separator.mapping.trin}
-          2: {name: entity.other.attribute-name.id.trin}
+          1: {name: punctuation.separator.mapping.saga}
+          2: {name: entity.other.attribute-name.id.saga}
 
   # Unicode Named Character Language
 
@@ -1115,44 +1131,44 @@ repository:
     comment: Grammar for the Unicode Named Character Mini-Language.
     patterns:
       - include: "#embedded"
-      - name: line.separator.math.trin
+      - name: line.separator.math.saga
         match: (\\\\)$
         captures:
-          1: {name: punctuation.line.separator.math.trin}
-      - name: meta.function.math.trin
+          1: {name: punctuation.line.separator.math.saga}
+      - name: meta.function.math.saga
         begin: ((\\)([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*))(\{)
         beginCaptures:
-          1: {name: storage.type.function.math.trin}
-          2: {name: punctuation.definition.function.math.trin}
+          1: {name: storage.type.function.math.saga}
+          2: {name: punctuation.definition.function.math.saga}
           3:
             patterns:
               - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-                name: entity.name.namespace.trin
+                name: entity.name.namespace.saga
               - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
-                name: entity.name.function.trin
+                name: entity.name.function.saga
               - match: \b\:\b
-                name: punctuation.separator.namespace.trin
+                name: punctuation.separator.namespace.saga
               - match: \b\.\b
-                name: punctuation.accessor.trin
-          4: {name: punctuation.definition.arguments.begin.math.trin}
+                name: punctuation.accessor.saga
+          4: {name: punctuation.definition.arguments.begin.math.saga}
         end: \}
         endCaptures:
-          0: {name: punctuation.definition.arguments.end.math.trin}
+          0: {name: punctuation.definition.arguments.end.math.saga}
         patterns:
           - include: "#latex-sublanguage"
       - match: (\\)\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
         captures:
-          1: {name: punctuation.definition.constant.trin}
+          1: {name: punctuation.definition.constant.saga}
           2:
             patterns:
               - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-                name: constant.other.namespace.trin
+                name: constant.other.namespace.saga
               - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
-                name: constant.character.math.trin
+                name: constant.character.math.saga
               - match: \b\:\b
-                name: punctuation.separator.namespace.trin
+                name: punctuation.separator.namespace.saga
               - match: \b\.\b
-                name: punctuation.accessor.trin
+                name: punctuation.accessor.saga
       - match: "[-+*/^]"
         name: punctuation.math.operator.latex
       - include: "#string-escapes"
@@ -1165,35 +1181,35 @@ repository:
       - comment: Replacement section
         begin: (?<=`+)\s*(```+|`)
         end: \s*(?:(\1)(?!`+))(\p{Alnum}*)
-        contentName: string.replace.regexp.trin
+        contentName: string.replace.regexp.saga
         captures:
-          1: {name: punctuation.section.regexp.end.trin}
-          2: {name: keyword.other.flag.trin}
+          1: {name: punctuation.section.regexp.end.saga}
+          2: {name: keyword.other.flag.saga}
         patterns:
           - include: "#back-references"
           - include: "#string-content"
       - comment: Pattern section
         begin: \s*(\p{Alnum}*)(?<!`+)(```+|`)
         end: \s*(?:(\2)(?!`+))(\p{Alnum}*)
-        contentName: string.pattern.regexp.trin
+        contentName: string.pattern.regexp.saga
         beginCaptures:
-          1: {name: keyword.modifier.trin}
-          2: {name: punctuation.section.regexp.begin.trin}
+          1: {name: keyword.modifier.saga}
+          2: {name: punctuation.section.regexp.begin.saga}
         endCaptures:
-          1: {name: punctuation.section.regexp.end.trin}
-          2: {name: keyword.other.flag.trin}
+          1: {name: punctuation.section.regexp.end.saga}
+          2: {name: keyword.other.flag.saga}
         patterns:
           - include: "#comments"
           - include: "#regexp-patterns"
   back-references:
     patterns:
       - match: \$(\d+|[+-]\d*|&)
-        name: keyword.other.back-reference.trin
+        name: keyword.other.back-reference.saga
       - begin: (\$<)\s*
         end: \s*(>)
-        name: keyword.other.back-reference.trin
+        name: keyword.other.back-reference.saga
         captures:
-          1: {name: keyword.other.back-reference.trin}
+          1: {name: keyword.other.back-reference.saga}
         patterns: &regex-back-references
           - include: "#variables"
           - include: "#numbers"
@@ -1201,9 +1217,9 @@ repository:
           - include: "#string-content"
       - begin: (\$(['"]))\s*
         end: \s*(\2)
-        name: keyword.other.back-reference.trin
+        name: keyword.other.back-reference.saga
         captures:
-          1: {name: keyword.other.back-reference.trin}
+          1: {name: keyword.other.back-reference.saga}
         patterns: *regex-back-references
   regexp-patterns:
     patterns:
@@ -1211,121 +1227,121 @@ repository:
       - include: "#comments"
       - include: "#strings-quoted"
       - match: \|
-        name: keyword.operator.or.trin
+        name: keyword.operator.or.saga
       - match: \&
-        name: keyword.operator.compose.trin
+        name: keyword.operator.compose.saga
       - match: \.
-        name: constant.character.all.trin
-      - match: \\[mM]({[\w\s]+})?
-        name: keyword.control.anchor.trin
+        name: constant.character.all.saga
+      - match: \\[bB]({[\w\s]+})?
+        name: keyword.control.anchor.saga
       - match: \$|\\[yYzZ]({[\w\s]+})?
-        name: keyword.control.end.trin}
-      - match: \^|\\[AbB]({[\w\s]+})?
-        name: keyword.control.begin.trin
+        name: keyword.control.end.saga}
+      - match: \^|\\[AmM]({[\w\s]+})?
+        name: keyword.control.begin.saga
       - match: \\K
-        name: keyword.control.keepout.trin
+        name: keyword.control.keepout.saga
       - match: \\G
-        name: keyword.control.search.trin
+        name: keyword.control.search.saga
       - match: \\R
-        name: constant.character.control.trin
+        name: constant.character.control.saga
       - match: \\[XO]
-        name: constant.character.unicode.trin
+        name: constant.character.unicode.saga
       - match: (\\\()(?:(\?)|(\+)|(\*))
         captures:
-          1: {name: constant.character.escape.other.trin}
-          2: {name: keyword.operator.quantifier.lazy.trin}
-          3: {name: keyword.operator.quantifier.eager.trin}
-          4: {name: keyword.operator.quantifier.greedy.trin}
+          1: {name: constant.character.escape.other.saga}
+          2: {name: keyword.operator.quantifier.lazy.saga}
+          3: {name: keyword.operator.quantifier.eager.saga}
+          4: {name: keyword.operator.quantifier.greedy.saga}
       - match: \\\d+
-        name: keyword.other.back-reference.trin
+        name: keyword.other.back-reference.saga
       - match: \{(\s*\d*\s*(?:,?\s*\d*\s*)*)\}
-        name: keyword.operator.quantifier.trin
+        name: keyword.operator.quantifier.saga
       - begin: (\\k<)
         end: \s*(>)
-        name: constant.other.back-reference.trin
+        name: constant.other.back-reference.saga
         captures:
-          1: {name: keyword.other.back-reference.trin}
+          1: {name: keyword.other.back-reference.saga}
         patterns: *regex-back-references
       - begin: (\\g<)
         end: \s*(>)
-        name: constant.other.subroutine.trin
+        name: constant.other.subroutine.saga
         captures:
-          1: {name: keyword.other.subroutine.trin}
+          1: {name: keyword.other.subroutine.saga}
         patterns: *regex-back-references
       - begin: (\\k('''+|"""+|'|"))
         end: \s*(\2)
-        name: constant.other.back-reference.trin
+        name: constant.other.back-reference.saga
         captures:
-          1: {name: keyword.other.back-reference.trin}
+          1: {name: keyword.other.back-reference.saga}
         patterns: *regex-back-references
       - begin: (\\g('''+|"""+|'|"))
         end: \s*(\2)
-        name: constant.other.subroutine.trin
+        name: constant.other.subroutine.saga
         captures:
-          1: {name: keyword.other.subroutine.trin}
+          1: {name: keyword.other.subroutine.saga}
         patterns: *regex-back-references
       - match: (?<=[^\\][*+?}])(?:(\?)|(\+)|(\*))
         captures:
-          1: {name: keyword.operator.modifier.lazy.trin}
-          2: {name: keyword.operator.modifier.eager.trin}
-          3: {name: keyword.operator.modifier.greedy.trin}
+          1: {name: keyword.operator.modifier.lazy.saga}
+          2: {name: keyword.operator.modifier.eager.saga}
+          3: {name: keyword.operator.modifier.greedy.saga}
       - match: (\?)|(\+)|(\*)
         captures:
-          1: {name: keyword.operator.quantifier.lazy.trin}
-          2: {name: keyword.operator.quantifier.eager.trin}
-          3: {name: keyword.operator.quantifier.greedy.trin}
+          1: {name: keyword.operator.quantifier.lazy.saga}
+          2: {name: keyword.operator.quantifier.eager.saga}
+          3: {name: keyword.operator.quantifier.greedy.saga}
       - include: "#regexp-groups"
       - include: "#regexp-char-set"
       - include: "#regexp-char-class"
       - match: \\.
-        name: constant.character.escape.other.trin
+        name: constant.character.escape.other.saga
   regexp-groups:
     patterns:
       - comment: Embedded expression
-        begin: \(([*+])
+        begin: \(\??([*+])
         end: \s*(\))
-        name: constant.other.pcre.trin
+        name: constant.other.pcre.saga
         captures:
-          0: {name: punctuation.section.expression.trin}
+          0: {name: punctuation.section.expression.saga}
         patterns:
           - include: $self
       - comment: Block comment
         begin: (\()(\?#)
-        contentName: comment.block.regexp.trin
+        contentName: comment.block.regexp.saga
         end: \s*(\))
-        name: comment.block.regexp.trin
+        name: comment.block.regexp.saga
         captures:
-          1: {name: punctuation.definition.comment.trin}
+          1: {name: punctuation.definition.comment.saga}
         patterns:
           - match: \\.
-            name: comment.block.regexp.trin
+            name: comment.block.regexp.saga
       - comment: Lookahead assertion
         begin: (\(\?=)
         end: \s*(\))
-        name: meta.group.look-ahead.trin
+        name: meta.group.look-ahead.saga
         captures:
-          1: {name: punctuation.definition.group.look-ahead.trin}
+          1: {name: punctuation.definition.group.look-ahead.saga}
         patterns: [include: "#regexp-patterns"]
       - comment: Lookbehind assertion
         begin: (\(\?<=)
         end: \s*(\))
-        name: meta.group.look-behind.trin
+        name: meta.group.look-behind.saga
         captures:
-          1: {name: punctuation.definition.group.look-behind.trin}
+          1: {name: punctuation.definition.group.look-behind.saga}
         patterns: [include: "#regexp-patterns"]
       - comment: Negative lookahead assertion
         begin: (\(\?!)
         end: \s*(\))
-        name: meta.group.negative-look-ahead.trin
+        name: meta.group.negative-look-ahead.saga
         captures:
-          1: {name: punctuation.definition.group.negative-look-ahead.trin}
+          1: {name: punctuation.definition.group.negative-look-ahead.saga}
         patterns: [include: "#regexp-patterns"]
       - comment: Negative lookbehind assertion
         begin: (\(\?<!)
         end: \s*(\))
-        name: meta.group.negative-look-behind.trin
+        name: meta.group.negative-look-behind.saga
         captures:
-          1: {name: punctuation.definition.group.negative-look-behind.trin}
+          1: {name: punctuation.definition.group.negative-look-behind.saga}
         patterns: [include: "#regexp-patterns"]
       - comment: Match directive
         begin: |
@@ -1358,197 +1374,197 @@ repository:
           )?
           )
         captures:
-          1: {name: punctuation.definition.directive.trin}
+          1: {name: punctuation.definition.directive.saga}
           2:
-            name: storage.type.format.trin
+            name: storage.type.format.saga
             patterns:
               - include: "#format-language"
               - match: .+
-                name: string.other.format.trin
+                name: string.other.format.saga
         end: \s*(\))
-        name: meta.group.directive.trin
+        name: meta.group.directive.saga
         patterns: [include: "#regexp-patterns"]
       - comment: Longest match
         begin: (\(\?/=?)
         end: \s*(\))
-        name: meta.group.longest.trin
+        name: meta.group.longest.saga
         captures:
-          1: {name: punctuation.definition.group.longest.trin}
+          1: {name: punctuation.definition.group.longest.saga}
         patterns: [include: "#regexp-patterns"]
       - comment: Flag modifier group
         begin: (\(\?\^?(?:([+-]?\d+?)|((?:[+-]\p{Lu}+)+|\p{Lu}+(?:[+-]\p{Lu}+)*)|((?:[+-]\p{Ll}+)+|\p{Ll}+(?:[+-]\p{Ll}+)*)))\s*(:)?
         end: \s*(\))
-        name: meta.group.flag.trin
+        name: meta.group.flag.saga
         captures:
-          0: {name: punctuation.definition.group.flag.trin}
-          1: {name: punctuation.definition.group.flag.trin}
-          2: {name: constant.numeric.index.trin}
-          3: {name: keyword.control.recursion.trin}
-          4: {name: keyword.other.flag.trin}
-          5: {name: punctuation.separator.colon.trin}
+          0: {name: punctuation.definition.group.flag.saga}
+          1: {name: punctuation.definition.group.flag.saga}
+          2: {name: constant.numeric.index.saga}
+          3: {name: keyword.control.recursion.saga}
+          4: {name: keyword.other.flag.saga}
+          5: {name: punctuation.separator.colon.saga}
         patterns: [include: "#regexp-patterns"]
       - comment: Callouts
         begin: (\(\?)(?={)
         end: \s*(\))
-        name: meta.group.call-out.trin
+        name: meta.group.call-out.saga
         captures:
-          1: {name: punctuation.definition.group.call-out.trin}
+          1: {name: punctuation.definition.group.call-out.saga}
         patterns:
           - begin: (?<=\(\?)({)
             end: \s*(\})([<*>])?(?:(\[)(.*?)(\]))?
-            name: punctuation.definition.group.call-out.trin
+            name: punctuation.definition.group.call-out.saga
             captures:
-              1: {name: punctuation.definition.group.call-out.trin}
-              2: {name: keyword.operator.range.trin}
-              3: {name: punctuation.definition.tag.trin}
+              1: {name: punctuation.definition.group.call-out.saga}
+              2: {name: keyword.operator.range.saga}
+              3: {name: punctuation.definition.tag.saga}
               4: {patterns: [include: "#function-names"]}
-              5: {name: punctuation.definition.tag.trin}
+              5: {name: punctuation.definition.tag.saga}
             patterns:
               - include: $self
           - include: "#regexp-patterns"
       - comment: Atomic groups
         begin: (\(\?>)
         end: \s*(\))
-        name: meta.group.atomic.trin
+        name: meta.group.atomic.saga
         captures:
-          1: {name: punctuation.definition.group.atomic.trin}
+          1: {name: punctuation.definition.group.atomic.saga}
         patterns: [include: "#regexp-patterns"]
       - comment: Non-capturing groups
         begin: (\(\?:)
         end: \s*(\))
-        name: meta.group.non-capturing.trin
+        name: meta.group.non-capturing.saga
         captures:
-          1: {name: punctuation.definition.group.non-capturing.trin}
+          1: {name: punctuation.definition.group.non-capturing.saga}
         patterns: [include: "#regexp-patterns"]
       - comment: Branch groups
         begin: (\(\?)(?=[(|])
         end: \s*(\))
-        name: meta.group.branch.trin
+        name: meta.group.branch.saga
         captures:
-          1: {name: punctuation.definition.group.branch.trin}
+          1: {name: punctuation.definition.group.branch.saga}
         patterns: [include: "#regexp-patterns"]
       - comment: Atomic groups
         begin: (\(\?~)
         end: \s*(\))
-        name: meta.group.absent.trin
+        name: meta.group.absent.saga
         captures:
-          1: {name: punctuation.definition.group.absent.trin}
+          1: {name: punctuation.definition.group.absent.saga}
         patterns: [include: "#regexp-patterns"]
       - comment: Back-reference groups
         begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}][\w\p{Pd}]*)))(:)?
         end: \s*\)
-        name: meta.group.back-reference.trin
+        name: meta.group.back-reference.saga
         captures:
-          0: {name: punctuation.definition.group.back-reference.trin}
-          1: {name: punctuation.definition.group.back-reference.trin}
-          2: {name: constant.numeric.index.trin}
+          0: {name: punctuation.definition.group.back-reference.saga}
+          1: {name: punctuation.definition.group.back-reference.saga}
+          2: {name: constant.numeric.index.saga}
           3: {patterns: [include: "#variables"]}
-          4: {name: punctuation.separator.colon.trin}
+          4: {name: punctuation.separator.colon.saga}
         patterns: [include: "#regexp-patterns"]
       - comment: Named groups (angle-brackets)
         begin: \(\?(?=<(?![!=]))
         end: \s*(\))
-        name: meta.group.named.trin
+        name: meta.group.named.saga
         captures:
-          0: {name: punctuation.definition.group.named.trin}
+          0: {name: punctuation.definition.group.named.saga}
         patterns:
           - begin: (?<=\(\?)(<)
             end: \s*(>)
-            name: constant.other.group.trin
+            name: constant.other.group.saga
             captures:
-              1: {name: punctuation.definition.group.named.trin}
+              1: {name: punctuation.definition.group.named.saga}
             patterns: *regex-back-references
           - include: "#regexp-patterns"
       - comment: Named groups (single or double-quotes)
         begin: \(\?(?=['"])
         end: \s*(\))
-        name: meta.group.named.trin
+        name: meta.group.named.saga
         captures:
-          0: {name: punctuation.definition.group.named.trin}
+          0: {name: punctuation.definition.group.named.saga}
         patterns:
           - begin: (?<=\(\?)('''+|"""+|'|")
             end: \s*(\1)
-            name: constant.other.group.trin
+            name: constant.other.group.saga
             captures:
-              1: {name: punctuation.definition.group.named.trin}
+              1: {name: punctuation.definition.group.named.saga}
             patterns: *regex-back-references
           - include: "#regexp-patterns"
       - comment: Unnamed groups
         begin: (\()
         end: (\s*\))
-        name: meta.group.trin
+        name: meta.group.saga
         captures:
-          1: {name: punctuation.definition.group.trin}
+          1: {name: punctuation.definition.group.saga}
         patterns: [include: "#regexp-patterns"]
   regexp-char-class:
     patterns:
       - include: "#embedded"
       - match: \\(?=\s*$)
-        name: constant.character.escape.newline.trin
+        name: constant.character.escape.newline.saga
       - begin: (?i)\\p{
         end: \s*}
-        name: constant.other.character-class.unicode.trin
+        name: constant.other.character-class.unicode.saga
         patterns:
           - include: "#attribute-selectors"
       - begin: \\j{
         end: \s*}
-        name: constant.character.entity.named.trin
+        name: constant.character.entity.named.saga
         patterns:
           - include: "#latex-sublanguage"
       - include: "#numeric-escapes"
       - match: (?i)\\([cm][a-z])
-        name: constant.character.control.trin
+        name: constant.character.control.saga
       - match: (?i)\\p(\w\w?)
-        name: constant.other.character-class.unicode.trin
+        name: constant.other.character-class.unicode.saga
       - match: (?i)\\[ci]({\w+})?
-        name: constant.other.character-class.xml.trin
+        name: constant.other.character-class.xml.saga
       - match: (?x)\\[a-z]
-        name: constant.other.character-class.trin
+        name: constant.other.character-class.saga
       - match: (?x)\\[A-Z]
-        name: constant.other.character-class.negated.trin
+        name: constant.other.character-class.negated.saga
       - match: (?i)\\n{[\w\s\p{Pd}]+}
-        name: constant.character.escape.unicode.name.trin
+        name: constant.character.escape.unicode.name.saga
       - match: (?i)\\[\p{L}\p{N}]
-        name: constant.character.escape.trin
+        name: constant.character.escape.saga
       - match: (?x)\\[\p{S}\p{P}]
-        name: constant.character.escape.symbol.trin
+        name: constant.character.escape.symbol.saga
       - match: (?x)\\\p{Z}
-        name: constant.character.escape.other.trin
+        name: constant.character.escape.other.saga
       - match: (?x)\\\p{C}
-        name: invalid.illegal.unknown-escape.trin
+        name: invalid.illegal.unknown-escape.saga
   regexp-char-ops:
     patterns:
       - match: (?<!\|)\|\|(?!\|)
-        name: keyword.operator.union.trin
+        name: keyword.operator.union.saga
       - match: (?<!&)&&(?!&)
-        name: keyword.operator.intersection.trin
+        name: keyword.operator.intersection.saga
       - match: (?<!\^)\^\^(?!\^)
-        name: keyword.operator.symmetric.trin
+        name: keyword.operator.symmetric.saga
       - match: (?<!~)~~(?!~)
-        name: keyword.operator.negation.trin
+        name: keyword.operator.negation.saga
       - match: (?<!-)--(?!-)
-        name: keyword.operator.difference.trin
+        name: keyword.operator.difference.saga
       - match: (?<![^\\][\\\[])-(?![-\[\]])
-        name: keyword.operator.range.trin
+        name: keyword.operator.range.saga
       - match: ([^-\\\[\]]|\\.)(?<!-+)(?=(?<!\\)-)
-        name: constant.other.character-class.range.from.trin
+        name: constant.other.character-class.range.from.saga
       - match: (?<=[^\\]-)(?!-+)([^-\\\[\]]|\\.)
-        name: constant.other.character-class.range.to.trin
+        name: constant.other.character-class.range.to.saga
       - match: \\.
-        name: constant.character.escape.other.trin
+        name: constant.character.escape.other.saga
   regexp-char-set:
     patterns:
       - begin: (\[[.:])
         end: (\])
-        name: constant.other.character-class.posix.trin
+        name: constant.other.character-class.posix.saga
         captures:
-          1: {name: punctuation.definition.character-class.posix.trin}
+          1: {name: punctuation.definition.character-class.posix.saga}
         patterns: [include: "#attribute-selectors"]
       - begin: (\[[!^])
         end: (\])
-        name: constant.other.character-class.negated.trin
+        name: constant.other.character-class.negated.saga
         captures:
-          1: {name: punctuation.definition.character-class.negated.trin}
+          1: {name: punctuation.definition.character-class.negated.saga}
         patterns:
           - include: "#comments"
           - include: "#regexp-char-class"
@@ -1556,9 +1572,9 @@ repository:
           - include: "#regexp-char-set"
       - begin: (\[)
         end: (\])
-        name: constant.other.character-class.trin
+        name: constant.other.character-class.saga
         captures:
-          1: {name: punctuation.definition.character-class.trin}
+          1: {name: punctuation.definition.character-class.saga}
         patterns:
           - include: "#comments"
           - include: "#regexp-char-class"
@@ -1568,30 +1584,30 @@ repository:
   attribute-selectors:
     patterns:
       - match: ","
-        name: punctuation.separator.sequence.trin
+        name: punctuation.separator.sequence.saga
       - include: "#comments"
       - include: "#strings-quoted"
       - match: (?xi)\b[is]\b(?=[)}\]]|&&|\|\||\^\^)
-        name: storage.modifier.ignore-case.trin
+        name: storage.modifier.ignore-case.saga
       - include: "#string-escapes"
       - match: "[:!=</>.^$%?*+|&~]?="
-        name: keyword.operator.pattern.trin
+        name: keyword.operator.pattern.saga
       - match: ([&|^])\1|!
-        name: keyword.operator.logical.trin
+        name: keyword.operator.logical.saga
       - match: \b(i[ns])\b
-        name: keyword.operator.expression.$1.trin
+        name: keyword.operator.expression.$1.saga
       - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)([:!=</>.^$%?*+|&~]?=)
         beginCaptures:
-          1: {name: entity.other.attribute-name.trin}
-          2: {name: keyword.operator.pattern.trin}
+          1: {name: entity.other.attribute-name.saga}
+          2: {name: keyword.operator.pattern.saga}
         end: (?=&&|\|\||\^\^|[\s,:;'"`(){}\[\]])
-        name: string.unquoted.attribute-name.trin
+        name: string.unquoted.attribute-name.saga
         patterns: [include: "#html-properties"]
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         captures:
-          1: {name: entity.other.attribute-name.trin}
-          2: {name: keyword.operator.pattern.trin}
+          1: {name: entity.other.attribute-name.saga}
+          2: {name: keyword.operator.pattern.saga}
       - include: "#operators"
 
   # Markdown
@@ -1605,7 +1621,7 @@ repository:
   html-properties:
     patterns:
       - match: \s+
-        name: meta.var.expr.trin
+        name: meta.var.expr.saga
       - include: "#clauses"
       - include: "#declarations"
       - include: source.yaml#flow-collection
@@ -1627,32 +1643,32 @@ repository:
       1:
         patterns:
           - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-            name: entity.name.tag.namespace.trin
+            name: entity.name.tag.namespace.saga
           - match: (?x)\b([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)\b
-            name: entity.name.tag.trin support.class.component.trin
+            name: entity.name.tag.saga support.class.component.saga
           - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
-            name: entity.name.tag.trin
+            name: entity.name.tag.saga
           - match: \b\:\b
-            name: punctuation.separator.namespace.trin
+            name: punctuation.separator.namespace.saga
           - match: \b\.\b
-            name: punctuation.accessor.trin
+            name: punctuation.accessor.saga
   style-block:
     begin: \s*(\{)\s*
     end: \s*(\})
     captures:
-      1: {name: punctuation.definition.block.trin}
+      1: {name: punctuation.definition.block.saga}
     patterns: [include: "#style-properties"]
   style-properties:
     patterns:
       - include: "#clauses"
       - include: "#declarations"
       - applyEndPatternLast: 1
-        begin: (?<=^|;|{)\s*([\p{Pc}\p{L}][\w\p{Pd}]*)(:)?\s*
+        begin: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)?\s*
         beginCaptures:
-          1: {name: support.type.property-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: support.type.property-name.saga}
+          2: {name: punctuation.separator.key-value.saga}
         end: (?=.)|$
-        name: string.unquoted.trin
+        name: string.unquoted.saga
         patterns: [include: "#html-properties"]
       - include: "#style-block"
       - include: "#style-rules"
@@ -1667,31 +1683,31 @@ repository:
     begin: \s*(\()\s*
     end: \s*(\))
     captures:
-      1: {name: punctuation.definition.parameters.trin}
+      1: {name: punctuation.definition.parameters.saga}
     patterns: [include: "#style-properties"]
   style-attributes:
     begin: \s*(\[)\s*
     end: \s*(\])
     captures:
-      1: {name: punctuation.definition.selector.trin}
+      1: {name: punctuation.definition.selector.saga}
     patterns: [include: "#attribute-selectors"]
   style-selectors:
     patterns:
-      - include: "#format-language"
       - match: \s*(\@|\#|\$|\&|\*|\.|\:|::)\b
-        name: punctuation.definition.entity.trin
+        name: punctuation.definition.entity.saga
       - match: \s*(?<=\@)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: keyword.control.at-rule.trin
+        name: keyword.control.at-rule.saga
       - match: \s*(?<=\#)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.id.trin
+        name: entity.other.attribute-name.id.saga
       - match: \s*(?<=\&)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.name.type.anchor.trin
+        name: entity.name.type.anchor.saga
       - match: \s*(?<=\.)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.class.trin
+        name: entity.other.attribute-name.class.saga
       - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.pseudo-element.trin
+        name: entity.other.attribute-name.pseudo-element.saga
       - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.pseudo-element.trin
+        name: entity.other.attribute-name.pseudo-element.saga
+      - include: "#format-language"
 
   # JSX
 
@@ -1710,9 +1726,9 @@ repository:
       |class|enum|module|pack|struct|schema|space|pragma
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|un|elif|elun|else|then
+      |if|un|elif|elun|else
       |for|each|loop|while|until|when
-      |with|do|from
+      |with|then|do|from|ref
       |try|throw|catch|final
       |switch|match|case|fail
       |race|some|every|done|spawn|kill|lock
@@ -1726,31 +1742,31 @@ repository:
     patterns: [include: "#tag-element-name"]
   tag-element-name:
     comment: "Tags that end > are trapped in #tag-termination"
-    contentName: string.unquoted.html.trin
+    contentName: string.unquoted.html.saga
     begin: |
       (?x)\s*+(<)#start tag begin
       ([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)#tag name
       (?=[\/>\s])(?![:])(?<!\.|:)
     end: \s*(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>
     beginCaptures:
-      1: {name: punctuation.definition.tag.trin}
+      1: {name: punctuation.definition.tag.saga}
       2: {patterns: [include: "#tag-names"]}
     endCaptures:
       1: {patterns: [include: "#tag-names"]}
-      2: {name: punctuation.definition.tag.trin}
-      3: {name: punctuation.definition.tag.trin}
-      4: {name: invalid.illegal.termination.trin}
+      2: {name: punctuation.definition.tag.saga}
+      3: {name: punctuation.definition.tag.saga}
+      4: {name: invalid.illegal.termination.saga}
     patterns:
       - include: "#tag-termination"
       - include: "#tag-attributes"
   tag-termination:
     comment: uses non consuming search for </ in </tag>
-    contentName: meta.jsx.children.trin
-    name: meta.jsx.children.trin
+    contentName: meta.jsx.children.saga
+    name: meta.jsx.children.saga
     begin: (>)
     end: (</)
     captures:
-      0: {name: punctuation.definition.tag.trin}
+      0: {name: punctuation.definition.tag.saga}
     patterns:
       - include: "#evaluated-code"
       - include: "#jsx-entities"
@@ -1768,56 +1784,56 @@ repository:
       - applyEndPatternLast: 1
         begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(=)\s*
         beginCaptures:
-          1: {name: entity.other.attribute-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: entity.other.attribute-name.saga}
+          2: {name: punctuation.separator.key-value.saga}
         end: (?=.)|$
-        name: string.unquoted.attribute-name.trin
+        name: string.unquoted.attribute-name.saga
         patterns: [include: "#html-properties"]
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(=)?\s*
         captures:
-          1: {name: entity.other.attribute-name.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: entity.other.attribute-name.saga}
+          2: {name: punctuation.separator.key-value.saga}
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
     match: (?<!\*)\*(?!\*)
-    name: keyword.operator.spread.trin
+    name: keyword.operator.spread.saga
   jsx-entities:
     patterns:
       - captures: &jsx-entities
-          1: {name: punctuation.definition.entity.trin}
-          2: {name: punctuation.definition.entity.trin}
+          1: {name: punctuation.definition.entity.saga}
+          2: {name: punctuation.definition.entity.saga}
         match: (&)#\d+(;)
-        name: constant.character.escape.decimal.trin
+        name: constant.character.escape.decimal.saga
       - captures: *jsx-entities
         match: (?i)(&)#x\h+(;)
-        name: constant.character.escape.hexadecimal.trin
+        name: constant.character.escape.hexadecimal.saga
       - captures: *jsx-entities
         match: (?i)(&)#b[01]+(;)
-        name: constant.character.escape.binary.trin
+        name: constant.character.escape.binary.saga
       - captures: *jsx-entities
         match: (?i)(&)#q[0-3]\h+(;)
-        name: constant.character.escape.quaternary.trin
+        name: constant.character.escape.quaternary.saga
       - captures: *jsx-entities
         match: (?i)(&)#s[0-5]\h+(;)
-        name: constant.character.escape.senary.trin
+        name: constant.character.escape.senary.saga
       - captures: *jsx-entities
         match: (?i)(&)#o[0-7]\h+(;)
-        name: constant.character.escape.octal.trin
+        name: constant.character.escape.octal.saga
       - captures: *jsx-entities
         match: (?i)(&)#o[0-7]\h+(;)
-        name: constant.character.escape.octal.trin
+        name: constant.character.escape.octal.saga
       - captures: *jsx-entities
         match: (?i)(&)#z[\dab]\h+(;)
-        name: constant.character.escape.duodecimal.trin
+        name: constant.character.escape.duodecimal.saga
       - captures: *jsx-entities
         match: (&)(?:\\.|[^(){}\[\]\s;])+?(;)
         name: constant.character.entity.xml
       - match: '&(?=\w*;)'
-        name: invalid.illegal.ambiguous-ampersand.trin
+        name: invalid.illegal.ambiguous-ampersand.saga
       - comment: Entity with & and invalid name
         match: '&\s*+;'
-        name: invalid.illegal.bad-ampersand.trin
+        name: invalid.illegal.bad-ampersand.saga
 
   # Comments
 
@@ -1830,18 +1846,18 @@ repository:
     patterns:
       - begin: \s*(/\+\+)
         end: \s*(\+/)
-        name: comment.block.documentation.nested.trin
+        name: comment.block.documentation.nested.saga
         captures:
-          1: {name: punctuation.definition.comment.trin}
+          1: {name: punctuation.definition.comment.saga}
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
           - include: "#nested-jsdoc"
       - begin: \s*(/\+)
         end: \s*(\+/)
-        name: comment.block.nested.trin
+        name: comment.block.nested.saga
         captures:
-          1: {name: punctuation.definition.comment.trin}
+          1: {name: punctuation.definition.comment.saga}
         patterns:
           - include: text.html.markdown#inline
           - include: "#nested-block"
@@ -1849,42 +1865,42 @@ repository:
     patterns:
       - begin: \s*(/\*\*)
         end: \s*(\*/)
-        name: comment.block.documentation.trin
+        name: comment.block.documentation.saga
         captures:
-          1: {name: punctuation.definition.comment.trin}
+          1: {name: punctuation.definition.comment.saga}
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
       - begin: \s*(/\*)
         end: \s*(\*/)
-        name: comment.block.trin
+        name: comment.block.saga
         captures:
-          1: {name: punctuation.definition.comment.trin}
+          1: {name: punctuation.definition.comment.saga}
         patterns:
           - include: text.html.markdown#inline
   line-comments:
     patterns:
       - begin: \s*(///)
         end: \s*$
-        name: comment.line.documentation.trin
+        name: comment.line.documentation.saga
         captures:
-          1: {name: punctuation.definition.comment.trin}
+          1: {name: punctuation.definition.comment.saga}
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
       - begin: \s*(//)
         end: \s*$
-        name: comment.line.number-sign.trin
+        name: comment.line.number-sign.saga
         captures:
-          1: {name: punctuation.definition.comment.trin}
+          1: {name: punctuation.definition.comment.saga}
         patterns:
           - include: text.html.markdown#inline
   nested-jsdoc:
     begin: (/\+\+?)\s*
     end: \s*(\+/)
-    name: comment.block.documentation.nested.trin
+    name: comment.block.documentation.nested.saga
     captures:
-      1: {name: punctuation.definition.comment.trin}
+      1: {name: punctuation.definition.comment.saga}
     patterns:
       - include: "#jsdoc"
       - include: text.html.markdown#inline
@@ -1892,9 +1908,9 @@ repository:
   nested-block:
     begin: (/\+)\s*
     end: \s*(\+/)
-    name: comment.block.nested.trin
+    name: comment.block.nested.saga
     captures:
-      1: {name: punctuation.definition.comment.trin}
+      1: {name: punctuation.definition.comment.saga}
     patterns:
       - include: text.html.markdown#inline
       - include: "#nested-block"
@@ -2076,9 +2092,9 @@ repository:
           |class|enum|module|pack|struct|schema|space|pragma
           |proc|proto|macro|given|style|elem|field
           |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|un|elif|elun|else|then
+          |if|un|elif|elun|else
           |for|each|loop|while|until|when
-          |with|do|from
+          |with|then|do|from|ref
           |try|throw|catch|final
           |switch|match|case|fail
           |race|some|every|done|spawn|kill|lock
@@ -2105,9 +2121,9 @@ repository:
           |class|enum|module|pack|struct|schema|space|pragma
           |proc|proto|macro|given|style|elem|field
           |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|un|elif|elun|else|then
+          |if|un|elif|elun|else
           |for|each|loop|while|until|when
-          |with|do|from
+          |with|then|do|from|ref
           |try|throw|catch|final
           |switch|match|case|fail
           |race|some|every|done|spawn|kill|lock
@@ -2132,17 +2148,17 @@ repository:
   placeholder-variables:
     patterns:
       - match: (?i)\s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.optional.trin
+        name: variable.parameter.optional.saga
       - match: (?i)\s*\*[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.spread.trin
+        name: variable.parameter.spread.saga
       - match: (?i)\s*[&~][\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.name.trin
+        name: variable.parameter.name.saga
       - match: (?i)\s*\%[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.reference.trin
+        name: variable.parameter.reference.saga
       - match: (?i)\s*\$[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.other.trin
+        name: variable.parameter.other.saga
       - match: (?i)\s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.trin
+        name: variable.parameter.saga
 
   variables:
     comment: |
@@ -2179,18 +2195,18 @@ repository:
       )
       \b\s*
     captures:
-      1: {name: variable.other.index.trin}
-      2: {name: variable.other.constant.property.trin}
-      3: {name: variable.other.property.static.trin}
-      4: {name: variable.other.property.trin}
-      5: {name: variable.other.global.trin}
-      6: {name: variable.other.constant.object.trin}
-      7: {name: variable.other.conditional.trin}
-      8: {name: variable.other.object.trin}
-      9: {name: variable.other.dollar.trin}
-      10: {name: variable.other.constant.trin}
-      11: {name: variable.other.class.trin}
-      12: {name: variable.other.readwrite.trin}
+      1: {name: variable.other.index.saga}
+      2: {name: variable.other.constant.property.saga}
+      3: {name: variable.other.property.static.saga}
+      4: {name: variable.other.property.saga}
+      5: {name: variable.other.global.saga}
+      6: {name: variable.other.constant.object.saga}
+      7: {name: variable.other.conditional.saga}
+      8: {name: variable.other.object.saga}
+      9: {name: variable.other.dollar.saga}
+      10: {name: variable.other.constant.saga}
+      11: {name: variable.other.class.saga}
+      12: {name: variable.other.readwrite.saga}
 
   # Operators
 
@@ -2205,7 +2221,7 @@ repository:
       - begin: (?<=^|\s)(\?)(?=\s|$)
         end: (?<=^|\s)(:)(?=\s|$)
         captures:
-          1: {name: keyword.operator.conditional.trin}
+          1: {name: keyword.operator.conditional.saga}
         patterns:
           - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
             end: \s*(?=:\s|$)
@@ -2216,7 +2232,7 @@ repository:
       - begin: (?<=^|\s)(\!)(?=\s|$)
         end: (?<=^|\s)(:)(?=\s|$)
         captures:
-          1: {name: keyword.operator.ternary.trin}
+          1: {name: keyword.operator.ternary.saga}
         patterns:
           - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
             end: \s*(?=:\s|$)
@@ -2227,17 +2243,17 @@ repository:
       - begin: (?<=^|\s)(\$)(?=\s|$)
         end: (?<=^|\s)(:)(?=\s|$)
         captures:
-          1: {name: keyword.operator.macro.dollar.trin}
+          1: {name: keyword.operator.macro.dollar.saga}
         patterns:
           - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
             end: \s*(?=:\s|$)
-            name: entity.name.function.trin
+            name: entity.name.function.saga
           - include: $self
   binary-ops:
     patterns:
       - comment: augmented assignment += -= *= /= etc
         match: (?<=^|[\s'"`({\[])([\p{S}\p{P}&&[^!:~.<=>,;'"`(){}\[\]\p{Pc}]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=)(?=$|[\s'"`)}\]])
-        name: keyword.operator.assignment.augmented.trin
+        name: keyword.operator.assignment.augmented.saga
       - comment: |
           BUILT-IN OPERATORS
 
@@ -2262,26 +2278,26 @@ repository:
           19: inverse ternary operator !:
           20: infix function call $:
         captures:
-          1: {name: keyword.operator.assignment.trin}
-          2: {name: keyword.operator.arithmetic.trin}
-          3: {name: keyword.operator.successor.trin}
-          4: {name: keyword.operator.logical.trin}
-          5: {name: keyword.operator.bitwise.trin}
-          6: {name: keyword.operator.bitwise.shift.trin}
-          7: {name: keyword.operator.pipeline.trin}
-          8: {name: keyword.operator.compose.trin}
-          9: {name: keyword.operator.class.trin}
-          10: {name: keyword.operator.relational.trin}
-          11: {name: keyword.operator.regexp.trin}
-          12: {name: keyword.operator.comparison.trin}
-          13: {name: keyword.operator.similarity.trin}
-          14: {name: keyword.operator.arrow.fat.trin}
-          15: {name: keyword.operator.arrow.skinny.trin}
-          16: {name: keyword.operator.null-coalescing.trin}
-          17: {name: keyword.operator.coalescing.trin}
-          18: {name: keyword.operator.conditional.trin}
-          19: {name: keyword.operator.ternary.trin}
-          20: {name: keyword.operator.macro.dollar.trin}
+          1: {name: keyword.operator.assignment.saga}
+          2: {name: keyword.operator.arithmetic.saga}
+          3: {name: keyword.operator.successor.saga}
+          4: {name: keyword.operator.logical.saga}
+          5: {name: keyword.operator.bitwise.saga}
+          6: {name: keyword.operator.bitwise.shift.saga}
+          7: {name: keyword.operator.pipeline.saga}
+          8: {name: keyword.operator.compose.saga}
+          9: {name: keyword.operator.class.saga}
+          10: {name: keyword.operator.relational.saga}
+          11: {name: keyword.operator.regexp.saga}
+          12: {name: keyword.operator.comparison.saga}
+          13: {name: keyword.operator.similarity.saga}
+          14: {name: keyword.operator.arrow.fat.saga}
+          15: {name: keyword.operator.arrow.skinny.saga}
+          16: {name: keyword.operator.null-coalescing.saga}
+          17: {name: keyword.operator.coalescing.saga}
+          18: {name: keyword.operator.conditional.saga}
+          19: {name: keyword.operator.ternary.saga}
+          20: {name: keyword.operator.macro.dollar.saga}
         match: |
           (?x)
           (?<=^|[\s'"`({\[])# opening
@@ -2326,17 +2342,17 @@ repository:
           10: custom ASCII (between \x80 and \xff)
           11: custom infix operators (all other chars)
         captures:
-          1: {name: keyword.operator.bitwise.custom.trin}
-          2: {name: keyword.operator.arithmetic.custom.trin}
-          3: {name: keyword.operator.prototype.custom.trin}
-          4: {name: keyword.operator.accessor.custom.trin}
-          5: {name: keyword.operator.comparison.custom.trin}
-          6: {name: keyword.operator.relational.custom.trin}
-          7: {name: keyword.operator.private.custom.trin}
-          8: {name: keyword.operator.math.custom.trin}
-          9: {name: keyword.operator.currency.custom.trin}
-          10: {name: keyword.operator.ascii.custom.trin}
-          11: {name: keyword.operator.infix.custom.trin}
+          1: {name: keyword.operator.bitwise.custom.saga}
+          2: {name: keyword.operator.arithmetic.custom.saga}
+          3: {name: keyword.operator.prototype.custom.saga}
+          4: {name: keyword.operator.accessor.custom.saga}
+          5: {name: keyword.operator.comparison.custom.saga}
+          6: {name: keyword.operator.relational.custom.saga}
+          7: {name: keyword.operator.private.custom.saga}
+          8: {name: keyword.operator.math.custom.saga}
+          9: {name: keyword.operator.currency.custom.saga}
+          10: {name: keyword.operator.ascii.custom.saga}
+          11: {name: keyword.operator.infix.custom.saga}
         match: |
           (?x)
           (?<=^|[\s'"`({\[])# opening
@@ -2369,11 +2385,11 @@ repository:
           )
           (?=\b|['"`({\[])# opening
         captures:
-          1: {name: keyword.operator.range.trin}
-          2: {name: keyword.operator.optional.trin}
-          3: {name: keyword.operator.assert.trin}
-          4: {name: keyword.operator.accessor.trin}
-          5: {name: keyword.operator.primary.trin}
+          1: {name: keyword.operator.range.saga}
+          2: {name: keyword.operator.optional.saga}
+          3: {name: keyword.operator.assert.saga}
+          4: {name: keyword.operator.accessor.saga}
+          5: {name: keyword.operator.primary.saga}
       - &prefix-operators
         comment: Prefix operators
         match: |
@@ -2395,23 +2411,23 @@ repository:
           |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
           (?=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
           [\w({\['"`])
-        name: keyword.operator.prefix.trin
+        name: keyword.operator.prefix.saga
         captures:
-          1: {name: keyword.operator.module.all.trin}
-          2: {name: keyword.operator.increment.trin}
-          3: {name: keyword.operator.decrement.trin}
-          4: {name: keyword.operator.intersection.trin}
-          5: {name: keyword.operator.union.trin}
-          6: {name: keyword.operator.symmetric.trin}
-          7: {name: keyword.operator.logical.trin}
-          8: {name: keyword.operator.private.trin}
-          9: {name: keyword.operator.decorator.trin}
-          10: {name: keyword.operator.bitwise.not.trin}
-          11: {name: keyword.operator.existential.trin}
-          12: {name: keyword.operator.assignment.trin}
-          13: {name: keyword.operator.pipeline.trin}
-          14: {name: keyword.operator.private.trin}
-          15: {name: keyword.operator.prefix.trin}
+          1: {name: keyword.operator.module.all.saga}
+          2: {name: keyword.operator.increment.saga}
+          3: {name: keyword.operator.decrement.saga}
+          4: {name: keyword.operator.intersection.saga}
+          5: {name: keyword.operator.union.saga}
+          6: {name: keyword.operator.symmetric.saga}
+          7: {name: keyword.operator.logical.saga}
+          8: {name: keyword.operator.private.saga}
+          9: {name: keyword.operator.decorator.saga}
+          10: {name: keyword.operator.bitwise.not.saga}
+          11: {name: keyword.operator.existential.saga}
+          12: {name: keyword.operator.assignment.saga}
+          13: {name: keyword.operator.pipeline.saga}
+          14: {name: keyword.operator.private.saga}
+          15: {name: keyword.operator.prefix.saga}
       - &suffix-operators
         comment: Suffix operators
         match: |
@@ -2433,23 +2449,23 @@ repository:
           |(\$)#13
           |(\#)#14
           |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
-        name: keyword.operator.suffix.trin
+        name: keyword.operator.suffix.saga
         captures:
-          1: {name: keyword.operator.module.all.trin}
-          2: {name: keyword.operator.increment.trin}
-          3: {name: keyword.operator.decrement.trin}
-          4: {name: keyword.operator.intersection.trin}
-          5: {name: keyword.operator.union.trin}
-          6: {name: keyword.operator.symmetric.trin}
-          7: {name: keyword.operator.assert.trin}
-          8: {name: keyword.operator.private.trin}
-          9: {name: keyword.operator.decorator.trin}
-          10: {name: keyword.operator.bitwise.trin}
-          11: {name: keyword.operator.optional.trin}
-          12: {name: keyword.operator.assignment.trin}
-          13: {name: keyword.operator.pipeline.trin}
-          14: {name: keyword.operator.private.trin}
-          15: {name: keyword.operator.suffix.trin}
+          1: {name: keyword.operator.module.all.saga}
+          2: {name: keyword.operator.increment.saga}
+          3: {name: keyword.operator.decrement.saga}
+          4: {name: keyword.operator.intersection.saga}
+          5: {name: keyword.operator.union.saga}
+          6: {name: keyword.operator.symmetric.saga}
+          7: {name: keyword.operator.assert.saga}
+          8: {name: keyword.operator.private.saga}
+          9: {name: keyword.operator.decorator.saga}
+          10: {name: keyword.operator.bitwise.saga}
+          11: {name: keyword.operator.optional.saga}
+          12: {name: keyword.operator.assignment.saga}
+          13: {name: keyword.operator.pipeline.saga}
+          14: {name: keyword.operator.private.saga}
+          15: {name: keyword.operator.suffix.saga}
   pipeline-operator:
     patterns:
       - applyEndPatternLast: 1
@@ -2463,9 +2479,9 @@ repository:
           |class|enum|module|pack|struct|schema|space|pragma
           |proc|proto|macro|given|style|elem|field
           |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|un|elif|elun|else|then
+          |if|un|elif|elun|else
           |for|each|loop|while|until|when
-          |with|do|from
+          |with|then|do|from|ref
           |try|throw|catch|final
           |switch|match|case|fail
           |race|some|every|done|spawn|kill|lock
@@ -2481,8 +2497,8 @@ repository:
           )\s*([^(]|$|;))
         end: (?=.)|$
         beginCaptures:
-          1: {name: keyword.operator.compose.trin}
-          2: {name: keyword.operator.pipeline.trin}
+          1: {name: keyword.operator.compose.saga}
+          2: {name: keyword.operator.pipeline.saga}
         patterns:
           - match: |
               (?x)\s*\b
@@ -2493,9 +2509,9 @@ repository:
               |class|enum|module|pack|struct|schema|space|pragma
               |proc|proto|macro|given|style|elem|field
               |ext|pred|data|trait|lemma|iter|sub|prop
-              |if|un|elif|elun|else|then
+              |if|un|elif|elun|else
               |for|each|loop|while|until|when
-              |with|do|from
+              |with|then|do|from|ref
               |try|throw|catch|final
               |switch|match|case|fail
               |race|some|every|done|spawn|kill|lock
@@ -2529,18 +2545,18 @@ repository:
               )
               )\b
             captures:
-              1: {name: variable.other.global.trin}
-              2: {name: variable.other.constant.object.trin}
-              3: {name: variable.other.conditional.trin}
-              4: {name: variable.other.object.trin}
-              5: {name: entity.name.tag.trin}
-              6: {name: entity.name.tag.trin support.class.component.trin}
-              7: {name: entity.name.class.builtin.trin}
-              8: {name: entity.name.function.method.trin}
-              9: {name: entity.name.function.tagged-template.trin}
-              10: {name: entity.name.type.trin}
-              11: {name: entity.name.class.trin}
-              12: {name: entity.name.function.trin}
+              1: {name: variable.other.global.saga}
+              2: {name: variable.other.constant.object.saga}
+              3: {name: variable.other.conditional.saga}
+              4: {name: variable.other.object.saga}
+              5: {name: entity.name.tag.saga}
+              6: {name: entity.name.tag.saga support.class.component.saga}
+              7: {name: entity.name.class.builtin.saga}
+              8: {name: entity.name.function.method.saga}
+              9: {name: entity.name.function.tagged-template.saga}
+              10: {name: entity.name.type.saga}
+              11: {name: entity.name.class.saga}
+              12: {name: entity.name.function.saga}
           - *primary-operators
 
   # Types
@@ -2550,7 +2566,7 @@ repository:
     begin: (:)(?=\s|$)
     end: (?=.)|$
     beginCaptures:
-      1: {name: punctuation.definition.annotation.trin}
+      1: {name: punctuation.definition.annotation.saga}
     patterns:
       - include: "#types"
   type-brackets:
@@ -2564,14 +2580,14 @@ repository:
           punctuation:
             patterns:
               - match: ","
-                name: punctuation.separator.mapping.trin
+                name: punctuation.separator.mapping.saga
               - match: (?<!\s):(?!:)
-                name: punctuation.separator.key-value.trin
+                name: punctuation.separator.key-value.saga
         patterns:
           - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
             end: \s*(})
             captures:
-              1: {name: punctuation.definition.binding-pattern.object.trin}
+              1: {name: punctuation.definition.binding-pattern.object.saga}
             patterns:
               - include: "#labels"
               - include: "#punctuation"
@@ -2580,7 +2596,7 @@ repository:
           - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.mapping.trin}
+              1: {name: punctuation.definition.mapping.saga}
             patterns:
               - include: "#labels"
               - include: "#punctuation"
@@ -2589,7 +2605,7 @@ repository:
           - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.dictionary.trin}
+              1: {name: punctuation.definition.dictionary.saga}
             patterns:
               - include: "#labels"
               - include: "#punctuation"
@@ -2600,12 +2616,12 @@ repository:
           punctuation:
             patterns:
               - match: ","
-                name: punctuation.separator.arguments.trin
+                name: punctuation.separator.arguments.saga
         patterns:
           - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.parameters.trin}
+              1: {name: punctuation.definition.parameters.saga}
             patterns:
               - include: "#punctuation"
               - include: "#function-params"
@@ -2614,7 +2630,7 @@ repository:
           - begin: \s*(\#?\()\s*
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.trin}
+              1: {name: punctuation.definition.expression.saga}
             patterns:
               - include: "#punctuation"
               - include: "#types"
@@ -2625,14 +2641,14 @@ repository:
             patterns:
               - match: (?<![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)
                 captures:
-                  1: {name: punctuation.separator.slice.trin}
+                  1: {name: punctuation.separator.slice.saga}
               - match: ","
-                name: punctuation.separator.sequence.trin
+                name: punctuation.separator.sequence.saga
         patterns:
           - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
             end: \s*(\])
             captures:
-              1: {name: punctuation.definition.attribute-selector.trin}
+              1: {name: punctuation.definition.attribute-selector.saga}
             patterns:
               - include: "#punctuation"
               - include: "#types"
@@ -2640,19 +2656,19 @@ repository:
           - begin: \s*(\#\[)\s*
             end: \s*(\])
             captures:
-              1: {name: punctuation.definition.sequence.trin}
+              1: {name: punctuation.definition.sequence.saga}
             patterns:
               - match: ","
-                name: punctuation.separator.sequence.trin
+                name: punctuation.separator.sequence.saga
               - include: "#types"
               - include: $self
           - begin: \s*(\[)\s*
             end: \s*(\])
             captures:
-              1: {name: punctuation.definition.array.trin}
+              1: {name: punctuation.definition.array.saga}
             patterns:
               - match: ","
-                name: punctuation.separator.sequence.trin
+                name: punctuation.separator.sequence.saga
               - include: "#types"
               - include: $self
 
@@ -2661,28 +2677,28 @@ repository:
     patterns:
       - comment: single quoted raw string
         begin: (?<!'+)\s*('''+)
-        contentName: string.quoted.single.trin
+        contentName: string.quoted.single.saga
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.saga}
         patterns:
           - include: "#type-embedded-raw"
       - comment: simple single quoted raw string
         begin: (?<!'+)\s*(')
-        contentName: string.quoted.single.trin
+        contentName: string.quoted.single.saga
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.saga}
         patterns:
           - match: "''"
-            name: constant.character.escape.trin
+            name: constant.character.escape.saga
           - include: "#type-embedded-raw"
       - comment: double quoted standard string
         begin: (?<!"+)\s*("""+|")
-        contentName: string.quoted.double.trin
+        contentName: string.quoted.double.saga
         end: \s*((\1)(?!"+))
         captures:
-          1: {name: punctuation.definition.string.trin}
+          1: {name: punctuation.definition.string.saga}
         patterns:
           - include: "#string-escapes"
           - include: "#type-embedded"
@@ -2691,9 +2707,9 @@ repository:
     patterns:
       - begin: (\${)\s*
         end: (})
-        name: entity.quasi.element.trin
+        name: entity.quasi.element.saga
         captures:
-          1: {name: punctuation.section.embedded.trin}
+          1: {name: punctuation.section.embedded.saga}
         patterns: [include: "types", include: $self]
       - match: |
           (?x)(\$)
@@ -2717,24 +2733,24 @@ repository:
           )*
           )
         captures:
-          1: {name: punctuation.section.embedded.trin}
+          1: {name: punctuation.section.embedded.saga}
           2: {patterns: [include: "#types", include: "#everything-but-comments"]}
 
   type-embedded-placeholder:
     patterns:
       - match: (\#)([+-]?\d+)
         captures:
-          1: {name: punctuation.definition.anchor.trin}
-          2: {name: constant.numeric.decimal.trin}
+          1: {name: punctuation.definition.anchor.saga}
+          2: {name: constant.numeric.decimal.saga}
       - match: (\#)([?*&~%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
-          1: {name: punctuation.definition.anchor.trin}
+          1: {name: punctuation.definition.anchor.saga}
           2: {patterns: [include: "#placeholder-variables"]}
       - begin: (\#{)\s*
         end: (})
-        name: entity.quasi.element.trin
+        name: entity.quasi.element.saga
         captures:
-          1: {name: punctuation.definition.anchor.trin}
+          1: {name: punctuation.definition.anchor.saga}
         patterns:
           - include: "#placeholder-variables"
           - include: $self
@@ -2748,7 +2764,7 @@ repository:
   type-embedded-raw:
     patterns:
       - match: \$\$|\%\%\|#\#
-        name: constant.character.escape.trin
+        name: constant.character.escape.saga
       - include: "#format-specifier"
       - include: "#type-embedded-placeholder"
       - include: "#type-embedded-expression"
@@ -2756,15 +2772,15 @@ repository:
   type-keywords:
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)(?![\w\p{Pd}])\s*
-        name: storage.type.extends.trin
+        name: storage.type.extends.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(impl)(?![\w\p{Pd}])\s*
-        name: storage.type.implements.trin
+        name: storage.type.implements.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(typeof|nameof|sizeof|keyof|pairof|infer|as|is)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.$1.trin
+        name: keyword.operator.expression.$1.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(instof)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.instanceof.trin
+        name: keyword.operator.expression.instanceof.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(valof)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.valueof.trin
+        name: keyword.operator.expression.valueof.saga
 
   type-operators:
     patterns:
@@ -2780,10 +2796,10 @@ repository:
           )
           (?=\b|['"`\\({\[])
         captures:
-          1: {name: keyword.operator.range.trin}
-          2: {name: keyword.operator.optional.trin}
-          3: {name: keyword.operator.assert.trin}
-          4: {name: keyword.operator.accessor.trin}
+          1: {name: keyword.operator.range.saga}
+          2: {name: keyword.operator.optional.saga}
+          3: {name: keyword.operator.assert.saga}
+          4: {name: keyword.operator.accessor.saga}
 
       - comment: type operators
         match: |
@@ -2806,29 +2822,29 @@ repository:
           )
           (?=$|[({\[\w'"\s])
         captures:
-          1: {name: keyword.operator.sum.trin}
-          2: {name: keyword.operator.difference.trin}
-          3: {name: keyword.operator.product.trin}
-          4: {name: keyword.operator.quotient.trin}
-          5: {name: keyword.operator.remainder.trin}
-          6: {name: keyword.operator.only.trin}
-          7: {name: keyword.operator.maybe.trin}
-          8: {name: keyword.operator.intersection.trin}
-          9: {name: keyword.operator.union.trin}
-          10: {name: keyword.operator.symmetric.trin}
-          11: {name: keyword.operator.negation.trin}
-          12: {name: keyword.operator.macro.dollar.trin}
-          13: {name: keyword.operator.private.trin}
-          14: {name: keyword.operator.class.trin}
+          1: {name: keyword.operator.sum.saga}
+          2: {name: keyword.operator.difference.saga}
+          3: {name: keyword.operator.product.saga}
+          4: {name: keyword.operator.quotient.saga}
+          5: {name: keyword.operator.remainder.saga}
+          6: {name: keyword.operator.only.saga}
+          7: {name: keyword.operator.maybe.saga}
+          8: {name: keyword.operator.intersection.saga}
+          9: {name: keyword.operator.union.saga}
+          10: {name: keyword.operator.symmetric.saga}
+          11: {name: keyword.operator.negation.saga}
+          12: {name: keyword.operator.macro.dollar.saga}
+          13: {name: keyword.operator.private.saga}
+          14: {name: keyword.operator.class.saga}
 
   # Types
 
   types:
     patterns:
       - match: \s*(==?>|--?>|~~?>)
-        name: keyword.operator.type.function.trin
+        name: keyword.operator.type.function.saga
       - match: \s*(<==|<--?|<~~?)
-        name: keyword.operator.type.channel.trin
+        name: keyword.operator.type.channel.saga
       - include: "#params-clause"
       - include: "#type-keywords"
       - include: "#type-names"
@@ -2855,9 +2871,9 @@ repository:
       |class|enum|module|pack|struct|schema|space|pragma
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|un|elif|elun|else|then
+      |if|un|elif|elun|else
       |for|each|loop|while|until|when
-      |with|do|from
+      |with|then|do|from|ref
       |try|throw|catch|final
       |switch|match|case|fail
       |race|some|every|done|spawn|kill|lock
@@ -2891,18 +2907,18 @@ repository:
       )
       )\b
     captures: &custom-types
-      1: {name: entity.name.module.trin}
-      2: {name: entity.name.tag.trin}
-      3: {name: entity.name.namespace.trin}
-      4: {name: entity.name.interface.trin}
-      5: {name: entity.name.tag.block.trin}
-      6: {name: entity.name.tag.script.trin}
-      7: {name: entity.name.tag.style.trin}
-      8: {name: entity.name.tag.inline.trin}
-      9: {name: entity.name.label.trin}
-      10: {name: entity.name.project.trin}
-      11: {name: entity.name.class.trin}
-      12: {name: entity.name.type.trin}
+      1: {name: entity.name.module.saga}
+      2: {name: entity.name.tag.saga}
+      3: {name: entity.name.namespace.saga}
+      4: {name: entity.name.interface.saga}
+      5: {name: entity.name.tag.block.saga}
+      6: {name: entity.name.tag.script.saga}
+      7: {name: entity.name.tag.style.saga}
+      8: {name: entity.name.tag.inline.saga}
+      9: {name: entity.name.label.saga}
+      10: {name: entity.name.project.saga}
+      11: {name: entity.name.class.saga}
+      12: {name: entity.name.type.saga}
 
   # Clauses and Keywords
 
@@ -2921,7 +2937,7 @@ repository:
       - include: "#round-brackets"
       - include: "#type-annotation"
       - match: \s*(?<!\*)\*(?!\*)\s*
-        name: keyword.generator.asterisk.trin
+        name: keyword.generator.asterisk.saga
       - include: "#type-operators"
       - include: "#operators"
       - include: "#literals"
@@ -2929,7 +2945,7 @@ repository:
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]))
         end: (?=.)|$
         beginCaptures:
-          1: {name: punctuation.definition.annotation.trin}
+          1: {name: punctuation.definition.annotation.saga}
         patterns: [include: "#types"]
       - include: "#comments"
       - include: "#brackets"
@@ -2976,7 +2992,7 @@ repository:
         patterns: &modifier-keywords
           - &decorators
             match: (?x)\s*@[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
-            name: entity.name.class.decorator.trin
+            name: entity.name.class.decorator.saga
           - &modifiers
             match: |
               (?x)\s*
@@ -2996,104 +3012,104 @@ repository:
               )
               )(?![\w\p{Pd}])\s*
             captures:
-              1: {name: storage.modifier.trin}
-              2: {name: storage.type.accessor.trin}
-              3: {name: storage.type.property.trin}
+              1: {name: storage.modifier.saga}
+              2: {name: storage.type.accessor.saga}
+              3: {name: storage.type.property.saga}
 
   declaration-keywords:
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)(?![\w\p{Pd}])\s*
-        name: keyword.other.declare.trin
+        name: keyword.other.declare.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)(?![\w\p{Pd}])\s*
-        name: storage.type.trin
+        name: storage.type.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?![\w\p{Pd}])\s*
-        name: storage.type.style.trin
+        name: storage.type.style.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)(?![\w\p{Pd}])\s*
-        name: storage.type.function.trin
+        name: storage.type.function.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?![\w\p{Pd}])\s*
-        name: storage.type.method.trin
+        name: storage.type.method.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)(?![\w\p{Pd}])\s*
-        name: storage.type.class.trin
+        name: storage.type.class.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)(?![\w\p{Pd}])\s*
-        name: storage.type.enum.trin
+        name: storage.type.enum.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)(?![\w\p{Pd}])\s*
-        name: storage.type.module.trin
+        name: storage.type.module.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pack)(?![\w\p{Pd}])\s*
-        name: storage.type.package.trin
+        name: storage.type.package.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(schema)(?![\w\p{Pd}])\s*
-        name: storage.type.interface.trin
+        name: storage.type.interface.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(space)(?![\w\p{Pd}])\s*
-        name: storage.type.namespace.trin
+        name: storage.type.namespace.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)(?![\w\p{Pd}])\s*
-        name: storage.type.structure.trin
+        name: storage.type.structure.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)(?![\w\p{Pd}])\s*
-        name: storage.type.object.trin
+        name: storage.type.object.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)(?![\w\p{Pd}])\s*
-        name: storage.type.data.trin
+        name: storage.type.data.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)(?![\w\p{Pd}])\s*
-        name: storage.type.trait.trin
+        name: storage.type.trait.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)(?![\w\p{Pd}])\s*
-        name: storage.type.procedure.trin
+        name: storage.type.procedure.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)(?![\w\p{Pd}])\s*
-        name: storage.type.protocol.trin
+        name: storage.type.protocol.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)(?![\w\p{Pd}])\s*
-        name: storage.type.macro.trin
+        name: storage.type.macro.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)(?![\w\p{Pd}])\s*
-        name: storage.type.given.trin
+        name: storage.type.given.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)(?![\w\p{Pd}])\s*
-        name: storage.type.element.trin
+        name: storage.type.element.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)(?![\w\p{Pd}])\s*
-        name: storage.type.extends.trin
+        name: storage.type.extends.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sub)(?![\w\p{Pd}])\s*
-        name: storage.type.subroutine.trin
+        name: storage.type.subroutine.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pred)(?![\w\p{Pd}])\s*
-        name: storage.type.predicate.trin
+        name: storage.type.predicate.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(lemma)(?![\w\p{Pd}])\s*
-        name: storage.type.lemma.trin
+        name: storage.type.lemma.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)(?![\w\p{Pd}])\s*
-        name: storage.type.iterator.trin
+        name: storage.type.iterator.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(field)(?![\w\p{Pd}])\s*
-        name: storage.type.field.trin
+        name: storage.type.field.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)(?![\w\p{Pd}])\s*
-        name: storage.type.property.trin
+        name: storage.type.property.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pragma)(?![\w\p{Pd}])\s*
-        name: storage.type.pragma.trin
+        name: storage.type.pragma.saga
 
   general-keywords:
     comment: general keywords
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)(?![\w\p{Pd}])\s*
-        name: keyword.control.conditional.trin
+        name: keyword.control.conditional.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)(?![\w\p{Pd}])\s*
-        name: keyword.control.loop.trin
+        name: keyword.control.loop.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|final)(?![\w\p{Pd}])\s*
-        name: keyword.control.trycatch.trin
+        name: keyword.control.trycatch.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch|case|fail)(?![\w\p{Pd}])\s*
-        name: keyword.control.switch.trin
+        name: keyword.control.switch.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|when)(?![\w\p{Pd}])\s*
-        name: keyword.control.match.trin
+        name: keyword.control.match.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(race|some|every|done|spawn|kill|lock)(?![\w\p{Pd}])\s*
-        name: keyword.control.thread.trin
+        name: keyword.control.thread.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?![\w\p{Pd}])\s*
-        name: keyword.control.flow.trin
+        name: keyword.control.flow.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|using|route)(?![\w\p{Pd}])\s*
-        name: keyword.control.module.trin
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|do|from)(?![\w\p{Pd}])\s*
-        name: keyword.control.$1.trin
+        name: keyword.control.module.saga
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|do|from|ref)(?![\w\p{Pd}])\s*
+        name: keyword.control.$1.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|assert|where)(?![\w\p{Pd}])\s*
-        name: keyword.other.$1.trin
+        name: keyword.other.$1.saga
 
   expression-keywords:
     comment: expression keywords
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of|as|is|new)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.$1.trin
+        name: keyword.operator.expression.$1.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(del)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.delete.trin
+        name: keyword.operator.expression.delete.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(to|til|till|thru|by)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.range.trin
+        name: keyword.operator.expression.range.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unset)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.void.trin
+        name: keyword.operator.expression.void.saga
 
   keywords:
     patterns:
@@ -3112,10 +3128,10 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|label|goto|pass)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: keyword.control.flow.trin}
+          1: {name: keyword.control.flow.saga}
         patterns:
           - match: *entity-name
-            name: constant.other.label.trin
+            name: constant.other.label.saga
 
       module-expression:
         patterns:
@@ -3123,40 +3139,40 @@ repository:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|using|route)(?![\w\p{Pd}])\s*
             end: (?=.)|$
             beginCaptures:
-              1: {name: keyword.control.module.trin}
+              1: {name: keyword.control.module.saga}
             patterns:
               - include: source.yaml#flow-collection
               - *modifiers
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                name: keyword.control.module.trin
+                name: keyword.control.module.saga
               - include: "#type-keywords"
               - include: "#declarations"
               - include: "#strings-quoted"
               - include: "#symbols"
               - include: "#type-operators"
               - match: ","
-                name: punctuation.separator.comma.trin
+                name: punctuation.separator.comma.saga
               - match: *entity-name
-                name: variable.other.readwrite.alias.trin
+                name: variable.other.readwrite.alias.saga
 
       validation-expression:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where)(?![\w\p{Pd}])\s*
         beginCaptures:
-          1: {name: keyword.control.validate.trin}
+          1: {name: keyword.control.validate.saga}
         end: (?<=})|(?=[,;)\]])
         patterns:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pre|post|need|know|check|test|read|write|till|same)(?![\w\p{Pd}])\s*
-            name: keyword.control.validate.trin
+            name: keyword.control.validate.saga
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)(?![\w\p{Pd}])\s*
-            name: keyword.control.validate.trin
+            name: keyword.control.validate.saga
           - include: $self
 
       query-expression:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)(?![\w\p{Pd}])\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?![\w\p{Pd}])\s*
         beginCaptures:
-          1: {name: keyword.control.query.trin}
+          1: {name: keyword.control.query.saga}
           2: {patterns: [include: $self]}
-          3: {name: keyword.control.query.trin}
+          3: {name: keyword.control.query.saga}
         end: (?<=})|(?=[,;)\]])
         patterns:
           - include: "#query-body"
@@ -3174,19 +3190,19 @@ repository:
           join-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:full|part|self|cross)?(?![\w\p{Pd}])\s*\b(?:inner|outer|left|right)?(?![\w\p{Pd}])\s*\bjoin)\b\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.saga}
               2: {patterns: [include: $self]}
-              3: {name: keyword.control.query.trin}
+              3: {name: keyword.control.query.saga}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(on|equals|into)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.trin
+                name: keyword.control.query.saga
               - include: "#query-body"
               - include: $self
           where-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where|having)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.saga}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - include: "#query-body"
@@ -3194,7 +3210,7 @@ repository:
           sort-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sort(?![\w\p{Pd}])\s*\b(?:asc|desc)?(?![\w\p{Pd}])\s*\b(?:by|with)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.saga}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - include: "#query-body"
@@ -3202,41 +3218,41 @@ repository:
           select-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(select(?![\w\p{Pd}])\s*\b(?:unique|any|all)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.saga}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.trin
+                name: keyword.control.query.saga
               - include: "#query-body"
               - include: $self
           limit-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit)(?![\w\p{Pd}])\s*\b(?:first|last|head|tail)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.saga}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.trin
+                name: keyword.control.query.saga
               - include: "#query-body"
               - include: $self
           reduce-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)(?![\w\p{Pd}])\s*\b(?:left|right)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.saga}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.trin
+                name: keyword.control.query.saga
               - include: "#query-body"
               - include: $self
           group-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(group)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.trin}
+              1: {name: keyword.control.query.saga}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|into)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.trin
+                name: keyword.control.query.saga
               - include: "#query-body"
               - include: $self
 
@@ -3278,277 +3294,277 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.style.trin}
+          1: {name: storage.type.style.saga}
         patterns:
           - include: "#style-block"
           - include: "#style-rules"
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.style.trin
+            name: entity.name.style.saga
 
       variable:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.variable.trin}
+          1: {name: storage.type.variable.saga}
       declare:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: keyword.other.declare.trin}
+          1: {name: keyword.other.declare.saga}
 
       function:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.function.trin}
+          1: {name: storage.type.function.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.function.trin
+            name: entity.name.function.saga
       method:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.method.trin}
+          1: {name: storage.type.method.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.method.trin
+            name: entity.name.method.saga
       class:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.class.trin}
+          1: {name: storage.type.class.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.class.trin
+            name: entity.name.class.saga
       enum:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.enum.trin}
+          1: {name: storage.type.enum.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.enum.trin
+            name: entity.name.enum.saga
       module:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.module.trin}
+          1: {name: storage.type.module.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.module.trin
+            name: entity.name.module.saga
       package:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pack)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.package.trin}
+          1: {name: storage.type.package.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.package.trin
+            name: entity.name.package.saga
       interface:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(schema)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.interface.trin}
+          1: {name: storage.type.interface.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.interface.trin
+            name: entity.name.interface.saga
       namespace:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(space)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.namespace.trin}
+          1: {name: storage.type.namespace.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.namespace.trin
+            name: entity.name.namespace.saga
       structure:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.structure.trin}
+          1: {name: storage.type.structure.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.structure.trin
+            name: entity.name.structure.saga
       object:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.object.trin}
+          1: {name: storage.type.object.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.object.trin
+            name: entity.name.object.saga
       data:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.data.trin}
+          1: {name: storage.type.data.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.data.trin
+            name: entity.name.data.saga
       trait:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.trait.trin}
+          1: {name: storage.type.trait.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.trait.trin
+            name: entity.name.trait.saga
       procedure:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.procedure.trin}
+          1: {name: storage.type.procedure.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.procedure.trin
+            name: entity.name.procedure.saga
       protocol:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.protocol.trin}
+          1: {name: storage.type.protocol.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.protocol.trin
+            name: entity.name.protocol.saga
       macro:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.macro.trin}
+          1: {name: storage.type.macro.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.macro.trin
+            name: entity.name.macro.saga
       given:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.given.trin}
+          1: {name: storage.type.given.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.given.trin
+            name: entity.name.given.saga
       element:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.element.trin}
+          1: {name: storage.type.element.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.element.trin
+            name: entity.name.element.saga
       extends:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.extends.trin}
+          1: {name: storage.type.extends.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.extends.trin
+            name: entity.name.extends.saga
       subroutine:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sub)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.subroutine.trin}
+          1: {name: storage.type.subroutine.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.subroutine.trin
+            name: entity.name.subroutine.saga
       predicate:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pred)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.predicate.trin}
+          1: {name: storage.type.predicate.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.predicate.trin
+            name: entity.name.predicate.saga
       lemma:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(lemma)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.lemma.trin}
+          1: {name: storage.type.lemma.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.lemma.trin
+            name: entity.name.lemma.saga
       iterator:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.iterator.trin}
+          1: {name: storage.type.iterator.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.iterator.trin
+            name: entity.name.iterator.saga
       field:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(field)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.field.trin}
+          1: {name: storage.type.field.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.field.trin
+            name: entity.name.field.saga
       property:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.property.trin}
+          1: {name: storage.type.property.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.property.trin
+            name: entity.name.property.saga
       pragma:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pragma)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.pragma.trin}
+          1: {name: storage.type.pragma.saga}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.pragma.trin
+            name: entity.name.pragma.saga
 
   params-clause:
     begin: |
@@ -3559,9 +3575,9 @@ repository:
       |class|enum|module|pack|struct|schema|space|pragma
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|un|elif|elun|else|then
+      |if|un|elif|elun|else
       |for|each|loop|while|until|when
-      |with|do|from
+      |with|then|do|from|ref
       |try|throw|catch|final
       |switch|match|case|fail
       |race|some|every|done|spawn|kill|lock
@@ -3572,7 +3588,7 @@ repository:
       (\|)
       (?!\|)
     captures:
-      1: {name: punctuation.separator.arguments.trin}
+      1: {name: punctuation.separator.arguments.saga}
     end: (?<!\|)(\|)(?!\|)
     patterns: *function-params
 
@@ -3597,7 +3613,7 @@ repository:
         begin: \s*(\()
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.parameters.trin}
+          1: {name: punctuation.definition.parameters.saga}
         patterns:
           - include: "#function-params"
       new-clause:
@@ -3605,10 +3621,10 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(new)(?![\w\p{Pd}])
         end: (?=.)|$
         beginCaptures:
-          1: {name: keyword.operator.expression.$1.trin}
+          1: {name: keyword.operator.expression.$1.saga}
         patterns:
           - match: *entity-name
-            name: entity.name.instance.trin
+            name: entity.name.instance.saga
           - include: "#type-keywords"
           - include: "#illegal-keywords"
           - include: "#type-square-brackets"
@@ -3620,53 +3636,53 @@ repository:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?![\w\p{Pd}])\s*
             end: (?=.)|$
             beginCaptures:
-              1: {name: keyword.operator.expression.$1.trin}
+              1: {name: keyword.operator.expression.$1.saga}
             patterns:
               - include: "#types"
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)(?![\w\p{Pd}])\s*
             end: (?=.)|$
             captures:
-              1: {name: keyword.other.typedef.trin}
+              1: {name: keyword.other.typedef.saga}
             patterns:
               - match: \s*([?:]?=)\s*
                 captures:
-                  1: {name: keyword.operator.assignment.trin}
+                  1: {name: keyword.operator.assignment.saga}
               - include: "#types"
       catch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|final)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.catch.trin
+        name: meta.catch.saga
         captures:
-          1: {name: keyword.control.error.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.error.saga}
+          2: {name: punctuation.separator.colon.saga}
         patterns:
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.trin}
+              1: {name: punctuation.definition.expression.saga}
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-                name: keyword.control.error.trin
+                name: keyword.control.error.saga
               - include: $self
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-            name: keyword.control.error.trin
+            name: keyword.control.error.saga
           - include: $self
       thread-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(race|some|every|done|spawn|kill|lock)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.thread.trin
+        name: meta.thread.saga
         captures:
-          1: {name: keyword.control.thread.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.thread.saga}
+          2: {name: punctuation.separator.colon.saga}
         patterns:
           - &thread-clause-keywords
             match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-            name: keyword.control.thread.trin
+            name: keyword.control.thread.saga
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.trin}
+              1: {name: punctuation.definition.expression.saga}
             patterns:
               - *thread-clause-keywords
               - include: $self
@@ -3674,27 +3690,27 @@ repository:
       do-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.do.trin
+        name: meta.do.saga
         captures:
-          1: {name: keyword.control.do.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.do.saga}
+          2: {name: punctuation.separator.colon.saga}
         patterns:
           - include: $self
       for-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.for.trin
+        name: meta.for.saga
         captures:
-          1: {name: keyword.control.loop.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.loop.saga}
+          2: {name: punctuation.separator.colon.saga}
         patterns:
           - &for-clause-keywords
             match: \s*\b(in|of)\b
-            name: keyword.control.loop.trin
+            name: keyword.control.loop.saga
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.trin}
+              1: {name: punctuation.definition.expression.saga}
             patterns:
               - *for-clause-keywords
               - include: $self
@@ -3702,61 +3718,61 @@ repository:
       if-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.if.trin
+        name: meta.if.saga
         captures:
-          1: {name: keyword.control.conditional.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.conditional.saga}
+          2: {name: punctuation.separator.colon.saga}
         patterns:
           - include: $self
       match-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?![\w\p{Pd}])\s*
         end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.match.trin
+        name: meta.match.saga
         captures:
-          1: {name: keyword.control.match.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.match.saga}
+          2: {name: punctuation.separator.colon.saga}
         patterns:
           - begin: (\#\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.section.class.trin}
+              1: {name: punctuation.section.class.saga}
             patterns:
               - &when-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)(?![\w\p{Pd}])\s*
                 end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
                 captures:
-                  1: {name: keyword.control.match.trin}
-                  2: {name: punctuation.separator.colon.trin}
+                  1: {name: keyword.control.match.saga}
+                  2: {name: punctuation.separator.colon.saga}
                 patterns:
                   - include: "#params-clause"
                   - applyEndPatternLast: 1
                     begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?![\w\p{Pd}])\s*
                     end: (?=.)|$
                     beginCaptures:
-                      1: {name: keyword.control.match.trin}
+                      1: {name: keyword.control.match.saga}
                     patterns:
                       - include: "#types"
                   - include: "#type-keywords"
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)(?![\w\p{Pd}])\s*
-                    name: keyword.control.match.trin
+                    name: keyword.control.match.saga
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
-                    name: keyword.control.match.trin
+                    name: keyword.control.match.saga
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                    name: keyword.control.match.trin
+                    name: keyword.control.match.saga
                   - include: $self
               - &else-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
                 end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
                 captures:
-                  1: {name: keyword.control.match.trin}
-                  2: {name: punctuation.separator.colon.trin}
+                  1: {name: keyword.control.match.saga}
+                  2: {name: punctuation.separator.colon.saga}
                 patterns:
                   - include: $self
               - include: $self
           - begin: (\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.block.trin}
+              1: {name: punctuation.definition.block.saga}
             patterns:
               - *when-clause
               - *else-clause
@@ -3765,52 +3781,52 @@ repository:
       switch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)(?![\w\p{Pd}])\s*
         end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.switch.trin
+        name: meta.switch.saga
         captures:
-          1: {name: keyword.control.switch.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.switch.saga}
+          2: {name: punctuation.separator.colon.saga}
         patterns:
           - begin: (\#\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.section.class.trin}
+              1: {name: punctuation.section.class.saga}
             patterns:
               - &case-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)(?![\w\p{Pd}])\s*
                 end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
                 captures:
-                  1: {name: keyword.control.switch.trin}
-                  2: {name: punctuation.separator.colon.trin}
+                  1: {name: keyword.control.switch.saga}
+                  2: {name: punctuation.separator.colon.saga}
                 patterns:
                   - include: "#params-clause"
                   - applyEndPatternLast: 1
                     begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?![\w\p{Pd}])\s*
                     end: (?=.)|$
                     beginCaptures:
-                      1: {name: keyword.control.switch.trin}
+                      1: {name: keyword.control.switch.saga}
                     patterns:
                       - include: "#types"
                   - include: "#type-keywords"
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)(?![\w\p{Pd}])\s*
-                    name: keyword.control.switch.trin
+                    name: keyword.control.switch.saga
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
-                    name: keyword.control.switch.trin
+                    name: keyword.control.switch.saga
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                    name: keyword.control.switch.trin
+                    name: keyword.control.switch.saga
                   - include: $self
               - &default-clause
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
                 end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
                 captures:
-                  1: {name: keyword.control.switch.trin}
-                  2: {name: punctuation.separator.colon.trin}
+                  1: {name: keyword.control.switch.saga}
+                  2: {name: punctuation.separator.colon.saga}
                 patterns:
                   - include: $self
               - include: $self
           - begin: (\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.block.trin}
+              1: {name: punctuation.definition.block.saga}
             patterns:
               - *case-clause
               - *default-clause
@@ -3819,18 +3835,18 @@ repository:
       with-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.with.trin
+        name: meta.with.saga
         captures:
-          1: {name: keyword.control.with.trin}
-          2: {name: punctuation.separator.colon.trin}
+          1: {name: keyword.control.with.saga}
+          2: {name: punctuation.separator.colon.saga}
         patterns:
           - &with-clause-keywords
             match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-            name: keyword.control.with.trin
+            name: keyword.control.with.saga
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.trin}
+              1: {name: punctuation.definition.expression.saga}
             patterns:
               - *with-clause-keywords
               - include: $self
@@ -3872,10 +3888,10 @@ repository:
           def|func|proc|macro
           )\b
           )
-        name: meta.object-literal.key.trin
+        name: meta.object-literal.key.saga
         captures:
-          1: {name: entity.name.function.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: entity.name.function.saga}
+          2: {name: punctuation.separator.key-value.saga}
           3: {patterns: *modifier-keywords}
       - begin: |
           (?x)
@@ -3904,14 +3920,14 @@ repository:
           (\|)
           (?!\|)
         end: (?<!\|)(\|)(?!\|)
-        name: meta.object-literal.key.trin
+        name: meta.object-literal.key.saga
         captures:
-          1: {name: entity.name.function.trin}
-          2: {name: punctuation.separator.key-value.trin}
+          1: {name: entity.name.function.saga}
+          2: {name: punctuation.separator.key-value.saga}
           3: {patterns: *modifier-keywords}
-          4: {name: punctuation.separator.arguments.trin}
+          4: {name: punctuation.separator.arguments.saga}
         endCaptures:
-          1: {name: punctuation.separator.arguments.trin}
+          1: {name: punctuation.separator.arguments.saga}
         patterns: *function-params
       - match: |
           (?x)
@@ -3920,16 +3936,16 @@ repository:
           \b[\p{Pc}\p{L}][\p{Pd}\w]*\b
           )
           (:)\s+
-        name: meta.object-literal.key.trin
+        name: meta.object-literal.key.saga
         captures:
           1:
-            name: constant.other.object.key.trin
+            name: constant.other.object.key.saga
             patterns:
               - include: "#constants"
               - include: "#numbers"
               - include: "#symbols"
               - include: "#string-content"
-          2: {name: punctuation.separator.key-value.trin}
+          2: {name: punctuation.separator.key-value.saga}
 
   # Punctuation
 
@@ -3941,16 +3957,16 @@ repository:
 
   line-continuation:
     match: (\\)\s*(?=/[/*+]|$)
-    name: punctuation.separator.continuation.line.trin
+    name: punctuation.separator.continuation.line.saga
   comma:
     match: \s*(,)
-    name: punctuation.separator.comma.trin
+    name: punctuation.separator.comma.saga
   double-semi:
     match: \s*(;;)
-    name: punctuation.terminator.expression.trin
+    name: punctuation.terminator.expression.saga
   semicolon:
     match: \s*(;)
-    name: punctuation.terminator.statement.trin
+    name: punctuation.terminator.statement.saga
 
   brackets:
     patterns:
@@ -3963,52 +3979,52 @@ repository:
       punctuation:
         patterns:
           - match: ","
-            name: punctuation.separator.mapping.trin
+            name: punctuation.separator.mapping.saga
           - match: (?<!\s):(?!:)
-            name: punctuation.separator.key-value.trin
+            name: punctuation.separator.key-value.saga
       closures:
         patterns:
           - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)(?![\w\p{Pd}])\s*
             end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
             captures:
-              1: {name: keyword.control.trin}
-              2: {name: punctuation.separator.colon.trin}
+              1: {name: keyword.control.saga}
+              2: {name: punctuation.separator.colon.saga}
             patterns:
               - include: "#params-clause"
               - applyEndPatternLast: 1
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?![\w\p{Pd}])\s*
                 end: (?=.)|$
                 beginCaptures:
-                  1: {name: keyword.control.trin}
+                  1: {name: keyword.control.saga}
                 patterns:
                   - include: "#types"
               - include: "#type-keywords"
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|un|elif|elun|else)(?![\w\p{Pd}])\s*
-                name: keyword.control.trin
+                name: keyword.control.saga
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
-                name: keyword.control.trin
+                name: keyword.control.saga
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                name: keyword.control.switch.trin
+                name: keyword.control.switch.saga
               - include: $self
           - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
             end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
             captures:
-              1: {name: keyword.control.trin}
-              2: {name: punctuation.separator.colon.trin}
+              1: {name: keyword.control.saga}
+              2: {name: punctuation.separator.colon.saga}
             patterns:
               - include: $self
     patterns:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.typeparameters.trin}
+          1: {name: punctuation.definition.typeparameters.saga}
         patterns:
           - include: "#types"
           - include: $self
       - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.binding-pattern.object.trin}
+          1: {name: punctuation.definition.binding-pattern.object.saga}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4016,7 +4032,7 @@ repository:
       - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.mapping.trin}
+          1: {name: punctuation.definition.mapping.saga}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4024,7 +4040,7 @@ repository:
       - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.dictionary.trin}
+          1: {name: punctuation.definition.dictionary.saga}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4032,14 +4048,14 @@ repository:
       - begin: (\#\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.section.class.trin}
+          1: {name: punctuation.section.class.saga}
         patterns:
           - include: "#closures"
           - include: $self
       - begin: (\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.block.trin}
+          1: {name: punctuation.definition.block.saga}
         patterns:
           - include: "#closures"
           - include: $self
@@ -4049,14 +4065,14 @@ repository:
       punctuation:
         patterns:
           - match: ","
-            name: punctuation.separator.arguments.trin
+            name: punctuation.separator.arguments.saga
       function-params:
         patterns: *function-params
     patterns:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.parameters.trin}
+          1: {name: punctuation.definition.parameters.saga}
         patterns:
           - include: "#punctuation"
           - include: "#function-params"
@@ -4064,7 +4080,7 @@ repository:
       - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.binding-pattern.tuple.trin}
+          1: {name: punctuation.definition.binding-pattern.tuple.saga}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4072,7 +4088,7 @@ repository:
       - begin: \s*(\#?\()\s*
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.expression.trin}
+          1: {name: punctuation.definition.expression.saga}
         patterns:
           - include: "#punctuation"
           - include: $self
@@ -4083,14 +4099,14 @@ repository:
         patterns:
           - match: (?<![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)
             captures:
-              1: {name: punctuation.separator.slice.trin}
+              1: {name: punctuation.separator.slice.saga}
           - match: ","
-            name: punctuation.separator.sequence.trin
+            name: punctuation.separator.sequence.saga
     patterns:
       - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.binding-pattern.array.trin}
+          1: {name: punctuation.definition.binding-pattern.array.saga}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4098,23 +4114,23 @@ repository:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.attribute-selector.trin}
+          1: {name: punctuation.definition.attribute-selector.saga}
         patterns:
           - include: "#punctuation"
           - include: $self
       - begin: \s*(\#\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.sequence.trin}
+          1: {name: punctuation.definition.sequence.saga}
         patterns:
           - match: ","
-            name: punctuation.separator.sequence.trin
+            name: punctuation.separator.sequence.saga
           - include: $self
       - begin: \s*(\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.array.trin}
+          1: {name: punctuation.definition.array.saga}
         patterns:
           - match: ","
-            name: punctuation.separator.sequence.trin
+            name: punctuation.separator.sequence.saga
           - include: $self
