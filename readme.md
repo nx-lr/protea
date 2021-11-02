@@ -425,11 +425,9 @@ The syntax for string formatting derives from Command Prompt.
 "%x/x:other variable"
 "%x/x:'' string"
 "%x/x:`` regex"
-"%x/x:("") expression"
+"%x/x:() expression"
 "%x/x:[] array"
-"%x/x:{} object"
-
-// To-do: conversion between Python f-strings and this
+"%x/x:{} dictionary"
 ```
 
 ### String placeholder variables
@@ -440,7 +438,7 @@ Use the special format method.
 "#named"
 "#%keyed"
 "#?optional"
-"#0 positive (zero-indexed"
+"#0 positive (zero-indexed)"
 "#-1 negative (from end)"
 "#*spread (from an object)"
 
