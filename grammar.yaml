@@ -1648,6 +1648,7 @@ repository:
     captures:
       1:
         patterns:
+          - include: source.css#tag-names
           - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
             name: entity.name.tag.namespace.saga
           - match: (?x)\b([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)*\b
@@ -1735,29 +1736,40 @@ repository:
       |import|export|using|route
       |debug|assert|where
       )\b)\s*)
-      (?=<[\p{Pc}\p{L}])
+      (?=<[\p{Pc}\p{L}]|<\s+>)
     end: (?=.)|$
     applyEndPatternLast: 1
     patterns: [include: "#tag-element-name"]
   tag-element-name:
-    comment: "Tags that end > are trapped in #tag-termination"
-    contentName: string.unquoted.html.saga
-    begin: |
-      (?x)\s*+(<)#start tag begin
-      ([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)#tag name
-      (?=[\/>\s])(?![:])(?<!\.|:)
-    end: \s*(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>
-    beginCaptures:
-      1: {name: punctuation.definition.tag.saga}
-      2: {patterns: [include: "#tag-names"]}
-    endCaptures:
-      1: {patterns: [include: "#tag-names"]}
-      2: {name: punctuation.definition.tag.saga}
-      3: {name: punctuation.definition.tag.saga}
-      4: {name: invalid.illegal.termination.saga}
     patterns:
-      - include: "#tag-termination"
-      - include: "#tag-attributes"
+      - comment: JSX Fragment
+        contentName: string.unquoted.html.saga
+        begin: \s*(<)\s*(?=>)
+        end: (?<=</)(>)
+        beginCaptures:
+          1: {name: punctuation.definition.tag.saga}
+        endCaptures:
+          1: {name: punctuation.definition.tag.saga}
+        patterns:
+          - include: "#tag-termination"
+      - comment: Tags that end > are trapped in tag-termination
+        contentName: string.unquoted.html.saga
+        begin: |
+          (?x)\s*+(<)#start tag begin
+          ([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)#tag name
+          (?=[\/>\s])(?![:])(?<!\.|:)
+        end: \s*(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>
+        beginCaptures:
+          1: {name: punctuation.definition.tag.saga}
+          2: {patterns: [include: "#tag-names"]}
+        endCaptures:
+          1: {patterns: [include: "#tag-names"]}
+          2: {name: punctuation.definition.tag.saga}
+          3: {name: punctuation.definition.tag.saga}
+          4: {name: invalid.illegal.termination.saga}
+        patterns:
+          - include: "#tag-termination"
+          - include: "#tag-attributes"
   tag-termination:
     comment: uses non consuming search for </ in </tag>
     contentName: meta.jsx.children.saga
