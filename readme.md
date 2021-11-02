@@ -225,8 +225,8 @@ func cmpIdent(a: str, b: str): bool {
     a1 == b.sub(`\P{Alnum}`g, '')
   else:
     a[0] == b[0] -> (
-      a[1:].sub(`\P{Alnum}`g, '') ==
-      b[1:].sub(`\P{Alnum}`g, '')
+      a[1:].sub(`\P{Alnum}`g, '').lower() ==
+      b[1:].sub(`\P{Alnum}`g, '').lower()
     )
 }
 ```
@@ -239,6 +239,8 @@ var var_ = 42, val_ = 8
 const assert_ = var_ + val_ == 50
 assert assert_
 ```
+
+All identifiers are normalized using the above function.
 
 ### Numbers
 
@@ -318,6 +320,7 @@ val base17 = 17b0123456789abcdefg%num/digits:(base17Digits)
 "just like the \\ backslash"
 "the single quote ' and other characters can be escaped,
 but they are completely optional"
+" more quotes because why not"""""
 ```
 
 Double quoted predefined escapes are:
@@ -365,14 +368,16 @@ Double quoted predefined escapes are:
 Multi-quoted strings are defined with three or more quotes of the same type and end in the same opening sequence.
 
 ```dart
-// All `[\s\n]` are discarded between the text and the quotes
+// All non-spacing characters are discarded
+// between the text and the quotes
 '''We're fine'''
-""""""""""We're fine""""""""""
+""""We're fine""""
 
 // Strings can end in more than the opening number of quotes
 """x""""
 
-// Indentation is preserved based on the first line of text
+// Indentation is preserved or discarded
+// based on the first line of text
 '''
 "stringified
   string"
@@ -382,7 +387,7 @@ Multi-quoted strings are defined with three or more quotes of the same type and 
     string"
 """
 
-// Escaping rules apply in all string literals
+// Escaping rules apply as before
 '''
   no escapes needed!
 '''
@@ -393,35 +398,215 @@ Multi-quoted strings are defined with three or more quotes of the same type and 
 
 ### String interpolation
 
+`$`, `#` or `%` begins an interpolation expression, placeholder or formatting directive. This applies to all strings and regular expressions.
+
+Use a backslash to escape them in double quoted strings or regular expressions, i.e. `\$`, `\#` or `\%`. Meanwhile, double them in single quoted strings.
+
 ```dart
 "simple $variable"
 "$object_.property or $deeply.nested[property]"
 "$type_{casting}"
 "$function() or $method.call(with_, args)"
-"${expression}"
+"${expression} if all else fails"
+"keywords $then are not stropped"
 ```
 
 ### String formatting
 
+The syntax for string formatting derives from Command Prompt.
+
 ```dart
+// A formatting directive example
 "%type/switch/switch:'value'/switch:(expression)"
 
 // Types of values
 "%x/x:#10ffff numeric (positive only)"
-"%x/color:lang(x) CSS property"
-"%x/x:blue other variable"
+"%x/color:blue CSS property"
+"%x/x:other variable"
 "%x/x:'' string"
 "%x/x:`` regex"
-"%x/x:() expression"
+"%x/x:("") expression"
 "%x/x:[] array"
 "%x/x:{} object"
+
+// To-do: conversion between Python f-strings and this
 ```
 
 ### String placeholder variables
 
+Use the special format method.
+
 ```dart
-"#key"
+"#named"
+"#%keyed"
+"#?optional"
 "#0 positive (zero-indexed"
 "#-1 negative (from end)"
-"#*spread"
+"#*spread (from an object)"
+
+// Usage
+"#1%s".format(0, "hello world") // => 'hello world'
+"#&int%i/b:16/p:'0x'".format({int: 42}) // => '0x2A'
+"#name%i/b:16/p:'0x'".format(name = 42) // => '0x2A'
+```
+
+### Regular expressions
+
+Regular expressions function like strings in every regard.
+
+The Oniguruma flavor is used. Here's a summary:
+
+```dart
+`
+/** Meta-characters and basic syntax elements */
+\ /* Escape */
+| /* Alternate/ordered choice */
+() /* Capturing group */
+[] /* Character class (can be nested) */
+[^] [!] /* Negated char-class */
+[:] /* POSIX or Unicode query */
+$a ${} /* Interpolation */
+#a #{} /* Placeholders */
+{,} /* Quantifier */
+"" '' /* Quoting */
+\g<1> \g'1' \g"1" /* Subroutine */
+\1 \k<1> \k'1' \k"1" /* Back-reference */
+
+/** Characters, along with their negated forms in uppercase */
+\w \W /* Word character */ [\pL\pM\pPc\pNd]
+\s \S /* Whitespace */ [\t\n\v\f\r] \pZ
+\d \D /* Decimal digit */ [0-9] \pNd
+\h \H /* Hexadecimal digit */ [\da-f]
+\u \U /* Uppercase letter */ [A-Z] \pLu
+\l \L /* Lowercase letter */ [a-z] \pLl
+\q \Q /* Combining marks */ \pM
+\p \P /* Punctuation */ \pP
+\j \J /* Numeric character */ \pN
+\c \C /* Leading identifier char */ [\pL\pPc]
+\i \I /* Trailing identifier char */ [\w\pPd]
+\R /* Platform-specific line feed */ \r&\n
+\X /* Unicode text segment */
+\O /* Any character */
+
+/** Escapes, along with their negated forms */
+\a ([\A]) /* Alert character */
+[\b] ([\B]) /* Backspace character */
+\e (\E) /* Escape character */
+\f (\F) /* Form feed */
+\n (\N) /* Newline */
+\r ([\R]) /* Carriage return */
+\t (\T) /* Horizontal tab */
+\v (\V) /* Vertical tab */
+\cA (\CA) /* Control character (from \x01 to \x1a */
+[\mA] ([\MA]) /* Meta-control character */
+
+/** Quantifiers */
+? /* Zero or one times */
++ /* One or many times */
+* /* Zero or many times */
+{5} /* Exactly 5 times */
+{5,} /* At least 5 times */
+{,5} /* Up to 5 times */
+{3,5} /* Between 3 and 5 times */
+{,} /* 0 or many times */
+
+/* Modifiers */
+? /* Reluctant: returns shortest possible match */
++ /* Possessive: no backtracking */
+* /* Greedy: returns longest possible match */
+
+/* Join shorthands */
+a&b /* => */ (a|b|ab)
+a&?b/* => */  a(ba)?
+a&+b /* => */ a(ba)+
+a&*b /* => */ (a(ba)*)?
+
+/** Groups */
+() /* Numbered capturing group */
+(?:) /* Non-capturing group */
+(?<x>) (?'x') (?"x") /* Named capturing group */
+(?<|x>) /* Balancing group */
+(?<x|x>) /* Balancing pair */
+(?=) /* Positive look-ahead */
+(?!) /* Negative look-ahead */
+(?<=) /* Positive look-behind */
+(?<!) /* Negative look-behind */
+(?>) /* Atomic group (no backtracking) */
+(?()) /* Conditional branching */
+(?|) /* ...with alternatives */
+(?/) /* Shortest match */
+(?/=) /* Longest match */
+(?*) /* Embedded code */
+(?{}) (?{}[tag]) /* Call-out (embedded code) */
+(?y) /* Enable mode */
+(?-y) /* Disable mode */
+(?~) (?~||) (?~|) /* Absent expression (see Oniguruma docs) */
+(?#...) /* Comment */
+(?&1) /* Numbered group */
+(?&-1) (?&+1) /* Relative back-reference */
+(?&name) /* Named back-reference */
+
+/** Anchors & Assertions */
+^ /* Start of line */
+$ /* Ending of line */
+\A /* Start of string */
+\z /* End of string */
+\Z /* Not end of string */
+\b /* Word boundary */
+\B /* Not word boundary */
+\m /* Line boundary */
+\M /* Not line boundary */
+\y /* Text segment boundary */
+\Y /* Not text segment boundary */
+\G /* Match boundary */
+\K /* Keep text out of the match */
+
+/** Pre-defined character classes */
+\p{alpha} /* letters */
+\p{alnum} /* alphanumerics */
+\p{ascii} /* ASCII characters */
+\p{blank} /* non-spacing characters */
+\p{cntrl} /* control characters */
+\p{dash} /* dash punctuation */
+\p{delim} /* combining punctuation */
+\p{digit} /* decimal digits */
+\p{graph} /* visible character */
+\p{lower} /* lowercase letters */
+\p{mark} /* diacritical marks */
+\p{number} /* Unicode numbers */
+\p{print} /* printable */
+\p{priv} /* private use */
+\p{punct} /* all punctuation */
+\p{space} /* spacing characters */
+\p{symbol} /* symbol characters */
+\p{title} /* title-case letters */
+\p{upper} /* uppercase letters */
+\p{word} /* word characters */
+\p{xdigit} /* hexadecimal digits */
+
+/** Character classes */
+[x||x] /* Union (lowest precedence) */
+[x^^x] /* Symmetric difference */
+[x&&x] /* Intersection */
+[x~~x] /* Difference */
+[x-y] /* Range (highest precedence) */
+
+/** Unicode properties */
+\p{in Block} \p{!in Block} /* Block */
+\p{is Script} \p{!is Script} /* Script or boolean property */
+\p{Script} /* Shorthand property */
+
+/* Properties are checked in the order:
+`General_Category`, `Script`, `Block`, binary property */
+
+/* Logical operators `&&` `||` `^^` `!` also work */
+\p{p=v} \p{p==v} /* Property equals value */
+\p{p!=v} \P{p=v} /* Does not equal */
+\p{p^=v} /* Begins with but does not equal */
+\p{p$=v} /* Ends with but does not equal */
+\p{p*=v} /* Contains but does not equal */
+\p{p|=v} /* Begins with or equals */
+\p{p&=v} /* Ends with or equals */
+\p{p~=v} /* Contains or equals */
+`
 ```
