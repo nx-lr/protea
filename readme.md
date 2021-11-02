@@ -16,13 +16,13 @@ style GlobalStyle {
 }
 
 const Section = style section {
-  margin: 3rem auto;
-  max-width: 600px;
+  margin: 3rem auto
+  max-width: 600px
 }
 
 export main elem Layout({ children }) {
   <Fragment>
-    <GlobalStyle theme="purple" />
+    <GlobalStyle theme="purple"/>
     $children
   </Fragment>
 }
@@ -336,7 +336,6 @@ Double quoted predefined escapes are:
 "\b" // backspace
 "\e" // escape
 "\s" // space
-
 "\cA" // control character from A (#U+01) to Z (#U+1A)
 
 // Multi-base escapes
