@@ -21,10 +21,10 @@ const Section = style section {
 }
 
 export main elem Layout({ children }) {
-  <React.Fragment>
+  <Fragment>
     <GlobalStyle theme="purple" />
     $children
-  </React.Fragment>
+  </Fragment>
 }
 ```
 
