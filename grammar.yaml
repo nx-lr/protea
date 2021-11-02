@@ -983,7 +983,8 @@ repository:
         captures:
           1: {name: punctuation.section.embedded.saga}
         patterns: [include: $self]
-      - match: |
+      - comment: 20 levels of recursion should be enough
+        match: |
           (?x)(\$)
           (
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
@@ -1026,8 +1027,8 @@ repository:
         captures:
           1: {name: punctuation.section.embedded.saga}
           2: {patterns: [include: "#everything-but-comments"]}
-
   format-specifier:
+    comment: 20 levels of recursion should be enough
     match: |
       (?x)(%)
       (
@@ -1067,7 +1068,6 @@ repository:
           - include: "#format-language"
           - match: .+
             name: string.other.format.saga
-
   embedded-placeholder:
     repository:
       function-params:
@@ -1089,16 +1089,14 @@ repository:
         patterns:
           - include: "#function-params"
           - include: $self
-
   embedded:
     patterns:
       - include: "#format-specifier"
       - include: "#embedded-placeholder"
       - include: "#embedded-expression"
-
   embedded-raw:
     patterns:
-      - match: \$\$|\%\%\|#\#
+      - match: \$\$|\%\%|\#\#
         name: constant.character.escape.saga
       - include: "#format-specifier"
       - include: "#embedded-placeholder"
@@ -1345,7 +1343,7 @@ repository:
         captures:
           1: {name: punctuation.definition.group.negative-look-behind.saga}
         patterns: [include: "#regexp-patterns"]
-      - comment: Match directive
+      - comment: Match directive 20 levels of recursion should be enough
         begin: |
           (?x)(\(\?%)
           (
@@ -2834,7 +2832,7 @@ repository:
 
   type-embedded-raw:
     patterns:
-      - match: \$\$|\%\%\|#\#
+      - match: \$\$|\%\%|\#\#
         name: constant.character.escape.saga
       - include: "#format-specifier"
       - include: "#embedded-placeholder"
