@@ -1645,18 +1645,15 @@ repository:
     name: entity.name.tag.saga
     captures:
       1:
+        name: entity.name.tag.saga
         patterns:
-          - include: source.css#tag-names
-          - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-            name: entity.name.tag.namespace.saga
-          - match: (?x)\b([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)*\b
-            name: entity.name.tag.saga support.class.component.saga
-          - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
-            name: entity.name.tag.saga
-          - match: \b\:\b
+          - match: "[.:]"
             name: punctuation.separator.namespace.saga
-          - match: \b\.\b
-            name: punctuation.accessor.saga
+          - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[:.])
+            name: entity.name.tag.namespace.saga
+          - match: ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)\b
+            name: support.class.component.saga
+          - include: source.css#tag-names
   style-block:
     begin: \s*(\{)\s*
     end: \s*(\})
