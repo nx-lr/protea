@@ -5,48 +5,55 @@
 Saga is a multi-platform general-purpose programming language containing everything you need for building, testing and deploying applications, systems and libraries across the entire tech stack. Combining object-oriented and functional programming in one concise, high-level language, allowing you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
 ```dart
-using React
+import Interval from DOM;
 
-style GlobalStyle {
-  style body {
-    color: ${|{theme}| theme == "purple"
-      ? "purple"
-      : "white"}
-  }
+elem Timer impl Interval {
+  mut field seconds = 0
+  sync def tick = seconds += 1
+  mut field interval = 100
+
+  return <div
+    :mount=${tick(Interval = 1:s)}
+    :unmount=${interval = 0:s}
+  >
+    $seconds%int/lang:'en-us'/unit:'sec'
+    has passed.
+  </div>
 }
 
-const Section = style section {
-  margin: 3rem auto
-  max-width: 600px
-}
-
-export main elem Layout({ children }) {
-  < >
-    <GlobalStyle theme="purple"/>
-    $children
-  </>
-}
+document.render(
+  <Timer />,
+  document.getElementById('timer-example')
+)
 ```
 
 ### Overview
 
-JavaScript is undoubtedly the most popular programming language in the world, with a large ecosystem, and most of all, a great community. And with Node.JS allowing full-stack apps to be developed with a single programming language, this has in turn contributed to its success. But at the same time, we all know the language itself is drowned in many imperfections, and has many complicated or weird quirks that can sometimes throw us off. It's quite apparent that the language was drafted in ten days, yet it still became the technology that impacted every person on the planet. And today, it's a language that's evolving, constantly adapting to suit the needs of its users.
+JavaScript is undoubtedly the most popular language in the world. It's got a large ecosystem, and even better, a great community. And with the Node.JS allowing full-stack apps to be developed in a single programming language further paved the way to its overall success. And today, it's a language that's evolving, constantly adapting to suit the needs of its users. Eventually, _any application that can be written in JavaScript will be written in JavaScript_ (Atwood's Law).
 
-However, the ecosystem is equally as frightening. There's bloated projects gigabytes in size on one hand, and too many choices on which framework and build tool to use on the other. Yet, people still brave the pain and develop awesome applications in it, pushing it to its limits, but the thing is JS still does not perform as well compared to rival languages and the domains they serve in. While it is normally used as an alternative than their native counterparts, JS is not designed to be used in developing apps that could fit those workloads. You won't see machine learning or data analytics systems or even full blown 3D games built only with JS, rather they would rather choose to use in C++/C#, Rust or Python in order to get the performance and reliability they desire.
+But the language is drowned in many imperfections, foot-guns and gotchas, and has many complicated parts that most of the time could throw us off. The ecosystem is also as frightening, with project folders gigabytes in size even for a simple, small application. And perhaps, a new framework gets released ever so often. While JS is normally used as an alternative than their native counterparts, it's not designed to be used as a "workhorse" language that could solve every single conceivable problem.
+
+![](https://external-preview.redd.it/ABNCwO_-ZehpLMGLU_tihhjCLjxBPe9IZt6trcaxC9A.jpg?auto=webp&s=bf0235f0213845ca15b5df474e912cfcb3471d64)
+
+Still, time and time again, developers keep pushing on JavaScript to its limits. While JavaScript could be used to write such an application, you won't see machine learning or data analytics systems or even full blown 3D games built only with JavaScript, rather they would rather stick to the old way and develop with various lower-level languages to bring about the performance they desire.
+
+Unison’s core idea is that code is immutable and identified by its content. This lets us reimagine many aspects of how a programming language works. We simplify codebase management — Unison has no builds, no dependency conflicts, and renaming things is trivial. The same core idea forms the basis for a runtime that robustly supports dynamic code deployment, allowing a single Unison program to describe entire elastic distributed systems.
+
+Given the language was created iheih
 
 ### About the Project
 
-Saga is a versatile and multi-purpose alternative to JavaScript, aiming to serve its domains and outperform them in every regard, from compilation and execution speed, and .
+Saga's core idea
 
-It offers a syntax that looks and feels like JavaScript, inspired by other languages like Python, Scala, Kotlin, Rust and Go, thereby being useful for scripting or library and being
+Saga is created to be a versatile and multi-purpose alternative to JavaScript, yet delivers far greater speed and performance than JavaScript. It solves many of the shortcomings of JavaScript, through a robust type checking and program validation system.
 
-but at the same time extended with constructs specific to client and server development, such as markup, styles, schemas and queries.
+ReScript looks like JS, acts like JS, and compiles to the highest quality of clean, readable and performant JS. It's designed to express common programming patterns in a concise, elegant, and type-safe way, and seamlessly integrates features of object-oriented and functional languages.
 
-Saga (formerly Trinity) aims to serve the same domains as JavaScript, but exceeds JavaScript in terms of execution and compilation speed, and memory management, so to deliver significant performance that rivals that of other languages like Java and C#. With that, Saga aims to provide a great developer experience while allowing to write safe, readable and maintainable code.
+At the same time, it contains a wide range of language features specific to frontend and backend development, such as markup, styling, database queries and schemas, inspired by React and its ecosystem. It's syntax is also extensible through the use of macros
 
-It has a syntax that is similar to JavaScript and other curly-brace languages such as Rust, Go, Swift and Kotlin, fully embraces the functional and object-oriented paradigms, is fully extensible, and contains a lot of powerful language constructs, some specific to frontend and backend development (and everything in between).
+Saga started out as a side project in June 2021 and has since grown from there.
 
-Saga started out as a side project in June 2021 and has since grown from there. Here's the full list of features I aim for Saga to cover:
+### Features
 
 - familiar JS-like syntax
 - built-in JSX, CSS-in-JS and GraphQL
@@ -60,12 +67,12 @@ Saga started out as a side project in June 2021 and has since grown from there. 
 - uniform function call syntax
 - (im)mutable data structures
 - Perl-compatible regular expressions
+- extensible numeric literals
 - string formatting
 - Unicode named characters
 - algebraic data types
 - advanced type inference
 - JIT and AOT compilation
-- extensible numbers and operators
 - portable runtime
 - multiple targets: JS, C#, Python, JVM and LLVM/Swift
 - opaque types and type aliases
@@ -104,10 +111,10 @@ func main(*args: []str): void { /* code here */ }
 
 ```dart
 // Saga is a curly bracket language
-switch (x) {
+switch x {
   case true: f("t")
   case false: g("f")
-};
+}
 
 // Semicolons are optional
 var a = 1; var b = 2
