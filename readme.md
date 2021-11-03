@@ -8,7 +8,7 @@ Saga is a multi-platform general-purpose programming language containing everyth
 using React
 
 style GlobalStyle {
-  style $body {
+  style body {
     color: ${|{theme}| theme == "purple"
       ? "purple"
       : "white"}
@@ -21,20 +21,26 @@ const Section = style section {
 }
 
 export main elem Layout({ children }) {
-  <Fragment>
+  < >
     <GlobalStyle theme="purple"/>
     $children
-  </Fragment>
+  </>
 }
 ```
 
 ### Overview
 
-JavaScript is undoubtedly the most popular programming language in the world, with a large ecosystem, and most of all, a great community. And with Node.JS allowing full-stack applications to be developed with a single programming language, has in turn contributed to its success. But at the same time, we all know the language itself is drowned in many imperfections, and has many complicated or weird quirks that can sometimes throw us off. It's quite apparent that the language was drafted in ten days, yet it still became the technology that impacts every person on the planet. It's a language that's evolving, constantly adapting to suit the needs of its developers.
+JavaScript is undoubtedly the most popular programming language in the world, with a large ecosystem, and most of all, a great community. And with Node.JS allowing full-stack apps to be developed with a single programming language, this has in turn contributed to its success. But at the same time, we all know the language itself is drowned in many imperfections, and has many complicated or weird quirks that can sometimes throw us off. It's quite apparent that the language was drafted in ten days, yet it still became the technology that impacted every person on the planet. And today, it's a language that's evolving, constantly adapting to suit the needs of its users.
 
-The ecosystem is equally as frightening. Overly bloated projects and too many choices on which framework and built tool to use. Yet, people still brave the pain and develop awesome applications in it, pushing it to its limits. Also, JS does not perform as well compared to rival languages and the domains they serve in. While it is normally used as an alternative, JS is not designed to be used to develop apps that could fit those workloads. That's why JS is not used as a tool to build machine learning systems or full blown 3D games than their equivalents in C++/C#, Rust or Python.
+However, the ecosystem is equally as frightening. There's bloated projects gigabytes in size on one hand, and too many choices on which framework and build tool to use on the other. Yet, people still brave the pain and develop awesome applications in it, pushing it to its limits, but the thing is JS still does not perform as well compared to rival languages and the domains they serve in. While it is normally used as an alternative than their native counterparts, JS is not designed to be used in developing apps that could fit those workloads. You won't see machine learning or data analytics systems or even full blown 3D games built only with JS, rather they would rather choose to use in C++/C#, Rust or Python in order to get the performance and reliability they desire.
 
 ### About the Project
+
+Saga is a versatile and multi-purpose alternative to JavaScript, aiming to serve its domains and outperform them in every regard, from compilation and execution speed, and .
+
+It offers a syntax that looks and feels like JavaScript, inspired by other languages like Python, Scala, Kotlin, Rust and Go, thereby being useful for scripting or library and being
+
+but at the same time extended with constructs specific to client and server development, such as markup, styles, schemas and queries.
 
 Saga (formerly Trinity) aims to serve the same domains as JavaScript, but exceeds JavaScript in terms of execution and compilation speed, and memory management, so to deliver significant performance that rivals that of other languages like Java and C#. With that, Saga aims to provide a great developer experience while allowing to write safe, readable and maintainable code.
 
@@ -395,11 +401,7 @@ Multi-quoted strings are defined with three or more quotes of the same type and 
 """
 ```
 
-### String interpolation
-
-`$`, `#` or `%` begins an interpolation expression, placeholder or formatting directive. This applies to all strings and regular expressions.
-
-Use a backslash to escape them in double quoted strings or regular expressions, i.e. `\$`, `\#` or `\%`. Meanwhile, double them in single quoted strings.
+### String interpolation (`$`)
 
 ```dart
 "simple $variable"
@@ -408,6 +410,9 @@ Use a backslash to escape them in double quoted strings or regular expressions, 
 "$function() or $method.call(with_, args)"
 "${expression} if all else fails"
 "keywords $then are not stropped"
+
+'$1' '$%' // don't need escaping
+'$$a' == "\$a"
 ```
 
 ### String formatting
@@ -415,7 +420,6 @@ Use a backslash to escape them in double quoted strings or regular expressions, 
 The syntax for string formatting derives from Command Prompt.
 
 ```dart
-// A formatting directive example
 "%type/switch/switch:'value'/switch:(expression)"
 
 // Types of values
@@ -427,19 +431,24 @@ The syntax for string formatting derives from Command Prompt.
 "%x/x:() expression"
 "%x/x:[] array"
 "%x/x:{} dictionary"
+
+'%1' '%$' // don't need escaping
+'%a' == "\%a"
 ```
 
 ### String placeholder variables
 
-Use the special format method.
+Use the special `format` method.
 
 ```dart
-"#named"
-"#%keyed"
-"#?optional"
+"#named" "#?optional"
+"#&keyed" "#%optional"
 "#0 positive (zero-indexed)"
 "#-1 negative (from end)"
 "#*spread (from an object)"
+
+'#@' '#*' // don't need escaping
+'%a' == "\%a"
 
 // Usage
 "#1%s".format(0, "hello world") // => 'hello world'
