@@ -64,166 +64,879 @@ Saga aims to be a language with a syntax very familiar to JavaScript and React d
 
 ## Overview
 
-### Semicolons
+## An Introduction
 
-Not needed!
+Script files contain a shebang at the beginning of the file. They can use modules, but also act as script files.
+
+A typical Saga project would contain this file structure:
+
+```
+my-app/
+|- lib/ -> all installed modules
+|- src/ -> backend codes
+|- app/ -> frontend codes
+|- .gitignore
+|- index.saga
+|- package.json
+|- README.saga
+|- modules.saga
+```
+
+The entry point of a program is defined in the `main` function. `args` is a specific variable used to define the program arguments.
+
+```dart
+func main(*args: []str): void { /* code here */ }
+```
+
+### Syntax
+
+Like JavaScript, Saga is a curly-brace language. Code blocks are delimited usually with curly braces.
+
+Semicolons are completely optional though they can be used to separate multiple statements on the same line. The same rules apply to commas in function arguments or collection literals.
+
+If a line ends in an **infix operator**, such as `!in` or `&&`, or otherwise explicitly with `\`, the resultant line is joined. If the next line also begins with an infix operator, it is joined to the previous line.
+
+```dart
+x +  // joined
+y
+
+x // joined
++ y
+```
 
 ### Comments
 
-```js
-// line comment
-/* block comment */
-/** JSDoc comment */
-```
+Saga supports C-style comments. Comments `/+` and `/++` can be nested.
 
 ```dart
 // line comment
 /* block comment */
-/+ /+ nested +/ comment +/
-
-/// JSDoc comment
-/** JSDoc comment */
-/++ JSDoc comment +/
+/+ nested comment +/
+/// line documentation comment
+/** block documentation comment */
+/++ nested documentation comment +/
 ```
 
 ### Variables
 
-```js
-const x = 1;
-var x = 1;
-
-let x = 5;
-x = x + 1;
-```
+A variable binding, or otherwise a declaration, begin with any one of `var`, `val`, `let` or `const`. All bindings are "scoped" to the block in which they are defined in, and all inner blocks.
 
 ```dart
-val x = 1 // or val x = 1
-var x = 1
-
-var x = 5; x += 1 // or x := x += 1
+var x = 42
+val y: Int = 42
+y = 10
 ```
 
-### Strings
-
-```js
-"Kai'Sa";
-'Kai\'Sa';
-
-"C:\\Windows\\Media";
-
-"Multi-line\n\
-string";
-
-`hello ${message}`;
-// No string formatting
-```
+`let` and `const` bindings can be redeclared, even on the same scope.
 
 ```dart
-"Kai'Sa" // Escaped string
-'Kai''Sa' // Verbatim string
-
-"C:\\Windows\\Media"
-'C:\Windows\Media'
-
-"""Multiline
-string"""
-
-"hello $message"
-"${32}%d items"
+let x = 1
+let x = 2 // x is now 2
 ```
 
-### Numbers
+### Assigning multiple variables
 
-```js
-[1, 1n, 1.0, 0b100, 0o1000, 0x19];
-parseInt("103", 4);
-parseInt("105", 6);
-parseInt("107", 12);
-
-1 + 2;
-2 - 3;
-3 * 3;
-4 / 10;
-Math.floor(4 / 10);
-4 ** 10;
-Math.floor(4 ** 10);
-4 % 1;
-((4 % 1) + 1) % 1;
-4 & 1;
-4 | 1;
-4 ^ 1;
-4 << 1;
-4 >> 1;
-Math.min(1, 3);
-Math.max(1, 3);
-
-1 < 3;
-1 < 2 && 2 < 3;
-1 < 2 ? -1 : 1 > 2 ? 1 : 0;
-```
-
-Saga has a distinction between integers and floating point numbers.
+There are many ways to assign variables:
 
 ```dart
-[1, 1:n, 1.0, 0b100, 0o1000, 0x19]
-0q103
-0s105
-0z107
-
-1 + 2
-2 - 3
-3 * 3
-4 / 10
-4 ~/ 10
-4 ** 10
-4 *** 10
-4 % 1
-4 %% 1
-4 & 1
-4 | 1
-4 ^ 1
-4 << 1
-4 >> 1
-// No >>>
-1 <* 3
-1 *> 3
-
-1 < 3 // also >, <=, >=
-1 < 2 < 3
-1 <=> 2
+let x, y, z = 1, a = 2
+x = 1; y = 2
 ```
 
-### Constants & boolean operations
+You can also unpack them from regular expressions or data structures:
+
+```dart
+let `(?'x'.+)` = 'a' // x == 'a'
+let (x, y) = (1, 2) // seq
+let [x, y] = [1, 2] // list
+let {x, y} = {x: 1, y: 2} // map
+let {x, y} = {1, 2} // set
+```
+
+### Keywords
+
+Operator keywords are operators used to
+
+```
+in of as is new to til thru by del unset ref
+```
+
+Declaration keywords, which are keywords used to declare program entities such as variables, functions, methods and properties.
+
+```
+var val let const decl def func type object
+class enum module pack struct inter space pragma
+proc proto macro given style elem field
+ext pred data trait lemma iter sub prop
+```
+
+Control keywords are keywords used to create control flow statements such as conditionals, loops and error-handling statements.
+
+```
+if un elif elun else then
+for each loop while until when
+with do from ref
+try throw catch final
+switch match case fail
+race some every done spawn kill lock
+break next redo retry return await label yield goto pass
+import export using
+debug assert where
+```
+
+Contextual keywords only are parsed as keywords when they appear before a declaration keyword.
+
+```
+pub priv prot inline final mut immut ghost early late joint contra
+seal abs intern extern imply exply global local
+async sync stat dyn lazy eager strong weak swap
+vol unsafe unfix bound free opaque trans
+rec gen oper get set post put rem new del patch
+prefix suffix infix binary unary left right
+```
+
+### Identifiers
+
+An identifier can contain any sequence of letters, digits, marks,underscores, and dashes, provided it starts with a letter or underscore, and does not end in any number of dashes.
 
 ```js
-true;
-false;
-null;
-undefined;
-Infinity;
-NaN;
-
-!!a && !!b;
-!!a || !!b;
-!!a != !!b;
-
-a == b;
-a === b;
+const regex = /\b[\p{Pc}\p{L}][\d\p{L}\p{M}\p{Pc}\p{Pd}]*\b/;
 ```
+
+Identifiers are compared using an approach known as partial case-insensitivity.
+
+```dart
+func cmpIdent(a: str, b: str): bool {
+  let a1
+  if (a1 = a.sub(`\P{Alnum}`g, '')) ~= `\p{Upper}+`:
+    a1 == b.sub(`\P{Alnum}`g, '')
+  else:
+    a[0] == b[0] -> (
+      a[1:].sub(`\P{Alnum}`g, '').lower() ==
+      b[1:].sub(`\P{Alnum}`g, '').lower()
+    )
+}
+```
+
+To "strop" keywords, append a trailing underscore.
+
+```dart
+type Type = { def_: Func }
+var var_ = 42, val_ = 8
+const assert_ = var_ + val_ == 50
+assert assert_
+```
+
+All identifiers are normalized using the above function.
+
+### Booleans, Null and Void
+
+The `Null` type is used to represent the absence of a value, similar to `null` in other languages. It only has a single value:
+
+```dart
+null
+```
+
+Threenity also has `void`, for compatibility purposes. `void` is equal to `null`, but compiles to JavaScript `undefined`. You should use `void` in place of `null`.
+
+### Bool
+
+Bool has only two possible values: `true` and `false`. They are constructed using the following literals:
 
 ```dart
 true
 false
-null
-void
-infin
-nan
+```
 
-a && b
-a || b
-a ^^ b
-!b
+### Numbers
 
-a == b // no type coercion
-a === b
+Threenity supports three numeric data types, `Nat`, `Int` and `Float`, all 64-bit. This avoids a lot of complexity associated with numeric precision such as file lengths, Unicode strings or very large lists.
+
+```dart
+val integer: Int = 123
+val floating: Float = 0x12.345
+```
+
+As for signs, the prefix `+` and `-` are not part of the literal.
+
+Numbers are case insensitive. They can contain leading zeroes or underscores for easy readability. Literals can be written in base 2, 4, 6, 8, 10, 12 or 16:
+
+```dart
+val base2 = 0b10
+val base4 = 0q123
+val base6 = 0s12345
+val base8 = 0o1234567
+val base10 = 0123456789
+val base12 = 0z0123456789ab
+val base16 = 0x0123456789abcdef
+```
+
+Floating-point numbers can allow different kinds of delimiters and separators.
+
+```dart
+0.3 // Basic literal (3/10)
+3/10 // Fraction
+0.~3 // Repeating digits
+1^10 // Exponent
+1^-10 // Signed exponent
+0.1*16^+10 // Scientific notation
+1=10 // Rounding to 10 decimal places
+1=+10 // Round up 10 decimal places
+1=-10 // Round down 10 decimal places
+1=!10 // Round to 10 significant figures
+1=!+10 // Round up to 10 significant figures
+1=!-10 // Round down to 10 significant figures
+```
+
+The fractional, repeating, exponent, rounding and type-suffix part appear in that specific order, though are all optional.
+
+Multi-base digits can use either alphanumerics or digits. The digits are specified with a formatting modifier, `%`.
+
+```dart
+var int: Int = 123
+var nat: Nat = 123:u
+var float: Float = 123.0
+
+/* Different radixes */
+val base2 = 0b10
+val base4 = 0q123
+val base6 = 0s12345
+val base8 = 0o1234567
+val base10 = 0123456789
+val base12 = 0z0123456789ab
+val base16 = 0x0123456789abcdef
+
+/* For floats only: */
+0.3 // Basic literal (3/10)
+3/10 // Fraction
+0.~3 // Repeating digits
+1^10 // Exponent
+1^-10 // Signed exponent
+0.1*16^+10 // Scientific notation
+1=10 // Round to 10 decimal places
+1=+10 // Round up 10 d.p
+1=-10 // Round down 10 d.p
+1=!10 // Round to 10 significant figures
+1=!+10 // Round up to 10 s.f
+1=!-10 // Round down to 10 s.f
+
+// Parts of a float: all optional
+/* fraction => repeating => exponent => rounding => suffix */
+/* denominator => exponent => rounding => suffix */
+
+// Type suffix: with colon
+assert 1:u is Nat
+
+// Multi-base literals
+val base100 = 100b0_99_99
+assert base100 == 9999
+
+// With custom digits
+const base17Digits = '0123456789abcdefg'
+val base17 = 17b0123456789abcdefg%num/digits:(base17Digits)
+```
+
+### Strings
+
+Strings are created using single or double quotes.
+
+```dart
+'all single quoted strings are verbatim'
+'this \ backslash also does not need to be escaped'
+'same for the " double quote'
+'to express one single quote, use '' two of them'
+
+"here we can use predefined escape sequences like \t \n \b"
+"or generic escape sequences \x0b \u0041 \U000041"
+"the double quote \" needs to be escaped"
+"just like the \\ backslash"
+"the single quote ' and other characters can be escaped,
+but they are completely optional"
+" more quotes because why not"""""
+```
+
+Double quoted string literals can contain the following escape sequences, and all of them are case-insensitive:
+
+```dart
+"\p" // platform specific newline
+"\r" // carriage return
+"\n" // newline
+"\f" // form feed
+"\t" // horizontal tab
+"\v" // vertical tab
+"\a" // alert (bell)
+"\b" // backspace
+"\e" // escape
+"\s" // space
+"\cA" // control character from A (#U+01) to Z (#U+1A)
+
+// Multi-base escapes
+"\b100001111111111111111"
+"\q10033333333"
+"\s35513531"
+"\o4177777"
+"\d1114111" // or "\1114111"
+"\z4588A7"
+"\x10FFFF" // or "\u10fffff"
+
+// Multi code-point escapes
+"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
+"\d{72 69 76 76 69}" == "\72\69\76\76\79"
+
+// LaTeX expressions:
+"\j{
+  \documentclass{article}
+  \title{Cartesian closed categories and the price of eggs}
+  \author{Jane Doe}
+  \date{September 1994}
+  \begin{document}
+    \maketitle
+    Hello world!
+  \end{document}
+}"
+```
+
+Multi-quoted strings are defined with three or more quotes of the same type and end in the same opening sequence.
+
+```dart
+// All non-spacing characters are discarded
+// between the text and the quotes
+'''We're fine'''
+""""We're fine""""
+
+// Strings can end in more than the opening number of quotes
+"""x""""
+
+// Indentation is preserved or discarded
+// based on the first line of text
+'''
+"stringified
+  string"
+''' ==
+"""
+  "stringified
+    string"
+"""
+
+// Escaping rules apply as before
+'''
+  no escapes needed!
+'''
+"""
+  \\escape\ with\ me
+"""
+```
+
+### String interpolation (`$`)
+
+All forms of strings can allow embedding of underscores. Expressions are always prefixed with the dollar and may be surrounded with curly brackets, the latter if the expression is a literal, a stti
+
+All forms of strings, can enable embedding of expressions. Expressions are prefixed with the dollar and surrounded by curly brackets.
+
+If the expression is an identifier or qualified name, then the brackets can be left out. Use the `\$` escape sequence if you wish to express the dollar sign itself.
+
+```dart
+"simple $variable"
+"$object_.property or $deeply.nested[property]"
+"$type_{casting}"
+"$a.'string'.property"
+"$function() or $method.call(with_, args)"
+"${expression} if all else fails"
+"keywords $then are not stropped"
+
+'$1' '$%' // don't need escaping
+'$$a' == "\$a"
+```
+
+### String formatting
+
+Saga comes built-in with a string formatting mini-language for converting, serializing and transforming objects inside strings, with a clearer to read syntax. They are composed of the following parts:
+
+- A type: `%type` denoted by a percentage sign
+- An optional range of switches, each denoted by a slash `/switch`,
+- Their optional values, separated by a colon: `/sw:value`.
+
+```dart
+"%type/switch/switch:'value'/switch:(expression)"
+
+// Types of values
+"%x/x:#10ffff numeric (positive only)"
+"%x/color:blue CSS property"
+"%x/x:other variable"
+"%x/x:'' string"
+"%x/x:`` regex"
+"%x/x:() expression"
+"%x/x:[] array"
+"%x/x:{} dictionary"
+
+'%1' '%$' // don't need escaping when next to a symbol or number
+'%a' == "\%a"
+
+const Everest = {height: 8848}
+"Mount Everest is $Everest.height%f/unit:'m'/long tall."
+// "Mount Everest is 8,848 meters tall."
+```
+
+### String placeholder variables
+
+String placeholders are used to create template strings from named, keyed or positional arguments. They produce strings from their arguments by calling its `format` method with the specified arguments.
+
+```dart
+"#named" "#?optional"
+"#&keyed" "#%optional"
+"#0 positive (zero-indexed)"
+"#-1 negative (from end)"
+"#*spread (from an object)"
+
+'#@' '#*' // don't need escaping when next to a number
+'%a' == "\%a"
+
+// Usage
+"#1%s".format(0, "hello world") // => 'hello world'
+"#&int%i/b:16/p:'0x'".format({int: 42}) // => '0x2A'
+"#name%i/b:16/p:'0x'".format(name = 42) // => '0x2A'
+```
+
+### Symbols
+
+A symbol represents a unique name inside the entire source code. Symbols are interpreted at compile time and cannot be created dynamically.
+
+The only way to create a symbol is by using a symbol literal, denoted by a colon (`:`) followed by an unquoted string beginning with a word character, and follows the same rules as an unquoted string.
+
+The identifier may optionally be enclosed in single or double quotes.
+
+```dart
+:unquoted_symbol
+:"quoted symbol"
+:"a" // identical to :a
+:あ
+```
+
+A quoted identifier can contain any Unicode character including white-spaces and can same escape sequences as a string literal, including interpolation. Use interpolation to create dynamic keys.
+
+```dart
+:question?
+:exclamation!
+```
+
+### Regular expressions
+
+Regular expressions function like strings, except delimited using backticks. In an effort to make them more readable, Saga's regexes allow for free spacing and embedded comments.
+
+Saga uses the [Oniguruma](https://github.com/kkos/oniguruma) regular expression flavor by default, the same regex engine that powers Ruby and PHP7, though with a few extensions.
+
+````dart
+`\b{wb}(fee|fie|foe|fum)\b{wb}`x
+`[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] `]`x
+`
+  \/\* // Match the opening delimiter.
+  .*?  // Match a minimal number of characters.
+  \*\/ // Match the closing delimiter.
+`
+
+// Multi-quoted regex
+```(?:[a-zA-Z_]|(?:\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}))(?:[a-zA-Z0-9_]|(?:\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}))*(?=:)```
+````
+
+Interpolation and formatting also applies but the interpolated result is usually escaped so to prevent generating invalid regular expressions.
+
+#### Replacement strings
+
+If there are two adjacent regular expression literals on one side, then the one on the right is the substitution (template) string for the regular expression on the left.
+
+```dart
+val str = 'James Bond'
+val newStr = str.sub(`(\w+)\W+(\w+)` `$2, $1`) // 'Bond, James'
+val newStr = str.sub(`(\w+)\W+(\w+)` `My name is $2, $0!`)
+// 'My name is Bond, James Bond'
+```
+
+```dart
+`((()))` `
+$& $0   ${/* Entire match */}
+$-      ${/* Before matched substring */}
+$+      ${/* After matched substring */}
+$1      ${/* Numbered capture group */}
+$+1     ${/* Relative group */}
+$<name> ${/* Named capture group */}
+`
+```
+
+### Collections
+
+Saga comes with two basic literals: list and map. Both collections are homogenous and immutable.
+
+- Lists are ordered collections of literals.
+- Maps are collections of key-value pairs where each item is mapped to a distinct key.
+
+Sets are map literals with the values repeated.
+
+```dart
+var list1: []int = [10, 20, 30]
+var list2 = ['a', 'b', 'c'] // is []str
+[] // an empty list
+
+val map1: {str : int} = {one: 1, two: 2, three: 3}
+val map2 = {1: 2, 2: 4, 3: 6, 4, 8} // inferred as {int : int}
+{} // an empty map
+```
+
+An explicit type can be specified by immediately following the closing angle with a type encased in curly brackets, without a space.
+
+This overwrites the inferred type and can be used for example to create an array that holds only some types initially but can accept other types later.
+
+```dart
+var z = [10, '20', '30']{Str|Int} // with type casting operator
+```
+
+Often the compiler will infer a list to have a non-nullable type. If the list might store `null` values, then you will need to explicitly cast it.
+
+```dart
+[1, 2, 3] // cannot store null
+[1, 2, 3, null]{?Nat} // can store null
+```
+
+The empty list is denoted using the special syntax `[]`. Often you will specify a type - for example `[]{Str}` is an empty list of strings. If a type is not specified, then the empty list is an `[]{Any}`.
+
+If a key is a valid identifier, even if it is a keyword, and is placed right before the colon, then it need not be quoted. The same goes for types. Any other value is parsed as an expression. Unquoted identifiers are subject to normalisation.
+
+```dart
+x = {int: 1, 2.2: 2, '3': 3, x * 2 + 4: 4}
+assert x.int == 1
+assert x.2.2 == 1
+assert x.'3' == 3
+assert x[x * 2 + 4] = 1
+```
+
+## Control Statements
+
+### Introduction: expression-oriented programming
+
+As a brief note about programming in general, when every expression you write returns a value, that style is referred to as expression-oriented programming, or EOP. The examples above are all expressions.
+
+Conversely, lines of code that don't return values are called statements, and they are used for their side-effects. For example, these lines of code don’t return values, so they are used for their side effects:
+
+```dart
+if a == b: doSomething()
+print("Hello")
+```
+
+### Basic closures
+
+Bindings can be scoped through the do-block: `do {}`.
+
+```dart
+let message = do {
+  let part1 = "hello"
+  let part2 = "world"
+  part1 ++ " " ++ part2
+}
+// `part1` and `part2` not accessible here!
+```
+
+The value of the last line of a scope is implicitly returned.
+
+`if`, `while` and functions all use the same block scoping mechanism.
+
+```dart
+if displayGreeting {
+  let message = "Enjoying the docs so far?"
+  print(message)
+}
+// `message` not accessible here!
+```
+
+Instead of a block, whenever there's a single statement, use the colon `:` instead of an opening curly brace.
+
+```dart
+let message = do: 3 + 4
+```
+
+But not both (opening curly brace is a set literal):
+
+```dart
+let message = do: { 3 + 4 }
+assert message is Set
+```
+
+### Conditionals
+
+A basic `if` statement looks like this:
+
+```dart
+if a == b: doSomething()
+```
+
+Or like this:
+
+```dart
+if a == b:
+  doSomething()
+```
+
+or even like this:
+
+```dart
+if a == b {
+  doSomething()
+}
+```
+
+An if-else expression without the final `else` branch implicitly gives `()` (aka the unit type).
+
+```dart
+if showMenu { displayMenu() }
+// is equivalent to
+if showMenu { displayMenu() } else { null }
+```
+
+The if/else construct looks like this:
+
+```dart
+if a == b {
+  doSomething()
+} else {
+  doSomethingElse()
+}
+```
+
+The complete Trinity `if`/`else if`/`else` expression looks like this:
+
+```dart
+if test1 {
+  doX()
+} elif test2 { // not "else if"
+  doY()
+} else {
+  doZ()
+}
+```
+
+Replacing `if` with `unless` and `elif` with `eless` for the opposite effect, meaning they would execute if their predicates return false.
+
+```dart
+unless test1 { // unless; if not
+  doX()
+} eless test2 { // unless; if not
+  doY()
+} else {
+  doZ()
+}
+```
+
+A great thing about the Trinity conditional is that it always returns. You can ignore the result as we did in the previous examples, but a more common approach, especially in functional programming.
+
+You can assign the result to a variable:
+
+```dart
+val minValue = if a < b: a else: b
+```
+
+Anyway, Trinity has two ternary conditional operators, which are just syntax sugar for the above if you're not keen on using `if`. That last one, is syntax sugar for `un`...`else`.
+
+```dart
+val minValue = a < b ? a : b
+val maxValue = a > b ! a : b
+```
+
+### While Loops
+
+While loops execute its body code block while its condition is true.
+
+```dart
+while i < 10 {
+  text += "The number is $i"
+  i += 1
+}
+```
+
+`repeat-while` is a variant of `while`. This loop will execute the code block once, before checking if the condition is true, then it will repeat the loop as long as the condition is true.
+
+```dart
+repeat {
+  text += "The number is $i"
+  i += 1
+} while i < 10
+```
+
+Until loops execute their bodies until their statements become false.
+
+```dart
+until i == 10 {
+  text += "The number is $i"
+  i += 1
+}
+
+repeat {
+  text += "The number is $i"
+  i += 1
+} until i == 10
+
+repeat: text += "The number is $i" && i += 1 until i == 10
+```
+
+Loop block runs indefinitely.
+
+```dart
+repeat:
+  print("hello world forever!")
+
+let i = 1
+repeat {
+  print("i is now $i")
+  if i > 100: break
+  i *= 2
+}
+assert i == 128
+```
+
+#### Loop keywords
+
+Trinity has three keywords relating to loops:
+
+- stop and exit a loop or an enumeration using the `break` keyword
+- jump to the next iteration or step using the `next` keyword
+- repeat the current iteration or step using the `redo` keyword
+
+```dart
+label x: loop {
+  if new Random() > 0.3: break x
+  elif new Random() > 0.5: next x
+  elif new Random() > 0.7: redo x
+  else: log("Still running")
+}
+```
+
+All are system calls so they can be interlaced with expressions.
+
+### For-loops
+
+In its most simple use, a `for` or `each` loop can be used to iterate over the elements in a collection. For example, given an array of integers:
+
+```dart
+val numbers = [1, 2, 3]
+```
+
+you can loop over them and print out their values like this:
+
+```dart
+for val n in numbers: print(n)
+```
+
+A second variable is assigned to their indices (i.e keys):
+
+```dart
+for val number, index in numbers: print(n, x)
+```
+
+You can loop over the keys of a map (or any other keyed collection) with `of` rather than `in`.
+
+```dart
+val list = [4, 5, 6]
+for val i in list:
+  print(i) // "0", "1", "2",
+for val i of list:
+  print(i) // "4", "5", "6"
+for val n of numbers: print(n)
+```
+
+### Switch or match
+
+Trinity has a concept of a `match` or `switch` expression. You can use either of which. As shown, with a match expression you write a number of case statements that you use to match possible values.
+
+```dart
+match i {
+  case 1: print("Monday") // when or case
+  case 2: print("Tuesday")
+  case 3: print("Wednesday")
+  case 4: print("Thursday")
+  case 5: print("Friday")
+  case 6: print("Saturday")
+  case 7: print("Sunday")
+  fail: print("Invalid day") // else or fail
+}
+```
+
+Above, we match the integer values 1 through 7. Any other value falls down to the `fail` or blank case, which is the catch-all, default case.
+
+`match`/`switch` expressions are nice because they also return values, so rather than directly printing a string as in that example, you can assign the string result to a new value:
+
+```dart
+// i is an integer
+val dayName = match i {
+  case 1: "Monday"
+  case 2: "Tuesday"
+  case 3: "Wednesday"
+  case 4: "Thursday"
+  case 5: "Friday"
+  case 6: "Saturday"
+  case 7: "Sunday"
+  fail: "Invalid day"
+}
+```
+
+`match`/`switch` expressions let you handle multiple cases.
+
+To demonstrate this, imagine that you want to evaluate "boolean equality" like PHP would: `0`, `''` or `'0'` evaluates to `false`, while everything else evaluates to `true`.
+
+```dart
+fun isTrue(a: Any) = match a {
+  case is 0 | '' | '0': false
+  fail: true
+}
+```
+
+The key part of this solution is that this one case statement lets both 0 and the empty string evaluate to false:
+
+```dart
+match a { case is 0 | '' | '0': false }
+```
+
+Before we move on, here’s another example that shows many matches in each case statement:
+
+```dart
+val evenOrOdd = match i {
+  case is 1 | 3 | 5 | 7 | 9: print("odd")
+  case is 2 | 4 | 6 | 8 | 10: print("even")
+  fail: print("some other number")
+}
+```
+
+Here's another example that shows how to handle multiple strings in multiple case statements:
+
+```dart
+match cmd {
+  case is "start" | "go": print("starting")
+  case is "stop" | "quit" | "exit": print("stopping")
+  fail: print("doing nothing")
+}
+```
+
+#### Guard conditions
+
+Another great thing about match expressions is that you can use `when` clauses to filter conditions.
+
+```dart
+val number = 4:u
+match number {
+  case i if i == 0: print('Zero')
+  case i if i > 0: print("Greater than zero")
+  fail: print("Fell through")
+}
+```
+
+#### Bindings
+
+Indirectly accessing a variable makes it impossible to branch and use that variable without re-binding. `match` provides the `as` sigil for binding values to names:
+
+```dart
+val pair = [2, 2]
+print("Tell me about $pair.")
+
+match pair {
+  case [x, y] as z if x == y: print("$z are twins!")
+  case [x, y] as z if x + y == 0: print("$z are opposites!")
+  case [x, _] if x % 2 == 1: print("The first is odd.")
+  fail: print("Nothing special!")
+}
 ```
