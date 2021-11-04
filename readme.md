@@ -429,11 +429,9 @@ Multi-quoted strings are defined with three or more quotes of the same type and 
 
 ### String interpolation (`$`)
 
-All forms of strings can allow embedding of underscores. Expressions are always prefixed with the dollar and may be surrounded with curly brackets, the latter if the expression is a literal, a stti
+All forms of strings can allow interpolation. Expressions are always prefixed with the dollar sign and may be surrounded with curly brackets.
 
-All forms of strings, can enable embedding of expressions. Expressions are prefixed with the dollar and surrounded by curly brackets.
-
-If the expression is an identifier or qualified name, then the brackets can be left out. Use the `\$` escape sequence if you wish to express the dollar sign itself.
+If the expression is an identifier or qualified name, a nested property or a function or method call, then the brackets can be left out. Use the `\$` escape sequence if you wish to express the dollar sign itself.
 
 ```dart
 "simple $variable"
@@ -608,6 +606,12 @@ assert x.'3' == 3
 assert x[x * 2 + 4] = 1
 ```
 
+Set literals are treated like map literals, with the keys and the values being the same.
+
+```dart
+assert ({1: 1, 2: 2} == {1, 2})
+```
+
 ## Control Statements
 
 ### Introduction: expression-oriented programming
@@ -739,6 +743,37 @@ val minValue = a < b ? a : b
 val maxValue = a > b ! a : b
 ```
 
+### For-loops
+
+In its most simple use, a `for` or `each` loop can be used to iterate over the elements in a collection. For example, given an array of integers:
+
+```dart
+val numbers = [1, 2, 3]
+```
+
+you can loop over them and print out their values like this:
+
+```dart
+for val n in numbers: print(n)
+```
+
+A second variable is assigned to their indices (i.e keys):
+
+```dart
+for val number, index in numbers: print(n, x)
+```
+
+You can loop over the keys of a map (or any other keyed collection) with `of` rather than `in`.
+
+```dart
+val list = [4, 5, 6]
+for val i in list:
+  print(i) // "0", "1", "2",
+for val i of list:
+  print(i) // "4", "5", "6"
+for val n of numbers: print(n)
+```
+
 ### While Loops
 
 While loops execute its body code block while its condition is true.
@@ -775,7 +810,7 @@ repeat {
 repeat: text += "The number is $i" && i += 1 until i == 10
 ```
 
-Loop block runs indefinitely.
+Repeat blocks run indefinitely.
 
 ```dart
 repeat:
@@ -809,61 +844,15 @@ label x: loop {
 
 All are system calls so they can be interlaced with expressions.
 
-### For-loops
-
-In its most simple use, a `for` or `each` loop can be used to iterate over the elements in a collection. For example, given an array of integers:
-
-```dart
-val numbers = [1, 2, 3]
-```
-
-you can loop over them and print out their values like this:
-
-```dart
-for val n in numbers: print(n)
-```
-
-A second variable is assigned to their indices (i.e keys):
-
-```dart
-for val number, index in numbers: print(n, x)
-```
-
-You can loop over the keys of a map (or any other keyed collection) with `of` rather than `in`.
-
-```dart
-val list = [4, 5, 6]
-for val i in list:
-  print(i) // "0", "1", "2",
-for val i of list:
-  print(i) // "4", "5", "6"
-for val n of numbers: print(n)
-```
-
 ### Switch or match
 
-Trinity has a concept of a `match` or `switch` expression. You can use either of which. As shown, with a match expression you write a number of case statements that you use to match possible values.
-
-```dart
-match i {
-  case 1: print("Monday") // when or case
-  case 2: print("Tuesday")
-  case 3: print("Wednesday")
-  case 4: print("Thursday")
-  case 5: print("Friday")
-  case 6: print("Saturday")
-  case 7: print("Sunday")
-  fail: print("Invalid day") // else or fail
-}
-```
-
-Above, we match the integer values 1 through 7. Any other value falls down to the `fail` or blank case, which is the catch-all, default case.
+With a `match` or `switch` expression you write a number of case statements that you use to match possible values.
 
 `match`/`switch` expressions are nice because they also return values, so rather than directly printing a string as in that example, you can assign the string result to a new value:
 
 ```dart
 // i is an integer
-val dayName = match i {
+val dayName = switch i {
   case 1: "Monday"
   case 2: "Tuesday"
   case 3: "Wednesday"
@@ -880,7 +869,7 @@ val dayName = match i {
 To demonstrate this, imagine that you want to evaluate "boolean equality" like PHP would: `0`, `''` or `'0'` evaluates to `false`, while everything else evaluates to `true`.
 
 ```dart
-fun isTrue(a: Any) = match a {
+func isTrue(a: Any) = switch a {
   case is 0 | '' | '0': false
   fail: true
 }
@@ -889,13 +878,13 @@ fun isTrue(a: Any) = match a {
 The key part of this solution is that this one case statement lets both 0 and the empty string evaluate to false:
 
 ```dart
-match a { case is 0 | '' | '0': false }
+switch a { case is 0 | '' | '0': false }
 ```
 
 Before we move on, here’s another example that shows many matches in each case statement:
 
 ```dart
-val evenOrOdd = match i {
+val evenOrOdd = switch i {
   case is 1 | 3 | 5 | 7 | 9: print("odd")
   case is 2 | 4 | 6 | 8 | 10: print("even")
   fail: print("some other number")
@@ -905,7 +894,7 @@ val evenOrOdd = match i {
 Here's another example that shows how to handle multiple strings in multiple case statements:
 
 ```dart
-match cmd {
+switch cmd {
   case is "start" | "go": print("starting")
   case is "stop" | "quit" | "exit": print("stopping")
   fail: print("doing nothing")
@@ -914,11 +903,11 @@ match cmd {
 
 #### Guard conditions
 
-Another great thing about match expressions is that you can use `when` clauses to filter conditions.
+Another great thing about switch expressions is that you can use `if` clauses to filter conditions.
 
 ```dart
 val number = 4:u
-match number {
+switch number {
   case i if i == 0: print('Zero')
   case i if i > 0: print("Greater than zero")
   fail: print("Fell through")
@@ -927,16 +916,58 @@ match number {
 
 #### Bindings
 
-Indirectly accessing a variable makes it impossible to branch and use that variable without re-binding. `match` provides the `as` sigil for binding values to names:
+Indirectly accessing a variable makes it impossible to branch and use that variable without re-binding. The `as` clause for binding values to names:
 
 ```dart
 val pair = [2, 2]
-print("Tell me about $pair.")
 
-match pair {
+switch pair {
   case [x, y] as z if x == y: print("$z are twins!")
   case [x, y] as z if x + y == 0: print("$z are opposites!")
   case [x, _] if x % 2 == 1: print("The first is odd.")
   fail: print("Nothing special!")
 }
 ```
+
+### Error handling
+
+Like a lot of other languages, Saga has a try-catch statement to let you catch and manage errors. The main difference is that Saga allows you to pattern match errors.
+
+```dart
+var text = ''
+try:
+  text = new File('filename').open().read()
+catch {
+  case is FileNotFoundError:
+    'Could not find the file $filename'
+  case is IOError:
+    "Had an IOError trying to read file $filename"
+}
+```
+
+Try-catch also lets you use a "final" clause which is typically used when you need to close a resource.
+
+```dart
+try {
+  var file = new File(path).open().read()
+} catch {
+  case foo : FooError: handleFooError(foo)
+  case bar : BarError: handleBarError(bar)
+  case : Throwable: print("Got some other kind of \
+    Throwable error")
+} final {
+  file.close()
+}
+```
+
+You can also use a "with" clause similar to Python, so there is no need to write a "final" clause, or even a "catch" clauses. Those are defined with the trait `Handleable`, with the methods `_try`, `_catch` and `_final` defined.
+
+```dart
+with var file as new File(path).open().read() {
+  file.write('hello world!')
+} // final { file._final() }
+```
+
+### Asynchrony
+
+Saga comes with three different constructs: `some`, `every` and `race` for minimising callback/try-catch hell when dealing with asynchronous code.
