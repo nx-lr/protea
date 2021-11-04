@@ -1,6 +1,6 @@
 # Saga
 
-> Your dream programming language.
+> It's JavaScript, but no.
 
 Saga is a multi-platform general-purpose programming language containing everything you need for building, testing and deploying applications, systems and libraries across the entire tech stack. Combining object-oriented and functional programming in one concise, high-level language, allowing you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
@@ -30,7 +30,11 @@ Still, time and time again, developers keep pushing on JavaScript to its limits.
 
 ### About the Project
 
-Saga aims to be a language with a syntax very familiar to JavaScript and React developers, including those who use tools such as Gatsby, Next.JS or Styled Components. Saga is a compiler and a framework combined and has features specific to client and server-side app development: built-in styles, markup, schemas, routing and queries. It is designed to express common programming patterns in a concise, elegant and type-safe way, integrating features from different object-oriented and functional languages.
+Saga aims to be a language with a syntax very familiar to JavaScript and React developers, including those who use tools such as Gatsby, Next.JS or Styled Components.
+
+Saga is a compiler and a framework combined and has features specific to client and server-side app development: built-in styles, markup, schemas, routing and queries.
+
+It is designed to express common programming patterns in a concise, elegant and type-safe way, integrating features from different object-oriented and functional languages.
 
 ### Features
 
@@ -173,7 +177,7 @@ ext pred data trait lemma iter sub prop
 Control keywords are keywords used to create control flow statements such as conditionals, loops and error-handling statements.
 
 ```
-if unless  elif eless else then
+if unless elif eless else then
 for each loop while until when
 with do from ref
 try throw catch final
@@ -614,6 +618,8 @@ assert ({1: 1, 2: 2} == {1, 2})
 
 ## Control Statements
 
+Saga ha s rang irhti hrwih
+
 ### Introduction: expression-oriented programming
 
 As a brief note about programming in general, when every expression you write returns a value, that style is referred to as expression-oriented programming, or EOP. The examples above are all expressions.
@@ -929,6 +935,17 @@ switch pair {
 }
 ```
 
+Matching on strings, regular expressions and functions allow you to extract those data from them.
+
+```dart
+val sample: str = '10-a'
+switch sample {
+  case '${x: int}-dir': exec(x)
+  case `(?<x>\d+)-dir`: exec(x)
+  case x if x ~= `^\d+-dir$`: exec(x)
+}
+```
+
 ### Error handling
 
 Like a lot of other languages, Saga has a try-catch statement to let you catch and manage errors. The main difference is that Saga allows you to pattern match errors.
@@ -971,3 +988,55 @@ with var file as new File(path).open().read() {
 ### Asynchrony
 
 Saga comes with several constructs, namely `some`, `every`, `race` and `settle` when dealing with asynchronous operations. A promise can either be pending, `accept`ed or `reject`ed, depending on the operation having been completed or failed.
+
+The `every` block would reject if any of its statements is rejected or an error is thrown. Those would be handled in the `catch` block.
+
+```dart
+every {
+  accept 42
+  accept await getFromDatabase()
+  sleep(accept 'Success', 100, 'foo')
+  reject 3
+} done values {
+  print(values)
+} catch rejected {
+  print(rejected)
+}
+```
+
+The `some` block would only pass if any statement is resolved. If none are accepted, then the errors are handled in the catch block.
+
+```dart
+some {
+  accept 42
+  accept await getFromDatabase().throw()
+  await sleep('Success', 100, 'foo')
+  reject 3
+} done values {
+  print(values)
+}
+```
+
+The `race` block would only pass as soon as any of its statements fulfils or rejects.
+
+```dart
+race {
+  const a = 42
+  await sleep(300, 'foo')
+  await sleep(100, 'foo')
+} done value {
+  print(value) // 42
+}
+```
+
+The `settle` block passes once all its statements have been completed or failed, describing the outcome of each statement as a status.
+
+```dart
+settle {
+  const promise1 = 3
+  const promise2 = setTimeout(reject, 100, 'foo')
+  const promises = [promise1, promise2]
+} done values, statuses {
+  print(value) // 42
+}
+```
