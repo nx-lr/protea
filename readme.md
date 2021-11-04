@@ -173,12 +173,12 @@ ext pred data trait lemma iter sub prop
 Control keywords are keywords used to create control flow statements such as conditionals, loops and error-handling statements.
 
 ```
-if un elif elun else then
+if unless  elif eless else then
 for each loop while until when
 with do from ref
 try throw catch final
-switch match case fail
-race some every done spawn kill lock
+settle race some every done
+spawn kill accept reject
 break next redo retry return await label yield goto pass
 import export using
 debug assert where
@@ -970,4 +970,4 @@ with var file as new File(path).open().read() {
 
 ### Asynchrony
 
-Saga comes with three different constructs: `some`, `every` and `race` for minimising callback/try-catch hell when dealing with asynchronous code.
+Saga comes with several constructs, namely `some`, `every`, `race` and `settle` when dealing with asynchronous operations. A promise can either be pending, `accept`ed or `reject`ed, depending on the operation having been completed or failed.
