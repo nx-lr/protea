@@ -62,7 +62,7 @@ define:
     |with|then|do|from|ref
     |try|throw|catch|final
     |switch|match|case|fail
-    |race|some|every|done|spawn|kill|lock
+    |race|some|every|done|spawn|kill|settle
     |break|next|redo|retry|return|await|label|yield|goto|pass
     |import|export|using|route
     |debug|assert|where
@@ -85,7 +85,7 @@ define:
     |with|then|do|from|ref
     |try|throw|catch|final
     |switch|match|case|fail
-    |race|some|every|done|spawn|kill|lock
+    |race|some|every|done|spawn|kill|settle
     |break|next|redo|retry|return|await|label|yield|goto|pass
     |import|export|using|route
     |debug|assert|where
@@ -212,7 +212,7 @@ repository:
       |with|then|do|from|ref
       |try|throw|catch|final
       |switch|match|case|fail
-      |race|some|every|done|spawn|kill|lock
+      |race|some|every|done|spawn|kill|settle
       |break|next|redo|retry|return|await|label|yield|goto|pass
       |import|export|using|route
       |debug|assert|where
@@ -273,15 +273,15 @@ repository:
           |any|mixed|just|some|none|never|(im)?pure
           )(?![\w\p{Pd}])
         name: support.type.primitive.saga
+      - comment: Error classes | BaseError, etc
+        match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)?(Error|Exception)\b
+        name: support.class.error.saga
       - comment: Interface classes | IEnumerable, etc
         match: \s*\bI((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)\b
         name: entity.name.interface.saga
       - comment: Namespace classes | NSString, etc
         match: \s*\bNS((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)\b
         name: entity.name.namespace.saga
-      - comment: Error classes | BaseError, etc
-        match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)?(Error|Exception)\b
-        name: support.class.error.saga
       - comment: Trait classes | Serializable, Loggable etc
         match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)able\b
         name: support.class.trait.saga
@@ -998,7 +998,7 @@ repository:
           |with|then|do|from|ref
           |try|throw|catch|final
           |switch|match|case|fail
-          |race|some|every|done|spawn|kill|lock
+          |race|some|every|done|spawn|kill|settle
           |break|next|redo|retry|return|await|label|yield|goto|pass
           |import|export|using|route
           |debug|assert|where
@@ -1725,7 +1725,7 @@ repository:
       |with|then|do|from|ref
       |try|throw|catch|final
       |switch|match|case|fail
-      |race|some|every|done|spawn|kill|lock
+      |race|some|every|done|spawn|kill|settle
       |break|next|redo|retry|return|await|label|yield|goto|pass
       |import|export|using|route
       |debug|assert|where
@@ -2102,7 +2102,7 @@ repository:
           |with|then|do|from|ref
           |try|throw|catch|final
           |switch|match|case|fail
-          |race|some|every|done|spawn|kill|lock
+          |race|some|every|done|spawn|kill|settle
           |break|next|redo|retry|return|await|label|yield|goto|pass
           |import|export|using|route
           |debug|assert|where
@@ -2131,7 +2131,7 @@ repository:
           |with|then|do|from|ref
           |try|throw|catch|final
           |switch|match|case|fail
-          |race|some|every|done|spawn|kill|lock
+          |race|some|every|done|spawn|kill|settle
           |break|next|redo|retry|return|await|label|yield|goto|pass
           |import|export|using|route
           |debug|assert|where
@@ -2489,7 +2489,7 @@ repository:
           |with|then|do|from|ref
           |try|throw|catch|final
           |switch|match|case|fail
-          |race|some|every|done|spawn|kill|lock
+          |race|some|every|done|spawn|kill|settle
           |break|next|redo|retry|return|await|label|yield|goto|pass
           |import|export|using|route
           |debug|assert|where
@@ -2519,7 +2519,7 @@ repository:
               |with|then|do|from|ref
               |try|throw|catch|final
               |switch|match|case|fail
-              |race|some|every|done|spawn|kill|lock
+              |race|some|every|done|spawn|kill|settle
               |break|next|redo|retry|return|await|label|yield|goto|pass
               |import|export|using|route
               |debug|assert|where
@@ -2602,7 +2602,7 @@ repository:
       |with|then|do|from|ref
       |try|throw|catch|final
       |switch|match|case|fail
-      |race|some|every|done|spawn|kill|lock
+      |race|some|every|done|spawn|kill|settle
       |break|next|redo|retry|return|await|label|yield|goto|pass
       |import|export|using|route
       |debug|assert|where
@@ -3069,8 +3069,8 @@ repository:
         name: keyword.control.switch.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|when)(?![\w\p{Pd}])\s*
         name: keyword.control.match.saga
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(race|some|every|done|spawn|kill|lock)(?![\w\p{Pd}])\s*
-        name: keyword.control.thread.saga
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(race|some|every|done|spawn|kill|settle)(?![\w\p{Pd}])\s*
+        name: keyword.control.promise.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?![\w\p{Pd}])\s*
         name: keyword.control.flow.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|using|route)(?![\w\p{Pd}])\s*
@@ -3561,7 +3561,7 @@ repository:
       |with|then|do|from|ref
       |try|throw|catch|final
       |switch|match|case|fail
-      |race|some|every|done|spawn|kill|lock
+      |race|some|every|done|spawn|kill|settle
       |break|next|redo|retry|return|await|label|yield|goto|pass
       |import|export|using|route
       |debug|assert|where
@@ -3581,7 +3581,7 @@ repository:
       - include: "#match-clause"
       - include: "#catch-clause"
       - include: "#with-clause"
-      - include: "#thread-clause"
+      - include: "#promise-clause"
       - include: "#do-clause"
       - include: "#when-clause"
       - include: "#case-clause"
@@ -3649,23 +3649,23 @@ repository:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
             name: keyword.control.error.saga
           - include: $self
-      thread-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(race|some|every|done|spawn|kill|lock)(?![\w\p{Pd}])\s*
+      promise-clause:
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(race|some|every|done|spawn|kill|settle)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.thread.saga
+        name: meta.async.saga
         captures:
-          1: {name: keyword.control.thread.saga}
+          1: {name: keyword.control.promise.saga}
           2: {name: punctuation.separator.colon.saga}
         patterns:
-          - &thread-clause-keywords
+          - &promise-clause-keywords
             match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-            name: keyword.control.thread.saga
+            name: keyword.control.promise.saga
           - begin: \s*(\()
             end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.saga}
             patterns:
-              - *thread-clause-keywords
+              - *promise-clause-keywords
               - include: $self
           - include: $self
       do-clause:
@@ -3976,15 +3976,15 @@ repository:
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?![\w\p{Pd}])\s*
                 end: (?=.)|$
                 beginCaptures:
-                  1: {name: keyword.control.flow.saga}
+                  1: {name: keyword.control.saga}
                 patterns:
                   - include: "#types"
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|unless|elif|eless|else)(?![\w\p{Pd}])\s*
-                name: keyword.control.flow.saga
+                name: keyword.control.saga
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
-                name: keyword.control.flow.saga
+                name: keyword.control.saga
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                name: keyword.control.flow.saga
+                name: keyword.control.saga
               - include: "#type-keywords"
               - include: $self
           - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
