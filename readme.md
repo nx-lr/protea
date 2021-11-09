@@ -350,7 +350,7 @@ val base17 = 17b0123456789abcdefg%num/digits:(base17Digits)
 
 ### Strings
 
-Strings are created using single or double quotes.
+Strings are created using single or double quotes. They are stored as UTF-16.
 
 ```dart
 'all single quoted strings are verbatim'
@@ -1056,13 +1056,13 @@ kill x
 
 ## Functions
 
-Functions form the heart of Saga Writing pure functions is very simple:
+Functions form the heart of Saga. Writing them is very simple:
 
 ```dart
 func double(i: int): int = i * 2
 ```
 
-Functions can also be written using a special syntax that resembles Ruby, with the
+Functions can also be written using a special syntax that resembles Ruby, with the arguments written in between pipe characters instead:
 
 ```dart
 val add = |x, y, z| x + y + z
@@ -1085,7 +1085,7 @@ If your function has no arguments, you can write `var greetMore = | | { }`.
 By default, a function cannot be called recursively with itself. To make a function recursive, we add the `rec` modifier:
 
 ```dart
-rec func sum(list: list[int]): int = list match {
+rec func sum(list: list[int]): int = match list {
   case null: 0
   case head :: tail: head + sum(tail)
 }
@@ -1098,4 +1098,36 @@ Mutually recursive functions start like a single recursive function using the `r
 ```dart
 rec def callSecond = | | callFirst(),
 def callFirst = | | callSecond()
+```
+
+### Labeled Arguments
+
+Multi-arguments functions, especially those whose arguments are of the same type, can be confusing to call.
+
+```dart
+func addCoordinates(x, y) {
+  // use x and y here
+}
+addCoordinates(5, 6) // which is x, which is y?
+```
+
+You can attach labels to an argument by prefixing the name with the `&` symbol:
+
+```dart
+func addCoordinates(&x, &y) {
+  // use x and y here
+}
+// ...
+addCoordinates(&x = 5, &y = 6)
+addCoordinates(&y = 6, &x = 5)
+```
+
+The `&x` part in the declaration means the function accepts an argument labeled `x` and can refer to it in the function body by the same name.
+
+You can also refer to the arguments inside the function body by a different name for conciseness:
+
+```dart
+func addCoordinates(&x as y) {
+  // use x and y here
+}
 ```
