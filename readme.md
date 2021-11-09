@@ -2,7 +2,7 @@
 
 > It's like JavaScript, but harder, better, faster and stronger.
 
-Saga is a multi-platform general-purpose programming language containing everything you need for building, testing and deploying applications, systems and libraries across the entire tech stack. It combines object-oriented and functional programming in one concise, high-level language, allowing you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
+Saga is a multi-platform and multi-purpose programming language containing tools you need for building, testing and deploying apps, systems and libraries for the entire tech stack. It supports the object-oriented and functional programming paradigms, and allows you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
 ```dart
 module Button {
@@ -20,7 +20,7 @@ module Button {
 
 ### Overview
 
-JavaScript is undoubtedly the most popular language in the world. It's got a large ecosystem, and even better, a great community. And with the Node.JS allowing full-stack apps to be developed in a single programming language further paved the way to its overall success. And today, it's a language that's evolving, constantly adapting to suit the needs of its users. Eventually, _any application that can be written in JavaScript will be written in JavaScript_ (Atwood's Law).
+JavaScript is undoubtedly the most popular programming language in the world. It's got a large ecosystema dn JavaScript is undoubtedly the most popular language in the world. It's got a large ecosystem, and even better, a great community. And with the Node.JS allowing full-stack apps to be developed in a single programming language further paved the way to its overall success. And today, it's a language that's evolving, constantly adapting to suit the needs of its users. Eventually, _any application that can be written in JavaScript will be written in JavaScript_ (Atwood's Law).
 
 But the language is drowned in many imperfections, foot-guns and gotchas, and has many complicated parts that most of the time could throw us off. The ecosystem is also as frightening, with project folders gigabytes in size even for a simple, small application. And perhaps, a new framework gets released ever so often. While JS is normally used as an alternative than their native counterparts, it's not designed to be used as a "workhorse" language that could solve every single conceivable problem.
 
@@ -84,11 +84,23 @@ my-app/
 |- modules.saga
 ```
 
-The entry point of a program is defined in the `main` function. `args` is a specific variable used to define the program arguments.
+Modules form the core of every Saga project. They can be accessed, installed, loaded, and passed around to and from other modules.
+
+You can put virtually anything into a module file, including constants, variables, types, functions, classes, components, constants, and more.
+
+The entry point of a project is the `main` function, defined in a special file called `index.saga`, at the project's root directory. All code is executed within `main`.
+
+```dart
+func main {}
+```
+
+The `main` process can accept arguments:
 
 ```dart
 func main(*args: []str): void { /* code here */ }
 ```
+
+Script files do not have a main function, similar to other languages. They can import and use modules, and can call and open other script files.
 
 ### Syntax
 
@@ -521,15 +533,18 @@ A quoted identifier can contain any Unicode character including white-spaces and
 
 Regular expressions function like strings, except delimited using backticks. In an effort to make them more readable, Saga's regexes allow for free spacing and embedded comments.
 
-Saga uses the [Oniguruma](https://github.com/kkos/oniguruma/blob/master/doc/RE) regular expression flavor by default, the same regex engine that powers Ruby and PHP7, though with a few extensions.
+Saga uses the [Oniguruma](https://github.com/kkos/oniguruma/blob/master/doc/RE) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. Saga's own flavor offers a blend of all the features found in the most popular regular expression flavors.
 
 ````dart
 `\b{wb}(fee|fie|foe|fum)\b{wb}`x
 `[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] `]`x
 `
-  \/\* // Match the opening delimiter.
-  .*?  // Match a minimal number of characters.
-  \*\/ // Match the closing delimiter.
+// Match a 20th or 21st century date in yyyy-mm-dd format
+(19|20)\d\d                // year (group 1)
+[- /.]                     // separator
+(0[1-9]|1[012])            // month (group 2)
+[- /.]                     // separator
+(0[1-9]|[12][0-9]|3[01])   // day (group 3)
 `
 
 // Multi-quoted regex
@@ -547,9 +562,7 @@ val str = 'James Bond'
 val newStr = str.sub(`(\w+)\W+(\w+)` `$2, $1`) // 'Bond, James'
 val newStr = str.sub(`(\w+)\W+(\w+)` `My name is $2, $0!`)
 // 'My name is Bond, James Bond'
-```
 
-```dart
 `` `
 $& $0   ${/* Entire match */}
 $-      ${/* Before matched substring */}
@@ -1025,7 +1038,7 @@ settle {
 }
 ```
 
-### Concurrency
+#### Concurrency
 
 Saga also contains the `spawn` and `kill` statement to spawn or stop execution of different threads.
 
