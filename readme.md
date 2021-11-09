@@ -1029,4 +1029,16 @@ settle {
 
 ### Concurrency
 
-Saga also contains the `spawn` and `kill` statement to spawn
+Saga also contains the `spawn` and `kill` statement to spawn or stop execution of different threads.
+
+```dart
+i = 0
+while i < 10 {
+  spawn label x {
+    print(i)
+    i += 1
+  }
+}
+
+kill x
+```
