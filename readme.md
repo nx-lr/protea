@@ -2,7 +2,7 @@
 
 > It's like JavaScript, but harder, better, faster and stronger.
 
-Saga is a multi-platform general-purpose programming language containing everything you need for building, testing and deploying applications, systems and libraries across the entire tech stack. Combining object-oriented and functional programming in one concise, high-level language, allowing you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
+Saga is a multi-platform general-purpose programming language containing everything you need for building, testing and deploying applications, systems and libraries across the entire tech stack. It combines object-oriented and functional programming in one concise, high-level language, allowing you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
 ```dart
 module Button {
@@ -950,7 +950,7 @@ Try-catch also lets you use a "final" clause which is typically used when you ne
 
 ```dart
 try {
-  var file = new File(path).open().read()
+  var file = file(path).open().read()
 } catch {
   case foo : FooError: handleFooError(foo)
   case bar : BarError: handleBarError(bar)
@@ -1018,7 +1018,7 @@ The `settle` block passes once all its statements have been completed or failed,
 ```dart
 settle {
   const promise1 = 3
-  const promise2 = setTimeout(reject, 100, 'foo')
+  const promise2 = sleep(reject, 100, 'foo')
   const promises = [promise1, promise2]
 } done values, statuses {
   print(value) // 42
