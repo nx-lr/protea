@@ -20,11 +20,11 @@ module Button {
 
 ### Overview
 
-JavaScript is undoubtedly the most popular programming language in the world. It's got a large ecosystema dn JavaScript is undoubtedly the most popular language in the world. It's got a large ecosystem, and even better, a great community. And with the Node.JS allowing full-stack apps to be developed in a single programming language further paved the way to its overall success. And today, it's a language that's evolving, constantly adapting to suit the needs of its users. Eventually, _any application that can be written in JavaScript will be written in JavaScript_ (Atwood's Law).
+JavaScript is undoubtedly the most popular programming language in the world, and the most used. It's got a great community and a large and diverse ecosystem. But thanks to the power of Node.JS pushing the boundaries of JavaScript, any application that can be written in JavaScript will eventually be written entirely in JavaScript. Enabling development in a single programming language further paved the way to its overall success.
 
-But the language is drowned in many imperfections, foot-guns and gotchas, and has many complicated parts that most of the time could throw us off. The ecosystem is also as frightening, with project folders gigabytes in size even for a simple, small application. And perhaps, a new framework gets released ever so often. While JS is normally used as an alternative than their native counterparts, it's not designed to be used as a "workhorse" language that could solve every single conceivable problem.
+The language is drowned in many imperfections, with loopholes and wacky quirks that could throw us off. The ecosystem is also as frightening, with project files gigabytes in size, each containing lots of unused, dead code. And while JS is normally used as an alternative way to build cross-platform applications than rather learning a native language, it's not designed for such a feat, and again, causing on us to rely on a framework to solve it.
 
-Still, time and time again, developers keep pushing on JavaScript to its limits. While JavaScript could be used to write such an application, you won't see machine learning or data analytics systems or even full blown 3D games built only with JavaScript, rather they would rather stick to the old way and develop with various lower-level languages to bring about the performance they desire.
+Time and time again, developers keep pushing on JavaScript to its limits. While JavaScript could be used to write such an application, you won't see machine learning or data analytics systems or even full blown 3D games built only with JavaScript, rather they would rather stick to the old way and develop with various lower-level languages to bring about the performance they desire.
 
 ### About the Project
 
@@ -932,14 +932,14 @@ switch pair {
 }
 ```
 
-Matching on strings, regular expressions and functions allow you to extract those data from them.
+Matching on strings, regular expressions and functions using interpolation would allow you to extract those data from them.
 
 ```dart
 val sample: str = '10-a'
 switch sample {
   case '${x: int}-dir': exec(x)
   case `(?<x>\d+)-dir`: exec(x)
-  case x if x ~= `^\d+-dir$`: exec(x)
+  case |x| ~= `^\d+-dir$`: exec(x)
 }
 ```
 
@@ -1052,4 +1052,50 @@ while i < 10 {
 }
 
 kill x
+```
+
+## Functions
+
+Functions form the heart of Saga Writing pure functions is very simple:
+
+```dart
+func double(i: int): int = i * 2
+```
+
+Functions can also be written using a special syntax that resembles Ruby, with the
+
+```dart
+val add = |x, y, z| x + y + z
+add(1, 2, 3) // 6
+```
+
+For longer functions, you'd surround the body with a block:
+
+```dart
+val greetMore = |name| {
+  val part1 = "Hello"
+  part1 ++ " " ++ name
+}
+```
+
+If your function has no arguments, you can write `var greetMore = | | { }`.
+
+### Recursive Functions
+
+By default, a function cannot be called recursively with itself. To make a function recursive, we add the `rec` modifier:
+
+```dart
+rec func sum(list: list[int]): int = list match {
+  case null: 0
+  case head :: tail: head + sum(tail)
+}
+```
+
+Tail recursion is compiled into a fast `while` loop so they run faster.
+
+Mutually recursive functions start like a single recursive function using the `rec` keyword, and then are chained together with a comma.
+
+```dart
+rec def callSecond = | | callFirst(),
+def callFirst = | | callSecond()
 ```
