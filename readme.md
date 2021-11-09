@@ -1040,19 +1040,21 @@ settle {
 
 #### Concurrency
 
-Saga also contains the `spawn` and `kill` statement to spawn or stop execution of different threads.
+Saga contains the `spawn` or `kill` statement to start and stop processes from running in the background, i.e. on a different thread.
 
 ```dart
 i = 0
 while i < 10 {
-  spawn label x {
+  spawn sub thisProc {
     print(i)
     i += 1
   }
 }
 
-kill x
+kill thisProc()
 ```
+
+Other concurrent processes are managed through
 
 ## Functions
 
