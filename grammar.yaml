@@ -145,39 +145,39 @@ repository:
       - include: "#declarations"
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^|[(|]\.\s+|\s*\bas\b\s+)
+          (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
         name: variable.parameter.optional.saga
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^|[(|]\.\s+|\s*\bas\b\s+)
+          (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\*[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
         name: variable.parameter.spread.saga
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^|[(|]\.\s+|\s*\bas\b\s+)
+          (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\%[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
         name: variable.parameter.name.saga
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^|[(|]\.\s+|\s*\bas\b\s+)
+          (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\&[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
         name: variable.parameter.reference.saga
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^|[(|]\.\s+|\s*\bas\b\s+)
+          (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\$[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
         name: variable.parameter.other.saga
       - match: |
           (?xi)\s*
-          (?<=(?:^|[^|])\||[({\[;,]|^|[(|]\.\s+|\s*\bas\b\s+)
+          (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
         name: variable.parameter.saga
       - include: "$self"
 
@@ -3543,7 +3543,9 @@ repository:
   params-clause:
     begin: |
       (?x)
-      (?<=(?:^\s*|\#?[({\[]\s*|(?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s+|\b(?:#keywords
+      (?<=(?:^\s*|[,;]\s*|\#?[({\[]\s*
+      |(?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s+
+      |\b(?:#keywords
       in|of|as|is|new|to|til|thru|by|del|unset
       |var|val|let|const|decl|def|func|type|object
       |class|enum|module|pack|struct|schema|space|pragma
