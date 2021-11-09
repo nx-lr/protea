@@ -18,7 +18,10 @@ Information for Contributors: |
 
 comment: |
   To-Do:
-  - Add route blocks
+  - Revamp numeric literals again
+  - Fix highlighting of CSS style rules to allow not repeating the "style"
+    keyword for nested styles
+  - Add type-regex literals
 
   Done:
   - Changed from indentation to curly bracket syntax
@@ -26,16 +29,14 @@ comment: |
     non-suffix operator
   - Freed backslash to be an operator character
   - Added support for dashed identifiers, to support Lisp/train case
-    - Fixed highlighting of "S-1" scenario, where a dash would only
-      highlight the first word
+  - Fixed highlighting of "S-1" scenario, where a dash would only
+    highlight the first word
   - Removed unquoted strings, especially YAML ones
   - Added CSS keyword and function properties
-  - Reworked JSX syntax
+  - Reworked JSX syntax, restored JSX fragments
   - Reworked format directives and embedded expressions, with a little
     help from recursion
-  - Reworked number literals
-  - Revamped JSX literals
-  - Fixed highlighting of JSX/Style tags
+  - Reworked number, string and JSX literals
 
 define:
   number-literal: &number-literal
@@ -57,7 +58,7 @@ define:
     |class|enum|module|pack|struct|schema|space|pragma
     |proc|proto|macro|given|style|elem|field
     |ext|pred|data|trait|lemma|iter|sub|prop
-    |if|unless|elif|eless|else
+    |if|lest|elif|elest|else
     |for|each|repeat|while|until|when
     |with|then|do|from|ref
     |try|throw|catch|final
@@ -80,7 +81,7 @@ define:
     |class|enum|module|pack|struct|schema|space|pragma
     |proc|proto|macro|given|style|elem|field
     |ext|pred|data|trait|lemma|iter|sub|prop
-    |if|unless|elif|eless|else
+    |if|lest|elif|elest|else
     |for|each|repeat|while|until|when
     |with|then|do|from|ref
     |try|throw|catch|final
@@ -207,7 +208,7 @@ repository:
       |class|enum|module|pack|struct|schema|space|pragma
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|unless|elif|eless|else
+      |if|lest|elif|elest|else
       |for|each|repeat|while|until|when
       |with|then|do|from|ref
       |try|throw|catch|final
@@ -982,7 +983,7 @@ repository:
         captures:
           1: {name: punctuation.section.embedded.saga}
         patterns: [include: $self]
-      - comment: 20 levels of recursion should be enough
+      - comment: Oniguruma supports only 20 levels of recursion
         match: |
           (?x)(\$)
           (
@@ -993,7 +994,7 @@ repository:
           |class|enum|module|pack|struct|schema|space|pragma
           |proc|proto|macro|given|style|elem|field
           |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|unless|elif|eless|else
+          |if|lest|elif|elest|else
           |for|each|repeat|while|until|when
           |with|then|do|from|ref
           |try|throw|catch|final
@@ -1027,7 +1028,7 @@ repository:
           1: {name: punctuation.section.embedded.saga}
           2: {patterns: [include: "#everything-but-comments"]}
   format-specifier:
-    comment: 20 levels of recursion should be enough
+    comment: Oniguruma supports only 20 levels of recursion
     match: |
       (?x)(%)
       (
@@ -1342,7 +1343,7 @@ repository:
         captures:
           1: {name: punctuation.definition.group.negative-look-behind.saga}
         patterns: [include: "#regexp-patterns"]
-      - comment: Match directive 20 levels of recursion should be enough
+      - comment: Match directive Oniguruma supports only 20 levels of recursion
         begin: |
           (?x)(\(\?%)
           (
@@ -1698,15 +1699,13 @@ repository:
         name: entity.other.attribute-name.class.saga
       - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: entity.other.attribute-name.pseudo-element.saga
-      - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.pseudo-element.saga
       - include: "#format-language"
       - include: "#tag-names"
 
   # JSX
 
   jsx:
-    comment: Avoid < operator expressions as best we can using Zertosh's regex
+    comment: Only after opening brackets, commas, semicolons, keywords, and operators. In addition, < > starts a JSX fragment.
     begin: |
       (?x)
       (?<=(?:
@@ -1720,7 +1719,7 @@ repository:
       |class|enum|module|pack|struct|schema|space|pragma
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|unless|elif|eless|else
+      |if|lest|elif|elest|else
       |for|each|repeat|while|until|when
       |with|then|do|from|ref
       |try|throw|catch|final
@@ -2097,7 +2096,7 @@ repository:
           |class|enum|module|pack|struct|schema|space|pragma
           |proc|proto|macro|given|style|elem|field
           |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|unless|elif|eless|else
+          |if|lest|elif|elest|else
           |for|each|repeat|while|until|when
           |with|then|do|from|ref
           |try|throw|catch|final
@@ -2126,7 +2125,7 @@ repository:
           |class|enum|module|pack|struct|schema|space|pragma
           |proc|proto|macro|given|style|elem|field
           |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|unless|elif|eless|else
+          |if|lest|elif|elest|else
           |for|each|repeat|while|until|when
           |with|then|do|from|ref
           |try|throw|catch|final
@@ -2484,7 +2483,7 @@ repository:
           |class|enum|module|pack|struct|schema|space|pragma
           |proc|proto|macro|given|style|elem|field
           |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|unless|elif|eless|else
+          |if|lest|elif|elest|else
           |for|each|repeat|while|until|when
           |with|then|do|from|ref
           |try|throw|catch|final
@@ -2514,7 +2513,7 @@ repository:
               |class|enum|module|pack|struct|schema|space|pragma
               |proc|proto|macro|given|style|elem|field
               |ext|pred|data|trait|lemma|iter|sub|prop
-              |if|unless|elif|eless|else
+              |if|lest|elif|elest|else
               |for|each|repeat|while|until|when
               |with|then|do|from|ref
               |try|throw|catch|final
@@ -2597,7 +2596,7 @@ repository:
       |class|enum|module|pack|struct|schema|space|pragma
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|unless|elif|eless|else
+      |if|lest|elif|elest|else
       |for|each|repeat|while|until|when
       |with|then|do|from|ref
       |try|throw|catch|final
@@ -3059,7 +3058,7 @@ repository:
   general-keywords:
     comment: general keywords
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|unless|elif|eless|else)(?![\w\p{Pd}])\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?![\w\p{Pd}])\s*
         name: keyword.control.conditional.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|repeat|while|until)(?![\w\p{Pd}])\s*
         name: keyword.control.loop.saga
@@ -3556,7 +3555,7 @@ repository:
       |class|enum|module|pack|struct|schema|space|pragma
       |proc|proto|macro|given|style|elem|field
       |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|unless|elif|eless|else
+      |if|lest|elif|elest|else
       |for|each|repeat|while|until|when
       |with|then|do|from|ref
       |try|throw|catch|final
@@ -3697,7 +3696,7 @@ repository:
               - include: $self
           - include: $self
       if-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|unless|elif|eless|else)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.if.saga
         captures:
@@ -3733,7 +3732,7 @@ repository:
                       1: {name: keyword.control.match.saga}
                     patterns:
                       - include: "#types"
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|unless|elif|eless|else)(?![\w\p{Pd}])\s*
+                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?![\w\p{Pd}])\s*
                     name: keyword.control.match.saga
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
                     name: keyword.control.match.saga
@@ -3787,7 +3786,7 @@ repository:
                       1: {name: keyword.control.switch.saga}
                     patterns:
                       - include: "#types"
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|unless|elif|eless|else)(?![\w\p{Pd}])\s*
+                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?![\w\p{Pd}])\s*
                     name: keyword.control.switch.saga
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
                     name: keyword.control.switch.saga
@@ -3979,7 +3978,7 @@ repository:
                   1: {name: keyword.control.saga}
                 patterns:
                   - include: "#types"
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|unless|elif|eless|else)(?![\w\p{Pd}])\s*
+              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?![\w\p{Pd}])\s*
                 name: keyword.control.saga
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
                 name: keyword.control.saga
