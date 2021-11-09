@@ -1,6 +1,6 @@
 # Saga
 
-> It's JavaScript, but no.
+> It's like JavaScript, but harder, better, faster and stronger.
 
 Saga is a multi-platform general-purpose programming language containing everything you need for building, testing and deploying applications, systems and libraries across the entire tech stack. Combining object-oriented and functional programming in one concise, high-level language, allowing you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
@@ -101,11 +101,11 @@ Semicolons are completely optional though they can be used to separate multiple 
 If a line ends in an **infix operator**, such as `!in` or `&&`, or otherwise explicitly with `\`, the resultant line is joined. If the next line also begins with an infix operator, it is joined to the previous line.
 
 ```dart
-x +  // joined
+x in  // joined
 y
 
 x // joined
-+ y
+in y
 ```
 
 ### Comments
@@ -177,7 +177,7 @@ ext pred data trait lemma iter sub prop
 Control keywords are keywords used to create control flow statements such as conditionals, loops and error-handling statements.
 
 ```
-if unless elif eless else then
+if lest elif elest else then
 for each loop while until when
 with do from ref
 try throw catch final
@@ -243,9 +243,7 @@ null
 
 Threenity also has `void`, for compatibility purposes. `void` is equal to `null`, but compiles to JavaScript `undefined`. You should use `void` in place of `null`.
 
-### Bool
-
-Bool has only two possible values: `true` and `false`. They are constructed using the following literals:
+Booleans have only two possible values: `true` and `false`. They are constructed using the following literals:
 
 ```dart
 true
@@ -525,7 +523,7 @@ A quoted identifier can contain any Unicode character including white-spaces and
 
 Regular expressions function like strings, except delimited using backticks. In an effort to make them more readable, Saga's regexes allow for free spacing and embedded comments.
 
-Saga uses the [Oniguruma](https://github.com/kkos/oniguruma) regular expression flavor by default, the same regex engine that powers Ruby and PHP7, though with a few extensions.
+Saga uses the [Oniguruma](https://github.com/kkos/oniguruma/blob/master/doc/RE) regular expression flavor by default, the same regex engine that powers Ruby and PHP7, though with a few extensions.
 
 ````dart
 `\b{wb}(fee|fie|foe|fum)\b{wb}`x
@@ -554,7 +552,7 @@ val newStr = str.sub(`(\w+)\W+(\w+)` `My name is $2, $0!`)
 ```
 
 ```dart
-`((()))` `
+`` `
 $& $0   ${/* Entire match */}
 $-      ${/* Before matched substring */}
 $+      ${/* After matched substring */}
@@ -579,7 +577,7 @@ var list2 = ['a', 'b', 'c'] // is []str
 [] // an empty list
 
 val map1: {str : int} = {one: 1, two: 2, three: 3}
-val map2 = {1: 2, 2: 4, 3: 6, 4, 8} // inferred as {int : int}
+val map2 = {1: 2, 2: 4, 3: 6, 4: 8} // inferred as {int : int}
 {} // an empty map
 ```
 
@@ -588,7 +586,7 @@ An explicit type can be specified by immediately following the closing angle wit
 This overwrites the inferred type and can be used for example to create an array that holds only some types initially but can accept other types later.
 
 ```dart
-var z = [10, '20', '30']{Str|Int} // with type casting operator
+var z = [10, '20', '30']{Str | Int} // with type casting operator
 ```
 
 Often the compiler will infer a list to have a non-nullable type. If the list might store `null` values, then you will need to explicitly cast it.
@@ -610,30 +608,19 @@ assert x.'3' == 3
 assert x[x * 2 + 4] = 1
 ```
 
-Set literals are treated like map literals, with the keys and the values being the same.
+Map literals with single elements are allowed, with the keys and the values repeated.
 
 ```dart
-assert ({1: 1, 2: 2} == {1, 2})
+assert ({1: 1, 2: 2}) == {1, 2}
 ```
 
 ## Control Statements
 
-Saga ha s rang irhti hrwih
-
-### Introduction: expression-oriented programming
-
-As a brief note about programming in general, when every expression you write returns a value, that style is referred to as expression-oriented programming, or EOP. The examples above are all expressions.
-
-Conversely, lines of code that don't return values are called statements, and they are used for their side-effects. For example, these lines of code don’t return values, so they are used for their side effects:
-
-```dart
-if a == b: doSomething()
-print("Hello")
-```
+Saga has a range of control statements which are also expressions. They form the core of the language.
 
 ### Basic closures
 
-Bindings can be scoped through the do-block: `do {}`.
+Bindings can be scoped through the do-block: `do {}`. The value of the last line of a closure is immediately returned, lest specified with `return`.
 
 ```dart
 let message = do {
@@ -644,9 +631,7 @@ let message = do {
 // `part1` and `part2` not accessible here!
 ```
 
-The value of the last line of a scope is implicitly returned.
-
-`if`, `while` and functions all use the same block scoping mechanism.
+`if`, `while`, and all code blocks use this same mechanism.
 
 ```dart
 if displayGreeting {
@@ -656,17 +641,18 @@ if displayGreeting {
 // `message` not accessible here!
 ```
 
-Instead of a block, whenever there's a single statement, use the colon `:` instead of an opening curly brace.
+Instead of a block, whenever there's a single statement, you can use a colon `:` instead of an opening curly brace, provided the colon is separated by a space only on its right.
 
 ```dart
 let message = do: 3 + 4
+let message = do : 3 + 4 // type annotation
 ```
 
-But not both (opening curly brace is a set literal):
+But not both (opening curly brace is a map literal).
 
 ```dart
 let message = do: { 3 + 4 }
-assert message is Set
+assert message is map
 ```
 
 ### Conditionals
@@ -722,12 +708,12 @@ if test1 {
 }
 ```
 
-Replacing `if` with `unless` and `elif` with `eless` for the opposite effect, meaning they would execute if their predicates return false.
+Replacing `if` with `lest` and `elif` with `elest` for the opposite effect, meaning they would execute if their predicates return false.
 
 ```dart
-unless test1 { // unless; if not
+lest test1 { // lest; if not
   doX()
-} eless test2 { // unless; if not
+} elest test2 { // else lest; else if not
   doY()
 } else {
   doZ()
@@ -1021,9 +1007,9 @@ The `race` block would only pass as soon as any of its statements fulfils or rej
 
 ```dart
 race {
+  reject sleep(300, 'foo')
+  reject sleep(100, 'foo')
   const a = 42
-  await sleep(300, 'foo')
-  await sleep(100, 'foo')
 } done value {
   print(value) // 42
 }
@@ -1040,3 +1026,7 @@ settle {
   print(value) // 42
 }
 ```
+
+### Concurrency
+
+Saga also contains the `spawn` and `kill` statement to spawn
