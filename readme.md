@@ -24,8 +24,6 @@ JavaScript is undoubtedly the most popular language in the world. It's got a lar
 
 But the language is drowned in many imperfections, foot-guns and gotchas, and has many complicated parts that most of the time could throw us off. The ecosystem is also as frightening, with project folders gigabytes in size even for a simple, small application. And perhaps, a new framework gets released ever so often. While JS is normally used as an alternative than their native counterparts, it's not designed to be used as a "workhorse" language that could solve every single conceivable problem.
 
-![](https://external-preview.redd.it/ABNCwO_-ZehpLMGLU_tihhjCLjxBPe9IZt6trcaxC9A.jpg?auto=webp&s=bf0235f0213845ca15b5df474e912cfcb3471d64)
-
 Still, time and time again, developers keep pushing on JavaScript to its limits. While JavaScript could be used to write such an application, you won't see machine learning or data analytics systems or even full blown 3D games built only with JavaScript, rather they would rather stick to the old way and develop with various lower-level languages to bring about the performance they desire.
 
 ### About the Project
