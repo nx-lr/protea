@@ -1,12 +1,12 @@
-# Saga
+# Saga(Script)
 
-> It's like JavaScript, but better, faster and stronger.
+> It's like JavaScript. But faster, stronger and better.
 
 Saga is a multi-platform and multi-purpose programming language containing tools you need for building, testing and deploying apps, systems and libraries for the entire tech stack. It supports the object-oriented and functional programming paradigms, and allows you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
 ```dart
 module Button {
-  @React pub elem make(%count: int) {
+  pub elem make(%count: int) {
     let times = switch count {
       case 1: "once"
       case 2: "twice"
@@ -20,66 +20,65 @@ module Button {
 
 ### Overview
 
-JavaScript is undoubtedly the most popular programming language in the world, and the most used. It's got a great community and a large and diverse ecosystem. But thanks to the power of Node.JS pushing the boundaries of JavaScript, any application that can be written in JavaScript will eventually be written entirely in JavaScript. Enabling development in a single programming language further paved the way to its overall success.
+Saga is my programming language for building cross-platform software using existing JavaScript (or perhaps Python) libraries, expanding on the JavaScript everywhere paradigm. It has a general syntax reminiscent of Go, Python, Scala, Rust and more, plus built-in language features like GraphQL, SCSS and JSX.
 
-The language is drowned in many imperfections, with loopholes and wacky quirks that could throw us off. The ecosystem is also as frightening, with project files gigabytes in size, each containing lots of unused, dead code. And while JS is normally used as an alternative way to build cross-platform applications than rather learning a native language, it's not designed for such a feat, and again, causing on us to rely on a framework to solve it.
+### Help me choose a language name!
 
-Time and time again, developers keep pushing on JavaScript to its limits. While JavaScript could be used to write such an application, you won't see machine learning or data analytics systems or even full blown 3D games built only with JavaScript, rather they would rather stick to the old way and develop with various lower-level languages to bring about the performance they desire.
+- Trinity
+- Protea
+- Lotus
+- SagaScript (or Saga for short)
+- NovaScript (or Nova for short)
+- Zenith
+- Zephyr
+- EvalIn, pronounced "Evelyn"
 
-### About the Project
+### Features (non-exhaustive, more to come)
 
-Saga is a statically typed language and framework designed for building cross-platform performant apps for the entire tech stack, embedded with features specific to client and server-side app development: built-in styles, markup, schemas, routing and queries.
-
-It is designed to express common programming patterns in a concise, elegant and type-safe way, integrating features from different object-oriented and functional languages. It gives gives you developer a lot of power. Anything you can do in other languages, you can do in Saga.
-
-It's similar to JavaScript and its design has also been influenced by Go, Rust, Swift, Kotlin, ReScript and Python. Saga is the language for folks who don't necessarily love JavaScript, but who still acknowledge its importance.
-
-### Features
-
-- familiar JS-like syntax
-- built-in JSX, CSS-in-JS and GraphQL
-- JSDoc documentation support
+- familiar syntax (for the most part)
+- JSDoc support
+- JSX and embedded CSS support
+- GraphQL schemas
 - language-integrated query (LINQ)
-- DSL strings
+- tagged template literals
 - keyword-based syntax
-- concurrency, asynchrony and error-handling constructs
+- concurrency/asynchrony support and error-handling
 - pattern matching
 - type annotations and aliases
 - uniform function call syntax
-- (im)mutable data structures
+- immutable-by-default data structures
 - block regular expressions
 - extensible numeric literals
 - string formatting
 - Unicode named characters
 - algebraic data types
 - advanced type inference
-- JIT and AOT compilation
-- portable runtime
+- Node.JS runtime
 - multiple targets: JS, C#, Python, JVM and LLVM/Swift
 - opaque types and type aliases
+
+### Compiler features (for future use)
+
 - full tail call elimination
 - human friendly errors
-- a Rust compiler
+- what compiler should I use to build Saga?
 - a core standard library
 - an interactive REPL
 - comprehensive editor support
 
-## Overview
-
 ## An Introduction
-
-Script files contain a shebang at the beginning of the file. They can use modules, but also act as script files.
 
 A typical Saga project would contain this file structure:
 
 ```
-my-app/
+hello-world/
 |- lib/ -> all installed modules
 |- src/ -> backend codes
 |- app/ -> frontend codes
+|- node_modules/ -> required in a JavaScript project
 |- .gitignore
 |- index.saga
-|- package.json
+|- package.json -> required in a JavaScript project
 |- README.saga
 |- modules.saga
 ```
@@ -94,7 +93,7 @@ The entry point of a project is the `main` function, defined in a special file c
 func main {}
 ```
 
-The `main` process can accept arguments:
+The `main` function can accept arguments:
 
 ```dart
 func main(*args: []str): void { /* code here */ }
@@ -108,10 +107,10 @@ Like JavaScript, Saga is a curly-brace language. Code blocks are delimited usual
 
 Semicolons are completely optional though they can be used to separate multiple statements on the same line. The same rules apply to commas in function arguments or collection literals.
 
-If a line ends in an **infix operator**, such as `!in` or `&&`, or otherwise explicitly with `\`, the resultant line is joined. If the next line also begins with an infix operator, it is joined to the previous line.
+If a line ends in an **infix operator**, such as `!in` or `&&`, the resultant line is joined. If the next line also begins with an infix operator, it is joined to the previous line.
 
 ```dart
-x in  // joined
+x in // joined
 y
 
 x // joined
@@ -169,13 +168,17 @@ val {x, y} = {1, 2} // set
 
 ### Keywords
 
-Operator keywords are operators used to
+Saga has a lot of keywords, possibly far greater than any languag ,
+
+Keywords used as operators:
 
 ```
 in of as is new to til thru by del unset ref
 ```
 
 Declaration keywords, which are keywords used to declare program entities such as variables, functions, methods and properties.
+
+Of all of these, three of them are reserved for future use: `lemma`, `prop`, `pred`, `given`. Many of them are synonyms: `def` = `func`, `sub` = `proc`, `trait` = `proto`, `prop` = `field`.
 
 ```
 var val let const decl def func type object
@@ -187,26 +190,36 @@ ext pred data trait lemma iter sub prop
 Control keywords are keywords used to create control flow statements such as conditionals, loops and error-handling statements.
 
 ```
-if lest elif elest else then
+if lest elif elest else
 for each loop while until when
-with do from ref
+with then do from ref
 try throw catch final
-settle race some every done
-spawn kill accept reject
-break next redo retry return await label yield goto pass
-import export using
+switch match case fail
+race some every done spawn
+kill settle accept reject
+break next redo retry return
+await label yield goto pass
+import export using route
 debug assert where
 ```
 
-Contextual keywords only are parsed as keywords when they appear before a declaration keyword.
+Contextual keywords are only parsed as keywords when they appear before a declaration keyword and occur in a row.
 
 ```
-pub priv prot inline final mut immut ghost early late joint contra
-seal abs intern extern imply exply global local
-async sync stat dyn lazy eager strong weak swap
+# Visibility and mutability modifiers
+pub priv prot final mut ghost
+immut global local early late
+joint contra seal abs intern extern
+imply exply swap
+
+# Concurrency/threading modifiers (definitely for future use)
+sync async stat dyn lazy eager strong weak
 vol unsafe unfix bound free opaque trans
-rec gen oper get set post put rem new del patch
+
+# Method modifiers
+rec cur gen oper get set post put rem inline
 prefix suffix infix binary unary left right
+and or xor not
 ```
 
 ### Identifiers
@@ -533,7 +546,7 @@ A quoted identifier can contain any Unicode character including white-spaces and
 
 Regular expressions function like strings, except delimited using backticks. In an effort to make them more readable, Saga's regexes allow for free spacing and embedded comments.
 
-Saga uses the [Oniguruma](https://github.com/kkos/oniguruma/blob/master/doc/RE) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. Saga's own flavor offers a blend of all the features found in the most popular regular expression flavors.
+Saga uses the [Oniguruma](https://github.com/kkos/oniguruma/blob/master/doc/RE) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. This means it's a blend of features found in the most popular regular expression flavors.
 
 ````dart
 `\b{wb}(fee|fie|foe|fum)\b{wb}`x
@@ -614,7 +627,7 @@ If a key is a valid identifier, even if it is a keyword, and is placed right bef
 ```dart
 x = {int: 1, 2.2: 2, '3': 3, x * 2 + 4: 4}
 assert x.int == 1
-assert x.2.2 == 1
+assert x.2.2 == 1 // but why tho
 assert x.'3' == 3
 assert x[x * 2 + 4] = 1
 ```
@@ -625,7 +638,7 @@ Map literals with single elements are allowed, with the keys and the values repe
 assert ({1: 1, 2: 2}) == {1, 2}
 ```
 
-## Expressions
+## Expressions & Operators
 
 In Saga, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot notation:
 
@@ -665,9 +678,11 @@ Operators can contain the following characters. In addition, all other Unicode p
 
 These keywords are also operators: `in !in of !of is is! as as! as? unset del to til thru by`.
 
-`.`, `=`, `:`, `::`, `|>`, `||>`, `|||>`, `<|`, `<||`, `<|||`, `<+`, `?:`, `!:`, `??`, `!!`, `!`, `?` and `$`, are not available as general operators; they are used for other notational purposes.
+`.`, `=`, `:`, `::`, `|>`, `||>`, `|||>`, `+>`, `<|`, `<||`, `<|||`, `<+`, `?:`, `!:`, `??`, `!!`, `!`, `?` and `$`, are not available as general operators; they are used for other notational purposes.
 
-Binary operators whose first character is `^`, except `^` and `^^` themselves are right-associative, all other binary operators are left-associative.
+An operator can any sequence of `/*`, `//` or `/+` provided they do not begin with such
+
+Binary operators whose first character is `^`, with exception to `^` and `^^` themselves are right-associative, all other binary operators are left-associative.
 
 ```dart
 def x ^/ (y: float): float = x / y
@@ -686,13 +701,13 @@ Otherwise, precedence is determined by the first character.
 | Precedence level | Operators                                                        | First character |
 | ---------------- | ---------------------------------------------------------------- | --------------- |
 | 9 (highest)      | `unset del . ?. !. :: ?: !:`                                     | `$ ^`           |
-| 8                | `* / ** # % ## %% <* *>`                                         | `* % \ /`       |
+| 8                | `* / ** # %`                                                     | `* % \ /`       |
 | 7                | `+ -`                                                            | `+ - ~ \|`      |
-| 6                | `& \| ^ << >> <<< >>>`                                           | `&`             |
+| 6                | `& \| ^ << >>`                                                   | `&`             |
 | 5                | `== <= < >= > != in !in of !of is is! as as! as? to til thru by` | `= < > !`       |
-| 4                | `&&` `\|\| ^^`                                                   |                 |
+| 4                | `&& \|\| ^^`                                                     |                 |
 | 3                | infix `?? !! ?: !: $:`                                           |                 |
-| 2                | `@, ? :, ! :, $ :`                                               |                 |
+| 2                | `@`, `? :`, `! :`, `$ :`                                         |                 |
 | 1                | assignment operator (like `+=`, `*=`)                            |                 |
 | 0                | (lowest) arrow like operator (like `->`, `=>`)                   |                 |
 
@@ -704,13 +719,13 @@ Whether an operator is used as a prefix operator is also affected by preceding o
 
 Dot-like or colon-like operators are operators starting with `.`, `!.`, `?.`, `::`, `?:` or `!:`; they have the same precedence as `.`, so that `a.?b.c` is parsed as `(a.?b).c` instead of `a.?(b.c)`.
 
+---
+
 ## Control Statements
 
 Saga has a range of control statements which are also expressions. They form the core of the language.
 
 ### Basic closures
-
----
 
 Bindings can be scoped through the do-block: `do {}`. The value of the last line of a closure is immediately returned, lest specified with `return`.
 
@@ -1179,7 +1194,7 @@ rec func sum(list: list[int]): int = match list {
 A simple recursive function may look like this:
 
 ```dart
-rec def List.has(item: any): bool = switch this {
+rec func List.has(item: any): bool = switch this {
   case []: false
   case [a, *rest]: a == item ?: rest.has(item)
 }
@@ -1188,8 +1203,8 @@ rec def List.has(item: any): bool = switch this {
 Mutually recursive functions start like a single recursive function using the `rec` keyword, and then are chained together with `and`.
 
 ```dart
-rec def callSecond = | | callFirst()
-and def callFirst = | | callSecond()
+rec func callSecond = | | callFirst()
+and func callFirst = | | callSecond()
 ```
 
 ### Labeled Arguments
@@ -1269,10 +1284,11 @@ func drawCircle(&radius = 1, &color) {
 
 ### Curried functions
 
-Functions and procedures are curried, by default. To want guaranteed un-currying, prefix a dot in the function's parameter list:
+Functions and procedures are curried, by default. To want guaranteed un-currying, prefix a dot in the function's parameter list. Its type would have a dot.
 
 ```dart
 func add(. x, y) = x + y
+assert echo is (. int, int) int
 add(. 1, 2)
 ```
 
@@ -1280,8 +1296,5 @@ If you need to call a curried function without any argument, you can do this:
 
 ```dart
 proc echo(a) = print(a)
-assert echo is (. any) any
 echo(.)
 ```
-
-Its type would have a dot.
