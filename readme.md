@@ -168,58 +168,54 @@ val {x, y} = {1, 2} // set
 
 ### Keywords
 
-Saga has a lot of keywords, possibly far greater than any languag ,
+Saga has a lot of different types of keywords, all of which are written entirely in lowercase and without any
 
 Keywords used as operators:
 
 ```
-in of as is new to til thru by del unset ref
+in of as is new to til thru by del unset ref and or xor not
 ```
 
 Declaration keywords, which are keywords used to declare program entities such as variables, functions, methods and properties.
 
-Of all of these, three of them are reserved for future use: `lemma`, `prop`, `pred`, `given`. Many of them are synonyms: `def` = `func`, `sub` = `proc`, `trait` = `proto`, `prop` = `field`.
-
 ```
-var val let const decl def func type object
-class enum module pack struct inter space pragma
-proc proto macro given style elem field
-ext pred data trait lemma iter sub prop
+var val func proc type
+class data enum module
+iter macro struct trait
+style elem prop
 ```
 
 Control keywords are keywords used to create control flow statements such as conditionals, loops and error-handling statements.
 
 ```
-if lest elif elest else
-for each loop while until when
-with then do from ref
-try throw catch final
-switch match case fail
-race some every done spawn
-kill settle accept reject
+do from where
+if elif else
+for each loop while
+try throw catch after
+match case
 break next redo retry return
 await label yield goto pass
-import export using route
-debug assert where
+import export route
+debug assert
 ```
 
 Contextual keywords are only parsed as keywords when they appear before a declaration keyword and occur in a row.
 
+Visibility keywords explicitly tell the compiler which qualified name to refer to in a given scope. It would also be used to
+
 ```
-# Visibility and mutability modifiers
-pub priv prot final mut ghost
-immut global local early late
-joint contra seal abs intern extern
-imply exply swap
+# Visibility and mutability
+pub priv prot final mut immut
+glo loc early late covar contra
+seal abst inter exter imply exply
+super
 
 # Concurrency/threading modifiers (future use)
-sync async stat dyn lazy eager strong weak
-vol unsafe unfix bound free opaque trans
+sync async stat dyn lazy eager bound free
 
-# Method modifiers
-rec cur gen oper get set post put rem inline
+# Function or method modifiers
+rec gen oper get set post del curry inline
 prefix suffix infix binary unary left right
-and or xor not
 ```
 
 ### Identifiers
