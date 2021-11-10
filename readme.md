@@ -168,7 +168,7 @@ val {x, y} = {1, 2} // set
 
 ### Keywords
 
-Saga has a lot of different types of keywords, all of which are written entirely in lowercase and without any
+Saga has a lot of different types of keywords, all of which are written entirely in lowercase and are between two and six letters.
 
 Keywords used as operators:
 
