@@ -1,6 +1,6 @@
 # Saga
 
-> It's like JavaScript, but harder, better, faster and stronger.
+> It's like JavaScript, but better, faster and stronger.
 
 Saga is a multi-platform and multi-purpose programming language containing tools you need for building, testing and deploying apps, systems and libraries for the entire tech stack. It supports the object-oriented and functional programming paradigms, and allows you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
@@ -709,6 +709,8 @@ Dot-like or colon-like operators are operators starting with `.`, `!.`, `?.`, `:
 Saga has a range of control statements which are also expressions. They form the core of the language.
 
 ### Basic closures
+
+---
 
 Bindings can be scoped through the do-block: `do {}`. The value of the last line of a closure is immediately returned, lest specified with `return`.
 
