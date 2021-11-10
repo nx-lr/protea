@@ -1846,7 +1846,7 @@ repository:
       - include: "#nested-comments"
   nested-comments:
     patterns:
-      - begin: \s*(/\+\+)
+      - begin: \s*(/\+\+)(?=\s+|\s*$)
         end: \s*(\+/)
         name: comment.block.documentation.nested.saga
         captures:
@@ -1855,7 +1855,7 @@ repository:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
           - include: "#nested-jsdoc"
-      - begin: \s*(/\+)
+      - begin: \s*(/\+)(?=\s+|\s*$)
         end: \s*(\+/)
         name: comment.block.nested.saga
         captures:
@@ -1865,7 +1865,7 @@ repository:
           - include: "#nested-block"
   block-comments:
     patterns:
-      - begin: \s*(/\*\*)
+      - begin: \s*(/\*\*)(?=\s+|\s*$)
         end: \s*(\*/)
         name: comment.block.documentation.saga
         captures:
@@ -1873,7 +1873,7 @@ repository:
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
-      - begin: \s*(/\*)
+      - begin: \s*(/\*)(?=\s+|\s*$)
         end: \s*(\*/)
         name: comment.block.saga
         captures:
@@ -1882,7 +1882,7 @@ repository:
           - include: text.html.markdown#inline
   line-comments:
     patterns:
-      - begin: \s*(///)
+      - begin: \s*(///)(?=\s+|\s*$)
         end: \s*$
         name: comment.line.documentation.saga
         captures:
@@ -1890,7 +1890,7 @@ repository:
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
-      - begin: \s*(//)
+      - begin: \s*(//)(?=\s+|\s*$)
         end: \s*$
         name: comment.line.number-sign.saga
         captures:
@@ -1898,7 +1898,7 @@ repository:
         patterns:
           - include: text.html.markdown#inline
   nested-jsdoc:
-    begin: (/\+\+?)\s*
+    begin: (/\+\+?)(?=\s+|\s*$)
     end: \s*(\+/)
     name: comment.block.documentation.nested.saga
     captures:
@@ -1908,7 +1908,7 @@ repository:
       - include: text.html.markdown#inline
       - include: "#nested-jsdoc"
   nested-block:
-    begin: (/\+)\s*
+    begin: (/\+)(?=\s+|\s*$)
     end: \s*(\+/)
     name: comment.block.nested.saga
     captures:
