@@ -212,7 +212,7 @@ immut global local early late
 joint contra seal abs intern extern
 imply exply swap
 
-# Concurrency/threading modifiers (definitely for future use)
+# Concurrency/threading modifiers (future use)
 sync async stat dyn lazy eager strong weak
 vol unsafe unfix bound free opaque trans
 
