@@ -210,7 +210,7 @@ glo loc early late covar contra
 seal abst inter exter imply exply
 super
 
-# Concurrency/threading modifiers (future use)
+# Concurrency/thread modifiers
 sync async stat dyn lazy eager bound free
 
 # Function or method modifiers
