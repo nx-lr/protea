@@ -1145,6 +1145,8 @@ Functions form the heart of Saga. Writing them is very simple:
 func double(i: int): int = i * 2
 ```
 
+Impure functions use the `proc` (procedure) keyword instead of `func`. This is sure to distinguish them from regular pure functions.
+
 Functions can also be written using a special syntax that resembles Ruby, with the arguments written in between pipe characters instead:
 
 ```dart
@@ -1155,7 +1157,7 @@ add(1, 2, 3) // 6
 For longer functions, you'd surround the body with a block:
 
 ```dart
-val greetMore = |name| {
+func greetMore(name) {
   val part1 = "Hello"
   part1 ++ " " ++ name
 }
@@ -1174,7 +1176,16 @@ rec func sum(list: list[int]): int = match list {
 }
 ```
 
-Mutually recursive functions start like a single recursive function using the `rec` keyword, and then are chained together with `and`
+A simple recursive function may look like this:
+
+```dart
+rec def List.has(item: any): bool = switch this {
+  case []: false
+  case [a, *rest]: a == item ?: rest.has(item)
+}
+```
+
+Mutually recursive functions start like a single recursive function using the `rec` keyword, and then are chained together with `and`.
 
 ```dart
 rec def callSecond = | | callFirst()
@@ -1212,3 +1223,64 @@ func addCoordinates(&x as y) {
   // use x and y here
 }
 ```
+
+### Optional Arguments
+
+Labeled function arguments can be made optional during declaration. You can then omit them when calling the function.
+
+```dart
+// radius can be omitted
+async proc drawCircle(&color, &?radius) {
+  await setColor(color)
+  switch radius {
+    case none: startAt(1, 1)
+    case some r: startAt(r, r)
+  }
+}
+```
+
+You can type a `func` or `proc`. The argument is wrapped in an "option" type.
+
+```dart
+async proc drawCircle(
+  &color: color
+  &?radius: ?int = 1
+): void {
+  await setColor(color)
+  switch radius {
+    case none: startAt(1, 1)
+    case some r: startAt(r, r)
+  }
+}
+
+var result =
+  drawCircle(&color, &radius = ?payloadRadius)
+```
+
+Labeled arguments can also be provided a default value. In this case, they aren't wrapped in an option type.
+
+```dart
+func drawCircle(&radius = 1, &color) {
+  setColor(color)
+  startAt(radius, radius)
+}
+```
+
+### Curried functions
+
+Functions and procedures are curried, by default. To want guaranteed un-currying, prefix a dot in the function's parameter list:
+
+```dart
+func add(. x, y) = x + y
+add(. 1, 2)
+```
+
+If you need to call a curried function without any argument, you can do this:
+
+```dart
+proc echo(a) = print(a)
+assert echo is (. any) any
+echo(.)
+```
+
+Its type would have a dot.
