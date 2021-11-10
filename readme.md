@@ -30,7 +30,7 @@ Time and time again, developers keep pushing on JavaScript to its limits. While 
 
 Saga is a statically typed language and framework designed for building cross-platform performant apps for the entire tech stack, embedded with features specific to client and server-side app development: built-in styles, markup, schemas, routing and queries.
 
-It is designed to express common programming patterns in a concise, elegant and type-safe way, integrating features from different object-oriented and functional languages. It gives gives you developer a lot of power. Anything you can do in other languages, you can do in V.
+It is designed to express common programming patterns in a concise, elegant and type-safe way, integrating features from different object-oriented and functional languages. It gives gives you developer a lot of power. Anything you can do in other languages, you can do in Saga.
 
 It's similar to JavaScript and its design has also been influenced by Go, Rust, Swift, Kotlin, ReScript and Python. Saga is the language for folks who don't necessarily love JavaScript, but who still acknowledge its importance.
 
