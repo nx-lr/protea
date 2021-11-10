@@ -625,6 +625,85 @@ Map literals with single elements are allowed, with the keys and the values repe
 assert ({1: 1, 2: 2}) == {1, 2}
 ```
 
+## Expressions
+
+In Saga, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot notation:
+
+```dart
+10.+(1)
+```
+
+However, it’s easier to read as an infix operator:
+
+```dart
+10 + 1
+```
+
+The data class `Vec` has a method `+` which we used to add vector1 and vector2. Using parentheses, you can build up complex expressions with readable syntax.
+
+```dart
+data Vec(x: float, y: float) {
+  def +(that: Vec) = Vec(this.x + that.x, this.y + that.y)
+}
+
+val vector1 = Vec(1.0, 1.0)
+val vector2 = Vec(2.0, 2.0)
+
+val vector3 = vector1 + vector2
+vector3.x  // 3.0
+vector3.y  // 3.0
+```
+
+Operators can contain the following characters. In addition, all other Unicode punctuation and symbol characters can also be used as operators.
+
+```dart
+'
+= + - * / \ < >
+@ $ ~ & % | ! ? ^ . :
+'
+```
+
+These keywords are also operators: `in !in of !of is is! as as! as? unset del to til thru by`.
+
+`.`, `=`, `:`, `::`, `|>`, `||>`, `|||>`, `<|`, `<||`, `<|||`, `<+`, `?:`, `!:`, `??`, `!!`, `!`, `?` and `$`, are not available as general operators; they are used for other notational purposes.
+
+Binary operators whose first character is `^`, except `^` and `^^` themselves are right-associative, all other binary operators are left-associative.
+
+```dart
+def x ^/ (y: float): float = x / y
+12 ^/ 4 ^/ 8 // 24.0
+12 / 4 / 8 // 24.8
+```
+
+Suffix operators have a trailing whitespace and are evaluated first, followed by prefix operators which have preceding whitespace, and last are infix binary operators which are evaluated in the order given below.
+
+Operators ending in either `->`, `~>` or `=>` or starting in `<-` `<=` or `<~` are called arrow like, and have the lowest precedence of all operators.
+
+If the operator ends with `=` and its first character is none of `<`, `>`, `!`, `=`, `~`, `?`, it is an assignment operator which has the second-lowest precedence.
+
+Otherwise, precedence is determined by the first character.
+
+| Precedence level | Operators                                                        | First character |
+| ---------------- | ---------------------------------------------------------------- | --------------- |
+| 9 (highest)      | `unset del . ?. !. :: ?: !:`                                     | `$ ^`           |
+| 8                | `* / ** # % ## %% <* *>`                                         | `* % \ /`       |
+| 7                | `+ -`                                                            | `+ - ~ \|`      |
+| 6                | `& \| ^ << >> <<< >>>`                                           | `&`             |
+| 5                | `== <= < >= > != in !in of !of is is! as as! as? to til thru by` | `= < > !`       |
+| 4                | `&&` `\|\| ^^`                                                   |                 |
+| 3                | infix `?? !! ?: !: $:`                                           |                 |
+| 2                | `@, ? :, ! :, $ :`                                               |                 |
+| 1                | assignment operator (like `+=`, `*=`)                            |                 |
+| 0                | (lowest) arrow like operator (like `->`, `=>`)                   |                 |
+
+Whether an operator is used as a prefix operator is also affected by preceding or following whitespace, respectively.
+
+```dart
+++x++ == +(+((x+)+))
+```
+
+Dot-like or colon-like operators are operators starting with `.`, `!.`, `?.`, `::`, `?:` or `!:`; they have the same precedence as `.`, so that `a.?b.c` is parsed as `(a.?b).c` instead of `a.?(b.c)`.
+
 ## Control Statements
 
 Saga has a range of control statements which are also expressions. They form the core of the language.
@@ -689,7 +768,7 @@ if a == b {
 }
 ```
 
-An if-else expression without the final `else` branch implicitly gives `()` (aka the unit type).
+An `if`-`else` expression without the final `else` branch gives null.
 
 ```dart
 if showMenu { displayMenu() }
@@ -697,7 +776,7 @@ if showMenu { displayMenu() }
 if showMenu { displayMenu() } else { null }
 ```
 
-The if/else construct looks like this:
+The `if`-`else` construct looks like this:
 
 ```dart
 if a == b {
@@ -707,7 +786,7 @@ if a == b {
 }
 ```
 
-The complete Trinity `if`/`else if`/`else` expression looks like this:
+The complete `if`-`else if`-`else` expression looks like this:
 
 ```dart
 if test1 {
@@ -788,10 +867,10 @@ while i < 10 {
 }
 ```
 
-`repeat-while` is a variant of `while`. This loop will execute the code block once, before checking if the condition is true, then it will repeat the loop as long as the condition is true.
+`loop-while` is a variant of `while`. This loop will execute the code block once, before checking if the condition is true, then it will loop the loop as long as the condition is true.
 
 ```dart
-repeat {
+loop {
   text += "The number is $i"
   i += 1
 } while i < 10
@@ -805,22 +884,22 @@ until i == 10 {
   i += 1
 }
 
-repeat {
+loop {
   text += "The number is $i"
   i += 1
 } until i == 10
 
-repeat: text += "The number is $i" && i += 1 until i == 10
+loop: text += "The number is $i" && i += 1 until i == 10
 ```
 
-Repeat blocks run indefinitely.
+Loop blocks run indefinitely.
 
 ```dart
-repeat:
+loop:
   print("hello world forever!")
 
 let i = 1
-repeat {
+loop {
   print("i is now $i")
   if i > 100: break
   i *= 2
@@ -834,7 +913,7 @@ Trinity has three keywords relating to loops:
 
 - stop and exit a loop or an enumeration using the `break` keyword
 - jump to the next iteration or step using the `next` keyword
-- repeat the current iteration or step using the `redo` keyword
+- loop the current iteration or step using the `redo` keyword
 
 ```dart
 label x: loop {
@@ -1054,7 +1133,7 @@ while i < 10 {
 kill thisProc()
 ```
 
-Other concurrent processes are managed through
+Other concurrent processes are managed through processes as defined in the `Thread` module.
 
 ## Functions
 
@@ -1084,7 +1163,7 @@ If your function has no arguments, you can write `var greetMore = | | { }`.
 
 ### Recursive Functions
 
-By default, a function cannot be called recursively with itself. To make a function recursive, we add the `rec` modifier:
+By default, a function cannot be called recursively with itself. To make a function recursive, we add the `rec` modifier. Tail recursion is compiled into a fast `while` loop so they run faster.
 
 ```dart
 rec func sum(list: list[int]): int = match list {
@@ -1093,13 +1172,11 @@ rec func sum(list: list[int]): int = match list {
 }
 ```
 
-Tail recursion is compiled into a fast `while` loop so they run faster.
-
-Mutually recursive functions start like a single recursive function using the `rec` keyword, and then are chained together with a comma.
+Mutually recursive functions start like a single recursive function using the `rec` keyword, and then are chained together with `and`
 
 ```dart
-rec def callSecond = | | callFirst(),
-def callFirst = | | callSecond()
+rec def callSecond = | | callFirst()
+and def callFirst = | | callSecond()
 ```
 
 ### Labeled Arguments
