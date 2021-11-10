@@ -28,11 +28,11 @@ Time and time again, developers keep pushing on JavaScript to its limits. While 
 
 ### About the Project
 
-Saga aims to be a language with a syntax very familiar to JavaScript and React developers, including those who use tools such as Gatsby, Next.JS or Styled Components.
+Saga is a statically typed language and framework designed for building cross-platform performant apps for the entire tech stack, embedded with features specific to client and server-side app development: built-in styles, markup, schemas, routing and queries.
 
-Saga is a compiler and a framework combined and has features specific to client and server-side app development: built-in styles, markup, schemas, routing and queries.
+It is designed to express common programming patterns in a concise, elegant and type-safe way, integrating features from different object-oriented and functional languages. It gives gives you developer a lot of power. Anything you can do in other languages, you can do in V.
 
-It is designed to express common programming patterns in a concise, elegant and type-safe way, integrating features from different object-oriented and functional languages.
+It's similar to JavaScript and its design has also been influenced by Go, Rust, Swift, Kotlin, ReScript and Python. Saga is the language for folks who don't necessarily love JavaScript, but who still acknowledge its importance.
 
 ### Features
 
@@ -145,7 +145,7 @@ y = 10
 
 ```dart
 let x = 1
-let x = 2 // x is now 2
+const x = 2 // x is now 2
 ```
 
 ### Assigning multiple variables
@@ -153,18 +153,18 @@ let x = 2 // x is now 2
 There are many ways to assign variables:
 
 ```dart
-let x, y, z = 1, a = 2
+var x, y, z = 1, a = 2
 x = 1; y = 2
 ```
 
 You can also unpack them from regular expressions or data structures:
 
 ```dart
-let `(?'x'.+)` = 'a' // x == 'a'
-let (x, y) = (1, 2) // seq
-let [x, y] = [1, 2] // list
-let {x, y} = {x: 1, y: 2} // map
-let {x, y} = {1, 2} // set
+val `(?'x'.+)` = 'a' // x == 'a'
+val (x, y) = (1, 2) // seq
+val [x, y] = [1, 2] // list
+val {x, y} = {x: 1, y: 2} // map
+val {x, y} = {1, 2} // set
 ```
 
 ### Keywords
