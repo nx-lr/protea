@@ -192,9 +192,9 @@ do from where
 if elif else
 for each loop while
 try throw catch after
-match case
-break next redo retry return
-await label yield goto pass
+match case goto pass
+break next redo retry
+return yield await label
 import export route
 debug assert
 ```
