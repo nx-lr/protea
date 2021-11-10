@@ -1243,13 +1243,14 @@ You can type a `func` or `proc`. The argument is wrapped in an "option" type.
 
 ```dart
 async proc drawCircle(
+  circle: circle,
   &color: color
   &?radius: ?int = 1
 ): void {
-  await setColor(color)
+  await color.set()
   switch radius {
-    case none: startAt(1, 1)
-    case some r: startAt(r, r)
+    case none: circle.startAt(1, 1)
+    case some r: circle.startAt(r, r)
   }
 }
 
