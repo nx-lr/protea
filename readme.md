@@ -61,7 +61,7 @@ proc main {
 }
 ```
 
-Protea still maintains a general syntax that still somewhat resembles JavaScript, and has almost all of the features from modern JavaScript such as generators (now iterators) and template literals (now macros). Protea also has support for CSS, JSDoc, JSX and limited support for GraphQL.
+Protea still maintains a general syntax that still somewhat resembles JavaScript, and has inherited most of the features such as JavaScript, adapted for the language. Protea also has support for SCSS, JSDoc, JSX and limited support for GraphQL.
 
 ```dart
 val element = <div>
@@ -69,20 +69,18 @@ val element = <div>
   <h2>Good to see you here.</h2>
 </div>
 
-style @mixin prefix(property, prefix, value) {
-  for prefix in prefixes: -$prefix-${property}: $value;
-  $property: $value
-}
-style .gray {
-  @include prefix(filter, grayscale(50%), moz webkit);
+style button-base(button-height) {
+  display: inline-flex
+  position: relative
+  height: $button-height
+  border: none
+  vertical-align: middle
 }
 
 data HeroNameAndFriends($episode: Episode) {
   hero(episode = $episode) {
     name
-    friends {
-      name
-    }
+    friends { name }
   }
 }
 ```
