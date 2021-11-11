@@ -5,14 +5,14 @@
 Saga is a multi-platform and multi-purpose programming language containing tools you need for building, testing and deploying apps, systems and libraries for the entire tech stack. It supports the object-oriented and functional programming paradigms, and allows you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
 ```dart
-module Button {
-  pub elem make(%count: int) {
-    let times = switch count {
+module Button impl Y, Z {
+  pub compo make(%count: int) {
+    var times = match count {
       case 1: "once"
       case 2: "twice"
       case 3: "$n%d times"
     }
-    let msg = "Click me $times%s"
+    var msg = "Click me $times%s"
     <button>$msg</button>
   }
 }
@@ -20,10 +20,13 @@ module Button {
 
 ### Overview
 
+Saga is a programming language inspired by many curly-bracket languages for building, testing and deploying applications, expanding on the JavaScript everywhere paradigm.
+
 Saga is my programming language for building cross-platform software using existing JavaScript (or perhaps Python) libraries, expanding on the JavaScript everywhere paradigm. It has a general syntax reminiscent of Go, Python, Scala, Rust and more, plus built-in language features like GraphQL, SCSS and JSX.
 
 ### Help me choose a language name!
 
+- Solo, Seul
 - Trinity
 - Protea
 - Lotus
@@ -99,7 +102,7 @@ The `main` function can accept arguments:
 func main(*args: []str): void { /* code here */ }
 ```
 
-Script files do not have a main function, similar to other languages. They can import and use modules, and can call and open other script files.
+Script files do not have a `main` function, similar to other languages. They can import and use modules, and can call and open other script files.
 
 ### Syntax
 
@@ -119,32 +122,23 @@ in y
 
 ### Comments
 
-Saga supports C-style comments. Comments `/+` and `/++` can be nested.
+Saga supports C-style comments. Block comments can be nested. The leading spaces after a comment is required, but not the trailing spaces.
 
 ```dart
 // line comment
-/* block comment */
-/+ nested comment +/
+/* /* block comment */ */
 /// line documentation comment
 /** block documentation comment */
-/++ nested documentation comment +/
 ```
 
 ### Variables
 
-A variable binding, or otherwise a declaration, begin with any one of `var`, `val`, `let` or `const`. All bindings are "scoped" to the block in which they are defined in, and all inner blocks.
+A variable binding, or otherwise a declaration, begin with any one of `var`, `val`. All bindings are "scoped" to the block in which they are defined in, and all inner blocks.
 
 ```dart
 var x = 42
-val y: Int = 42
+val y: int = 42
 y = 10
-```
-
-`let` and `const` bindings can be redeclared, even on the same scope.
-
-```dart
-let x = 1
-const x = 2 // x is now 2
 ```
 
 ### Assigning multiple variables
@@ -173,7 +167,9 @@ Saga has a lot of different types of keywords, all of which are written entirely
 Keywords used as operators:
 
 ```
-in of as is new to til thru by del unset ref and or xor not
+in of as is new
+to til thru by del
+unset ref and or xor not
 ```
 
 Declaration keywords, which are keywords used to declare program entities such as variables, functions, methods and properties.
@@ -181,8 +177,8 @@ Declaration keywords, which are keywords used to declare program entities such a
 ```
 var val func proc type
 class data enum module
-iter macro struct trait
-style elem prop
+iter macro struct object
+trait style elem prop
 ```
 
 Control keywords are keywords used to create control flow statements such as conditionals, loops and error-handling statements.
@@ -205,7 +201,7 @@ Visibility keywords explicitly tell the compiler which qualified name to refer t
 
 ```
 # Visibility and mutability
-pub priv prot final mut immut
+pub priv prot after mut immut
 glo loc early late covar contra
 seal abst inter exter imply exply
 super
@@ -230,11 +226,11 @@ Identifiers are compared using an approach known as partial case-insensitivity.
 
 ```dart
 func cmpIdent(a: str, b: str): bool {
-  let a1
+  val a1
   if (a1 = a.sub(`\P{Alnum}`g, '')) ~= `\p{Upper}+`:
     a1 == b.sub(`\P{Alnum}`g, '')
   else:
-    a[0] == b[0] -> (
+    a[0] == b[0] && (
       a[1:].sub(`\P{Alnum}`g, '').lower() ==
       b[1:].sub(`\P{Alnum}`g, '').lower()
     )
@@ -246,7 +242,7 @@ To "strop" keywords, append a trailing underscore.
 ```dart
 type Type = { def_: Func }
 var var_ = 42, val_ = 8
-const assert_ = var_ + val_ == 50
+val assert_ = var_ + val_ == 50
 assert assert_
 ```
 
@@ -314,9 +310,9 @@ The fractional, repeating, exponent, rounding and type-suffix part appear in tha
 Multi-base digits can use either alphanumerics or digits. The digits are specified with a formatting modifier, `%`.
 
 ```dart
-var int: Int = 123
-var nat: Nat = 123:u
-var float: Float = 123.0
+var int: int = 123
+var nat: nat = 123:u
+var float: float = 123.0
 
 /* Different radixes */
 val base2 = 0b10
@@ -356,6 +352,13 @@ assert base100 == 9999
 const base17Digits = '0123456789abcdefg'
 val base17 = 17b0123456789abcdefg%num/digits:(base17Digits)
 ```
+
+Integers:
+
+- Comparisons: `<=`, `<`, `==`, `!=`, `>=`, `>` (evaluate to bool)
+- Bit operators: `&`, `|`, `^` (bitwise exclusive or), `~` (bitwise negation)
+- Shift operators: `<<` (left shift), `>>` (right shift)
+- Arithmetic operators: `+`, `-`, prefix `-` (only for signed integers), `*`, `/`, `%` (modulo), `**` (exponentiation)
 
 ### Strings
 
@@ -639,7 +642,7 @@ assert ({1: 1, 2: 2}) == {1, 2}
 In Saga, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot notation:
 
 ```dart
-10.+(1)
+10.+1
 ```
 
 However, it’s easier to read as an infix operator:
@@ -652,15 +655,15 @@ The data class `Vec` has a method `+` which we used to add vector1 and vector2. 
 
 ```dart
 data Vec(x: float, y: float) {
-  def +(that: Vec) = Vec(this.x + that.x, this.y + that.y)
+  func + (that: Vec) = Vec(this.x + that.x, this.y + that.y)
 }
 
 val vector1 = Vec(1.0, 1.0)
 val vector2 = Vec(2.0, 2.0)
-
 val vector3 = vector1 + vector2
-vector3.x  // 3.0
-vector3.y  // 3.0
+
+vector3.x // 3.0
+vector3.y // 3.0
 ```
 
 Operators can contain the following characters. In addition, all other Unicode punctuation and symbol characters can also be used as operators.
@@ -676,17 +679,17 @@ These keywords are also operators: `in !in of !of is is! as as! as? unset del to
 
 `.`, `=`, `:`, `::`, `|>`, `||>`, `|||>`, `+>`, `<|`, `<||`, `<|||`, `<+`, `?:`, `!:`, `??`, `!!`, `!`, `?` and `$`, are not available as general operators; they are used for other notational purposes.
 
-An operator can any sequence of `/*`, `//` or `/+` provided they do not begin with such
+An infix operator can contain any sequence of `//` or `/*`, but must NOT be exactly those sequences (those are the syntax for comments).
 
-Binary operators whose first character is `^`, with exception to `^` and `^^` themselves are right-associative, all other binary operators are left-associative.
+Binary operators whose first character is `@` are right-associative.
 
 ```dart
-def x ^/ (y: float): float = x / y
-12 ^/ 4 ^/ 8 // 24.0
+func x @/ (y: float): float = x / y
+12 @/ 4 @/ 8 // 24.0
 12 / 4 / 8 // 24.8
 ```
 
-Suffix operators have a trailing whitespace and are evaluated first, followed by prefix operators which have preceding whitespace, and last are infix binary operators which are evaluated in the order given below.
+Suffix operators have a trailing whitespace and are evaluated first, followed by prefix operators which have preceding whitespace, and last are infix binary operators which are evaluated in the order given by their first character.
 
 Operators ending in either `->`, `~>` or `=>` or starting in `<-` `<=` or `<~` are called arrow like, and have the lowest precedence of all operators.
 
@@ -703,9 +706,9 @@ Otherwise, precedence is determined by the first character.
 | 5                | `== <= < >= > != in !in of !of is is! as as! as? to til thru by` | `= < > !`       |
 | 4                | `&& \|\| ^^`                                                     |                 |
 | 3                | infix `?? !! ?: !: $:`                                           |                 |
-| 2                | `@`, `? :`, `! :`, `$ :`                                         |                 |
-| 1                | assignment operator (like `+=`, `*=`)                            |                 |
-| 0                | (lowest) arrow like operator (like `->`, `=>`)                   |                 |
+| 2                | (lowest) arrow like operator (like `->`, `=>`)                   |                 |
+| 1                | `@`, `? :`, `! :`, `$ :`                                         |                 |
+| 0                | assignment operator (like `+=`, `*=`)                            |                 |
 
 Whether an operator is used as a prefix operator is also affected by preceding or following whitespace, respectively.
 
@@ -726,9 +729,9 @@ Saga has a range of control statements which are also expressions. They form the
 Bindings can be scoped through the do-block: `do {}`. The value of the last line of a closure is immediately returned, lest specified with `return`.
 
 ```dart
-let message = do {
-  let part1 = "hello"
-  let part2 = "world"
+val message = do {
+  val part1 = "hello"
+  val part2 = "world"
   part1 ++ " " ++ part2
 }
 // `part1` and `part2` not accessible here!
@@ -738,7 +741,7 @@ let message = do {
 
 ```dart
 if displayGreeting {
-  let message = "Enjoying the docs so far?"
+  val message = "Enjoying the docs so far?"
   print(message)
 }
 // `message` not accessible here!
@@ -747,14 +750,14 @@ if displayGreeting {
 Instead of a block, whenever there's a single statement, you can use a colon `:` instead of an opening curly brace, provided the colon is separated by a space only on its right.
 
 ```dart
-let message = do: 3 + 4
-let message = do : 3 + 4 // type annotation
+val message = do: 3 + 4
+val message = do : 3 + 4 // type annotation
 ```
 
 But not both (opening curly brace is a map literal).
 
 ```dart
-let message = do: { 3 + 4 }
+val message = do: { 3 + 4 }
 assert message is map
 ```
 
@@ -781,7 +784,7 @@ if a == b {
 }
 ```
 
-An `if`-`else` expression without the final `else` branch gives null.
+An `if`-`else` expression without the after `else` branch gives null.
 
 ```dart
 if showMenu { displayMenu() }
@@ -811,19 +814,7 @@ if test1 {
 }
 ```
 
-Replacing `if` with `lest` and `elif` with `elest` for the opposite effect, meaning they would execute if their predicates return false.
-
-```dart
-lest test1 { // lest; if not
-  doX()
-} elest test2 { // else lest; else if not
-  doY()
-} else {
-  doZ()
-}
-```
-
-A great thing about the Trinity conditional is that it always returns. You can ignore the result as we did in the previous examples, but a more common approach, especially in functional programming.
+A great thing about the conditional is that it always returns. You can ignore the result as we did in the previous examples, but a more common approach, especially in functional programming.
 
 You can assign the result to a variable:
 
@@ -831,7 +822,7 @@ You can assign the result to a variable:
 val minValue = if a < b: a else: b
 ```
 
-Anyway, Trinity has two ternary conditional operators, which are just syntax sugar for the above if you're not keen on using `if`. That last one, is syntax sugar for `un`...`else`.
+Anyway, Saga has two ternary conditional operators, which are just syntax sugar for the above if you're not keen on using `if`. That last one, is syntax sugar for `un`...`else`.
 
 ```dart
 val minValue = a < b ? a : b
@@ -889,40 +880,25 @@ loop {
 } while i < 10
 ```
 
-Until loops execute their bodies until their statements become false.
-
-```dart
-until i == 10 {
-  text += "The number is $i"
-  i += 1
-}
-
-loop {
-  text += "The number is $i"
-  i += 1
-} until i == 10
-
-loop: text += "The number is $i" && i += 1 until i == 10
-```
-
-Loop blocks run indefinitely.
+Loop blocks without their while condition would run indefinitely, and you would have to manually insert a `break` statement somewhere. Loop blocks would also stop executing when a closure returns, yields or throws too.
 
 ```dart
 loop:
   print("hello world forever!")
 
-let i = 1
+val i = 1
 loop {
   print("i is now $i")
   if i > 100: break
   i *= 2
 }
+
 assert i == 128
 ```
 
 #### Loop keywords
 
-Trinity has three keywords relating to loops:
+Saga has three keywords relating to loops:
 
 - stop and exit a loop or an enumeration using the `break` keyword
 - jump to the next iteration or step using the `next` keyword
@@ -939,7 +915,7 @@ label x: loop {
 
 All are system calls so they can be interlaced with expressions.
 
-### Switch or match
+### Match or match
 
 With a `match` or `switch` expression you write a number of case statements that you use to match possible values.
 
@@ -947,7 +923,7 @@ With a `match` or `switch` expression you write a number of case statements that
 
 ```dart
 // i is an integer
-val dayName = switch i {
+val dayName = match i {
   case 1: "Monday"
   case 2: "Tuesday"
   case 3: "Wednesday"
@@ -959,12 +935,12 @@ val dayName = switch i {
 }
 ```
 
-`match`/`switch` expressions let you handle multiple cases.
+`match`/`switch` expressions allow you to handle multiple cases.
 
 To demonstrate this, imagine that you want to evaluate "boolean equality" like PHP would: `0`, `''` or `'0'` evaluates to `false`, while everything else evaluates to `true`.
 
 ```dart
-func isTrue(a: Any) = switch a {
+func isTrue(a: Any) = match a {
   case is 0 | '' | '0': false
   fail: true
 }
@@ -973,13 +949,13 @@ func isTrue(a: Any) = switch a {
 The key part of this solution is that this one case statement lets both 0 and the empty string evaluate to false:
 
 ```dart
-switch a { case is 0 | '' | '0': false }
+match a { case is 0 | '' | '0': false }
 ```
 
 Before we move on, here’s another example that shows many matches in each case statement:
 
 ```dart
-val evenOrOdd = switch i {
+val evenOrOdd = match i {
   case is 1 | 3 | 5 | 7 | 9: print("odd")
   case is 2 | 4 | 6 | 8 | 10: print("even")
   fail: print("some other number")
@@ -989,7 +965,7 @@ val evenOrOdd = switch i {
 Here's another example that shows how to handle multiple strings in multiple case statements:
 
 ```dart
-switch cmd {
+match cmd {
   case is "start" | "go": print("starting")
   case is "stop" | "quit" | "exit": print("stopping")
   fail: print("doing nothing")
@@ -998,11 +974,11 @@ switch cmd {
 
 #### Guard conditions
 
-Another great thing about switch expressions is that you can use `if` clauses to filter conditions.
+Another great thing about match expressions is that you can use `if` clauses to filter conditions.
 
 ```dart
 val number = 4:u
-switch number {
+match number {
   case i if i == 0: print('Zero')
   case i if i > 0: print("Greater than zero")
   fail: print("Fell through")
@@ -1016,7 +992,7 @@ Indirectly accessing a variable makes it impossible to branch and use that varia
 ```dart
 val pair = [2, 2]
 
-switch pair {
+match pair {
   case [x, y] as z if x == y: print("$z are twins!")
   case [x, y] as z if x + y == 0: print("$z are opposites!")
   case [x, _] if x % 2 == 1: print("The first is odd.")
@@ -1028,7 +1004,7 @@ Matching on strings, regular expressions and functions using interpolation would
 
 ```dart
 val sample: str = '10-a'
-switch sample {
+match sample {
   case '${x: int}-dir': exec(x)
   case `(?<x>\d+)-dir`: exec(x)
   case |x| ~= `^\d+-dir$`: exec(x)
@@ -1037,7 +1013,7 @@ switch sample {
 
 ### Error handling
 
-Like a lot of other languages, Saga has a try-catch statement to let you catch and manage errors. The main difference is that Saga allows you to pattern match errors.
+Like a lot of other languages, Saga has a try-catch statement to val you catch and manage errors. The main difference is that Saga allows you to pattern match errors.
 
 ```dart
 var text = ''
@@ -1045,13 +1021,13 @@ try:
   text = new File('filename').open().read()
 catch {
   case is FileNotFoundError:
-    'Could not find the file $filename'
+    "Could not find the file $filename"
   case is IOError:
     "Had an IOError trying to read file $filename"
 }
 ```
 
-Try-catch also lets you use a "final" clause which is typically used when you need to close a resource.
+Try-catch also lets you use an `after` clause which is typically used when you need to close a resource.
 
 ```dart
 try {
@@ -1061,90 +1037,20 @@ try {
   case bar : BarError: handleBarError(bar)
   case : Throwable: print("Got some other kind of \
     Throwable error")
-} final {
+} after {
   file.close()
 }
 ```
 
-You can also use a "with" clause similar to Python, so there is no need to write a "final" clause, or even a "catch" clauses. Those are defined with the trait `Handleable`, with the methods `_try`, `_catch` and `_final` defined.
+You can also use a `with` clause similar to Python, so there is no need to write a `final` clause, or even a `catch` clauses. Those are defined with the trait `Handleable`, with the methods `_try`, `_catch` and `_after` defined.
 
 ```dart
-with var file as new File(path).open().read() {
+with var file as new File(path).open.read {
   file.write('hello world!')
-} // final { file._final() }
+} // after { file._final() }
 ```
 
-### Asynchrony
-
-Saga comes with several constructs, namely `some`, `every`, `race` and `settle` when dealing with asynchronous operations. A promise can either be pending, `accept`ed or `reject`ed, depending on the operation having been completed or failed.
-
-The `every` block would reject if any of its statements is rejected or an error is thrown. Those would be handled in the `catch` block.
-
-```dart
-every {
-  accept 42
-  accept await getFromDatabase()
-  sleep(accept 'Success', 100, 'foo')
-  reject 3
-} done values {
-  print(values)
-} catch rejected {
-  print(rejected)
-}
-```
-
-The `some` block would only pass if any statement is resolved. If none are accepted, then the errors are handled in the catch block.
-
-```dart
-some {
-  accept 42
-  accept await getFromDatabase().throw()
-  await sleep('Success', 100, 'foo')
-  reject 3
-} done values {
-  print(values)
-}
-```
-
-The `race` block would only pass as soon as any of its statements fulfils or rejects.
-
-```dart
-race {
-  reject sleep(300, 'foo')
-  reject sleep(100, 'foo')
-  const a = 42
-} done value {
-  print(value) // 42
-}
-```
-
-The `settle` block passes once all its statements have been completed or failed, describing the outcome of each statement as a status.
-
-```dart
-settle {
-  const promise1 = 3
-  const promise2 = sleep(reject, 100, 'foo')
-  const promises = [promise1, promise2]
-} done values, statuses {
-  print(value) // 42
-}
-```
-
-#### Concurrency
-
-Saga contains the `spawn` or `kill` statement to start and stop processes from running in the background, i.e. on a different thread.
-
-```dart
-i = 0
-while i < 10 {
-  spawn sub thisProc {
-    print(i)
-    i += 1
-  }
-}
-
-kill thisProc()
-```
+### Concurrency and Multi-threading
 
 Other concurrent processes are managed through processes as defined in the `Thread` module.
 
@@ -1162,6 +1068,7 @@ Functions can also be written using a special syntax that resembles Ruby, with t
 
 ```dart
 val add = |x, y, z| x + y + z
+val add = |x: int, y: int, z: int|: int = x + y + z
 add(1, 2, 3) // 6
 ```
 
@@ -1190,7 +1097,7 @@ rec func sum(list: list[int]): int = match list {
 A simple recursive function may look like this:
 
 ```dart
-rec func List.has(item: any): bool = switch this {
+rec func List.has(item: any): bool = match this {
   case []: false
   case [a, *rest]: a == item ?: rest.has(item)
 }
@@ -1243,7 +1150,7 @@ Labeled function arguments can be made optional during declaration. You can then
 // radius can be omitted
 async proc drawCircle(&color, &?radius) {
   await setColor(color)
-  switch radius {
+  match radius {
     case none: startAt(1, 1)
     case some r: startAt(r, r)
   }
@@ -1259,7 +1166,7 @@ async proc drawCircle(
   &?radius: ?int = 1
 ): void {
   await color.set()
-  switch radius {
+  match radius {
     case none: circle.startAt(1, 1)
     case some r: circle.startAt(r, r)
   }
