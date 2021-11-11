@@ -1110,7 +1110,7 @@ repository:
         captures:
           1: {name: punctuation.definition.anchor.saga}
           2: {name: constant.numeric.decimal.saga}
-      - match: (\#)([?*&%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
+      - match: (\#)((?:[*&%$]\??|\?)?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
           1: {name: punctuation.definition.anchor.saga}
           2: {patterns: [include: "#placeholder-variables"]}
@@ -1881,25 +1881,6 @@ repository:
       - include: "#block-comments"
       - include: "#line-comments"
       - include: "#nested-comments"
-  nested-comments:
-    patterns:
-      - begin: \s*(/\+\+)(?=\s+|\s*$)
-        end: \s*(\+/)
-        name: comment.block.documentation.nested.saga
-        captures:
-          1: {name: punctuation.definition.comment.saga}
-        patterns:
-          - include: "#jsdoc"
-          - include: text.html.markdown#inline
-          - include: "#nested-jsdoc"
-      - begin: \s*(/\+)(?=\s+|\s*$)
-        end: \s*(\+/)
-        name: comment.block.nested.saga
-        captures:
-          1: {name: punctuation.definition.comment.saga}
-        patterns:
-          - include: text.html.markdown#inline
-          - include: "#nested-block"
   block-comments:
     patterns:
       - begin: \s*(/\*\*)(?=\s+|\s*$)
@@ -1910,6 +1891,7 @@ repository:
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
+          - include: "#nested-jsdoc"
       - begin: \s*(/\*)(?=\s+|\s*$)
         end: \s*(\*/)
         name: comment.block.saga
@@ -1917,6 +1899,7 @@ repository:
           1: {name: punctuation.definition.comment.saga}
         patterns:
           - include: text.html.markdown#inline
+          - include: "#nested-block"
   line-comments:
     patterns:
       - begin: \s*(///)(?=\s+|\s*$)
@@ -1935,8 +1918,8 @@ repository:
         patterns:
           - include: text.html.markdown#inline
   nested-jsdoc:
-    begin: (/\+\+?)(?=\s+|\s*$)
-    end: \s*(\+/)
+    begin: (/\*\*?)(?=\s+|\s*$)
+    end: \s*(\*/)
     name: comment.block.documentation.nested.saga
     captures:
       1: {name: punctuation.definition.comment.saga}
@@ -1945,8 +1928,8 @@ repository:
       - include: text.html.markdown#inline
       - include: "#nested-jsdoc"
   nested-block:
-    begin: (/\+)(?=\s+|\s*$)
-    end: \s*(\+/)
+    begin: (/\*)(?=\s+|\s*$)
+    end: \s*(\*/)
     name: comment.block.nested.saga
     captures:
       1: {name: punctuation.definition.comment.saga}
@@ -3531,7 +3514,6 @@ repository:
         endCaptures:
           1: {name: punctuation.separator.arguments.saga}
         patterns: *function-params
-
       - comment: |
           Function def before function keyword
           x = def()
