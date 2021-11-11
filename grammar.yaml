@@ -1,6 +1,6 @@
 name: Protea
 scopeName: source.dart
-fileTypes: [dart, prot]
+fileTypes: [dart, protea]
 patterns: [include: "#core"]
 
 Information for Contributors: |
@@ -1726,7 +1726,8 @@ repository:
           [\p{Pd}$]?
           (?:
           # Recursive brackets
-          \$(?<b>
+          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
+          (?<b>
           \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
           \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
           \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
@@ -1746,7 +1747,10 @@ repository:
         beginCaptures:
           1:
             name: support.type.property-name.protea
-            patterns: [include: "#embedded"]
+            patterns:
+              - include: "#embedded"
+              - include: source.yaml#flow-collection
+              - include: "#brackets"
           8: {name: punctuation.separator.key-value.protea}
         end: (?=.)|$
         name: string.unquoted.protea
