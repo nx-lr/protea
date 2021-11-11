@@ -22,7 +22,7 @@ comment: |
   - Fix highlighting of CSS style rules to allow not repeating the "style"
     keyword for nested styles
   - Add type-regex literals
-  - Rework keywords in favor of a smaller set (see documentation)
+  - Add highlighting for CSS dynamic properties
 
   Done:
   - Changed from indentation to curly bracket syntax
@@ -38,6 +38,7 @@ comment: |
   - Reworked format directives and embedded expressions, with a little
     help from recursion
   - Reworked number, string and JSX literals
+  - Rework keywords in favor of a smaller set (see documentation)
 
 define:
   number-literal: &number-literal
@@ -61,7 +62,7 @@ define:
     |class|data|enum|module
     |iter|macro|struct|object
     |trait|style|compo|prop
-    |do|from|where|with
+    |go|defer|do|from|where|with
     |if|elif|else|def
     |for|each|loop|while
     |try|throw|catch|after
@@ -86,7 +87,7 @@ define:
     |class|data|enum|module
     |iter|macro|struct|object
     |trait|style|compo|prop
-    |do|from|where|with
+    |go|defer|do|from|where|with
     |if|elif|else|def
     |for|each|loop|while
     |try|throw|catch|after
@@ -112,7 +113,7 @@ define:
     |class|data|enum|module
     |iter|macro|struct|object
     |trait|style|compo|prop
-    |do|from|where|with
+    |go|defer|do|from|where|with
     |if|elif|else|def
     |for|each|loop|while
     |try|throw|catch|after
@@ -164,20 +165,8 @@ repository:
 
   # Function brackets (early here as not to break things)
 
-  parameter-brackets:
-    begin: \s*(\()
-    end: \s*(\))
-    captures:
-      1: {name: punctuation.definition.parameters.saga}
-    patterns: &function-params
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.as.saga
-      - match: (?<=[\w\s][(|])\.
-        name: punctuation.definition.metadata.saga
-      - include: "#clauses"
-      - include: "#constants"
-      - include: "#declarations"
-      - include: "#expression-keywords"
+  function-params:
+    patterns:
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
@@ -214,6 +203,22 @@ repository:
           \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
         name: variable.parameter.saga
+
+  parameter-brackets:
+    begin: \s*(\()
+    end: \s*(\))
+    captures:
+      1: {name: punctuation.definition.parameters.saga}
+    patterns: &function-params
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
+        name: keyword.operator.expression.as.saga
+      - match: (?<=[\w\s][(|])\.
+        name: punctuation.definition.metadata.saga
+      - include: "#clauses"
+      - include: "#constants"
+      - include: "#declarations"
+      - include: "#expression-keywords"
+      - include: "#function-params"
       - include: "$self"
 
   # Illegal Syntax
@@ -239,7 +244,7 @@ repository:
       |class|data|enum|module
       |iter|macro|struct|object
       |trait|style|compo|prop
-      |do|from|where|with
+      |go|defer|do|from|where|with
       |if|elif|else|def
       |for|each|loop|while
       |try|throw|catch|after
@@ -299,10 +304,10 @@ repository:
           |Any|Mixed|Just|Some|None|Never|(Im)?pure
           |Class|Enum|Module|Pack|Struct|Schema|Space|Pragma
           |Proc|Proto|Macro|Given|Style|Compo|Field
-          |Ext|Pred|Data|Trait|Lemma|Iter|Sub|Prop
+          |Ext|Pred|Data|Trait|Lemma|Iter|Sub|Prop|Const
           # lowerFlatCase
           |true|false|null|void|nan|infin|empty|unit
-          |any|mixed|just|some|none|never|(im)?pure
+          |any|mixed|just|some|none|never|(im)?pure|const
           )(?![\w\p{Pd}])
         name: support.type.primitive.saga
       - comment: Error classes | BaseError, etc
@@ -428,7 +433,7 @@ repository:
           |(args)#2
           |(ctor)#3
           |(prot)#4
-          |(pro)#5
+          |(proto)#5
           )(?![\w\p{Pd}])\s*
         captures:
           1: {name: variable.language.$1.saga}
@@ -1027,7 +1032,7 @@ repository:
           |class|data|enum|module
           |iter|macro|struct|object
           |trait|style|compo|prop
-          |do|from|where|with
+          |go|defer|do|from|where|with
           |if|elif|else|def
           |for|each|loop|while
           |try|throw|catch|after
@@ -1102,9 +1107,6 @@ repository:
           - match: .+
             name: string.other.format.saga
   embedded-placeholder:
-    repository:
-      function-params:
-        patterns: *function-params
     patterns:
       - match: (\#)([+-]?\d+)
         captures:
@@ -1698,10 +1700,35 @@ repository:
       - include: "#clauses"
       - include: "#declarations"
       - applyEndPatternLast: 1
-        begin: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)?\s*
+        begin: |
+          (?x)
+          \s*
+          (
+          [\p{Pd}$]?
+          (?:
+          # Recursive brackets
+          \$(?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )+
+          )
+          (:)?\s*
         beginCaptures:
-          1: {name: support.type.property-name.saga}
-          2: {name: punctuation.separator.key-value.saga}
+          1:
+            name: support.type.property-name.saga
+            patterns: [include: "#embedded"]
+          8: {name: punctuation.separator.key-value.saga}
         end: (?=.)|$
         name: string.unquoted.saga
         patterns: [include: "#html-properties"]
@@ -1714,7 +1741,9 @@ repository:
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.parameters.saga}
-        patterns: [include: "#style-properties"]
+        patterns:
+          - include: "#function-params"
+          - include: "#style-properties"
       - begin: \s*(\[)\s*
         end: \s*(\])
         captures:
@@ -1754,7 +1783,7 @@ repository:
       |class|data|enum|module
       |iter|macro|struct|object
       |trait|style|compo|prop
-      |do|from|where|with
+      |go|defer|do|from|where|with
       |if|elif|else|def
       |for|each|loop|while
       |try|throw|catch|after
@@ -2116,7 +2145,7 @@ repository:
           |class|data|enum|module
           |iter|macro|struct|object
           |trait|style|compo|prop
-          |do|from|where|with
+          |go|defer|do|from|where|with
           |if|elif|else|def
           |for|each|loop|while
           |try|throw|catch|after
@@ -2147,7 +2176,7 @@ repository:
           |class|data|enum|module
           |iter|macro|struct|object
           |trait|style|compo|prop
-          |do|from|where|with
+          |go|defer|do|from|where|with
           |if|elif|else|def
           |for|each|loop|while
           |try|throw|catch|after
@@ -2506,7 +2535,7 @@ repository:
           |class|data|enum|module
           |iter|macro|struct|object
           |trait|style|compo|prop
-          |do|from|where|with
+          |go|defer|do|from|where|with
           |if|elif|else|def
           |for|each|loop|while
           |try|throw|catch|after
@@ -2538,7 +2567,7 @@ repository:
               |class|data|enum|module
               |iter|macro|struct|object
               |trait|style|compo|prop
-              |do|from|where|with
+              |go|defer|do|from|where|with
               |if|elif|else|def
               |for|each|loop|while
               |try|throw|catch|after
@@ -2623,7 +2652,7 @@ repository:
       |class|data|enum|module
       |iter|macro|struct|object
       |trait|style|compo|prop
-      |do|from|where|with
+      |go|defer|do|from|where|with
       |if|elif|else|def
       |for|each|loop|while
       |try|throw|catch|after
@@ -2960,9 +2989,9 @@ repository:
           - match: '\.|::'
             name: punctuation.separator.namespace.saga
           - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
-            name: entity.name.namespace.saga
+            name: entity.name.module.saga
           - match: *class-name
-            name: entity.name.class.saga
+            name: entity.name.interface.saga
           - include: "#punctuation"
       - include: "#declarations"
       - include: "#type-keywords"
@@ -3102,7 +3131,7 @@ repository:
         name: keyword.control.flow.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|route)(?![\w\p{Pd}])\s*
         name: keyword.control.module.saga
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|do|from|ref)(?![\w\p{Pd}])\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|do|from|ref|go|defer)(?![\w\p{Pd}])\s*
         name: keyword.control.$1.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|assert|check|where)(?![\w\p{Pd}])\s*
         name: keyword.other.$1.saga
@@ -3593,7 +3622,7 @@ repository:
       |class|data|enum|module
       |iter|macro|struct|object
       |trait|style|compo|prop
-      |do|from|where|with
+      |go|defer|do|from|where|with
       |if|elif|else|def
       |for|each|loop|while
       |try|throw|catch|after
@@ -4005,8 +4034,6 @@ repository:
         patterns:
           - match: ","
             name: punctuation.separator.arguments.saga
-      function-params:
-        patterns: *function-params
     patterns:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
         end: \s*(\))
