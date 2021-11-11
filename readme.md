@@ -5,7 +5,7 @@
 Saga is a multi-platform and multi-purpose programming language containing tools you need for building, testing and deploying apps, systems and libraries for the entire tech stack. It supports the object-oriented and functional programming paradigms, and allows you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
 ```dart
-module Button impl Y, Z {
+module Button {
   pub compo make(%count: int) {
     var times = match count {
       case 1: "once"
@@ -677,11 +677,11 @@ Operators can contain the following characters. In addition, all other Unicode p
 
 These keywords are also operators: `in !in of !of is is! as as! as? unset del to til thru by`.
 
-`.`, `=`, `:`, `::`, `|>`, `||>`, `|||>`, `+>`, `<|`, `<||`, `<|||`, `<+`, `?:`, `!:`, `??`, `!!`, `!`, `?` and `$`, are not available as general operators; they are used for other notational purposes.
+`.`, `=`, `:`, `::`, `|>`, `||>`, `|||>`, `+>`, `<|`, `<||`, `<|||`, `<+`, `?:`, `!:`, `??`, `!!`, are not available as general operators; they are used for other notational purposes.
 
 An infix operator can contain any sequence of `//` or `/*`, but must NOT be exactly those sequences (those are the syntax for comments).
 
-Binary operators whose first character is `@` are right-associative.
+Infix operators whose first character is `@` are right-associative.
 
 ```dart
 func x @/ (y: float): float = x / y
@@ -689,7 +689,13 @@ func x @/ (y: float): float = x / y
 12 / 4 / 8 // 24.8
 ```
 
-Suffix operators have a trailing whitespace and are evaluated first, followed by prefix operators which have preceding whitespace, and last are infix binary operators which are evaluated in the order given by their first character.
+Prefix, suffix and infix operators are distinguished whether they have preceding, following whitespace, or both (respectively).
+
+Suffix operators are evaluated first and from left to right, and prefix operators are evaluated next and from right to left.
+
+Infix operators are evaluated last and are evaluated based on the given order below.
+
+###
 
 Operators ending in either `->`, `~>` or `=>` or starting in `<-` `<=` or `<~` are called arrow like, and have the lowest precedence of all operators.
 
@@ -699,16 +705,15 @@ Otherwise, precedence is determined by the first character.
 
 | Precedence level | Operators                                                        | First character |
 | ---------------- | ---------------------------------------------------------------- | --------------- |
-| 9 (highest)      | `unset del . ?. !. :: ?: !:`                                     | `$ ^`           |
+| 9 (highest)      | `unset del not`                                                  | `$ ^`           |
 | 8                | `* / ** # %`                                                     | `* % \ /`       |
 | 7                | `+ -`                                                            | `+ - ~ \|`      |
 | 6                | `& \| ^ << >>`                                                   | `&`             |
 | 5                | `== <= < >= > != in !in of !of is is! as as! as? to til thru by` | `= < > !`       |
-| 4                | `&& \|\| ^^`                                                     |                 |
-| 3                | infix `?? !! ?: !: $:`                                           |                 |
-| 2                | (lowest) arrow like operator (like `->`, `=>`)                   |                 |
-| 1                | `@`, `? :`, `! :`, `$ :`                                         |                 |
-| 0                | assignment operator (like `+=`, `*=`)                            |                 |
+| 4                | `&& \|\| ^^ and or xor`                                          |                 |
+| 3                | infix `?? !! ?: !: ::`                                           |                 |
+| 2                | `@` and arrow like operator (like `->`, `=>`)                    |                 |
+| 1                | assignment operator (like `+=`, `*=`)                            |                 |
 
 Whether an operator is used as a prefix operator is also affected by preceding or following whitespace, respectively.
 
@@ -902,10 +907,10 @@ Saga has three keywords relating to loops:
 
 - stop and exit a loop or an enumeration using the `break` keyword
 - jump to the next iteration or step using the `next` keyword
-- loop the current iteration or step using the `redo` keyword
+- redo the current iteration or step using the `redo` keyword
 
 ```dart
-label x: loop {
+label x loop {
   if new Random() > 0.3: break x
   elif new Random() > 0.5: next x
   elif new Random() > 0.7: redo x
