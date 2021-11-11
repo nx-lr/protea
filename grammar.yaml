@@ -1,6 +1,6 @@
 name: Protea
 scopeName: source.dart
-fileTypes: [dart, protea]
+fileTypes: [dart, prot]
 patterns: [include: "#core"]
 
 Information for Contributors: |
@@ -19,10 +19,7 @@ Information for Contributors: |
 comment: |
   To-Do:
   - Revamp numeric literals again
-  - Fix highlighting of CSS style rules to allow not repeating the "style"
-    keyword for nested styles
   - Add type-regex literals
-  - Rework keywords in favor of a smaller set (see documentation)
 
   Done:
   - Changed from indentation to curly bracket syntax
@@ -38,15 +35,19 @@ comment: |
   - Reworked format directives and embedded expressions, with a little
     help from recursion
   - Reworked number, string and JSX literals
+  - Rework keywords in favor of a smaller set (see documentation)
+  - Fix highlighting of CSS style rules to allow not repeating the "style"
+    keyword for nested styles
+  - Add highlighting for CSS dynamic properties
 
 define:
   number-literal: &number-literal
-    1: {name: storage.type.numeric.pr}
-    2: {name: punctuation.separator.decimal.period.pr}
-    3: {name: punctuation.separator.decimal.fraction.pr}
-    4: {name: constant.numeric.other.exponent.pr}
-    5: {name: constant.numeric.other.density.pr}
-    6: {name: storage.type.numeric.pr}
+    1: {name: storage.type.numeric.protea}
+    2: {name: punctuation.separator.decimal.period.protea}
+    3: {name: punctuation.separator.decimal.fraction.protea}
+    4: {name: constant.numeric.other.exponent.protea}
+    5: {name: constant.numeric.other.density.protea}
+    6: {name: storage.type.numeric.protea}
 
   entity-name-clause: &entity-name-clause |
     (?x)\s*\b
@@ -54,20 +55,48 @@ define:
 
     (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
     \b(?:# keywords
-    in|of|as|is|new|to|til|thru|by|del|unset
-    |var|val|let|const|decl|def|func|type|object
-    |class|enum|module|pack|struct|schema|space|pragma
-    |proc|proto|macro|given|style|elem|field
-    |ext|pred|data|trait|lemma|iter|sub|prop
-    |if|lest|elif|elest|else
-    |for|each|loop|while|until|when
-    |with|then|do|from|ref
-    |try|throw|catch|final
-    |switch|match|case|fail
-    |race|some|every|done|spawn|kill|settle|accept|reject
-    |break|next|redo|retry|return|await|label|yield|goto|pass
-    |import|export|using|route
-    |debug|assert|where
+    in|of|as|is|new
+    |to|til|thru|by|del
+    |unset|ref|and|or|xor|not
+    |var|val|func|proc|type
+    |class|data|enum|module
+    |iter|macro|struct|object
+    |trait|style|compo|prop
+    |go|defer|do|from|where|with
+    |if|elif|else|def
+    |for|each|loop|while
+    |try|throw|catch|after
+    |match|case|goto|pass
+    |break|next|redo|retry
+    |return|yield|await|label
+    |import|export|route
+    |debug|assert|check
+    )(?![\w\p{Pd}])
+    )
+    ([\p{Pc}\p{L}][\w\p{Pd}]*)
+    \b
+
+  class-name: &class-name |
+    (?x)\s*\b
+    (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
+    \b(?:# keywords
+    in|of|as|is|new
+    |to|til|thru|by|del
+    |unset|ref|and|or|xor|not
+    |var|val|func|proc|type
+    |class|data|enum|module
+    |iter|macro|struct|object
+    |trait|style|compo|prop
+    |go|defer|do|from|where|with
+    |if|elif|else|def
+    |for|each|loop|while
+    |try|throw|catch|after
+    |match|case|goto|pass
+    |break|next|redo|retry
+    |return|yield|await|label
+    |import|export|route
+    |debug|assert|check
+    |ext|impl
     )(?![\w\p{Pd}])
     )
     ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -77,20 +106,22 @@ define:
     (?x)\s*\b
     (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
     \b(?:# keywords
-    in|of|as|is|new|to|til|thru|by|del|unset
-    |var|val|let|const|decl|def|func|type|object
-    |class|enum|module|pack|struct|schema|space|pragma
-    |proc|proto|macro|given|style|elem|field
-    |ext|pred|data|trait|lemma|iter|sub|prop
-    |if|lest|elif|elest|else
-    |for|each|loop|while|until|when
-    |with|then|do|from|ref
-    |try|throw|catch|final
-    |switch|match|case|fail
-    |race|some|every|done|spawn|kill|settle|accept|reject
-    |break|next|redo|retry|return|await|label|yield|goto|pass
-    |import|export|using|route
-    |debug|assert|where
+    in|of|as|is|new
+    |to|til|thru|by|del
+    |unset|ref|and|or|xor|not
+    |var|val|func|proc|type
+    |class|data|enum|module
+    |iter|macro|struct|object
+    |trait|style|compo|prop
+    |go|defer|do|from|where|with
+    |if|elif|else|def
+    |for|each|loop|while
+    |try|throw|catch|after
+    |match|case|goto|pass
+    |break|next|redo|retry
+    |return|yield|await|label
+    |import|export|route
+    |debug|assert|check
     )(?![\w\p{Pd}])
     )
     ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -134,56 +165,60 @@ repository:
 
   # Function brackets (early here as not to break things)
 
-  parameter-brackets:
-    begin: \s*(\()
-    end: \s*(\))
-    captures:
-      1: {name: punctuation.definition.parameters.pr}
-    patterns: &function-params
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.as.pr
-      - match: (?<=[\w\s][(|])\.
-        name: punctuation.definition.metadata.pr
-      - include: "#clauses"
-      - include: "#constants"
-      - include: "#declarations"
-      - include: "#expression-keywords"
+  function-params:
+    patterns:
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
-        name: variable.parameter.optional.pr
+        name: variable.parameter.optional.protea
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\*\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
-        name: variable.parameter.spread.pr
+        name: variable.parameter.spread.protea
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\%\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
-        name: variable.parameter.name.pr
+        name: variable.parameter.name.protea
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\&\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
-        name: variable.parameter.reference.pr
+        name: variable.parameter.reference.protea
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\$\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
-        name: variable.parameter.other.pr
+        name: variable.parameter.other.protea
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
           (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
-        name: variable.parameter.pr
+        name: variable.parameter.protea
+
+  parameter-brackets:
+    begin: \s*(\()
+    end: \s*(\))
+    captures:
+      1: {name: punctuation.definition.parameters.protea}
+    patterns: &function-params
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
+        name: keyword.operator.expression.as.protea
+      - match: (?<=[\w\s][(|])\.
+        name: punctuation.definition.metadata.protea
+      - include: "#clauses"
+      - include: "#constants"
+      - include: "#declarations"
+      - include: "#expression-keywords"
+      - include: "#function-params"
       - include: "$self"
 
   # Illegal Syntax
@@ -191,33 +226,35 @@ repository:
   illegal:
     patterns:
       - match: \p{N}[\w.+-/\\]*?
-        name: invalid.illegal.numeric.other.pr
+        name: invalid.illegal.numeric.other.protea
       - match: '[\w]+?'
-        name: invalid.illegal.variable.other.pr
+        name: invalid.illegal.variable.other.protea
       - match: '[(){}\[\]]+?'
-        name: invalid.illegal.missing-bracket.pr
+        name: invalid.illegal.missing-bracket.protea
       - match: \S+?
-        name: invalid.illegal.syntax.pr
+        name: invalid.illegal.syntax.protea
 
   illegal-keywords:
     match: |
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-      in|of|as|is|new|to|til|thru|by|del|unset
-      |var|val|let|const|decl|def|func|type|object
-      |class|enum|module|pack|struct|schema|space|pragma
-      |proc|proto|macro|given|style|elem|field
-      |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|lest|elif|elest|else
-      |for|each|loop|while|until|when
-      |with|then|do|from|ref
-      |try|throw|catch|final
-      |switch|match|case|fail
-      |race|some|every|done|spawn|kill|settle|accept|reject
-      |break|next|redo|retry|return|await|label|yield|goto|pass
-      |import|export|using|route
-      |debug|assert|where
+      in|of|as|is|new
+      |to|til|thru|by|del
+      |unset|ref|and|or|xor|not
+      |var|val|func|proc|type
+      |class|data|enum|module
+      |iter|macro|struct|object
+      |trait|style|compo|prop
+      |go|defer|do|from|where|with
+      |if|elif|else|def
+      |for|each|loop|while
+      |try|throw|catch|after
+      |match|case|goto|pass
+      |break|next|redo|retry
+      |return|yield|await|label
+      |import|export|route
+      |debug|assert|check
       )(?![\w\p{Pd}])\s*
-    name: invalid.illegal.keyword.pr
+    name: invalid.illegal.keyword.protea
 
   # Support
 
@@ -233,21 +270,21 @@ repository:
       - comment: Primitive classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          Bool|[NR]at|Real|Num|(Big)?(U?Int|Float|Nat)
+          Bool|[NR]at|Real|Num|(Big)?(U?Int|Float|[NR]at)
           |Imag|Comp|Char|Rune|Str|Sym
           |U?Int(8|16|32|64|128)
           |[CI]?Float(16|32|64|128)
           |[UI](8|16|32|64|128)
           |[CI]?F(16|32|64|128)
           # lowerFlatCase
-          |bool|[nr]at|real|num|(big)?(u?int|float|nat)
+          |bool|[nr]at|real|num|(big)?(u?int|float|[nr]at)
           |imag|comp|char|rune|str|sym
           |u?int(8|16|32|64|128)
           |[ci]?float(16|32|64|128)
           |[ui](8|16|32|64|128)
           |[ci]?f(16|32|64|128)
           )(?![\w\p{Pd}])
-        name: support.type.builtin.primitive.pr
+        name: support.type.builtin.primitive.protea
       - comment: Data structure classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
@@ -259,32 +296,32 @@ repository:
           |proc|seq|gen|range|stack|heap|queue|tree|trie
           |future|stream|regexp?|func|buf|strbuf|bytes
           )(?![\w\p{Pd}])
-        name: support.type.builtin.pr
+        name: support.type.builtin.protea
       - comment: Constant/algebraic classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
           True|False|Null|Void|NaN|Infin|Empty|Unit
           |Any|Mixed|Just|Some|None|Never|(Im)?pure
           |Class|Enum|Module|Pack|Struct|Schema|Space|Pragma
-          |Proc|Proto|Macro|Given|Style|Elem|Field
-          |Ext|Pred|Data|Trait|Lemma|Iter|Sub|Prop
+          |Proc|Proto|Macro|Given|Style|Compo|Field
+          |Ext|Pred|Data|Trait|Lemma|Iter|Sub|Prop|Const
           # lowerFlatCase
           |true|false|null|void|nan|infin|empty|unit
-          |any|mixed|just|some|none|never|(im)?pure
+          |any|mixed|just|some|none|never|(im)?pure|const
           )(?![\w\p{Pd}])
-        name: support.type.primitive.pr
+        name: support.type.primitive.protea
       - comment: Error classes | BaseError, etc
         match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)?(Error|Exception)\b
-        name: support.class.error.pr
+        name: support.class.error.protea
       - comment: Interface classes | IEnumerable, etc
         match: \s*\bI((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)\b
-        name: entity.name.interface.pr
+        name: entity.name.interface.protea
       - comment: Namespace classes | NSString, etc
         match: \s*\bNS((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)\b
-        name: entity.name.namespace.pr
+        name: entity.name.namespace.protea
       - comment: Trait classes | Serializable, Loggable etc
         match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)able\b
-        name: support.class.trait.pr
+        name: support.class.trait.protea
       - comment: Swift
       - include: source.swift#builtin-types
       - comment: Python
@@ -298,10 +335,10 @@ repository:
     patterns:
       - comment: isName functions
         match: (?x)\s*\bis(\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+\b\s*
-        name: support.function.predicate.pr
+        name: support.function.predicate.protea
       - comment: magic functions
         match: (?x)\s*\b_+([\p{Pc}\p{L}][\w\p{Pd}]*)+_+\b\s*
-        name: support.function.magic.pr
+        name: support.function.magic.protea
       - comment: Swift
       - include: source.swift#builtin-functions
       - comment: JavaScript
@@ -339,18 +376,18 @@ repository:
           )
           )\b
         captures:
-          1: {name: entity.name.tag.pr}
-          2: {name: entity.name.tag.pr support.class.component.pr}
-          3: {name: entity.name.class.builtin.pr}
-          4: {name: entity.name.function.method.pr}
-          5: {name: variable.other.global.pr}
-          6: {name: variable.other.constant.object.pr}
-          7: {name: variable.other.conditional.pr}
-          8: {name: variable.other.object.pr}
-          9: {name: entity.name.function.tagged-template.pr}
-          10: {name: entity.name.type.pr}
-          11: {name: entity.name.class.pr}
-          12: {name: entity.name.function.pr}
+          1: {name: entity.name.tag.protea}
+          2: {name: entity.name.tag.protea support.class.component.protea}
+          3: {name: entity.name.class.builtin.protea}
+          4: {name: entity.name.function.method.protea}
+          5: {name: variable.other.global.protea}
+          6: {name: variable.other.constant.object.protea}
+          7: {name: variable.other.conditional.protea}
+          8: {name: variable.other.object.protea}
+          9: {name: entity.name.function.tagged-template.protea}
+          10: {name: entity.name.type.protea}
+          11: {name: entity.name.class.protea}
+          12: {name: entity.name.function.protea}
       - include: $self
   constant-names:
     comment: Names for constants, symbols and static properties
@@ -384,38 +421,38 @@ repository:
           (true)|(false)|(null)|(void)|(nan)|(infin)
           )(?![\w\p{Pd}])\s*
         captures:
-          1: {name: constant.language.boolean.true.pr}
-          2: {name: constant.language.boolean.false.pr}
-          3: {name: constant.language.null.pr}
-          4: {name: constant.language.undefined.pr}
-          5: {name: constant.language.nan.pr}
-          6: {name: constant.language.infinity.pr}
+          1: {name: constant.language.boolean.true.protea}
+          2: {name: constant.language.boolean.false.protea}
+          3: {name: constant.language.null.protea}
+          4: {name: constant.language.undefined.protea}
+          5: {name: constant.language.nan.protea}
+          6: {name: constant.language.infinity.protea}
       - match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(?:
-          (it|this|that|super|self)#1
+          (it|this|that|sub|self)#1
           |(args)#2
           |(ctor)#3
           |(prot)#4
-          |(pro)#5
+          |(proto)#5
           )(?![\w\p{Pd}])\s*
         captures:
-          1: {name: variable.language.$1.pr}
-          2: {name: variable.language.arguments.pr}
-          3: {name: variable.language.constructor.pr}
-          4: {name: variable.language.prototype.pr}
-          5: {name: variable.language.proto.pr}
+          1: {name: variable.language.$1.protea}
+          2: {name: variable.language.arguments.protea}
+          3: {name: variable.language.constructor.protea}
+          4: {name: variable.language.prototype.protea}
+          5: {name: variable.language.proto.protea}
   symbols:
     patterns:
       - match: (?x)\s*@[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
-        name: entity.name.class.decorator.pr
+        name: entity.name.class.decorator.protea
       - match: \s*\B(:)(?=['"])
-        name: punctuation.definition.symbol.pr
+        name: punctuation.definition.symbol.protea
       - begin: \s*\B(:)(\w|\\.)
         beginCaptures:
-          1: {name: punctuation.definition.symbol.pr}
-          2: {name: constant.other.symbol.pr}
+          1: {name: punctuation.definition.symbol.protea}
+          2: {name: constant.other.symbol.protea}
         end: (?=[\s.,:;'"`</>(){}\[\]]|$|[?!:]:|[!?]\.)
-        name: constant.other.symbol.pr
+        name: constant.other.symbol.protea
         patterns:
           - include: "#string-content"
 
@@ -424,9 +461,9 @@ repository:
   numbers:
     patterns:
       - match: (?<=(^|[({\[])\s*\d\w*)\.
-        name: punctuation.separator.decimal.period.pr
+        name: punctuation.separator.decimal.period.protea
       - match: (?<=(^|[({\[])\s*|\s)\.(?=\d)
-        name: punctuation.separator.decimal.period.pr
+        name: punctuation.separator.decimal.period.protea
       - match: |
           (?ix)\s*\b
           ((?:[2-9]|[1-9]\d+)b)# radix/base prefix
@@ -441,14 +478,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.arbitrary-radix.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.arbitrary-radix.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           ((?:[2-9]|[1-9]\d+)b)# radix prefix
@@ -463,14 +500,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.arbitrary-radix.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.arbitrary-radix.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0b)# radix/base prefix
@@ -485,14 +522,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.binary.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.binary.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0b)# radix prefix
@@ -507,14 +544,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.binary.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.binary.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0q)# radix/base prefix
@@ -529,14 +566,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.quaternary.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.quaternary.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0q)# radix prefix
@@ -551,14 +588,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.quaternary.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.quaternary.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0s)# radix/base prefix
@@ -573,14 +610,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.senary.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.senary.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0s)# radix prefix
@@ -595,14 +632,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.senary.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.senary.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0o)# radix/base prefix
@@ -617,14 +654,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.octal.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.octal.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0o)# radix prefix
@@ -639,14 +676,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.octal.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.octal.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0z)# radix/base prefix
@@ -661,14 +698,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.duodecimal.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.duodecimal.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0z)# radix prefix
@@ -683,14 +720,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.duodecimal.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.duodecimal.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0x)# radix/base prefix
@@ -705,14 +742,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.hexadecimal.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.hexadecimal.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (0x)# radix prefix
@@ -727,14 +764,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.hexadecimal.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.hexadecimal.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           ()# radix/base prefix
@@ -749,14 +786,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.decimal.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.decimal.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           ()# radix prefix
@@ -771,14 +808,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: constant.numeric.decimal.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: constant.numeric.decimal.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (\d+(?=\w+))# radix/base prefix
@@ -793,14 +830,14 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: invalid.illegal.numeric.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: invalid.illegal.numeric.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
       - match: |
           (?ix)\s*\b
           (\d+(?=\w+))# radix prefix
@@ -815,49 +852,49 @@ repository:
           (\:[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?# type suffix
           \b\s*
         captures:
-          0: {name: invalid.illegal.numeric.pr}
-          1: {name: storage.type.numeric.pr}
-          2: {name: punctuation.separator.decimal.period.pr}
-          3: {name: punctuation.separator.decimal.repeating.pr}
-          4: {name: punctuation.separator.decimal.fraction.pr}
-          5: {name: constant.numeric.other.exponent.pr}
-          6: {name: constant.numeric.other.precision.pr}
-          7: {name: storage.type.numeric.pr}
+          0: {name: invalid.illegal.numeric.protea}
+          1: {name: storage.type.numeric.protea}
+          2: {name: punctuation.separator.decimal.period.protea}
+          3: {name: punctuation.separator.decimal.repeating.protea}
+          4: {name: punctuation.separator.decimal.fraction.protea}
+          5: {name: constant.numeric.other.exponent.protea}
+          6: {name: constant.numeric.other.precision.protea}
+          7: {name: storage.type.numeric.protea}
 
   strings-quoted:
     patterns:
       - comment: multi-single quoted string
         begin: (?<!'+)\s*('''+)
-        contentName: string.quoted.single.pr
+        contentName: string.quoted.single.protea
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.pr}
+          1: {name: punctuation.definition.string.protea}
         patterns:
           - include: "#embedded-raw"
       - comment: single quoted string
         begin: (?<!'+)\s*(')
-        contentName: string.quoted.single.pr
+        contentName: string.quoted.single.protea
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.pr}
+          1: {name: punctuation.definition.string.protea}
         patterns:
           - match: "''"
-            name: constant.character.escape.pr
+            name: constant.character.escape.protea
           - include: "#embedded-raw"
       - comment: multi-double quoted string
         begin: (?<!"+)\s*("""+)
-        contentName: string.quoted.double.pr
+        contentName: string.quoted.double.protea
         end: \s*((\1)(?!"+))
         captures:
-          1: {name: punctuation.definition.string.pr}
+          1: {name: punctuation.definition.string.protea}
         patterns:
           - include: "#string-content"
       - comment: double quoted string
         begin: (?<!"+)\s*(")
-        contentName: string.quoted.double.pr
+        contentName: string.quoted.double.protea
         end: \s*((\1)(?!"+))
         captures:
-          1: {name: punctuation.definition.string.pr}
+          1: {name: punctuation.definition.string.protea}
         patterns:
           - include: "#string-content"
 
@@ -870,117 +907,117 @@ repository:
     patterns:
       - comment: Binary escape sequences
         match: (?ix)\\b[01]{1,21}
-        name: constant.character.escape.binary.pr
+        name: constant.character.escape.binary.protea
       - comment: Binary escape sequences
         begin: (?ix)\\b{
         end: \s*}
-        name: constant.character.escape.binary.pr
+        name: constant.character.escape.binary.protea
         patterns:
           - match: \b[01]{1,21}\b
-            name: constant.character.escape.binary.pr
+            name: constant.character.escape.binary.protea
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.pr
+            name: invalid.illegal.unrecognized-string-escape.protea
       - comment: Quaternary escape sequences
         match: (?ix)\\q[0-3]{1,11}
-        name: constant.character.escape.quaternary.pr
+        name: constant.character.escape.quaternary.protea
       - comment: Quaternary escape sequences
         begin: (?ix)\\q{
         end: \s*}
-        name: constant.character.escape.quaternary.pr
+        name: constant.character.escape.quaternary.protea
         patterns:
           - match: \b[0-3]{1,11}\b
-            name: constant.character.escape.quaternary.pr
+            name: constant.character.escape.quaternary.protea
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.pr
+            name: invalid.illegal.unrecognized-string-escape.protea
       - comment: Senary escape sequences
         match: (?ix)\\s[0-5]{1,8}
-        name: constant.character.escape.senary.pr
+        name: constant.character.escape.senary.protea
       - comment: Senary escape sequences
         begin: (?ix)\\s{
         end: \s*}
-        name: constant.character.escape.senary.pr
+        name: constant.character.escape.senary.protea
         patterns:
           - match: \b[0-5]{1,8}\b
-            name: constant.character.escape.senary.pr
+            name: constant.character.escape.senary.protea
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.pr
+            name: invalid.illegal.unrecognized-string-escape.protea
       - comment: Octal escape sequences
         match: (?ix)\\o[0-7]{1,7}
-        name: constant.character.escape.octal.pr
+        name: constant.character.escape.octal.protea
       - comment: Octal escape sequences
         begin: (?ix)\\o{
         end: \s*}
-        name: constant.character.escape.octal.pr
+        name: constant.character.escape.octal.protea
         patterns:
           - match: \b[0-7]{1,7}\b
-            name: constant.character.escape.octal.pr
+            name: constant.character.escape.octal.protea
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.pr
+            name: invalid.illegal.unrecognized-string-escape.protea
       - comment: Decimal escape sequences
         match: (?ix)\\d?\d{1,7}
-        name: constant.character.escape.decimal.pr
+        name: constant.character.escape.decimal.protea
       - comment: Decimal escape sequences
         begin: (?ix)\\d{
         end: \s*}
-        name: constant.character.escape.decimal.pr
+        name: constant.character.escape.decimal.protea
         patterns:
           - match: \b\d{1,7}\b
-            name: constant.character.escape.decimal.pr
+            name: constant.character.escape.decimal.protea
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.pr
+            name: invalid.illegal.unrecognized-string-escape.protea
       - comment: Duodecimal escape sequences
         match: (?ix)\\z[\dab]{1,6}
-        name: constant.character.escape.duodecimal.pr
+        name: constant.character.escape.duodecimal.protea
       - comment: Duodecimal escape sequences
         begin: (?ix)\\z{
         end: \s*}
-        name: constant.character.escape.duodecimal.pr
+        name: constant.character.escape.duodecimal.protea
         patterns:
           - match: \b[\dab]{1,6}\b
-            name: constant.character.escape.duodecimal.pr
+            name: constant.character.escape.duodecimal.protea
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.pr
+            name: invalid.illegal.unrecognized-string-escape.protea
       - comment: Hexadecimal escape sequences
         match: (?ix)\\[ux]\h{1,6}
-        name: constant.character.escape.hexadecimal.pr
+        name: constant.character.escape.hexadecimal.protea
       - comment: Hexadecimal escape sequences
         begin: (?ix)\\[ux]{
         end: \s*}
-        name: constant.character.escape.hexadecimal.pr
+        name: constant.character.escape.hexadecimal.protea
         patterns:
           - match: \b\h{1,6}\b
-            name: constant.character.escape.hexadecimal.pr
+            name: constant.character.escape.hexadecimal.protea
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.pr
+            name: invalid.illegal.unrecognized-string-escape.protea
 
   string-escapes:
     patterns:
       - match: \\(?=\s*$)
-        name: constant.character.escape.newline.pr
+        name: constant.character.escape.newline.protea
       - begin: (?i)\\j{
         end: \s*}
-        name: constant.character.entity.named.pr
+        name: constant.character.entity.named.protea
         patterns:
           - include: "#latex-sublanguage"
       - include: "#numeric-escapes"
       - match: (?i)\\([cm][a-z])
-        name: constant.character.control.pr
+        name: constant.character.control.protea
       - match: (?i)\\[a-z]
-        name: constant.character.escape.pr
+        name: constant.character.escape.protea
       - match: (?x)\\[\p{S}\p{P}]
-        name: constant.character.escape.symbol.pr
+        name: constant.character.escape.symbol.protea
       - match: (?x)\\\p{Z}
-        name: constant.character.escape.other.pr
+        name: constant.character.escape.other.protea
       - match: (?x)\\[\p{L}\p{N}\p{C}]
-        name: invalid.illegal.unknown-escape.pr
+        name: invalid.illegal.unknown-escape.protea
 
   embedded-expression:
     patterns:
       - begin: (\${)\s*
         end: (})
-        name: entity.quasi.element.pr
+        name: entity.quasi.component.protea
         captures:
-          1: {name: punctuation.section.embedded.pr}
+          1: {name: punctuation.section.embedded.protea}
         patterns: [include: $self]
       - comment: Oniguruma supports only 20 levels of recursion
         match: |
@@ -988,20 +1025,22 @@ repository:
           (
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
           \b(?:# keywords
-          in|of|as|is|new|to|til|thru|by|del|unset
-          |var|val|let|const|decl|def|func|type|object
-          |class|enum|module|pack|struct|schema|space|pragma
-          |proc|proto|macro|given|style|elem|field
-          |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|lest|elif|elest|else
-          |for|each|loop|while|until|when
-          |with|then|do|from|ref
-          |try|throw|catch|final
-          |switch|match|case|fail
-          |race|some|every|done|spawn|kill|settle|accept|reject
-          |break|next|redo|retry|return|await|label|yield|goto|pass
-          |import|export|using|route
-          |debug|assert|where
+          in|of|as|is|new
+          |to|til|thru|by|del
+          |unset|ref|and|or|xor|not
+          |var|val|func|proc|type
+          |class|data|enum|module
+          |iter|macro|struct|object
+          |trait|style|compo|prop
+          |go|defer|do|from|where|with
+          |if|elif|else|def
+          |for|each|loop|while
+          |try|throw|catch|after
+          |match|case|goto|pass
+          |break|next|redo|retry
+          |return|yield|await|label
+          |import|export|route
+          |debug|assert|check
           )(?![\w\p{Pd}])
           )
           \b[\p{Pc}\p{L}][\p{Pd}\w]*\b
@@ -1024,7 +1063,7 @@ repository:
           )*
           )
         captures:
-          1: {name: punctuation.section.embedded.pr}
+          1: {name: punctuation.section.embedded.protea}
           2: {patterns: [include: "#everything-but-comments"]}
   format-specifier:
     comment: Oniguruma supports only 20 levels of recursion
@@ -1060,31 +1099,28 @@ repository:
       )
       )
     captures:
-      1: {name: punctuation.definition.directive.pr}
+      1: {name: punctuation.definition.directive.protea}
       2:
-        name: storage.type.format.pr
+        name: storage.type.format.protea
         patterns:
           - include: "#format-language"
           - match: .+
-            name: string.other.format.pr
+            name: string.other.format.protea
   embedded-placeholder:
-    repository:
-      function-params:
-        patterns: *function-params
     patterns:
       - match: (\#)([+-]?\d+)
         captures:
-          1: {name: punctuation.definition.anchor.pr}
-          2: {name: constant.numeric.decimal.pr}
-      - match: (\#)([?*&%$]?[\p{Pc}\p{L}][\w\p{Pd}]*)
+          1: {name: punctuation.definition.anchor.protea}
+          2: {name: constant.numeric.decimal.protea}
+      - match: (\#)((?:[*&%$]\??|\?)?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
-          1: {name: punctuation.definition.anchor.pr}
+          1: {name: punctuation.definition.anchor.protea}
           2: {patterns: [include: "#placeholder-variables"]}
       - begin: (\#{)\s*
         end: (})
-        name: entity.quasi.element.pr
+        name: entity.quasi.component.protea
         captures:
-          1: {name: punctuation.definition.anchor.pr}
+          1: {name: punctuation.definition.anchor.protea}
         patterns:
           - include: "#function-params"
           - include: $self
@@ -1096,7 +1132,7 @@ repository:
   embedded-raw:
     patterns:
       - match: \$\$|\%\%|\#\#
-        name: constant.character.escape.pr
+        name: constant.character.escape.protea
       - include: "#format-specifier"
       - include: "#embedded-placeholder"
       - include: "#embedded-expression"
@@ -1108,21 +1144,21 @@ repository:
     patterns:
       - comment: type specifier
         match: (?<=[^\\%]%)\w+
-        name: entity.other.attribute-name.pr
+        name: entity.other.attribute-name.protea
       - comment: Format switch with value /x:24
         applyEndPatternLast: 1
         begin: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)(:)
         beginCaptures:
-          1: {name: punctuation.separator.mapping.pr}
-          2: {name: entity.other.attribute-name.class.pr}
-          3: {name: punctuation.separator.key-value.pr}
+          1: {name: punctuation.separator.mapping.protea}
+          2: {name: entity.other.attribute-name.class.protea}
+          3: {name: punctuation.separator.key-value.protea}
         end: (?=.)|$
         patterns: [include: "#html-properties"]
       - comment: Format switch without value
         match: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
-          1: {name: punctuation.separator.mapping.pr}
-          2: {name: entity.other.attribute-name.id.pr}
+          1: {name: punctuation.separator.mapping.protea}
+          2: {name: entity.other.attribute-name.id.protea}
 
   # Unicode Named Character Language
 
@@ -1130,44 +1166,44 @@ repository:
     comment: Grammar for the Unicode Named Character Mini-Language.
     patterns:
       - include: "#embedded"
-      - name: line.separator.math.pr
+      - name: line.separator.math.protea
         match: (\\\\)$
         captures:
-          1: {name: punctuation.line.separator.math.pr}
-      - name: meta.function.math.pr
+          1: {name: punctuation.line.separator.math.protea}
+      - name: meta.function.math.protea
         begin: ((\\)([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*))(\{)
         beginCaptures:
-          1: {name: storage.type.function.math.pr}
-          2: {name: punctuation.definition.function.math.pr}
+          1: {name: storage.type.function.math.protea}
+          2: {name: punctuation.definition.function.math.protea}
           3:
             patterns:
               - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-                name: entity.name.namespace.pr
+                name: entity.name.namespace.protea
               - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
-                name: entity.name.function.pr
+                name: entity.name.function.protea
               - match: \b\:\b
-                name: punctuation.separator.namespace.pr
+                name: punctuation.separator.namespace.protea
               - match: \b\.\b
-                name: punctuation.accessor.pr
-          4: {name: punctuation.definition.arguments.begin.math.pr}
+                name: punctuation.accessor.protea
+          4: {name: punctuation.definition.arguments.begin.math.protea}
         end: \}
         endCaptures:
-          0: {name: punctuation.definition.arguments.end.math.pr}
+          0: {name: punctuation.definition.arguments.end.math.protea}
         patterns:
           - include: "#latex-sublanguage"
       - match: (\\)\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
         captures:
-          1: {name: punctuation.definition.constant.pr}
+          1: {name: punctuation.definition.constant.protea}
           2:
             patterns:
               - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-                name: constant.other.namespace.pr
+                name: constant.other.namespace.protea
               - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
-                name: constant.character.math.pr
+                name: constant.character.math.protea
               - match: \b\:\b
-                name: punctuation.separator.namespace.pr
+                name: punctuation.separator.namespace.protea
               - match: \b\.\b
-                name: punctuation.accessor.pr
+                name: punctuation.accessor.protea
       - match: "[-+*/^]"
         name: punctuation.math.operator.latex
       - include: "#string-escapes"
@@ -1180,35 +1216,35 @@ repository:
       - comment: Replacement section
         begin: (?<=`+)\s*(```+|`)
         end: \s*(?:(\1)(?!`+))(\p{Alnum}*)
-        contentName: string.replace.regexp.pr
+        contentName: string.replace.regexp.protea
         captures:
-          1: {name: punctuation.section.regexp.end.pr}
-          2: {name: keyword.other.flag.pr}
+          1: {name: punctuation.section.regexp.end.protea}
+          2: {name: keyword.other.flag.protea}
         patterns:
           - include: "#back-references"
           - include: "#string-content"
       - comment: Pattern section
         begin: \s*(\p{Alnum}*)(?<!`+)(```+|`)
         end: \s*(?:(\2)(?!`+))(\p{Alnum}*)
-        contentName: string.pattern.regexp.pr
+        contentName: string.pattern.regexp.protea
         beginCaptures:
-          1: {name: keyword.modifier.pr}
-          2: {name: punctuation.section.regexp.begin.pr}
+          1: {name: keyword.modifier.protea}
+          2: {name: punctuation.section.regexp.begin.protea}
         endCaptures:
-          1: {name: punctuation.section.regexp.end.pr}
-          2: {name: keyword.other.flag.pr}
+          1: {name: punctuation.section.regexp.end.protea}
+          2: {name: keyword.other.flag.protea}
         patterns:
           - include: "#comments"
           - include: "#regexp-patterns"
   back-references:
     patterns:
       - match: \$(\d+|[+-]\d*|&)
-        name: keyword.other.back-reference.pr
+        name: keyword.other.back-reference.protea
       - begin: (\$<)\s*
         end: \s*(>)
-        name: keyword.other.back-reference.pr
+        name: keyword.other.back-reference.protea
         captures:
-          1: {name: keyword.other.back-reference.pr}
+          1: {name: keyword.other.back-reference.protea}
         patterns: &regex-back-references
           - include: "#variables"
           - include: "#numbers"
@@ -1216,9 +1252,9 @@ repository:
           - include: "#string-content"
       - begin: (\$(['"]))\s*
         end: \s*(\2)
-        name: keyword.other.back-reference.pr
+        name: keyword.other.back-reference.protea
         captures:
-          1: {name: keyword.other.back-reference.pr}
+          1: {name: keyword.other.back-reference.protea}
         patterns: *regex-back-references
   regexp-patterns:
     patterns:
@@ -1226,121 +1262,121 @@ repository:
       - include: "#comments"
       - include: "#strings-quoted"
       - match: \|
-        name: keyword.operator.or.pr
+        name: keyword.operator.or.protea
       - match: \&
-        name: keyword.operator.compose.pr
+        name: keyword.operator.compose.protea
       - match: \.
-        name: constant.character.all.pr
+        name: constant.character.all.protea
       - match: \\[bB]({[\w\s]+})?
-        name: keyword.control.anchor.pr
+        name: keyword.control.anchor.protea
       - match: \$|\\[yYzZ]({[\w\s]+})?
-        name: keyword.control.end.pr}
+        name: keyword.control.end.protea}
       - match: \^|\\[AmM]({[\w\s]+})?
-        name: keyword.control.begin.pr
+        name: keyword.control.begin.protea
       - match: \\K
-        name: keyword.control.keepout.pr
+        name: keyword.control.keepout.protea
       - match: \\G
-        name: keyword.control.search.pr
+        name: keyword.control.search.protea
       - match: \\R
-        name: constant.character.control.pr
+        name: constant.character.control.protea
       - match: \\[XO]
-        name: constant.character.unicode.pr
+        name: constant.character.unicode.protea
       - match: (\\\()(?:(\?)|(\+)|(\*))
         captures:
-          1: {name: constant.character.escape.other.pr}
-          2: {name: keyword.operator.quantifier.lazy.pr}
-          3: {name: keyword.operator.quantifier.eager.pr}
-          4: {name: keyword.operator.quantifier.greedy.pr}
+          1: {name: constant.character.escape.other.protea}
+          2: {name: keyword.operator.quantifier.lazy.protea}
+          3: {name: keyword.operator.quantifier.eager.protea}
+          4: {name: keyword.operator.quantifier.greedy.protea}
       - match: \\\d+
-        name: keyword.other.back-reference.pr
+        name: keyword.other.back-reference.protea
       - match: \{(\s*\d*\s*(?:,?\s*\d*\s*)*)\}
-        name: keyword.operator.quantifier.pr
+        name: keyword.operator.quantifier.protea
       - begin: (\\k<)
         end: \s*(>)
-        name: constant.other.back-reference.pr
+        name: constant.other.back-reference.protea
         captures:
-          1: {name: keyword.other.back-reference.pr}
+          1: {name: keyword.other.back-reference.protea}
         patterns: *regex-back-references
       - begin: (\\g<)
         end: \s*(>)
-        name: constant.other.subroutine.pr
+        name: constant.other.subroutine.protea
         captures:
-          1: {name: keyword.other.subroutine.pr}
+          1: {name: keyword.other.subroutine.protea}
         patterns: *regex-back-references
       - begin: (\\k('''+|"""+|'|"))
         end: \s*(\2)
-        name: constant.other.back-reference.pr
+        name: constant.other.back-reference.protea
         captures:
-          1: {name: keyword.other.back-reference.pr}
+          1: {name: keyword.other.back-reference.protea}
         patterns: *regex-back-references
       - begin: (\\g('''+|"""+|'|"))
         end: \s*(\2)
-        name: constant.other.subroutine.pr
+        name: constant.other.subroutine.protea
         captures:
-          1: {name: keyword.other.subroutine.pr}
+          1: {name: keyword.other.subroutine.protea}
         patterns: *regex-back-references
       - match: (?<=[^\\][*+?}])(?:(\?)|(\+)|(\*))
         captures:
-          1: {name: keyword.operator.modifier.lazy.pr}
-          2: {name: keyword.operator.modifier.eager.pr}
-          3: {name: keyword.operator.modifier.greedy.pr}
+          1: {name: keyword.operator.modifier.lazy.protea}
+          2: {name: keyword.operator.modifier.eager.protea}
+          3: {name: keyword.operator.modifier.greedy.protea}
       - match: (\?)|(\+)|(\*)
         captures:
-          1: {name: keyword.operator.quantifier.lazy.pr}
-          2: {name: keyword.operator.quantifier.eager.pr}
-          3: {name: keyword.operator.quantifier.greedy.pr}
+          1: {name: keyword.operator.quantifier.lazy.protea}
+          2: {name: keyword.operator.quantifier.eager.protea}
+          3: {name: keyword.operator.quantifier.greedy.protea}
       - include: "#regexp-groups"
       - include: "#regexp-char-set"
       - include: "#regexp-char-class"
       - match: \\.
-        name: constant.character.escape.other.pr
+        name: constant.character.escape.other.protea
   regexp-groups:
     patterns:
       - comment: Embedded expression
         begin: \(\??([*+])
         end: \s*(\))
-        name: constant.other.pcre.pr
+        name: constant.other.pcre.protea
         captures:
-          0: {name: punctuation.section.expression.pr}
+          0: {name: punctuation.section.expression.protea}
         patterns:
           - include: $self
       - comment: Block comment
         begin: (\()(\?#)
-        contentName: comment.block.regexp.pr
+        contentName: comment.block.regexp.protea
         end: \s*(\))
-        name: comment.block.regexp.pr
+        name: comment.block.regexp.protea
         captures:
-          1: {name: punctuation.definition.comment.pr}
+          1: {name: punctuation.definition.comment.protea}
         patterns:
           - match: \\.
-            name: comment.block.regexp.pr
+            name: comment.block.regexp.protea
       - comment: Lookahead assertion
         begin: (\(\?=)
         end: \s*(\))
-        name: meta.group.look-ahead.pr
+        name: meta.group.look-ahead.protea
         captures:
-          1: {name: punctuation.definition.group.look-ahead.pr}
+          1: {name: punctuation.definition.group.look-ahead.protea}
         patterns: [include: "#regexp-patterns"]
       - comment: Lookbehind assertion
         begin: (\(\?<=)
         end: \s*(\))
-        name: meta.group.look-behind.pr
+        name: meta.group.look-behind.protea
         captures:
-          1: {name: punctuation.definition.group.look-behind.pr}
+          1: {name: punctuation.definition.group.look-behind.protea}
         patterns: [include: "#regexp-patterns"]
       - comment: Negative lookahead assertion
         begin: (\(\?!)
         end: \s*(\))
-        name: meta.group.negative-look-ahead.pr
+        name: meta.group.negative-look-ahead.protea
         captures:
-          1: {name: punctuation.definition.group.negative-look-ahead.pr}
+          1: {name: punctuation.definition.group.negative-look-ahead.protea}
         patterns: [include: "#regexp-patterns"]
       - comment: Negative lookbehind assertion
         begin: (\(\?<!)
         end: \s*(\))
-        name: meta.group.negative-look-behind.pr
+        name: meta.group.negative-look-behind.protea
         captures:
-          1: {name: punctuation.definition.group.negative-look-behind.pr}
+          1: {name: punctuation.definition.group.negative-look-behind.protea}
         patterns: [include: "#regexp-patterns"]
       - comment: Match directive Oniguruma supports only 20 levels of recursion
         begin: |
@@ -1375,197 +1411,197 @@ repository:
           )
           )
         captures:
-          1: {name: punctuation.definition.directive.pr}
+          1: {name: punctuation.definition.directive.protea}
           2:
-            name: storage.type.format.pr
+            name: storage.type.format.protea
             patterns:
               - include: "#format-language"
               - match: .+
-                name: string.other.format.pr
+                name: string.other.format.protea
         end: \s*(\))
-        name: meta.group.directive.pr
+        name: meta.group.directive.protea
         patterns: [include: "#regexp-patterns"]
       - comment: Longest match
         begin: (\(\?/=?)
         end: \s*(\))
-        name: meta.group.longest.pr
+        name: meta.group.longest.protea
         captures:
-          1: {name: punctuation.definition.group.longest.pr}
+          1: {name: punctuation.definition.group.longest.protea}
         patterns: [include: "#regexp-patterns"]
       - comment: Flag modifier group
         begin: (\(\?\^?(?:([+-]?\d+?)|((?:[+-]\p{Lu}+)+|\p{Lu}+(?:[+-]\p{Lu}+)*)|((?:[+-]\p{Ll}+)+|\p{Ll}+(?:[+-]\p{Ll}+)*)))\s*(:)?
         end: \s*(\))
-        name: meta.group.flag.pr
+        name: meta.group.flag.protea
         captures:
-          0: {name: punctuation.definition.group.flag.pr}
-          1: {name: punctuation.definition.group.flag.pr}
-          2: {name: constant.numeric.index.pr}
-          3: {name: keyword.control.recursion.pr}
-          4: {name: keyword.other.flag.pr}
-          5: {name: punctuation.separator.colon.pr}
+          0: {name: punctuation.definition.group.flag.protea}
+          1: {name: punctuation.definition.group.flag.protea}
+          2: {name: constant.numeric.index.protea}
+          3: {name: keyword.control.recursion.protea}
+          4: {name: keyword.other.flag.protea}
+          5: {name: punctuation.separator.colon.protea}
         patterns: [include: "#regexp-patterns"]
       - comment: Callouts
         begin: (\(\?)(?={)
         end: \s*(\))
-        name: meta.group.call-out.pr
+        name: meta.group.call-out.protea
         captures:
-          1: {name: punctuation.definition.group.call-out.pr}
+          1: {name: punctuation.definition.group.call-out.protea}
         patterns:
           - begin: (?<=\(\?)({)
             end: \s*(\})([<*>])?(?:(\[)(.*?)(\]))?
-            name: punctuation.definition.group.call-out.pr
+            name: punctuation.definition.group.call-out.protea
             captures:
-              1: {name: punctuation.definition.group.call-out.pr}
-              2: {name: keyword.operator.range.pr}
-              3: {name: punctuation.definition.tag.pr}
+              1: {name: punctuation.definition.group.call-out.protea}
+              2: {name: keyword.operator.range.protea}
+              3: {name: punctuation.definition.tag.protea}
               4: {patterns: [include: "#function-names"]}
-              5: {name: punctuation.definition.tag.pr}
+              5: {name: punctuation.definition.tag.protea}
             patterns:
               - include: $self
           - include: "#regexp-patterns"
       - comment: Atomic groups
         begin: (\(\?>)
         end: \s*(\))
-        name: meta.group.atomic.pr
+        name: meta.group.atomic.protea
         captures:
-          1: {name: punctuation.definition.group.atomic.pr}
+          1: {name: punctuation.definition.group.atomic.protea}
         patterns: [include: "#regexp-patterns"]
       - comment: Non-capturing groups
         begin: (\(\?:)
         end: \s*(\))
-        name: meta.group.non-capturing.pr
+        name: meta.group.non-capturing.protea
         captures:
-          1: {name: punctuation.definition.group.non-capturing.pr}
+          1: {name: punctuation.definition.group.non-capturing.protea}
         patterns: [include: "#regexp-patterns"]
       - comment: Branch groups
         begin: (\(\?)(?=[(|])
         end: \s*(\))
-        name: meta.group.branch.pr
+        name: meta.group.branch.protea
         captures:
-          1: {name: punctuation.definition.group.branch.pr}
+          1: {name: punctuation.definition.group.branch.protea}
         patterns: [include: "#regexp-patterns"]
       - comment: Atomic groups
         begin: (\(\?~)
         end: \s*(\))
-        name: meta.group.absent.pr
+        name: meta.group.absent.protea
         captures:
-          1: {name: punctuation.definition.group.absent.pr}
+          1: {name: punctuation.definition.group.absent.protea}
         patterns: [include: "#regexp-patterns"]
       - comment: Back-reference groups
         begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}][\w\p{Pd}]*)))(:)?
         end: \s*\)
-        name: meta.group.back-reference.pr
+        name: meta.group.back-reference.protea
         captures:
-          0: {name: punctuation.definition.group.back-reference.pr}
-          1: {name: punctuation.definition.group.back-reference.pr}
-          2: {name: constant.numeric.index.pr}
+          0: {name: punctuation.definition.group.back-reference.protea}
+          1: {name: punctuation.definition.group.back-reference.protea}
+          2: {name: constant.numeric.index.protea}
           3: {patterns: [include: "#variables"]}
-          4: {name: punctuation.separator.colon.pr}
+          4: {name: punctuation.separator.colon.protea}
         patterns: [include: "#regexp-patterns"]
       - comment: Named groups (angle-brackets)
         begin: \(\?(?=<(?![!=]))
         end: \s*(\))
-        name: meta.group.named.pr
+        name: meta.group.named.protea
         captures:
-          0: {name: punctuation.definition.group.named.pr}
+          0: {name: punctuation.definition.group.named.protea}
         patterns:
           - begin: (?<=\(\?)(<)
             end: \s*(>)
-            name: constant.other.group.pr
+            name: constant.other.group.protea
             captures:
-              1: {name: punctuation.definition.group.named.pr}
+              1: {name: punctuation.definition.group.named.protea}
             patterns: *regex-back-references
           - include: "#regexp-patterns"
       - comment: Named groups (single or double-quotes)
         begin: \(\?(?=['"])
         end: \s*(\))
-        name: meta.group.named.pr
+        name: meta.group.named.protea
         captures:
-          0: {name: punctuation.definition.group.named.pr}
+          0: {name: punctuation.definition.group.named.protea}
         patterns:
           - begin: (?<=\(\?)('''+|"""+|'|")
             end: \s*(\1)
-            name: constant.other.group.pr
+            name: constant.other.group.protea
             captures:
-              1: {name: punctuation.definition.group.named.pr}
+              1: {name: punctuation.definition.group.named.protea}
             patterns: *regex-back-references
           - include: "#regexp-patterns"
       - comment: Unnamed groups
         begin: (\()
         end: (\s*\))
-        name: meta.group.pr
+        name: meta.group.protea
         captures:
-          1: {name: punctuation.definition.group.pr}
+          1: {name: punctuation.definition.group.protea}
         patterns: [include: "#regexp-patterns"]
   regexp-char-class:
     patterns:
       - include: "#embedded"
       - match: \\(?=\s*$)
-        name: constant.character.escape.newline.pr
+        name: constant.character.escape.newline.protea
       - begin: (?i)\\p{
         end: \s*}
-        name: constant.other.character-class.unicode.pr
+        name: constant.other.character-class.unicode.protea
         patterns:
           - include: "#attribute-selectors"
       - begin: \\j{
         end: \s*}
-        name: constant.character.entity.named.pr
+        name: constant.character.entity.named.protea
         patterns:
           - include: "#latex-sublanguage"
       - include: "#numeric-escapes"
       - match: (?i)\\([cm][a-z])
-        name: constant.character.control.pr
+        name: constant.character.control.protea
       - match: (?i)\\p(\w\w?)
-        name: constant.other.character-class.unicode.pr
+        name: constant.other.character-class.unicode.protea
       - match: (?i)\\[ci]({\w+})?
-        name: constant.other.character-class.xml.pr
+        name: constant.other.character-class.xml.protea
       - match: (?x)\\[a-z]
-        name: constant.other.character-class.pr
+        name: constant.other.character-class.protea
       - match: (?x)\\[A-Z]
-        name: constant.other.character-class.negated.pr
+        name: constant.other.character-class.negated.protea
       - match: (?i)\\n{[\w\s\p{Pd}]+}
-        name: constant.character.escape.unicode.name.pr
+        name: constant.character.escape.unicode.name.protea
       - match: (?i)\\[\p{L}\p{N}]
-        name: constant.character.escape.pr
+        name: constant.character.escape.protea
       - match: (?x)\\[\p{S}\p{P}]
-        name: constant.character.escape.symbol.pr
+        name: constant.character.escape.symbol.protea
       - match: (?x)\\\p{Z}
-        name: constant.character.escape.other.pr
+        name: constant.character.escape.other.protea
       - match: (?x)\\\p{C}
-        name: invalid.illegal.unknown-escape.pr
+        name: invalid.illegal.unknown-escape.protea
   regexp-char-ops:
     patterns:
       - match: (?<!\|)\|\|(?!\|)
-        name: keyword.operator.union.pr
+        name: keyword.operator.union.protea
       - match: (?<!&)&&(?!&)
-        name: keyword.operator.intersection.pr
+        name: keyword.operator.intersection.protea
       - match: (?<!\^)\^\^(?!\^)
-        name: keyword.operator.symmetric.pr
+        name: keyword.operator.symmetric.protea
       - match: (?<!~)~~(?!~)
-        name: keyword.operator.negation.pr
+        name: keyword.operator.negation.protea
       - match: (?<!-)--(?!-)
-        name: keyword.operator.difference.pr
+        name: keyword.operator.difference.protea
       - match: (?<![^\\][\\\[])-(?![-\[\]])
-        name: keyword.operator.range.pr
+        name: keyword.operator.range.protea
       - match: ([^-\\\[\]]|\\.)(?<!-+)(?=(?<!\\)-)
-        name: constant.other.character-class.range.from.pr
+        name: constant.other.character-class.range.from.protea
       - match: (?<=[^\\]-)(?!-+)([^-\\\[\]]|\\.)
-        name: constant.other.character-class.range.to.pr
+        name: constant.other.character-class.range.to.protea
       - match: \\.
-        name: constant.character.escape.other.pr
+        name: constant.character.escape.other.protea
   regexp-char-set:
     patterns:
       - begin: (\[[:])
         end: (\])
-        name: constant.other.character-class.posix.pr
+        name: constant.other.character-class.posix.protea
         captures:
-          1: {name: punctuation.definition.character-class.posix.pr}
+          1: {name: punctuation.definition.character-class.posix.protea}
         patterns: [include: "#attribute-selectors"]
       - begin: (\[[!^])
         end: (\])
-        name: constant.other.character-class.negated.pr
+        name: constant.other.character-class.negated.protea
         captures:
-          1: {name: punctuation.definition.character-class.negated.pr}
+          1: {name: punctuation.definition.character-class.negated.protea}
         patterns:
           - include: "#comments"
           - include: "#regexp-char-class"
@@ -1573,9 +1609,9 @@ repository:
           - include: "#regexp-char-set"
       - begin: (\[)
         end: (\])
-        name: constant.other.character-class.pr
+        name: constant.other.character-class.protea
         captures:
-          1: {name: punctuation.definition.character-class.pr}
+          1: {name: punctuation.definition.character-class.protea}
         patterns:
           - include: "#comments"
           - include: "#regexp-char-class"
@@ -1585,30 +1621,30 @@ repository:
   attribute-selectors:
     patterns:
       - match: ","
-        name: punctuation.separator.sequence.pr
+        name: punctuation.separator.sequence.protea
       - include: "#comments"
       - include: "#strings-quoted"
       - match: (?xi)\b[is]\b(?=[)}\]]|&&|\|\||\^\^)
-        name: storage.modifier.ignore-case.pr
+        name: storage.modifier.ignore-case.protea
       - include: "#string-escapes"
       - match: "[:!=</>.^$%?*+|&~]?="
-        name: keyword.operator.pattern.pr
+        name: keyword.operator.pattern.protea
       - match: ([&|^])\1|!
-        name: keyword.operator.logical.pr
+        name: keyword.operator.logical.protea
       - match: \b(i[ns])\b
-        name: keyword.operator.expression.$1.pr
+        name: keyword.operator.expression.$1.protea
       - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)([:!=</>.^$%?*+|&~]?=)
         beginCaptures:
-          1: {name: entity.other.attribute-name.pr}
-          2: {name: keyword.operator.pattern.pr}
+          1: {name: entity.other.attribute-name.protea}
+          2: {name: keyword.operator.pattern.protea}
         end: (?=&&|\|\||\^\^|[\s,:;'"`(){}\[\]])
-        name: string.unquoted.attribute-name.pr
+        name: string.unquoted.attribute-name.protea
         patterns: [include: "#html-properties"]
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         captures:
-          1: {name: entity.other.attribute-name.pr}
-          2: {name: keyword.operator.pattern.pr}
+          1: {name: entity.other.attribute-name.protea}
+          2: {name: keyword.operator.pattern.protea}
       - include: "#operators"
 
   # Markdown
@@ -1622,7 +1658,7 @@ repository:
   html-properties:
     patterns:
       - match: \s+
-        name: meta.var.expr.pr
+        name: meta.var.expr.protea
       - include: "#clauses"
       - include: "#declarations"
       - include: source.yaml#flow-collection
@@ -1641,63 +1677,109 @@ repository:
       - include: "#embedded"
   tag-names:
     match: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b\s*
-    name: entity.name.tag.pr
+    name: entity.name.tag.protea
     captures:
       1:
-        name: entity.name.tag.pr
+        name: entity.name.tag.protea
         patterns:
           - match: "[.:]"
-            name: punctuation.separator.namespace.pr
+            name: punctuation.separator.namespace.protea
           - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[:.])
-            name: entity.name.tag.namespace.pr
+            name: entity.name.tag.namespace.protea
           - match: ([\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)\b
-            name: support.class.component.pr
+            name: support.class.component.protea
           - include: source.css#tag-names
   style-block:
     begin: \s*(\{)\s*
     end: \s*(\})
     captures:
-      1: {name: punctuation.definition.block.pr}
+      1: {name: punctuation.definition.block.protea}
     patterns: [include: "#style-properties"]
   style-properties:
     patterns:
       - include: "#clauses"
       - include: "#declarations"
+      - include: source.css.scss#variable_setting
+      - include: source.css.scss#at_rule_forward
+      - include: source.css.scss#at_rule_use
+      - include: source.css.scss#at_rule_include
+      - include: source.css.scss#at_rule_import
+      - include: source.css.scss#general
+      - include: source.css.scss#flow_control
+      - include: source.css.scss#rules
+      - include: source.css.scss#at_rule_mixin
+      - include: source.css.scss#at_rule_media
+      - include: source.css.scss#at_rule_function
+      - include: source.css.scss#at_rule_charset
+      - include: source.css.scss#at_rule_option
+      - include: source.css.scss#at_rule_namespace
+      - include: source.css.scss#at_rule_fontface
+      - include: source.css.scss#at_rule_page
+      - include: source.css.scss#at_rule_keyframes
+      - include: source.css.scss#at_rule_at_root
+      - include: source.css.scss#at_rule_supports
       - applyEndPatternLast: 1
-        begin: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)\s*
+        begin: |
+          (?x)
+          \s*
+          (
+          [\p{Pd}$]?
+          (?:
+          # Recursive brackets
+          \$(?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )+
+          )
+          (:)\s*
         beginCaptures:
-          1: {name: support.type.property-name.pr}
-          2: {name: punctuation.separator.key-value.pr}
+          1:
+            name: support.type.property-name.protea
+            patterns: [include: "#embedded"]
+          8: {name: punctuation.separator.key-value.protea}
         end: (?=.)|$
-        name: string.unquoted.pr
+        name: string.unquoted.protea
         patterns: [include: "#html-properties"]
-      - include: "#style-rules"
       - include: "#style-block"
+      - include: "#style-rules"
       - include: $self
   style-rules:
     patterns:
       - begin: \s*(\()\s*
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.parameters.pr}
-        patterns: [include: "#style-properties"]
+          1: {name: punctuation.definition.parameters.protea}
+        patterns:
+          - include: "#function-params"
+          - include: "#style-properties"
       - begin: \s*(\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.selector.pr}
+          1: {name: punctuation.definition.selector.protea}
         patterns: [include: "#attribute-selectors"]
       - match: \s*(\@|\#|\$|\&|\*|\.|\:|::)\b
-        name: punctuation.definition.entity.pr
+        name: punctuation.definition.entity.protea
       - match: \s*(?<=\@)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: keyword.control.at-rule.pr
+        name: keyword.control.at-rule.protea
       - match: \s*(?<=\#)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.id.pr
+        name: entity.other.attribute-name.id.protea
       - match: \s*(?<=\&)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.name.type.anchor.pr
+        name: entity.name.type.anchor.protea
       - match: \s*(?<=\.)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.class.pr
+        name: entity.other.attribute-name.class.protea
       - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.pseudo-element.pr
+        name: entity.other.attribute-name.pseudo-component.protea
       - include: "#format-language"
       - include: "#tag-names"
 
@@ -1712,68 +1794,70 @@ repository:
       \#?[({\[]\s*|
       [\p{Pc}\p{L}][\w\p{Pd}]*|
       (?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s+|
-      \b(?:#keywords
-      in|of|as|is|new|to|til|thru|by|del|unset
-      |var|val|let|const|decl|def|func|type|object
-      |class|enum|module|pack|struct|schema|space|pragma
-      |proc|proto|macro|given|style|elem|field
-      |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|lest|elif|elest|else
-      |for|each|loop|while|until|when
-      |with|then|do|from|ref
-      |try|throw|catch|final
-      |switch|match|case|fail
-      |race|some|every|done|spawn|kill|settle|accept|reject
-      |break|next|redo|retry|return|await|label|yield|goto|pass
-      |import|export|using|route
-      |debug|assert|where
+      \b(?:# keywords
+      in|of|as|is|new
+      |to|til|thru|by|del
+      |unset|ref|and|or|xor|not
+      |var|val|func|proc|type
+      |class|data|enum|module
+      |iter|macro|struct|object
+      |trait|style|compo|prop
+      |go|defer|do|from|where|with
+      |if|elif|else|def
+      |for|each|loop|while
+      |try|throw|catch|after
+      |match|case|goto|pass
+      |break|next|redo|retry
+      |return|yield|await|label
+      |import|export|route
+      |debug|assert|check
       )\b)\s*)
       (?=<[\p{Pc}\p{L}]|<\s+>)
     end: (?=.)|$
     applyEndPatternLast: 1
-    patterns: [include: "#tag-element-name"]
-  tag-element-name:
+    patterns: [include: "#tag-component-name"]
+  tag-component-name:
     patterns:
       - comment: JSX Fragment
-        contentName: string.unquoted.html.pr
+        contentName: string.unquoted.html.protea
         begin: \s*(<)\s*(?=>)
         end: (?<=</)(>)
         beginCaptures:
-          1: {name: punctuation.definition.tag.pr}
+          1: {name: punctuation.definition.tag.protea}
         endCaptures:
-          1: {name: punctuation.definition.tag.pr}
+          1: {name: punctuation.definition.tag.protea}
         patterns:
           - include: "#tag-termination"
       - comment: Tags that end > are trapped in tag-termination
-        contentName: string.unquoted.html.pr
+        contentName: string.unquoted.html.protea
         begin: |
           (?x)\s*+(<)#start tag begin
           ([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)#tag name
           (?=[\/>\s])(?![:])(?<!\.|:)
         end: \s*(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>
         beginCaptures:
-          1: {name: punctuation.definition.tag.pr}
+          1: {name: punctuation.definition.tag.protea}
           2: {patterns: [include: "#tag-names"]}
         endCaptures:
           1: {patterns: [include: "#tag-names"]}
-          2: {name: punctuation.definition.tag.pr}
-          3: {name: punctuation.definition.tag.pr}
-          4: {name: invalid.illegal.termination.pr}
+          2: {name: punctuation.definition.tag.protea}
+          3: {name: punctuation.definition.tag.protea}
+          4: {name: invalid.illegal.termination.protea}
         patterns:
           - include: "#tag-termination"
           - include: "#tag-attributes"
   tag-termination:
     comment: uses non consuming search for </ in </tag>
-    contentName: meta.jsx.children.pr
-    name: meta.jsx.children.pr
+    contentName: meta.jsx.children.protea
+    name: meta.jsx.children.protea
     begin: (>)
     end: (</)
     captures:
-      0: {name: punctuation.definition.tag.pr}
+      0: {name: punctuation.definition.tag.protea}
     patterns:
       - include: "#evaluated-code"
       - include: "#jsx-entities"
-      - include: "#tag-element-name"
+      - include: "#tag-component-name"
       - include: "#string-content"
       - include: markdown.math.block
       - include: text.html.markdown#inline
@@ -1787,56 +1871,56 @@ repository:
       - applyEndPatternLast: 1
         begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(=)\s*
         beginCaptures:
-          1: {name: entity.other.attribute-name.pr}
-          2: {name: punctuation.separator.key-value.pr}
+          1: {name: entity.other.attribute-name.protea}
+          2: {name: punctuation.separator.key-value.protea}
         end: (?=.)|$
-        name: string.unquoted.attribute-name.pr
+        name: string.unquoted.attribute-name.protea
         patterns: [include: "#html-properties"]
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(=)?\s*
         captures:
-          1: {name: entity.other.attribute-name.pr}
-          2: {name: punctuation.separator.key-value.pr}
+          1: {name: entity.other.attribute-name.protea}
+          2: {name: punctuation.separator.key-value.protea}
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
     match: (?<!\*)\*(?!\*)
-    name: keyword.operator.spread.pr
+    name: keyword.operator.spread.protea
   jsx-entities:
     patterns:
       - captures: &jsx-entities
-          1: {name: punctuation.definition.entity.pr}
-          2: {name: punctuation.definition.entity.pr}
+          1: {name: punctuation.definition.entity.protea}
+          2: {name: punctuation.definition.entity.protea}
         match: (&)#\d+(;)
-        name: constant.character.escape.decimal.pr
+        name: constant.character.escape.decimal.protea
       - captures: *jsx-entities
         match: (?i)(&)#x\h+(;)
-        name: constant.character.escape.hexadecimal.pr
+        name: constant.character.escape.hexadecimal.protea
       - captures: *jsx-entities
         match: (?i)(&)#b[01]+(;)
-        name: constant.character.escape.binary.pr
+        name: constant.character.escape.binary.protea
       - captures: *jsx-entities
         match: (?i)(&)#q[0-3]\h+(;)
-        name: constant.character.escape.quaternary.pr
+        name: constant.character.escape.quaternary.protea
       - captures: *jsx-entities
         match: (?i)(&)#s[0-5]\h+(;)
-        name: constant.character.escape.senary.pr
+        name: constant.character.escape.senary.protea
       - captures: *jsx-entities
         match: (?i)(&)#o[0-7]\h+(;)
-        name: constant.character.escape.octal.pr
+        name: constant.character.escape.octal.protea
       - captures: *jsx-entities
         match: (?i)(&)#o[0-7]\h+(;)
-        name: constant.character.escape.octal.pr
+        name: constant.character.escape.octal.protea
       - captures: *jsx-entities
         match: (?i)(&)#z[\dab]\h+(;)
-        name: constant.character.escape.duodecimal.pr
+        name: constant.character.escape.duodecimal.protea
       - captures: *jsx-entities
         match: (&)(?:\\.|[^(){}\[\]\s;])+?(;)
         name: constant.character.entity.xml
       - match: '&(?=\w*;)'
-        name: invalid.illegal.ambiguous-ampersand.pr
+        name: invalid.illegal.ambiguous-ampersand.protea
       - comment: Entity with & and invalid name
         match: '&\s*+;'
-        name: invalid.illegal.bad-ampersand.pr
+        name: invalid.illegal.bad-ampersand.protea
 
   # Comments
 
@@ -1845,75 +1929,58 @@ repository:
       - include: "#block-comments"
       - include: "#line-comments"
       - include: "#nested-comments"
-  nested-comments:
-    patterns:
-      - begin: \s*(/\+\+)(?=\s+|\s*$)
-        end: \s*(\+/)
-        name: comment.block.documentation.nested.pr
-        captures:
-          1: {name: punctuation.definition.comment.pr}
-        patterns:
-          - include: "#jsdoc"
-          - include: text.html.markdown#inline
-          - include: "#nested-jsdoc"
-      - begin: \s*(/\+)(?=\s+|\s*$)
-        end: \s*(\+/)
-        name: comment.block.nested.pr
-        captures:
-          1: {name: punctuation.definition.comment.pr}
-        patterns:
-          - include: text.html.markdown#inline
-          - include: "#nested-block"
   block-comments:
     patterns:
       - begin: \s*(/\*\*)(?=\s+|\s*$)
         end: \s*(\*/)
-        name: comment.block.documentation.pr
+        name: comment.block.documentation.protea
         captures:
-          1: {name: punctuation.definition.comment.pr}
+          1: {name: punctuation.definition.comment.protea}
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
+          - include: "#nested-jsdoc"
       - begin: \s*(/\*)(?=\s+|\s*$)
         end: \s*(\*/)
-        name: comment.block.pr
+        name: comment.block.protea
         captures:
-          1: {name: punctuation.definition.comment.pr}
+          1: {name: punctuation.definition.comment.protea}
         patterns:
           - include: text.html.markdown#inline
+          - include: "#nested-block"
   line-comments:
     patterns:
       - begin: \s*(///)(?=\s+|\s*$)
         end: \s*$
-        name: comment.line.documentation.pr
+        name: comment.line.documentation.protea
         captures:
-          1: {name: punctuation.definition.comment.pr}
+          1: {name: punctuation.definition.comment.protea}
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
       - begin: \s*(//)(?=\s+|\s*$)
         end: \s*$
-        name: comment.line.number-sign.pr
+        name: comment.line.number-sign.protea
         captures:
-          1: {name: punctuation.definition.comment.pr}
+          1: {name: punctuation.definition.comment.protea}
         patterns:
           - include: text.html.markdown#inline
   nested-jsdoc:
-    begin: (/\+\+?)(?=\s+|\s*$)
-    end: \s*(\+/)
-    name: comment.block.documentation.nested.pr
+    begin: (/\*\*?)(?=\s+|\s*$)
+    end: \s*(\*/)
+    name: comment.block.documentation.nested.protea
     captures:
-      1: {name: punctuation.definition.comment.pr}
+      1: {name: punctuation.definition.comment.protea}
     patterns:
       - include: "#jsdoc"
       - include: text.html.markdown#inline
       - include: "#nested-jsdoc"
   nested-block:
-    begin: (/\+)(?=\s+|\s*$)
-    end: \s*(\+/)
-    name: comment.block.nested.pr
+    begin: (/\*)(?=\s+|\s*$)
+    end: \s*(\*/)
+    name: comment.block.nested.protea
     captures:
-      1: {name: punctuation.definition.comment.pr}
+      1: {name: punctuation.definition.comment.protea}
     patterns:
       - include: text.html.markdown#inline
       - include: "#nested-block"
@@ -2090,20 +2157,22 @@ repository:
           (
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
           \b(?:# keywords
-          in|of|as|is|new|to|til|thru|by|del|unset
-          |var|val|let|const|decl|def|func|type|object
-          |class|enum|module|pack|struct|schema|space|pragma
-          |proc|proto|macro|given|style|elem|field
-          |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|lest|elif|elest|else
-          |for|each|loop|while|until|when
-          |with|then|do|from|ref
-          |try|throw|catch|final
-          |switch|match|case|fail
-          |race|some|every|done|spawn|kill|settle|accept|reject
-          |break|next|redo|retry|return|await|label|yield|goto|pass
-          |import|export|using|route
-          |debug|assert|where
+          in|of|as|is|new
+          |to|til|thru|by|del
+          |unset|ref|and|or|xor|not
+          |var|val|func|proc|type
+          |class|data|enum|module
+          |iter|macro|struct|object
+          |trait|style|compo|prop
+          |go|defer|do|from|where|with
+          |if|elif|else|def
+          |for|each|loop|while
+          |try|throw|catch|after
+          |match|case|goto|pass
+          |break|next|redo|retry
+          |return|yield|await|label
+          |import|export|route
+          |debug|assert|check
           )(?![\w\p{Pd}])
           )
           [\p{Pc}\p{L}][\w\p{Pd}]*
@@ -2119,20 +2188,22 @@ repository:
           (
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
           \b(?:# keywords
-          in|of|as|is|new|to|til|thru|by|del|unset
-          |var|val|let|const|decl|def|func|type|object
-          |class|enum|module|pack|struct|schema|space|pragma
-          |proc|proto|macro|given|style|elem|field
-          |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|lest|elif|elest|else
-          |for|each|loop|while|until|when
-          |with|then|do|from|ref
-          |try|throw|catch|final
-          |switch|match|case|fail
-          |race|some|every|done|spawn|kill|settle|accept|reject
-          |break|next|redo|retry|return|await|label|yield|goto|pass
-          |import|export|using|route
-          |debug|assert|where
+          in|of|as|is|new
+          |to|til|thru|by|del
+          |unset|ref|and|or|xor|not
+          |var|val|func|proc|type
+          |class|data|enum|module
+          |iter|macro|struct|object
+          |trait|style|compo|prop
+          |go|defer|do|from|where|with
+          |if|elif|else|def
+          |for|each|loop|while
+          |try|throw|catch|after
+          |match|case|goto|pass
+          |break|next|redo|retry
+          |return|yield|await|label
+          |import|export|route
+          |debug|assert|check
           )(?![\w\p{Pd}])
           )
           [\p{Pc}\p{L}][\w\p{Pd}]*
@@ -2151,17 +2222,17 @@ repository:
   placeholder-variables:
     patterns:
       - match: (?i)\s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.optional.pr
+        name: variable.parameter.optional.protea
       - match: (?i)\s*\*\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.spread.pr
+        name: variable.parameter.spread.protea
       - match: (?i)\s*\%\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.name.pr
+        name: variable.parameter.name.protea
       - match: (?i)\s*\&\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.reference.pr
+        name: variable.parameter.reference.protea
       - match: (?i)\s*\$\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.other.pr
+        name: variable.parameter.other.protea
       - match: (?i)\s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: variable.parameter.pr
+        name: variable.parameter.protea
 
   variables:
     comment: |
@@ -2198,18 +2269,18 @@ repository:
       )
       \b\s*
     captures:
-      1: {name: variable.other.index.pr}
-      2: {name: variable.other.constant.property.pr}
-      3: {name: variable.other.property.static.pr}
-      4: {name: variable.other.property.pr}
-      5: {name: variable.other.global.pr}
-      6: {name: variable.other.constant.object.pr}
-      7: {name: variable.other.conditional.pr}
-      8: {name: variable.other.object.pr}
-      9: {name: variable.other.dollar.pr}
-      10: {name: variable.other.constant.pr}
-      11: {name: variable.other.class.pr}
-      12: {name: variable.other.readwrite.pr}
+      1: {name: variable.other.index.protea}
+      2: {name: variable.other.constant.property.protea}
+      3: {name: variable.other.property.static.protea}
+      4: {name: variable.other.property.protea}
+      5: {name: variable.other.global.protea}
+      6: {name: variable.other.constant.object.protea}
+      7: {name: variable.other.conditional.protea}
+      8: {name: variable.other.object.protea}
+      9: {name: variable.other.dollar.protea}
+      10: {name: variable.other.constant.protea}
+      11: {name: variable.other.class.protea}
+      12: {name: variable.other.readwrite.protea}
 
   # Operators
 
@@ -2223,7 +2294,7 @@ repository:
       - begin: (?<=^|\s)(\?)(?=\s|$)
         end: (?<=^|\s)(:)(?=\s|$)
         captures:
-          1: {name: keyword.operator.conditional.pr}
+          1: {name: keyword.operator.conditional.protea}
         patterns:
           - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
             end: \s*(?=:\s|$)
@@ -2234,7 +2305,7 @@ repository:
       - begin: (?<=^|\s)(\!)(?=\s|$)
         end: (?<=^|\s)(:)(?=\s|$)
         captures:
-          1: {name: keyword.operator.ternary.pr}
+          1: {name: keyword.operator.ternary.protea}
         patterns:
           - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
             end: \s*(?=:\s|$)
@@ -2245,17 +2316,17 @@ repository:
       - begin: (?<=^|\s)(\$)(?=\s|$)
         end: (?<=^|\s)(:)(?=\s|$)
         captures:
-          1: {name: keyword.operator.macro.dollar.pr}
+          1: {name: keyword.operator.macro.dollar.protea}
         patterns:
           - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
             end: \s*(?=:\s|$)
-            name: entity.name.function.pr
+            name: entity.name.function.protea
           - include: $self
   binary-ops:
     patterns:
       - comment: augmented assignment += -= *= /= etc
         match: (?<=^|[\s'"`({\[])([\p{S}\p{P}&&[^!:~.<=>,;'"`(){}\[\]\p{Pc}]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=)(?=$|[\s'"`)}\]])
-        name: keyword.operator.assignment.augmented.pr
+        name: keyword.operator.assignment.augmented.protea
       - comment: |
           BUILT-IN OPERATORS
 
@@ -2280,26 +2351,26 @@ repository:
           19: inverse ternary operator !:
           20: infix function call $:
         captures:
-          1: {name: keyword.operator.assignment.pr}
-          2: {name: keyword.operator.arithmetic.pr}
-          3: {name: keyword.operator.successor.pr}
-          4: {name: keyword.operator.logical.pr}
-          5: {name: keyword.operator.bitwise.pr}
-          6: {name: keyword.operator.bitwise.shift.pr}
-          7: {name: keyword.operator.pipeline.pr}
-          8: {name: keyword.operator.compose.pr}
-          9: {name: keyword.operator.class.pr}
-          10: {name: keyword.operator.relational.pr}
-          11: {name: keyword.operator.regexp.pr}
-          12: {name: keyword.operator.comparison.pr}
-          13: {name: keyword.operator.similarity.pr}
-          14: {name: keyword.operator.arrow.fat.pr}
-          15: {name: keyword.operator.arrow.skinny.pr}
-          16: {name: keyword.operator.null-coalescing.pr}
-          17: {name: keyword.operator.coalescing.pr}
-          18: {name: keyword.operator.conditional.pr}
-          19: {name: keyword.operator.ternary.pr}
-          20: {name: keyword.operator.macro.dollar.pr}
+          1: {name: keyword.operator.assignment.protea}
+          2: {name: keyword.operator.arithmetic.protea}
+          3: {name: keyword.operator.successor.protea}
+          4: {name: keyword.operator.logical.protea}
+          5: {name: keyword.operator.bitwise.protea}
+          6: {name: keyword.operator.bitwise.shift.protea}
+          7: {name: keyword.operator.pipeline.protea}
+          8: {name: keyword.operator.compose.protea}
+          9: {name: keyword.operator.class.protea}
+          10: {name: keyword.operator.relational.protea}
+          11: {name: keyword.operator.regexp.protea}
+          12: {name: keyword.operator.comparison.protea}
+          13: {name: keyword.operator.similarity.protea}
+          14: {name: keyword.operator.arrow.fat.protea}
+          15: {name: keyword.operator.arrow.skinny.protea}
+          16: {name: keyword.operator.null-coalescing.protea}
+          17: {name: keyword.operator.coalescing.protea}
+          18: {name: keyword.operator.conditional.protea}
+          19: {name: keyword.operator.ternary.protea}
+          20: {name: keyword.operator.macro.dollar.protea}
         match: |
           (?x)
           (?<=^|[\s'"`({\[])# opening
@@ -2344,17 +2415,17 @@ repository:
           10: custom ASCII (between \x80 and \xff)
           11: custom infix operators (all other chars)
         captures:
-          1: {name: keyword.operator.bitwise.custom.pr}
-          2: {name: keyword.operator.arithmetic.custom.pr}
-          3: {name: keyword.operator.prototype.custom.pr}
-          4: {name: keyword.operator.accessor.custom.pr}
-          5: {name: keyword.operator.comparison.custom.pr}
-          6: {name: keyword.operator.relational.custom.pr}
-          7: {name: keyword.operator.private.custom.pr}
-          8: {name: keyword.operator.math.custom.pr}
-          9: {name: keyword.operator.currency.custom.pr}
-          10: {name: keyword.operator.ascii.custom.pr}
-          11: {name: keyword.operator.infix.custom.pr}
+          1: {name: keyword.operator.bitwise.custom.protea}
+          2: {name: keyword.operator.arithmetic.custom.protea}
+          3: {name: keyword.operator.prototype.custom.protea}
+          4: {name: keyword.operator.accessor.custom.protea}
+          5: {name: keyword.operator.comparison.custom.protea}
+          6: {name: keyword.operator.relational.custom.protea}
+          7: {name: keyword.operator.private.custom.protea}
+          8: {name: keyword.operator.math.custom.protea}
+          9: {name: keyword.operator.currency.custom.protea}
+          10: {name: keyword.operator.ascii.custom.protea}
+          11: {name: keyword.operator.infix.custom.protea}
         match: |
           (?x)
           (?<=^|[\s'"`({\[])# opening
@@ -2387,11 +2458,11 @@ repository:
           )
           (?=\b|['"`({\[])# opening
         captures:
-          1: {name: keyword.operator.range.pr}
-          2: {name: keyword.operator.optional.pr}
-          3: {name: keyword.operator.assert.pr}
-          4: {name: keyword.operator.accessor.pr}
-          5: {name: keyword.operator.primary.pr}
+          1: {name: keyword.operator.range.protea}
+          2: {name: keyword.operator.optional.protea}
+          3: {name: keyword.operator.assert.protea}
+          4: {name: keyword.operator.accessor.protea}
+          5: {name: keyword.operator.primary.protea}
       - &prefix-operators
         comment: Prefix operators
         match: |
@@ -2413,23 +2484,23 @@ repository:
           |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
           (?=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
           [\w({\['"`])
-        name: keyword.operator.prefix.pr
+        name: keyword.operator.prefix.protea
         captures:
-          1: {name: keyword.operator.module.all.pr}
-          2: {name: keyword.operator.increment.pr}
-          3: {name: keyword.operator.decrement.pr}
-          4: {name: keyword.operator.intersection.pr}
-          5: {name: keyword.operator.union.pr}
-          6: {name: keyword.operator.symmetric.pr}
-          7: {name: keyword.operator.logical.pr}
-          8: {name: keyword.operator.private.pr}
-          9: {name: keyword.operator.decorator.pr}
-          10: {name: keyword.operator.bitwise.not.pr}
-          11: {name: keyword.operator.existential.pr}
-          12: {name: keyword.operator.assignment.pr}
-          13: {name: keyword.operator.pipeline.pr}
-          14: {name: keyword.operator.private.pr}
-          15: {name: keyword.operator.prefix.pr}
+          1: {name: keyword.operator.module.all.protea}
+          2: {name: keyword.operator.increment.protea}
+          3: {name: keyword.operator.decrement.protea}
+          4: {name: keyword.operator.intersection.protea}
+          5: {name: keyword.operator.union.protea}
+          6: {name: keyword.operator.symmetric.protea}
+          7: {name: keyword.operator.logical.protea}
+          8: {name: keyword.operator.private.protea}
+          9: {name: keyword.operator.decorator.protea}
+          10: {name: keyword.operator.bitwise.not.protea}
+          11: {name: keyword.operator.existential.protea}
+          12: {name: keyword.operator.assignment.protea}
+          13: {name: keyword.operator.pipeline.protea}
+          14: {name: keyword.operator.private.protea}
+          15: {name: keyword.operator.prefix.protea}
       - &suffix-operators
         comment: Suffix operators
         match: |
@@ -2451,23 +2522,23 @@ repository:
           |(\$)#13
           |(\#)#14
           |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
-        name: keyword.operator.suffix.pr
+        name: keyword.operator.suffix.protea
         captures:
-          1: {name: keyword.operator.module.all.pr}
-          2: {name: keyword.operator.increment.pr}
-          3: {name: keyword.operator.decrement.pr}
-          4: {name: keyword.operator.intersection.pr}
-          5: {name: keyword.operator.union.pr}
-          6: {name: keyword.operator.symmetric.pr}
-          7: {name: keyword.operator.assert.pr}
-          8: {name: keyword.operator.private.pr}
-          9: {name: keyword.operator.decorator.pr}
-          10: {name: keyword.operator.bitwise.pr}
-          11: {name: keyword.operator.optional.pr}
-          12: {name: keyword.operator.assignment.pr}
-          13: {name: keyword.operator.pipeline.pr}
-          14: {name: keyword.operator.private.pr}
-          15: {name: keyword.operator.suffix.pr}
+          1: {name: keyword.operator.module.all.protea}
+          2: {name: keyword.operator.increment.protea}
+          3: {name: keyword.operator.decrement.protea}
+          4: {name: keyword.operator.intersection.protea}
+          5: {name: keyword.operator.union.protea}
+          6: {name: keyword.operator.symmetric.protea}
+          7: {name: keyword.operator.assert.protea}
+          8: {name: keyword.operator.private.protea}
+          9: {name: keyword.operator.decorator.protea}
+          10: {name: keyword.operator.bitwise.protea}
+          11: {name: keyword.operator.optional.protea}
+          12: {name: keyword.operator.assignment.protea}
+          13: {name: keyword.operator.pipeline.protea}
+          14: {name: keyword.operator.private.protea}
+          15: {name: keyword.operator.suffix.protea}
   pipeline-operator:
     patterns:
       - applyEndPatternLast: 1
@@ -2476,20 +2547,22 @@ repository:
           [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
           \b(?:# keywords
-          in|of|as|is|new|to|til|thru|by|del|unset
-          |var|val|let|const|decl|def|func|type|object
-          |class|enum|module|pack|struct|schema|space|pragma
-          |proc|proto|macro|given|style|elem|field
-          |ext|pred|data|trait|lemma|iter|sub|prop
-          |if|lest|elif|elest|else
-          |for|each|loop|while|until|when
-          |with|then|do|from|ref
-          |try|throw|catch|final
-          |switch|match|case|fail
-          |race|some|every|done|spawn|kill|settle|accept|reject
-          |break|next|redo|retry|return|await|label|yield|goto|pass
-          |import|export|using|route
-          |debug|assert|where
+          in|of|as|is|new
+          |to|til|thru|by|del
+          |unset|ref|and|or|xor|not
+          |var|val|func|proc|type
+          |class|data|enum|module
+          |iter|macro|struct|object
+          |trait|style|compo|prop
+          |go|defer|do|from|where|with
+          |if|elif|else|def
+          |for|each|loop|while
+          |try|throw|catch|after
+          |match|case|goto|pass
+          |break|next|redo|retry
+          |return|yield|await|label
+          |import|export|route
+          |debug|assert|check
           )(?![\w\p{Pd}])
           )
           [\w]+
@@ -2499,27 +2572,29 @@ repository:
           )\s*([^(]|$|;))
         end: (?=.)|$
         beginCaptures:
-          1: {name: keyword.operator.compose.pr}
-          2: {name: keyword.operator.pipeline.pr}
+          1: {name: keyword.operator.compose.protea}
+          2: {name: keyword.operator.pipeline.protea}
         patterns:
           - match: |
               (?x)\s*\b
               (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
               \b(?:# keywords
-              in|of|as|is|new|to|til|thru|by|del|unset
-              |var|val|let|const|decl|def|func|type|object
-              |class|enum|module|pack|struct|schema|space|pragma
-              |proc|proto|macro|given|style|elem|field
-              |ext|pred|data|trait|lemma|iter|sub|prop
-              |if|lest|elif|elest|else
-              |for|each|loop|while|until|when
-              |with|then|do|from|ref
-              |try|throw|catch|final
-              |switch|match|case|fail
-              |race|some|every|done|spawn|kill|settle|accept|reject
-              |break|next|redo|retry|return|await|label|yield|goto|pass
-              |import|export|using|route
-              |debug|assert|where
+              in|of|as|is|new
+              |to|til|thru|by|del
+              |unset|ref|and|or|xor|not
+              |var|val|func|proc|type
+              |class|data|enum|module
+              |iter|macro|struct|object
+              |trait|style|compo|prop
+              |go|defer|do|from|where|with
+              |if|elif|else|def
+              |for|each|loop|while
+              |try|throw|catch|after
+              |match|case|goto|pass
+              |break|next|redo|retry
+              |return|yield|await|label
+              |import|export|route
+              |debug|assert|check
               )(?![\w\p{Pd}])
               )
               (?:
@@ -2547,18 +2622,18 @@ repository:
               )
               )\b
             captures:
-              1: {name: variable.other.global.pr}
-              2: {name: variable.other.constant.object.pr}
-              3: {name: variable.other.conditional.pr}
-              4: {name: variable.other.object.pr}
-              5: {name: entity.name.tag.pr}
-              6: {name: entity.name.tag.pr support.class.component.pr}
-              7: {name: entity.name.class.builtin.pr}
-              8: {name: entity.name.function.method.pr}
-              9: {name: entity.name.function.tagged-template.pr}
-              10: {name: entity.name.type.pr}
-              11: {name: entity.name.class.pr}
-              12: {name: entity.name.function.pr}
+              1: {name: variable.other.global.protea}
+              2: {name: variable.other.constant.object.protea}
+              3: {name: variable.other.conditional.protea}
+              4: {name: variable.other.object.protea}
+              5: {name: entity.name.tag.protea}
+              6: {name: entity.name.tag.protea support.class.component.protea}
+              7: {name: entity.name.class.builtin.protea}
+              8: {name: entity.name.function.method.protea}
+              9: {name: entity.name.function.tagged-template.protea}
+              10: {name: entity.name.type.protea}
+              11: {name: entity.name.class.protea}
+              12: {name: entity.name.function.protea}
           - *primary-operators
 
   # Types
@@ -2566,9 +2641,9 @@ repository:
   types:
     patterns:
       - match: \s*(==?>|--?>|~~?>)
-        name: keyword.operator.type.function.pr
+        name: keyword.operator.type.function.protea
       - match: \s*(<==|<--?|<~~?)
-        name: keyword.operator.type.channel.pr
+        name: keyword.operator.type.channel.protea
       - include: "#params-clause"
       - include: "#type-keywords"
       - include: "#type-names"
@@ -2589,20 +2664,22 @@ repository:
 
       (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
       \b(?:# keywords
-      in|of|as|is|new|to|til|thru|by|del|unset
-      |var|val|let|const|decl|def|func|type|object
-      |class|enum|module|pack|struct|schema|space|pragma
-      |proc|proto|macro|given|style|elem|field
-      |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|lest|elif|elest|else
-      |for|each|loop|while|until|when
-      |with|then|do|from|ref
-      |try|throw|catch|final
-      |switch|match|case|fail
-      |race|some|every|done|spawn|kill|settle|accept|reject
-      |break|next|redo|retry|return|await|label|yield|goto|pass
-      |import|export|using|route
-      |debug|assert|where
+      in|of|as|is|new
+      |to|til|thru|by|del
+      |unset|ref|and|or|xor|not
+      |var|val|func|proc|type
+      |class|data|enum|module
+      |iter|macro|struct|object
+      |trait|style|compo|prop
+      |go|defer|do|from|where|with
+      |if|elif|else|def
+      |for|each|loop|while
+      |try|throw|catch|after
+      |match|case|goto|pass
+      |break|next|redo|retry
+      |return|yield|await|label
+      |import|export|route
+      |debug|assert|check
       )(?![\w\p{Pd}])
       )
       (?:
@@ -2630,24 +2707,24 @@ repository:
       )
       )\b
     captures: &type-variables
-      1: {name: entity.name.module.pr}
-      2: {name: entity.name.tag.pr}
-      3: {name: entity.name.namespace.pr}
-      4: {name: entity.name.interface.pr}
-      5: {name: entity.name.tag.block.pr}
-      6: {name: entity.name.tag.script.pr}
-      7: {name: entity.name.tag.style.pr}
-      8: {name: entity.name.tag.inline.pr}
-      9: {name: entity.name.label.pr}
-      10: {name: entity.name.project.pr}
-      11: {name: entity.name.class.pr}
-      12: {name: entity.name.type.pr}
+      1: {name: entity.name.module.protea}
+      2: {name: entity.name.tag.protea}
+      3: {name: entity.name.namespace.protea}
+      4: {name: entity.name.interface.protea}
+      5: {name: entity.name.tag.block.protea}
+      6: {name: entity.name.tag.script.protea}
+      7: {name: entity.name.tag.style.protea}
+      8: {name: entity.name.tag.inline.protea}
+      9: {name: entity.name.label.protea}
+      10: {name: entity.name.project.protea}
+      11: {name: entity.name.class.protea}
+      12: {name: entity.name.type.protea}
   type-annotation:
     applyEndPatternLast: 1
     begin: (:)(?=\s|$)
     end: (?=.)|$
     beginCaptures:
-      1: {name: punctuation.definition.annotation.pr}
+      1: {name: punctuation.definition.annotation.protea}
     patterns:
       - include: "#types"
   type-brackets:
@@ -2661,14 +2738,14 @@ repository:
           punctuation:
             patterns:
               - match: ","
-                name: punctuation.separator.mapping.pr
+                name: punctuation.separator.mapping.protea
               - match: (?<!\s):(?!:)
-                name: punctuation.separator.key-value.pr
+                name: punctuation.separator.key-value.protea
         patterns:
-          - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
+          - begin: \s*(?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
             end: \s*(})
             captures:
-              1: {name: punctuation.definition.binding-pattern.object.pr}
+              1: {name: punctuation.definition.binding-pattern.object.protea}
             patterns:
               - include: "#labels"
               - include: "#punctuation"
@@ -2677,7 +2754,7 @@ repository:
           - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.mapping.pr}
+              1: {name: punctuation.definition.mapping.protea}
             patterns:
               - include: "#labels"
               - include: "#punctuation"
@@ -2686,7 +2763,7 @@ repository:
           - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.dictionary.pr}
+              1: {name: punctuation.definition.dictionary.protea}
             patterns:
               - include: "#labels"
               - include: "#punctuation"
@@ -2697,12 +2774,12 @@ repository:
           punctuation:
             patterns:
               - match: ","
-                name: punctuation.separator.arguments.pr
+                name: punctuation.separator.arguments.protea
         patterns:
           - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.parameters.pr}
+              1: {name: punctuation.definition.parameters.protea}
             patterns:
               - include: "#punctuation"
               - include: "#function-params"
@@ -2711,7 +2788,7 @@ repository:
           - begin: \s*(\#?\()\s*
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.pr}
+              1: {name: punctuation.definition.expression.protea}
             patterns:
               - include: "#punctuation"
               - include: "#types"
@@ -2722,14 +2799,14 @@ repository:
             patterns:
               - match: (?<![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)
                 captures:
-                  1: {name: punctuation.separator.slice.pr}
+                  1: {name: punctuation.separator.slice.protea}
               - match: ","
-                name: punctuation.separator.sequence.pr
+                name: punctuation.separator.sequence.protea
         patterns:
           - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
             end: \s*(\])
             captures:
-              1: {name: punctuation.definition.attribute-selector.pr}
+              1: {name: punctuation.definition.attribute-selector.protea}
             patterns:
               - include: "#punctuation"
               - include: "#types"
@@ -2737,19 +2814,19 @@ repository:
           - begin: \s*(\#\[)\s*
             end: \s*(\])
             captures:
-              1: {name: punctuation.definition.sequence.pr}
+              1: {name: punctuation.definition.sequence.protea}
             patterns:
               - match: ","
-                name: punctuation.separator.sequence.pr
+                name: punctuation.separator.sequence.protea
               - include: "#types"
               - include: $self
           - begin: \s*(\[)\s*
             end: \s*(\])
             captures:
-              1: {name: punctuation.definition.array.pr}
+              1: {name: punctuation.definition.array.protea}
             patterns:
               - match: ","
-                name: punctuation.separator.sequence.pr
+                name: punctuation.separator.sequence.protea
               - include: "#types"
               - include: $self
 
@@ -2758,28 +2835,28 @@ repository:
     patterns:
       - comment: single quoted raw string
         begin: (?<!'+)\s*('''+)
-        contentName: string.quoted.single.pr
+        contentName: string.quoted.single.protea
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.pr}
+          1: {name: punctuation.definition.string.protea}
         patterns:
           - include: "#type-embedded-raw"
       - comment: simple single quoted raw string
         begin: (?<!'+)\s*(')
-        contentName: string.quoted.single.pr
+        contentName: string.quoted.single.protea
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.pr}
+          1: {name: punctuation.definition.string.protea}
         patterns:
           - match: "''"
-            name: constant.character.escape.pr
+            name: constant.character.escape.protea
           - include: "#type-embedded-raw"
       - comment: double quoted standard string
         begin: (?<!"+)\s*("""+|")
-        contentName: string.quoted.double.pr
+        contentName: string.quoted.double.protea
         end: \s*((\1)(?!"+))
         captures:
-          1: {name: punctuation.definition.string.pr}
+          1: {name: punctuation.definition.string.protea}
         patterns:
           - include: "#string-escapes"
           - include: "#type-embedded"
@@ -2788,9 +2865,9 @@ repository:
     patterns:
       - begin: (\${)\s*
         end: (})
-        name: entity.quasi.element.pr
+        name: entity.quasi.component.protea
         captures:
-          1: {name: punctuation.section.embedded.pr}
+          1: {name: punctuation.section.embedded.protea}
         patterns: [include: "types", include: $self]
       - match: |
           (?x)(\$)
@@ -2814,7 +2891,7 @@ repository:
           )*
           )
         captures:
-          1: {name: punctuation.section.embedded.pr}
+          1: {name: punctuation.section.embedded.protea}
           2: {patterns: [include: "#types", include: "#everything-but-comments"]}
 
   type-embedded:
@@ -2826,7 +2903,7 @@ repository:
   type-embedded-raw:
     patterns:
       - match: \$\$|\%\%|\#\#
-        name: constant.character.escape.pr
+        name: constant.character.escape.protea
       - include: "#format-specifier"
       - include: "#embedded-placeholder"
       - include: "#type-embedded-expression"
@@ -2834,15 +2911,15 @@ repository:
   type-keywords:
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)(?![\w\p{Pd}])\s*
-        name: storage.type.extends.pr
+        name: storage.type.extends.protea
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(impl)(?![\w\p{Pd}])\s*
-        name: storage.type.implements.pr
+        name: storage.type.implements.protea
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(typeof|nameof|sizeof|keyof|pairof|infer|as|is)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.$1.pr
+        name: keyword.operator.expression.$1.protea
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(instof)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.instanceof.pr
+        name: keyword.operator.expression.instanceof.protea
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(valof)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.valueof.pr
+        name: keyword.operator.expression.valueof.protea
 
   type-operators:
     patterns:
@@ -2858,10 +2935,10 @@ repository:
           )
           (?=\b|['"`\\({\[])
         captures:
-          1: {name: keyword.operator.range.pr}
-          2: {name: keyword.operator.optional.pr}
-          3: {name: keyword.operator.assert.pr}
-          4: {name: keyword.operator.accessor.pr}
+          1: {name: keyword.operator.range.protea}
+          2: {name: keyword.operator.optional.protea}
+          3: {name: keyword.operator.assert.protea}
+          4: {name: keyword.operator.accessor.protea}
       - comment: type operators
         match: |
           (?x)\s*
@@ -2883,20 +2960,20 @@ repository:
           )
           (?=$|[({\[\w'"\s])
         captures:
-          1: {name: keyword.operator.sum.pr}
-          2: {name: keyword.operator.difference.pr}
-          3: {name: keyword.operator.product.pr}
-          4: {name: keyword.operator.quotient.pr}
-          5: {name: keyword.operator.remainder.pr}
-          6: {name: keyword.operator.only.pr}
-          7: {name: keyword.operator.maybe.pr}
-          8: {name: keyword.operator.intersection.pr}
-          9: {name: keyword.operator.union.pr}
-          10: {name: keyword.operator.symmetric.pr}
-          11: {name: keyword.operator.negation.pr}
-          12: {name: keyword.operator.macro.dollar.pr}
-          13: {name: keyword.operator.private.pr}
-          14: {name: keyword.operator.class.pr}
+          1: {name: keyword.operator.sum.protea}
+          2: {name: keyword.operator.difference.protea}
+          3: {name: keyword.operator.product.protea}
+          4: {name: keyword.operator.quotient.protea}
+          5: {name: keyword.operator.remainder.protea}
+          6: {name: keyword.operator.only.protea}
+          7: {name: keyword.operator.maybe.protea}
+          8: {name: keyword.operator.intersection.protea}
+          9: {name: keyword.operator.union.protea}
+          10: {name: keyword.operator.symmetric.protea}
+          11: {name: keyword.operator.negation.protea}
+          12: {name: keyword.operator.macro.dollar.protea}
+          13: {name: keyword.operator.private.protea}
+          14: {name: keyword.operator.class.protea}
 
   # Clauses and Keywords
 
@@ -2907,6 +2984,34 @@ repository:
       type-curly-brackets: *type-curly-brackets
 
     patterns:
+      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
+        name: entity.name.namespace.protea
+      - applyEndPatternLast: 1
+        begin: \s+(impl)\s+
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.implements.protea}
+        patterns:
+          - match: '\.|::'
+            name: punctuation.separator.namespace.protea
+          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
+            name: entity.name.namespace.protea
+          - match: *class-name
+            name: entity.name.trait.protea
+          - include: "#punctuation"
+      - applyEndPatternLast: 1
+        begin: \s+(ext)\s+
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.extends.protea}
+        patterns:
+          - match: '\.|::'
+            name: punctuation.separator.namespace.protea
+          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
+            name: entity.name.module.protea
+          - match: *class-name
+            name: entity.name.interface.protea
+          - include: "#punctuation"
       - include: "#declarations"
       - include: "#type-keywords"
       - include: "#illegal-keywords"
@@ -2915,7 +3020,7 @@ repository:
       - include: "#round-brackets"
       - include: "#type-annotation"
       - match: \s*(?<!\*)\*(?!\*)\s*
-        name: keyword.generator.asterisk.pr
+        name: keyword.generator.asterisk.protea
       - include: "#type-operators"
       - include: "#operators"
       - include: "#literals"
@@ -2923,7 +3028,7 @@ repository:
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]))
         end: (?=.)|$
         beginCaptures:
-          1: {name: punctuation.definition.annotation.pr}
+          1: {name: punctuation.definition.annotation.protea}
         patterns: [include: "#types"]
       - include: "#comments"
       - include: "#brackets"
@@ -2938,31 +3043,29 @@ repository:
       (?:
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:
-      # access modifiers
-      pub|priv|prot|inline|final|mut|immut|ghost|early|late|joint|contra
-      |seal|abs|intern|extern|imply|exply|global|local
+      # Visibility and mutability
+      pub|priv|prot|after|mut|immut
+      |glo|loc|early|late|covar|contra
+      |seal|abst|inter|exter|imply|exply
+      |sub
 
-      # concurrency modifiers
-      |a?sync|stat|dyn|lazy|eager|strong|weak|swap
-      |vol|unsafe|unfix|bound|free|opaque|trans
+      # Concurrency/thread
+      |sync|async|stat|dyn|lazy|eager|bound|free
 
-      # property or method modifiers
-      |rec|cur|gen|oper|get|set|post|put|rem
+      # Function and methods
+      |rec|gen|oper|get|set|post|del|curry|inline
       |prefix|suffix|infix|binary|unary|left|right
-      |and|or|xor|not
       )
       )(?![\w\p{Pd}])\s*
-      |# Decorators
-      @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
       )*
       )
       (?=
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:
-      var|val|let|const|decl|def|func|type|object
-      |class|enum|module|pack|struct|schema|space|pragma
-      |proc|proto|macro|given|style|elem|field
-      |ext|pred|data|trait|lemma|iter|sub|prop
+      var|val|func|proc|type
+      |class|data|enum|module
+      |iter|macro|struct|object
+      |trait|style|compo|prop
       )
       \b
       )
@@ -2971,128 +3074,100 @@ repository:
         patterns: &modifier-keywords
           - &decorators
             match: (?x)\s*@[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
-            name: entity.name.class.decorator.pr
+            name: entity.name.class.decorator.protea
           - &modifiers
             match: |
               (?x)\s*
               \s*\b
               (?:
               (# Access modifiers
-              pub|priv|prot|inline|final|mut|immut|ghost|early|late|joint|contra
-              |seal|abs|intern|extern|imply|exply|global|local
+              pub|priv|prot|after|mut|immut
+              |glo|loc|early|late|covar|contra
+              |seal|abst|inter|exter|imply|exply
+              |sub
               )|
               (# Function or method modifiers
-              a?sync|stat|dyn|lazy|eager|strong|weak|swap
-              |vol|unsafe|unfix|bound|free|opaque|trans
+              sync|async|stat|dyn|lazy|eager|bound|free
               )|
               (# Property modifiers
-              rec|cur|gen|oper|get|set|post|put|rem
+              rec|gen|oper|get|set|post|del|curry|inline
               |prefix|suffix|infix|binary|unary|left|right
-              )|
-              (# Logical joiners
-              and|or|xor|not
               )
               )(?![\w\p{Pd}])\s*
             captures:
-              1: {name: storage.modifier.pr}
-              2: {name: storage.type.accessor.pr}
-              3: {name: storage.type.property.pr}
-              4: {name: keyword.operator.expression.pr}
+              1: {name: storage.modifier.protea}
+              2: {name: storage.type.accessor.protea}
+              3: {name: storage.type.property.protea}
+              4: {name: keyword.operator.expression.protea}
 
   declaration-keywords:
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)(?![\w\p{Pd}])\s*
-        name: keyword.other.declare.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)(?![\w\p{Pd}])\s*
-        name: storage.type.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?![\w\p{Pd}])\s*
-        name: storage.type.style.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)(?![\w\p{Pd}])\s*
-        name: storage.type.function.pr
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?![\w\p{Pd}])\s*
-        name: storage.type.method.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)(?![\w\p{Pd}])\s*
-        name: storage.type.class.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)(?![\w\p{Pd}])\s*
-        name: storage.type.enum.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)(?![\w\p{Pd}])\s*
-        name: storage.type.module.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pack)(?![\w\p{Pd}])\s*
-        name: storage.type.package.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(schema)(?![\w\p{Pd}])\s*
-        name: storage.type.interface.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(space)(?![\w\p{Pd}])\s*
-        name: storage.type.namespace.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)(?![\w\p{Pd}])\s*
-        name: storage.type.structure.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)(?![\w\p{Pd}])\s*
-        name: storage.type.object.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)(?![\w\p{Pd}])\s*
-        name: storage.type.data.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)(?![\w\p{Pd}])\s*
-        name: storage.type.trait.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)(?![\w\p{Pd}])\s*
-        name: storage.type.procedure.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)(?![\w\p{Pd}])\s*
-        name: storage.type.protocol.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)(?![\w\p{Pd}])\s*
-        name: storage.type.macro.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)(?![\w\p{Pd}])\s*
-        name: storage.type.given.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)(?![\w\p{Pd}])\s*
-        name: storage.type.element.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)(?![\w\p{Pd}])\s*
-        name: storage.type.extends.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sub)(?![\w\p{Pd}])\s*
-        name: storage.type.subroutine.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pred)(?![\w\p{Pd}])\s*
-        name: storage.type.predicate.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(lemma)(?![\w\p{Pd}])\s*
-        name: storage.type.lemma.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)(?![\w\p{Pd}])\s*
-        name: storage.type.iterator.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(field)(?![\w\p{Pd}])\s*
-        name: storage.type.field.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)(?![\w\p{Pd}])\s*
-        name: storage.type.property.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pragma)(?![\w\p{Pd}])\s*
-        name: storage.type.pragma.pr
+        name: keyword.other.declare.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val)(?![\w\p{Pd}])\s*
+        name: storage.type.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?![\w\p{Pd}])\s*
+        name: storage.type.style.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)\b\s*
+        name: storage.type.function.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)\b\s*
+        name: storage.type.procedure.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
+        name: storage.type.class.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)\b\s*
+        name: storage.type.data.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)\b\s*
+        name: storage.type.enum.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)\b\s*
+        name: storage.type.module.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)\b\s*
+        name: storage.type.iterator.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
+        name: storage.type.macro.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
+        name: storage.type.structure.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)\b\s*
+        name: storage.type.object.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)\b\s*
+        name: storage.type.trait.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(compo)\b\s*
+        name: storage.type.component.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)\b\s*
+        name: storage.type.property.protea
 
   general-keywords:
     comment: general keywords
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?![\w\p{Pd}])\s*
-        name: keyword.control.conditional.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)(?![\w\p{Pd}])\s*
-        name: keyword.control.loop.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|final)(?![\w\p{Pd}])\s*
-        name: keyword.control.trycatch.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch|case|fail)(?![\w\p{Pd}])\s*
-        name: keyword.control.switch.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|when)(?![\w\p{Pd}])\s*
-        name: keyword.control.match.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(race|some|every|done|spawn|kill|settle|accept|reject)(?![\w\p{Pd}])\s*
-        name: keyword.control.promise.pr
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|elif|else)(?![\w\p{Pd}])\s*
+        name: keyword.control.conditional.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|loop|while)(?![\w\p{Pd}])\s*
+        name: keyword.control.loop.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|after)(?![\w\p{Pd}])\s*
+        name: keyword.control.trycatch.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|case|fail)(?![\w\p{Pd}])\s*
+        name: keyword.control.switch.protea
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?![\w\p{Pd}])\s*
-        name: keyword.control.flow.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|using|route)(?![\w\p{Pd}])\s*
-        name: keyword.control.module.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|do|from|ref)(?![\w\p{Pd}])\s*
-        name: keyword.control.$1.pr
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|assert|where)(?![\w\p{Pd}])\s*
-        name: keyword.other.$1.pr
+        name: keyword.control.flow.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|route)(?![\w\p{Pd}])\s*
+        name: keyword.control.module.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|do|from|ref|go|defer)(?![\w\p{Pd}])\s*
+        name: keyword.control.$1.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|assert|check|where)(?![\w\p{Pd}])\s*
+        name: keyword.other.$1.protea
 
   expression-keywords:
     comment: expression keywords
     patterns:
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of|as|is|new)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.$1.pr
+        name: keyword.operator.expression.$1.protea
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(del)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.delete.pr
+        name: keyword.operator.expression.delete.protea
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(to|til|till|thru|by)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.range.pr
+        name: keyword.operator.expression.range.protea
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unset)(?![\w\p{Pd}])\s*
-        name: keyword.operator.expression.void.pr
+        name: keyword.operator.expression.void.protea
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(and|or|xor|not)(?![\w\p{Pd}])\s*
+        name: keyword.operator.expression.logical.protea
 
   keywords:
     patterns:
@@ -3111,51 +3186,51 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|label|goto|pass)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: keyword.control.flow.pr}
+          1: {name: keyword.control.flow.protea}
         patterns:
           - match: *entity-name
-            name: constant.other.label.pr
+            name: constant.other.label.protea
 
       module-expression:
         patterns:
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|using|route)(?![\w\p{Pd}])\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|route)(?![\w\p{Pd}])\s*
             end: (?=.)|$
             beginCaptures:
-              1: {name: keyword.control.module.pr}
+              1: {name: keyword.control.module.protea}
             patterns:
               - include: source.yaml#flow-collection
               - *modifiers
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                name: keyword.control.module.pr
+                name: keyword.control.module.protea
               - include: "#type-keywords"
               - include: "#declarations"
               - include: "#strings-quoted"
               - include: "#symbols"
               - include: "#type-operators"
               - match: ","
-                name: punctuation.separator.comma.pr
+                name: punctuation.separator.comma.protea
               - match: *entity-name
-                name: variable.other.readwrite.alias.pr
+                name: variable.other.readwrite.alias.protea
 
       validation-expression:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where)(?![\w\p{Pd}])\s*
         beginCaptures:
-          1: {name: keyword.control.validate.pr}
+          1: {name: keyword.control.validate.protea}
         end: (?<=})|(?=[,;)\]])
         patterns:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pre|post|need|know|check|test|read|write|till|same)(?![\w\p{Pd}])\s*
-            name: keyword.control.validate.pr
+            name: keyword.control.validate.protea
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)(?![\w\p{Pd}])\s*
-            name: keyword.control.validate.pr
+            name: keyword.control.validate.protea
           - include: $self
 
       query-expression:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)(?![\w\p{Pd}])\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?![\w\p{Pd}])\s*
         beginCaptures:
-          1: {name: keyword.control.query.pr}
+          1: {name: keyword.control.query.protea}
           2: {patterns: [include: $self]}
-          3: {name: keyword.control.query.pr}
+          3: {name: keyword.control.query.protea}
         end: (?<=})|(?=[,;)\]])
         patterns:
           - include: "#query-body"
@@ -3173,19 +3248,19 @@ repository:
           join-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:full|part|self|cross)?(?![\w\p{Pd}])\s*\b(?:inner|outer|left|right)?(?![\w\p{Pd}])\s*\bjoin)\b\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.pr}
+              1: {name: keyword.control.query.protea}
               2: {patterns: [include: $self]}
-              3: {name: keyword.control.query.pr}
+              3: {name: keyword.control.query.protea}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(on|equals|into)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.pr
+                name: keyword.control.query.protea
               - include: "#query-body"
               - include: $self
           where-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where|having)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.pr}
+              1: {name: keyword.control.query.protea}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - include: "#query-body"
@@ -3193,49 +3268,49 @@ repository:
           sort-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sort(?![\w\p{Pd}])\s*\b(?:asc|desc)?(?![\w\p{Pd}])\s*\b(?:by|with)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.pr}
+              1: {name: keyword.control.query.protea}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - include: "#query-body"
               - include: $self
           select-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(select(?![\w\p{Pd}])\s*\b(?:unique|any|all)?)(?![\w\p{Pd}])\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:select|map)(?![\w\p{Pd}])\s*\b(?:unique|any|all)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.pr}
+              1: {name: keyword.control.query.protea}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.pr
+                name: keyword.control.query.protea
               - include: "#query-body"
               - include: $self
           limit-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit)(?![\w\p{Pd}])\s*\b(?:first|last|head|tail)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.pr}
+              1: {name: keyword.control.query.protea}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.pr
+                name: keyword.control.query.protea
               - include: "#query-body"
               - include: $self
           reduce-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)(?![\w\p{Pd}])\s*\b(?:left|right)?)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.pr}
+              1: {name: keyword.control.query.protea}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.pr
+                name: keyword.control.query.protea
               - include: "#query-body"
               - include: $self
           group-clause:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(group)(?![\w\p{Pd}])\s*
             beginCaptures:
-              1: {name: keyword.control.query.pr}
+              1: {name: keyword.control.query.protea}
             end: (?<=})|(?=[,;)\]])
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|into)(?![\w\p{Pd}])\s*
-                name: keyword.control.query.pr
+                name: keyword.control.query.protea
               - include: "#query-body"
               - include: $self
 
@@ -3245,31 +3320,18 @@ repository:
       - include: "#declare"
       - include: "#style"
       - include: "#function"
-      - include: "#method"
+      - include: "#procedure"
       - include: "#class"
+      - include: "#data"
       - include: "#enum"
       - include: "#module"
-      - include: "#package"
-      - include: "#interface"
-      - include: "#namespace"
+      - include: "#iterator"
+      - include: "#macro"
       - include: "#structure"
       - include: "#object"
-      - include: "#data"
       - include: "#trait"
-      - include: "#procedure"
-      - include: "#protocol"
-      - include: "#macro"
-      - include: "#type"
-      - include: "#given"
-      - include: "#element"
-      - include: "#extends"
-      - include: "#subroutine"
-      - include: "#predicate"
-      - include: "#lemma"
-      - include: "#iterator"
-      - include: "#field"
+      - include: "#component"
       - include: "#property"
-      - include: "#pragma"
 
     repository:
       style:
@@ -3277,303 +3339,322 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.style.pr}
+          1: {name: storage.type.style.protea}
         patterns:
           - include: "#style-rules"
           - include: "#style-block"
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.style.pr
+            name: entity.name.style.protea
 
       variable:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.variable.pr}
+          1: {name: storage.type.variable.protea}
       declare:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: keyword.other.declare.pr}
-
-      function:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.function.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.function.pr
-      method:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?![\w\p{Pd}])\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.method.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.method.pr
-      class:
+          1: {name: keyword.other.declare.protea}
+
+      function:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.class.pr}
+          1: {name: storage.type.function.protea}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.class.pr
-      enum:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.enum.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.enum.pr
-      module:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.module.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.module.pr
-      package:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pack)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.package.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.package.pr
-      interface:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(schema)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.interface.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.interface.pr
-      namespace:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(space)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.namespace.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.namespace.pr
-      structure:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.structure.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.structure.pr
-      object:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.object.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.object.pr
-      data:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.data.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.data.pr
-      trait:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.trait.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.trait.pr
+            name: entity.name.function.protea
       procedure:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.procedure.pr}
+          1: {name: storage.type.procedure.protea}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.procedure.pr
-      protocol:
+            name: entity.name.procedure.protea
+      class:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proto)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.protocol.pr}
+          1: {name: storage.type.class.protea}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.protocol.pr
-      macro:
+            name: entity.name.class.protea
+      data:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.macro.pr}
+          1: {name: storage.type.data.protea}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.macro.pr
-      given:
+            name: entity.name.data.protea
+      enum:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(given)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.given.pr}
+          1: {name: storage.type.enum.protea}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.given.pr
-      element:
+            name: entity.name.enum.protea
+      module:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.element.pr}
+          1: {name: storage.type.module.protea}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.element.pr
-      extends:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.extends.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.extends.pr
-      subroutine:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sub)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.subroutine.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.subroutine.pr
-      predicate:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pred)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.predicate.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.predicate.pr
-      lemma:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(lemma)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.lemma.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.lemma.pr
+            name: entity.name.module.protea
       iterator:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.iterator.pr}
+          1: {name: storage.type.iterator.protea}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.iterator.pr
-      field:
+            name: entity.name.iterator.protea
+      macro:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(field)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.field.pr}
+          1: {name: storage.type.macro.protea}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.field.pr
+            name: entity.name.macro.protea
+      structure:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.structure.protea}
+        patterns:
+          - include: "#block-entities"
+          - match: *entity-name
+            name: entity.name.structure.protea
+      object:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.object.protea}
+        patterns:
+          - include: "#block-entities"
+          - match: *entity-name
+            name: entity.name.object.protea
+      trait:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.trait.protea}
+        patterns:
+          - include: "#block-entities"
+          - match: *entity-name
+            name: entity.name.trait.protea
+      component:
+        applyEndPatternLast: 1
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(compo)\b\s*
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.component.protea}
+        patterns:
+          - include: "#block-entities"
+          - match: *entity-name
+            name: entity.name.component.protea
       property:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)\b\s*
         end: (?=.)|$
         beginCaptures:
-          1: {name: storage.type.property.pr}
+          1: {name: storage.type.property.protea}
         patterns:
           - include: "#block-entities"
           - match: *entity-name
-            name: entity.name.property.pr
-      pragma:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pragma)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: {name: storage.type.pragma.pr}
-        patterns:
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.pragma.pr
+            name: entity.name.property.protea
+
+  function-clause:
+    patterns:
+      - comment: |
+          Function def before function keyword
+          x = def()
+        match: |
+          (?x)\s*
+          (?<=[?!:]:|\b\.|[?!]\.)
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          (:?=)\s+
+          ((?:
+          \s*(?:
+          (?:# Visibility and mutability
+          pub|priv|prot|after|mut|immut
+          |glo|loc|early|late|covar|contra
+          |seal|abst|inter|exter|imply|exply
+          |sub
+
+          # Concurrency/thread
+          |sync|async|stat|dyn|lazy|eager|bound|free
+
+          # Function and methods
+          |rec|gen|oper|get|set|post|del|curry|inline
+          |prefix|suffix|infix|binary|unary|left|right
+          )
+          )
+          \s*)*)
+          (?=\s*\b
+          (?:
+          def|func|proc|macro
+          )\b
+          )
+        name: meta.object-literal.key.protea
+        captures:
+          1: {name: entity.name.method.protea}
+          2: {name: keyword.operator.assignment.protea}
+          3: {patterns: *modifier-keywords}
+      - begin: |
+          (?x)\s*
+          (?<=[?!:]:|\b\.|[?!]\.)
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          (:?=)\s+
+          (
+          (?:
+          (?:# Visibility and mutability
+          pub|priv|prot|after|mut|immut
+          |glo|loc|early|late|covar|contra
+          |seal|abst|inter|exter|imply|exply
+          |sub
+
+          # Concurrency/thread
+          |sync|async|stat|dyn|lazy|eager|bound|free
+
+          # Function and methods
+          |rec|gen|oper|get|set|post|del|curry|inline
+          |prefix|suffix|infix|binary|unary|left|right
+          )\s*\b)*
+          )\s*
+          (\|)
+          (?!\|)
+        end: (?<!\|)(\|)(?!\|)
+        name: meta.object-literal.key.protea
+        captures:
+          1: {name: entity.name.method.protea}
+          2: {name: keyword.operator.assignment.protea}
+          3: {patterns: *modifier-keywords}
+          4: {name: punctuation.separator.arguments.protea}
+        endCaptures:
+          1: {name: punctuation.separator.arguments.protea}
+        patterns: *function-params
+      - comment: |
+          Function def before function keyword
+          x = def()
+        match: |
+          (?x)\s*
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          (:?=)\s+
+          ((?:
+          \s*(?:
+          (?:# Visibility and mutability
+          pub|priv|prot|after|mut|immut
+          |glo|loc|early|late|covar|contra
+          |seal|abst|inter|exter|imply|exply
+          |sub
+
+          # Concurrency/thread
+          |sync|async|stat|dyn|lazy|eager|bound|free
+
+          # Function and methods
+          |rec|gen|oper|get|set|post|del|curry|inline
+          |prefix|suffix|infix|binary|unary|left|right
+          )
+          )
+          \s*)*)
+          (?=\s*\b
+          (?:
+          def|func|proc|macro
+          )\b
+          )
+        name: meta.object-literal.key.protea
+        captures:
+          1: {name: entity.name.function.protea}
+          2: {name: keyword.operator.assignment.protea}
+          3: {patterns: *modifier-keywords}
+      - begin: |
+          (?x)\s*
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          (:?=)\s+
+          (
+          (?:
+          (?:# Visibility and mutability
+          pub|priv|prot|after|mut|immut
+          |glo|loc|early|late|covar|contra
+          |seal|abst|inter|exter|imply|exply
+          |sub
+
+          # Concurrency/thread
+          |sync|async|stat|dyn|lazy|eager|bound|free
+
+          # Function and methods
+          |rec|gen|oper|get|set|post|del|curry|inline
+          |prefix|suffix|infix|binary|unary|left|right
+          )\s*\b)*
+          )\s*
+          (\|)
+          (?!\|)
+        end: (?<!\|)(\|)(?!\|)
+        name: meta.object-literal.key.protea
+        captures:
+          1: {name: entity.name.function.protea}
+          2: {name: keyword.operator.assignment.protea}
+          3: {patterns: *modifier-keywords}
+          4: {name: punctuation.separator.arguments.protea}
+        endCaptures:
+          1: {name: punctuation.separator.arguments.protea}
+        patterns: *function-params
 
   params-clause:
     begin: |
       (?x)
       (?<=(?:^\s*|[,;]\s*|\#?[({\[]\s*
       |(?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s+
-      |\b(?:#keywords
-      in|of|as|is|new|to|til|thru|by|del|unset
-      |var|val|let|const|decl|def|func|type|object
-      |class|enum|module|pack|struct|schema|space|pragma
-      |proc|proto|macro|given|style|elem|field
-      |ext|pred|data|trait|lemma|iter|sub|prop
-      |if|lest|elif|elest|else
-      |for|each|loop|while|until|when
-      |with|then|do|from|ref
-      |try|throw|catch|final
-      |switch|match|case|fail
-      |race|some|every|done|spawn|kill|settle|accept|reject
-      |break|next|redo|retry|return|await|label|yield|goto|pass
-      |import|export|using|route
-      |debug|assert|where
+      |\b(?:# keywords
+      in|of|as|is|new
+      |to|til|thru|by|del
+      |unset|ref|and|or|xor|not
+      |var|val|func|proc|type
+      |class|data|enum|module
+      |iter|macro|struct|object
+      |trait|style|compo|prop
+      |go|defer|do|from|where|with
+      |if|elif|else|def
+      |for|each|loop|while
+      |try|throw|catch|after
+      |match|case|goto|pass
+      |break|next|redo|retry
+      |return|yield|await|label
+      |import|export|route
+      |debug|assert|check
       )\b)\s*)
       (\|)
       (?!\|)
     captures:
-      1: {name: punctuation.separator.arguments.pr}
+      1: {name: punctuation.separator.arguments.protea}
     end: (?<!\|)(\|)(?!\|)
     patterns: *function-params
 
@@ -3585,20 +3666,20 @@ repository:
       - include: "#match-clause"
       - include: "#catch-clause"
       - include: "#with-clause"
-      - include: "#promise-clause"
       - include: "#do-clause"
       - include: "#when-clause"
       - include: "#case-clause"
       - include: "#type-clause"
       - include: "#new-clause"
       - include: "#params-clause"
+      - include: "#function-clause"
 
     repository:
       pattern-brackets:
         begin: \s*(\()
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.parameters.pr}
+          1: {name: punctuation.definition.parameters.protea}
         patterns:
           - include: "#function-params"
       new-clause:
@@ -3606,10 +3687,10 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(new)(?![\w\p{Pd}])
         end: (?=.)|$
         beginCaptures:
-          1: {name: keyword.operator.expression.$1.pr}
+          1: {name: keyword.operator.expression.$1.protea}
         patterns:
           - match: *entity-name
-            name: entity.name.instance.pr
+            name: entity.name.instance.protea
           - include: "#type-keywords"
           - include: "#illegal-keywords"
           - include: "#type-square-brackets"
@@ -3621,197 +3702,124 @@ repository:
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?![\w\p{Pd}])\s*
             end: (?=.)|$
             beginCaptures:
-              1: {name: keyword.operator.expression.$1.pr}
+              1: {name: keyword.operator.expression.$1.protea}
             patterns:
               - include: "#types"
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)(?![\w\p{Pd}])\s*
             end: (?=.)|$
             captures:
-              1: {name: keyword.other.typedef.pr}
+              1: {name: keyword.other.typedef.protea}
             patterns:
               - match: \s*([?:]?=)\s*
                 captures:
-                  1: {name: keyword.operator.assignment.pr}
+                  1: {name: keyword.operator.assignment.protea}
               - include: "#types"
       catch-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|final)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|after)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.catch.pr
+        name: meta.catch.protea
         captures:
-          1: {name: keyword.control.error.pr}
-          2: {name: punctuation.separator.colon.pr}
+          1: {name: keyword.control.error.protea}
+          2: {name: punctuation.separator.colon.protea}
         patterns:
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.pr}
+              1: {name: punctuation.definition.expression.protea}
             patterns:
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-                name: keyword.control.error.pr
+                name: keyword.control.error.protea
               - include: $self
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-            name: keyword.control.error.pr
-          - include: $self
-      promise-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(race|some|every|done|settle)(?![\w\p{Pd}])\s*
-        end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.async.pr
-        captures:
-          1: {name: keyword.control.promise.pr}
-          2: {name: punctuation.separator.colon.pr}
-        patterns:
-          - &promise-clause-keywords
-            match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-            name: keyword.control.promise.pr
-          - begin: \s*(\()
-            end: \s*(\))
-            captures:
-              1: {name: punctuation.definition.expression.pr}
-            patterns:
-              - *promise-clause-keywords
-              - include: $self
+            name: keyword.control.error.protea
           - include: $self
       do-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.do.pr
+        name: meta.do.protea
         captures:
-          1: {name: keyword.control.do.pr}
-          2: {name: punctuation.separator.colon.pr}
+          1: {name: keyword.control.do.protea}
+          2: {name: punctuation.separator.colon.protea}
         patterns:
           - include: $self
       for-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while|until)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.for.pr
+        name: meta.for.protea
         captures:
-          1: {name: keyword.control.loop.pr}
-          2: {name: punctuation.separator.colon.pr}
+          1: {name: keyword.control.loop.protea}
+          2: {name: punctuation.separator.colon.protea}
         patterns:
           - &for-clause-keywords
             match: \s*\b(in|of)\b
-            name: keyword.control.loop.pr
+            name: keyword.control.loop.protea
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.pr}
+              1: {name: punctuation.definition.expression.protea}
             patterns:
               - *for-clause-keywords
               - include: $self
           - include: $self
       if-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|elif|else)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.if.pr
+        name: meta.if.protea
         captures:
-          1: {name: keyword.control.conditional.pr}
-          2: {name: punctuation.separator.colon.pr}
+          1: {name: keyword.control.conditional.protea}
+          2: {name: punctuation.separator.colon.protea}
         patterns:
-          - include: $self
-      match-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?![\w\p{Pd}])\s*
-        end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.match.pr
-        captures:
-          1: {name: keyword.control.match.pr}
-          2: {name: punctuation.separator.colon.pr}
-        patterns:
-          - begin: (\#\{)\s*
-            end: \s*(\})
-            captures:
-              1: {name: punctuation.section.class.pr}
-            patterns:
-              - &when-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)(?![\w\p{Pd}])\s*
-                end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-                captures:
-                  1: {name: keyword.control.match.pr}
-                  2: {name: punctuation.separator.colon.pr}
-                patterns:
-                  - include: "#params-clause"
-                  - applyEndPatternLast: 1
-                    begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?![\w\p{Pd}])\s*
-                    end: (?=.)|$
-                    beginCaptures:
-                      1: {name: keyword.control.match.pr}
-                    patterns:
-                      - include: "#types"
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?![\w\p{Pd}])\s*
-                    name: keyword.control.match.pr
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
-                    name: keyword.control.match.pr
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                    name: keyword.control.match.pr
-                  - include: "#type-keywords"
-                  - include: $self
-              - &else-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
-                end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-                captures:
-                  1: {name: keyword.control.match.pr}
-                  2: {name: punctuation.separator.colon.pr}
-                patterns:
-                  - include: $self
-              - include: $self
-          - begin: (\{)\s*
-            end: \s*(\})
-            captures:
-              1: {name: punctuation.definition.block.pr}
-            patterns:
-              - *when-clause
-              - *else-clause
-              - include: $self
           - include: $self
       switch-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)(?![\w\p{Pd}])\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?![\w\p{Pd}])\s*
         end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.switch.pr
+        name: meta.switch.protea
         captures:
-          1: {name: keyword.control.switch.pr}
-          2: {name: punctuation.separator.colon.pr}
+          1: {name: keyword.control.switch.protea}
+          2: {name: punctuation.separator.colon.protea}
         patterns:
           - begin: (\#\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.section.class.pr}
+              1: {name: punctuation.section.class.protea}
             patterns:
               - &case-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)(?![\w\p{Pd}])\s*
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?![\w\p{Pd}])\s*
                 end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
                 captures:
-                  1: {name: keyword.control.switch.pr}
-                  2: {name: punctuation.separator.colon.pr}
+                  1: {name: keyword.control.switch.protea}
+                  2: {name: punctuation.separator.colon.protea}
                 patterns:
                   - include: "#params-clause"
                   - applyEndPatternLast: 1
                     begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?![\w\p{Pd}])\s*
                     end: (?=.)|$
                     beginCaptures:
-                      1: {name: keyword.control.switch.pr}
+                      1: {name: keyword.control.switch.protea}
                     patterns:
                       - include: "#types"
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?![\w\p{Pd}])\s*
-                    name: keyword.control.switch.pr
+                    name: keyword.control.switch.protea
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
-                    name: keyword.control.switch.pr
+                    name: keyword.control.switch.protea
                   - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                    name: keyword.control.switch.pr
+                    name: keyword.control.switch.protea
                   - include: "#type-keywords"
                   - include: $self
               - &default-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
+                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?![\w\p{Pd}])\s*
                 end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
                 captures:
-                  1: {name: keyword.control.switch.pr}
-                  2: {name: punctuation.separator.colon.pr}
+                  1: {name: keyword.control.switch.protea}
+                  2: {name: punctuation.separator.colon.protea}
                 patterns:
                   - include: $self
               - include: $self
           - begin: (\{)\s*
             end: \s*(\})
             captures:
-              1: {name: punctuation.definition.block.pr}
+              1: {name: punctuation.definition.block.protea}
             patterns:
               - *case-clause
               - *default-clause
@@ -3820,18 +3828,18 @@ repository:
       with-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?![\w\p{Pd}])\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.with.pr
+        name: meta.with.protea
         captures:
-          1: {name: keyword.control.with.pr}
-          2: {name: punctuation.separator.colon.pr}
+          1: {name: keyword.control.with.protea}
+          2: {name: punctuation.separator.colon.protea}
         patterns:
           - &with-clause-keywords
             match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
-            name: keyword.control.with.pr
+            name: keyword.control.with.protea
           - begin: \s*(\()
             end: \s*(\))
             captures:
-              1: {name: punctuation.definition.expression.pr}
+              1: {name: punctuation.definition.expression.protea}
             patterns:
               - *with-clause-keywords
               - include: $self
@@ -3851,31 +3859,30 @@ repository:
           (:)\s+
           ((?:
           \s*(?:
-          (?:# access modifiers
-          pub|priv|prot|inline|final|mut|immut|ghost|early|late|joint|contra
-          |seal|abs|intern|extern|imply|exply|global|local
+          (?:# Visibility and mutability
+          pub|priv|prot|after|mut|immut
+          |glo|loc|early|late|covar|contra
+          |seal|abst|inter|exter|imply|exply
+          |sub
 
-          # concurrency modifiers
-          |a?sync|stat|dyn|lazy|eager|strong|weak|swap
-          |vol|unsafe|unfix|bound|free|opaque|trans
+          # Concurrency/thread
+          |sync|async|stat|dyn|lazy|eager|bound|free
 
-          # property or method modifiers
-          |rec|cur|gen|oper|get|set|post|put|rem
+          # Function and methods
+          |rec|gen|oper|get|set|post|del|curry|inline
           |prefix|suffix|infix|binary|unary|left|right
-          |and|or|xor|not
-          |# Decorators
-          @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
-          ))
+          )
+          )
           \s*)*)
           (?=\s*\b
           (?:
           def|func|proc|macro
           )\b
           )
-        name: meta.object-literal.key.pr
+        name: meta.object-literal.key.protea
         captures:
-          1: {name: entity.name.function.pr}
-          2: {name: punctuation.separator.key-value.pr}
+          1: {name: entity.name.function.protea}
+          2: {name: punctuation.separator.key-value.protea}
           3: {patterns: *modifier-keywords}
       - begin: |
           (?x)
@@ -3884,49 +3891,47 @@ repository:
           (:)\s+
           (
           (?:
-          (?:# access modifiers
-          pub|priv|prot|inline|final|mut|immut|ghost|early|late|joint|contra
-          |seal|abs|intern|extern|imply|exply|global|local
+          (?:# Visibility and mutability
+          pub|priv|prot|after|mut|immut
+          |glo|loc|early|late|covar|contra
+          |seal|abst|inter|exter|imply|exply
+          |sub
 
-          # concurrency modifiers
-          |a?sync|stat|dyn|lazy|eager|strong|weak|swap
-          |vol|unsafe|unfix|bound|free|opaque|trans
+          # Concurrency/thread
+          |sync|async|stat|dyn|lazy|eager|bound|free
 
-          # property or method modifiers
-          |rec|cur|gen|oper|get|set|post|put|rem
+          # Function and methods
+          |rec|gen|oper|get|set|post|del|curry|inline
           |prefix|suffix|infix|binary|unary|left|right
-          |and|or|xor|not
-          |# Decorators
-          @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
           )\s*\b)*
           )\s*
           (\|)
           (?!\|)
         end: (?<!\|)(\|)(?!\|)
-        name: meta.object-literal.key.pr
+        name: meta.object-literal.key.protea
         captures:
-          1: {name: entity.name.function.pr}
-          2: {name: punctuation.separator.key-value.pr}
+          1: {name: entity.name.function.protea}
+          2: {name: punctuation.separator.key-value.protea}
           3: {patterns: *modifier-keywords}
-          4: {name: punctuation.separator.arguments.pr}
+          4: {name: punctuation.separator.arguments.protea}
         endCaptures:
-          1: {name: punctuation.separator.arguments.pr}
+          1: {name: punctuation.separator.arguments.protea}
         patterns: *function-params
       - match: |
           (?x)
           (?<=^|{|;|,|\s)\s*
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
           (:)\s+
-        name: meta.object-literal.key.pr
+        name: meta.object-literal.key.protea
         captures:
           1:
-            name: constant.other.object.key.pr
+            name: constant.other.object.key.protea
             patterns:
               - include: "#constants"
               - include: "#numbers"
               - include: "#symbols"
               - include: "#string-content"
-          2: {name: punctuation.separator.key-value.pr}
+          2: {name: punctuation.separator.key-value.protea}
 
   # Punctuation
 
@@ -3937,17 +3942,17 @@ repository:
       - include: "#semicolon"
 
   line-continuation:
-    match: (\\)\s*(?=/[/*+]|$)
-    name: punctuation.separator.continuation.line.pr
+    match: \\\n*|(\\)\s*(?=/[/*+]|$)
+    name: punctuation.separator.continuation.line.protea
   comma:
     match: \s*(,)
-    name: punctuation.separator.comma.pr
+    name: punctuation.separator.comma.protea
   double-semi:
     match: \s*(;;)
-    name: punctuation.terminator.expression.pr
+    name: punctuation.terminator.expression.protea
   semicolon:
     match: \s*(;)
-    name: punctuation.terminator.statement.pr
+    name: punctuation.terminator.statement.protea
 
   brackets:
     patterns:
@@ -3960,52 +3965,53 @@ repository:
       punctuation:
         patterns:
           - match: ","
-            name: punctuation.separator.mapping.pr
+            name: punctuation.separator.mapping.protea
           - match: (?<!\s):(?!:)
-            name: punctuation.separator.key-value.pr
+            name: punctuation.separator.key-value.protea
       closures:
         patterns:
-          - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(when|case)(?![\w\p{Pd}])\s*
+          - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?![\w\p{Pd}])\s*
             end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
             captures:
-              1: {name: keyword.control.pr}
-              2: {name: punctuation.separator.colon.pr}
+              1: {name: keyword.control.switch.protea}
+              2: {name: punctuation.separator.colon.protea}
             patterns:
               - include: "#params-clause"
               - applyEndPatternLast: 1
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?![\w\p{Pd}])\s*
                 end: (?=.)|$
                 beginCaptures:
-                  1: {name: keyword.control.pr}
+                  1: {name: keyword.control.switch.protea}
                 patterns:
                   - include: "#types"
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?![\w\p{Pd}])\s*
-                name: keyword.control.pr
+                name: keyword.control.switch.protea
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?![\w\p{Pd}])\s*
-                name: keyword.control.pr
+                name: keyword.control.switch.protea
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
-                name: keyword.control.pr
+                name: keyword.control.switch.protea
               - include: "#type-keywords"
               - include: $self
-          - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?![\w\p{Pd}])\s*
+          - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?![\w\p{Pd}])\s*
             end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?![\w\p{Pd}])|(?<=[)}\]\w'"`])(:)(?=\s|$)
             captures:
-              1: {name: keyword.control.pr}
-              2: {name: punctuation.separator.colon.pr}
+              1: {name: keyword.control.switch.protea}
+              2: {name: punctuation.separator.colon.protea}
             patterns:
               - include: $self
+          - include: $self
     patterns:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.typeparameters.pr}
+          1: {name: punctuation.definition.typeparameters.protea}
         patterns:
           - include: "#types"
           - include: $self
-      - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
+      - begin: \s*(?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.binding-pattern.object.pr}
+          1: {name: punctuation.definition.binding-pattern.object.protea}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4013,7 +4019,7 @@ repository:
       - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.mapping.pr}
+          1: {name: punctuation.definition.mapping.protea}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4021,7 +4027,7 @@ repository:
       - begin: \s*(?<=^|[,;({\[]|[)}\]\w'"`]:\s|\s[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.dictionary.pr}
+          1: {name: punctuation.definition.dictionary.protea}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4029,14 +4035,14 @@ repository:
       - begin: (\#\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.section.class.pr}
+          1: {name: punctuation.section.class.protea}
         patterns:
           - include: "#closures"
           - include: $self
       - begin: (\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.block.pr}
+          1: {name: punctuation.definition.block.protea}
         patterns:
           - include: "#closures"
           - include: $self
@@ -4046,22 +4052,20 @@ repository:
       punctuation:
         patterns:
           - match: ","
-            name: punctuation.separator.arguments.pr
-      function-params:
-        patterns: *function-params
+            name: punctuation.separator.arguments.protea
     patterns:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.parameters.pr}
+          1: {name: punctuation.definition.parameters.protea}
         patterns:
           - include: "#punctuation"
           - include: "#function-params"
           - include: $self
-      - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
+      - begin: \s*(?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.binding-pattern.tuple.pr}
+          1: {name: punctuation.definition.binding-pattern.tuple.protea}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4069,7 +4073,7 @@ repository:
       - begin: \s*(\#?\()\s*
         end: \s*(\))
         captures:
-          1: {name: punctuation.definition.expression.pr}
+          1: {name: punctuation.definition.expression.protea}
         patterns:
           - include: "#punctuation"
           - include: $self
@@ -4080,14 +4084,14 @@ repository:
         patterns:
           - match: (?<![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)
             captures:
-              1: {name: punctuation.separator.slice.pr}
+              1: {name: punctuation.separator.slice.protea}
           - match: ","
-            name: punctuation.separator.sequence.pr
+            name: punctuation.separator.sequence.protea
     patterns:
-      - begin: \s*(?<=\b(?:var|val|let|const|in|of|as|is|new|to|til|thru|by|del|unset)\b\s*)(\#?\{)\s*
+      - begin: \s*(?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.binding-pattern.array.pr}
+          1: {name: punctuation.definition.binding-pattern.array.protea}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
@@ -4095,23 +4099,23 @@ repository:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.attribute-selector.pr}
+          1: {name: punctuation.definition.attribute-selector.protea}
         patterns:
           - include: "#punctuation"
           - include: $self
       - begin: \s*(\#\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.sequence.pr}
+          1: {name: punctuation.definition.sequence.protea}
         patterns:
           - match: ","
-            name: punctuation.separator.sequence.pr
+            name: punctuation.separator.sequence.protea
           - include: $self
       - begin: \s*(\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.array.pr}
+          1: {name: punctuation.definition.array.protea}
         patterns:
           - match: ","
-            name: punctuation.separator.sequence.pr
+            name: punctuation.separator.sequence.protea
           - include: $self
