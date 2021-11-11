@@ -69,7 +69,33 @@ define:
     |break|next|redo|retry
     |return|yield|await|label
     |import|export|route
-    |debug|assert
+    |debug|assert|check
+    )(?![\w\p{Pd}])
+    )
+    ([\p{Pc}\p{L}][\w\p{Pd}]*)
+    \b
+
+  class-name: &class-name |
+    (?x)\s*\b
+    (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
+    \b(?:# keywords
+    in|of|as|is|new
+    |to|til|thru|by|del
+    |unset|ref|and|or|xor|not
+    |var|val|func|proc|type
+    |class|data|enum|module
+    |iter|macro|struct|object
+    |trait|style|compo|prop
+    |do|from|where|with
+    |if|elif|else|def
+    |for|each|loop|while
+    |try|throw|catch|after
+    |match|case|goto|pass
+    |break|next|redo|retry
+    |return|yield|await|label
+    |import|export|route
+    |debug|assert|check
+    |ext|impl
     )(?![\w\p{Pd}])
     )
     ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -94,7 +120,7 @@ define:
     |break|next|redo|retry
     |return|yield|await|label
     |import|export|route
-    |debug|assert
+    |debug|assert|check
     )(?![\w\p{Pd}])
     )
     ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -221,7 +247,7 @@ repository:
       |break|next|redo|retry
       |return|yield|await|label
       |import|export|route
-      |debug|assert
+      |debug|assert|check
       )(?![\w\p{Pd}])\s*
     name: invalid.illegal.keyword.saga
 
@@ -1009,7 +1035,7 @@ repository:
           |break|next|redo|retry
           |return|yield|await|label
           |import|export|route
-          |debug|assert
+          |debug|assert|check
           )(?![\w\p{Pd}])
           )
           \b[\p{Pc}\p{L}][\p{Pd}\w]*\b
@@ -1736,7 +1762,7 @@ repository:
       |break|next|redo|retry
       |return|yield|await|label
       |import|export|route
-      |debug|assert
+      |debug|assert|check
       )\b)\s*)
       (?=<[\p{Pc}\p{L}]|<\s+>)
     end: (?=.)|$
@@ -2115,7 +2141,7 @@ repository:
           |break|next|redo|retry
           |return|yield|await|label
           |import|export|route
-          |debug|assert
+          |debug|assert|check
           )(?![\w\p{Pd}])
           )
           [\p{Pc}\p{L}][\w\p{Pd}]*
@@ -2146,7 +2172,7 @@ repository:
           |break|next|redo|retry
           |return|yield|await|label
           |import|export|route
-          |debug|assert
+          |debug|assert|check
           )(?![\w\p{Pd}])
           )
           [\p{Pc}\p{L}][\w\p{Pd}]*
@@ -2506,7 +2532,7 @@ repository:
           |break|next|redo|retry
           |return|yield|await|label
           |import|export|route
-          |debug|assert
+          |debug|assert|check
           )(?![\w\p{Pd}])
           )
           [\w]+
@@ -2538,7 +2564,7 @@ repository:
               |break|next|redo|retry
               |return|yield|await|label
               |import|export|route
-              |debug|assert
+              |debug|assert|check
               )(?![\w\p{Pd}])
               )
               (?:
@@ -2623,7 +2649,7 @@ repository:
       |break|next|redo|retry
       |return|yield|await|label
       |import|export|route
-      |debug|assert
+      |debug|assert|check
       )(?![\w\p{Pd}])
       )
       (?:
@@ -2928,6 +2954,34 @@ repository:
       type-curly-brackets: *type-curly-brackets
 
     patterns:
+      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
+        name: entity.name.namespace.saga
+      - applyEndPatternLast: 1
+        begin: \s+(impl)\s+
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.implements.saga}
+        patterns:
+          - match: '\.|::'
+            name: punctuation.separator.namespace.saga
+          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
+            name: entity.name.namespace.saga
+          - match: *class-name
+            name: entity.name.trait.saga
+          - include: "#punctuation"
+      - applyEndPatternLast: 1
+        begin: \s+(ext)\s+
+        end: (?=.)|$
+        beginCaptures:
+          1: {name: storage.type.extends.saga}
+        patterns:
+          - match: '\.|::'
+            name: punctuation.separator.namespace.saga
+          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
+            name: entity.name.namespace.saga
+          - match: *class-name
+            name: entity.name.class.saga
+          - include: "#punctuation"
       - include: "#declarations"
       - include: "#type-keywords"
       - include: "#illegal-keywords"
@@ -3068,7 +3122,7 @@ repository:
         name: keyword.control.module.saga
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|do|from|ref)(?![\w\p{Pd}])\s*
         name: keyword.control.$1.saga
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|assert|where)(?![\w\p{Pd}])\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|assert|check|where)(?![\w\p{Pd}])\s*
         name: keyword.other.$1.saga
 
   expression-keywords:
@@ -3407,6 +3461,75 @@ repository:
           - match: *entity-name
             name: entity.name.property.saga
 
+  function-clause:
+    patterns:
+      - comment: |
+          Function def before function keyword
+          x = def()
+        match: |
+          (?x)\s*
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          (:?=)\s+
+          ((?:
+          \s*(?:
+          (?:# Visibility and mutability
+          pub|priv|prot|after|mut|immut
+          |glo|loc|early|late|covar|contra
+          |seal|abst|inter|exter|imply|exply
+          |super
+
+          # Concurrency/thread
+          |sync|async|stat|dyn|lazy|eager|bound|free
+
+          # Function and methods
+          |rec|gen|oper|get|set|post|del|curry|inline
+          |prefix|suffix|infix|binary|unary|left|right
+          )
+          )
+          \s*)*)
+          (?=\s*\b
+          (?:
+          def|func|proc|macro
+          )\b
+          )
+        name: meta.object-literal.key.saga
+        captures:
+          1: {name: entity.name.function.saga}
+          2: {name: keyword.operator.assignment.saga}
+          3: {patterns: *modifier-keywords}
+      - begin: |
+          (?x)\s*
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          (:?=)\s+
+          (
+          (?:
+          (?:# Visibility and mutability
+          pub|priv|prot|after|mut|immut
+          |glo|loc|early|late|covar|contra
+          |seal|abst|inter|exter|imply|exply
+          |super
+
+          # Concurrency/thread
+          |sync|async|stat|dyn|lazy|eager|bound|free
+
+          # Function and methods
+          |rec|gen|oper|get|set|post|del|curry|inline
+          |prefix|suffix|infix|binary|unary|left|right
+          )\s*\b)*
+          )\s*
+          (\|)
+          (?!\|)
+        end: (?<!\|)(\|)(?!\|)
+        name: meta.object-literal.key.saga
+        captures:
+          1: {name: entity.name.function.saga}
+          2: {name: keyword.operator.assignment.saga}
+          3: {patterns: *modifier-keywords}
+          4: {name: punctuation.separator.arguments.saga}
+        endCaptures:
+          1: {name: punctuation.separator.arguments.saga}
+        patterns: *function-params
+
   params-clause:
     begin: |
       (?x)
@@ -3428,7 +3551,7 @@ repository:
       |break|next|redo|retry
       |return|yield|await|label
       |import|export|route
-      |debug|assert
+      |debug|assert|check
       )\b)\s*)
       (\|)
       (?!\|)
@@ -3451,6 +3574,7 @@ repository:
       - include: "#type-clause"
       - include: "#new-clause"
       - include: "#params-clause"
+      - include: "#function-clause"
 
     repository:
       pattern-brackets:
@@ -3633,9 +3757,7 @@ repository:
         match: |
           (?x)
           (?<=^|{|;|,|\s)\s*
-          (
-          \b[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
           (:)\s+
           ((?:
           \s*(?:
@@ -3667,9 +3789,7 @@ repository:
       - begin: |
           (?x)
           (?<=^|{|;|,|\s)\s*
-          (
-          \b[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
           (:)\s+
           (
           (?:
@@ -3724,7 +3844,7 @@ repository:
       - include: "#semicolon"
 
   line-continuation:
-    match: (\\)\s*(?=/[/*+]|$)
+    match: \\\n*|(\\)\s*(?=/[/*+]|$)
     name: punctuation.separator.continuation.line.saga
   comma:
     match: \s*(,)
