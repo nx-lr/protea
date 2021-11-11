@@ -1,6 +1,6 @@
 ![Protea](./banner.svg)
 
-Protea will be a multi-platform and multi-purpose programming language containing tools you need for building, testing and deploying apps, systems and libraries for the entire tech stack. It supports the object-oriented and functional programming paradigms, and allows you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
+Protea is a multi-purpose programming language that serves as a drop-in replacement to JavaScript, and the traditional way of writing JavaScript full stack applications on multiple platforms. It fully supports object-oriented and functional programming, and allows you to write simple, fast and quality code while leveraging on the best of the JavaScript (and Python) ecosystems.
 
 ```dart
 module Button {
@@ -27,7 +27,7 @@ module Button {
 
 ### Overview
 
-Protea is both a programming language and a framework targeting the JavaScript ecosystem, optimized for building, testing and deploying cross-platform applications using only a single programming language. It is heavily inspired by Scala, Rust, Go, Python, ReasonML and the React framework.
+Protea is both a programming language and a framework targeting the JavaScript ecosystem, optimized for developing applications and libraries using only a single programming language. It is heavily inspired by Scala, Rust, Go, Python, ReasonML and the React framework.
 
 ### Syntax Overview
 
