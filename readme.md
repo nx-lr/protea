@@ -1,12 +1,12 @@
-# Saga(Script)
+# Protea(Script)
 
 > It's like JavaScript. But faster, stronger and better.
 
-Saga is a multi-platform and multi-purpose programming language containing tools you need for building, testing and deploying apps, systems and libraries for the entire tech stack. It supports the object-oriented and functional programming paradigms, and allows you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
+Protea is a multi-platform and multi-purpose programming language containing tools you need for building, testing and deploying apps, systems and libraries for the entire tech stack. It supports the object-oriented and functional programming paradigms, and allows you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
 ```dart
 module Button {
-  pub compo make(%count: int) {
+  pub compo make(&count: int) {
     var times = match count {
       case 1: "once"
       case 2: "twice"
@@ -20,18 +20,82 @@ module Button {
 
 ### Overview
 
-Saga is a programming language inspired by many curly-bracket languages for building, testing and deploying applications, expanding on the JavaScript everywhere paradigm.
+Protea is a programming language inspired by many curly-bracket languages for building, testing and deploying applications, expanding on the JavaScript everywhere paradigm.
 
-Saga is my programming language for building cross-platform software using existing JavaScript (or perhaps Python) libraries, expanding on the JavaScript everywhere paradigm. It has a general syntax reminiscent of Go, Python, Scala, Rust and more, plus built-in language features like GraphQL, SCSS and JSX.
+It's a curly bracket language heavily influenced not only by JavaScript, but also from Scala, Rust, Go and Python, and targets the JavaScript and WebAssembly runtimes. It also has built-in language features such as embedded JSX and CSS for use when building single-page applications.
+
+### Syntax Overview
+
+The influence from Go can be seen in the syntax for variable declarations, most language constructs that are free of syntax noise like semicolons and parentheses, and statements like `go` and `defer`. Protea uses the `[]Item` syntax for list types.
+
+```dart
+func fibonacci(n: int): []int {
+  var (a, b) = (1, 1)
+  for var i in 1 to n { (a, b) = (b, a + b) }
+  return list
+}
+
+func fibonacci(n: int): int = match n {
+  case is 0 | 1: 1
+  case n: fibonacci(n - 1) + fibonacci(n - 2)
+}
+```
+
+Protea is heavily inspired by Scala on many regards, including pattern matching, classes, traits, variables and operators. Protea has many short keywords, such as `dyn`, `pub`, `priv` and `impl`, many of them inspired from Rust.
+
+```dart
+class Complex(real: float, imag: float) {
+  infix func + (that: Complex) =
+    new Complex(this.real + that.real, this.imag + that.imag)
+  infix func - (that: Complex) =
+    new Complex(this.real - that.real, this.imag - that.imag)
+  sub func str = '$real + ${imag}i'
+}
+
+proc main {
+  var a = new Complex(4.0, 5.0)
+  var b = new Complex(2.0, 3.0)
+  print(a) // 4.0 + 5.0i
+  print(a + b) // 6.0 + 8.0i
+  print(a - b) // 2.0 + 2.0i
+}
+```
+
+Protea still maintains a general syntax that still somewhat resembles JavaScript, and has almost all of the features from modern JavaScript such as generators (now iterators) and template literals (now macros). Protea also has support for CSS, JSDoc, JSX and limited support for GraphQL.
+
+```dart
+val element = <div>
+  <h1>Hello!</h1>
+  <h2>Good to see you here.</h2>
+</div>
+
+style @mixin prefix(property, prefix, value) {
+  for prefix in prefixes: -$prefix-${property}: $value;
+  $property: $value
+}
+style .gray {
+  @include prefix(filter, grayscale(50%), moz webkit);
+}
+
+data HeroNameAndFriends($episode: Episode) {
+  hero(episode = $episode) {
+    name
+    friends {
+      name
+    }
+  }
+}
+```
+
+Protea also contains some smaller influences from other languages like Ruby, with symbol literals, Python's array slicing and splash asterisk, and YAML single quoted raw strings.
 
 ### Help me choose a language name!
 
-- Solo, Seul
+- Solace
 - Trinity
 - Protea
 - Lotus
-- SagaScript (or Saga for short)
-- NovaScript (or Nova for short)
+- Protea or SagaScript
 - Zenith
 - Zephyr
 - EvalIn, pronounced "Evelyn"
@@ -64,14 +128,14 @@ Saga is my programming language for building cross-platform software using exist
 
 - full tail call elimination
 - human friendly errors
-- what compiler should I use to build Saga?
+- what compiler should I use to build Protea?
 - a core standard library
 - an interactive REPL
 - comprehensive editor support
 
 ## An Introduction
 
-A typical Saga project would contain this file structure:
+A typical Protea project would contain this file structure:
 
 ```
 hello-world/
@@ -80,17 +144,17 @@ hello-world/
 |- app/ -> frontend codes
 |- node_modules/ -> required in a JavaScript project
 |- .gitignore
-|- index.saga
+|- index.pr
 |- package.json -> required in a JavaScript project
-|- README.saga
-|- modules.saga
+|- README.pr
+|- modules.pr
 ```
 
-Modules form the core of every Saga project. They can be accessed, installed, loaded, and passed around to and from other modules.
+Modules form the core of every Protea project. They can be accessed, installed, loaded, and passed around to and from other modules.
 
 You can put virtually anything into a module file, including constants, variables, types, functions, classes, components, constants, and more.
 
-The entry point of a project is the `main` function, defined in a special file called `index.saga`, at the project's root directory. All code is executed within `main`.
+The entry point of a project is the `main` function, defined in a special file called `index.pr`, at the project's root directory. All code is executed within `main`.
 
 ```dart
 func main {}
@@ -106,7 +170,7 @@ Script files do not have a `main` function, similar to other languages. They can
 
 ### Syntax
 
-Like JavaScript, Saga is a curly-brace language. Code blocks are delimited usually with curly braces.
+Like JavaScript, Protea is a curly-brace language. Code blocks are delimited usually with curly braces.
 
 Semicolons are completely optional though they can be used to separate multiple statements on the same line. The same rules apply to commas in function arguments or collection literals.
 
@@ -122,7 +186,7 @@ in y
 
 ### Comments
 
-Saga supports C-style comments. Block comments can be nested. The leading spaces after a comment is required, but not the trailing spaces.
+Protea supports C-style comments. Block comments can be nested. The leading spaces after a comment is required, but not the trailing spaces.
 
 ```dart
 // line comment
@@ -162,7 +226,7 @@ val {x, y} = {1, 2} // set
 
 ### Keywords
 
-Saga has a lot of different types of keywords, all of which are written entirely in lowercase and are between two and six letters.
+Protea has a lot of different types of keywords, all of which are written entirely in lowercase and are between two and six letters.
 
 Keywords used as operators:
 
@@ -250,13 +314,13 @@ All identifiers are normalized using the above function.
 
 ### Booleans, Null and Void
 
-The `Null` type is used to represent the absence of a value, similar to `null` in other languages. It only has a single value:
+The `null` type is used to represent the absence of a value, similar to that in other languages. It only has a single value:
 
 ```dart
 null
 ```
 
-Threenity also has `void`, for compatibility purposes. `void` is equal to `null`, but compiles to JavaScript `undefined`. You should use `void` in place of `null`.
+Protea also has `void`, for compatibility purposes. `void` is equal to `null`, but compiles to JavaScript `undefined`. You should use `void` in place of `null`.
 
 Booleans have only two possible values: `true` and `false`. They are constructed using the following literals:
 
@@ -267,11 +331,11 @@ false
 
 ### Numbers
 
-Threenity supports three numeric data types, `Nat`, `Int` and `Float`, all 64-bit. This avoids a lot of complexity associated with numeric precision such as file lengths, Unicode strings or very large lists.
+Protea supports three numeric data types, `Nat`, `Int` and `Float`, all 64-bit. This avoids a lot of complexity associated with numeric precision such as file lengths, Unicode strings or very large lists.
 
 ```dart
-val integer: Int = 123
-val floating: Float = 0x12.345
+val integer: int = 123
+val floating: float = 0x12.345
 ```
 
 As for signs, the prefix `+` and `-` are not part of the literal.
@@ -342,7 +406,7 @@ val base16 = 0x0123456789abcdef
 /* denominator => exponent => rounding => suffix */
 
 // Type suffix: with colon
-assert 1:u is Nat
+assert 1:u is nat
 
 // Multi-base literals
 val base100 = 100b0_99_99
@@ -462,7 +526,7 @@ If the expression is an identifier or qualified name, a nested property or a fun
 "$object_.property or $deeply.nested[property]"
 "$type_{casting}"
 "$a.'string'.property"
-"$function() or $method.call(with_, args)"
+"$function() or $method.call(plus, params)"
 "${expression} if all else fails"
 "keywords $then are not stropped"
 
@@ -472,7 +536,7 @@ If the expression is an identifier or qualified name, a nested property or a fun
 
 ### String formatting
 
-Saga comes built-in with a string formatting mini-language for converting, serializing and transforming objects inside strings, with a clearer to read syntax. They are composed of the following parts:
+Protea comes built-in with a string formatting mini-language for converting, serializing and transforming objects inside strings, with a clearer to read syntax. They are composed of the following parts:
 
 - A type: `%type` denoted by a percentage sign
 - An optional range of switches, each denoted by a slash `/switch`,
@@ -495,7 +559,7 @@ Saga comes built-in with a string formatting mini-language for converting, seria
 '%a' == "\%a"
 
 const Everest = {height: 8848}
-"Mount Everest is $Everest.height%f/unit:'m'/long tall."
+"Mount Everest is $Everest.height%f/unit:m/style:long tall."
 // "Mount Everest is 8,848 meters tall."
 ```
 
@@ -543,9 +607,9 @@ A quoted identifier can contain any Unicode character including white-spaces and
 
 ### Regular expressions
 
-Regular expressions function like strings, except delimited using backticks. In an effort to make them more readable, Saga's regexes allow for free spacing and embedded comments.
+Regular expressions function like strings, except delimited using backticks. In an effort to make them more readable, Protea's regexes allow for free spacing and embedded comments.
 
-Saga uses the [Oniguruma](https://github.com/kkos/oniguruma/blob/master/doc/RE) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. This means it's a blend of features found in the most popular regular expression flavors.
+Protea uses the [Oniguruma](https://github.com/kkos/oniguruma/blob/master/doc/RE) regular expression flavor by default, the same regex engine that powers Ruby and PHP7. This means it's a blend of features found in the most popular regular expression flavors.
 
 ````dart
 `\b{wb}(fee|fie|foe|fum)\b{wb}`x
@@ -587,7 +651,7 @@ $<name> ${/* Named capture group */}
 
 ### Collections
 
-Saga comes with two basic literals: list and map. Both collections are homogenous and immutable.
+Protea comes with two basic literals: list and map. Both collections are homogenous and immutable.
 
 - Lists are ordered collections of literals.
 - Maps are collections of key-value pairs where each item is mapped to a distinct key.
@@ -639,7 +703,7 @@ assert ({1: 1, 2: 2}) == {1, 2}
 
 ## Expressions & Operators
 
-In Saga, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot notation:
+In Protea, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot notation:
 
 ```dart
 10.+1
@@ -675,7 +739,7 @@ Operators can contain the following characters. In addition, all other Unicode p
 '
 ```
 
-These keywords are also operators: `in !in of !of is is! as as! as? unset del to til thru by`.
+These keywords are also operators: `in !in of !of is is! as as! as? unset del to til thru by and or xor not !and !or !xor`.
 
 `.`, `=`, `:`, `::`, `|>`, `||>`, `|||>`, `+>`, `<|`, `<||`, `<|||`, `<+`, `?:`, `!:`, `??`, `!!`, are not available as general operators; they are used for other notational purposes.
 
@@ -727,7 +791,7 @@ Dot-like or colon-like operators are operators starting with `.`, `!.`, `?.`, `:
 
 ## Control Statements
 
-Saga has a range of control statements which are also expressions. They form the core of the language.
+Protea has a range of control statements which are also expressions. They form the core of the language.
 
 ### Basic closures
 
@@ -827,7 +891,7 @@ You can assign the result to a variable:
 val minValue = if a < b: a else: b
 ```
 
-Anyway, Saga has two ternary conditional operators, which are just syntax sugar for the above if you're not keen on using `if`. That last one, is syntax sugar for `un`...`else`.
+Anyway, Protea has two ternary conditional operators, which are just syntax sugar for the above if you're not keen on using `if`. That last one, is syntax sugar for `un`...`else`.
 
 ```dart
 val minValue = a < b ? a : b
@@ -903,7 +967,7 @@ assert i == 128
 
 #### Loop keywords
 
-Saga has three keywords relating to loops:
+Protea has three keywords relating to loops:
 
 - stop and exit a loop or an enumeration using the `break` keyword
 - jump to the next iteration or step using the `next` keyword
@@ -1018,7 +1082,7 @@ match sample {
 
 ### Error handling
 
-Like a lot of other languages, Saga has a try-catch statement to val you catch and manage errors. The main difference is that Saga allows you to pattern match errors.
+Like a lot of other languages, Protea has a try-catch statement to val you catch and manage errors. The main difference is that Protea allows you to pattern match errors.
 
 ```dart
 var text = ''
@@ -1061,7 +1125,7 @@ Other concurrent processes are managed through processes as defined in the `Thre
 
 ## Functions
 
-Functions form the heart of Saga. Writing them is very simple:
+Functions form the heart of Protea. Writing them is very simple:
 
 ```dart
 func double(i: int): int = i * 2
