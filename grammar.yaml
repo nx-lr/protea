@@ -3468,6 +3468,75 @@ repository:
           x = def()
         match: |
           (?x)\s*
+          (?<=[?!:]:|\b\.|[?!]\.)
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          (:?=)\s+
+          ((?:
+          \s*(?:
+          (?:# Visibility and mutability
+          pub|priv|prot|after|mut|immut
+          |glo|loc|early|late|covar|contra
+          |seal|abst|inter|exter|imply|exply
+          |super
+
+          # Concurrency/thread
+          |sync|async|stat|dyn|lazy|eager|bound|free
+
+          # Function and methods
+          |rec|gen|oper|get|set|post|del|curry|inline
+          |prefix|suffix|infix|binary|unary|left|right
+          )
+          )
+          \s*)*)
+          (?=\s*\b
+          (?:
+          def|func|proc|macro
+          )\b
+          )
+        name: meta.object-literal.key.saga
+        captures:
+          1: {name: entity.name.method.saga}
+          2: {name: keyword.operator.assignment.saga}
+          3: {patterns: *modifier-keywords}
+      - begin: |
+          (?x)\s*
+          (?<=[?!:]:|\b\.|[?!]\.)
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          (:?=)\s+
+          (
+          (?:
+          (?:# Visibility and mutability
+          pub|priv|prot|after|mut|immut
+          |glo|loc|early|late|covar|contra
+          |seal|abst|inter|exter|imply|exply
+          |super
+
+          # Concurrency/thread
+          |sync|async|stat|dyn|lazy|eager|bound|free
+
+          # Function and methods
+          |rec|gen|oper|get|set|post|del|curry|inline
+          |prefix|suffix|infix|binary|unary|left|right
+          )\s*\b)*
+          )\s*
+          (\|)
+          (?!\|)
+        end: (?<!\|)(\|)(?!\|)
+        name: meta.object-literal.key.saga
+        captures:
+          1: {name: entity.name.method.saga}
+          2: {name: keyword.operator.assignment.saga}
+          3: {patterns: *modifier-keywords}
+          4: {name: punctuation.separator.arguments.saga}
+        endCaptures:
+          1: {name: punctuation.separator.arguments.saga}
+        patterns: *function-params
+
+      - comment: |
+          Function def before function keyword
+          x = def()
+        match: |
+          (?x)\s*
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
           (:?=)\s+
           ((?:
