@@ -1,8 +1,6 @@
-# Protea(Script)
+# Protea
 
-> It's like JavaScript. But faster, stronger and better.
-
-Protea is a multi-platform and multi-purpose programming language containing tools you need for building, testing and deploying apps, systems and libraries for the entire tech stack. It supports the object-oriented and functional programming paradigms, and allows you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
+Protea will be a multi-platform and multi-purpose programming language containing tools you need for building, testing and deploying apps, systems and libraries for the entire tech stack. It supports the object-oriented and functional programming paradigms, and allows you to write simple, fast and quality type safe code while leveraging huge ecosystems of libraries.
 
 ```dart
 module Button {
@@ -44,21 +42,15 @@ func fibonacci(n: int): int = match n {
 Protea is heavily inspired by Scala on many regards, including pattern matching, classes, traits, variables and operators. Protea has many short keywords, such as `dyn`, `pub`, `priv` and `impl`, many of them inspired from Rust.
 
 ```dart
-class Complex(real: float, imag: float) {
-  infix func + (that: Complex) =
-    new Complex(this.real + that.real, this.imag + that.imag)
-  infix func - (that: Complex) =
-    new Complex(this.real - that.real, this.imag - that.imag)
-  sub func str = '$real + ${imag}i'
+data Vec(x: float, y: float) {
+  infix func + (that: Vec) = Vec(x + that.x, y + that.y)
 }
 
-proc main {
-  var a = new Complex(4.0, 5.0)
-  var b = new Complex(2.0, 3.0)
-  print(a) // 4.0 + 5.0i
-  print(a + b) // 6.0 + 8.0i
-  print(a - b) // 2.0 + 2.0i
-}
+val vector1 = Vec(1.0, 1.0)
+val vector2 = Vec(2.0, 2.0)
+val vector3 = vector1 + vector2
+vector3.x // 3.0
+vector3.y // 3.0
 ```
 
 Protea still maintains a general syntax that still somewhat resembles JavaScript, and has inherited most of the features such as JavaScript, adapted for the language. Protea also has support for SCSS, JSDoc, JSX and limited support for GraphQL.
@@ -69,18 +61,17 @@ val element = <div>
   <h2>Good to see you here.</h2>
 </div>
 
-style button-base(button-height) {
-  display: inline-flex
-  position: relative
-  height: $button-height
-  border: none
-  vertical-align: middle
+var TomatoButton = style Button {
+  color: tomato
+  border-color: tomato
 }
 
-data HeroNameAndFriends($episode: Episode) {
-  hero(episode = $episode) {
+data HeroNameAndFriends(episode: Episode) {
+  hero(episode) {
     name
-    friends { name }
+    friends {
+      name
+    }
   }
 }
 ```
@@ -89,14 +80,16 @@ Protea also contains some smaller influences from other languages like Ruby, wit
 
 ### Help me choose a language name!
 
-- Solace
-- Trinity
-- Protea
-- Lotus
-- Protea or SagaScript
-- Zenith
-- Zephyr
-- EvalIn, pronounced "Evelyn"
+- Dictionary words
+  - **Solace**, i.e. comfort, peace
+  - **Zenith** or **Nadir**
+  - **Zephyr**
+  - **Protean** or **Proteus**
+- Personal names
+  - **Evalyn** or **Evalin**
+- Flora or Fauna
+  - **Protea**
+  - **Lotus**
 
 ### Features (non-exhaustive, more to come)
 
