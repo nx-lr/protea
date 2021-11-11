@@ -4,6 +4,15 @@ Protea will be a multi-platform and multi-purpose programming language containin
 
 ```dart
 module Button {
+  style button {
+    color: palevioletred
+    font-size: 1em
+    margin: 1em
+    padding: 0.25em 1em
+    border: 2px solid palevioletred
+    border-radius: 3px
+  }
+
   pub compo make(&count: int) {
     var times = match count {
       case 1: "once"
@@ -18,11 +27,23 @@ module Button {
 
 ### Overview
 
-Protea is a programming language inspired by many curly-bracket languages for building, testing and deploying applications, expanding on the JavaScript everywhere paradigm.
-
-It's a curly bracket language heavily influenced not only by JavaScript, but also from Scala, Rust, Go and Python, and targets the JavaScript and WebAssembly runtimes. It also has built-in language features such as embedded JSX and CSS for use when building single-page applications.
+Protea is both a programming language and a framework targeting the JavaScript ecosystem, optimized for building, testing and deploying cross-platform applications using only a single programming language. It is heavily inspired by Scala, Rust, Go, Python, ReasonML and the React framework.
 
 ### Syntax Overview
+
+Protea is heavily inspired by Scala on many regards, including pattern matching, classes, traits, variables and operators. Protea has many short keywords, such as `dyn`, `pub`, `priv` and `impl`, many of them inspired from Rust.
+
+```dart
+data Vec(x: float, y: float) {
+  infix func + (that: Vec) = Vec(x + that.x, y + that.y)
+}
+
+val vector1 = Vec(1.0, 1.0)
+val vector2 = Vec(2.0, 2.0)
+val vector3 = vector1 + vector2
+vector3.x // 3.0
+vector3.y // 3.0
+```
 
 The influence from Go can be seen in the syntax for variable declarations, most language constructs that are free of syntax noise like semicolons and parentheses, and statements like `go` and `defer`. Protea uses the `[]Item` syntax for list types.
 
@@ -37,20 +58,6 @@ func fibonacci(n: int): int = match n {
   case is 0 | 1: 1
   case n: fibonacci(n - 1) + fibonacci(n - 2)
 }
-```
-
-Protea is heavily inspired by Scala on many regards, including pattern matching, classes, traits, variables and operators. Protea has many short keywords, such as `dyn`, `pub`, `priv` and `impl`, many of them inspired from Rust.
-
-```dart
-data Vec(x: float, y: float) {
-  infix func + (that: Vec) = Vec(x + that.x, y + that.y)
-}
-
-val vector1 = Vec(1.0, 1.0)
-val vector2 = Vec(2.0, 2.0)
-val vector3 = vector1 + vector2
-vector3.x // 3.0
-vector3.y // 3.0
 ```
 
 Protea still maintains a general syntax that still somewhat resembles JavaScript, and has inherited most of the features such as JavaScript, adapted for the language. Protea also has support for SCSS, JSDoc, JSX and limited support for GraphQL.
