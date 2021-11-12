@@ -1,4 +1,4 @@
-# ![Protea](banner.svg)
+# ![Protea](./banner.png)
 
 Protea is a multi-purpose programming language that serves as a drop-in replacement to JavaScript, and the traditional way of writing JavaScript full stack applications on multiple platforms. It fully supports object-oriented and functional programming, and allows you to write simple, fast and quality code while leveraging on the best of the JavaScript (and Python) ecosystems.
 
@@ -438,7 +438,7 @@ Strings are created using single or double quotes. They are stored as UTF-16.
 "just like the \\ backslash"
 "the single quote ' and other characters can be escaped,
 but they are completely optional"
-" more quotes because why not"""""
+" more quotes because why not"""
 ```
 
 Double quoted string literals can contain the following escape sequences, and all of them are case-insensitive:
