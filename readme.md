@@ -1416,7 +1416,7 @@ print(p.firstName + " " + p.lastName) // Orianna Reveck
 If you’re coming from JavaScript, this Saga code:
 
 ```dart
-class Person(var firstName: String, var lastName: String)
+class Person(var firstName: str, var lastName: str)
 ```
 
 is roughly the equivalent of this TypeScript code:
@@ -1477,7 +1477,7 @@ class Person(var firstName: str, var lastName: str) {
 }
 ```
 
-Before we move on, here are a few other examples of Scala classes:
+Before we move on, here are a few other examples of Saga classes:
 
 ```dart
 class Pizza(var crustSize: int, var crustType: str)
