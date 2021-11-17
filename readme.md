@@ -1,9 +1,9 @@
-# ![Protea](./banner.png)
+# ![Protea](https://github.com/NoxVentura/ProteaLang/raw/main/banner.png)
 
 Protea is a multi-purpose programming language that serves as a drop-in replacement to JavaScript, and the traditional way of writing JavaScript full stack applications on multiple platforms. It fully supports object-oriented and functional programming, and allows you to write simple, fast and quality code while leveraging on the best of the JavaScript (and Python) ecosystems.
 
 ```dart
-module Button {
+module Button-B {
   style button {
     color: palevioletred
     font-size: 1em
@@ -71,6 +71,7 @@ val element = <div>
 var TomatoButton = style Button {
   color: tomato
   border-color: tomato
+  border: [x, y, z]
 }
 
 data HeroNameAndFriends(episode: Episode) {
@@ -525,8 +526,7 @@ If the expression is an identifier or qualified name, a nested property or a fun
 "$type_{casting}"
 "$a.'string'.property"
 "$function() or $method.call(plus, params)"
-"${expression} if all else fails"
-"keywords $then are not stropped"
+"${expression} $for everything $else"
 
 '$1' '$%' // don't need escaping
 '$$a' == "\$a"
@@ -976,7 +976,7 @@ label x loop {
   if new Random() > 0.3: break x
   elif new Random() > 0.5: next x
   elif new Random() > 0.7: redo x
-  else: log("Still running")
+  else: print("Still running")
 }
 ```
 
@@ -998,7 +998,7 @@ val dayName = match i {
   case 5: "Friday"
   case 6: "Saturday"
   case 7: "Sunday"
-  fail: "Invalid day"
+  def: "Invalid day"
 }
 ```
 
@@ -1009,7 +1009,7 @@ To demonstrate this, imagine that you want to evaluate "boolean equality" like P
 ```dart
 func isTrue(a: Any) = match a {
   case is 0 | '' | '0': false
-  fail: true
+  def: true
 }
 ```
 
@@ -1025,7 +1025,7 @@ Before we move on, here’s another example that shows many matches in each case
 val evenOrOdd = match i {
   case is 1 | 3 | 5 | 7 | 9: print("odd")
   case is 2 | 4 | 6 | 8 | 10: print("even")
-  fail: print("some other number")
+  def: print("some other number")
 }
 ```
 
@@ -1035,7 +1035,7 @@ Here's another example that shows how to handle multiple strings in multiple cas
 match cmd {
   case is "start" | "go": print("starting")
   case is "stop" | "quit" | "exit": print("stopping")
-  fail: print("doing nothing")
+  def: print("doing nothing")
 }
 ```
 
@@ -1048,7 +1048,7 @@ val number = 4:u
 match number {
   case i if i == 0: print('Zero')
   case i if i > 0: print("Greater than zero")
-  fail: print("Fell through")
+  def: print("Fell through")
 }
 ```
 
@@ -1063,7 +1063,7 @@ match pair {
   case [x, y] as z if x == y: print("$z are twins!")
   case [x, y] as z if x + y == 0: print("$z are opposites!")
   case [x, _] if x % 2 == 1: print("The first is odd.")
-  fail: print("Nothing special!")
+  def: print("Nothing special!")
 }
 ```
 
@@ -1164,6 +1164,7 @@ rec func sum(list: list[int]): int = match list {
 A simple recursive function may look like this:
 
 ```dart
+
 rec func List.has(item: any): bool = match this {
   case []: false
   case [a, *rest]: a == item ?: rest.has(item)
@@ -1173,8 +1174,8 @@ rec func List.has(item: any): bool = match this {
 Mutually recursive functions start like a single recursive function using the `rec` keyword, and then are chained together with `and`.
 
 ```dart
-rec func callSecond = | | callFirst()
-and func callFirst = | | callSecond()
+rec func callSecond = |x, y, z| callFirst()
+and func callFirst = | | callSecond(. x)
 ```
 
 ### Labeled Arguments
@@ -1257,6 +1258,7 @@ func drawCircle(&radius = 1, &color) {
 Functions and procedures are curried, by default. To want guaranteed un-currying, prefix a dot in the function's parameter list. Its type would have a dot.
 
 ```dart
+add(. x, y)
 func add(. x, y) = x + y
 assert echo is (. int, int) int
 add(. 1, 2)
@@ -1267,4 +1269,179 @@ If you need to call a curried function without any argument, you can do this:
 ```dart
 proc echo(a) = print(a)
 echo(.)
+```
+
+### Tips & Tricks
+
+Cheat sheet for the function syntaxes:
+
+#### Declaration
+
+```dart
+// anonymous function
+func(x, y) = 1
+|x, y| 1
+// bind to a name
+func x(x, y) = 1
+x = func(x, y) = 1
+x = |x, y|: void = 1
+
+// labeled
+func add(&first as x, &second as y) = x + y
+add = |&first as x, &second as y| x + y
+// with punning sugar
+func add(&first, &second) = x + y
+add = |&first, &second| x + y
+
+// labeled with default value
+func add(&first as x = 1, &second as y = 2) = x + y
+add = |&first as x = 1, &second as y = 2| x + y
+// with punning
+func add(&first = 1, &second = 2) = x + y
+add = |&first, &second| x + y
+
+// optional
+func add(&?first as ?x, &?second as ?y) = match x {...}
+add = |&?first as ?x, &?second as ?y| match first {...}
+// with punning
+func add(&?first, &?second) = match first {...}
+add = |&?first, &?second| match first {...}
+
+/* WITH TYPES */
+
+// anonymous function
+func(x: int, y: int): int = 1
+|x: int, y: int|: int, 1
+// bind to a name
+func x(x: int, y: int): int = 1
+x = func(x: int, y: int): int = 1
+x = |x: int, y: int|: int, 1
+
+// labeled
+func add(&first as x: int, &second as y): int = x + y
+add = |&first as x: int, &second as y|: int, x + y
+// with punning sugar
+func add(&first: int, &second: int): int = x + y
+add = |&first: int, &second: int|: int, x + y
+
+// labeled with default value
+func add(&first as x: int = 1, &second as y: int = 2) = x + y
+add = |&first as x: int = 1, &second as y: int = 2|: int, x + y
+// with punning
+func add(&first: int = 1, &second: int = 2): int = x + y
+add = |&first: int, &second: int|: int, x + y
+
+// optional
+func add(&?first as ?x: ?int, &?second as ?y: ?int): int = match x {...}
+add = |&?first as ?x: ?int, &?second as ?y: ?int|: int, match x {...}
+// with punning
+func add(&?first: ?int, &?second: ?int) = match first {...}
+add = |&?first: ?int, &?second: ?int|, match first {...}
+```
+
+#### Application
+
+```dart
+add(x, y)
+
+// labeled
+add(&first = 1, &second = 2)
+// with punning sugar
+add(&first, &second)
+
+// application with default value. Same as normal application
+add(&first = 1, &second = 2)
+
+// explicit optional application
+add(&?first = 1, &?second = 2)
+// with punning
+add(&?first, &?second)
+
+/* WITH TYPES */
+
+// labeled
+add(&first: int = 1, &second: int = 2)
+// with punning sugar
+add(&first: int, &second: int)
+
+// application with default value. Same as normal application
+add(&first: int = 1, &second: int = 2)
+
+// explicit optional application
+add(&?first: ?int = 1, &?second: ?int = 2)
+// no punning sugar when you want to type annotate
+```
+
+#### Type Signature
+
+```dart
+// first arg type, second arg type, return type
+type add = (int, int) int
+type add = (x: int, y: int) int
+type add = (&first: int, &second: int) int
+type add = (&?first: ?int, &?second: ?int) int
+```
+
+## Classes
+
+In support of object-oriented programming, Saga has a class construct. Its syntax is much more concise than languages like Java or C.
+
+Basic class constructor Here’s a Scala class whose constructor defines two parameters, firstName and lastName:
+
+```dart
+class Character(var firstName: str, var lastName: str)
+```
+
+Given that definition, you can create new Person instances as shown below. The `new` keyword is optional.
+
+```dart
+val p = new Character("Akali", "Tethi")
+val p = Character("Akali", "Tethi")
+```
+
+Defining parameters in a class constructor automatically creates fields in the class, and in this example you can access the firstName and lastName fields like this:
+
+```dart
+print(p.firstName + " " + p.lastName) // Akali Tethi
+```
+
+As both fields are defined as var fields, they're also mutable, meaning they can be changed. This is how you change them:
+
+```dart
+p.firstName = "Orianna"
+p.lastName = "Reveck"
+print(p.firstName + " " + p.lastName) // Orianna Reveck
+```
+
+If you’re coming from JavaScript, this Saga code:
+
+```dart
+class Person(var firstName: String, var lastName: String)
+```
+
+is roughly the equivalent of this TypeScript code:
+
+```ts
+class Person {
+  private firstName: string;
+  private lastName: string;
+
+  constructor(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+
+  get firstName(): string {
+    return this.firstName;
+  }
+  get lastName(): string {
+    return this.lastName;
+  }
+  set firstName(value: string): void {
+    return this.lastName;
+  }
+  set firstName(value: string): void {
+    return this.lastName;
+  }
+}
 ```
