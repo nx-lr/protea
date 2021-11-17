@@ -1280,32 +1280,32 @@ Cheat sheet for the function syntaxes:
 ```dart
 // anonymous function
 func(x, y) = 1
-|x, y| 1
+|x, y| = 1
 // bind to a name
 func x(x, y) = 1
 x = func(x, y) = 1
-x = |x, y|: void = 1
+x = |x, y| = 1
 
 // labeled
 func add(&first as x, &second as y) = x + y
 add = |&first as x, &second as y| x + y
 // with punning sugar
 func add(&first, &second) = x + y
-add = |&first, &second| x + y
+add = |&first, &second| = x + y
 
 // labeled with default value
 func add(&first as x = 1, &second as y = 2) = x + y
 add = |&first as x = 1, &second as y = 2| x + y
 // with punning
 func add(&first = 1, &second = 2) = x + y
-add = |&first, &second| x + y
+add = |&first, &second| = x + y
 
 // optional
 func add(&?first as ?x, &?second as ?y) = match x {...}
-add = |&?first as ?x, &?second as ?y| match first {...}
+add = |&?first as ?x, &?second as ?y| = match first {...}
 // with punning
 func add(&?first, &?second) = match first {...}
-add = |&?first, &?second| match first {...}
+add = |&?first, &?second| = match first {...}
 
 /* WITH TYPES */
 
@@ -1315,28 +1315,28 @@ func(x: int, y: int): int = 1
 // bind to a name
 func x(x: int, y: int): int = 1
 x = func(x: int, y: int): int = 1
-x = |x: int, y: int|: int, 1
+x = |x: int, y: int|: int = 1
 
 // labeled
 func add(&first as x: int, &second as y): int = x + y
 add = |&first as x: int, &second as y|: int, x + y
 // with punning sugar
 func add(&first: int, &second: int): int = x + y
-add = |&first: int, &second: int|: int, x + y
+add = |&first: int, &second: int|: int = x + y
 
 // labeled with default value
 func add(&first as x: int = 1, &second as y: int = 2) = x + y
 add = |&first as x: int = 1, &second as y: int = 2|: int, x + y
 // with punning
 func add(&first: int = 1, &second: int = 2): int = x + y
-add = |&first: int, &second: int|: int, x + y
+add = |&first: int, &second: int|: int = x + y
 
 // optional
 func add(&?first as ?x: ?int, &?second as ?y: ?int): int = match x {...}
-add = |&?first as ?x: ?int, &?second as ?y: ?int|: int, match x {...}
+add = |&?first as ?x: ?int, &?second as ?y: ?int|: int = match x {...}
 // with punning
 func add(&?first: ?int, &?second: ?int) = match first {...}
-add = |&?first: ?int, &?second: ?int|, match first {...}
+add = |&?first: ?int, &?second: ?int| = match first {...}
 ```
 
 #### Application
