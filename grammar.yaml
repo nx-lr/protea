@@ -171,37 +171,37 @@ repository:
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
         name: variable.parameter.optional.protea
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\*\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
         name: variable.parameter.spread.protea
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\%\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
         name: variable.parameter.name.protea
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\&\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
         name: variable.parameter.reference.protea
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\$\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
         name: variable.parameter.other.protea
       - match: |
           (?xi)\s*
           (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
           \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+:?=\s+|\s+\bas\b\s+)
+          (?=$|\s*(?:[,;)}\]]|:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
         name: variable.parameter.protea
 
   parameter-brackets:
@@ -2775,26 +2775,56 @@ repository:
               - include: $self
       round-brackets: &type-round-brackets
         repository:
+          function-params:
+            patterns:
+              - match: |
+                  (?xi)\s*
+                  (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
+                  \s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+                  (?=$|\s*(?:\b:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
+                name: variable.parameter.optional.protea
+              - match: |
+                  (?xi)\s*
+                  (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
+                  \s*\*\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+                  (?=$|\s*(?:\b:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
+                name: variable.parameter.spread.protea
+              - match: |
+                  (?xi)\s*
+                  (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
+                  \s*\%\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+                  (?=$|\s*(?:\b:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
+                name: variable.parameter.name.protea
+              - match: |
+                  (?xi)\s*
+                  (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
+                  \s*\&\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+                  (?=$|\s*(?:\b:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
+                name: variable.parameter.reference.protea
+              - match: |
+                  (?xi)\s*
+                  (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
+                  \s*\$\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+                  (?=$|\s*(?:\b:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
+                name: variable.parameter.other.protea
+              - match: |
+                  (?xi)\s*
+                  (?<=^|(?:^|[^|])\||[({\[;,]|[(|]\.\s+|\s*\bas\b\s+)
+                  \s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+                  (?=$|\s*(?:\b:\s+|\|(?!\|))|\s+[?:]?=\s+|\s+\bas\b\s+)
+                name: variable.parameter.protea
           punctuation:
             patterns:
               - match: ","
                 name: punctuation.separator.arguments.protea
         patterns:
-          - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
-            end: \s*(\))
-            captures:
-              1: {name: punctuation.definition.parameters.protea}
-            patterns:
-              - include: "#punctuation"
-              - include: "#function-params"
-              - include: "#types"
-              - include: $self
           - begin: \s*(\#?\()\s*
             end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.protea}
             patterns:
               - include: "#punctuation"
+              - include: "#function-params"
               - include: "#types"
               - include: $self
       square-brackets: &type-square-brackets
@@ -4057,6 +4087,10 @@ repository:
         patterns:
           - match: ","
             name: punctuation.separator.arguments.protea
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?![\w\p{Pd}])\s*
+            name: keyword.operator.expression.as.protea
+          - match: (?<=[\w\s][(|])\.
+            name: punctuation.definition.metadata.protea
     patterns:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
         end: \s*(\))
@@ -4072,14 +4106,12 @@ repository:
           1: {name: punctuation.definition.binding-pattern.tuple.protea}
         patterns:
           - include: "#labels"
-          - include: "#punctuation"
           - include: $self
       - begin: \s*(\#?\()\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.expression.protea}
         patterns:
-          - include: "#punctuation"
           - include: $self
 
   square-brackets:
