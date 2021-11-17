@@ -1085,7 +1085,7 @@ Like a lot of other languages, Protea has a try-catch statement to val you catch
 ```dart
 var text = ''
 try:
-  text = new File('filename').open().read()
+  text = File('filename').open.read
 catch {
   case is FileNotFoundError:
     "Could not find the file $filename"
@@ -1098,7 +1098,7 @@ Try-catch also lets you use an `after` clause which is typically used when you n
 
 ```dart
 try {
-  var file = file(path).open().read()
+  var file = File(path).open.read
 } catch {
   case foo : FooError: handleFooError(foo)
   case bar : BarError: handleBarError(bar)
@@ -1384,9 +1384,9 @@ type add = (&?first: ?int, &?second: ?int) int
 
 ## Classes
 
-In support of object-oriented programming, Saga has a class construct. Its syntax is much more concise than languages like Java or C.
+In support of object-oriented programming, Protea has a class construct. Its syntax is much more concise than languages like Java or C.
 
-Here's a Saga class whose constructor defines two parameters, firstName and lastName:
+Here's a Protea class whose constructor defines two parameters, firstName and lastName:
 
 ```dart
 class Character(var firstName: str, var lastName: str)
@@ -1413,7 +1413,7 @@ p.lastName = "Reveck"
 print(p.firstName + " " + p.lastName) // Orianna Reveck
 ```
 
-If you’re coming from JavaScript, this Saga code:
+If you’re coming from JavaScript, this Protea code:
 
 ```dart
 class Person(var firstName: str, var lastName: str)
@@ -1449,13 +1449,12 @@ class Person {
 
 #### Class constructors
 
-In Saga, the primary constructor of a class is a combination of:
+In Protea, the primary constructor of a class is a combination of:
 
-The constructor parameters
-
+- The constructor parameters
 - Methods that are called in the body of the class
 - Statements and expressions that are executed in the body of the class
-- Fields declared in the body of a Saga class are handled in a manner similar to JavaScript; they're assigned when the class is first instantiated.
+- Fields declared in the body of a Protea class are handled in a manner similar to JavaScript; they're assigned when the class is first instantiated.
 
 This Person class demonstrates several of the things you can do inside the body of a class:
 
@@ -1477,7 +1476,7 @@ class Person(var firstName: str, var lastName: str) {
 }
 ```
 
-Before we move on, here are a few other examples of Saga classes:
+Before we move on, here are a few other examples of Protea classes:
 
 ```dart
 class Pizza(var crustSize: int, var crustType: str)
