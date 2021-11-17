@@ -1449,12 +1449,11 @@ class Person {
 
 #### Class constructors
 
-In Protea, the primary constructor of a class is a combination of:
+In Protea, the constructor of a class is a combination of:
 
-- The constructor parameters
-- Methods that are called in the body of the class
-- Statements and expressions that are executed in the body of the class
-- Fields declared in the body of a Protea class are handled in a manner similar to JavaScript; they're assigned when the class is first instantiated.
+- The parameters
+- Statements executed in the class body
+- Fields and methods assigned when the class is initialised.
 
 This Person class demonstrates several of the things you can do inside the body of a class:
 
@@ -1463,7 +1462,7 @@ class Person(var firstName: str, var lastName: str) {
   print("the constructor begins")
   // 'public' access by default
   var age = 0
-  // some class fields
+  pub var age // explicit public
   priv val HOME = System.get("user.home")
 
   // some methods
@@ -1476,7 +1475,7 @@ class Person(var firstName: str, var lastName: str) {
 }
 ```
 
-Before we move on, here are a few other examples of Protea classes:
+Here are some more examples of classes:
 
 ```dart
 class Pizza(var crustSize: int, var crustType: str)
@@ -1495,4 +1494,56 @@ class Address(
   var city: str,
   var state: str
 )
+```
+
+## HTML
+
+If you're not a React developer, or don't use JSX in your day to day, then you should quickly skip over this section and pretend you didn't see anything!
+
+This is one of Protea's defining features: embedded HTML (PML). Create components, style them, add functionality to them, pass them around. Protea's PML language looks like JSX, but with very notable differences.
+
+### HTML5 Components
+
+For the most part, HTML code have literals just like any other data structure.
+
+```dart
+<h1>This is a heading</h1>
+<p>This is a paragraph.</p>
+```
+
+You can leave out the closing tag name if you want, so you don't have to repeat yourself. This is what's known as a short tag.
+
+```dart
+<h1>This is a heading</>
+<p>This is a paragraph.</>
+```
+
+Self closing tags with no content or children are always written this way.
+
+```dart
+<br/>
+<input type='text'/>
+```
+
+### Props
+
+HTML only allows you to quote properties (or "props") and their values as strings. Much like JSX, you can assign props without needing to put curly brackets (for the most part).
+
+You can include any value: strings, numbers, booleans, regexes, arrays, objects, functions, block literals and even CSS values. Or perhaps no value at all.
+
+```dart
+compo Hello(var toWhat: str) = <div>Hello $toWhat</div>
+DOM.render<Hello toWhat="World"/>
+```
+
+```dart
+<button
+  x =
+  border-radius = 3px
+  background-color = green
+  color = red
+  margin = 20px 40px
+  padding = 10px
+  class = value
+>Button</button>
 ```
