@@ -1386,7 +1386,7 @@ type add = (&?first: ?int, &?second: ?int) int
 
 In support of object-oriented programming, Saga has a class construct. Its syntax is much more concise than languages like Java or C.
 
-Basic class constructor Here’s a Scala class whose constructor defines two parameters, firstName and lastName:
+Here's a Saga class whose constructor defines two parameters, firstName and lastName:
 
 ```dart
 class Character(var firstName: str, var lastName: str)
@@ -1426,7 +1426,7 @@ class Person {
   private firstName: string;
   private lastName: string;
 
-  constructor(firstName, lastName) {
+  constructor(firstName: string, readonly lastName: string) {
     this.firstName = firstName;
     this.lastName = lastName;
   }
@@ -1434,14 +1434,66 @@ class Person {
   get firstName(): string {
     return this.firstName;
   }
+  set firstName(firstName: string): void {
+    this.firstName = firstName;
+  }
+
   get lastName(): string {
     return this.lastName;
   }
-  set firstName(value: string): void {
-    return this.lastName;
-  }
-  set firstName(value: string): void {
-    return this.lastName;
+  set lastName(lastName: string): void {
+    this.lastName = lastName;
   }
 }
+```
+
+#### Class constructors
+
+In Saga, the primary constructor of a class is a combination of:
+
+The constructor parameters
+
+- Methods that are called in the body of the class
+- Statements and expressions that are executed in the body of the class
+- Fields declared in the body of a Saga class are handled in a manner similar to JavaScript; they're assigned when the class is first instantiated.
+
+This Person class demonstrates several of the things you can do inside the body of a class:
+
+```dart
+class Person(var firstName: str, var lastName: str) {
+  print("the constructor begins")
+  // 'public' access by default
+  var age = 0
+  // some class fields
+  priv val HOME = System.get("user.home")
+
+  // some methods
+  sub func str: str = "$firstName $lastName is $age years old"
+  proc printHome = print("HOME = $HOME")
+  proc printFullName = print(this)
+
+  printHome() && printFullName()
+  print("you've reached the end of the constructor")
+}
+```
+
+Before we move on, here are a few other examples of Scala classes:
+
+```dart
+class Pizza(var crustSize: int, var crustType: str)
+
+// a stock, like AAPL or GOOG
+class Stock(var symbol: str, var price: bigrat)
+
+// a network socket
+class Socket(val timeout: str, val linger: str) {
+  sub func str = "timeout: $timeout, linger: $linger"
+}
+
+class Address(
+  var street1: str,
+  var street2: str,
+  var city: str,
+  var state: str
+)
 ```
