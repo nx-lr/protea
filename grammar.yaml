@@ -997,8 +997,7 @@ repository:
       - begin: (?i)\\j{
         end: \s*}
         name: constant.character.entity.named.protea
-        patterns:
-          - include: "#latex-sublanguage"
+        patterns: [include: "#latex-sublanguage"]
       - include: "#numeric-escapes"
       - match: (?i)\\([cm][a-z])
         name: constant.character.control.protea
@@ -1197,7 +1196,7 @@ repository:
           2:
             patterns:
               - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
-                name: constant.other.namespace.protea
+                name: constant.other.character-class.protea
               - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
                 name: constant.character.math.protea
               - match: \b\:\b
@@ -1546,8 +1545,7 @@ repository:
       - begin: \\j{
         end: \s*}
         name: constant.character.entity.named.protea
-        patterns:
-          - include: "#latex-sublanguage"
+        patterns: [include: "#latex-sublanguage"]
       - include: "#numeric-escapes"
       - match: (?i)\\([cm][a-z])
         name: constant.character.control.protea
@@ -1659,8 +1657,6 @@ repository:
     patterns:
       - match: \s+
         name: meta.var.expr.protea
-      - include: "#clauses"
-      - include: "#declarations"
       - include: source.yaml#flow-collection
       - include: "#brackets"
       - include: source.css.scss#constant_functions
@@ -1673,7 +1669,6 @@ repository:
       - include: source.css#color-keywords
       - include: source.css#property-names
       - include: "#literals"
-      - include: "#variables"
       - include: "#embedded"
   tag-names:
     match: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b\s*
@@ -1684,9 +1679,9 @@ repository:
         patterns:
           - match: "[.:]"
             name: punctuation.separator.namespace.protea
-          - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[:.])
+          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[:.])
             name: entity.name.tag.namespace.protea
-          - match: ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)\b
+          - match: \b((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)\b
             name: support.class.component.protea
           - include: source.css#tag-names
   style-block:
@@ -1772,6 +1767,11 @@ repository:
         captures:
           1: {name: punctuation.definition.selector.protea}
         patterns: [include: "#attribute-selectors"]
+      - include: "#style-selectors"
+      - include: "#format-language"
+      - include: "#tag-names"
+  style-selectors:
+    patterns:
       - match: \s*(\@|\#|\$|\&|\*|\.|\:|::)\b
         name: punctuation.definition.entity.protea
       - match: \s*(?<=\@)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
@@ -1784,8 +1784,6 @@ repository:
         name: entity.other.attribute-name.class.protea
       - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: entity.other.attribute-name.pseudo-component.protea
-      - include: "#format-language"
-      - include: "#tag-names"
 
   # JSX
 
@@ -1873,18 +1871,74 @@ repository:
   attributes:
     patterns:
       - applyEndPatternLast: 1
-        begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(=)\s*
+        begin: |
+          (?x)
+          \s*
+          (
+          [\p{Pd}$]?
+          (?:
+          # Recursive brackets
+          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
+          (?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )+
+          )\s*
+          (=)\s*
         beginCaptures:
-          1: {name: entity.other.attribute-name.protea}
-          2: {name: punctuation.separator.key-value.protea}
+          1:
+            name: entity.other.attribute-name.${1:/downcase}.protea
+            patterns:
+              - include: "#embedded"
+              - include: source.yaml#flow-collection
+              - include: "#brackets"
+          8: {name: punctuation.separator.key-value.protea}
         end: (?=.)|$
-        name: string.unquoted.attribute-name.protea
+        name: string.unquoted.protea
         patterns: [include: "#html-properties"]
-      - comment: Attribute names
-        match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(=)?\s*
+      - match: |
+          (?x)
+          \s*
+          (
+          [\p{Pd}$]?
+          (?:
+          # Recursive brackets
+          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
+          (?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )+
+          )\s*
         captures:
-          1: {name: entity.other.attribute-name.protea}
-          2: {name: punctuation.separator.key-value.protea}
+          1:
+            name: entity.other.attribute-name.${1:/downcase}.protea
+            patterns:
+              - include: "#embedded"
+              - include: source.yaml#flow-collection
+              - include: "#brackets"
+        name: string.unquoted.protea
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
     match: (?<!\*)\*(?!\*)
