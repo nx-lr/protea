@@ -18,8 +18,8 @@ comment: |
 
   Done:
   - Changed from indentation to curly bracket syntax
-  - Map/set syntax should only activate next to an opening bracket, or
-    non-suffix operator
+  - Map/set syntax should only activate next to an opening bracket, a colon
+    bordering a literal, closing bracket or identifier, or a non-suffix operator
   - Freed backslash to be an operator character
   - Added support for dashed identifiers, to support Lisp/train case
   - Fixed highlighting of "S-1" scenario, where a dash would only
@@ -350,14 +350,14 @@ repository:
           (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
           (?:# Properties
           (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-          ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+          ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
           |
           (?:# Objects
           (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-          ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+          ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
@@ -365,7 +365,7 @@ repository:
           |
           (?:# Regular variables
           (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-          ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+          ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
@@ -2300,14 +2300,14 @@ repository:
       (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
       (?:# Properties
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       |
       (?:# Objects
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
@@ -2315,7 +2315,7 @@ repository:
       |
       (?:# Regular variables
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
@@ -2653,7 +2653,7 @@ repository:
               (?:
               (?:# Objects
               (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-              ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+              ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
               ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
               ([\p{Pc}\p{L}][\w\p{Pd}]*)
               )
@@ -2662,14 +2662,14 @@ repository:
               (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
               (?:# Properties
               (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-              ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+              ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
               ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
               ([\p{Pc}\p{L}][\w\p{Pd}]*)
               )
               |
               (?:# Regular variables
               (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-              ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+              ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
               ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
               ([\p{Pc}\p{L}][\w\p{Pd}]*)
               )
@@ -2739,14 +2739,14 @@ repository:
       (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
       (?:# Properties
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       |
       (?:# Objects
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
@@ -2754,7 +2754,7 @@ repository:
       |
       (?:# Regular variables
       (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
-      ([\p{L}&&\P{Ll}]\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
+      ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
