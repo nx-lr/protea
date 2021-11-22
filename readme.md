@@ -1580,4 +1580,3 @@ PML supports punning. `<input checked/>` is just a shorthand for `<input checked
 <MyComponent isLoading text onClick/>
 ```
 
-Consequently, a PML component can cram in a few more props before reaching for extra libraries solutions that avoids props passing.
