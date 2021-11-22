@@ -1496,7 +1496,7 @@ class Address(
 )
 ```
 
-## PML: HTML Markup in Protea
+## PML: Protea Meets HTML
 
 If you're not a React developer, or don't use JSX in your day to day, then you should quickly skip over this section and pretend you didn't see anything!
 
@@ -1579,4 +1579,3 @@ PML supports punning. `<input checked/>` is just a shorthand for `<input checked
 ```dart
 <MyComponent isLoading text onClick/>
 ```
-
