@@ -227,6 +227,8 @@ repository:
         name: invalid.illegal.variable.protea
       - match: '[(){}\[\]]+?'
         name: invalid.illegal.missing-bracket.protea
+      - match: '[\p{S}\p{P}&&[^,;''"`(){}\[\]\p{Pc}]]+'
+        name: invalid.illegal.operator.protea
       - match: \S+?
         name: invalid.illegal.uncaught.protea
 
@@ -1734,7 +1736,7 @@ repository:
           \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
           )+
           )
-          (:)\s*
+          (:)\s+
         beginCaptures:
           1:
             name: support.type.property-name.protea
