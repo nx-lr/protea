@@ -15,16 +15,17 @@ comment: |
   To-Do:
   - Revamp numeric literals again
   - Add type-regex literals
+  - Document and add uncaught parsing errors
 
   Done:
   - Changed from indentation to curly bracket syntax
   - Map/set syntax should only activate next to an opening bracket, a colon
-    bordering a literal, closing bracket or identifier, or a non-suffix operator
-  - Freed backslash to be an operator character
+    beside a literal or closing bracket, or a non-suffix operator
+  - Freed backslash to be used as part of operators
   - Added support for dashed identifiers, to support Lisp/train case
-  - Fixed highlighting of "S-1" scenario, where a dash would only
-    highlight the first word
-  - Removed unquoted strings, especially YAML ones
+    - Fixed highlighting of "S-1" or "SX-1" scenario, where a dash would only
+      highlight the first word
+  - Removed unquoted strings
   - Added CSS keyword and function properties
   - Reworked JSX syntax, restored JSX fragments
   - Reworked format directives and embedded expressions, with a little
@@ -221,13 +222,13 @@ repository:
   illegal:
     patterns:
       - match: \p{N}[\w.+-/\\]*?
-        name: invalid.illegal.numeric.other.protea
+        name: invalid.illegal.number.protea
       - match: '[\w]+?'
-        name: invalid.illegal.variable.other.protea
+        name: invalid.illegal.variable.protea
       - match: '[(){}\[\]]+?'
         name: invalid.illegal.missing-bracket.protea
       - match: \S+?
-        name: invalid.illegal.syntax.protea
+        name: invalid.illegal.uncaught.protea
 
   illegal-keywords:
     match: |
@@ -1737,10 +1738,9 @@ repository:
         beginCaptures:
           1:
             name: support.type.property-name.protea
-            patterns:
+            patterns: &embedded-brackets
               - include: "#embedded"
               - include: "#brackets"
-              - include: source.yaml#flow-collection
           8: {name: punctuation.separator.key-value.protea}
         end: (?=.)|$
         name: string.unquoted.protea
@@ -1769,16 +1769,174 @@ repository:
     patterns:
       - match: \s*(\@|\#|\&|\*|\.|\:|::)\b
         name: punctuation.definition.entity.protea
-      - match: \s*(?<=\@)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: keyword.control.at-rule.protea
-      - match: \s*(?<=\#)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.id.protea
-      - match: \s*(?<=\&)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.name.type.anchor.protea
-      - match: \s*(?<=\.)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.class.protea
-      - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.other.attribute-name.pseudo-component.protea
+      - match: |
+          (?x)
+          \s*(?<=\*)
+          (
+          [\p{Pd}$]?
+          (?:
+          # Recursive brackets
+          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
+          (?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )+
+          )\s*
+        captures:
+          1:
+            name: entity.name.type.alias.protea
+            patterns: *embedded-brackets
+      - match: |
+          (?x)
+          \s*(?<=\&)
+          (
+          [\p{Pd}$]?
+          (?:
+          # Recursive brackets
+          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
+          (?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )+
+          )\s*
+        captures:
+          1:
+            name: entity.name.type.anchor.protea
+            patterns: *embedded-brackets
+      - match: |
+          (?x)
+          \s*(?<=\@)
+          (
+          [\p{Pd}$]?
+          (?:
+          # Recursive brackets
+          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
+          (?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )+
+          )\s*
+        captures:
+          1:
+            name: keyword.control.at-rule.protea
+            patterns: *embedded-brackets
+      - match: |
+          (?x)
+          \s*(?<=\#)
+          (
+          [\p{Pd}$]?
+          (?:
+          # Recursive brackets
+          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
+          (?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )+
+          )\s*
+        captures:
+          1:
+            name: entity.other.attribute-name.id.protea
+            patterns: *embedded-brackets
+      - match: |
+          (?x)
+          \s*(?<=\.)
+          (
+          [\p{Pd}$]?
+          (?:
+          # Recursive brackets
+          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
+          (?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )+
+          )\s*
+        captures:
+          1:
+            name: entity.other.attribute-name.class.protea
+            patterns: *embedded-brackets
+      - match: |
+          (?x)
+          \s*(?<=::?)
+          (
+          [\p{Pd}$]?
+          (?:
+          # Recursive brackets
+          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
+          (?<b>
+          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+          )|
+          (?<s>
+          # Strings
+          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+          (?<q1>')(?:[^']|'')*\g<q1>
+          )|
+          # Rest of identifier characters
+          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+          )+
+          )\s*
+        captures:
+          1:
+            name: entity.other.attribute-name.pseudo-component.protea
+            patterns: *embedded-brackets
 
   # JSX
 
@@ -1818,7 +1976,7 @@ repository:
   tag-component-name:
     patterns:
       - comment: JSX Fragment
-        contentName: string.unquoted.html.protea
+        contentName: invalid.illegal.invalid-prop.protea
         begin: \s*(<)\s*(?=>)
         end: (?<=</)(>)
         beginCaptures:
@@ -1828,7 +1986,7 @@ repository:
         patterns:
           - include: "#tag-termination"
       - comment: Tags that end > are trapped in tag-termination
-        contentName: string.unquoted.html.protea
+        contentName: invalid.illegal.invalid-prop.protea
         begin: |
           (?x)\s*+(<)#start tag begin
           ([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)#tag name
@@ -1899,7 +2057,6 @@ repository:
             patterns:
               - include: "#embedded"
               - include: "#brackets"
-              - include: source.yaml#flow-collection
           8: {name: punctuation.separator.key-value.protea}
         end: (?=.)|$
         name: string.unquoted.protea
@@ -1934,7 +2091,6 @@ repository:
             patterns:
               - include: "#embedded"
               - include: "#brackets"
-              - include: source.yaml#flow-collection
         name: string.unquoted.protea
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
@@ -3284,7 +3440,6 @@ repository:
             beginCaptures:
               1: {name: keyword.control.module.protea}
             patterns:
-              - include: source.yaml#flow-collection
               - *modifiers
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?![\w\p{Pd}])\s*
                 name: keyword.control.module.protea
