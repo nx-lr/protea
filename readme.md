@@ -71,7 +71,7 @@ val element = <div>
 var TomatoButton = style Button {
   color: tomato
   border-color: tomato
-  border: [x, y, z]
+  border: 30px
 }
 
 data HeroNameAndFriends(episode: Episode) {
@@ -557,7 +557,7 @@ Protea comes built-in with a string formatting mini-language for converting, ser
 '%a' == "\%a"
 
 const Everest = {height: 8848}
-"Mount Everest is $Everest.height%f/unit:m/style:long tall."
+"Mount Everest is $Everest.height%f/unit:'m'/style:'long' tall."
 // "Mount Everest is 8,848 meters tall."
 ```
 
@@ -1496,7 +1496,7 @@ class Address(
 )
 ```
 
-## HTML
+## PML: HTML Markup in Protea
 
 If you're not a React developer, or don't use JSX in your day to day, then you should quickly skip over this section and pretend you didn't see anything!
 
@@ -1525,11 +1525,11 @@ Self closing tags with no content or children are always written this way.
 <input type='text'/>
 ```
 
-### Props
+You can use any name for your tags. Built-in HTML tags such as `strong`, `em`, `button` and `div` are already pre-defined.
 
-HTML only allows you to quote properties (or "props") and their values as strings. Much like JSX, you can assign props without needing to put curly brackets (for the most part).
+### Attributes
 
-You can include any value: strings, numbers, booleans, regexes, arrays, objects, functions, block literals and even CSS values. Or perhaps no value at all.
+Attributes in PML work the same way as props in JSX, in that you can include any value or expression in addition to strings. You can also assign CSS properties directly to your HTML in the form of inline styles.
 
 ```dart
 compo Hello(var toWhat: str) = <div>Hello $toWhat</div>
@@ -1538,12 +1538,46 @@ DOM.render<Hello toWhat="World"/>
 
 ```dart
 <button
-  x =
+  name = "inline styles shown here!"
   border-radius = 3px
   background-color = green
   color = red
   margin = 20px 40px
   padding = 10px
-  class = value
+  class = "value"
 >Button</button>
 ```
+
+There are shortcuts for `class` and `id` attributes as well:
+
+```dart
+<button>Button</button>
+```
+
+### Content
+
+The contents inside of PML work the same way as double-quoted strings in Protea. You can include strings, variables, expressions and other Protea components inside there. Plus, we give you inline Markdown support.
+
+```dart
+val children = <div checked${x}=true>Hello World!</div>
+<div .total.total-${obj.state}>$children</div>
+
+<View style=$styles.container>
+  <Image source=${{uri: 'https://i.imgur.com/TkIrScD.png'}} style=$styles.logo/>
+  <Text style=$styles.instructions>
+    To share a photo from your phone with a friend, just press the button below!
+  </Text>
+</View>
+```
+
+### Punning
+
+"Punning" refers to the syntax shorthand for when a label and a value are the same. For example, in JavaScript, instead of doing return `{name: name}`, you can do return `{name}`.
+
+PML supports punning. `<input checked/>` is just a shorthand for `<input checked="checked"/>`. The formatter will help you format to the punned syntax whenever possible. This is convenient in the cases where there are lots of props to pass down:
+
+```dart
+<MyComponent isLoading text onClick/>
+```
+
+Consequently, a PML component can cram in a few more props before reaching for extra libraries solutions that avoids props passing.
