@@ -451,17 +451,17 @@ val base12 = 0z0123456789ab
 val base16 = 0x0123456789abcdef
 ```
 
-Some suffixes which you can use:
+Some suffixes which you can use (note simplified into regexes for compactness) for you to use (note digits depends on the prefix and the base).
 
-- `f`: fraction; as in `1f3` to mean 1&div;3
-- `r`: repeating digits
-- `p`: power or exponent
-- `p...p...`: power with custom base
-- `t` or `td`: truncate to how many place values
-- `ts`: truncate to significant figures
-- `t+`: round up
-- `t-`: round down
-- `_` (optional) + identifier: type suffix
+- `f(\p{Pc}|$digits)`: fraction; as in `1f3` to mean &frac13;
+- `r(\p{Pc}|$digits)`: repeating digits
+- `p[+-]?\d+`: power/exponent
+- `p\d+p[+-]?\d+`: power with custom base
+- `td?\d+p[+-]?\d+`: truncate to place values
+- `ts\d+`: truncate to significant figures
+- `t\+\d+`: round up
+- `t\-\d+`: round down
+- `_$ident`: type suffix
 
 Integers:
 
