@@ -132,9 +132,33 @@ Protea also contains some smaller influences from other languages like Ruby, wit
 - an interactive REPL
 - comprehensive editor support
 
-## An Introduction
+## Hello World
 
-A typical Protea project would contain this file structure:
+```dart
+func main = print('Hello World!')
+```
+
+Save this snippet into a file named `hello.pta`. Now run `pta run hello.pta` (you can leave out the `.pta` file format if you like). Congratulations - you just wrote and executed your first V program!
+
+You can compile a program without execution with `pta comp hello.pta`. See `pta help` for all supported commands.
+
+From the example above, you can see that functions are declared with the `func` keyword. The return type is specified after the function name. In this case `main` doesn't return anything, so you can leave out the return type.
+
+As in many other languages (such as C, Go, and Rust), `main` is the entry point of your program.
+
+`print` is one of the few built-in functions. It prints the value passed to it to standard output.
+
+`fn main` declaration can be skipped in one-file programs. This is useful when writing small programs, "scripts", or just learning the language. For brevity, `fn main` will be skipped in this entire document.
+
+This means that a "hello world" program in Protea is as simple as
+
+```dart
+print('Hello World!')
+```
+
+### The Basics
+
+Your Protea codebase would contain this file structure:
 
 ```
 hello-world/
@@ -143,33 +167,19 @@ hello-world/
 |- app/ -> frontend codes
 |- node_modules/ -> required in a JavaScript project
 |- .gitignore
-|- index.pr
+|- main.pta
 |- package.json -> required in a JavaScript project
-|- README.pr
-|- modules.pr
+|- README.pta
+|- module.pta
 ```
 
-Modules form the core of every Protea project. They can be accessed, installed, loaded, and passed around to and from other modules.
+Every `.pta` file is a module. They can be accessed, installed, loaded, and passed around to and from other modules. You can put virtually anything into them, even other modules (they're called submodules)
 
-You can put virtually anything into a module file, including constants, variables, types, functions, classes, components, constants, and more.
-
-The entry point of a project is the `main` function, defined in a special file called `index.pr`, at the project's root directory. All code is executed within `main`.
-
-```dart
-func main {}
-```
-
-The `main` function can accept arguments:
-
-```dart
-func main(*args: []str): void { /* code here */ }
-```
-
-Script files do not have a `main` function, similar to other languages. They can import and use modules, and can call and open other script files.
+The entry point of a project is the `main` function, defined in a special file called `main.pta`, at the project's root directory. All code is executed within `main`. If no `main` function is defined with `main`, it would look for any other root-directory file with a `main` and run it.
 
 ### Syntax
 
-Like JavaScript, Protea is a curly-brace language. Code blocks are delimited usually with curly braces.
+Like JavaScript, Protea is a curly-brace language. Code blocks are delimited ~~usually~~ all the time with curly braces.
 
 Semicolons are completely optional though they can be used to separate multiple statements on the same line. The same rules apply to commas in function arguments or collection literals.
 
@@ -185,7 +195,7 @@ in y
 
 ### Comments
 
-Protea supports C-style comments. Block comments can be nested. The leading spaces after a comment is required, but not the trailing spaces.
+Protea supports C-style comments. Block comments can be nested. **The leading space(s) after a comment is required**, but not the trailing spaces.
 
 ```dart
 // line comment
@@ -194,17 +204,106 @@ Protea supports C-style comments. Block comments can be nested. The leading spac
 /** block documentation comment */
 ```
 
-### Variables
+## Functions (the basics)
 
-A variable binding, or otherwise a declaration, begin with any one of `var`, `val`. All bindings are "scoped" to the block in which they are defined in, and all inner blocks.
+Functions are a core part of any language. They perform logic and return values based on the arguments provided.
+
+```dart
+func main {
+  print(add(77, 33))
+  print(sub(100, 50))
+}
+
+func add(x: int, y: int): int = x + y
+func sub(x: int, y: int): int = x - y
+```
+
+Again, the type comes after the argument's name.
+
+Just like in Go and C, functions cannot be overloaded. This simplifies the code and improves maintainability and readability.
+
+### Hoisting
+
+Functions can be used before their declaration: `add` and `sub` are declared after `main`, but can still be called from `main`. This is true for all declarations in Protea and eliminates the need for header files or thinking about the order of files and declarations.
+
+### Returning multiple values
+
+Parentheses are tuple literals (very similar to lists).
+
+```dart
+func foo: (int, int) = (2, 3)
+val (a, b) = foo()
+print(a, b) // 2, 3
+val (c, ?) = foo() // ignore values
+```
+
+### Visibility
+
+```dart
+pub func public-function {}
+priv func private-function {}
+```
+
+Functions are private (not exported) by default. To allow other modules to use them, prepend `pub` or `export`. The same applies to constants and types.
+
+Note: `pub` can only be used from a named module. For information about creating a module, see [Modules](#modules).
+
+## Variables
+
+A variable declaration binds values to names. In other languages they might be called a "variable binding" or "term declaration". The binding is immutable and can be referenced by code that comes after them.
+
+```dart
+val greeting = "hello!";
+val score = 10;
+val newScore = 10 + score;
+```
+
+Note: If you are coming from JavaScript, these bindings behave like `const`, not like `var` or `let`.
+
+#### Mutable and Immutable Variables
+
+`val` bindings are "immutable", they cannot change after they are created.
+
+```dart
+val x = 10;
+/* Error: Invalid code! */
+x = x + 13;
+```
+
+### Shadowing
+
+Declarations can be shadowed to give the appearance of updating them. This is a common pattern that should be used when it seems like a variable needs to be updated.
+
+```dart
+val x = 10;
+val x = x + 10;
+val x = x + 3;
+/* x is 23 */
+```
+
+Block Scope Bindings can be manually scoped using `{}`.
+
+```dart
+val message = do {
+  val part1 = "hello";
+  val part2 = "world";
+  part1 ++ " " ++ part2
+};
+/* `part1` and `part2` not accessible here! */
+```
+
+The last line of a block is implicitly returned.
+
+### Mutable Bindings
+
+A mutable variable is defined with the `var` keyword rather than `val`. This behaves very similarly to `let` in JavaScript.
 
 ```dart
 var x = 42
-val y: int = 42
-y = 10
+x = 10
 ```
 
-### Assigning multiple variables
+#### Assigning multiple variables
 
 There are many ways to assign variables:
 
@@ -216,11 +315,11 @@ x = 1; y = 2
 You can also unpack them from regular expressions or data structures:
 
 ```dart
-val `(?'x'.+)` = 'a' // x == 'a'
+val `(?'x'\w+?)` = 'a-random' // x == 'a'
 val (x, y) = (1, 2) // seq
 val [x, y] = [1, 2] // list
 val {x, y} = {x: 1, y: 2} // map
-val {x, y} = {1, 2} // set
+val {x, y} = {1, 2} // set (same as above)
 ```
 
 ### Keywords
@@ -281,7 +380,7 @@ prefix suffix infix binary unary left right
 
 An identifier can contain any sequence of letters, digits, marks,underscores, and dashes, provided it starts with a letter or underscore, and does not end in any number of dashes.
 
-```js
+```ts
 const regex = /\b[\p{Pc}\p{L}][\d\p{L}\p{M}\p{Pc}\p{Pd}]*\b/;
 ```
 
@@ -289,8 +388,9 @@ Identifiers are compared using an approach known as partial case-insensitivity.
 
 ```dart
 func cmpIdent(a: str, b: str): bool {
-  val a1
-  if (a1 = a.sub(`\P{Alnum}`g, '')) ~= `\p{Upper}+`:
+  if do {
+    val a1; (a1 = a.sub(`\P{Alnum}`g, '')) ~= `\p{Upper}+`
+  }:
     a1 == b.sub(`\P{Alnum}`g, '')
   else:
     a[0] == b[0] && (
@@ -334,7 +434,7 @@ Protea supports three numeric data types, `Nat`, `Int` and `Float`, all 64-bit. 
 
 ```dart
 val integer: int = 123
-val floating: float = 0x12.345
+val floating: float = -1
 ```
 
 As for signs, the prefix `+` and `-` are not part of the literal.
@@ -346,75 +446,22 @@ val base2 = 0b10
 val base4 = 0q123
 val base6 = 0s12345
 val base8 = 0o1234567
-val base10 = 0123456789
+val base10 = 0123456789p10
 val base12 = 0z0123456789ab
 val base16 = 0x0123456789abcdef
 ```
 
-Floating-point numbers can allow different kinds of delimiters and separators.
+Some suffixes which you can use:
 
-```dart
-0.3 // Basic literal (3/10)
-3/10 // Fraction
-0.~3 // Repeating digits
-1^10 // Exponent
-1^-10 // Signed exponent
-0.1*16^+10 // Scientific notation
-1=10 // Rounding to 10 decimal places
-1=+10 // Round up 10 decimal places
-1=-10 // Round down 10 decimal places
-1=!10 // Round to 10 significant figures
-1=!+10 // Round up to 10 significant figures
-1=!-10 // Round down to 10 significant figures
-```
-
-The fractional, repeating, exponent, rounding and type-suffix part appear in that specific order, though are all optional.
-
-Multi-base digits can use either alphanumerics or digits. The digits are specified with a formatting modifier, `%`.
-
-```dart
-var int: int = 123
-var nat: nat = 123:u
-var float: float = 123.0
-
-/* Different radixes */
-val base2 = 0b10
-val base4 = 0q123
-val base6 = 0s12345
-val base8 = 0o1234567
-val base10 = 0123456789
-val base12 = 0z0123456789ab
-val base16 = 0x0123456789abcdef
-
-/* For floats only: */
-0.3 // Basic literal (3/10)
-3/10 // Fraction
-0.~3 // Repeating digits
-1^10 // Exponent
-1^-10 // Signed exponent
-0.1*16^+10 // Scientific notation
-1=10 // Round to 10 decimal places
-1=+10 // Round up 10 d.p
-1=-10 // Round down 10 d.p
-1=!10 // Round to 10 significant figures
-1=!+10 // Round up to 10 s.f
-1=!-10 // Round down to 10 s.f
-
-// Parts of a float: all optional
-/* fraction => repeating => exponent => rounding => suffix */
-/* denominator => exponent => rounding => suffix */
-
-// Type suffix: with colon
-assert 1:u is nat
-
-// Multi-base literals
-val base100 = 100b0_99_99
-assert base100 == 9999
-
-// With custom digits
-const base17Digits = '0123456789abcdefg'
-val base17 = 17b0123456789abcdefg%num/digits:(base17Digits)
-```
+- `f`: fraction; as in `1f3` to mean 1&div;3
+- `r`: repeating digits
+- `p`: power or exponent
+- `p...p...`: power with custom base
+- `t` or `td`: truncate to how many place values
+- `ts`: truncate to significant figures
+- `t+`: round up
+- `t-`: round down
+- `_` (optional) + identifier: type suffix
 
 Integers:
 
@@ -426,6 +473,8 @@ Integers:
 ### Strings
 
 Strings are created using single or double quotes. They are stored as UTF-16.
+
+In Saga, a string is a read-only array of bytes. String data is encoded using UTF-16.
 
 ```dart
 'all single quoted strings are verbatim'
@@ -442,7 +491,14 @@ but they are completely optional"
 " more quotes because why not"""
 ```
 
-Double quoted string literals can contain the following escape sequences, and all of them are case-insensitive:
+Indexing a string would produce another string, i.e. a rune. Indexes correspond to Unicode characters, but you can convert the strings using the `.bytes()` method.
+
+```v
+hello := 'Hello World 👋'
+hello_runes := hello.runes() // [`H`, `e`, `l`, `l`, `o`, ` `, `W`, `o`, `r`, `l`, `d`, ` `, `👋`]
+```
+
+Double quoted string literals can contain the following escape sequences, and all of them are case-insensitive. You can embed multiple code points in a single expansion.
 
 ```dart
 "\p" // platform specific newline
@@ -470,6 +526,11 @@ Double quoted string literals can contain the following escape sequences, and al
 "\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
 "\d{72 69 76 76 69}" == "\72\69\76\76\79"
 
+```
+
+Double quoted literals also allow you to embed LaTeX expressions (because why not?).
+
+```dart
 // LaTeX expressions:
 "\j{
   \documentclass{article}
@@ -551,7 +612,8 @@ Protea comes built-in with a string formatting mini-language for converting, ser
 "%x/x:`` regex"
 "%x/x:() expression"
 "%x/x:[] array"
-"%x/x:{} dictionary"
+"%x/x:{} code block"
+"%x/x:({}) dictionary"
 
 '%1' '%$' // don't need escaping when next to a symbol or number
 '%a' == "\%a"
@@ -581,7 +643,11 @@ String placeholders are used to create template strings from named, keyed or pos
 "#name%i/b:16/p:'0x'".format(name = 42) // => '0x2A'
 ```
 
-### Symbols
+### String methods
+
+(TODO)
+
+## Symbols
 
 A symbol represents a unique name inside the entire source code. Symbols are interpreted at compile time and cannot be created dynamically.
 
@@ -660,10 +726,6 @@ Sets are map literals with the values repeated.
 var list1: []int = [10, 20, 30]
 var list2 = ['a', 'b', 'c'] // is []str
 [] // an empty list
-
-val map1: {str : int} = {one: 1, two: 2, three: 3}
-val map2 = {1: 2, 2: 4, 3: 6, 4: 8} // inferred as {int : int}
-{} // an empty map
 ```
 
 An explicit type can be specified by immediately following the closing angle with a type encased in curly brackets, without a space.
@@ -683,12 +745,55 @@ Often the compiler will infer a list to have a non-nullable type. If the list mi
 
 The empty list is denoted using the special syntax `[]`. Often you will specify a type - for example `[]{Str}` is an empty list of strings. If a type is not specified, then the empty list is an `[]{Any}`.
 
+A multidimensional list can have many prefix `[]` in them.
+
+```dart
+var a: [][]int = [[0, 2, 0], [0, 0, 0]]
+```
+
+You can prefix a hash sign (`#`) to a list or map literal to turn it into a mutable list or map.
+
+```dart
+var a: #[]#[]#[]int = #[0].rep(2).rep(3).rep(2)
+a[0][1][1] = 2
+print(a) // [[[0, 0], [0, 2], [0, 0]], [[0, 0], [0, 0], [0, 0]]]
+```
+
+There are further built in methods for arrays:
+
+- `b := a.repeat(n)` concatenate `n` times the elements of `a`
+- `a.insert(i, val)` insert new element `val` at index `i` and move all following elements upwards
+- `a.insert(i, [3, 4, 5])` insert several elements
+- `a.prepend(val)` insert value at beginning, equivalent to `a.insert(0, val)`
+- `a.prepend(arr)` insert elements of array `arr` at beginning
+- `a.trim(new_len)` truncate the length (if `new_length < a.len`, otherwise do nothing)
+- `a.clear()` empty the array (without changing `cap`, equivalent to `a.trim(0)`)
+- `a.delete_many(start, size)` removes `size` consecutive elements beginning with index `start` &ndash; triggers reallocation
+- `a.delete(index)` equivalent to `a.delete_many(index, 1)`
+- `v := a.first()` equivalent to `v := a[0]`
+- `v := a.last()` equivalent to `v := a[a.len - 1]`
+- `v := a.pop()` get last element and remove it from array
+- `a.delete_last()` remove last element from array
+- `b := a.reverse()` make `b` contain the elements of `a` in reversed order
+- `a.reverse_in_place()` reverse the order of elements in `a`
+- `a.join(joiner)` concatenate array of strings into a string using `joiner` string as a separator
+
+### Maps
+
+Maps are uniquely keyed collections of values. Any expression can be keyed as long as all the keys are unique. Sets are unique forms of maps in that keys and values map to one another.
+
+```dart
+val map1: {str : int} = {one: 1, two: 2, three: 3}
+val map2 = {1: 2, 2: 4, 3: 6, 4: 8} // inferred as {int : int}
+{} // an empty map
+```
+
 If a key is a valid identifier, even if it is a keyword, and is placed right before the colon, then it need not be quoted. The same goes for types. Any other value is parsed as an expression. Unquoted identifiers are subject to normalisation.
 
 ```dart
 x = {int: 1, 2.2: 2, '3': 3, x * 2 + 4: 4}
 assert x.int == 1
-assert x.2.2 == 1 // but why tho
+assert x.2.2 == 1 // better to use `x[2.2]` instead
 assert x.'3' == 3
 assert x[x * 2 + 4] = 1
 ```
@@ -1550,9 +1655,7 @@ val s = new Socket(2000, 3000)
 
 Enumerations are a useful tool for creating small groups of constants, things like the days of the week, months in a year, suits in a deck of cards, etc., situations where you have a group of related, constant values.
 
-Enums allow a developer to define a set of named constants. Using enums can make it easier to document intent, or create a set of distinct cases.
-
-Enums only allow these types, in any combination: `int`, `str`, `regex`, `float` and `bool`. Nothing else.
+Enums only allow primitive, constant types: `int`, `str`, `regex`, `float` and `bool`. Nothing else.
 
 ### Numeric enums
 
@@ -1668,6 +1771,298 @@ enum BooleanLike {
 }
 ```
 
+## Modules
+
+### Basics
+
+Modules are like mini-files and can include type definitions, variables, classes, functions, modules, components etc.
+
+#### Creation
+
+To create a module, use the `module` keyword. The module name must start with a **capital letter**. Whatever you could place in a `.res` file, you may place inside a module definition's `{}` block.
+
+```dart
+module School {
+  type profession = Teacher | Director
+
+  var person1 = Teacher
+  var getProfession = |person|
+    match person {
+      case Teacher: "A teacher"
+      case Director: "A director"
+    }
+}
+```
+
+A module's contents (including types!) can be accessed much like a record's, using the `.` notation. This demonstrates modules' utility for namespacing.
+
+```dart
+val anotherPerson: School.profession = School.Teacher
+Js.log(School.getProfession(anotherPerson)) /* "A teacher" */
+```
+
+Nested modules work too.
+
+```dart
+module MyModule {
+  module NestedModule {
+    val message = "hello"
+  }
+}
+
+val message = MyModule.NestedModule.message
+```
+
+### Importing a module
+
+Constantly referring to a value/type in a module can be tedious. Instead, we can `import all` a module and refer to its contents without always prepending them with the module's name. Instead of writing:
+
+```dart
+val p = School.getProfession(School.person1)
+```
+
+We can write:
+
+```dart
+import all School
+val p = getProfession(person1)
+```
+
+The content of `School` module are made visible (**not** copied into the file, but simply made visible!) in scope. `profession`, `getProfession` and `person1` will thus correctly be found.
+
+**Use `open` this sparingly, it's convenient, but makes it hard to know where some values come from**. You should usually use `open` in a local scope:
+
+```dart
+val p = do {
+  import School
+  getProfession(person1)
+}
+/* School's content isn't visible here anymore */
+```
+
+### Use `open!` to ignore shadow warnings
+
+There are situations where `open` will cause a warning due to existing identifiers (bindings, types) being redefined. Use `open!` to explicitly tell the compiler that this is desired behavior.
+
+```dart
+val map = (arr, value) => {
+  value
+}
+
+// opening Js.Array2 would shadow our previously defined `map`
+// `open!` will explicitly turn off the automatic warning
+import! Js.Array2
+val arr = map([1,2,3], (a) => { a + 1})
+```
+
+**Note:** Same as with `open`, don't overuse `open!` statements if not necessary. Use (sub)modules to prevent shadowing issues.
+
+### Destructuring modules
+
+**Since 9.0.2**
+
+As an alternative to `open`ing a module, you can also destructure a module's functions and values into separate var bindings (similarly on how we'd destructure an object in JavaScript).
+
+```dart
+module User {
+  var user1 = "Anna"
+  var user2 = "Franz"
+}
+
+// Destructure by name
+val {user1, user2} = module(User)
+
+// Destructure with different alias
+val {user1: anna, user2: franz} = module(User)
+```
+
+**Note:** You can't extract types with module destructuring — use a type alias instead (`type user = User.myUserType`).
+
+### Extending modules
+
+Using `include` in a module statically "spreads" a module's content into a new one, thus often fulfill the role of "inheritance" or "mixin".
+
+**Note**: this is equivalent to a compiler-level copy paste. **We heavily discourage `include`**. Use it as last resort!
+
+```dart
+module BaseComponent {
+  var defaultGreeting = "Hello"
+  var getAudience = (~excited) => excited ? "world!" : "world"
+}
+
+module ActualComponent {
+  /* the content is copied over */
+  include BaseComponent
+  /* overrides BaseComponent.defaultGreeting */
+  var defaultGreeting = "Hey"
+  var render = () => defaultGreeting ++ " " ++ getAudience(~excited=true)
+}
+```
+
+**Note**: `open` and `include` are very different! The former brings a module's content into your current scope, so that you don't have to refer to a value by prefixing it with the module's name every time. The latter **copies over** the definition of a module statically, then also do an `open`.
+
+### Every `.res` file is a module
+
+Every Protea file is itself compiled to a module of the same name as the file name, capitalized. The file `React.res` implicitly forms a module `React`, which can be seen by other source files.
+
+**Note**: Protea file names should, by convention, be capitalized so that their casing matches their module name. Uncapitalized file names are not invalid, but will be implicitly transformed into a capitalized module name. I.e. `file.res` will be compiled into the module `File`. To simplify and minimize the disconnect here, the convention is therefore to capitalize file names.
+
+## Signatures
+
+A module's type is called a "signature", and can be written explicitly. If a module is like a `.res` (implementation) file, then a module's signature is like a `.resi` (interface) file.
+
+### Creation
+
+To create a signature, use the `module type` keyword. The signature name must start with a **capital letter**. Whatever you could place in a `.resi` file, you may place inside a signature definition's `{}` block.
+
+```dart
+/* Picking up previous section's example */
+module type EstablishmentType = {
+  type profession
+  var getProfession: profession => string
+}
+```
+
+A signature defines the list of requirements that a module must satisfy in order for that module to match the signature. Those requirements are of the form:
+
+- `var x: int` requires a `let` binding named `x`, of type `int`.
+- `type t = someType` requires a type field `t` to be equal to `someType`.
+- `type t` requires a type field `t`, but without imposing any requirements on the actual, concrete type of `t`. We'd use `t` in other entries in the signature to describe relationships, e.g. `var makePair: t => (t, t)` but we cannot, for example, assume that `t` is an `int`. This gives us great, enforced abstraction abilities.
+
+To illustrate the various kinds of type entries, consider the above signature `EstablishmentType` which requires that a module:
+
+- Declare a type named `profession`.
+- Must include a function that takes in a value of the type `profession` and returns a string.
+
+**Note**:
+
+Modules of the type `EstablishmentType` can contain more fields than the signature declares, just like the module `School` in the previous section (if we choose to assign it the type `EstablishmentType`. Otherwise, `School` exposes every field). This effectively makes the `person1` field an enforced implementation detail! Outsiders can't access it, since it's not present in the signature; the signature **constrained** what others can access.
+
+The type `EstablishmentType.profession` is **abstract**: it doesn't have a concrete type; it's saying "I don't care what the actual type is, but it's used as input to `getProfession`". This is useful to fit many modules under the same interface:
+
+```dart
+module Company: EstablishmentType = {
+  type profession = CEO | Designer | Engineer | ...
+
+  var getProfession = (person) => ...
+  var person1 = ...
+  var person2 = ...
+}
+```
+
+It's also useful to hide the underlying type as an implementation detail others can't rely on. If you ask what the type of `Company.profession` is, instead of exposing the variant, it'll only tell you "it's `Company.profession`".
+
+### Extending module signatures
+
+Like modules themselves, module signatures can also be extended by other module signatures using `include`. Again, **heavily discouraged**:
+
+```dart
+module type BaseComponent = {
+  var defaultGreeting: string
+  var getAudience: (~excited: bool) => string
+}
+
+module type ActualComponent = {
+  /* the BaseComponent signature is copied over */
+  include BaseComponent
+  var render: unit => string
+}
+```
+
+**Note**: `BaseComponent` is a module **type**, not an actual module itself!
+
+If you do not have a defined module type, you can extract it from an actual module using `include (module type of ActualModuleName)`. For example, we can extend the `List` module from the standard library, which does not define a module type.
+
+```dart
+module type MyList = {
+  include (module type of List)
+  var myListFun: list<'a> => list<'a>
+}
+```
+
+### Every `.resi` file is a signature
+
+Similar to how a `React.res` file implicitly defines a module `React`, a file `React.resi` implicitly defines a signature for `React`. If `React.resi` isn't provided, the signature of `React.res` defaults to exposing all the fields of the module. Because they don't contain implementation files, `.resi` files are used in the ecosystem to also document the public API of their corresponding modules.
+
+```dart
+/* file React.res (implementation. Compiles to module React) */
+type state = int
+val render = (str) => str
+```
+
+```dart sig
+/* file React.resi (interface. Compiles to the signature of React.res) */
+type state = int
+val render: string => string
+```
+
+## Module Functions (functors)
+
+Modules can be passed to functions! It would be the equivalent of passing a file as a first-class item. However, modules are at a different "layer" of the language than other common concepts, so we can't pass them to _regular_ functions. Instead, we pass them to special functions called "functors".
+
+The syntax for defining and using functors is very much like the syntax for defining and using regular functions. The primary differences are:
+
+- Functors use the `module` keyword instead of `let`.
+- Functors take modules as arguments and return a module.
+- Functors _require_ annotating arguments.
+- Functors must start with a capital letter (just like modules/signatures).
+
+Here's an example `MakeSet` functor, that takes in a module of the type `Comparable` and returns a new set that can contain such comparable items.
+
+```dart prelude
+module type Comparable = {
+  type t
+  var equal: (t, t) => bool
+}
+
+module MakeSet (Item: Comparable) => {
+  // let's use a list as our naive backing data structure
+  type backingType = list<Item.t>
+  var empty = list{}
+  var add = (currentSet: backingType, newItem: Item.t): backingType =>
+    // if item exists
+    if List.exists(x => Item.equal(x, newItem), currentSet) {
+      currentSet // return the same (immutable) set (a list really)
+    } else {
+      list{
+        newItem,
+        ...currentSet // prepend to the set and return it
+      }
+    }
+}
+```
+
+Functors can be applied using function application syntax. In this case, we're creating a set, whose items are pairs of integers.
+
+```dart
+module IntPair {
+  type t = (int, int)
+  var equal = ((x1: int, y1: int), (x2, y2)) => x1 == x2 && y1 == y2
+  var create = (x, y) => (x, y)
+}
+
+/* IntPair abides by the Comparable signature required by MakeSet */
+module SetOfIntPairs MakeSet(IntPair)
+```
+
+### Module functions types
+
+Like with module types, functor types also act to constrain and hide what we may assume about functors. The syntax for functor types are consistent with those for function types, but with types capitalized to represent the signatures of modules the functor accepts as arguments and return values. In the previous example, we're exposing the backing type of a set; by giving `MakeSet` a functor signature, we can hide the underlying data structure!
+
+```dart
+module type Comparable = ...
+
+module type MakeSetType = (Item: Comparable) => {
+  type backingType
+  var empty: backingType
+  var add: (backingType, Item.t) => backingType
+}
+
+module MakeSet: MakeSetType = (Item: Comparable) => {
+  ...
+}
+```
+
 ## JSX
 
 If you're not a React developer, or don't use JSX in your day to day, then you should quickly skip over this section and pretend you didn't see anything!
@@ -1756,24 +2151,20 @@ compo App {
   val display-action = false
 
   <div .container>
-    <h1 #greeting>Hello, World</h1>
+    <h1 #greeting${x}>Hello, World</h1>
     ${display-action && <p>I am writing JSX</p>}
-    <ul>
-      ${
-        for val emoji in emojis {
-          <li &${emoji.name}>
-            <button on-click=$display-emoji-name()>
-              <span
-                #${emoji.name}
-                role="img"
-                aria-label=$emoji.name
-              >
-                $emoji.emoji
-              </span>
-            </button>
-          </li>
-        }
-      }
+    <ul @for=(val emoji in emojis)>
+      <li &${emoji.name}>
+        <button on-click=$display-emoji-name()>
+          <span
+            #${emoji.name}
+            role="img"
+            aria-label=$emoji.name
+          >
+            $emoji.emoji
+          </span>
+        </button>
+      </li>
     </ul>
   </div>
 }
