@@ -527,6 +527,7 @@ power_suffix = (["p" "P"] decimal)? ["p" "P"] ["+" "-"]? decimal
 rounding_suffix = ["t" "T"] ["d" "D" "s" "S"]? ["+" "-"]? decimal
 type_suffix = identifier
 float_suffix = power_suffix? rounding_suffix? type_suffix?
+higher_float_suffix = power_suffix? rounding_suffix? ("\\" type_suffix?)
 
 bin_run = (bin_digit | underscore)+
 bin_init = ("0" ["b" "B"]) bin_run
@@ -561,14 +562,14 @@ doz_init = ("0" ["z" "Z"]) doz_run
 doz_frac = "." doz_run
 doz_denom = ["f" "F"] doz_run
 doz_repeat = ["r" "R"] doz_run
-doz_float = doz_init (doz_denom? | doz_frac? doz_repeat?) float_suffix
+doz_float = doz_init (doz_denom? | doz_frac? doz_repeat?) higher_float_suffix
 
 hex_run = (hex_digit | underscore)+
 hex_init = ("0" ["x" "X"]) hex_run
 hex_frac = "." hex_run
 hex_denom = ["f" "F"] hex_run
 hex_repeat = ["r" "R"] hex_run
-hex_float = hex_init (hex_denom? | hex_frac? hex_repeat?) float_suffix
+hex_float = hex_init (hex_denom? | hex_frac? hex_repeat?) higher_float_suffix
 
 dec_run = (dec_digit | underscore)+
 dec_init = dec_run
@@ -580,6 +581,25 @@ dec_float = dec_init (dec_denom? | dec_frac? dec_repeat?) float_suffix
 
 ```dart
 0x1f\sec
+
+1.0     // Float64
+1.0f32 // Float32
+1f32   // Float32
+
+1e10   // Float64
+1.5e10 // Float64
+1.5e-7 // Float64
+
++1.3 // Float64
+-0.5 // Float64
+```
+
+The underscore \_ before the suffix is optional.
+
+Underscores can be used to make some numbers more readable:
+
+```
+1_000_000.111_111 # a lot more readable than 1000000.111111, yet functionally
 ```
 
 A floating point literal is an optional + or - sign, followed by a sequence of numbers or underscores, followed by a dot, followed by numbers or underscores, followed by an optional exponent suffix, followed by an optional type suffix. If no suffix is present, the literal's type is Float64.
