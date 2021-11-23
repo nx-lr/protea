@@ -2023,78 +2023,46 @@ repository:
       - include: text.html.markdown#inline
   tag-attributes:
     patterns:
+      - applyEndPatternLast: 1
+        begin: \s*(=)\s*
+        beginCaptures:
+          1: {name: punctuation.separator.key-value.protea}
+        end: (?=)|$
+        name: string.unquoted.protea
+        patterns: [include: "#html-properties"]
       - include: "#style-selectors"
       - include: "#attributes"
       - include: "#comments"
   attributes:
-    patterns:
-      - applyEndPatternLast: 1
-        begin: |
-          (?x)
-          \s*
-          (
-          [\p{Pd}$]?
-          (?:
-          # Recursive brackets
-          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
-          (?<b>
-          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-          )|
-          (?<s>
-          # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
-          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
-          (?<q1>')(?:[^']|'')*\g<q1>
-          )|
-          # Rest of identifier characters
-          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )+
-          )\s*
-          (=)\s*
-        beginCaptures:
-          1:
-            name: entity.other.attribute-name.${1:/downcase}.protea
-            patterns:
-              - include: "#embedded"
-              - include: "#brackets"
-          8: {name: punctuation.separator.key-value.protea}
-        end: (?=)|$
-        name: string.unquoted.protea
-        patterns: [include: "#html-properties"]
-      - match: |
-          (?x)
-          \s*
-          (
-          [\p{Pd}$]?
-          (?:
-          # Recursive brackets
-          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
-          (?<b>
-          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-          )|
-          (?<s>
-          # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
-          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
-          (?<q1>')(?:[^']|'')*\g<q1>
-          )|
-          # Rest of identifier characters
-          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )+
-          )\s*
-        captures:
-          1:
-            name: entity.other.attribute-name.${1:/downcase}.protea
-            patterns:
-              - include: "#embedded"
-              - include: "#brackets"
-        name: string.unquoted.protea
+    match: |
+      (?x)
+      \s*
+      (
+      [\p{Pd}$]?
+      (?:
+      # Recursive brackets
+      \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
+      (?<b>
+      \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+      \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+      \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+      )|
+      (?<s>
+      # Strings
+      (?<q3>'''+|"""+|```+).*\g<q3>|
+      (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+      (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+      (?<q1>')(?:[^']|'')*\g<q1>
+      )|
+      # Rest of identifier characters
+      \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+      )+
+      )\s*
+    captures:
+      1:
+        name: entity.other.attribute-name.${1:/downcase}.protea
+        patterns: [include: '#embedded', include: '#brackets']
+    name: string.unquoted.protea
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
     match: (?<!\*)\*(?!\*)
