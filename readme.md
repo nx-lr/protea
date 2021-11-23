@@ -520,6 +520,8 @@ There is an exception to the rule that all operators in Protea must have values 
 
 There are two floating point types, `float32` and `float64`, which correspond to the binary32 and binary64 types defined by IEEE.
 
+Floating numbers can contain repeating digits, ratios, fractions, repeating digits, powers, exponents, and rounding, as well as an optional type suffix. If no suffix is present, the literal's type is `f64`.
+
 A floating point literal is of the form:
 
 ```ebnf
@@ -579,6 +581,8 @@ dec_repeat = ["r" "R"] dec_run
 dec_float = dec_init (dec_denom? | dec_frac? dec_repeat?) float_suffix
 ```
 
+The backslash `\` before the suffix is optional, but compulsory in duodecimal and hexadecimal floating literals, much like their integer counterparts. Underscores can be used to make some numbers more readable:
+
 ```dart
 0x1f\sec
 
@@ -592,17 +596,9 @@ dec_float = dec_init (dec_denom? | dec_frac? dec_repeat?) float_suffix
 
 +1.3 // Float64
 -0.5 // Float64
+
+1_000_000.111_111
 ```
-
-The underscore \_ before the suffix is optional.
-
-Underscores can be used to make some numbers more readable:
-
-```
-1_000_000.111_111 # a lot more readable than 1000000.111111, yet functionally
-```
-
-A floating point literal is an optional + or - sign, followed by a sequence of numbers or underscores, followed by a dot, followed by numbers or underscores, followed by an optional exponent suffix, followed by an optional type suffix. If no suffix is present, the literal's type is Float64.
 
 ### Strings
 
