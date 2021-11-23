@@ -1655,8 +1655,6 @@ enum FileAccess {
   // computed member
   G = len('123')
 }
-
-func func x = 
 ```
 
 ### Heterogeneous enums
