@@ -1632,27 +1632,15 @@ It is the first member in the enum and it has no initializer, in which case itâ€
 
 ```dart
 // E.X is constant:
-enum E {
-  X,
-}
+enum E { X }
 ```
 
 It does not have an initializer and the preceding enum member was a numeric constant. In this case the value of the current enum member will be the value of the preceding enum member plus one.
 
 ```dart
 // All enum members in 'E1' and 'E2' are constant.
-
-enum E1 {
-  X,
-  Y,
-  Z,
-}
-
-enum E2 {
-  A = 1,
-  B,
-  C,
-}
+enum E1 { X, Y, Z }
+enum E2 { A = 1, B, C }
 ```
 
 Any constant expression can be used in the same enum, provided that that expression contain NO variables except those previously defined.
@@ -1660,13 +1648,15 @@ Any constant expression can be used in the same enum, provided that that express
 ```dart
 enum FileAccess {
   // constant members
-  None,
-  Read = 1 << 1,
-  Write = 1 << 2,
-  ReadWrite = Read | Write,
+  None
+  Read = 1 << 1
+  Write = 1 << 2
+  ReadWrite = Read | Write
   // computed member
-  G = "123".length,
+  G = len('123')
 }
+
+func func x = 
 ```
 
 ### Heterogeneous enums
