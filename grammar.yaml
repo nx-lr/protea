@@ -17,6 +17,10 @@ comment: |
   - Add type-regex literals
   - Document and add uncaught parsing errors
 
+  Bugfixes:
+  - Self-closing or closing tags when next to closing brackets
+    do not 
+
   Done:
   - Changed from indentation to curly bracket syntax
   - Map/set syntax should only activate next to an opening bracket, a colon
@@ -1011,7 +1015,7 @@ repository:
   embedded-expression:
     patterns:
       - begin: (\${)\s*
-        end: (})
+        end: \s*(})
         name: entity.quasi.component.protea
         captures:
           1: {name: punctuation.section.embedded.protea}
@@ -1114,7 +1118,7 @@ repository:
           1: {name: punctuation.definition.anchor.protea}
           2: {patterns: [include: "#placeholder-variables"]}
       - begin: (\#{)\s*
-        end: (})
+        end: \s*(})
         name: entity.quasi.component.protea
         captures:
           1: {name: punctuation.definition.anchor.protea}
@@ -1149,7 +1153,7 @@ repository:
           1: {name: punctuation.separator.mapping.protea}
           2: {name: entity.other.attribute-name.class.protea}
           3: {name: punctuation.separator.key-value.protea}
-        end: (?=.)|$
+        end: (?=)|$
         patterns: [include: "#html-properties"]
       - comment: Format switch without value
         match: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -1744,7 +1748,7 @@ repository:
               - include: "#embedded"
               - include: "#brackets"
           8: {name: punctuation.separator.key-value.protea}
-        end: (?=.)|$
+        end: (?=)|$
         name: string.unquoted.protea
         patterns: [include: "#html-properties"]
       - include: "#style-block"
@@ -1769,7 +1773,7 @@ repository:
       - include: "#tag-names"
   style-selectors:
     patterns:
-      - match: \s*(\@|\#|\&|\*|\.|\:|::)\b
+      - match: \s*(\@|\#|\&|\*|\.|\:|::)(?=[\w$])
         name: punctuation.definition.entity.protea
       - match: |
           (?x)
@@ -1943,10 +1947,12 @@ repository:
   # JSX
 
   jsx:
+    applyEndPatternLast: 1
     comment: Only after opening brackets, commas, semicolons, keywords, and operators. In addition, < > starts a JSX fragment.
     begin: |
       (?x)
-      (?<=(?:
+      (?<=
+      (?:
       ^\s*|,\s*|;\s*|
       \#?[({\[]\s*|
       [\p{Pc}\p{L}][\w\p{Pd}]*|
@@ -1968,10 +1974,11 @@ repository:
       |return|yield|await|label
       |import|export|route
       |debug|assert|check
-      )\b)\s*)
+      )\b
+      )\s*
+      )
       (?=<[\p{Pc}\p{L}]|<\s+>)
-    end: (?=.)|$
-    applyEndPatternLast: 1
+    end: (?=)|$
     patterns:
       - include: "#tag-component-name"
       - include: "#illegal"
@@ -2060,7 +2067,7 @@ repository:
               - include: "#embedded"
               - include: "#brackets"
           8: {name: punctuation.separator.key-value.protea}
-        end: (?=.)|$
+        end: (?=)|$
         name: string.unquoted.protea
         patterns: [include: "#html-properties"]
       - match: |
@@ -2274,7 +2281,7 @@ repository:
   jsdoc-inline-tags:
     name: meta.tag.inline.jsdoc
     begin: (\[(?:(?>[^\[\]]+)|\g<-1>)*\])?({)(?=@)
-    end: (})
+    end: \s*(})
     beginCaptures:
       1: {name: string.linktext.jsdoc}
       2: {name: meta.brace.curly.jsdoc}
@@ -2783,7 +2790,7 @@ repository:
           [\w]+)*
           [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# suffix
           )\s*([^(]|$|;))
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: keyword.operator.compose.protea}
           2: {name: keyword.operator.pipeline.protea}
@@ -2935,7 +2942,7 @@ repository:
   type-annotation:
     applyEndPatternLast: 1
     begin: (:)(?=\s|$)
-    end: (?=.)|$
+    end: (?=)|$
     beginCaptures:
       1: {name: punctuation.definition.annotation.protea}
     patterns:
@@ -3107,7 +3114,7 @@ repository:
   type-embedded-expression:
     patterns:
       - begin: (\${)\s*
-        end: (})
+        end: \s*(})
         name: entity.quasi.component.protea
         captures:
           1: {name: punctuation.section.embedded.protea}
@@ -3231,7 +3238,7 @@ repository:
         name: entity.name.namespace.protea
       - applyEndPatternLast: 1
         begin: \s+(impl)\s+
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.implements.protea}
         patterns:
@@ -3244,7 +3251,7 @@ repository:
           - include: "#punctuation"
       - applyEndPatternLast: 1
         begin: \s+(ext)\s+
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.extends.protea}
         patterns:
@@ -3269,7 +3276,7 @@ repository:
       - include: "#literals"
       - applyEndPatternLast: 1
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]))
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: punctuation.definition.annotation.protea}
         patterns: [include: "#types"]
@@ -3427,7 +3434,7 @@ repository:
       control-expression:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|label|goto|pass)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: keyword.control.flow.protea}
         patterns:
@@ -3438,7 +3445,7 @@ repository:
         patterns:
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|route)(?![\w\p{Pd}])\s*
-            end: (?=.)|$
+            end: (?=)|$
             beginCaptures:
               1: {name: keyword.control.module.protea}
             patterns:
@@ -3579,7 +3586,7 @@ repository:
       style:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.style.protea}
         patterns:
@@ -3592,20 +3599,20 @@ repository:
       variable:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.variable.protea}
       declare:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?![\w\p{Pd}])\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: keyword.other.declare.protea}
 
       function:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.function.protea}
         patterns:
@@ -3615,7 +3622,7 @@ repository:
       procedure:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.procedure.protea}
         patterns:
@@ -3625,7 +3632,7 @@ repository:
       class:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.class.protea}
         patterns:
@@ -3635,7 +3642,7 @@ repository:
       data:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.data.protea}
         patterns:
@@ -3645,7 +3652,7 @@ repository:
       enum:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.enum.protea}
         patterns:
@@ -3655,7 +3662,7 @@ repository:
       module:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.module.protea}
         patterns:
@@ -3665,7 +3672,7 @@ repository:
       iterator:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.iterator.protea}
         patterns:
@@ -3675,7 +3682,7 @@ repository:
       macro:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.macro.protea}
         patterns:
@@ -3685,7 +3692,7 @@ repository:
       structure:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.structure.protea}
         patterns:
@@ -3695,7 +3702,7 @@ repository:
       object:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.object.protea}
         patterns:
@@ -3705,7 +3712,7 @@ repository:
       trait:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.trait.protea}
         patterns:
@@ -3715,7 +3722,7 @@ repository:
       component:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(compo)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.component.protea}
         patterns:
@@ -3725,7 +3732,7 @@ repository:
       property:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)\b\s*
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: storage.type.property.protea}
         patterns:
@@ -3927,7 +3934,7 @@ repository:
       new-clause:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(new)(?![\w\p{Pd}])
-        end: (?=.)|$
+        end: (?=)|$
         beginCaptures:
           1: {name: keyword.operator.expression.$1.protea}
         patterns:
@@ -3942,14 +3949,14 @@ repository:
         patterns:
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?![\w\p{Pd}])\s*
-            end: (?=.)|$
+            end: (?=)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.protea}
             patterns:
               - include: "#types"
           - applyEndPatternLast: 1
             begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)(?![\w\p{Pd}])\s*
-            end: (?=.)|$
+            end: (?=)|$
             captures:
               1: {name: keyword.other.typedef.protea}
             patterns:
@@ -4036,7 +4043,7 @@ repository:
                   - include: "#params-clause"
                   - applyEndPatternLast: 1
                     begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?![\w\p{Pd}])\s*
-                    end: (?=.)|$
+                    end: (?=)|$
                     beginCaptures:
                       1: {name: keyword.control.switch.protea}
                     patterns:
@@ -4221,7 +4228,7 @@ repository:
               - include: "#params-clause"
               - applyEndPatternLast: 1
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?![\w\p{Pd}])\s*
-                end: (?=.)|$
+                end: (?=)|$
                 beginCaptures:
                   1: {name: keyword.control.switch.protea}
                 patterns:
