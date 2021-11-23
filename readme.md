@@ -430,45 +430,89 @@ false
 
 ### Numbers
 
-Protea supports three numeric data types, `Nat`, `Int` and `Float`, all 64-bit. This avoids a lot of complexity associated with numeric precision such as file lengths, Unicode strings or very large lists.
+#### Integer types
+
+There are four signed integer types, and four unsigned integer types:
+
+| Type           | Byte Length |              Minimum Value |                    Maximum Value |
+| -------------- | ----------- | -------------------------: | -------------------------------: |
+| `int8`/`i8`    | 8           |                       -128 |                              127 |
+| `int16`/`i16`  | 16          |                    -32,768 |                           32,767 |
+| `int32`/`i32`  | 32          |             -2,147,483,648 |                    2,147,483,647 |
+| `int64`/`i64`  | 64          | -9,223,372,036,854,775,808 |        9,223,372,036,854,775,807 |
+| `uint8`/`u8`   | 8           |                          0 |                              255 |
+| `uint16`/`u16` | 16          |                          0 |                           65,535 |
+| `uint32`/`u32` | 32          |                          0 |                    4,294,967,295 |
+| `uint64`/`u64` | 64          |                          0 | 18,​446,​744,​073,​709,​551,​615 |
+
+An integer literal consists of a suitable radix prefix, followed by a sequence of digits or underscores, and an optional suffix (which can also be other than the types mentioned above). If there is no prefix the number is written as base 10.
+
+An `int` corresponds to `int64` by default; same for a `uint` which corresponds to a `uint64`. If no suffix is present, the literal's type is the lowest between `int32`, `int64` and `uint64` in which the number fits:
 
 ```dart
-val integer: int = 123
-val floating: float = -1
+1 // Int32
+
+1_i8  // Int8
+1_i16 // Int16
+1_i32 // Int32
+1_i64 // Int64
+
+1_u8  // UInt8
+1_u16 // UInt16
+1_u32 // UInt32
+1_u64 // UInt64
+
++10 // Int32
+-20 // Int32
+
+2147483648          // Int64
+9223372036854775808 // UInt64
 ```
 
-As for signs, the prefix `+` and `-` are not part of the literal.
-
-Numbers are case insensitive. They can contain leading zeroes or underscores for easy readability. Literals can be written in base 2, 4, 6, 8, 10, 12 or 16:
+An integer literal can also be written with a base prefix, which can be any of the following bases:
 
 ```dart
 val base2 = 0b10
 val base4 = 0q123
 val base6 = 0s12345
 val base8 = 0o1234567
-val base10 = 0123456789p10
+val base10 = 0123456789
 val base12 = 0z0123456789ab
 val base16 = 0x0123456789abcdef
 ```
 
-Some suffixes which you can use (note simplified into regexes for compactness) for you to use (note digits depends on the prefix and the base).
+There is an exception to the rule that all operators in Protea must have values of the same type on both sides. A small primitive type on one side can be automatically promoted if it fits completely into the data range of the type on the other side. These are the allowed possibilities:
 
-- `f(\p{Pc}|$digits)`: fraction; as in `1f3` to mean &frac13;
-- `r(\p{Pc}|$digits)`: repeating digits
-- `p[+-]?\d+`: power/exponent
-- `p\d+p[+-]?\d+`: power with custom base
-- `td?\d+p[+-]?\d+`: truncate to place values
-- `ts\d+`: truncate to significant figures
-- `t\+\d+`: round up
-- `t\-\d+`: round down
-- `_$ident`: type suffix
+```
+   i8 → i16 → i32 → i64
+                  ↘     ↘
+                    f32 → f64 → bigfloat
+                  ↗     ↗
+   u8 → u16 → u32 → u64 ⬎
+      ↘     ↘     ↘      bigint
+   i8 → i16 → i32 → i64 ⬏
+```
 
-Integers:
+#### Floating point types
 
-- Comparisons: `<=`, `<`, `==`, `!=`, `>=`, `>` (evaluate to bool)
-- Bit operators: `&`, `|`, `^` (bitwise exclusive or), `~` (bitwise negation)
-- Shift operators: `<<` (left shift), `>>` (right shift)
-- Arithmetic operators: `+`, `-`, prefix `-` (only for signed integers), `*`, `/`, `%` (modulo), `**` (exponentiation)
+There are two floating point types, `float32` and `float64`, which correspond to the binary32 and binary64 types defined by IEEE.
+
+A floating point literal is the same as an integer, but appends to it a dot, then some more digits or underscores, or any one of these optional modifiers, as written in extended Backus-Naur form:
+
+- `'r' (underscores | digits)+`: repeating digits
+- `'p' ['+' '-']? decimal`: power/exponent
+- `'p' decimal 'p' ['+' '-']? decimal`: power with custom base
+- `'t' 'd'? ['+' '-']? decimal`: truncate to place values
+  - `'t' 's' ['+' '-']? decimal`: truncate to significant figures
+  - `'+'`: round up
+  - `'-'`: round down
+- `identifier`: type suffix
+
+```dart 
+0x1f\sec
+```
+
+A floating point literal is an optional + or - sign, followed by a sequence of numbers or underscores, followed by a dot, followed by numbers or underscores, followed by an optional exponent suffix, followed by an optional type suffix. If no suffix is present, the literal's type is Float64.
 
 ### Strings
 
