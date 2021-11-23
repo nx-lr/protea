@@ -445,7 +445,30 @@ There are four signed integer types, and four unsigned integer types:
 | `uint32`/`u32` | 32          |                          0 |                    4,294,967,295 |
 | `uint64`/`u64` | 64          |                          0 | 18,​446,​744,​073,​709,​551,​615 |
 
-An integer literal consists of a suitable radix prefix, followed by a sequence of digits or underscores, and an optional suffix (which can also be other than the types mentioned above). If there is no prefix the number is written as base 10.
+An integer literal consists of the form:
+
+```ebnf
+digit = "0".."9"
+nonzero_digit = "1".."9"
+bin_digit = "0" | "1"
+qua_digit = "0".."3"
+sen_digit = "0".."5"
+oct_digit = "0".."7"
+doz_digit = digit | "a" | "b" | "A" | "B"
+hex_digit = digit | "a".."f" | "A".."F"
+underscore = /* Unicode category Pc */
+
+bin_lit = ("0"["B""b"]) (bin_digit | underscore)+
+qua_lit = ("0"["Q""q"]) (qua_digit | underscore)+
+sen_lit = ("0"["S""s"]) (sen_digit | underscore)+
+oct_lit = ("0"["O""o"]) (oct_digit | underscore)+
+doz_lit = ("0"["Z""z"]) (doz_digit | underscore)+
+hex_lit = ("0"["X""x"]) (hex_digit | underscore)+
+dec_lit = (dec_digit | underscore)+
+
+type_suffix = identifier
+int_lit = (bin_lit | qua_lit | sen_lit | oct_lit | doz_lit | hex_lit | dec_lit) type_suffix
+```
 
 An `int` corresponds to `int64` by default; same for a `uint` which corresponds to a `uint64`. If no suffix is present, the literal's type is the lowest between `int32`, `int64` and `uint64` in which the number fits:
 
@@ -497,18 +520,65 @@ There is an exception to the rule that all operators in Protea must have values 
 
 There are two floating point types, `float32` and `float64`, which correspond to the binary32 and binary64 types defined by IEEE.
 
-A floating point literal is the same as an integer, but appends to it a dot, then some more digits or underscores, or any one of these optional modifiers, as written in extended Backus-Naur form:
+A floating point literal is of the form:
 
-- `'r' (underscores | digits)+`: repeating digits
-- `'p' ['+' '-']? decimal`: power/exponent
-- `'p' decimal 'p' ['+' '-']? decimal`: power with custom base
-- `'t' 'd'? ['+' '-']? decimal`: truncate to place values
-  - `'t' 's' ['+' '-']? decimal`: truncate to significant figures
-  - `'+'`: round up
-  - `'-'`: round down
-- `identifier`: type suffix
+```ebnf
+power_suffix = (["p" "P"] decimal)? ["p" "P"] ["+" "-"]? decimal
+rounding_suffix = ["t" "T"] ["d" "D" "s" "S"]? ["+" "-"]? decimal
+type_suffix = identifier
+float_suffix = power_suffix? rounding_suffix? type_suffix?
 
-```dart 
+bin_run = (bin_digit | underscore)+
+bin_init = ("0" ["b" "B"]) bin_run
+bin_frac = "." bin_run
+bin_denom = ["f" "F"] bin_run
+bin_repeat = ["r" "R"] bin_run
+bin_float = bin_init (bin_denom? | bin_frac? bin_repeat?) float_suffix
+
+qua_run = (qua_digit | underscore)+
+qua_init = ("0" ["q" "Q"]) qua_run
+qua_frac = "." qua_run
+qua_denom = ["f" "F"] qua_run
+qua_repeat = ["r" "R"] qua_run
+qua_float = qua_init (qua_denom? | qua_frac? qua_repeat?) float_suffix
+
+sen_run = (sen_digit | underscore)+
+sen_init = ("0" ["s" "S"]) sen_run
+sen_frac = "." sen_run
+sen_denom = ["f" "F"] sen_run
+sen_repeat = ["r" "R"] sen_run
+sen_float = sen_init (sen_denom? | sen_frac? sen_repeat?) float_suffix
+
+oct_run = (oct_digit | underscore)+
+oct_init = ("0" ["o" "O"]) oct_run
+oct_frac = "." oct_run
+oct_denom = ["f" "F"] oct_run
+oct_repeat = ["r" "R"] oct_run
+oct_float = oct_init (oct_denom? | oct_frac? oct_repeat?) float_suffix
+
+doz_run = (doz_digit | underscore)+
+doz_init = ("0" ["z" "Z"]) doz_run
+doz_frac = "." doz_run
+doz_denom = ["f" "F"] doz_run
+doz_repeat = ["r" "R"] doz_run
+doz_float = doz_init (doz_denom? | doz_frac? doz_repeat?) float_suffix
+
+hex_run = (hex_digit | underscore)+
+hex_init = ("0" ["x" "X"]) hex_run
+hex_frac = "." hex_run
+hex_denom = ["f" "F"] hex_run
+hex_repeat = ["r" "R"] hex_run
+hex_float = hex_init (hex_denom? | hex_frac? hex_repeat?) float_suffix
+
+dec_run = (dec_digit | underscore)+
+dec_init = dec_run
+dec_frac = "." dec_run
+dec_denom = ["f" "F"] dec_run
+dec_repeat = ["r" "R"] dec_run
+dec_float = dec_init (dec_denom? | dec_frac? dec_repeat?) float_suffix
+```
+
+```dart
 0x1f\sec
 ```
 
