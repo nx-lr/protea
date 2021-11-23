@@ -260,7 +260,7 @@ val newScore = 10 + score;
 
 Note: If you are coming from JavaScript, these bindings behave like `const`, not like `var` or `let`.
 
-#### Mutable and Immutable Variables
+### Mutable and Immutable Variables
 
 `val` bindings are "immutable", they cannot change after they are created.
 
@@ -550,10 +550,10 @@ Multi-quoted strings are defined with three or more quotes of the same type and 
 // All non-spacing characters are discarded
 // between the text and the quotes
 '''We're fine'''
-""""We're fine""""
+"""We're fine"""
 
 // Strings can end in more than the opening number of quotes
-"""x""""
+"""x\""""
 
 // Indentation is preserved or discarded
 // based on the first line of text
@@ -629,7 +629,7 @@ String placeholders are used to create template strings from named, keyed or pos
 
 ```dart
 "#named" "#?optional"
-"#&keyed" "#%optional"
+"#&keyed" "#&?optional"
 "#0 positive (zero-indexed)"
 "#-1 negative (from end)"
 "#*spread (from an object)"
