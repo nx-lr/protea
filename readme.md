@@ -746,7 +746,7 @@ An infix operator can contain any sequence of `//` or `/*`, but must NOT be exac
 Infix operators whose first character is `@` are right-associative.
 
 ```dart
-func x @/ (y: float): float = x / y
+func &/ (y: float): float = x / y
 12 @/ 4 @/ 8 // 24.0
 12 / 4 / 8 // 24.8
 ```
@@ -1112,7 +1112,7 @@ try {
 You can also use a `with` clause similar to Python, so there is no need to write a `final` clause, or even a `catch` clauses. Those are defined with the trait `Handleable`, with the methods `_try`, `_catch` and `_after` defined.
 
 ```dart
-with var file as new File(path).open.read {
+with var file as File(path).open.read {
   file.write('hello world!')
 } // after { file._final() }
 ```
@@ -1129,7 +1129,7 @@ Functions form the heart of Protea. Writing them is very simple:
 func double(i: int): int = i * 2
 ```
 
-Impure functions use the `proc` (procedure) keyword instead of `func`. This is sure to distinguish them from regular pure functions.
+You can use the `pure` or `impure` keywords to allow the compiler to analyse the function as said.
 
 Functions can also be written using a special syntax that resembles Ruby, with the arguments written in between pipe characters instead:
 
@@ -1161,9 +1161,15 @@ rec func sum(list: list[int]): int = match list {
 }
 ```
 
-A simple recursive function may look like this:
+### Functions
+
+You can define methods and functions in classes, or modify existing classes by defining a new function on that object.
 
 ```dart
+rec func has(this: []any, item: any): bool = match this {
+  case []: false
+  case [a, *rest]: a == item ?: rest.has(item)
+}
 
 rec func List.has(item: any): bool = match this {
   case []: false
@@ -1216,7 +1222,7 @@ Labeled function arguments can be made optional during declaration. You can then
 
 ```dart
 // radius can be omitted
-async proc drawCircle(&color, &?radius) {
+proc drawCircle(&color, &?radius) {
   await setColor(color)
   match radius {
     case none: startAt(1, 1)
@@ -1228,7 +1234,7 @@ async proc drawCircle(&color, &?radius) {
 You can type a `func` or `proc`. The argument is wrapped in an "option" type.
 
 ```dart
-async proc drawCircle(
+proc drawCircle(
   circle: circle,
   &color: color
   &?radius: ?int = 1
@@ -1496,11 +1502,189 @@ class Address(
 )
 ```
 
-## PML: Protea Meets HTML
+### Default constructor parameters
+
+Protea lets you supply default values for constructor parameters. For example, in previous lessons we showed that you can define a Socket class like this:
+
+```dart
+class Socket(var timeout: int, var linger: int) {
+  sub func str = "timeout: $timeout, linger: $linger"
+}
+```
+
+That’s nice, but you can make this class better by supplying default values for the `timeout` and `linger` parameters:
+
+```dart
+class Socket(var timeout: int = 2000, var linger: int = 3000) {
+  sub func str = "timeout: $timeout, linger: $linger"
+}
+```
+
+By supplying default values for the parameters, you can now create a new Socket in a variety of different ways:
+
+```dart
+new Socket()
+new Socket(1000)
+new Socket(4000, 6000)
+```
+
+You can use named parameters when creating a new instance of a class. For instance, given the Socket class above, you can create a new Socket like this:
+
+```dart
+val s = new Socket(&timeout = 2000, &linger = 3000)
+```
+
+This feature comes in handy from time to time, such as when all of the class constructor parameters have the same type, such as the Int parameters in this example. For example, some people find that this code:
+
+```dart
+val s = new Socket(&timeout = 2000, &linger = 3000)
+```
+
+is more readable than this code:
+
+```dart
+val s = new Socket(2000, 3000)
+```
+
+## Enumerations
+
+Enumerations are a useful tool for creating small groups of constants, things like the days of the week, months in a year, suits in a deck of cards, etc., situations where you have a group of related, constant values.
+
+Enums allow a developer to define a set of named constants. Using enums can make it easier to document intent, or create a set of distinct cases.
+
+Enums only allow these types, in any combination: `int`, `str`, `regex`, `float` and `bool`. Nothing else.
+
+### Numeric enums
+
+We'll first start off with numeric enums, which are probably more familiar if you’re coming from other languages. An enum can be defined using the enum keyword.
+
+```dart
+enum Direction: int { // the type is optional
+  Up = 1
+  Down
+  Left
+  Right
+}
+```
+
+Above, we have a numeric enum where `Up` is initialized with `1`. All of the following members are auto-incremented from that point on. In other words, `Direction.Up` has the value `1`, `Down` has `2`, `Left` has `3`, and `Right` has `4`.
+
+If we wanted, we could leave off the initializers entirely:
+
+```dart
+enum Direction: int {
+  Up
+  Down
+  Left
+  Right
+}
+```
+
+Here, `Up` would have the value `0`, `Down` would have `1`, etc. This auto-incrementing behavior is useful for cases where we might not care about the member values themselves, but do care that each value is distinct from other values in the same enum.
+
+Using an enum is simple: just access any member as a property off of the enum itself, and declare types using the name of the enum:
+
+```dart
+enum UserResponse {
+  No = 0,
+  Yes = 1,
+}
+
+func respond(
+  recipient: str,
+  message: UserResponse
+): void {
+  // ...
+}
+
+respond("Princess Caroline", UserResponse.Yes);
+```
+
+Numeric enums can be mixed in computed and constant members (see below). The short story is, enums without initializers either need to be first, or have to come after numeric enums initialized with numeric constants or other constant enum members. In other words, the following isn’t allowed:
+
+```dart
+enum E {
+  A = getSomeValue()
+  B // Enum member must have initializer.
+}
+```
+
+### String enums
+
+String enums are a similar concept, but have some subtle runtime differences as documented below. In a string enum, each member has to be constant-initialized with a string literal, or with another string enum member.
+
+```dart
+enum Direction: str {
+  Up = "UP"
+  Down = "DOWN"
+  Left = "LEFT"
+  Right = "RIGHT"
+}
+```
+
+While string enums don’t have auto-incrementing behavior, string enums have the benefit that they "serialize" well. In other words, string enums allow you to give a meaningful and readable value when your code runs, independent of the name of the enum member itself.
+
+### Constant expressions
+
+Each enum member has a value associated with it which can be either constant or computed. An enum member is considered constant if:
+
+It is the first member in the enum and it has no initializer, in which case it’s assigned the value 0:
+
+```dart
+// E.X is constant:
+enum E {
+  X,
+}
+```
+
+It does not have an initializer and the preceding enum member was a numeric constant. In this case the value of the current enum member will be the value of the preceding enum member plus one.
+
+```dart
+// All enum members in 'E1' and 'E2' are constant.
+
+enum E1 {
+  X,
+  Y,
+  Z,
+}
+
+enum E2 {
+  A = 1,
+  B,
+  C,
+}
+```
+
+Any constant expression can be used in the same enum, provided that that expression contain NO variables except those previously defined.
+
+```dart
+enum FileAccess {
+  // constant members
+  None,
+  Read = 1 << 1,
+  Write = 1 << 2,
+  ReadWrite = Read | Write,
+  // computed member
+  G = "123".length,
+}
+```
+
+### Heterogeneous enums
+
+Why would you do this in the first place?
+
+```dart
+enum BooleanLike {
+  No = 0,
+  Yes = "YES",
+}
+```
+
+## JSX
 
 If you're not a React developer, or don't use JSX in your day to day, then you should quickly skip over this section and pretend you didn't see anything!
 
-This is one of Protea's defining features: embedded HTML (PML). Create components, style them, add functionality to them, pass them around. Protea's PML language looks like JSX, but with very notable differences.
+JSX is one of Protea's defining features: embedded HTML. Create components, style them, pass them around, and add functionality to them. Protea's JSX looks very similar to React and ReasonML JSX, but with very notable differences.
 
 ### HTML5 Components
 
@@ -1529,43 +1713,96 @@ You can use any name for your tags. Built-in HTML tags such as `strong`, `em`, `
 
 ### Attributes
 
-Attributes in PML work the same way as props in JSX, in that you can include any value or expression in addition to strings. You can also assign CSS properties directly to your HTML in the form of inline styles.
+Attributes in PROTEA-JSX work the same way as props in JSX, in that you can include any value or expression in addition to strings.
 
 ```dart
 compo Hello(var toWhat: str) = <div>Hello $toWhat</div>
 DOM.render<Hello toWhat="World"/>
 ```
 
+You can also assign CSS properties directly to your components, and use inline styles as if they were custom properties.
+
 ```dart
 <button
-  name = "inline styles shown here!"
-  border-radius = 3px
-  background-color = green
-  color = red
-  margin = 20px 40px
-  padding = 10px
-  class = "value"
->Button</button>
+  name="inline styles shown here!"
+  border-radius=3px
+  background-color=green
+  color=red
+  margin=20px 40px
+  padding=10px
+  class="value"
+>
+  Button
+</button>
 ```
 
-There are shortcuts for `class` and `id` attributes as well:
+There are shortcuts for `class`, `id`, `key` and `name` attributes as well:
 
 ```dart
-<button>Button</button>
+<button
+  .primary.primary-button
+  #name
+  *key
+  &name
+>
+  Button
+</button>
+
+<button
+  class='primary primary-button'
+  id='name'
+  key='key'
+  name='name'
+>
+  Button
+</button>
+```
+
+### Custom Components
+
+You can define custom components with the `compo` keyword. Components look very similar to regular functions or classes, except return JSX which can be rendered to the DOM.
+
+```dart
+compo App {
+  val greeting = 'greeting'
+  val display-action = false
+
+  <div .container>
+    <h1 #greeting>Hello, World</h1>
+    ${display-action && <p>I am writing JSX</p>}
+    <ul>
+      ${
+        for val emoji in emojis {
+          <li &${emoji.name}>
+            <button on-click=$display-emoji-name()>
+              <span
+                #${emoji.name}
+                role="img"
+                aria-label=$emoji.name
+              >
+                $emoji.emoji
+              </span>
+            </button>
+          </li>
+        }
+      }
+    </ul>
+  </div>
+}
 ```
 
 ### Content
 
-The contents inside of PML work the same way as double-quoted strings in Protea. You can include strings, variables, expressions and other Protea components inside there. Plus, we give you inline Markdown support.
+The contents inside of JSX components work the same way as double-quoted strings in Protea. You can include strings, variables and expressions, not only JSX inside there. Plus, we give you inline Markdown support.
 
 ```dart
 val children = <div checked${x}=true>Hello World!</div>
 <div .total.total-${obj.state}>$children</div>
 
 <View style=$styles.container>
-  <Image source=${{uri: 'https://i.imgur.com/TkIrScD.png'}} style=$styles.logo/>
+  <Image source=({uri: 'https://i.imgur.com/TkIrScD.png'}) style=$styles.logo/>
   <Text style=$styles.instructions>
-    To share a photo from your phone with a friend, just press the button below!
+    To share a photo from your phone with a friend, just press the `button` below!
   </Text>
 </View>
 ```
@@ -1574,7 +1811,7 @@ val children = <div checked${x}=true>Hello World!</div>
 
 "Punning" refers to the syntax shorthand for when a label and a value are the same. For example, in JavaScript, instead of doing return `{name: name}`, you can do return `{name}`.
 
-PML supports punning. `<input checked/>` is just a shorthand for `<input checked="checked"/>`. The formatter will help you format to the punned syntax whenever possible. This is convenient in the cases where there are lots of props to pass down:
+Protea's JSX supports punning. `<input checked/>` is just a shorthand for `<input checked="checked"/>`. The formatter will help you format to the punned syntax whenever possible. This is convenient in the cases where there are lots of props to pass down:
 
 ```dart
 <MyComponent isLoading text onClick/>
