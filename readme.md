@@ -389,17 +389,15 @@ const regex = /\b[\p{Pc}\p{L}][\d\p{L}\p{M}\p{Pc}\p{Pd}]*\b/;
 Identifiers are compared using an approach known as partial case-insensitivity.
 
 ```dart
-func cmpIdent(a: str, b: str): bool {
-  if do {
-    val a1; (a1 = a.sub(`\P{Alnum}`g, '')) ~= `\p{Upper}+`
-  }:
-    a1 == b.sub(`\P{Alnum}`g, '')
-  else:
-    a[0] == b[0] && (
-      a[1:].sub(`\P{Alnum}`g, '').lower() ==
-      b[1:].sub(`\P{Alnum}`g, '').lower()
-    )
+func normalize(a: str): str = match a {
+  case a.sub(`[^\d\pL]`g, '') ~= `\p{Upper}+`:
+    a.sub(`[^\d\pL]`g, '').upper()
+  def:
+    a[0] + a[1:].sub(`[^\d\pL]`g, '').lower()
 }
+
+func cmpIdent(a: str, b: str): bool =
+  normalize(a) == normalize(b)
 ```
 
 To "strop" keywords, append a trailing underscore.
@@ -415,43 +413,36 @@ All identifiers are normalized using the above function.
 
 # Data Types
 
-`undef` is equivalent to JavaScript's `undefined`, while `nil` is JavaScript's `null`. If you're familiar with Ruby, they kind of mean the same.
+`void` is equivalent to JavaScript's `undefined`, while `null` is JavaScript's `null`. If you're familiar with Ruby, they kind of mean the same.
 
-`undef` is the default value assigned to a variable, or the value returned from function calls, while `nil` is the value which you assign explicitly.
-
-```dart
-# Not much else we can assign to these variables!
-u = undef
-n = nil
-```
-
-`void` is what we call a 'type alias' or 'type definition'. `void == nil | undef`; `void` as a type represents the values `null` or `undefined`.
+`void` is the default value assigned to a variable, or the value returned from function calls, while `null` is the value which you assign explicitly.
 
 ```dart
-warnUser(): void
-  print "This is my warning message"
+// Not much else we can assign to these variables!
+val u = void
+val n = null
 ```
 
-`void` also is an operator, in which it evaluates an expression and then returns `undef`.
+`void` is what we call a 'type alias' or 'type definition'. `void == null | void`; `void` as a type represents the values `null` or `undefined`.
 
 ```dart
-void 0 // undef
+func warnUser(): void = print("This is my warning message")
 ```
 
-So declaring variables of type `void` is not useful because you can only assign `null` or `undef` to them:
+So declaring variables of type `void` is not useful because you can only assign `null` or `void` to them:
 
 ```dart
-unusable: void = undef
-unusable = nil
+val unusable: n = void
+val unusable = null
 ```
 
-Take note of some behaviours with `undef` and `nil`:
+Take note of some behaviours with `void` and `null`:
 
 - When compared against one another with `~=`, they are considered `true`. Using `==` and `===` will result in false.
-- When converted into `int` or `float`, `undef` converts into `nan` and `nil` to `0`.
-- When used as a boolean, both `undef` and `nil` are `false`.
-- When converted into `char`, `undef` and `nil` both convert to `?\x0` (Unicode NULL).
-- When converted into `str`, `undef` is converted to `''`, and `nil` to `'nil'`.
+- When converted into `int` or `float`, `void` converts into `nan` and `null` to `0`.
+- When used as a boolean, both `void` and `null` are `false`.
+- When converted into `char`, `void` and `null` both convert to `?\x0` (Unicode NULL).
+- When converted into `str`, `void` is converted to `''`, and `null` to `'null'`.
 
 ## Boolean
 
@@ -529,7 +520,7 @@ o < p // true
 
 ### Truthy and falsy
 
-A truthy or falsy value is a value that yields either true or false when converted into booleans. Falsy values include `false` (duh), `0`, `0.0`, `''`, `nil` (null) and `undef` (undefined). All others are truthy.
+A truthy or falsy value is a value that yields either true or false when converted into booleans. Falsy values include `false` (duh), `0`, `0.0`, `''`, `null` (null) and `void` (undefined). All others are truthy.
 
 Like strings, any empty data structure is considered falsy. This includes arrays, sets, objects and maps, and their primitive 'frozen' counterparts.
 
@@ -938,11 +929,12 @@ String placeholders are used to create template strings from named, keyed or pos
 
 A symbol represents a unique name inside the entire source code. Symbols are interpreted at compile time and cannot be created dynamically.
 
-The only way to create a symbol is by using a symbol literal, denoted by a colon (`:`) followed by an identifier. If the symbol literal contains non-identifier characters, it must be enclosed in single or double quotes.
+Symbol literals are denoted by a colon (`:`) followed by an identifier. If the symbol contains non-identifier characters, it must be enclosed in single or double quotes.
 
 ```dart
 :unquoted_symbol
-:"quoted symbol"
+:1 // not a symbol
+:"quoted symbol" // contains spaces, so it is not an identifier
 :"a" // identical to :a
 :あ
 ```
@@ -1208,6 +1200,43 @@ The type of a list is written in full as `list[type]`, where `type` is the type 
 
 Although the two forms are functionally identical, the shorthand form is preferred and is used throughout this guide when referring to the type of a list.
 
+```dart
+var list1: []int = [10, 20, 30]
+var list2 = ['a', 'b', 'c'] // is []str
+[] // an empty list
+```
+
+An explicit type can be specified by immediately following the closing angle with a type encased in curly brackets, without a space.
+
+This overwrites the inferred type and can be used for example to create a list that holds only some types initially but can accept other types later.
+
+```dart
+var z = [10, '20', '30']{str | int} // with type casting operator
+```
+
+The compiler will infer a list to have a non-nullable type. If the list might store `null` values, then you will need to explicitly cast it.
+
+```dart
+[1, 2, 3] // cannot store null
+[1, 2, 3, null]{?int} // can store null
+```
+
+The empty list is denoted using the special syntax `[]`. Often you will specify a type - for example `[]{Str}` is an empty list of strings. If a type is not specified, then the empty list is an `[]{Any}`.
+
+A multidimensional list can have many prefix `[]` in them.
+
+```dart
+var a: [][]int = [[0, 2, 0], [0, 0, 0]]
+```
+
+You can prefix a hash sign (`#`) to a list or map literal to turn it into a mutable list or map.
+
+```dart
+var a: #[]#[]#[]int = ([[[0] * 2] * 3] * 2).mut-deep
+a[0][1][1] = 2
+print(a) // [[[0, 0], [0, 2], [0, 0]], [[0, 0], [0, 0], [0, 0]]]
+```
+
 ### Indexing Lists
 
 Retrieve a value from the list by using subscript syntax, passing the index of the value you want to retrieve within square brackets immediately after the name of the list:
@@ -1234,9 +1263,9 @@ So given a list of length `5`,
 | --------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Resultant Index | 3   | 4   | 0   | 1   | 2   | 3   | 4   | 0   | 1   | 2   | 3   | 4   | 0   | 1   | 2   |
 
-The result would always evaluate to **modulo** the length of the list (`a[k] == a[k %% len(a)]`). Using an invalid type will return `undef`.
+The result would always evaluate to **modulo** the length of the list (`a[k] == a[k %% len(a)]`). Using an invalid type will return `void`.
 
-You can also use subscript syntax to change a range of values at once, discarding any element once the end of the spliced list is reached, and reallocating deleted and empty entries. 
+You can also use subscript syntax to change a range of values at once, discarding any element once the end of the spliced list is reached, and reallocating deleted and empty entries.
 
 The following example replaces `"Chocolate Spread"`, `"Cheese"`, and `"Butter"` with `"Bananas"`, `"Apples"` and `"Bananas"`.
 
@@ -1304,7 +1333,7 @@ var vec = [-4, -2, 0, 2, 4]
 [for x in vec: if x >= 0: x] // [0, 2, 4]
 // apply a function to all the elements
 [for x in vec: abs] // [4, 2, 0, 2, 4]
-// flatten a list using a listcomp with two 'for'
+// flatten a list using a list-comp with two 'for'
 vec = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 [for elem in vec: for num in elem: num] // [1, 2, 3, 4, 5, 6, 7, 8, 9]
 ```
@@ -1322,15 +1351,17 @@ Protea also includes a data type for sets. A set is an unordered collection with
 
 Set objects also support mathematical operations like union `|`, intersection `&`, difference `-`, and symmetric difference `^`. Curly braces or the `set()` function can be used to create sets.
 
+The type of a set is `set[type]` or `{}set`.
+
 Note: to create an empty set you have to use `set()`, not `{}`; the latter creates an empty map, a data structure that we discuss in the next section.
 
 Here is a brief demonstration:
 
 ```dart
-var word = basket = {'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}
+var basket: {}str = {'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}
 assert basket == {'orange', 'banana', 'pear', 'apple'}
 assert 'orange' in basket // fast membership testing
-assert 'crabgrass' in basket
+assert 'crabgrass' !in basket
 
 var a = set('abracadabra') // Create sets from iterables
 var b = set('alacazam')
@@ -1351,74 +1382,9 @@ assert a == {'r', 'd'}
 
 ## Maps
 
-Another useful data type built into Protea, which is the map. Unlike lists which are indexed by number from 0, dictionaries are indexed by keys of a certain type.
+Another useful data type built into Protea is the map. Maps are sometimes found in other languages as "hashmaps", "tables", "objects" or "associative arrays". Unlike sequences, which are indexed by a range of numbers, dictionaries are indexed by keys, which can be any value including strings, symbols, numbers, etc but **NOT any mutable object**, since those can be modified in place through various operations.
 
-Dictionaries are sometimes found in other languages as “associative memories” or “associative arrays”. Unlike sequences, which are indexed by a range of numbers, dictionaries are indexed by keys, which can be any immutable type; strings and numbers can always be keys. Tuples can be used as keys if they contain only strings, numbers, or tuples; if a tuple contains any mutable object either directly or indirectly, it cannot be used as a key. You can’t use lists as keys, since lists can be modified in place using index assignments, slice assignments, or methods like append() and extend().
-
-- Lists are ordered collections of literals.
-- Maps are collections of key-value pairs where each item is mapped to a distinct key.
-
-Sets are map literals with the values repeated.
-
-```dart
-var list1: []int = [10, 20, 30]
-var list2 = ['a', 'b', 'c'] // is []str
-[] // an empty list
-```
-
-An explicit type can be specified by immediately following the closing angle with a type encased in curly brackets, without a space.
-
-This overwrites the inferred type and can be used for example to create a list that holds only some types initially but can accept other types later.
-
-```dart
-var z = [10, '20', '30']{Str | Int} // with type casting operator
-```
-
-Often the compiler will infer a list to have a non-nullable type. If the list might store `null` values, then you will need to explicitly cast it.
-
-```dart
-[1, 2, 3] // cannot store null
-[1, 2, 3, null]{?Nat} // can store null
-```
-
-The empty list is denoted using the special syntax `[]`. Often you will specify a type - for example `[]{Str}` is an empty list of strings. If a type is not specified, then the empty list is an `[]{Any}`.
-
-A multidimensional list can have many prefix `[]` in them.
-
-```dart
-var a: [][]int = [[0, 2, 0], [0, 0, 0]]
-```
-
-You can prefix a hash sign (`#`) to a list or map literal to turn it into a mutable list or map.
-
-```dart
-var a: #[]#[]#[]int = ([[[0] * 2] * 3] * 2).mut-deep
-a[0][1][1] = 2
-print(a) // [[[0, 0], [0, 2], [0, 0]], [[0, 0], [0, 0], [0, 0]]]
-```
-
-There are further built in methods for lists:
-
-- `b := a.repeat(n)` concatenate `n` times the elements of `a`
-- `a.insert(i, val)` insert new element `val` at index `i` and move all following elements upwards
-- `a.insert(i, [3, 4, 5])` insert several elements
-- `a.prepend(val)` insert value at beginning, equivalent to `a.insert(0, val)`
-- `a.prepend(arr)` insert elements of list `arr` at beginning
-- `a.trim(new_len)` truncate the length (if `new_length < a.len`, otherwise do nothing)
-- `a.clear()` empty the list (without changing `cap`, equivalent to `a.trim(0)`)
-- `a.delete_many(start, size)` removes `size` consecutive elements beginning with index `start` &ndash; triggers reallocation
-- `a.delete(index)` equivalent to `a.delete_many(index, 1)`
-- `v := a.first()` equivalent to `v := a[0]`
-- `v := a.last()` equivalent to `v := a[a.len - 1]`
-- `v := a.pop()` get last element and remove it from list
-- `a.delete_last()` remove last element from list
-- `b := a.reverse()` make `b` contain the elements of `a` in reversed order
-- `a.reverse_in_place()` reverse the order of elements in `a`
-- `a.join(joiner)` concatenate list of strings into a string using `joiner` string as a separator
-
-## Maps
-
-Maps are uniquely keyed collections of values. Any expression can be keyed as long as all the keys are unique. Sets are unique forms of maps in that keys and values map to one another.
+It is best to think of a map as a set of `key: value` pairs, with the requirement that the keys are unique (within one dictionary). A pair of braces creates an empty dictionary: `{}`. Placing a comma-separated list of `key: value` pairs within the braces adds initial `key: value` pairs to the dictionary; this is also the way dictionaries are serialised on output.
 
 ```dart
 val map1: {str : int} = {one: 1, two: 2, three: 3}
@@ -1426,20 +1392,42 @@ val map2 = {1: 2, 2: 4, 3: 6, 4: 8} // inferred as {int : int}
 {} // an empty map
 ```
 
-If a key is a valid identifier, even if it is a keyword, and is placed right before the colon, then it need not be quoted. The same goes for types. Any other value is parsed as an expression. Unquoted identifiers are subject to normalisation.
+If a key is a keyword or a valid single identifier and placed right before the colon, then it is an unquoted string which is normalized to its base form. Any other expression is parsed normally.
 
 ```dart
-x = {int: 1, 2.2: 2, '3': 3, x * 2 + 4: 4}
-assert x.int == 1
-assert x.2.2 == 1 // better to use `x[2.2]` instead
-assert x.'3' == 3
-assert x[x * 2 + 4] = 1
+val x = {one: 1, 2.2: {2.2: 2}, '3': 3, 8 / 2: 4}
+x::one == 1
+x::2.2::2.2 == 2
+x::'3' == 3
+x[8 / 2] == 4
 ```
 
-Map literals with single elements are allowed, with the keys and the values repeated.
+The main operations on a map are storing a value with some key and extracting the value with the key with `::` or `[]` (not `.`). You can manipulate objects using function or method calls, like `.keys()` or `.values()`.
+
+The optional accessor operator, `?:`, enables you to read the value of a property located deep within a chain of connected maps without having to check that each reference in the chain is valid.
+
+`?:` is like `::`, except that instead of causing an error if a reference is nullish (`null` or `void`), the expression short-circuits with a return value of `null`.
 
 ```dart
-assert ({1: 1, 2: 2}) == {1, 2}
+val adventurer = {
+  name: 'Alice',
+  cat: { name: 'Dinah' }
+}
+
+val dogName = adventurer::dog?:name
+print(dogName)
+```
+
+`!:` is the non-null assertion operator and assures that the previous map is not `null` before accessing a map.
+
+```dart
+val adventurer = {
+  name: 'Alice',
+  cat: { name: 'Dinah' }
+}
+
+val dogName = adventurer!:cat!:name
+print(dogName)
 ```
 
 ---
@@ -1462,7 +1450,7 @@ The data class `Vec` has a method `+` which we used to add vector1 and vector2. 
 
 ```dart
 data Vec(x: float, y: float) {
-  func + (that: Vec) = Vec(this.x + that.x, this.y + that.y)
+  func '+'(that: Vec) = Vec(this.x + that.x, this.y + that.y)
 }
 
 val vector1 = Vec(1.0, 1.0)
