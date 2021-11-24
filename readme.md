@@ -1515,15 +1515,15 @@ val test_obj = { foo: 'bar' }
 | `+`      | Suffix | Successor                      |
 | `+`      | Infix  | Add                            |
 | `-`      | Prefix | Negation                       |
-| `-`      | Suffix | Previous number                |
+| `-`      | Suffix | Predecessor                |
 | `-`      | Infix  | Subtract                       |
 | `*`      | Infix  | Multiply                       |
 | `**`     | Infix  | Exponent                       |
 | `***`    | Infix  | Exponent with integer rounding |
 | `/`      | Infix  | Divide                         |
 | `#`      | Infix  | Divide with integer rounding   |
-| `%`      | Infix  | Remainder (Python, R)          |
-| `%%`     | Infix  | Signed remainder (C, Java, JS) |
+| `%`      | Infix  | Remainder                      |
+| `%%`     | Infix  | Signed remainder               |
 | `~`      | Prefix | Bitwise not                    |
 | `&`      | Infix  | Bitwise and                    |
 | `\|`     | Infix  | Bitwise or                     |
