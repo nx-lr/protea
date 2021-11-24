@@ -286,11 +286,11 @@ repository:
       - comment: Data structure classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          Array|Tuple|(Mut)?(List|Set|Map|Bag)|Dict|Func|Iter
+          Array|Tuple|(Mut)?(List|Set|Map|Bag|Str)|Dict|Func|Iter
           |Proc|Seq|Gen|Range|Stack|Heap|Queue|Tree|Trie
           |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
           # lowerFlatCase
-          |array|tuple|(mut)?(list|set|map|bag)|dict|func|iter
+          |array|tuple|(mut)?(list|set|map|bag|str)|dict|func|iter
           |proc|seq|gen|range|stack|heap|queue|tree|trie
           |future|stream|regexp?|func|buf|strbuf|bytes
           )(?!\B|\p{Pd}+\b)
@@ -298,13 +298,13 @@ repository:
       - comment: Constant/algebraic classes
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
-          True|False|Null|Void|NaN|Infin|Empty|Unit
+          True|False|Null|Void|NaN|Infin|Empty|Unit|Obj
           |Any|Mixed|Just|Some|None|Never|(Im)?pure
           |Class|Enum|Module|Pack|Struct|Schema|Space|Pragma
           |Proc|Proto|Macro|Given|Style|Compo|Field
           |Ext|Pred|Data|Trait|Lemma|Iter|Sub|Prop|Const
           # lowerFlatCase
-          |true|false|null|void|nan|infin|empty|unit
+          |true|false|null|void|nan|infin|empty|unit|obj
           |any|mixed|just|some|none|never|(im)?pure|const
           )(?!\B|\p{Pd}+\b)
         name: support.type.primitive.pta
@@ -2441,8 +2441,8 @@ repository:
           )
           \b
           (?=['"`]|
-          (?:[!?]\.=?|\.=|[?!:]:=?)?\#?\(|
-          (?:[!?]\.=?|\.=|[?!:]:=?)?<[\p{Pc}\p{L}]
+          (?:[!?]\.=?|\.=)?\#?\(|
+          (?:[!?]\.=?|\.=)?<[\p{Pc}\p{L}]
           )
         captures:
           1: {patterns: [include: "#function-names"]}
