@@ -406,7 +406,7 @@ To "strop" keywords, append a trailing underscore.
 type Type = { def_: Func }
 var var_ = 42, val_ = 8
 val assert_ = var_ + val_ == 50
-assert assert_
+assert_
 ```
 
 All identifiers are normalized using the above function.
@@ -783,7 +783,7 @@ var s4 = "It's even easier to use the other delimiter."
 In double-quoted strings, an ending backslash joins the next line _without spaces_.
 
 ```dart
-assert "hello \
+"hello \
         world" == "hello world"
 ```
 
@@ -1274,13 +1274,27 @@ shoppingList[4:6] = ['Bananas', 'Apples']
 // shoppingList now contains 7 items
 ```
 
+### `in` operator
+
+To check if an element is in a list or sequence, use the `in` operator. As an inverse, use the `!in` operator instead.
+
+```dart
+val list1 = [1, 2, 3, 4, 5]
+val string1 = "My name is AskPython"
+val tuple1 = (11, 22, 33, 44)
+
+5 in list1
+"is" in string1
+88 !in tuple1
+```
+
 ### List comprehensions
 
 List comprehensions provide a concise way to create lists. Common applications are to make new lists where each element is the result of some operations applied to each member of another sequence or iterable, or to create a subsequence of those elements that satisfy a certain condition.
 
 ```dart
-var a = {for x in 'abracadabra': if x !in 'abc': x}
-assert a == {'r', 'd'}
+var a = [for x in 'abracadabra': if x !in 'abc': x]
+a == ['r', 'd', 'r']
 ```
 
 For example, assume we want to create a list of squares, like:
@@ -1288,7 +1302,7 @@ For example, assume we want to create a list of squares, like:
 ```dart
 var squares = #[] // mutable list is prefixed with a hash
 for x in 1 to 10: squares.push(x ** 2)
-assert squares == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+squares == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
 ```
 
 Note that this creates (or overwrites) a variable named x that still exists after the loop completes. We can calculate the list of squares without any side effects using:
@@ -1317,8 +1331,8 @@ which is equivalent to:
 ```dart
 var combs = #[]
 for x in [1, 2, 3], y in [3, 1, 4]:
-    if x != y:
-      combs.append((x, y))
+  if x != y:
+    combs.append((x, y))
 
 [(1, 3), (1, 4), (2, 3), (2, 1), (2, 4), (3, 1), (3, 4)]
 ```
@@ -1359,9 +1373,9 @@ Here is a brief demonstration:
 
 ```dart
 var basket: {}str = {'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}
-assert basket == {'orange', 'banana', 'pear', 'apple'}
-assert 'orange' in basket // fast membership testing
-assert 'crabgrass' !in basket
+basket == {'orange', 'banana', 'pear', 'apple'}
+'orange' in basket // fast membership testing
+'crabgrass' !in basket
 
 var a = set('abracadabra') // Create sets from iterables
 var b = set('alacazam')
@@ -1377,7 +1391,7 @@ Similarly to list comprehensions, set comprehensions are also supported:
 
 ```dart
 var a = {for x in 'abracadabra': if x !in 'abc': x}
-assert a == {'r', 'd'}
+a == {'r', 'd'}
 ```
 
 ## Maps
@@ -1404,9 +1418,7 @@ x[8 / 2] == 4
 
 The main operations on a map are storing a value with some key and extracting the value with the key with `::` or `[]` (not `.`). You can manipulate objects using function or method calls, like `.keys()` or `.values()`.
 
-The optional accessor operator, `?:`, enables you to read the value of a property located deep within a chain of connected maps without having to check that each reference in the chain is valid.
-
-`?:` is like `::`, except that instead of causing an error if a reference is nullish (`null` or `void`), the expression short-circuits with a return value of `null`.
+`?:` or `?.[]` is like `::`, except that instead of causing an error if a reference is nullish (`null` or `void`), the expression short-circuits with a return value of `null`. The optional accessor operator, `?:`, enables you to read the value of a property located deep within a chain of connected maps without having to check that each reference in the chain is valid.
 
 ```dart
 val adventurer = {
@@ -1415,10 +1427,10 @@ val adventurer = {
 }
 
 val dogName = adventurer::dog?:name
-print(dogName)
+print(dogName) // null
 ```
 
-`!:` is the non-null assertion operator and assures that the previous map is not `null` before accessing a map.
+`!:` or `!.[]` is the non-null assertion operator which assures that the previous map is not `null` before accessing its property. This would raise a compile time exception if the map along this chain is `null`, but in runtime is treated the same as `::`.
 
 ```dart
 val adventurer = {
@@ -1427,7 +1439,7 @@ val adventurer = {
 }
 
 val dogName = adventurer!:cat!:name
-print(dogName)
+print(dogName) // 'Dinah'
 ```
 
 ---
@@ -1558,7 +1570,7 @@ But not both (opening curly brace is a map literal).
 
 ```dart
 val message = do: { 3 + 4 }
-assert message is map
+message is map
 ```
 
 ### Conditionals
@@ -1693,7 +1705,7 @@ loop {
   i *= 2
 }
 
-assert i == 128
+i == 128
 ```
 
 #### Loop keywords
@@ -1999,7 +2011,7 @@ Functions and procedures are curried, by default. To want guaranteed un-currying
 ```dart
 add(. x, y)
 func add(. x, y) = x + y
-assert echo is (. int, int) int
+echo is (. int, int) int
 add(. 1, 2)
 ```
 
