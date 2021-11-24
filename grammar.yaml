@@ -907,6 +907,7 @@ repository:
           9: {name: punctuation.separator.precision.pta}
           10: {name: storage.type.numeric.pta}
 
+
   strings-quoted:
     patterns:
       - comment: multi-single quoted string
@@ -1283,7 +1284,7 @@ repository:
           - include: "#regexp-patterns"
   back-references:
     patterns:
-      - match: \$(\d+|[+-]\d*|&)
+      - match: \$(\d+[+-]?|[+-]\d*|&)
         name: keyword.other.back-reference.pta
       - begin: (\$<)\s*
         end: \s*(>)
@@ -1704,6 +1705,7 @@ repository:
       - match: \s+
         name: meta.var.expr.pta
       - include: "#brackets"
+      - include: "#literals"
       - include: source.yaml#flow-collection
       - include: source.css.scss#constant_functions
       - include: source.css.scss#constant_sass_functions
@@ -1714,7 +1716,6 @@ repository:
       - include: source.css#property-keywords
       - include: source.css#color-keywords
       - include: source.css#property-names
-      - include: "#literals"
       - include: "#embedded"
   tag-names:
     match: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b\s*
