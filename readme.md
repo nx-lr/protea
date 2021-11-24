@@ -457,11 +457,11 @@ A boolean (or just `bool`) data type can only have two values: true or false. Bo
 
 The usual naming convention for boolean variables is to write them as a simple yes/no (true/false) questions, e.g. `isEmpty`, `isFinished`, `isMoving`, etc.
 
-Boolean values have only two possible values, `true` and `false`, but those have their own aliases.
+Boolean values have only two possible values, `true` and `false`.
 
 ```dart
-true == on == yes // true
-false == off == no // false
+true
+false
 ```
 
 Logical operators work the same way as in many other programming languages like Java, C# and JavaScript. However, like in JavaScript, any operand is coerced to booleans, and return the truthy operand (`!` however always returns a boolean).
