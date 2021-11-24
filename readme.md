@@ -132,7 +132,9 @@ Protea also contains some smaller influences from other languages like Ruby, wit
 - an interactive REPL
 - comprehensive editor support
 
-## Hello World
+---
+
+# Hello World
 
 ```dart
 func main = print('Hello World!')
@@ -177,7 +179,7 @@ Every `.pta` file is a module. They can be accessed, installed, loaded, and pass
 
 The entry point of a project is the `main` function, defined in a special file called `main.pta`, at the project's root directory. All code is executed within `main`. If no `main` function is defined with `main`, it would look for any other root-directory file with a `main` and run it.
 
-### Syntax
+## Syntax
 
 Like JavaScript, Protea is a curly-brace language. Code blocks are delimited ~~usually~~ all the time with curly braces.
 
@@ -193,7 +195,7 @@ x // joined
 in y
 ```
 
-### Comments
+## Comments
 
 Protea supports C-style comments. Block comments can be nested. **The leading space(s) after a comment is required**, but not the trailing spaces.
 
@@ -322,7 +324,7 @@ val {x, y} = {x: 1, y: 2} // map
 val {x, y} = {1, 2} // set (same as above)
 ```
 
-### Keywords
+## Keywords
 
 Protea has a lot of different types of keywords, all of which are written entirely in lowercase and are between two and six letters.
 
@@ -411,7 +413,9 @@ assert assert_
 
 All identifiers are normalized using the above function.
 
-### Booleans, Null and Void
+# Data Types
+
+## Booleans, Null and Void
 
 The `null` type is used to represent the absence of a value, similar to that in other languages. It only has a single value:
 
@@ -458,12 +462,12 @@ doz_digit = digit | "a" | "b" | "A" | "B"
 hex_digit = digit | "a".."f" | "A".."F"
 underscore = /* Unicode category Pc */
 
-bin_lit = ("0"["B""b"]) (bin_digit | underscore)+
-qua_lit = ("0"["Q""q"]) (qua_digit | underscore)+
-sen_lit = ("0"["S""s"]) (sen_digit | underscore)+
-oct_lit = ("0"["O""o"]) (oct_digit | underscore)+
-doz_lit = ("0"["Z""z"]) (doz_digit | underscore)+
-hex_lit = ("0"["X""x"]) (hex_digit | underscore)+
+bin_lit = ("0" ["b" "B"]) (bin_digit | underscore)+
+qua_lit = ("0" ["q" "Q"]) (qua_digit | underscore)+
+sen_lit = ("0" ["s" "S"]) (sen_digit | underscore)+
+oct_lit = ("0" ["o" "O"]) (oct_digit | underscore)+
+doz_lit = ("0" ["z" "Z"]) (doz_digit | underscore)+
+hex_lit = ("0" ["x" "X"]) (hex_digit | underscore)+
 dec_lit = (dec_digit | underscore)+
 
 type_suffix = identifier
@@ -506,15 +510,13 @@ val base16 = 0x0123456789abcdef
 
 There is an exception to the rule that all operators in Protea must have values of the same type on both sides. A small primitive type on one side can be automatically promoted if it fits completely into the data range of the type on the other side. These are the allowed possibilities:
 
-```
-   i8 → i16 → i32 → i64
-                  ↘     ↘
-                    f32 → f64 → bigfloat
-                  ↗     ↗
-   u8 → u16 → u32 → u64 ⬎
-      ↘     ↘     ↘      bigint
-   i8 → i16 → i32 → i64 ⬏
-```
+    i8 → i16 → i32 → i64
+                   ↘     ↘
+                     f32 → f64 → bigfloat
+                   ↗     ↗
+    u8 → u16 → u32 → u64 ⬎
+       ↘     ↘     ↘      bigint
+    i8 → i16 → i32 → i64 ⬏
 
 #### Floating point types
 
@@ -602,60 +604,65 @@ The backslash `\` before the suffix is optional, but compulsory in duodecimal an
 
 ### Strings
 
-Strings are created using single or double quotes. They are stored as UTF-16.
-
-In Saga, a string is a read-only array of bytes. String data is encoded using UTF-16.
+Textual data in Protea is handled with `str` objects or strings, which are immutable sequence of Unicode code points. String literals are written in a variety of ways:
 
 ```dart
-'all single quoted strings are verbatim'
-'this \ backslash also does not need to be escaped'
-'same for the " double quote'
-'to express one single quote, use '' two of them'
-
-"here we can use predefined escape sequences like \t \n \b"
-"or generic escape sequences \x0b \u0041 \U000041"
-"the double quote \" needs to be escaped"
-"just like the \\ backslash"
-"the single quote ' and other characters can be escaped,
-but they are completely optional"
-" more quotes because why not"""
+'Single: allows embedded "double" quotes'
+"Dpuble: allows embedded 'single' quotes"
+'''Three single quotes''', """Three double quotes"""
 ```
 
-Indexing a string would produce another string, i.e. a rune. Indexes correspond to Unicode characters, but you can convert the strings using the `.bytes()` method.
+Triple quoted strings may span multiple lines - all associated whitespace will be included in the string literal.
 
-```v
-hello := 'Hello World 👋'
-hello_runes := hello.runes() // [`H`, `e`, `l`, `l`, `o`, ` `, `W`, `o`, `r`, `l`, `d`, ` `, `👋`]
-```
-
-Double quoted string literals can contain the following escape sequences, and all of them are case-insensitive. You can embed multiple code points in a single expansion.
+Only double-quoted strings contain escape sequences, all beginning with a backslash. Single-quoted strings are **raw**, which means that escape sequences are not transformed.
 
 ```dart
-"\p" // platform specific newline
-"\r" // carriage return
-"\n" // newline
-"\f" // form feed
-"\t" // horizontal tab
-"\v" // vertical tab
-"\a" // alert (bell)
-"\b" // backspace
-"\e" // escape
-"\s" // space
-"\cA" // control character from A (#U+01) to Z (#U+1A)
+var s1 = 'Single quotes work well for string literals.'
+var s2 = "Double quotes work just as well."
+```
 
-// Multi-base escapes
-"\b100001111111111111111"
-"\q10033333333"
-"\s35513531"
-"\o4177777"
-"\d1114111" // or "\1114111"
-"\z4588A7"
-"\x10FFFF" // or "\u10fffff"
+To escape a single quote in a single-quoted string, double it.
 
-// Multi code-point escapes
+```dart
+var daughterOfTheVoid = 'Kai''Sa'
+```
+
+#### Escape sequences
+
+Double quoted string literals can contain the following escape sequences:
+
+| Escape Sequence | Meaning                                        |
+| --------------- | ---------------------------------------------- |
+| `\p`            | platform specific newline (`\r\n`, `\n`, `\r`) |
+| `\r`            | carriage return (`\x9`)                        |
+| `\n`            | line feed (or newline) (`\xA`)                 |
+| `\f`            | form feed (`\xC`)                              |
+| `\t`            | horizontal tabulator (`\x9`)                   |
+| `\v`            | vertical tabulator (`\xB`)                     |
+| `\a`            | alert (`\x7`)                                  |
+| `\b`            | backspace (`\x8`)                              |
+| `\e`            | escape (`\xB`)                                 |
+| `\s`            | space (`\x20`)                                 |
+
+Numeric character escapes can be used in even bases up to 16, excluding 14.
+
+| Escape Sequence      | Meaning                                        |
+| -------------------- | ---------------------------------------------- |
+| `\b` (beside 0 or 1) | _Base 2_ - from `0` to `100001111111111111111` |
+| `\q`                 | _Base 4_ - from `0` to `10033333333`           |
+| `\s` (beside 0 to 5) | _Base 6_ - from `0` to `35513531`              |
+| `\o`                 | _Base 8_ - from `0` to `4177777`               |
+| `\d` or `\`          | _Base 10_ - from `0` to `1114111`              |
+| `\z`                 | _Base 12_ - from `0` to `4588A7`               |
+| `\x` or `\u`         | _Base 16_ - from `0` to `10FFFF`               |
+| `\j`                 | Named Unicode characters or LaTeX expressions  |
+
+The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
+
+```dart
+// "HELLO"
 "\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
 "\d{72 69 76 76 69}" == "\72\69\76\76\79"
-
 ```
 
 Double quoted literals also allow you to embed LaTeX expressions (because why not?).
@@ -674,19 +681,44 @@ Double quoted literals also allow you to embed LaTeX expressions (because why no
 }"
 ```
 
-Multi-quoted strings are defined with three or more quotes of the same type and end in the same opening sequence.
+In single quoted strings, to escape single quotes, double them.
 
 ```dart
-// All non-spacing characters are discarded
-// between the text and the quotes
-'''We're fine'''
-"""We're fine"""
+var s3 = 'It''s easy to escape the string delimiter.'
+var s4 = "It's even easier to use the other delimiter."
+```
 
-// Strings can end in more than the opening number of quotes
-"""x\""""
+In double-quoted strings, an ending backslash joins the next line _without spaces_.
 
-// Indentation is preserved or discarded
-// based on the first line of text
+```dart
+assert "hello \
+        world" == "hello world"
+```
+
+#### Block strings
+
+String literals can also be delimited by at least three single or double quotes, provided they end with _at least_ that many quotes of the same type.
+
+The rules for single- and double-quoted strings also apply.
+
+```dart
+'''
+  "stringified string"
+'''
+""" "stringified string""""
+```
+
+produces:
+
+    "stringified string"
+
+All newlines and whitespace before the first non-line character and after the last non-line character are discarded.
+
+All indentation is determined based on the first line of text (the first non-whitespace character). All indentation after that column is preserved while those before it are discarded.
+
+Newlines are normalized to `\n`.
+
+```dart
 '''
 "stringified
   string"
@@ -695,26 +727,36 @@ Multi-quoted strings are defined with three or more quotes of the same type and 
   "stringified
     string"
 """
+```
 
-// Escaping rules apply as before
-'''
-  no escapes needed!
-'''
+Any string that does not obey this rule is a compile-time error.
+
+```dart
 """
-  \\escape\ with\ me
+  "stringified
+string"
 """
 ```
 
-### String interpolation (`$`)
+#### String interpolation (`$`)
 
-All forms of strings can allow interpolation. Expressions are always prefixed with the dollar sign and may be surrounded with curly brackets.
+All forms of strings can allow interpolation. Expressions are always prefixed with the dollar sign `$` and may be surrounded with curly brackets if needed.
 
-If the expression is an identifier or qualified name, a nested property or a function or method call, then the brackets can be left out. Use the `\$` escape sequence if you wish to express the dollar sign itself.
+The curly brackets can be left out if the expression in question is:
+
+- a simple variable, like `variable`, as long as this variable is not a keyword
+- a nested property, like `this.props`, `value?.'string'`, `string[1]` or `my::ClosedBox::new`
+- a function or method call, with parameters: `"$function() or $method.call(plus, params)"`
+- a type casting operation: `List{Int}(1, 2, 3)`
+
+At most 20 nested bracket pairs are interpreted without needing the outsidemost curly brackets.
+
+If you wish to express the dollar sign itself, double it in single quoted strings.
 
 ```dart
 "simple $variable"
 "$object_.property or $deeply.nested[property]"
-"$type_{casting}"
+"$List{Int}(1, 2, 3)"
 "$a.'string'.property"
 "$function() or $method.call(plus, params)"
 "${expression} $for everything $else"
@@ -723,33 +765,38 @@ If the expression is an identifier or qualified name, a nested property or a fun
 '$$a' == "\$a"
 ```
 
-### String formatting
+#### String formatting
 
-Protea comes built-in with a string formatting mini-language for converting, serializing and transforming objects inside strings, with a clearer to read syntax. They are composed of the following parts:
+Protea comes with a string-formatting mini-language for serializing or converting objects and embedding them inside strings, inspired by Command Prompt.
 
-- A type: `%type` denoted by a percentage sign
+String formatting syntax is semantically identical to calling methods with(out) parameters to other data types which return strings, and is comprised of the following:
+
+```dart
+"%type/switch/switch:'value'"
+```
+
+- A compulsory type: `%type` denoted by a percentage sign
 - An optional range of switches, each denoted by a slash `/switch`,
 - Their optional values, separated by a colon: `/sw:value`.
 
+The values can be any of the following:
+
+- A number `10`
+- A symbol `:sec`
+- A string `'string'`
+- A CSS property `#fff` `tomato` `lang()`
+- A regular expression `` `regex` ``
+- An argument list in brackets `(param)`
+- An inline code block `{x + 1}`
+- A list literal `[1, '2']`
+
 ```dart
-"%type/switch/switch:'value'/switch:(expression)"
-
-// Types of values
-"%x/x:#10ffff numeric (positive only)"
-"%x/color:blue CSS property"
-"%x/x:other variable"
-"%x/x:'' string"
-"%x/x:`` regex"
-"%x/x:() expression"
-"%x/x:[] array"
-"%x/x:{} code block"
-"%x/x:({}) dictionary"
-
 '%1' '%$' // don't need escaping when next to a symbol or number
 '%a' == "\%a"
 
-const Everest = {height: 8848}
-"Mount Everest is $Everest.height%f/unit:'m'/style:'long' tall."
+val Everest = {height: 8848}
+"Mount Everest is $Everest.height%float/unit:'m'/style:'long' tall."
+"Mount Everest is " + $Everest.height{float}.unit('m').style('long') + " tall."
 // "Mount Everest is 8,848 meters tall."
 ```
 
@@ -762,15 +809,16 @@ String placeholders are used to create template strings from named, keyed or pos
 "#&keyed" "#&?optional"
 "#0 positive (zero-indexed)"
 "#-1 negative (from end)"
-"#*spread (from an object)"
+"#*spread (from an map)"
+"#*spread (from an map)"
 
 '#@' '#*' // don't need escaping when next to a number
 '%a' == "\%a"
 
 // Usage
 "#1%s".format(0, "hello world") // => 'hello world'
-"#&int%i/b:16/p:'0x'".format({int: 42}) // => '0x2A'
-"#name%i/b:16/p:'0x'".format(name = 42) // => '0x2A'
+"#&int%int/base:16/prefix:'0x'".format({int: 42}) // => '0x2A'
+"#name%int/base:16/prefix:'0x'".format(name = 42) // => '0x2A'
 ```
 
 ### String methods
@@ -795,11 +843,11 @@ The identifier may optionally be enclosed in single or double quotes.
 A quoted identifier can contain any Unicode character including white-spaces and can same escape sequences as a string literal, including interpolation. Use interpolation to create dynamic keys.
 
 ```dart
-:question?
-:exclamation!
+:question
+:exclamation
 ```
 
-### Regular expressions
+## Regular expressions
 
 Regular expressions function like strings, except delimited using backticks. In an effort to make them more readable, Protea's regexes allow for free spacing and embedded comments.
 
@@ -823,7 +871,7 @@ Protea uses the [Oniguruma](https://github.com/kkos/oniguruma/blob/master/doc/RE
 
 Interpolation and formatting also applies but the interpolated result is usually escaped so to prevent generating invalid regular expressions.
 
-#### Replacement strings
+### Replacement strings
 
 If there are two adjacent regular expression literals on one side, then the one on the right is the substitution (template) string for the regular expression on the left.
 
@@ -843,7 +891,7 @@ $<name> ${/* Named capture group */}
 `
 ```
 
-### Collections
+## Collections
 
 Protea comes with two basic literals: list and map. Both collections are homogenous and immutable.
 
@@ -908,7 +956,7 @@ There are further built in methods for arrays:
 - `a.reverse_in_place()` reverse the order of elements in `a`
 - `a.join(joiner)` concatenate array of strings into a string using `joiner` string as a separator
 
-### Maps
+## Maps
 
 Maps are uniquely keyed collections of values. Any expression can be keyed as long as all the keys are unique. Sets are unique forms of maps in that keys and values map to one another.
 
@@ -934,7 +982,9 @@ Map literals with single elements are allowed, with the keys and the values repe
 assert ({1: 1, 2: 2}) == {1, 2}
 ```
 
-## Expressions & Operators
+---
+
+# Expressions & Operators
 
 In Protea, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot notation:
 
