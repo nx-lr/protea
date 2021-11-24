@@ -874,24 +874,24 @@ If you wish to express the dollar sign itself, double it in single quoted string
 
 #### String formatting
 
-Protea comes with a string-formatting mini-language for serializing or converting objects and embedding them inside strings, inspired by Command Prompt.
-
-String formatting syntax is semantically identical to calling methods with(out) parameters to other data types which return strings, and is comprised of the following:
+Protea comes with a string-formatting mini-language for serializing or converting objects and embedding them inside strings, inspired by Command Prompt. String formatting syntax is semantically identical to calling the `format` method on functions which return strings, and is comprised of the following:
 
 ```dart
-"%type/switch/switch:'value'"
+"$value%type_/attrib/attrib:'value'"
+value{type_}.format(&attrib, &attrib = value)
 ```
 
 - A compulsory type: `%type` denoted by a percentage sign
-- An optional range of switches, each denoted by a slash `/switch`,
-- Their optional values, separated by a colon: `/sw:value`.
+- An optional range of attributes, each denoted by a slash `/attrib`,
+- Their optional values, separated by a colon: `/attrib:value`.
 
 The values can be any of the following:
 
 - A number `10`
-- A symbol `:sec`
+- A symbol `:seconds`
+- A variable, qualified name, function, method or property call, prefixed with `$`
+- A type casting operation `postfix{}`
 - A string `'string'`
-- A CSS property `#fff` `tomato` `lang()`
 - A regular expression `` `regex` ``
 - An argument list in brackets `(param)`
 - An inline code block `{x + 1}`
@@ -901,9 +901,9 @@ The values can be any of the following:
 '%1' '%$' // don't need escaping when next to a symbol or number
 '%a' == "\%a"
 
-val Everest = {height: 8848}
-"Mount Everest is $Everest.height%float/unit:'m'/style:'long' tall."
-"Mount Everest is " + Everest.height{float}.unit('m').style('long') + " tall."
+val everest = {height: 8848}
+"Mount Everest is $everest.height%float/unit::m/style::long tall."
+"Mount Everest is " + everest.height{float}.format(&unit = :m, &style = :long) + " tall."
 // "Mount Everest is 8,848 meters tall."
 ```
 
@@ -1515,7 +1515,7 @@ val test_obj = { foo: 'bar' }
 | `+`      | Suffix | Successor                      |
 | `+`      | Infix  | Add                            |
 | `-`      | Prefix | Negation                       |
-| `-`      | Suffix | Predecessor                |
+| `-`      | Suffix | Predecessor                    |
 | `-`      | Infix  | Subtract                       |
 | `*`      | Infix  | Multiply                       |
 | `**`     | Infix  | Exponent                       |
