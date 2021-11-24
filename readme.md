@@ -1410,13 +1410,21 @@ If a key is a keyword or a valid single identifier and placed right before the c
 
 ```dart
 val x = {one: 1, 2.2: {2.2: 2}, '3': 3, 8 / 2: 4}
-x::one == 1
-x::2.2::2.2 == 2
-x::'3' == 3
-x[8 / 2] == 4
 ```
 
 The main operations on a map are storing a value with some key and extracting the value with the key with `::` or `[]` (not `.`). You can manipulate objects using function or method calls, like `.keys()` or `.values()`.
+
+Again, just like the keys of an object, map keys can be accessed without quotes if they are a simple identifier. Any other value can be passed without quotes if they are a single literal.
+
+```dart
+x::one == x::'one' == x::one___
+x?:(:one) == null // symbol
+
+x::one == 1
+x::2.2::2.2 == 2
+x::'3' == 3
+x::(8 / 2) == x[8 / 2] == 4
+```
 
 `?:` or `?.[]` is like `::`, except that instead of causing an error if a reference is nullish (`null` or `void`), the expression short-circuits with a return value of `null`. The optional accessor operator, `?:`, enables you to read the value of a property located deep within a chain of connected maps without having to check that each reference in the chain is valid.
 
@@ -1427,19 +1435,38 @@ val adventurer = {
 }
 
 val dogName = adventurer::dog?:name
-print(dogName) // null
+dogName // null
 ```
 
 `!:` or `!.[]` is the non-null assertion operator which assures that the previous map is not `null` before accessing its property. This would raise a compile time exception if the map along this chain is `null`, but in runtime is treated the same as `::`.
 
 ```dart
-val adventurer = {
-  name: 'Alice',
-  cat: { name: 'Dinah' }
-}
+val catName = adventurer!:cat!:name
+catName // 'Dinah'
+```
 
-val dogName = adventurer!:cat!:name
-print(dogName) // 'Dinah'
+### Spreading
+
+The spread operator (prefix `*`) is a useful and convenient syntax for expanding iterable objects into function arguments, tuples, or other iterables.
+
+```dart
+// Function arguments
+func multiply(a, b) = a * b
+val numbers = [3, 5]
+multiply(*numbers) == 15
+
+// List literals
+val numbers = [1, 2, 3]
+val new_numbers = [0, *numbers, 4]
+new_numbers == [0, 1, 2, 3, 4]
+
+// Set literals
+var a = set(*'abracadabra')
+a == {'a', 'r', 'b', 'c', 'd'}
+
+// Map literals
+val test_obj = { foo: 'bar' }
+{ *test_obj, foo2: 'bar2' } == {foo: 'bar', foo2: 'bar2'}
 ```
 
 ---
