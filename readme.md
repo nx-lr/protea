@@ -1,6 +1,6 @@
 # ![Protea](https://github.com/NoxVentura/ProteaLang/raw/main/banner.png)
 
-Protea is a multi-purpose programming language that serves as a drop-in replacement to JavaScript, and the traditional way of writing JavaScript full stack applications on multiple platforms. It fully supports object-oriented and functional programming, and allows you to write simple, fast and quality code while leveraging on the best of the JavaScript (and Python) ecosystems.
+Protea is a multi-purpose programming language that serves as a drop-in replacement to JavaScript, and aims to be one of th traditional way of writing JavaScript full stack and multi-platform applications. It fully supports object-oriented and functional programming, and allows you to write simple, fast and quality code while leveraging on the best of the JavaScript (and Python) ecosystems.
 
 ```dart
 module Button-B {
