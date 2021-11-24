@@ -1274,20 +1274,6 @@ shoppingList[4:6] = ['Bananas', 'Apples']
 // shoppingList now contains 7 items
 ```
 
-### `in` operator
-
-To check if an element is in a list or sequence, use the `in` operator. As an inverse, use the `!in` operator instead.
-
-```dart
-val list1 = [1, 2, 3, 4, 5]
-val string1 = "My name is AskPython"
-val tuple1 = (11, 22, 33, 44)
-
-5 in list1
-"is" in string1
-88 !in tuple1
-```
-
 ### List comprehensions
 
 List comprehensions provide a concise way to create lists. Common applications are to make new lists where each element is the result of some operations applied to each member of another sequence or iterable, or to create a subsequence of those elements that satisfy a certain condition.
@@ -1472,6 +1458,215 @@ val test_obj = { foo: 'bar' }
 ---
 
 # Expressions & Operators
+
+#### General operators
+
+| Operator | Type   | Meaning                     |
+| -------- | ------ | --------------------------- |
+| `!`      | Unary  | Non-null assertion          |
+| `?`      | Unary  | Existential                 |
+| `.`      | Binary | Basic access                |
+| `::`     | Binary | Map access                  |
+| `!.`     | Binary | Assertive access            |
+| `!:`     | Binary | Assertive map access        |
+| `?.`     | Binary | Optional access             |
+| `?:`     | Binary | Optional map assign         |
+| `.=`     | Binary | Access-assignment           |
+| `::=`    | Binary | Map access-assign           |
+| `!.=`    | Binary | Assertive access-assign     |
+| `!:=`    | Binary | Assertive map access-assign |
+| `?.=`    | Binary | Optional access-assign      |
+| `?:=`    | Binary | Optional map access-assign  |
+| `??`     | Infix  | Null coalescing             |
+| `!!`     | Infix  | Non-null coalescing         |
+| `?:`     | Infix  | Falsy coalescing            |
+| `!:`     | Infix  | Truthy access               |
+| `*`      | Prefix | Spread                      |
+| `&`      | Prefix | Named arguments             |
+| `%`      | Prefix | Format specifier            |
+| `$`      | Prefix | Pass by reference           |
+
+### Comparison
+
+| Operator   | Type  | Meaning                  |
+| ---------- | ----- | ------------------------ |
+| `<`        | Infix | Lesser than              |
+| `<=`       | Infix | Lesser than or equal to  |
+| `>`        | Infix | Greater than             |
+| `>=`       | Infix | Greater than or equal to |
+| `==`       | Infix | Equal to                 |
+| `!=`, `<>` | Infix | Not equal to             |
+| `<=>`      | Infix | Three-way comparison     |
+| `*>`       | Infix | Minimum                  |
+| `<*`       | Infix | Maximum                  |
+
+#### Numeric operators
+
+| Operator | Type   | Meaning                        |
+| -------- | ------ | ------------------------------ |
+| `+`      | Prefix | Numeric casting                |
+| `+`      | Suffix | Successor                      |
+| `+`      | Infix  | Add                            |
+| `-`      | Prefix | Negation                       |
+| `-`      | Suffix | Previous number                |
+| `-`      | Infix  | Subtract                       |
+| `*`      | Infix  | Multiply                       |
+| `**`     | Infix  | Exponent                       |
+| `***`    | Infix  | Exponent with integer rounding |
+| `/`      | Infix  | Divide                         |
+| `#`      | Infix  | Divide with integer rounding   |
+| `%`      | Infix  | Remainder (Python, R)          |
+| `%%`     | Infix  | Signed remainder (C, Java, JS) |
+| `~`      | Prefix | Bitwise not                    |
+| `&`      | Infix  | Bitwise and                    |
+| `\|`     | Infix  | Bitwise or                     |
+| `^`      | Infix  | Bitwise exclusive or           |
+| `<<`     | Infix  | Bitwise signed left shift      |
+| `>>`     | Infix  | Bitwise signed right shift     |
+| `<<<`    | Infix  | Bitwise unsigned left shift    |
+| `>>>`    | Infix  | Bitwise unsigned right shift   |
+
+#### Regular expression operators
+
+| Operator | Type  | Meaning           |
+| -------- | ----- | ----------------- |
+| `=<`     | Infix | Substitution      |
+| `=~`     | Unary | Matches           |
+| `!~`     | Infix | Does not match    |
+| `~!`     | Infix | Negative matching |
+
+#### String operators
+
+| Operator | Type  | Meaning           |
+| -------- | ----- | ----------------- |
+| `+`      | Infix | Concatenation     |
+| `-`      | Unary | Reversal          |
+| `~=`     | Infix | Matching          |
+| `~!`     | Infix | Negative matching |
+| `*`      | Infix | Repetition        |
+| `/`      | Infix | Splitting         |
+| `#`      | Unary | Length            |
+
+#### Logical operators
+
+| Operator | Type  | Meaning              |
+| -------- | ----- | -------------------- |
+| `&&`     | Infix | Logical and          |
+| `\|\|`   | Infix | Logical or           |
+| `^^`     | Infix | Logical exclusive or |
+| `!`      | Unary | Logical not          |
+| `~>`     | Infix | Imply                |
+| `<~`     | Infix | Backwards imply      |
+| `<~>`    | Infix | Bothward imply       |
+
+#### Functional operators
+
+| Operator  | Type  | Meaning                    |
+| --------- | ----- | -------------------------- |
+| `+>`      | Infix | Composition                |
+| `\|>`     | Infix | Pipeline                   |
+| `\|\|>`   | Infix | Iterable pipeline          |
+| `\|\|\|>` | Infix | Async pipeline             |
+| `<+`      | Infix | Backward composition       |
+| `<\|`     | Infix | Backward pipeline          |
+| `<\|\|`   | Infix | Backward iterable pipeline |
+| `<\|\|\|` | Infix | Backward async piping      |
+
+#### Type operators
+
+| Operator | Type   | Meaning                   |
+| -------- | ------ | ------------------------- |
+| `?`      | Prefix | Nullable type             |
+| `+`      | Infix  | Sum type                  |
+| `-`      | Infix  | Difference type           |
+| `*`      | Infix  | Product type              |
+| `&`      | Infix  | Intersection type         |
+| `\|`     | Infix  | Union type                |
+| `^`      | Infix  | Symmetric type            |
+| `typeof` | Infix  | Type of object            |
+| `keyof`  | Infix  | Keys of object            |
+| `valof`  | Infix  | Values of object          |
+| `pairof` | Infix  | Key-value pairs of object |
+
+#### Collection operators
+
+| Operator | Type  | Meaning                 |
+| -------- | ----- | ----------------------- |
+| `+`      | Infix | Push or unshift         |
+| `++`     | Infix | Concatenate             |
+| `-`      | Unary | Pop or shift            |
+| `<:`     | Infix | Value in collection     |
+| `<!`     | Infix | Value not in collection |
+| `:<`     | Infix | Value in collection     |
+| `!<`     | Infix | Value not in collection |
+| `*`      | Infix | Repeat (only for lists) |
+| `/`      | Infix | Group by                |
+| `#`      | Unary | Length or cardinality   |
+| `%`      | Infix | Sort by                 |
+| `&`      | Infix | Intersection            |
+| `\|`     | Infix | Union                   |
+| `^`      | Infix | Symmetric difference    |
+| `</>`    | Infix | Filter                  |
+| `!</>`   | Infix | Reject                  |
+| `<*>`    | Infix | Map                     |
+| `<+>`    | Infix | Sort                    |
+| `<$>`    | Infix | Group                   |
+| `</`     | Infix | Fold from left          |
+| `/>`     | Infix | Fold from right         |
+| `<$`     | Infix | Scan from left          |
+| `$>`     | Infix | Scan from right         |
+| `<%`     | Infix | Take from left          |
+| `%>`     | Infix | Take from right         |
+| `<#`     | Infix | Drop from left          |
+| `#>`     | Infix | Drop from right         |
+
+### `in`, `of` and `is` operator
+
+To check if an element is in a lsit, or a key in a sequence, use the `in` operator. As an inverse, use the `!in` operator instead.
+
+```dart
+val list1 = [1, 2, 3, 4, 5]
+val string1 = "My name is AskPython"
+val tuple1 = (11, 22, 33, 44)
+
+5 in list1
+"is" in string1
+88 !in tuple1
+
+val car = #{ make: 'Honda', model: 'Accord', year: 1998 };
+del car.make
+if 'make' !in car: car.make = 'Suzuki';
+car.make == 'Suzuki'
+```
+
+The `of` operator checks if a property is present in an object.
+
+```dart
+// Arrays
+var trees = ['redwood', 'bay', 'cedar', 'oak', 'maple']
+0 of trees
+3 of trees
+6 !of trees
+'bay' !of trees; bay in trees
+'len' of trees
+
+'PI' of Core::Math
+
+// Custom objects
+var mycar = {make: 'Honda', model: 'Accord', year: 1998}
+'make' of mycar
+'model' of mycar
+```
+
+The `is` operator tests to see if the object is of a specified type.
+
+```dart
+data Car(make, model, year)
+var auto = new Car('Honda', 'Accord', 1998)
+auto is Car; auto is obj
+```
+
+### Operators as methods
 
 In Protea, operators are methods. Any method with a single parameter can be used as an infix operator. For example, `+` can be called with dot notation:
 
