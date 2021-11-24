@@ -96,7 +96,7 @@ Protea also contains some smaller influences from other languages like Ruby, wit
 - Personal names
   - **Evalyn** or **Evalin**
 - Flora or Fauna
-  - **Protea**
+  - **_Protea_**
   - **Lotus**
 
 ### Features (non-exhaustive, more to come)
@@ -128,6 +128,13 @@ Protea also contains some smaller influences from other languages like Ruby, wit
 - full tail call elimination
 - human friendly errors
 - what compiler should I use to build Protea?
+  - Rust
+  - Kotlin
+  - Scala
+  - JavaScript with SWC
+  - Python
+  - C
+  - C#
 - a core standard library
 - an interactive REPL
 - comprehensive editor support
