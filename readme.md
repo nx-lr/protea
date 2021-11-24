@@ -415,22 +415,136 @@ All identifiers are normalized using the above function.
 
 # Data Types
 
-## Booleans, Null and Void
+`undef` is equivalent to JavaScript's `undefined`, while `nil` is JavaScript's `null`. If you're familiar with Ruby, they kind of mean the same.
 
-The `null` type is used to represent the absence of a value, similar to that in other languages. It only has a single value:
+`undef` is the default value assigned to a variable, or the value returned from function calls, while `nil` is the value which you assign explicitly.
 
-```dart
-null
+```coffee
+# Not much else we can assign to these variables!
+u = undef
+n = nil
 ```
 
-Protea also has `void`, for compatibility purposes. `void` is equal to `null`, but compiles to JavaScript `undefined`. You should use `void` in place of `null`.
+`void` is what we call a 'type alias' or 'type definition'. `void == nil | undef`; `void` as a type represents the values `null` or `undefined`.
 
-Booleans have only two possible values: `true` and `false`. They are constructed using the following literals:
-
-```dart
-true
-false
+```coffee
+warnUser(): void
+  print "This is my warning message"
 ```
+
+`void` also is an operator, in which it evaluates an expression and then returns `undef`.
+
+```coffee
+void 0 # undef
+```
+
+So declaring variables of type `void` is not useful because you can only assign `null` or `undef` to them:
+
+```coffee
+unusable: void = undef
+unusable = nil
+```
+
+Take note of some behaviours with `undef` and `nil`:
+
+- When compared against one another with `~=`, they are considered `true`. Using `==` and `===` will result in false.
+- When converted into `int` or `float`, `undef` converts into `nan` and `nil` to `0`.
+- When used as a boolean, both `undef` and `nil` are `false`.
+- When converted into `char`, `undef` and `nil` both convert to `?\x0` (Unicode NULL).
+- When converted into `str`, `undef` is converted to `''`, and `nil` to `'nil'`.
+
+## Boolean
+
+A boolean (or just `bool`) data type can only have two values: true or false. Booleans are usually used for control flow (see next chapter), and they are often a result of relational operators.
+
+The usual naming convention for boolean variables is to write them as a simple yes/no (true/false) questions, e.g. `isEmpty`, `isFinished`, `isMoving`, etc.
+
+Boolean values have only two possible values, `true` and `false`, but those have their own aliases.
+
+```coffee
+true == on == yes # true
+false == off == no # false
+```
+
+Logical operators work the same way as in many other programming languages like Java, C# and JavaScript. However, like in JavaScript, any operand is coerced to booleans, and return the truthy operand (`!` however always returns a boolean).
+
+- `and`/`&&` returns `true` only if both members are `true`
+- `or`/`||` returns `true` if at least one member is `true`
+- `xor`/`^^` returns `true` if one member is `true`, but the other is not
+- `not`/`!` negates the truthiness of its member: changing `true` to `false`, and vice versa (it is the only logical operator that takes just one operand)
+
+```coffee
+!true          # false
+
+true && true   # true
+true && false  # false
+false && false # false
+
+1 && 0 # 1
+
+true || true   # true
+true || false  # true
+false || false # false
+
+0 || 1 # 1
+
+true ^^ true   # false
+true ^^ false  # true
+false ^^ false # false
+```
+
+`and`, `or` and `xor` have their own inverses: `!&`/`nand`, `!|`/`nor` and `!^`/`xnor`.
+
+Relational and logical operators can be combined together to form more complex expressions.
+
+For example: `(5 < 7) && (11 + 9 == 32 - 2*6)` will become true and `(20 == 20)`, which becomes `true && true`, and in the end this will give the final result of `true`.
+
+Like Python and CoffeeScript, you can chain comparison operators. `<`, `>`, `<=`, `>=`
+
+```coffee
+1 == 1   # true because 1 is equal to 1
+2 != 1   # true because 2 isn't equal to 1
+2 > 1    # true because 2 is greater than 1
+1 < 2    # true because 1 is less than 2
+1 >= 1   # true because 1 is greater than or equal to 1
+2 <= 1   # false because 2 isn't less than or equal to 1
+
+1 < 2 < 4        # true, as 1 < 2 and 2 < 4
+1 < 2 == 4/2 > 0 # true
+```
+
+You can also compare strings and numeric values in arrays. These works on a character-by-character or element-by-element basis.
+
+```coffee
+i = 'a'; j = 'd'; k = 'Z'
+
+i < j # true
+i < k # false
+
+m = 'axyb'
+n = 'axyz'
+o = 'ba'
+p = 'ba '
+
+m < n # true
+n < o # true
+o < p # true
+```
+
+Nyx provides two different value-comparison operations. Which operation you choose depends on what sort of comparison you are looking to perform. Briefly:
+
+- **Loose equality** `=~` will perform a type conversion when comparing two things. Its inverse is `!~`.
+- **Strict equality** `==` will do the same comparison as double equals but without type conversion; if the types differ, false is returned. The inverse is true for `!=`.
+
+### Truthy and falsy
+
+A truthy value is a value that is converted into booleans when encountered in such context. Falsy values include `false` (duh), `0`, `0.0`, `?\x0` (NULL character), `''`, `nil` (null) and `undef` (undefined). All others are truthy.
+
+Like strings, any empty data structure is considered falsy. This includes arrays, sets, objects and maps, and their primitive 'frozen' counterparts.
+
+> **Note**:
+>
+> We will go more into detail on data structures in the next chapter.
 
 ### Numbers
 
