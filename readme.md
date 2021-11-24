@@ -435,7 +435,7 @@ warnUser(): void
 `void` also is an operator, in which it evaluates an expression and then returns `undef`.
 
 ```dart
-void 0 # undef
+void 0 // undef
 ```
 
 So declaring variables of type `void` is not useful because you can only assign `null` or `undef` to them:
@@ -462,8 +462,8 @@ The usual naming convention for boolean variables is to write them as a simple y
 Boolean values have only two possible values, `true` and `false`, but those have their own aliases.
 
 ```dart
-true == on == yes # true
-false == off == no # false
+true == on == yes // true
+false == off == no // false
 ```
 
 Logical operators work the same way as in many other programming languages like Java, C# and JavaScript. However, like in JavaScript, any operand is coerced to booleans, and return the truthy operand (`!` however always returns a boolean).
@@ -474,23 +474,23 @@ Logical operators work the same way as in many other programming languages like 
 - `not`/`!` negates the truthiness of its member: changing `true` to `false`, and vice versa (it is the only logical operator that takes just one operand)
 
 ```dart
-!true          # false
+!true          // false
 
-true && true   # true
-true && false  # false
-false && false # false
+true && true   // true
+true && false  // false
+false && false // false
 
-1 && 0 # 1
+1 && 0 // 1
 
-true || true   # true
-true || false  # true
-false || false # false
+true || true   // true
+true || false  // true
+false || false // false
 
-0 || 1 # 1
+0 || 1 // 1
 
-true ^^ true   # false
-true ^^ false  # true
-false ^^ false # false
+true ^^ true   // false
+true ^^ false  // true
+false ^^ false // false
 ```
 
 Relational and logical operators can be combined together to form more complex expressions.
@@ -514,8 +514,8 @@ You can also compare strings and numeric values in arrays. These works on a char
 ```dart
 i = 'a'; j = 'd'; k = 'Z'
 
-i < j # true
-i < k # false
+i < j // true
+i < k // false
 
 m = 'axyb'
 n = 'axyz'
@@ -722,7 +722,7 @@ var s1 = 'Single quotes work well for string literals.'
 var s2 = "Double quotes work just as well."
 ```
 
-To escape a single quote in a single-quoted string, double it.
+To escape a single quote (apostrophe) in a single-quoted string, double it.
 
 ```dart
 var daughterOfTheVoid = 'Kai''Sa'
@@ -1194,8 +1194,7 @@ The contents of a collection are delimited either by colons or newlines.
 
 - **Lists** are ordered collections of single values.
 - **Maps** are ordered collections of key-value pairs.
-
-That way, you can be assured you can't insert a value of the wrong type into a collection by mistake. It also means you can be confident about the type of values you will retrieve from a collection.
+- **Tuples** are infinite collections of values.
 
 ## Lists
 
@@ -1205,29 +1204,9 @@ A list stores values in an ordered list, _usually_ of the same type. The same va
 val list = ['hello', 'world', 'how are you']
 ```
 
-The type of a Nyx list is written in full as `list[type]`, where `type` is the type of values the list is allowed to store. You can also write the type of a list in shorthand form as `[]type`. Although the two forms are functionally identical, the shorthand form is preferred and is used throughout this guide when referring to the type of a list.
+The type of a list is written in full as `list[type]`, where `type` is the type of values the list is allowed to store. You can also write the type of a list in shorthand form as `[]type`.
 
-### Creating a List
-
-You can create a list of a certain size with all of its values set to the same default value. You pass this initializer a default value of the appropriate type, enclosed in brackets, and the number of times that value is repeated by passing it immediately to the right of the multiplication sign.
-
-```dart
-val threeFloats = [0.0] * 3
-```
-
-You can create a new list by adding together two existing lists with the concatenation operator (`+`). The new list's type is inferred from the type of the two lists you add together:
-
-```dart
-val anotherThreeFloats = [2.5] * 3
-val sixFloats = threeFloats + anotherThreeFloats
-```
-
-This is not the only way to initialize a list. You can also do this: pass the length of the list in its **constructor** method `list`, setting its length as the first argument and the default value as the second.
-
-```dart
-threeNumbers = List(&val = 3, &rep = 20)
-# [20, 20, 20]
-```
+Although the two forms are functionally identical, the shorthand form is preferred and is used throughout this guide when referring to the type of a list.
 
 ### Indexing Lists
 
@@ -1235,25 +1214,19 @@ Retrieve a value from the list by using subscript syntax, passing the index of t
 
 ```dart
 firstItem = shoppingList[0]
-# firstItem is equal to "Eggs"
+// firstItem is equal to "Eggs"
 ```
 
-> **Note:**
->
-> The first item in the list has an index of 0, not 1. The second is 1, not 2, and so on. Lists in Nyx are always zero-indexed.
+The first item in the list has an index of 0, not 1. The second is 1, not 2, and so on. Lists in Nyx are always zero-indexed.
 
-You can use subscript syntax to change an existing value at a given index:
+You can use subscript syntax to change an existing value at a given index, provided the list is mutable:
 
 ```dart
 shoppingList[0] = 'Six eggs'
 // the first item in the list is now equal to "Six eggs" rather than "Eggs"
 ```
 
-When you use subscript syntax, you can specify <i>any **integer**</i>, including negative numbers. Indices can also count backward --- the index of the last element is `-1`, the second last `-2`, and so on.
-
-This can also work <i>beyond</i> the length of the list. Attempting to access `shoppingList[shoppingList.count] = "Salt"`
-
-For example, writing to try to append an item to the end of the list retrieves the **first** index of the list.
+When you use subscript syntax, you can specify any integer, including negative numbers. Indices can also count backward --- the index of the last element is `-1`, the second last `-2`, and so on. This works beyond &pm;`len(list)`.
 
 So given a list of length `5`,
 
@@ -1261,656 +1234,126 @@ So given a list of length `5`,
 | --------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Resultant Index | 3   | 4   | 0   | 1   | 2   | 3   | 4   | 0   | 1   | 2   | 3   | 4   | 0   | 1   | 2   |
 
-The result would always evaluate to **modulo** the length of the list (`a[k] == a[k %% len a]`). Using an invalid type will return `undef`.
+The result would always evaluate to **modulo** the length of the list (`a[k] == a[k %% len(a)]`). Using an invalid type will return `undef`.
 
-You can also use subscript syntax to change a range of values at once. The replacement set of values is coerced to the length of the subrange of the list by implicitly repeating it, without changing the length of the original list.
+You can also use subscript syntax to change a range of values at once, discarding any element once the end of the spliced list is reached, and reallocating deleted and empty entries. 
 
 The following example replaces `"Chocolate Spread"`, `"Cheese"`, and `"Butter"` with `"Bananas"`, `"Apples"` and `"Bananas"`.
 
 ```dart
-shoppingList[4::6] = ['Bananas' 'Apples']
+shoppingList[4:6] = ['Bananas', 'Apples']
 // shoppingList now contains 7 items
 ```
 
-To insert an item into the list at a specified index, call the list's `prepend()` method:
+### List comprehensions
+
+List comprehensions provide a concise way to create lists. Common applications are to make new lists where each element is the result of some operations applied to each member of another sequence or iterable, or to create a subsequence of those elements that satisfy a certain condition.
 
 ```dart
-shoppingList.prepend 'Maple Syrup'
-// shoppingList now contains 8 items
-// "Maple Syrup" is now the first item in the list
+var a = {for x in 'abracadabra': if x !in 'abc': x}
+assert a == {'r', 'd'}
 ```
 
-Any gaps in a list are closed when an item is removed, and so the value at index `0` is once again equal to "Six eggs":
+For example, assume we want to create a list of squares, like:
 
 ```dart
-firstItem = shoppingList[0]
-// firstItem is now equal to "Six eggs"
+var squares = #[] // mutable list is prefixed with a hash
+for x in 1 to 10: squares.push(x ** 2)
+assert squares == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
 ```
 
-> **Note:**
->
-> You can insert an element into the list at an index with the `insert(item, at)` method. Similarly, you can remove an element from the list at an index with the `remove(at)` method. Any deletion action returns the deleted items.
-
-If you want to remove the final item from a list, use the `pop()` method rather than the `remove()` method. Like the `remove()` method, `pop()` returns the removed item:
-
-> **Note:** To remove the first element from a list, use the `shift()` method instead.
+Note that this creates (or overwrites) a variable named x that still exists after the loop completes. We can calculate the list of squares without any side effects using:
 
 ```dart
-shoppingList.pop!
-// Remove the extra 'Bananas' item
-
-apples := shoppingList.pop!
-// the last item in the list has just been removed
-// shoppingList now contains 5 items, and no apples
-// the apples constant is now equal to the removed "Apples" string
+var squares = list((0 til 10).map(** 2))
 ```
 
-> **Note:** We can call functions, method and constructors with no arguments with an exclamation mark `!`, just right after its name.
-
-### Iterating Over a list
-
-You can iterate over the entire set of values in a list with the for-in loop:
+or, equivalently:
 
 ```dart
-for item in shoppingList
-  print item
-// Six eggs
-// Milk
-// Flour
-// Baking Powder
-// Bananas
+var squares = [for x in 0 til 10: x**2]
 ```
 
-If you need the integer index of each item as well as its value, simply put the index as the second argument in the list instead. iterate over the list instead. The integers start at zero and count up by one for each item; if you enumerate over a whole list, these integers match the items' indices.
+A list comprehension consists of a `for` expression encased between the literal and the expression in question. The result would be a new list resulting from evaluating the expression in the context of the clauses inside it.
+
+For example, this comprehension combines the elements of two lists if they are not equal:
 
 ```dart
-for index, value in shoppingList
-  print "Item #{index + 1}: #value"
-// Item 1: Six eggs
-// Item 2: Milk
-// Item 3: Flour
-// Item 4: Baking Powder
-// Item 5: Bananas
+[for x in [1, 2, 3], y in [3, 1, 4]: if x != y: (x, y)]
+[(1, 3), (1, 4), (2, 3), (2, 1), (2, 4), (3, 1), (3, 4)]
 ```
 
-> **Note:** For more about the `for-in` loop, see the section on **Control Flow**.
-
-##// Checking for Item Presence
-
-You can check the presence of a value in a list by using the `in` operator. This operation will return `true` if an item is present.
+which is equivalent to:
 
 ```dart
-"Bananas" in shoppingList // true
-"Baking Powder" in shoppingList // true
+var combs = #[]
+for x in [1, 2, 3], y in [3, 1, 4]:
+    if x != y:
+      combs.append((x, y))
+
+[(1, 3), (1, 4), (2, 3), (2, 1), (2, 4), (3, 1), (3, 4)]
 ```
 
-Similarly, its inverse, `!in` or `not in`, would check if an item is not present in the list, and return `true` if so.
+If the expression is a tuple (e.g. the (x, y) in the previous example), it must be parenthesized.
 
 ```dart
-"Vanilla" !in shoppingList // true
-"Chocolate Powder" not in shoppingList // true
+var vec = [-4, -2, 0, 2, 4]
+// create a new list with the values doubled
+[for x in vec: x * 2] // [-8, -4, 0, 4, 8]
+// filter the list to exclude negative numbers
+[for x in vec: if x >= 0: x] // [0, 2, 4]
+// apply a function to all the elements
+[for x in vec: abs] // [4, 2, 0, 2, 4]
+// flatten a list using a listcomp with two 'for'
+vec = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+[for elem in vec: for num in elem: num] // [1, 2, 3, 4, 5, 6, 7, 8, 9]
 ```
 
-### Difference and Filtering
-
-You can use the `-` operator in lists. Like strings, this operation will remove any elements from the first list if they are present in the second. This will also remove **all** instances of each element from the first list.
+List comprehensions can contain complex expressions and nested functions:
 
 ```dart
-list1 = [1 2 2 3 4 5 5]
-list2 = [3 5 6]
-
-list3 = list1 - list2 // [1, 2, 2, 4]
+[for i in 1 til 6: str(round(Math::Pi, i))]
+['3.1', '3.14', '3.142', '3.1416', '3.14159']
 ```
-
-If the right operand is not a list, then the operation will remove all instances of that value from the list.
-
-```dart
-list1 = [1 2 2 3 4 5 5]
-list2 = 5
-
-list3 = list1 - list2 // [1, 2, 2, 3, 4]
-```
-
-You can also filter lists with a boolean function. List elements which do not satisfy the function is removed.
-
-```dart
-list1 = [1 2 2 3 4 5 5]
-list2 = list1 - (x) -> x >= 4 // [1, 2, 2, 3]
-```
-
-### Splitting and Grouping
-
-- [ ] Complete this section
-
-### Joining
-
-- [ ] Complete this section
 
 ## Sets
 
-A set stores distinct values of the same type in a collection with no defined ordering. You can use a set instead of a list when the order of items isn't important, or when you need to ensure that an item only appears once.
+Protea also includes a data type for sets. A set is an unordered collection with no duplicate elements. Basic uses include membership testing and eliminating duplicate entries.
 
-The type of a set is written as `Set<Element>`, where `Element` is the type that the set is allowed to store. Sets have a shorthand form, two pipes on either end, surrounded by angle brackets `[||]`.
+Set objects also support mathematical operations like union `|`, intersection `&`, difference `-`, and symmetric difference `^`. Curly braces or the `set()` function can be used to create sets.
 
-### Creating and Initializing an Empty Set
+Note: to create an empty set you have to use `set()`, not `{}`; the latter creates an empty map, a data structure that we discuss in the next section.
 
-You can create an empty set of a certain type using initializer syntax:
-
-```dart
-letters: [|char|] = [||]
-print("letters is of type Set<char> with #letters.count items.")
-# Prints "letters is of type Set<Character> with 0 items."
-```
-
-### Creating a Set with a list Literal
-
-You can also initialize a set with a list literal, as a shorthand way to write one or more values as a set collection.
-
-The example below creates a set called `favoriteGenres` to store string values:
-
-```
-favoriteGenres: [|str|] = ["Rock" "Classical" "Hip hop"]
-# favoriteGenres has been initialized with three initial items
-```
-
-The `favoriteGenres` variable is declared as "a set of `str` values", written as `Set<str>`. Because this particular set has specified a value type of `str`, it's only allowed to store `str` values. Here, the favoriteGenres set is initialized with three `str` values (`"Rock"`, `"Classical`", and `"Hip hop"`), written within a list literal.
-
-### Accessing and Modifying a Set
-
-You access and modify an set through its methods and properties. Like lists, use the `len` or `size` operator to find out the number of items in a set.
+Here is a brief demonstration:
 
 ```dart
-print "I have #{len favoriteGenres} favorite music genres."
-# Prints "I have 3 favorite music genres."
+var word = basket = {'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}
+assert basket == {'orange', 'banana', 'pear', 'apple'}
+assert 'orange' in basket // fast membership testing
+assert 'crabgrass' in basket
+
+var a = set('abracadabra') // Create sets from iterables
+var b = set('alacazam')
+
+a == {'a', 'r', 'b', 'c', 'd'}
+a - b == {'r', 'd', 'b'}
+a | b == {'a', 'c', 'r', 'd', 'b', 'm', 'z', 'l'}
+a & b == {'a', 'c'}
+a ^ b == {'r', 'd', 'b', 'm', 'z', 'l'}
 ```
 
-You can add a new item into a set by calling the set's `insert(_:)` method:
+Similarly to list comprehensions, set comprehensions are also supported:
 
 ```dart
-favoriteGenres.insert "Jazz"
-# favoriteGenres now contains 4 items
-```
-
-You can remove an item from a set by calling the set's `remove(_:)` method, which removes the item if it's a member of the set, and returns the removed value, or returns nil if the set didn't contain it. Alternatively, all items in a set can be removed with its removeAll() method.
-
-```dart
-if removedGenre = favoriteGenres.remove "Rock"
-  print "#removedGenre? I'm over it."
-else
-  print "I never much cared for that."
-
-# Prints "Rock? I'm over it."
-```
-
-To check whether a set contains a particular item, use the `in` operator. Alternatively, use the `of` operator. Both mean the same thing.
-
-```dart
-if "Funk" in favoriteGenres
-  print "I get up on the good foot."
-else
-  print "It's too funky in here."
-# Prints "It's too funky in here."
-```
-
-### Iterating Over a Set
-
-You can iterate over the values in a set with a for-in loop.
-
-```dart
-for genre in favoriteGenres
-  print "#genre"
-
-# Classical
-# Jazz
-# Hip hop
-```
-
-Swift's Set type doesn't have a defined ordering. To iterate over the values of a set in a specific order, use the `sorted()` method, which returns the set's elements as a list sorted using the < operator.
-
-```dart
-for genre in favoriteGenres.sorted()
-  print("\(genre)")
-
-# Classical
-# Hip hop
-# Jazz
-```
-
-### Performing Set Operations
-
-You can efficiently perform fundamental set operations, such as combining two sets together, determining which values two sets have in common, or determining whether two sets contain all, some, or none of the same values.
-
-#### Fundamental Set Operations
-
-The illustration below depicts two sets—`a` and `b`—with the results of various set operations represented by the shaded regions.
-
-- Use the `&` (intersection) operator to create a new set with only the values common to both sets.
-- Use the `^` (symmetric difference) operator to create a new set with values in either set, but not both.
-- Use the `|` (intersection) operator to create a new set with all of the values in both sets.
-- Use the `-` (subtraction) operator to create a new set with values not in the specified set.
-
-![taken from Swift](https:#docs.swift.org/swift-book/_images/setVennDiagram_2x.png)
-
-```dart
-odds = [|1, 3, 5, 7, 9|]
-evens = [|0, 2, 4, 6, 8|]
-primes = [|2, 3, 5, 7|]
-
-(odds | evens).sorted() # Union
-# [|0, 1, 2, 3, 4, 5, 6, 7, 8, 9|]
-(odds & evens).sorted() # Intersection
-# [||]
-(odds ^ primes).sorted() # Symmetric difference
-# [|1, 9|]
-(odds - primes).sorted() # Subtraction
-# [|1, 2, 9|]
-```
-
-#### Set Membership and Equality
-
-The illustration below depicts three sets—`a`, `b` and `c`—with overlapping regions representing elements shared among sets. Set `a` is a superset of set `b`, because `a` contains all elements in `b`. Conversely, set `b` is `a` subset of set `a`, because all elements in `b` are also contained by `a`. Set `b` and set `c` are disjoint with one another, because they share no elements in common.
-
-![taken from Swift](https:#docs.swift.org/swift-book/_images/setEulerDiagram_2x.png)
-
-- Use the equality operator `==` to determine whether two sets are equal; that means they contain all of the same values (and its inverse `!=`)
-- Use the `>=` operator to determine whether all of the values of a set are contained in the specified set.
-- Use the `<=` operator to determine whether a set contains all of the values in a specified set.
-- Use `<` or `>` to determine whether a set is a subset or superset, but not equal to, a specified set.
-- Use the `!~` operator to determine whether two sets have no values in common, and `=~` as its inverse.
-
-```dart
-digits = [|0, 1, 2, 3, 4, 5, 6, 7, 8, 9|]
-odds = [|1, 3, 5, 7, 9|]
-evens = [|0, 2, 4, 6, 8|]
-primes = [|2, 3, 5, 7|]
-oneDigitPrimes = [|2, 3, 5, 7|]
-
-odds !~ evens # true
-odds =~ evens # true
-
-evens != primes # true
-oneDigitPrimes == primes # true
-
-digits > primes # true
-primes < digits # true
-
-digits >= evens # true
-evens <= digits # true
-
-digits > odds # true
-odds < digits # true
-```
-
-## Objects
-
-Objects are used to store keyed collections of various data and more complex entities. In JavaScript, objects penetrate almost every aspect of the language. So we must understand them first before going in-depth anywhere else.
-
-Unlike items in a list, items in an object don't have a specified order. You use an object when you need to look up values based on their identifier.
-
-### Dictionary Type Shorthand Syntax
-
-An object can be created with figure brackets `{ ... }` with an optional list of properties. A property is a `key: value` pair, where both keys and values can be anything. We can use
-
-An empty object can be created using one of two syntaxes:
-
-```dart
-user = new Object! # constructor syntax
-user = {}          # literal syntax
-```
-
-> **Note:** We can leave out the curly braces around objects, as long as they have at least one property. We can also exclude commas, as long as they are the last element of a line. This makes it easier to add/remove/move around properties, because all lines become alike.
-
-Literals and properties We can immediately put some properties into `{...}` as `key: value` pairs:
-
-```dart
-user = {         # an object
-  name: 'John'   # by key "name" store value "John"
-  age: 30        # by key "age" store value 30
-}
-```
-
-A property has a `key` (also known as "name" or "identifier") before the colon `:` and a `value` to the right of it.
-
-In the user object, there are two properties:
-
-- The first property has the key `name` and the string value `"John"`.
-- The second one has the key `age` and the integer value `30`.
-
-We can create, read, update and delete properties from it any time.
-
-Property values are accessible using the dot notation:
-
-```dart
-# get property values of the object:
-print user.name # John
-print user.age # 30
-```
-
-The value can be of any type. Let’s add a boolean one:
-
-```dart
-user.isAdmin = yes
-```
-
-To remove a property, we can use the `del` operator:
-
-```dart
-del user.age
-```
-
-We can also use multiword property names, but then they must be quoted:
-
-```dart
-user =
-  name: "John",
-  age: 30,
-  'likes birds': yes # multiword property name must be quoted
-```
-
-### String Properties
-
-For multiword properties, the dot access doesn't work:
-
-```dart
-# this would give a syntax error
-user.likes birds = true
-```
-
-Nyx doesn't understand that. It thinks that we address `user.likes`, then calls it as a method with the argument `birds`.
-
-The dot requires the key to be a valid variable identifier. That implies: contains no spaces, doesn't start with a digit or special character `$` or `_`.
-
-You should also surround your properties in string literals if you want to properly access them.
-
-```dart
-# this would give a syntax error
-user.'likes birds' = true
-```
-
-Now everything is fine. Please note that the string inside the brackets is properly quoted (any type of quotes will do).
-
-Interpolated expressions, surrounded in string literals, parentheses or square brackets, also provide a way to obtain the property name as the result of any expression – as opposed to a literal string – like from a variable as follows:
-
-```dart
-key = "likes birds"
-
-# same as user.'likes birds' = true;
-user.(key) = true # .() notation
-user[key] = true  # [] notation
-```
-
-Here, the variable key may be calculated at run-time or depend on the user input. And then we use it to access the property. That gives us a great deal of flexibility.
-
-For instance:
-
-```dart
-user =
-  name: "John",
-  age: 30
-
-key = scan(
-  'What do you want to know about the user?'
-  'name')
-
-# access by variable
-print user[key] # John (if enter "name")
-```
-
-### Computed properties
-
-We can use square brackets or parentheses for keys in an object literal, when creating an object. That’s called computed properties.
-
-For instance:
-
-```dart
-fruit = scan 'Which fruit to buy', 'apple'
-
-bag =
-  (fruit): 5 # the name of the property is taken from the variable fruit
-
-print bag.apple # 5 if fruit = "apple"
-```
-
-The meaning of a computed property is simple: `[fruit]` means that the property name should be taken from `fruit`.
-
-So, if a visitor enters `"apple"`, bag will become `{apple: 5}`. Essentially, that works the same as:
-
-```dart
-fruit = scan 'Which fruit to buy', \apple
-bag = {}
-
-# take property name from the fruit variable
-bag[fruit] = 5
-```
-
-…But looks nicer.
-
-We can use more complex expressions inside these parentheses or square brackets:
-
-```dart
-fruit = \apple
-bag =
-  (fruit + \Computers): 5 # bag.appleComputers = 5
-```
-
-Square brackets are much more powerful than the dot notation. They allow any property names and variables. But they are also more cumbersome to write.
-
-So most of the time, when property names are known and simple, the dot is used. And if we need something more complex, then we switch to square brackets.
-
-### Property value shorthand
-
-In real code we often use existing variables as values for property names.
-
-For instance:
-
-```dart
-fn makeUser = (name, age) -> {
-  name # same as name: name
-  age  # same as age: age
-  # other properties
-}
-
-user = makeUser \John 30
-print user.name # John
-```
-
-In the example above, properties have the same names as variables. The use-case of making a property from a variable is so common, that there's a special property value shorthand to make it shorter.
-
-Instead of `name:name` we can just write `name`, like this:
-
-```dart
-fn makeUser = (name, age) -> {
-  name # same as name: name
-  age  # same as age: age
-  # ...
-}
-```
-
-We can use both normal properties and shorthands in the same object:
-
-```dart
-user =
-  name # same as name: name
-  age: 30
-```
-
-Property existence test, “in” operator A notable feature of objects in JavaScript, compared to many other languages, is that it’s possible to access any property. There will be no error if the property doesn’t exist!
-
-Reading a non-existing property just returns undefined. So we can easily test whether the property exists:
-
-```dart
-user = {}
-
-user.noSuchProperty === undef # true means "no such property"
-```
-
-There’s also a special `of` operator for that.
-
-The syntax is:
-
-```dart
-"key" of object
-```
-
-For instance:
-
-```dart
-user = name: "John", age: 30
-
-\age of user    # true, user.age exists
-\blabla of user # false, user.blabla doesn't exist
-```
-
-Please note that on the left side of `of` there must be a property name. That's usually a quoted string.
-
-If we omit quotes, that means a variable, it should contain the actual name to be tested. For instance:
-
-```dart
-user = age: 30
-
-key = "age"
-key of user # true, property "age" exists
-```
-
-Why does the `of` operator exist? Isn't it enough to compare against `undefined`?
-
-Well, most of the time the comparison with `undefined` works fine. But there's a special case when it fails, but `of` works correctly.
-
-It’s when an object property exists, but stores `undefined`:
-
-```dart
-obj =
-  test: undefined
-
-\test of obj # true, the property does exist!
-```
-
-In the code above, the property `obj.test` technically exists. So the `of` operator works right.
-
-Situations like this happen very rarely, because undefined should not be explicitly assigned. We mostly use `null` for empty or unknown values. So the `of` operator is an exotic guest in the code.
-
-### Iterating Over a list
-
-To walk over all keys of an object, there exists a special form of the loop: `for..of`. The syntax:
-
-```dart
-for key of object
-  # executes the body for each key among object properties
-```
-
-> **Note**: For those coming from JavaScript, the `for..in` and `for..of` definitions are switched.
->
-> The `for..in` loop is used to iterate over lists, while the `for..of` loop is used to iterate over objects.
-
-For instance, let’s output all properties of user:
-
-```dart
-user =
-  name: "John",
-  age: 30,
-  isAdmin: true
-
-for key of user
-  # keys
-  print key # name, age, isAdmin
-  # values for the keys
-  print user[key] # John, 30, true
-```
-
-Note that all `for` constructs allow us to declare the looping variable inside the loop, like `let key` here. Also, we could use another variable name here instead of `key`. For instance, `for let prop of obj` is also widely used.
-
-If you want the values as separate, you can declare a second variable separated with a comma, just right after the first.
-
-```dart
-user =
-  name: "John",
-  age: 30,
-  isAdmin: true
-
-for key, value of user
-  # keys
-  print key # name, age, isAdmin
-  # values for the keys
-  print value # John, 30, true
-```
-
-### Non-Inherent Properties
-
-Also, to restrict this to own properties of the object (skips inherited properties), we can add a `hasOwnProperty()` check on the object.
-
-```dart
-user =
-  name: "John",
-  age: 30,
-  isAdmin: true
-
-for key, value of user when user.hasOwnProperty key
-  print key   # prints all the non-inherited keys
-  print value # prints all the values of those keys
-```
-
-> **Note**:
->
-> `when` is an optional guard statement, and is used in place of a nested `if` statement in the `for`-loop, to make the loop run only for iterations when its `when` condition is `true`.
->
-> More on `when` and `own` in the next chapter on **Control Flow**.
-
-The `own` keyword can be added before the variable names, rather than use that long method name. Since the properties of the object are inherent on the object itself, the below code also works fine.
-
-```dart
-user =
-  name: "John",
-  age: 30,
-  isAdmin: true
-
-for own key, value of user
-  print key   # prints all the non-inherited keys
-  print value # prints all the values of those keys
+var a = {for x in 'abracadabra': if x !in 'abc': x}
+assert a == {'r', 'd'}
 ```
 
 ## Maps
 
-- [ ] Complete this section
+Another useful data type built into Protea, which is the map. Unlike lists which are indexed by number from 0, dictionaries are indexed by keys of a certain type.
 
-## Immutable Data Types
-
-Tuples are used to store multiple items in a single variable. A tuple is a collection which is ordered and unchangeable. Tuples are written inside parentheses and the elements are separated by either commas or new lines.
-
-```dart
-thistuple = (1, 2, 3);
-print thistuple;
-```
-
-Like strings, tuples can be indexed (modulo its length), and also can be concatenated `+`, filtered `-`, repeated `*`, sliced or split `/` with arithmetic operators.
-
-```dart
-# Concatenation
-a = (1, 2) + (3, 4); # (1, 2, 3, 4)
-
-# Filtering (all instances of the values will be removed)
-a = (1, 2, 3) - 3; # (1, 2)
-a = (1, 3, 2, 3) - 3; # (1, 2)
-a = (1, 3, 2, 3) - (2, 3); # (1)
-
-# Repeating
-a = tuple(1) * 3 # (1, 1, 1)
-
-# Subdividing
-a = (1::10) / 2 # ((1, 2), (3, 4), (5, 6), (7, 8), (9, 10))
-a = (1::10) / (1, 2, 3, 4) # ((1), (2, 3), (4, 5, 6), (7, 8, 9, 10))
-```
-
-```
-a = [1, 2] + [3, 4]; # Concatenation
-[x, , ...z] = a # Destructuring
-print(x, z) # 1, [3, 4]
-$a = [...a, ...a, 4] # [1, 2, 3, 4, 1, 2, 3, 4, 5]
-$a = a * 2 + [4] # [1, 2, 3, 4, 1, 2, 3, 4, 5]
-```
-
-## Collections
-
-Protea comes with two basic literals: list and map. Both collections are homogenous and immutable.
+Dictionaries are sometimes found in other languages as “associative memories” or “associative arrays”. Unlike sequences, which are indexed by a range of numbers, dictionaries are indexed by keys, which can be any immutable type; strings and numbers can always be keys. Tuples can be used as keys if they contain only strings, numbers, or tuples; if a tuple contains any mutable object either directly or indirectly, it cannot be used as a key. You can’t use lists as keys, since lists can be modified in place using index assignments, slice assignments, or methods like append() and extend().
 
 - Lists are ordered collections of literals.
 - Maps are collections of key-value pairs where each item is mapped to a distinct key.
@@ -1949,7 +1392,7 @@ var a: [][]int = [[0, 2, 0], [0, 0, 0]]
 You can prefix a hash sign (`#`) to a list or map literal to turn it into a mutable list or map.
 
 ```dart
-var a: #[]#[]#[]int = #[0].rep(2).rep(3).rep(2)
+var a: #[]#[]#[]int = ([[[0] * 2] * 3] * 2).mut-deep
 a[0][1][1] = 2
 print(a) // [[[0, 0], [0, 2], [0, 0]], [[0, 0], [0, 0], [0, 0]]]
 ```
@@ -2070,7 +1513,7 @@ Otherwise, precedence is determined by the first character.
 | Precedence level | Operators                                                        | First character |
 | ---------------- | ---------------------------------------------------------------- | --------------- |
 | 9 (highest)      | `unset del not`                                                  | `$ ^`           |
-| 8                | `* / ** # %`                                                     | `* % \ /`       |
+| 8                | `* / ** // %`                                                    | `* % \ /`       |
 | 7                | `+ -`                                                            | `+ - ~ \|`      |
 | 6                | `& \| ^ << >>`                                                   | `&`             |
 | 5                | `== <= < >= > != in !in of !of is is! as as! as? to til thru by` | `= < > !`       |
