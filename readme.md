@@ -419,7 +419,7 @@ All identifiers are normalized using the above function.
 
 `undef` is the default value assigned to a variable, or the value returned from function calls, while `nil` is the value which you assign explicitly.
 
-```coffee
+```dart
 # Not much else we can assign to these variables!
 u = undef
 n = nil
@@ -427,20 +427,20 @@ n = nil
 
 `void` is what we call a 'type alias' or 'type definition'. `void == nil | undef`; `void` as a type represents the values `null` or `undefined`.
 
-```coffee
+```dart
 warnUser(): void
   print "This is my warning message"
 ```
 
 `void` also is an operator, in which it evaluates an expression and then returns `undef`.
 
-```coffee
+```dart
 void 0 # undef
 ```
 
 So declaring variables of type `void` is not useful because you can only assign `null` or `undef` to them:
 
-```coffee
+```dart
 unusable: void = undef
 unusable = nil
 ```
@@ -461,7 +461,7 @@ The usual naming convention for boolean variables is to write them as a simple y
 
 Boolean values have only two possible values, `true` and `false`, but those have their own aliases.
 
-```coffee
+```dart
 true == on == yes # true
 false == off == no # false
 ```
@@ -473,7 +473,7 @@ Logical operators work the same way as in many other programming languages like 
 - `xor`/`^^` returns `true` if one member is `true`, but the other is not
 - `not`/`!` negates the truthiness of its member: changing `true` to `false`, and vice versa (it is the only logical operator that takes just one operand)
 
-```coffee
+```dart
 !true          # false
 
 true && true   # true
@@ -493,29 +493,25 @@ true ^^ false  # true
 false ^^ false # false
 ```
 
-`and`, `or` and `xor` have their own inverses: `!&`/`nand`, `!|`/`nor` and `!^`/`xnor`.
-
 Relational and logical operators can be combined together to form more complex expressions.
 
-For example: `(5 < 7) && (11 + 9 == 32 - 2*6)` will become true and `(20 == 20)`, which becomes `true && true`, and in the end this will give the final result of `true`.
+Like Python and CoffeeScript, you can chain comparison operators: `<`, `>`, `<=`, `>=`, `==`, `!=` and `<=>`; this is because there exists a `<=>` operation (`compare` method) on those data types.
 
-Like Python and CoffeeScript, you can chain comparison operators. `<`, `>`, `<=`, `>=`
+```dart
+1 == 1   // true because 1 is equal to 1
+2 != 1   // true because 2 isn't equal to 1
+2 > 1    // true because 2 is greater than 1
+1 < 2    // true because 1 is less than 2
+1 >= 1   // true because 1 is greater than or equal to 1
+2 <= 1   // false because 2 isn't less than or equal to 1
 
-```coffee
-1 == 1   # true because 1 is equal to 1
-2 != 1   # true because 2 isn't equal to 1
-2 > 1    # true because 2 is greater than 1
-1 < 2    # true because 1 is less than 2
-1 >= 1   # true because 1 is greater than or equal to 1
-2 <= 1   # false because 2 isn't less than or equal to 1
-
-1 < 2 < 4        # true, as 1 < 2 and 2 < 4
-1 < 2 == 4/2 > 0 # true
+1 < 2 < 4        // true, as 1 < 2 and 2 < 4
+1 < 2 == 4/2 > 0 // true
 ```
 
 You can also compare strings and numeric values in arrays. These works on a character-by-character or element-by-element basis.
 
-```coffee
+```dart
 i = 'a'; j = 'd'; k = 'Z'
 
 i < j # true
@@ -526,25 +522,16 @@ n = 'axyz'
 o = 'ba'
 p = 'ba '
 
-m < n # true
-n < o # true
-o < p # true
+m < n // true
+n < o // true
+o < p // true
 ```
-
-Nyx provides two different value-comparison operations. Which operation you choose depends on what sort of comparison you are looking to perform. Briefly:
-
-- **Loose equality** `=~` will perform a type conversion when comparing two things. Its inverse is `!~`.
-- **Strict equality** `==` will do the same comparison as double equals but without type conversion; if the types differ, false is returned. The inverse is true for `!=`.
 
 ### Truthy and falsy
 
-A truthy value is a value that is converted into booleans when encountered in such context. Falsy values include `false` (duh), `0`, `0.0`, `?\x0` (NULL character), `''`, `nil` (null) and `undef` (undefined). All others are truthy.
+A truthy or falsy value is a value that yields either true or false when converted into booleans. Falsy values include `false` (duh), `0`, `0.0`, `''`, `nil` (null) and `undef` (undefined). All others are truthy.
 
 Like strings, any empty data structure is considered falsy. This includes arrays, sets, objects and maps, and their primitive 'frozen' counterparts.
-
-> **Note**:
->
-> We will go more into detail on data structures in the next chapter.
 
 ### Numbers
 
