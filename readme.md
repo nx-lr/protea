@@ -2233,7 +2233,7 @@ Functions and procedures are curried, by default. To want guaranteed un-currying
 ```dart
 add(. x, y)
 func add(. x, y) = x + y
-echo is (. int, int) int
+add is (. int, int) int
 add(. 1, 2)
 ```
 
@@ -2641,7 +2641,7 @@ Modules are like mini-files and can include type definitions, variables, classes
 
 #### Creation
 
-To create a module, use the `module` keyword. The module name must start with a **capital letter**. Whatever you could place in a `.res` file, you may place inside a module definition's `{}` block.
+To create a module, use the `module` keyword. The module name must start with a **capital letter**. Whatever you could place in a `.pta` file, you may place inside a module definition's `{}` block.
 
 ```dart
 module School {
@@ -2707,14 +2707,12 @@ val p = do {
 There are situations where `open` will cause a warning due to existing identifiers (bindings, types) being redefined. Use `open!` to explicitly tell the compiler that this is desired behavior.
 
 ```dart
-val map = (arr, value) => {
-  value
-}
+val map = |arr, value| value
 
 // opening Js.List2 would shadow our previously defined `map`
 // `open!` will explicitly turn off the automatic warning
 import! Js.List2
-val arr = map([1,2,3], (a) => { a + 1})
+val arr = map([1, 2, 3], |a| a + 1)
 ```
 
 **Note:** Same as with `open`, don't overuse `open!` statements if not necessary. Use (sub)modules to prevent shadowing issues.
@@ -2749,29 +2747,27 @@ Using `include` in a module statically "spreads" a module's content into a new o
 ```dart
 module BaseComponent {
   var defaultGreeting = "Hello"
-  var getAudience = (~excited) => excited ? "world!" : "world"
+  var getAudience = |&excited| excited ? ('world', 'world!')
 }
 
 module ActualComponent {
-  /* the content is copied over */
-  include BaseComponent
-  /* overrides BaseComponent.defaultGreeting */
+  import BaseComponent
   var defaultGreeting = "Hey"
-  var render = () => defaultGreeting ++ " " ++ getAudience(~excited=true)
+  var render = | | defaultGreeting ++ " " ++ getAudience(&excited = true)
 }
 ```
 
 **Note**: `open` and `include` are very different! The former brings a module's content into your current scope, so that you don't have to refer to a value by prefixing it with the module's name every time. The latter **copies over** the definition of a module statically, then also do an `open`.
 
-### Every `.res` file is a module
+### Every `.pta` file is a module
 
-Every Protea file is itself compiled to a module of the same name as the file name, capitalized. The file `React.res` implicitly forms a module `React`, which can be seen by other source files.
+Every Protea file is itself compiled to a module of the same name as the file name, capitalized. The file `React.pta` implicitly forms a module `React`, which can be seen by other source files.
 
-**Note**: Protea file names should, by convention, be capitalized so that their casing matches their module name. Uncapitalized file names are not invalid, but will be implicitly transformed into a capitalized module name. I.e. `file.res` will be compiled into the module `File`. To simplify and minimize the disconnect here, the convention is therefore to capitalize file names.
+**Note**: Protea file names should, by convention, be capitalized so that their casing matches their module name. Uncapitalized file names are not invalid, but will be implicitly transformed into a capitalized module name. I.e. `file.pta` will be compiled into the module `File`. To simplify and minimize the disconnect here, the convention is therefore to capitalize file names.
 
 ## Signatures
 
-A module's type is called a "signature", and can be written explicitly. If a module is like a `.res` (implementation) file, then a module's signature is like a `.resi` (interface) file.
+A module's type is called a "signature", and can be written explicitly. If a module is like a `.pta` (implementation) file, then a module's signature is like a `.pti` (interface) file.
 
 ### Creation
 
@@ -2779,7 +2775,7 @@ To create a signature, use the `module type` keyword. The signature name must st
 
 ```dart
 /* Picking up previous section's example */
-module type EstablishmentType = {
+module type EstablishmentType {
   type profession
   var getProfession: profession => string
 }
@@ -2844,16 +2840,16 @@ module type MyList = {
 
 ### Every `.resi` file is a signature
 
-Similar to how a `React.res` file implicitly defines a module `React`, a file `React.resi` implicitly defines a signature for `React`. If `React.resi` isn't provided, the signature of `React.res` defaults to exposing all the fields of the module. Because they don't contain implementation files, `.resi` files are used in the ecosystem to also document the public API of their corresponding modules.
+Similar to how a `React.pta` file implicitly defines a module `React`, a file `React.resi` implicitly defines a signature for `React`. If `React.resi` isn't provided, the signature of `React.pta` defaults to exposing all the fields of the module. Because they don't contain implementation files, `.resi` files are used in the ecosystem to also document the public API of their corresponding modules.
 
 ```dart
-/* file React.res (implementation. Compiles to module React) */
+/* file React.pta (implementation. Compiles to module React) */
 type state = int
 val render = (str) => str
 ```
 
 ```dart sig
-/* file React.resi (interface. Compiles to the signature of React.res) */
+/* file React.resi (interface. Compiles to the signature of React.pta) */
 type state = int
 val render: string => string
 ```
@@ -3013,13 +3009,15 @@ compo App {
   val display-action = false
 
   <div .container>
-    <h1 #greeting${x}>Hello, World</h1>
-    ${display-action && <p>I am writing JSX</p>}
-    <ul @for=(val emoji in emojis)>
-      <li &${emoji.name}>
-        <button on-click=$display-emoji-name()>
+    <h1 #greeting>Hello, World</h1>
+    <div @if={display-action}>
+      <p>I am writing JSX</p>
+    </div>
+    <ul @for={val emoji in emojis}>
+      <li key={emoji.name}>
+        <button @on:click=$display-emoji-name()>
           <span
-            #${emoji.name}
+            id={emoji.name}
             role="img"
             aria-label=$emoji.name
           >
