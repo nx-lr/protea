@@ -5,11 +5,11 @@ Protea is a multi-purpose programming language that serves as a drop-in replacem
 ```dart
 module Button-B {
   style button {
-    color: palevioletred
+    color: paleVioletRed
     font-size: 1em
     margin: 1em
     padding: 0.25em 1em
-    border: 2px solid palevioletred
+    border: 2px solid paleVioletRed
     border-radius: 3px
   }
 
@@ -515,8 +515,8 @@ i = 'a'; j = 'd'; k = 'Z'
 i < j // true
 i < k // false
 
-m = 'axyb'
-n = 'axyz'
+m = 'axial'
+n = 'axis'
 o = 'ba'
 p = 'ba '
 
@@ -707,7 +707,7 @@ Textual data in Protea is handled with `str` objects or strings, which are immut
 
 ```dart
 'Single: allows embedded "double" quotes'
-"Dpuble: allows embedded 'single' quotes"
+"Double: allows embedded 'single' quotes"
 '''Three single quotes''', """Three double quotes"""
 ```
 
@@ -774,9 +774,8 @@ Double quoted literals also allow you to embed LaTeX expressions (because why no
   \author{Jane Doe}
   \date{September 1994}
   \begin{document}
-    \maketitle
-    Hello world!
-  \end{document}
+    \maketitle Hello world!
+  \end{}
 }"
 ```
 
@@ -858,7 +857,7 @@ The curly brackets can be left out if the expression in question is:
 
 At most 20 nested bracket pairs are interpreted without needing the outsidemost curly brackets.
 
-If you wish to express the dollar sign itself, double it in single quoted strings.
+If you wish to express the dollar sign literally in this context, double it in single quoted strings, or escape it with a backslash everywhere else.
 
 ```dart
 "simple $variable"
@@ -907,6 +906,8 @@ val everest = {height: 8848}
 // "Mount Everest is 8,848 meters tall."
 ```
 
+If you wish to express the percent sign literally in this context, double it in single quoted strings, or escape it with a backslash everywhere else.
+
 ### String placeholder variables
 
 String placeholders are used to create template strings from named, keyed or positional arguments. They produce strings from their arguments by calling its `format` method with the specified arguments.
@@ -928,6 +929,8 @@ String placeholders are used to create template strings from named, keyed or pos
 "#name%int/base:16/prefix:'0x'".format(name = 42) // => '0x2A'
 ```
 
+If you wish to express the hash sign literally in this context, double it in single quoted strings, or escape it with a backslash everywhere else.
+
 ### String methods
 
 (TODO)
@@ -940,13 +943,13 @@ Symbol literals are denoted by a colon (`:`) followed by an identifier. If the s
 
 ```dart
 :unquoted_symbol
-:1 // not a symbol
+:1 :`` // not a symbol
 :"quoted symbol" // contains spaces, so it is not an identifier
 :"a" // identical to :a
 :あ
 ```
 
-A quoted identifier can contain any Unicode character including white-spaces and can same escape sequences as a string literal, including interpolation. Use interpolation to create dynamic keys.
+A quoted identifier can contain any Unicode character including whitespaces. Interpolation, formatting and other syntax are not permitted.
 
 ```dart
 :"$value"
@@ -1468,30 +1471,46 @@ val test_obj = { foo: 'bar' }
 
 #### General operators
 
-| Operator | Type   | Meaning                     |
-| -------- | ------ | --------------------------- |
-| `!`      | Unary  | Non-null assertion          |
-| `?`      | Unary  | Existential                 |
-| `.`      | Binary | Basic access                |
-| `::`     | Binary | Map access                  |
-| `!.`     | Binary | Assertive access            |
-| `!:`     | Binary | Assertive map access        |
-| `?.`     | Binary | Optional access             |
-| `?:`     | Binary | Optional map assign         |
-| `.=`     | Binary | Access-assignment           |
-| `::=`    | Binary | Map access-assign           |
-| `!.=`    | Binary | Assertive access-assign     |
-| `!:=`    | Binary | Assertive map access-assign |
-| `?.=`    | Binary | Optional access-assign      |
-| `?:=`    | Binary | Optional map access-assign  |
-| `??`     | Infix  | Null coalescing             |
-| `!!`     | Infix  | Non-null coalescing         |
-| `?:`     | Infix  | Falsy coalescing            |
-| `!:`     | Infix  | Truthy access               |
-| `*`      | Prefix | Spread                      |
-| `&`      | Prefix | Named arguments             |
-| `%`      | Prefix | Format specifier            |
-| `$`      | Prefix | Pass by reference           |
+| Operator | Type    | Meaning                            |
+| -------- | ------- | ---------------------------------- |
+| `!`      | Unary   | Non-null assertion                 |
+| `?`      | Unary   | Existential                        |
+| `.`      | Primary | Basic access                       |
+| `::`     | Primary | Map access                         |
+| `!.`     | Primary | Assertive access                   |
+| `!:`     | Primary | Assertive map access               |
+| `?.`     | Primary | Optional access                    |
+| `?:`     | Primary | Optional map assign                |
+| `.=`     | Primary | Access-assignment                  |
+| `::=`    | Primary | Map access-assign                  |
+| `!.=`    | Primary | Assertive access-assign            |
+| `!:=`    | Primary | Assertive map access-assign        |
+| `?.=`    | Primary | Optional access-assign             |
+| `?:=`    | Primary | Optional map access-assign         |
+| `??`     | Infix   | Null coalescing                    |
+| `!!`     | Infix   | Non-null coalescing                |
+| `?:`     | Infix   | Falsy coalescing                   |
+| `!:`     | Infix   | Truthy access                      |
+| `*`      | Prefix  | Spread                             |
+| `&`      | Prefix  | Named arguments                    |
+| `%`      | Prefix  | Format specifier                   |
+| `$`      | Prefix  | Pass by reference                  |
+| `?`      | Prefix  | Optional parameter                 |
+| `in`     | Infix   | Element, substring or key presence |
+| `!in`    | Infix   | Negation of the above              |
+| `of`     | Infix   | Property presence                  |
+| `!of`    | Infix   | Negation of the above              |
+| `is`     | Infix   | Type checking                      |
+| `is!`    | Infix   | Negation of the above              |
+| `as`     | Infix   | Type casting                       |
+| `as?`    | Infix   | Type up-casting                    |
+| `as!`    | Infix   | Type down-casting                  |
+| `unset`  | Infix   | Deletes a declaration              |
+| `del`    | Infix   | Deletes a property or key          |
+| `to`     | Infix   | Range operator (end-inclusive)     |
+| `til`    | Infix   | Range operator (end-exclusive)     |
+| `thru`   | Infix   | Range operator (start-exclusive)   |
+| `by`     | Infix   | Range operator (increment)         |
 
 ### Comparison
 
@@ -1581,19 +1600,19 @@ val test_obj = { foo: 'bar' }
 
 #### Type operators
 
-| Operator | Type   | Meaning                   |
-| -------- | ------ | ------------------------- |
-| `?`      | Prefix | Nullable type             |
-| `+`      | Infix  | Sum type                  |
-| `-`      | Infix  | Difference type           |
-| `*`      | Infix  | Product type              |
-| `&`      | Infix  | Intersection type         |
-| `\|`     | Infix  | Union type                |
-| `^`      | Infix  | Symmetric type            |
-| `typeof` | Infix  | Type of object            |
-| `keyof`  | Infix  | Keys of object            |
-| `valof`  | Infix  | Values of object          |
-| `pairof` | Infix  | Key-value pairs of object |
+| Operator | Type   | Meaning              |
+| -------- | ------ | -------------------- |
+| `?`      | Prefix | Nullable type        |
+| `+`      | Infix  | Sum type             |
+| `-`      | Infix  | Difference type      |
+| `*`      | Infix  | Product type         |
+| `&`      | Infix  | Intersection type    |
+| `\|`     | Infix  | Union type           |
+| `^`      | Infix  | Symmetric type       |
+| `typeof` | Infix  | Type of object       |
+| `keyof`  | Infix  | Keys of object       |
+| `valof`  | Infix  | Values of object     |
+| `attrof` | Infix  | Properties of object |
 
 #### Collection operators
 
@@ -1613,23 +1632,10 @@ val test_obj = { foo: 'bar' }
 | `&`      | Infix | Intersection            |
 | `\|`     | Infix | Union                   |
 | `^`      | Infix | Symmetric difference    |
-| `</>`    | Infix | Filter                  |
-| `!</>`   | Infix | Reject                  |
-| `<*>`    | Infix | Map                     |
-| `<+>`    | Infix | Sort                    |
-| `<$>`    | Infix | Group                   |
-| `</`     | Infix | Fold from left          |
-| `/>`     | Infix | Fold from right         |
-| `<$`     | Infix | Scan from left          |
-| `$>`     | Infix | Scan from right         |
-| `<%`     | Infix | Take from left          |
-| `%>`     | Infix | Take from right         |
-| `<#`     | Infix | Drop from left          |
-| `#>`     | Infix | Drop from right         |
 
-### `in`, `of` and `is` operator
+### Keyword Operators
 
-To check if an element is in a lsit, or a key in a sequence, use the `in` operator. As an inverse, use the `!in` operator instead.
+To check if an element is in a list, or a key in a map, use the `in` operator. As an inverse, use the `!in` operator instead.
 
 ```dart
 val list1 = [1, 2, 3, 4, 5]
@@ -1671,6 +1677,56 @@ The `is` operator tests to see if the object is of a specified type.
 data Car(make, model, year)
 var auto = new Car('Honda', 'Accord', 1998)
 auto is Car; auto is obj
+```
+
+`to` means up to and including the number. `til` means up until but not including the number. `thru` excludes the start. If you omit the first number, it is assumed to be 0.
+
+You can optionally add a `by` which defines the step of the range.
+
+```dart
+[1 to 5]         // [1, 2, 3, 4, 5]
+[1 til 5]        // [1, 2, 3, 4]
+[1 to 10 by 2]   // [1, 3, 5, 7, 9]
+[1 thru 10 by 2] // [3, 5, 7, 9]
+[4 to 1]         // [4, 3, 2, 1]
+[to 5]           // [0, 1, 2, 3, 4, 5]
+['A' to 'D']     // ['A', 'B', 'C', 'D']
+```
+
+With any expression - if your range uses expressions, and you want it to go downwards (ie. from a larger number to a smaller one) you must explicitly set `by -1`.
+
+```dart
+val x = 4
+[1 to x]       // [1, 2, 3, 4]
+[x to 0 by -1] // [4, 3, 2, 1, 0]
+```
+
+The `del` keyword is used to delete properties from an object, such as splice a mutable list or string, remove key-value pairs from a mutable list or dictionary.
+
+```dart
+val my_list1 = #[1, 2, 3, 4, 5, 6, 7, 8, 9]
+val my_list2 = #["Geeks", "For", "Geek"]
+del my_list1[1] // [1, 3, 4, 5, 6, 7, 8, 9]
+del my_list1[3 til 5] // [1, 3, 4, 7, 8, 9]
+
+val my_dict1 = #{small: "big", black: "white", up: "down"}
+val my_dict2 = #{dark: "light", fat: "thin", sky: "land"}
+del my_dict1::black // {'small': 'big', 'up': 'down'}
+```
+
+The `unset` keyword is used to remove a declaration.
+
+```dart
+class Sample_class {
+  val some_variable = 20
+  // method of the class
+  func my_method(self) =
+    print("GeeksForGeeks")
+}
+
+Sample_class
+unset Sample_class
+Sample_class // null
 ```
 
 ### Operators as methods
@@ -2747,14 +2803,14 @@ val {user1: anna, user2: franz} = module(User)
 
 ### Extending modules
 
-Using `include` in a module statically "spreads" a module's content into a new one, thus often fulfill the role of "inheritance" or "mixin".
+Using `import all` in a module statically "spreads" a module's content into a new one, thus often fulfill the role of "inheritance" or "mixin".
 
-**Note**: this is equivalent to a compiler-level copy paste. **We heavily discourage `include`**. Use it as last resort!
+**Note**: this is equivalent to a compiler-level copy paste. **We heavily discourage `import all`**. Use it as last resort!
 
 ```dart
 module BaseComponent {
   var defaultGreeting = "Hello"
-  var getAudience = |&excited| excited ? ('world', 'world!')
+  var getAudience = |&excited| excited ?: ('world', 'world!')
 }
 
 module ActualComponent {
@@ -2764,7 +2820,7 @@ module ActualComponent {
 }
 ```
 
-**Note**: `open` and `include` are very different! The former brings a module's content into your current scope, so that you don't have to refer to a value by prefixing it with the module's name every time. The latter **copies over** the definition of a module statically, then also do an `open`.
+**Note**: `import` and `import all` are very different! The former brings a module's content into your current scope, so that you don't have to refer to a value by prefixing it with the module's name every time. The latter **copies over** the definition of a module statically, then also do an `open`.
 
 ### Every `.pta` file is a module
 
@@ -2778,13 +2834,13 @@ A module's type is called a "signature", and can be written explicitly. If a mod
 
 ### Creation
 
-To create a signature, use the `module type` keyword. The signature name must start with a **capital letter**. Whatever you could place in a `.resi` file, you may place inside a signature definition's `{}` block.
+To create a signature, use the `module type` keyword. The signature name must start with a **capital letter**. Whatever you could place in a `.pti` file, you may place inside a signature definition's `{}` block.
 
 ```dart
 /* Picking up previous section's example */
 module type EstablishmentType {
   type profession
-  var getProfession: profession => string
+  var getProfession: (profession) str
 }
 ```
 
@@ -2806,10 +2862,10 @@ Modules of the type `EstablishmentType` can contain more fields than the signatu
 The type `EstablishmentType.profession` is **abstract**: it doesn't have a concrete type; it's saying "I don't care what the actual type is, but it's used as input to `getProfession`". This is useful to fit many modules under the same interface:
 
 ```dart
-module Company: EstablishmentType = {
+module Company: EstablishmentType {
   type profession = CEO | Designer | Engineer | ...
 
-  var getProfession = (person) => ...
+  var getProfession = |person| ...
   var person1 = ...
   var person2 = ...
 }
@@ -2822,15 +2878,15 @@ It's also useful to hide the underlying type as an implementation detail others 
 Like modules themselves, module signatures can also be extended by other module signatures using `include`. Again, **heavily discouraged**:
 
 ```dart
-module type BaseComponent = {
+module type BaseComponent {
   var defaultGreeting: string
-  var getAudience: (~excited: bool) => string
+  var getAudience: (&excited: bool) str
 }
 
-module type ActualComponent = {
+module type ActualComponent {
   /* the BaseComponent signature is copied over */
   include BaseComponent
-  var render: unit => string
+  var render: (unit) str
 }
 ```
 
@@ -2845,20 +2901,20 @@ module type MyList = {
 }
 ```
 
-### Every `.resi` file is a signature
+### Every `.pti` file is a signature
 
-Similar to how a `React.pta` file implicitly defines a module `React`, a file `React.resi` implicitly defines a signature for `React`. If `React.resi` isn't provided, the signature of `React.pta` defaults to exposing all the fields of the module. Because they don't contain implementation files, `.resi` files are used in the ecosystem to also document the public API of their corresponding modules.
+Similar to how a `React.pta` file implicitly defines a module `React`, a file `React.pti` implicitly defines a signature for `React`. If `React.pti` isn't provided, the signature of `React.pta` defaults to exposing all the fields of the module. Because they don't contain implementation files, `.pti` files are used in the ecosystem to also document the public API of their corresponding modules.
 
 ```dart
-/* file React.pta (implementation. Compiles to module React) */
+/* file React.pta */
 type state = int
-val render = (str) => str
+val render = |str| str
 ```
 
 ```dart sig
-/* file React.resi (interface. Compiles to the signature of React.pta) */
+/* file React.pti */
 type state = int
-val render: string => string
+val render: (str) str
 ```
 
 ## Module Functions (functors)
@@ -2877,23 +2933,21 @@ Here's an example `MakeSet` functor, that takes in a module of the type `Compara
 ```dart prelude
 module type Comparable = {
   type t
-  var equal: (t, t) => bool
+  var equal: (t, t) bool
 }
 
-module MakeSet (Item: Comparable) => {
+module MakeSet(Item: Comparable) {
   // let's use a list as our naive backing data structure
-  type backingType = list<Item.t>
-  var empty = list{}
-  var add = (currentSet: backingType, newItem: Item.t): backingType =>
+  type backingType = list[Item.t]
+  var empty = []
+  var add = |currentSet: backingType, newItem: Item.t|: backingType =
     // if item exists
-    if List.exists(x => Item.equal(x, newItem), currentSet) {
+    if currentSet.exists(|x| x.equals(newItem)):
       currentSet // return the same (immutable) set (a list really)
-    } else {
-      list{
-        newItem,
-        ...currentSet // prepend to the set and return it
-      }
-    }
+    else: [
+      newItem,
+      *currentSet // prepend to the set and return it
+    ]
 }
 ```
 
@@ -2917,16 +2971,18 @@ Like with module types, functor types also act to constrain and hide what we may
 ```dart
 module type Comparable = ...
 
-module type MakeSetType = (Item: Comparable) => {
+module type MakeSetType(Item: Comparable) {
   type backingType
   var empty: backingType
   var add: (backingType, Item.t) => backingType
 }
 
-module MakeSet: MakeSetType = (Item: Comparable) => {
+module MakeSet: MakeSetType(Item: Comparable) {
   ...
 }
 ```
+
+---
 
 ## JSX
 
