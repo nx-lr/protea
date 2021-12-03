@@ -129,9 +129,9 @@ repository:
       - include: "#clauses"
       - include: "#declarations"
       - include: "#keywords"
-      - include: "#jsx"
       - include: "#comments"
       - include: "#brackets"
+      - include: "#jsx"
       - include: "#punctuation"
       - include: "#type-annotation"
       - include: "#format-specifier"
@@ -409,7 +409,7 @@ repository:
   literals:
     patterns:
       - include: "#regexps"
-      - include: "#strings-quoted"
+      - include: "#strings"
       - include: "#symbols"
       - include: "#numbers"
       - include: "#constants"
@@ -942,7 +942,7 @@ repository:
         patterns:
           - include: "#string-escapes"
 
-  strings-quoted:
+  strings:
     patterns:
       - comment: multi-single quoted string
         begin: (?<!'+)\s*('''+)
@@ -1343,7 +1343,7 @@ repository:
     patterns:
       - include: "#embedded"
       - include: "#comments"
-      - include: "#strings-quoted"
+      - include: "#strings"
       - match: \|
         name: keyword.operator.or.pta
       - match: \&
@@ -1705,7 +1705,7 @@ repository:
       - match: ","
         name: punctuation.separator.sequence.pta
       - include: "#comments"
-      - include: "#strings-quoted"
+      - include: "#strings"
       - match: (?xi)\b[is]\b(?=[)}\]]|&&|\|\||\^\^)
         name: storage.modifier.ignore-case.pta
       - include: "#string-escapes"
@@ -2481,7 +2481,7 @@ repository:
           \b
           (?=['"`]|
           (?:[!?]\.=?|\.=)?\#?\(|
-          (?:[!?]\.=?|\.=)?<[\p{Pc}\p{L}]
+          (?:[!?]\.=?|\.=)?<(?:\b|['"`\\({\[])
           )
         captures:
           1: {patterns: [include: "#function-names"]}
@@ -2914,6 +2914,7 @@ repository:
       - match: \s*(<==|<--?|<~~?)
         name: keyword.operator.type.channel.pta
       - include: "#params-clause"
+      - include: "#angle-brackets"
       - include: "#type-keywords"
       - include: "#type-names"
       - include: "#type-variables"
@@ -3255,7 +3256,7 @@ repository:
           (\~)|
           (\$)|
           (\#)|
-          ([<>][!:]|[!:][<>])
+          ([<>])
           )
           (?=$|[({\[\w'"\s])
         captures:
@@ -3320,7 +3321,10 @@ repository:
       - include: "#type-annotation"
       - match: \s*(?<!\*)\*(?!\*)\s*
         name: keyword.generator.asterisk.pta
-      - include: "#literals"
+      - include: "#regexps"
+      - include: "#strings"
+      - include: "#symbols"
+      - include: "#constants"
       - applyEndPatternLast: 1
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]))
         end: (?=)|$
@@ -3330,6 +3334,8 @@ repository:
       - include: "#comments"
       - include: "#brackets"
       - include: "#comma"
+      - match: '\.|::'
+        name: punctuation.separator.namespace.pta
 
   modifier-keywords:
     match: |
@@ -3500,7 +3506,7 @@ repository:
                 name: keyword.control.module.pta
               - include: "#type-keywords"
               - include: "#declarations"
-              - include: "#strings-quoted"
+              - include: "#strings"
               - include: "#symbols"
               - include: "#type-operators"
               - match: ","
@@ -4253,6 +4259,19 @@ repository:
       - include: "#curly-brackets"
       - include: "#square-brackets"
       - include: "#round-brackets"
+      - include: "#angle-brackets"
+
+  angle-brackets:
+    patterns:
+      - comment: Type arguments. This is complicated since we don't want to match things like foo < 123 || bar > baz
+        name: meta.type-arguments.flowtype
+        begin: (?<=\b|['"`)}\]])(<)(?=\b|['"`({\[])
+        end: (?<=\b|['"`)}\]>])(>)
+        captures:
+          1: {name: punctuation.type.arguments.pta}
+        patterns:
+          - include: "#types"
+          - include: "#punctuation"
 
   curly-brackets:
     repository:
@@ -4352,7 +4371,7 @@ repository:
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.pta
     patterns:
-      - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
+      - begin: \s*(?<=[\w'"`)}\]>]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
         end: \s*(\))\s*
         captures:
           1: {name: punctuation.definition.parameters.pta}
