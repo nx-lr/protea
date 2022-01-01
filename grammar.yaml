@@ -1611,8 +1611,7 @@ repository:
         name: constant.other.pcre.pta
         captures:
           0: {name: punctuation.section.expression.pta}
-        patterns:
-          - include: $self
+        patterns: [include: $self]
       - comment: Block comment
         begin: (\()(\?#)
         contentName: comment.block.regexp.pta
@@ -3417,6 +3416,18 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
+          - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s+(\#\{)\s*
+            end: \s*(\})\s*
+            captures:
+              1: {name: punctuation.section.class.pta}
+            patterns:
+              - include: $self
+          - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s+(\{)\s*
+            end: \s*(\})\s*
+            captures:
+              1: {name: punctuation.definition.block.pta}
+            patterns:
+              - include: $self
       round-brackets: &type-round-brackets
         repository:
           function-params:
@@ -4442,8 +4453,7 @@ repository:
         captures:
           1: {name: keyword.control.conditional.pta}
           2: {name: punctuation.separator.colon.pta}
-        patterns:
-          - include: $self
+        patterns: [include: $self]
       switch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*
         end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
@@ -4691,6 +4701,16 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
+      - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s+(\#\{)\s*
+        end: \s*(\})\s*
+        captures:
+          1: {name: punctuation.section.class.pta}
+        patterns: [include: $self]
+      - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s+(\{)\s*
+        end: \s*(\})\s*
+        captures:
+          1: {name: punctuation.definition.block.pta}
+        patterns: [include: $self]
       - begin: \s*(?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
         end: \s*(\})\s*
         captures:
@@ -4711,14 +4731,12 @@ repository:
         end: \s*(\})\s*
         captures:
           1: {name: punctuation.section.class.pta}
-        patterns:
-          - include: $self
+        patterns: [include: $self]
       - begin: (\{)\s*
         end: \s*(\})\s*
         captures:
           1: {name: punctuation.definition.block.pta}
-        patterns:
-          - include: $self
+        patterns: [include: $self]
 
   round-brackets:
     repository:
@@ -4754,8 +4772,7 @@ repository:
         end: \s*(\))\s*
         captures:
           1: {name: punctuation.definition.expression.pta}
-        patterns:
-          - include: $self
+        patterns: [include: $self]
 
   square-brackets:
     repository:
