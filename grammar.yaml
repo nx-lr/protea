@@ -2287,7 +2287,23 @@ repository:
   style-rules:
     patterns:
       - include: "#calls"
-      - include: "#type-operators"
+      - comment: CSS operators
+        match: (?x)\s*(?:(\+)|(\-)|(\*)|(\/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|(\#)|([<>]))\s*
+        captures:
+          1: {name: keyword.operator.sum.pta}
+          2: {name: keyword.operator.difference.pta}
+          3: {name: keyword.operator.product.pta}
+          4: {name: keyword.operator.quotient.pta}
+          5: {name: keyword.operator.remainder.pta}
+          6: {name: keyword.operator.only.pta}
+          7: {name: keyword.operator.maybe.pta}
+          8: {name: keyword.operator.intersection.pta}
+          9: {name: keyword.operator.union.pta}
+          10: {name: keyword.operator.symmetric.pta}
+          11: {name: keyword.operator.negation.pta}
+          12: {name: keyword.operator.macro.dollar.pta}
+          13: {name: keyword.operator.private.pta}
+          14: {name: keyword.operator.class.pta}
       - begin: \s*(\()\s*
         end: \s*(\))\s*
         captures:
@@ -3692,25 +3708,7 @@ repository:
           3: {name: keyword.operator.assert.pta}
           4: {name: keyword.operator.accessor.pta}
       - comment: type operators
-        match: |
-          (?x)\s*
-          (?:
-          (\+)|
-          (\-)|
-          (\*)|
-          (\/)|
-          (\%)|
-          (\!)|
-          (\?)|
-          (\&)|
-          (\|)|
-          (\^)|
-          (\~)|
-          (\$)|
-          (\#)|
-          ([<>])
-          )
-          (?=$|[({\[\w'"\s])
+        match: (?x)\s*(?:(\+)|(\-)|(\*)|(\/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|(\#)|([<>]))(?=$|[({\[\w'"\s])
         captures:
           1: {name: keyword.operator.sum.pta}
           2: {name: keyword.operator.difference.pta}
