@@ -143,7 +143,7 @@ repository:
       - include: "#variables"
       - include: "#illegal"
 
-  everything-but-comments:
+  embedded-content:
     patterns:
       - include: "#clauses"
       - include: "#declarations"
@@ -1338,7 +1338,7 @@ repository:
           )
         captures:
           1: {name: punctuation.section.embedded.pta}
-          2: {patterns: [include: "#everything-but-comments"]}
+          2: {patterns: [include: "#embedded-content"]}
   format-specifier:
     comment: Oniguruma supports only 20 levels of recursion
     match: |
@@ -3387,7 +3387,7 @@ repository:
         captures:
           1: {name: punctuation.section.embedded.pta}
           2:
-            {patterns: [include: "#types", include: "#everything-but-comments"]}
+            {patterns: [include: "#types", include: "#embedded-content"]}
 
   type-embedded:
     patterns:
@@ -3754,7 +3754,7 @@ repository:
               - include: "#query-body"
               - include: $self
           where-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where|having)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where|having|filter|reject)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
             end: (?<=})|(?=[,;)\]])
