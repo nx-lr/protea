@@ -19,6 +19,8 @@ comment: |
 
   Done:
   - Changed from indentation to curly bracket syntax
+  - Map/set syntax should only activate next to an opening
+  - Changed from indentation to curly bracket syntax
   - Map/set syntax should only activate next to an opening bracket, a colon
     beside a literal or closing bracket, or a non-suffix operator
   - Freed backslash to be used as part of operators
@@ -59,7 +61,7 @@ define:
     |iter|macro|struct|object
     |trait|style|compo|prop
     |go|defer|do|from|where|with
-    |if|elif|else|then|def
+    |if|elif|else|then|def|defn
     |for|each|loop|while
     |try|throw|catch|after
     |match|case|goto|pass
@@ -84,7 +86,7 @@ define:
     |iter|macro|struct|object
     |trait|style|compo|prop
     |go|defer|do|from|where|with
-    |if|elif|else|then|def
+    |if|elif|else|then|def|defn
     |for|each|loop|while
     |try|throw|catch|after
     |match|case|goto|pass
@@ -110,7 +112,7 @@ define:
     |iter|macro|struct|object
     |trait|style|compo|prop
     |go|defer|do|from|where|with
-    |if|elif|else|then|def
+    |if|elif|else|then|def|defn
     |for|each|loop|while
     |try|throw|catch|after
     |match|case|goto|pass
@@ -126,6 +128,7 @@ define:
 repository:
   core:
     patterns:
+      - include: "#closures"
       - include: "#clauses"
       - include: "#declarations"
       - include: "#keywords"
@@ -145,6 +148,7 @@ repository:
 
   embedded-content:
     patterns:
+      - include: "#closures"
       - include: "#clauses"
       - include: "#declarations"
       - include: "#keywords"
@@ -244,7 +248,7 @@ repository:
       |iter|macro|struct|object
       |trait|style|compo|prop
       |go|defer|do|from|where|with
-      |if|elif|else|then|def
+      |if|elif|else|then|def|defn
       |for|each|loop|while
       |try|throw|catch|after
       |match|case|goto|pass
@@ -1305,7 +1309,7 @@ repository:
           |iter|macro|struct|object
           |trait|style|compo|prop
           |go|defer|do|from|where|with
-          |if|elif|else|then|def
+          |if|elif|else|then|def|defn
           |for|each|loop|while
           |try|throw|catch|after
           |match|case|goto|pass
@@ -2632,7 +2636,7 @@ repository:
           |iter|macro|struct|object
           |trait|style|compo|prop
           |go|defer|do|from|where|with
-          |if|elif|else|then|def
+          |if|elif|else|then|def|defn
           |for|each|loop|while
           |try|throw|catch|after
           |match|case|goto|pass
@@ -2663,7 +2667,7 @@ repository:
           |iter|macro|struct|object
           |trait|style|compo|prop
           |go|defer|do|from|where|with
-          |if|elif|else|then|def
+          |if|elif|else|then|def|defn
           |for|each|loop|while
           |try|throw|catch|after
           |match|case|goto|pass
@@ -3021,7 +3025,7 @@ repository:
           |iter|macro|struct|object
           |trait|style|compo|prop
           |go|defer|do|from|where|with
-          |if|elif|else|then|def
+          |if|elif|else|then|def|defn
           |for|each|loop|while
           |try|throw|catch|after
           |match|case|goto|pass
@@ -3053,7 +3057,7 @@ repository:
               |iter|macro|struct|object
               |trait|style|compo|prop
               |go|defer|do|from|where|with
-              |if|elif|else|then|def
+              |if|elif|else|then|def|defn
               |for|each|loop|while
               |try|throw|catch|after
               |match|case|goto|pass
@@ -3139,7 +3143,7 @@ repository:
       |iter|macro|struct|object
       |trait|style|compo|prop
       |go|defer|do|from|where|with
-      |if|elif|else|then|def
+      |if|elif|else|then|def|defn
       |for|each|loop|while
       |try|throw|catch|after
       |match|case|goto|pass
@@ -3600,7 +3604,7 @@ repository:
 
   declaration-keywords:
     patterns:
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl|def)(?!\B|\p{Pd}+\b)\s*
         name: keyword.other.declare.pta
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.pta
@@ -3838,8 +3842,9 @@ repository:
         beginCaptures:
           1: {name: storage.type.style.pta}
         patterns:
-          - match: (?<=^|\s)\s*:?=\s*(?=$|\s)
-            name: keyword.operator.assignment.pta
+          - match: \s+([?:]?=)\s*
+            captures:
+              1: {name: keyword.operator.assignment.pta}
           - include: "#style-property"
           - include: "#style-rules"
           - include: "#style-block"
@@ -4142,7 +4147,7 @@ repository:
       |iter|macro|struct|object
       |trait|style|compo|prop
       |go|defer|do|from|where|with
-      |if|elif|else|then|def
+      |if|elif|else|then|def|defn
       |for|each|loop|while
       |try|throw|catch|after
       |match|case|goto|pass
@@ -4457,6 +4462,33 @@ repository:
           - include: "#types"
           - include: "#punctuation"
 
+  closures:
+    patterns:
+      - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        captures:
+          1: {name: keyword.control.match.pta}
+          2: {name: punctuation.separator.colon.pta}
+        patterns:
+          - include: "#params-clause"
+          - applyEndPatternLast: 1
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
+            end: (?=)|$
+            beginCaptures:
+              1: {name: keyword.control.match.pta}
+            patterns:
+              - include: "#types"
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.match.pta
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.match.pta
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.match.pta
+          - include: "#type-keywords"
+          - include: $self
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?!\B|\p{Pd}+\b)\s*
+        name: keyword.control.match.pta
+
   curly-brackets:
     repository:
       punctuation:
@@ -4465,33 +4497,6 @@ repository:
             name: punctuation.separator.mapping.pta
           - match: (?<!\s):(?!:)
             name: punctuation.separator.key-value.pta
-      closures:
-        patterns:
-          - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
-            end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
-            captures:
-              1: {name: keyword.control.match.pta}
-              2: {name: punctuation.separator.colon.pta}
-            patterns:
-              - include: "#params-clause"
-              - applyEndPatternLast: 1
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
-                end: (?=)|$
-                beginCaptures:
-                  1: {name: keyword.control.match.pta}
-                patterns:
-                  - include: "#types"
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.match.pta
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.match.pta
-              - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.match.pta
-              - include: "#type-keywords"
-              - include: $self
-          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?!\B|\p{Pd}+\b)\s*
-            name: keyword.control.match.pta
-          - include: $self
     patterns:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\{)\s*
         end: \s*(\})\s*
@@ -4529,14 +4534,12 @@ repository:
         captures:
           1: {name: punctuation.section.class.pta}
         patterns:
-          - include: "#closures"
           - include: $self
       - begin: (\{)\s*
         end: \s*(\})\s*
         captures:
           1: {name: punctuation.definition.block.pta}
         patterns:
-          - include: "#closures"
           - include: $self
 
   round-brackets:
