@@ -284,18 +284,22 @@ repository:
       - comment: Python and Perl 6/Raku built-in functions
         match: |
           (?x)\s*\b(
-          import|abs|all|any|ascii|bin|breakpoint|callable
-          |chr|compile|copyright|credits|delattr|dir|divmod
-          |enumerate|eval|exec|exit|filter|format|getattr
-          |globals|hasattr|hash|help|hex|id|input
-          |isinstance|issubclass|iter|len|license|locals|map
-          |max|memoryview|min|next|oct|open|ord|pow|print
-          |quit|range|reload|repr|reversed|round
-          |setattr|sorted|sum|vars|zip|file|reduce|intern
-          |rawInput|unicode|cmp|basestring|execfile|long|xrange
+          # Python
+          import|abs|all|any|ascii|bin|breakpoint|callable|chr|compile
+          |copyright|credits|delattr|dir|divmod|enumerate|eval|exec|exit|filter
+          |format|getattr|globals|hasattr|hash|help|hex|id|input|isinstance
+          |issubclass|iter|len|license|locals|map|max|memoryview|min|next|oct
+          |open|ord|pow|print|quit|range|reload|repr|reversed|round|setattr|sorted
+          |sum|vars|zip|file|reduce|intern|rawInput|unicode|cmp|basestring|execfile
+          |long|xrange|bool|bytearray|bytes|classmethod|complex|dict|float|frozenset
+          |int|list|object|property|set|slice|staticmethod|str|tuple|type
+
+          # JavaScript
           |isNaN|isFinite|eval|uneval|parseInt|parseFloat|decodeURI
-          |decodeURIComponent|encodeURI|encodeURIComponent|escape|unescape
-          |require|set(Interval|Timeout)|clear(Interval|Timeout)
+          |decodeURIComponent|encodeURI|encodeURIComponent|escape|unescape|require
+          |(?:clear|set)(?:Interval|Timeout)
+
+          # Perl
           |eager|hyper|substr|index|rindex|grep|map|sort|join|lines|hints
           |chmod|split|reduce|min|max|reverse|truncate|zip|cat|roundrobin
           |classify|first|sum|keys|values|pairs|defined|delete|exists|elems
@@ -361,12 +365,40 @@ repository:
       - comment: Ruby kernel functions
         match: |
           (?x)\s*\b(
+          # Ruby builtin functions
           abort|atExit|autoload|binding|callcc|caller|callerLocations
           |chomp|chop|eval|exec|exit|exit|fork|format|gets
           |globalVariables|gsub|lambda|load|localVariables|open
           |p|print|printf|proc|putc|puts|rand|readline|readlines
           |select|setTraceFunc|sleep|spawn|sprintf|srand|sub
           |syscall|system|test|traceVar|trap|untraceVar|warn
+
+          # C StdLib
+          |abort|abs|acos|asctime|asctime_r|asin|assert|atan|atan2|atexit|atof|atoi|atol|bsearch|btowc|calloc
+          |catclose6|catgets6|catopen6|ceil|clearerr|clock|cos|cosh|ctime|ctime64|ctime_r|ctime64_r|difftime
+          |difftime64|div|erf|erfc|exit|exp|fabs|fclose|fdopen5|feof|ferror|fflush1|fgetc1|fgetpos1|fgets1
+          |fgetwc6|fgetws6|fileno5|floor|fmod|fopen|fprintf|fputc1|fputs1|fputwc6|fputws6|fread|free|freopen
+          |frexp|fscanf|fseek1|fsetpos1|ftell1|fwide6|fwprintf6|fwrite|fwscanf6|gamma|getc1|getchar1|getenv
+          |gets|getwc6|getwchar6|gmtime|gmtime64|gmtime_r|gmtime64_r|hypot|isalnum|isalpha|isascii4|isblank
+          |iscntrl|isdigit|isgraph|islower|isprint|ispunct|isspace|isupper|iswalnum4|iswalpha4|iswblank4
+          |iswcntrl4|iswctype4|iswdigit4|iswgraph4|iswlower4|iswprint4|iswpunct4|iswspace4|iswupper4|iswxdigit4
+          |isxdigit4|j0|j1|jn|labs|ldexp|ldiv|localeconv|localtime|localtime64|localtime_r|localtime64_r
+          |log|log10|longjmp|malloc|mblen|mbrlen4|mbrtowc4|mbsinit4|mbsrtowcs4|mbstowcs|mbtowc|memchr|memcmp
+          |memcpy|memmove|memset|mktime|mktime64|modf|nextafter|nextafterl|nexttoward|nexttowardl
+          |nl_langinfo4|perror|pow|printf|putc1|putchar1|putenv|puts|putwc6|putwchar6|qsort|quantexpd32
+          |quantexpd64|quantexpd128|quantized32|quantized64|quantized128|samequantumd32|samequantumd64
+          |samequantumd128|raise|rand|rand_r|realloc|regcomp|regerror|regexec|regfree|remove|rename|rewind1
+          |scanf|setbuf|setjmp|setlocale|setvbuf|signal|sin|sinh|snprintf|sprintf|sqrt|srand|sscanf
+          |strcasecmp|strcat|strchr|strcmp|strcoll|strcpy|strcspn|strerror|strfmon4|strftime|strlen
+          |strncasecmp|strncat|strncmp|strncpy|strpbrk|strptime4|strrchr|strspn|strstr|strtod|strtod32
+          |strtod64|strtod128|strtof|strtok|strtok_r|strtol|strtold|strtoul|strxfrm|swprintf|swscanf|system
+          |tan|tanh|time|time64|tmpfile|tmpnam|toascii|tolower|toupper|towctrans|towlower4|towupper4|ungetc1
+          |ungetwc6|va_arg|va_copy|va_end|va_start|vfprintf|vfscanf|vfwprintf6|vfwscanf|vprintf|vscanf|vsprintf
+          |vsnprintf|vsscanf|vswprintf|vswscanf|vwprintf6|vwscanf|wcrtomb4|wcscat|wcschr|wcscmp|wcscoll4|wcscpy
+          |wcscspn|wcsftime|wcslen|wcslocaleconv|wcsncat|wcsncmp|wcsncpy|wcspbrk|wcsptime|wcsrchr|wcsrtombs4
+          |wcsspn|wcsstr|wcstod|wcstod32|wcstod64|wcstod128|wcstof|wcstok|wcstol|wcstold|wcstombs|wcstoul
+          |wcsxfrm4|wctob|wctomb|wctrans|wctype4|wcwidth|wmemchr|wmemcmp|wmemcpy|wmemmove|wmemset|wprintf6
+          |wscanf6|y0|y1|yn
           )
           (?!\B|\p{Pd}+\b)\s*
         name: support.function.kernel.pta
@@ -496,9 +528,31 @@ repository:
           |echo|enable|eval|exec|exit|false|fc|fg|getopts|hash|help|history|jobs|kill
           |let|logout|popd|printf|pushd|pwd|read|readonly|set|shift|shopt|source
           |suspend|test|times|trap|true|type|ulimit|umask|unalias|unset|wait
+          |alias|apropos|apt|aptGet|aptitude|aspell|at|awk|basename|base32|base64
+          |bash|bc|bg|bind|break|builtin|bzip2|cal|caller|case|cat|cd|cfdisk|chattr
+          |chgrp|chmod|chown|chpasswd|chroot|chkconfig|cksum|clear|cmp|comm|command
+          |continue|cp|cpio|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|declare
+          |df|diff|diff3|dig|dir|dircolors|dirname|dirs|dos2unix|dmesg|dpkg|du|echo
+          |egrep|eject|enable|env|ethtool|eval|exec|exit|expect|expand|export|expr
+          |false|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|for|format|free|fsck|ftp
+          |function|fuser|gawk|getopts|grep|groupadd|groupdel|groupmod|groups|gzip|hash
+          |head|help|history|hostname|htop|iconv|id|if|ifconfig|ifdown|ifup|import|install
+          |iostat|ip|jobs|join|kill|killall|less|let|link|ln|local|locate|logname|logout
+          |look|lpc|lpr|lprint|lprintd|lprintq|lprm|lsattr|lsblk|ls|lsof|lspci|make|man
+          |mapfile|mkdir|mkfifo|mkfile|mkisofs|mknod|mktemp|more|most|mount|mtools|mtr|mv
+          |mmv|nc|netstat|nft|nice|nl|nohup|notifySend|nslookup|open|op|passwd|paste
+          |pathchk|Perf|ping|pgrep|pkill|popd|pr|printcap|printenv|printf|ps|pushd|pv|pwd
+          |quota|quotacheck|ram|rar|rcp|read|readarray|readonly|reboot|rename|renice
+          |remsync|return|rev|rm|rmdir|rsync|screen|scp|sdiff|sed|select|seq|set|sftp
+          |shift|shopt|shuf|shutdown|sleep|slocate|sort|source|split|ss|ssh|stat|strace
+          |su|sudo|sum|suspend|sync|tail|tar|tee|test|time|timeout|times|tmux|touch|top
+          |tput|traceroute|trap|tr|true|tsort|tty|type|ulimit|umask|umount|unalias|uname
+          |unexpand|uniq|units|unix2dos|unrar|unset|unshar|until|uptime|useradd|userdel
+          |usermod|users|uuencode|uudecode|v|vdir|vi|vmstat|w|wait|watch|wc|whereis|which
+          |while|who|whoami|wget|write|xargs|xdgOpen|xxd|xz|yes|zip
           )
           (?!\B|\p{Pd}+\b)\s*
-        name: support.function.command.pta
+        name: support.function.system.pta
       - comment: Bash and Batch built-in functions
         match: |
           (?x)\s*\b(
@@ -1728,8 +1782,7 @@ repository:
               3: {name: punctuation.definition.tag.pta}
               4: {patterns: [include: "#function-names"]}
               5: {name: punctuation.definition.tag.pta}
-            patterns:
-              - include: $self
+            patterns: [include: $self]
           - include: "#regexp-patterns"
       - comment: Atomic groups
         begin: (\(\?>)
@@ -3420,14 +3473,12 @@ repository:
             end: \s*(\})\s*
             captures:
               1: {name: punctuation.section.class.pta}
-            patterns:
-              - include: $self
+            patterns: [include: $self]
           - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s+(\{)\s*
             end: \s*(\})\s*
             captures:
               1: {name: punctuation.definition.block.pta}
-            patterns:
-              - include: $self
+            patterns: [include: $self]
       round-brackets: &type-round-brackets
         repository:
           function-params:
