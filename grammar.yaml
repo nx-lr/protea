@@ -2004,50 +2004,52 @@ repository:
     captures:
       1: {name: punctuation.definition.block.pta}
     patterns: [include: "#style-properties"]
+  style-property:
+    applyEndPatternLast: 1
+    begin: |
+      (?x)
+      \s*
+      (
+      [\p{Pd}$]?
+      (?:
+      # Recursive brackets
+      \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
+      (?<b>
+      \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
+      \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
+      \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
+      )|
+      (?<s>
+      # Strings
+      (?<q3>'''+|"""+|```+).*\g<q3>|
+      (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
+      (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
+      (?<q1>')(?:[^']|'')*\g<q1>
+      )|
+      # Rest of identifier characters
+      \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
+      )+
+      )
+      (:)\s+
+    beginCaptures:
+      1:
+        name: support.type.property-name.pta
+        patterns: &embedded-brackets
+          - include: "#embedded"
+          - include: "#brackets"
+      8: {name: punctuation.separator.key-value.pta}
+    end: (?=)|$
+    name: string.unquoted.pta
+    patterns:
+      - include: "#html-properties"
+      - match: \s+
+        name: meta.var.expr.pta
   style-properties:
     patterns:
       - include: "#clauses"
       - include: "#declarations"
       - include: "#style-block"
-      - applyEndPatternLast: 1
-        begin: |
-          (?x)
-          \s*
-          (
-          [\p{Pd}$]?
-          (?:
-          # Recursive brackets
-          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
-          (?<b>
-          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-          )|
-          (?<s>
-          # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
-          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
-          (?<q1>')(?:[^']|'')*\g<q1>
-          )|
-          # Rest of identifier characters
-          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )+
-          )
-          (:)\s+
-        beginCaptures:
-          1:
-            name: support.type.property-name.pta
-            patterns: &embedded-brackets
-              - include: "#embedded"
-              - include: "#brackets"
-          8: {name: punctuation.separator.key-value.pta}
-        end: (?=)|$
-        name: string.unquoted.pta
-        patterns:
-          - include: "#html-properties"
-          - match: \s+
-            name: meta.var.expr.pta
+      - include: "#style-property"
       - include: "#style-rules"
       - include: $self
   style-rules:
@@ -3386,8 +3388,7 @@ repository:
           )
         captures:
           1: {name: punctuation.section.embedded.pta}
-          2:
-            {patterns: [include: "#types", include: "#embedded-content"]}
+          2: {patterns: [include: "#types", include: "#embedded-content"]}
 
   type-embedded:
     patterns:
@@ -3531,6 +3532,8 @@ repository:
       - include: "#comma"
       - match: '\.|::'
         name: punctuation.separator.namespace.pta
+      - match: \s+:?=\s+
+        name: keyword.operator.assignment.pta
 
   modifier-keywords:
     match: |
@@ -3837,6 +3840,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.style.pta}
         patterns:
+          - include: "#style-property"
           - include: "#style-rules"
           - include: "#style-block"
           - include: "#block-entities"
