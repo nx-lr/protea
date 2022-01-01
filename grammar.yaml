@@ -148,16 +148,14 @@ repository:
       - include: "#clauses"
       - include: "#declarations"
       - include: "#keywords"
-      - include: "#jsx"
       - include: "#brackets"
+      - include: "#jsx"
       - include: "#punctuation"
       - include: "#type-annotation"
-      - include: "#format-specifier"
+      - include: "#symbol-strings"
       - include: "#symbols"
       - include: "#operators"
-      - include: "#strings"
-      - include: "#numbers"
-      - include: "#constants"
+      - include: "#literals"
       - include: "#calls"
       - include: "#variables"
       - include: "#illegal"
@@ -1105,7 +1103,7 @@ repository:
   symbol-strings:
     patterns:
       - comment: multi-single quoted string
-        begin: (?<=^|\s+)(:('''+))
+        begin: (?<=^|\s+)(:('''))
         contentName: string.quoted.single.pta
         end: \s*((\2)(?!'+))
         captures:
@@ -1120,7 +1118,7 @@ repository:
           - match: "''"
             name: constant.character.escape.pta
       - comment: multi-double quoted string
-        begin: (?<=^|\s+)(:("""+))
+        begin: (?<=^|\s+)(:("""))
         contentName: string.quoted.double.pta
         end: \s*((\2)(?!"+))
         captures:
@@ -1139,7 +1137,7 @@ repository:
   strings:
     patterns:
       - comment: multi-single quoted string
-        begin: (?<!'+)\s*('''+)
+        begin: (?<!'+)\s*(''')
         contentName: string.quoted.single.pta
         end: \s*((\1)(?!'+))
         captures:
@@ -1157,7 +1155,7 @@ repository:
             name: constant.character.escape.pta
           - include: "#embedded-raw"
       - comment: multi-double quoted string
-        begin: (?<!"+)\s*("""+)
+        begin: (?<!"+)\s*(""")
         contentName: string.quoted.double.pta
         end: \s*((\1)(?!"+))
         captures:
@@ -1325,9 +1323,9 @@ repository:
           \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
           \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
           )|
-          ([?!]?\.|[?!:]:)?(?<s>
+          ([?!]?\.|[?!:]:)?\B(?<s>
           # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q3>'''|"""|```).*\g<q3>|
           (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
           (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
@@ -1356,9 +1354,9 @@ repository:
       \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
       \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
       )|
-      ([?!]?\.|[?!:]:)?(?<s>
+      ([?!]?\.|[?!:]:)?\B(?<s>
       # Strings
-      (?<q3>'''+|"""+|```+).*\g<q3>|
+      (?<q3>'''|"""|```).*\g<q3>|
       (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
       (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
       (?<q1>')(?:[^']|'')*\g<q1>
@@ -1491,7 +1489,7 @@ repository:
   regexps:
     patterns:
       - comment: Replacement section
-        begin: (?<=`+)\s*(```+|`)
+        begin: (?<=`+)\s*(```|`)
         end: \s*(?:(\1)(?!`+))(\p{Alnum}*)
         contentName: string.replace.regexp.pta
         captures:
@@ -1501,7 +1499,7 @@ repository:
           - include: "#back-references"
           - include: "#string-content"
       - comment: Pattern section
-        begin: \s*(\p{Alnum}*)(?<!`+)(```+|`)
+        begin: \s*(\p{Alnum}*)(?<!`+)(```|`)
         end: \s*(?:(\2)(?!`+))(\p{Alnum}*)
         contentName: string.pattern.regexp.pta
         beginCaptures:
@@ -1580,13 +1578,13 @@ repository:
         captures:
           1: {name: keyword.other.subroutine.pta}
         patterns: *regex-back-references
-      - begin: (\\k('''+|"""+|'|"))
+      - begin: (\\k('''|"""|['"]))
         end: \s*(\2)
         name: constant.other.back-reference.pta
         captures:
           1: {name: keyword.other.back-reference.pta}
         patterns: *regex-back-references
-      - begin: (\\g('''+|"""+|'|"))
+      - begin: (\\g('''|"""|['"]))
         end: \s*(\2)
         name: constant.other.subroutine.pta
         captures:
@@ -1671,9 +1669,9 @@ repository:
           \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
           \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
           )|
-          ([?!]?\.|[?!:]:)?(?<s>
+          ([?!]?\.|[?!:]:)?\B(?<s>
           # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q3>'''|"""|```).*\g<q3>|
           (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
           (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
@@ -1796,7 +1794,7 @@ repository:
         captures:
           0: {name: punctuation.definition.group.named.pta}
         patterns:
-          - begin: (?<=\(\?)('''+|"""+|'|")
+          - begin: (?<=\(\?)('''|"""|['"])
             end: \s*(\1)
             name: constant.other.group.pta
             captures:
@@ -1964,7 +1962,7 @@ repository:
               (?x)\s*\b(
 
               (?:
-              # Html
+              # HTML
               a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdi|bdo|bgsound
               |big|blink|blockquote|body|br|button|canvas|caption|center|cite|code|col|colgroup|command
               |content|data|datalist|dd|del|details|dfn|dialog|dir|div|dl|dt|element|em|embed|fieldset
@@ -2019,9 +2017,9 @@ repository:
       \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
       \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
       )|
-      (?<s>
+      \B(?<s>
       # Strings
-      (?<q3>'''+|"""+|```+).*\g<q3>|
+      (?<q3>'''|"""|```).*\g<q3>|
       (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
       (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
       (?<q1>')(?:[^']|'')*\g<q1>
@@ -2089,9 +2087,9 @@ repository:
           \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
           \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
           )|
-          (?<s>
+          \B(?<s>
           # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q3>'''|"""|```).*\g<q3>|
           (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
           (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
@@ -2117,9 +2115,9 @@ repository:
           \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
           \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
           )|
-          (?<s>
+          \B(?<s>
           # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q3>'''|"""|```).*\g<q3>|
           (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
           (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
@@ -2145,9 +2143,9 @@ repository:
           \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
           \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
           )|
-          (?<s>
+          \B(?<s>
           # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q3>'''|"""|```).*\g<q3>|
           (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
           (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
@@ -2173,9 +2171,9 @@ repository:
           \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
           \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
           )|
-          (?<s>
+          \B(?<s>
           # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q3>'''|"""|```).*\g<q3>|
           (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
           (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
@@ -2201,9 +2199,9 @@ repository:
           \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
           \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
           )|
-          (?<s>
+          \B(?<s>
           # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q3>'''|"""|```).*\g<q3>|
           (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
           (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
@@ -2229,9 +2227,9 @@ repository:
           \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
           \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
           )|
-          (?<s>
+          \B(?<s>
           # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q3>'''|"""|```).*\g<q3>|
           (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
           (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
@@ -2334,9 +2332,9 @@ repository:
       \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
       \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
       )|
-      (?<s>
+      \B(?<s>
       # Strings
-      (?<q3>'''+|"""+|```+).*\g<q3>|
+      (?<q3>'''|"""|```).*\g<q3>|
       (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
       (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
       (?<q1>')(?:[^']|'')*\g<q1>
@@ -2678,7 +2676,7 @@ repository:
           [\p{Pc}\p{L}][\w\p{Pd}]*
           )
           \b
-          (?=['"`]|
+          (?=['"]|
           (?:[!?]\.=?|\.=)?\#?\(|
           (?:[!?]\.=?|\.=)?<(?:\b|['"`\\({\[])
           )
@@ -3333,7 +3331,7 @@ repository:
     comment: coming soon
     patterns:
       - comment: single quoted raw string
-        begin: (?<!'+)\s*('''+)
+        begin: (?<!'+)\s*(''')
         contentName: string.quoted.single.pta
         end: \s*((\1)(?!'+))
         captures:
@@ -3351,7 +3349,7 @@ repository:
             name: constant.character.escape.pta
           - include: "#type-embedded-raw"
       - comment: double quoted standard string
-        begin: (?<!"+)\s*("""+|")
+        begin: (?<!"+)\s*("""|")
         contentName: string.quoted.double.pta
         end: \s*((\1)(?!"+))
         captures:
@@ -3378,9 +3376,9 @@ repository:
           \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
           \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
           )|
-          ([?!]?\.|[?!:]:)?(?<s>
+          ([?!]?\.|[?!:]:)?\B(?<s>
           # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
+          (?<q3>'''|"""|```).*\g<q3>|
           (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
           (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
           (?<q1>')(?:[^']|'')*\g<q1>
