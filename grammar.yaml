@@ -2156,6 +2156,10 @@ repository:
           (?!\B|\p{Pd}+\b)\s*
         name: support.type.property-name.css.pta
 
+  css-value-names:
+    comment: TODO
+    patterns: []
+
   html-tag-names:
     match: |
       (?x)\s*\b(
@@ -2195,7 +2199,7 @@ repository:
 
   html-properties:
     patterns:
-      - include: source.yaml#flow-collection
+      - include: source.yaml#flow-sequence
       - include: "#brackets"
       - include: "#literals"
       - include: source.css.scss#constant_functions
@@ -3968,17 +3972,16 @@ repository:
           - include: $self
 
       query-expression:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)(?!\B|\p{Pd}+\b)\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)(?!\B|\p{Pd}+\b)\s*
         beginCaptures:
           1: {name: keyword.control.query.pta}
-          2: {patterns: [include: $self]}
-          3: {name: keyword.control.query.pta}
         end: (?<=})|(?=[,;)\]])
         patterns:
           - include: "#query-body"
           - include: $self
       query-body:
         patterns:
+          - include: "#in-clause"
           - include: "#where-clause"
           - include: "#join-clause"
           - include: "#sort-clause"
@@ -3987,8 +3990,18 @@ repository:
           - include: "#limit-clause"
           - include: "#reduce-clause"
         repository:
+          in-clause:
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
+            beginCaptures:
+              1: {name: keyword.control.query.pta}
+              2: {patterns: [include: $self]}
+              3: {name: keyword.control.query.pta}
+            end: (?<=})|(?=[,;)\]])
+            patterns:
+              - include: "#query-body"
+              - include: $self
           join-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:full|part|self|cross)?(?!\B|\p{Pd}+\b)\s*\b(?:inner|outer|left|right)?(?!\B|\p{Pd}+\b)\s*\bjoin)\b\s*(.*?)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:full|part|self|cross)?(?!\B|\p{Pd}+\b)\s*\b(?:inner|outer|left|right)?(?!\B|\p{Pd}+\b)\s*\bjoin)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
               2: {patterns: [include: $self]}
@@ -4008,7 +4021,7 @@ repository:
               - include: "#query-body"
               - include: $self
           sort-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(sort(?!\B|\p{Pd}+\b)\s*\b(?:asc|desc)?(?!\B|\p{Pd}+\b)\s*\b(?:by|with)?)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:sort|order)(?!\B|\p{Pd}+\b)\s*\b(?:asc|desc)?(?!\B|\p{Pd}+\b)\s*\b(?:by|with)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
             end: (?<=})|(?=[,;)\]])
@@ -4026,7 +4039,7 @@ repository:
               - include: "#query-body"
               - include: $self
           limit-clause:
-            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit)(?!\B|\p{Pd}+\b)\s*\b(?:first|last|head|tail)?)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit|offset)(?!\B|\p{Pd}+\b)\s*\b(?:first|last|head|tail)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
             end: (?<=})|(?=[,;)\]])
@@ -4086,6 +4099,7 @@ repository:
           - match: \s+([?:]?=)\s*
             captures:
               1: {name: keyword.operator.assignment.pta}
+          - include: "#style-pair"
           - include: "#style-rules"
           - include: "#style-pair"
           - include: "#style-block"
