@@ -155,7 +155,9 @@ repository:
       - include: "#format-specifier"
       - include: "#symbols"
       - include: "#operators"
-      - include: "#literals"
+      - include: "#strings"
+      - include: "#numbers"
+      - include: "#constants"
       - include: "#calls"
       - include: "#variables"
       - include: "#illegal"
@@ -321,14 +323,6 @@ repository:
       - comment: Trait classes | Serializable, Loggable etc
         match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)able(?!\B|\p{Pd}+\b)
         name: support.class.trait.pta
-      - comment: Swift
-      - include: source.swift#builtin-types
-      - comment: Python
-      - include: source.python#builtin-types
-      - comment: JS
-      - includes: "#support-js"
-      - comment: PHP
-      - include: source.php#class-builtin
   function-names:
     comment: Names for built-in functions (initial dump)
     patterns:
@@ -338,17 +332,217 @@ repository:
       - comment: magic functions
         match: (?x)\s*\b\p{Pc}+([\p{Pc}\p{L}][\w\p{Pd}]*)+\p{Pc}+(?!\B|\p{Pd}+\b)\s*
         name: support.function.magic.pta
-      - comment: Swift
-      - include: source.swift#builtin-functions
-      - comment: JavaScript
-      - include: source.js#support-objects
-      - comment: Python
-      - include: source.python#builtin-functions
-      - comment: PHP
-      - include: source.php#support
-      - comment: SASS
-      - include: source.css.sass#constant_sass_functions
-      - comment: Other (coming soon!)
+      - match: |
+          (?x)\s*\b(
+          import|abs|all|any|ascii|bin|breakpoint|callable
+          |chr|compile|copyright|credits|delattr|dir|divmod
+          |enumerate|eval|exec|exit|filter|format|getattr
+          |globals|hasattr|hash|help|hex|id|input
+          |isinstance|issubclass|iter|len|license|locals|map
+          |max|memoryview|min|next|oct|open|ord|pow|print
+          |quit|range|reload|repr|reversed|round
+          |setattr|sorted|sum|vars|zip|file|reduce|intern
+          |rawInput|unicode|cmp|basestring|execfile|long|xrange
+          |isNaN|isFinite|eval|uneval|parseInt|parseFloat|decodeURI
+          |decodeURIComponent|encodeURI|encodeURIComponent|escape|unescape
+          |require|set(Interval|Timeout)|clear(Interval|Timeout)
+          |eager|hyper|substr|index|rindex|grep|map|sort|join|lines|hints
+          |chmod|split|reduce|min|max|reverse|truncate|zip|cat|roundrobin
+          |classify|first|sum|keys|values|pairs|defined|delete|exists|elems
+          |end|kv|any|all|one|wrap|shape|key|value|name|pop|push|shift
+          |splice|unshift|floor|ceiling|abs|exp|log|log10|rand|sign|sqrt
+          |sin|cos|tan|round|strand|roots|cis|unpolar|polar|atan2|pick|chop
+          |p5chop|chomp|p5chomp|lc|lcfirst|uc|ucfirst|capitalize|normalize|pack
+          |unpack|quotemeta|comb|samecase|sameaccent|chars|nfd|nfc|nfkd|nfkc
+          |printf|sprintf|caller|evalfile|run|runinstead|nothing|want|bless
+          |chr|ord|gmtime|time|eof|localtime|gethost|getpw|chroot|getlogin
+          |getpeername|kill|fork|wait|perl|graphs|codes|bytes|clone|print
+          |open|read|write|readline|say|seek|close|opendir|readdir|slurp
+          |spurt|shell|run|pos|fmt|vec|link|unlink|symlink|uniq|pair|asin
+          |atan|sec|cosec|cotan|asec|acosec|acotan|sinh|cosh|tanh|asinh
+          |done|acos|acosh|atanh|sech|cosech|cotanh|sech|acosech|acotanh
+          |asech|ok|nok|planOk|diesOk|livesOk|skip|todo|pass|flunk
+          |forceTodo|useOk|isaOk|diag|isDeeply|isnt|like|skipRest
+          |unlike|cmpOk|evalDiesOk|nokError|evalLivesOk|approx
+          |isApprox|throwsOk|versionLt|plan|eval|succ|pred|times|nonce
+          |once|signature|new|connect|operator|undef|undefine|sleep|from
+          |to|infix|postfix|prefix|circumfix|postcircumfix|minmax|lazy
+          |count|unwrap|getc|pi|e|context|void|quasi|body|each|contains
+          |rewinddir|subst|can|isa|flush|arity|assuming|rewind|callwith
+          |callsame|nextwith|nextsame|attr|evalElsewhere|none|srand|trim
+          |trimStart|trimEnd|lastcall|what|where|how|which|var|who
+          |whence|accepts|rejects|not|true|iterator|by|re|im|invert
+          |flip|gist|flat|tree|isPrime|throwsLike|trans
+          )
+          (?!\B|\p{Pd}+\b)\s*
+        name: support.function.builtin.pta
+      - match: |
+          (?x)\s*\b(
+          \p{Pc}+(?:
+          abs|add|aenter|aexit|aiter|and|anext|await
+          |bool|call|ceil|cmp|coerce|complex|contains
+          |copy|deepcopy|del|delattr|delete|delitem
+          |delslice|dir|div|divmod|enter|eq|exit|float
+          |floor|floordiv|format|ge|get|getattr
+          |getattribute|getinitargs|getitem|getnewargs
+          |getslice|getstate|gt|hash|hex|iadd|iand|idiv
+          |ifloordiv|ilshift|imod|imul|index|init
+          |instancecheck|int|invert|ior|ipow|irshift|isub
+          |iter|itruediv|ixor|le|len|long|lshift|lt
+          |missing|mod|mul|ne|neg|new|next|nonzero|oct|or
+          |pos|pow|radd|rand|rdiv|rdivmod|reduce
+          |reduceEx|repr|reversed|rfloordiv|rlshift|rmod
+          |rmul|ror|round|rpow|rrshift|rshift|rsub
+          |rtruediv|rxor|set|setattr|setitem|setslice
+          |setstate|sizeof|str|sub|subclasscheck|truediv
+          |trunc|unicode|xor|matmul|rmatmul|imatmul
+          |initSubclass|setName|fspath|bytes|prepare
+          |all|bases|builtins|class|classGetitem|code|debug
+          |defaults|dict|doc|file|func|kwdefaults|members
+          |metaclass|methods|module|mro|mroEntries|name
+          |qualname|postInit|self|signature|slots|subclasses
+          |version|weakref|wrapped|annotations|classcell
+          |spec|path|package|future|traceback
+          )\p{Pc}+
+          )
+          (?!\B|\p{Pd}+\b)\s*
+        name: support.function.magic.pta
+      - match: |
+          (?x)\s*\b(
+          abort|atExit|autoload|binding|callcc|caller|callerLocations
+          |chomp|chop|eval|exec|exit|exit!|fork|format|gets
+          |globalVariables|gsub|lambda|load|localVariables|open
+          |p|print|printf|proc|putc|puts|rand|readline|readlines
+          |select|setTraceFunc|sleep|spawn|sprintf|srand|sub
+          |syscall|system|test|traceVar|trap|untraceVar|warn
+          )
+          (?!\B|\p{Pd}+\b)\s*
+        name: support.function.kernel.pta
+      - match: |
+          (?x)\s*\b(
+          on(Rowsinserted|Rowsdelete|Rowenter|Rowexit|Resize|Resizestart|Resizeend|Reset|
+          Readystatechange|Mouseout|Mouseover|Mousedown|Mouseup|Mousemove|
+          Before(cut|deactivate|unload|update|paste|print|editfocus|activate)|
+          Blur|Scrolltop|Submit|Select|Selectstart|Selectionchange|Hover|Help|
+          Change|Contextmenu|Controlselect|Cut|Cellchange|Clock|Close|Deactivate|
+          Datasetchanged|Datasetcomplete|Dataavailable|Drop|Drag|Dragstart|Dragover|
+          Dragdrop|Dragenter|Dragend|Dragleave|Dblclick|Unload|Paste|Propertychange|Error|
+          Errorupdate|Keydown|Keyup|Keypress|Focus|Load|Activate|Afterupdate|Afterprint|Abort)
+          )
+          (?!\B|\p{Pd}+\b)\s*
+        name: support.function.event-handler.pta
+      - match: |
+          (?x)\s*\b(
+          shift|showModelessDialog|showModalDialog|showHelp|scroll|scrollX|scrollByPages|
+          scrollByLines|scrollY|scrollTo|stop|strike|sizeToContent|sidebar|signText|sort|
+          sup|sub|substr|substring|splice|split|send|set(Milliseconds|Seconds|Minutes|Hours|
+          Month|Year|FullYear|Date|UTC(Milliseconds|Seconds|Minutes|Hours|Month|FullYear|Date)|
+          Time|Hotkeys|Cursor|ZOptions|Active|Resizable|RequestHeader)|search|slice|
+          savePreferences|small|home|handleEvent|navigate|char|charCodeAt|charAt|concat|
+          contextual|confirm|compile|clear|captureEvents|call|createStyleSheet|createPopup|
+          createEventObject|to(GMTString|UTCString|String|Source|UpperCase|LowerCase|LocaleString)|
+          test|taint|taintEnabled|indexOf|italics|disableExternalCapture|dump|detachEvent|unshift|
+          untaint|unwatch|updateCommands|join|javaEnabled|pop|push|plugins.refresh|paddings|parse|
+          print|prompt|preference|enableExternalCapture|exec|execScript|valueOf|UTC|find|file|
+          fileModifiedDate|fileSize|fileCreatedDate|fileUpdatedDate|fixed|fontsize|fontcolor|
+          forward|fromCharCode|watch|link|load|lastIndexOf|anchor|attachEvent|atob|apply|alert|
+          abort|routeEvents|resize|resizeBy|resizeTo|recalc|returnValue|replace|reverse|reload|
+          releaseCapture|releaseEvents|go|get(Milliseconds|Seconds|Minutes|Hours|Month|Day|Year|FullYear|
+          Time|Date|TimezoneOffset|UTC(Milliseconds|Seconds|Minutes|Hours|Day|Month|FullYear|Date)|
+          Attention|Selection|ResponseHeader|AllResponseHeaders)|moveBy|moveBelow|moveTo|
+          moveToAbsolute|moveAbove|mergeAttributes|match|margins|btoa|big|bold|borderWidths|blink|back
+          )
+          (?!\B|\p{Pd}+\b)\s*
+        name: support.function.builtin.pta
+      - match: |
+          (?x)\s*\b(
+          (acceptNode|add|addEventListener|addTextTrack|adoptNode|after|animate|append|
+          appendChild|appendData|before|blur|canPlayType|captureStream|
+          caretPositionFromPoint|caretRangeFromPoint|checkValidity|clear|click|
+          cloneContents|cloneNode|cloneRange|close|closest|collapse|
+          compareBoundaryPoints|compareDocumentPosition|comparePoint|contains|
+          convertPointFromNode|convertQuadFromNode|convertRectFromNode|createAttribute|
+          createAttributeNS|createCaption|createCDATASection|createComment|
+          createContextualFragment|createDocument|createDocumentFragment|
+          createDocumentType|createElement|createElementNS|createEntityReference|
+          createEvent|createExpression|createHTMLDocument|createNodeIterator|
+          createNSResolver|createProcessingInstruction|createRange|createShadowRoot|
+          createTBody|createTextNode|createTFoot|createTHead|createTreeWalker|delete|
+          deleteCaption|deleteCell|deleteContents|deleteData|deleteRow|deleteTFoot|
+          deleteTHead|detach|disconnect|dispatchEvent|elementFromPoint|elementsFromPoint|
+          enableStyleSheetsForSet|entries|evaluate|execCommand|exitFullscreen|
+          exitPointerLock|expand|extractContents|fastSeek|firstChild|focus|forEach|get|
+          getAll|getAnimations|getAttribute|getAttributeNames|getAttributeNode|
+          getAttributeNodeNS|getAttributeNS|getBoundingClientRect|getBoxQuads|
+          getClientRects|getContext|getDestinationInsertionPoints|getElementById|
+          getElementsByClassName|getElementsByName|getElementsByTagName|
+          getElementsByTagNameNS|getItem|getNamedItem|getSelection|getStartDate|
+          getVideoPlaybackQuality|has|hasAttribute|hasAttributeNS|hasAttributes|
+          hasChildNodes|hasFeature|hasFocus|importNode|initEvent|insertAdjacentElement|
+          insertAdjacentHTML|insertAdjacentText|insertBefore|insertCell|insertData|
+          insertNode|insertRow|intersectsNode|isDefaultNamespace|isEqualNode|
+          isPointInRange|isSameNode|item|key|keys|lastChild|load|lookupNamespaceURI|
+          lookupPrefix|matches|move|moveAttribute|moveAttributeNode|moveChild|
+          moveNamedItem|namedItem|nextNode|nextSibling|normalize|observe|open|
+          parentNode|pause|play|postMessage|prepend|preventDefault|previousNode|
+          previousSibling|probablySupportsContext|queryCommandEnabled|
+          queryCommandIndeterm|queryCommandState|queryCommandSupported|queryCommandValue|
+          querySelector|querySelectorAll|registerContentHandler|registerElement|
+          registerProtocolHandler|releaseCapture|releaseEvents|remove|removeAttribute|
+          removeAttributeNode|removeAttributeNS|removeChild|removeEventListener|
+          removeItem|replace|replaceChild|replaceData|replaceWith|reportValidity|
+          requestFullscreen|requestPointerLock|reset|scroll|scrollBy|scrollIntoView|
+          scrollTo|seekToNextFrame|select|selectNode|selectNodeContents|set|setAttribute|
+          setAttributeNode|setAttributeNodeNS|setAttributeNS|setCapture|
+          setCustomValidity|setEnd|setEndAfter|setEndBefore|setItem|setNamedItem|
+          setRangeText|setSelectionRange|setSinkId|setStart|setStartAfter|setStartBefore|
+          slice|splitText|stepDown|stepUp|stopImmediatePropagation|stopPropagation|
+          submit|substringData|supports|surroundContents|takeRecords|terminate|toBlob|
+          toDataURL|toggle|toString|values|write|writeln)
+          )
+          (?!\B|\p{Pd}+\b)\s*
+        name: support.function.dom.pta
+      - match: |
+          (?x)\s*\b(
+          adprep|append|arp|assoc|at|atmadm|attrib|auditpol|autochk|autoconv|autofmt
+          |bcdboot|bcdedit|bdehdcfg|bitsadmin|bootcfg|brea|cacls|cd|certreq|certutil
+          |change|chcp|chdir|chglogon|chgport|chgusr|chkdsk|chkntfs|choice|cipher
+          |clip|cls|clscluadmin|cluster|cmd|cmdkey|cmstp|color|comp|compact|convert
+          |copy|cprofile|cscript|csvde|date|dcdiag|dcgpofix|dcpromo|defra|del|dfscmd
+          |dfsdiag|dfsrmig|diantz|dir|dirquota|diskcomp|diskcopy|diskpart|diskperf
+          |diskraid|diskshadow|dispdiag|doin|dnscmd|doskey|driverquery|dsacls|dsadd
+          |dsamain|dsdbutil|dsget|dsmgmt|dsmod|dsmove|dsquery|dsrm|edit|endlocal
+          |eraseesentutl|eventcreate|eventquery|eventtriggers|evntcmd|expand|extract
+          |fc|filescrn|find|findstr|finger|flattemp|fonde|forfiles|format|freedisk
+          |fsutil|ftp|ftype|fveupdate|getmac|gettype|gpfixup|gpresult|gpupdate
+          |graftabl|hashgen|hep|helpctr|hostname|icacls|iisreset|inuse|ipconfig
+          |ipxroute|irftp|ismserv|jetpack|klist|ksetup|ktmutil|ktpass|label|ldifd
+          |ldp|lodctr|logman|logoff|lpq|lpr|macfile|makecab|manageBde|mapadmin|md
+          |mkdir|mklink|mmc|mode|more|mount|mountvol|move|mqbup|mqsvc|mqtgsvc|msdt
+          |msg|msiexec|msinfo32|mstsc|nbtstat|net|netcfg|netdiag|netdom|netsh|netstat
+          |nfsadmin|nfsshare|nfsstat|nlb|nlbmgr|nltest|nslookup|ntackup|ntcmdprompt
+          |ntdsutil|ntfrsutl|openfiles|pagefileconfig|path|pathping|pause|pbadmin
+          |pentnt|perfmon|ping|pnpunatten|pnputil|popd|powercfg|powershell|powershellIse
+          |print|prncnfg|prndrvr|prnjobs|prnmngr|prnport|prnqctl|prompt|pubprn|pushd
+          |pushprinterconnections|pwlauncher|qappsrv|qprocess|query|quser|qwinsta
+          |rasdial|rcp|rd|rdpsign|regentc|recover|redircmp|redirusr|reg|regini|regsvr32
+          |relog|ren|rename|rendom|repadmin|repairBde|replace|reset|rxec|risetup
+          |rmdir|robocopy|route|rpcinfo|rpcping|rsh|runas|rundll32|rwinsta|sc|schtasks
+          |scp|scwcmd|secedit|serverceipoptin|servrmanagercmd|serverweroptin|setspn
+          |setx|sfc|sftp|shadow|shift|showmount|shutdown|sort|ssh|sshAdd|sshAgent
+          |sshKeygen|sshKeyscan|start|storrept|subst|sxstrace|ysocmgr|systeminfo
+          |takeown|tapicfg|taskkill|tasklist|tcmsetup|telnet|tftp|time|timeout|title
+          |tlntadmn|tpmvscmgr|tpmvscmgr|tacerpt|tracert|tree|tscon|tsdiscon|tsecimp
+          |tskill|tsprof|type|typeperf|tzutil|uddiconfig|umount|unlodctr|ver|verifier
+          |verif|vol|vssadmin|w32tm|waitfor|wbadmin|wdsutil|wecutil|wevtutil|where
+          |whoami|winnt|winnt32|winpop|winrm|winrs|winsat|wlbs|wmic|wscript|wsl|xcopy
+          |alias|bg|bind|break|builtin|caller|cd|command|compgen|complete|dirs|disown
+          |echo|enable|eval|exec|exit|false|fc|fg|getopts|hash|help|history|jobs|kill
+          |let|logout|popd|printf|pushd|pwd|read|readonly|set|shift|shopt|source
+          |suspend|test|times|trap|true|type|ulimit|umask|unalias|unset|wait
+          )
+          (?!\B|\p{Pd}+\b)\s*
+        name: support.function.command.pta
       - match: |
           (?x)\b(?:
           (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
@@ -1739,8 +1933,6 @@ repository:
 
   html-properties:
     patterns:
-      - match: \s+
-        name: meta.var.expr.pta
       - include: "#brackets"
       - include: "#literals"
       - include: source.yaml#flow-collection
@@ -1756,7 +1948,7 @@ repository:
       - include: "#tag-names"
       - include: "#embedded"
   tag-names:
-    match: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b\s*
+    match: \b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
     name: entity.name.tag.pta
     captures:
       1:
@@ -1768,7 +1960,44 @@ repository:
             name: entity.name.tag.namespace.pta
           - match: \b((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)\b
             name: support.class.component.pta
-          - include: source.css#tag-names
+          - match: |
+              (?x)\s*\b(
+
+              (?:
+              # Html
+              a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdi|bdo|bgsound
+              |big|blink|blockquote|body|br|button|canvas|caption|center|cite|code|col|colgroup|command
+              |content|data|datalist|dd|del|details|dfn|dialog|dir|div|dl|dt|element|em|embed|fieldset
+              |figcaption|figure|font|footer|form|frame|frameset|h(?:0|[1-9]\d*)|head|header|hgroup|hr|html|i
+              |iframe|image|img|input|ins|isindex|kbd|keygen|label|legend|li|link|listing|main|map|mark
+              |marquee|math|menu|menuitem|meta|meter|multicol|nav|nextid|nobr|noembed|noframes|noscript
+              |object|ol|optgroup|option|output|p|param|picture|plaintext|pre|progress|q|rb|rp|rt|rtc
+              |ruby|s|samp|script|section|select|shadow|slot|small|source|spacer|span|strike|strong
+              |style|sub|summary|sup|table|tbody|td|template|textarea|tfoot|th|thead|time|title|tr
+              |track|tt|u|ul|var|video|wbr|xmp
+
+              # Svg
+              |altGlyph|altGlyphDef|altGlyphItem|animate|animateColor|animateMotion|animateTransform
+              |circle|clipPath|colorProfile|cursor|defs|desc|discard|ellipse|feBlend|feColorMatrix
+              |feComponentTransfer|feComposite|feConvolveMatrix|feDiffuseLighting|feDisplacementMap
+              |feDistantLight|feDropShadow|feFlood|feFuncA|feFuncB|feFuncG|feFuncR|feGaussianBlur
+              |feImage|feMerge|feMergeNode|feMorphology|feOffset|fePointLight|feSpecularLighting
+              |feSpotLight|feTile|feTurbulence|filter|fontFace|fontFaceFormat|fontFaceName
+              |fontFaceSrc|fontFaceUri|foreignObject|g|glyph|glyphRef|hatch|hatchpath|hkern
+              |line|linearGradient|marker|mask|mesh|meshgradient|meshpatch|meshrow|metadata
+              |missingGlyph|mpath|path|pattern|polygon|polyline|radialGradient|rect|set|solidcolor
+              |stop|svg|switch|symbol|text|textPath|tref|tspan|use|view|vkern
+
+              # MathML
+              |annotation|annotationXml|maction|maligngroup|malignmark|math|menclose|merror|mfenced
+              |mfrac|mglyph|mi|mlabeledtr|mlongdiv|mmultiscripts|mn|mo|mover|mpadded|mphantom|mroot
+              |mrow|ms|mscarries|mscarry|msgroup|msline|mspace|msqrt|msrow|mstack|mstyle|msub|msubsup
+              |msup|mtable|mtd|mtext|mtr|munder|munderover|semantics
+              )
+
+              )
+              (?!\B|\p{Pd}+\b)\s*
+            name: entity.name.tag.css.pta
   style-block:
     begin: \s*(\{)\s*
     end: \s*(\})\s*
@@ -1779,25 +2008,7 @@ repository:
     patterns:
       - include: "#clauses"
       - include: "#declarations"
-      - include: source.css.scss#variable_setting
-      - include: source.css.scss#at_rule_forward
-      - include: source.css.scss#at_rule_use
-      - include: source.css.scss#at_rule_include
-      - include: source.css.scss#at_rule_import
-      - include: source.css.scss#general
-      - include: source.css.scss#flow_control
-      - include: source.css.scss#rules
-      - include: source.css.scss#at_rule_mixin
-      - include: source.css.scss#at_rule_media
-      - include: source.css.scss#at_rule_function
-      - include: source.css.scss#at_rule_charset
-      - include: source.css.scss#at_rule_option
-      - include: source.css.scss#at_rule_namespace
-      - include: source.css.scss#at_rule_fontface
-      - include: source.css.scss#at_rule_page
-      - include: source.css.scss#at_rule_keyframes
-      - include: source.css.scss#at_rule_at_root
-      - include: source.css.scss#at_rule_supports
+      - include: "#style-block"
       - applyEndPatternLast: 1
         begin: |
           (?x)
@@ -1833,8 +2044,10 @@ repository:
           8: {name: punctuation.separator.key-value.pta}
         end: (?=)|$
         name: string.unquoted.pta
-        patterns: [include: "#html-properties"]
-      - include: "#style-block"
+        patterns:
+          - include: "#html-properties"
+          - match: \s+
+            name: meta.var.expr.pta
       - include: "#style-rules"
       - include: $self
   style-rules:
@@ -2036,28 +2249,9 @@ repository:
       (?x)
       (?<=
       (?:
-      ^\s*|,\s*|;\s*|
-      \#?[({\[]\s*|
-      [\p{Pc}\p{L}][\w\p{Pd}]*|
-      (?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s+|
-      \b(?:# keywords
-      in|of|as|is|new
-      |to|til|thru|by|del
-      |unset|ref|and|or|xor|not
-      |var|val|func|proc|type
-      |class|data|enum|module
-      |iter|macro|struct|object
-      |trait|style|compo|prop
-      |go|defer|do|from|where|with
-      |if|elif|else|then|def
-      |for|each|loop|while
-      |try|throw|catch|after
-      |match|case|goto|pass
-      |break|next|redo|retry
-      |return|yield|await|label
-      |import|export|route
-      |debug|assert|check
-      )\b
+      (?:^|[,;]|\#?[({\[])\s*|
+      \b[\p{Pc}\p{L}][\w\p{Pd}]*\b|
+      (?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s+
       )\s*
       )
       (?=<[\p{Pc}\p{L}]|<\s+>)
@@ -3192,7 +3386,8 @@ repository:
           )
         captures:
           1: {name: punctuation.section.embedded.pta}
-          2: {patterns: [include: "#types", include: "#everything-but-comments"]}
+          2:
+            {patterns: [include: "#types", include: "#everything-but-comments"]}
 
   type-embedded:
     patterns:
@@ -4017,7 +4212,7 @@ repository:
                   1: {name: keyword.operator.assignment.pta}
               - include: "#types"
       catch-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|after)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(catch)(?!\B|\p{Pd}+\b)\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.catch.pta
         captures:
@@ -4035,17 +4230,8 @@ repository:
           - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.error.pta
           - include: $self
-      do-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        name: meta.do.pta
-        captures:
-          1: {name: keyword.control.do.pta}
-          2: {name: punctuation.separator.colon.pta}
-        patterns:
-          - include: $self
       for-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|while)(?!\B|\p{Pd}+\b)\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.for.pta
         captures:
@@ -4064,7 +4250,7 @@ repository:
               - include: $self
           - include: $self
       if-clause:
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|elif|else)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|elif)(?!\B|\p{Pd}+\b)\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.if.pta
         captures:
