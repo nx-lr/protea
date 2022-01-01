@@ -2287,13 +2287,18 @@ repository:
   style-rules:
     patterns:
       - include: "#calls"
+      - include: "#type-operators"
       - begin: \s*(\()\s*
         end: \s*(\))\s*
         captures:
           1: {name: punctuation.definition.parameters.pta}
         patterns:
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.operator.expression.as.pta
           - include: "#clauses"
+          - include: "#constants"
           - include: "#declarations"
+          - include: "#expression-keywords"
           - include: "#style-block"
           - include: "#style-pair"
           - include: "#function-params"
@@ -4097,13 +4102,19 @@ repository:
         beginCaptures:
           1: {name: storage.type.style.pta}
         patterns:
-          - match: \s+([?:]?=)\s*
-            captures:
-              1: {name: keyword.operator.assignment.pta}
-          - include: "#style-pair"
           - include: "#style-rules"
           - include: "#style-pair"
           - include: "#style-block"
+          - applyEndPatternLast: 1
+            begin: \s*([?:]?=)\s*
+            captures:
+              1: {name: keyword.operator.assignment.pta}
+            end: (?=)|$
+            patterns:
+              - include: "#style-pair"
+              - include: "#style-rules"
+              - include: "#style-block"
+              - include: "#block-entities"
           - include: "#block-entities"
           - match: *entity-name
             name: entity.name.style.pta
