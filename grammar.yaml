@@ -2061,11 +2061,14 @@ repository:
         patterns:
           - include: "#function-params"
           - include: "#style-properties"
+          - include: $self
       - begin: \s*(\[)\s*
         end: \s*(\])\s*
         captures:
           1: {name: punctuation.definition.selector.pta}
-        patterns: [include: "#attribute-selectors"]
+        patterns:
+          - include: "#attribute-selectors"
+          - include: $self
       - include: "#style-selectors"
       - include: "#format-language"
       - include: "#tag-names"
@@ -3510,7 +3513,6 @@ repository:
           - include: "#comma"
       - include: "#declarations"
       - include: "#type-keywords"
-      - include: "#illegal-keywords"
       - include: "#type-square-brackets"
       - include: "#parameter-brackets"
       - include: "#round-brackets"
@@ -4192,7 +4194,6 @@ repository:
           - match: *entity-name
             name: entity.name.instance.pta
           - include: "#type-keywords"
-          - include: "#illegal-keywords"
           - include: "#type-square-brackets"
           - include: "#parameter-brackets"
           - include: "#round-brackets"
@@ -4299,13 +4300,8 @@ repository:
                   - include: "#type-keywords"
                   - include: $self
               - &default-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?!\B|\p{Pd}+\b)\s*
-                end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
-                captures:
-                  1: {name: keyword.control.switch.pta}
-                  2: {name: punctuation.separator.colon.pta}
-                patterns:
-                  - include: $self
+                match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.switch.pta
               - include: $self
           - begin: (\{)\s*
             end: \s*(\})\s*
@@ -4476,7 +4472,7 @@ repository:
           - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
             end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
             captures:
-              1: {name: keyword.control.switch.pta}
+              1: {name: keyword.control.match.pta}
               2: {name: punctuation.separator.colon.pta}
             patterns:
               - include: "#params-clause"
@@ -4484,24 +4480,19 @@ repository:
                 begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
                 end: (?=)|$
                 beginCaptures:
-                  1: {name: keyword.control.switch.pta}
+                  1: {name: keyword.control.match.pta}
                 patterns:
                   - include: "#types"
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.switch.pta
+                name: keyword.control.match.pta
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.switch.pta
+                name: keyword.control.match.pta
               - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.switch.pta
+                name: keyword.control.match.pta
               - include: "#type-keywords"
               - include: $self
-          - begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?!\B|\p{Pd}+\b)\s*
-            end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
-            captures:
-              1: {name: keyword.control.switch.pta}
-              2: {name: punctuation.separator.colon.pta}
-            patterns:
-              - include: $self
+          - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.match.pta
           - include: $self
     patterns:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\{)\s*
