@@ -328,13 +328,8 @@ repository:
   function-names:
     comment: Names for built-in functions (initial dump)
     patterns:
-      - comment: isName functions
-        match: (?x)\s*\bis(\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+(?!\B|\p{Pd}+\b)\s*
-        name: support.function.predicate.pta
-      - comment: magic functions
-        match: (?x)\s*\b\p{Pc}+([\p{Pc}\p{L}][\w\p{Pd}]*)+\p{Pc}+(?!\B|\p{Pd}+\b)\s*
-        name: support.function.magic.pta
-      - match: |
+      - comment: Python and Perl 6/Raku built-in functions
+        match: |
           (?x)\s*\b(
           import|abs|all|any|ascii|bin|breakpoint|callable
           |chr|compile|copyright|credits|delattr|dir|divmod
@@ -378,7 +373,8 @@ repository:
           )
           (?!\B|\p{Pd}+\b)\s*
         name: support.function.builtin.pta
-      - match: |
+      - comment: Python magic functions
+        match: |
           (?x)\s*\b(
           \p{Pc}+(?:
           abs|add|aenter|aexit|aiter|and|anext|await
@@ -409,10 +405,11 @@ repository:
           )
           (?!\B|\p{Pd}+\b)\s*
         name: support.function.magic.pta
-      - match: |
+      - comment: Ruby kernel functions
+        match: |
           (?x)\s*\b(
           abort|atExit|autoload|binding|callcc|caller|callerLocations
-          |chomp|chop|eval|exec|exit|exit!|fork|format|gets
+          |chomp|chop|eval|exec|exit|exit|fork|format|gets
           |globalVariables|gsub|lambda|load|localVariables|open
           |p|print|printf|proc|putc|puts|rand|readline|readlines
           |select|setTraceFunc|sleep|spawn|sprintf|srand|sub
@@ -420,7 +417,8 @@ repository:
           )
           (?!\B|\p{Pd}+\b)\s*
         name: support.function.kernel.pta
-      - match: |
+      - comment: Event handler functions
+        match: |
           (?x)\s*\b(
           on(Rowsinserted|Rowsdelete|Rowenter|Rowexit|Resize|Resizestart|Resizeend|Reset|
           Readystatechange|Mouseout|Mouseover|Mousedown|Mouseup|Mousemove|
@@ -433,7 +431,8 @@ repository:
           )
           (?!\B|\p{Pd}+\b)\s*
         name: support.function.event-handler.pta
-      - match: |
+      - comment: JavaScript StdLib functions
+        match: |
           (?x)\s*\b(
           shift|showModelessDialog|showModalDialog|showHelp|scroll|scrollX|scrollByPages|
           scrollByLines|scrollY|scrollTo|stop|strike|sizeToContent|sidebar|signText|sort|
@@ -456,7 +455,8 @@ repository:
           )
           (?!\B|\p{Pd}+\b)\s*
         name: support.function.builtin.pta
-      - match: |
+      - comment: DOM functions
+        match: |
           (?x)\s*\b(
           (acceptNode|add|addEventListener|addTextTrack|adoptNode|after|animate|append|
           appendChild|appendData|before|blur|canPlayType|captureStream|
@@ -504,7 +504,8 @@ repository:
           )
           (?!\B|\p{Pd}+\b)\s*
         name: support.function.dom.pta
-      - match: |
+      - comment: Bash and Batch built-in functions
+        match: |
           (?x)\s*\b(
           adprep|append|arp|assoc|at|atmadm|attrib|auditpol|autochk|autoconv|autofmt
           |bcdboot|bcdedit|bdehdcfg|bitsadmin|bootcfg|brea|cacls|cd|certreq|certutil
@@ -545,6 +546,44 @@ repository:
           )
           (?!\B|\p{Pd}+\b)\s*
         name: support.function.command.pta
+      - comment: SQL built-in functions
+        match: |
+          (?x)\s*\b(
+          avg|checksumAgg|count|countBig|grouping|groupingId|max|min|sum|stdev|stdevp|var|varp
+          |cumeDist|firstValue|lag|lastValue|lead|percentRank|percentileCont|percentileDisc
+          |cast|convert|parse|tryCast|tryConvert|tryParse|cursorStatus|coalesce|nullif|choose|iif
+          |sysdatetime|sysdatetimeoffset|sysutcdatetime|currentTime(?:stamp)?|getdate|getutcdate
+          |datename|datepart|day|month|year|datefromparts|datetime2fromparts|datetimefromparts
+          |datetimeoffsetfromparts|smalldatetimefromparts|timefromparts|datediff|dateadd|eomonth
+          |switchoffset|todatetimeoffset|isdate|cursorRows|connections|cpuBusy|datefirst|dbts|error
+          |fetchStatus|identity|idle|ioBusy|langid|language|lockTimeout|maxConnections|maxPrecision
+          |nestlevel|options|packetErrors|packReceived|packSent|procid|remserver|rowcount|servername
+          |servicename|spid|textsize|timeticks|totalErrors|totalRead|totalWrite|trancount|version|abs
+          |acos|asin|atan|atn2|ceiling|cos|cot|degrees|exp|floor|log|log10|pi|power|radians|rand|round|sign
+          |sin|sqrt|square|tan|appName|applockMode|applockTest|assemblyproperty|colLength|colName
+          |columnproperty|databasePrincipalId|databasepropertyex|dbId|dbName|fileId|fileIdex|fileName
+          |filegroupId|filegroupName|filegroupproperty|fileproperty|fulltextcatalogproperty|fulltextserviceproperty
+          |indexCol|indexkeyProperty|indexproperty|objectDefinition|objectId|objectName|objectSchemaName
+          |objectproperty|objectpropertyex|originalDbName|parsename|schemaId|schemaName|scopeIdentity
+          |serverproperty|statsDate|typeId|typeName|typeproperty|rank|denseRank|ntile|rowNumber
+          |opendatasource|openrowset|openquery|openxml|certencoded|certprivatekey|currentUser
+          |databasePrincipalId|hasPermsByName|isMember|isRolemember|isSrvrolemember|originalLogin
+          |permissions|pwdcompare|pwdencrypt|schemaId|schemaName|sessionUser|suserId|suserSid|suserSname
+          |systemUser|suserName|userId|userName|ascii|char|charindex|concat|difference|format|left|len|lower|ltrim
+          |nchar|nodes|patindex|quotename|replace|replicate|reverse|right|rtrim|soundex|space|str|stringAgg|stringEscape
+          |stringSplit|stuff|substring|translate|trim|unicode|upper|patindex|textptr|textvalid
+          |binaryChecksum|checksum|compress|connectionproperty|contextInfo|currentRequestId|currentTransactionId
+          |decompress|errorLine|errorMessage|errorNumber|errorProcedure|errorSeverity|errorState|formatmessage
+          |getFilestreamTransactionContext|getansinull|hostId|hostName|isnull|isnumeric|minActiveRowversion
+          |newid|newsequentialid|rowcountBig|sessionContext|sessionId|xactState
+          (?!\B|\p{Pd}+\b)\s*
+        name: support.function.database.pta
+      - comment: predicate functions
+        match: (?x)\s*\bis(\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+(?!\B|\p{Pd}+\b)\s*
+        name: support.function.predicate.pta
+      - comment: magic functions
+        match: (?x)\s*\b\p{Pc}+([\p{Pc}\p{L}][\w\p{Pd}]*)+\p{Pc}+(?!\B|\p{Pd}+\b)\s*
+        name: support.function.magic.pta
       - match: |
           (?x)\b(?:
           (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
@@ -2104,8 +2143,6 @@ repository:
           |textJustify|textOutline|textReplace|textWrap|timingFunction|topColor|topLeftRadius|topRightRadius|topStyle
           |topWidth|trim|unicode|up|userSelect|variant|voice|voiceBalance|voiceDuration|voiceFamily|voicePitch|voicePitchRange
           |voiceRate|voiceStress|voiceVolume|volume|weight|white|whiteSpaceCollapse|word|wrap
-
-
           )
           (?!\B|\p{Pd}+\b)\s*
         name: support.type.property-name.css.pta
@@ -2114,7 +2151,6 @@ repository:
     match: |
       (?x)\s*\b(
 
-      (?:
       # HTML
       a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdi|bdo|bgsound
       |big|blink|blockquote|body|br|button|canvas|caption|center|cite|code|col|colgroup|command
@@ -2127,7 +2163,7 @@ repository:
       |style|sub|summary|sup|table|tbody|td|template|textarea|tfoot|th|thead|time|title|tr
       |track|tt|u|ul|var|video|wbr|xmp
 
-      # Svg
+      # SVG
       |altGlyph|altGlyphDef|altGlyphItem|animate|animateColor|animateMotion|animateTransform
       |circle|clipPath|colorProfile|cursor|defs|desc|discard|ellipse|feBlend|feColorMatrix
       |feComponentTransfer|feComposite|feConvolveMatrix|feDiffuseLighting|feDisplacementMap
@@ -2144,8 +2180,6 @@ repository:
       |mfrac|mglyph|mi|mlabeledtr|mlongdiv|mmultiscripts|mn|mo|mover|mpadded|mphantom|mroot
       |mrow|ms|mscarries|mscarry|msgroup|msline|mspace|msqrt|msrow|mstack|mstyle|msub|msubsup
       |msup|mtable|mtd|mtext|mtr|munder|munderover|semantics
-      )
-
       )
       (?!\B|\p{Pd}+\b)\s*
     name: entity.name.tag.css.pta
@@ -2186,7 +2220,7 @@ repository:
     captures:
       1: {name: punctuation.definition.block.pta}
     patterns: [include: "#style-properties"]
-  style-property:
+  style-pair:
     applyEndPatternLast: 1
     begin: |
       (?x)
@@ -2231,8 +2265,9 @@ repository:
     patterns:
       - include: "#clauses"
       - include: "#declarations"
+      - include: "#keywords"
       - include: "#style-block"
-      - include: "#style-property"
+      - include: "#style-pair"
       - include: "#style-rules"
       - include: $self
   style-rules:
@@ -2246,7 +2281,7 @@ repository:
           - include: "#clauses"
           - include: "#declarations"
           - include: "#style-block"
-          - include: "#style-property"
+          - include: "#style-pair"
           - include: "#function-params"
           - include: $self
       - begin: \s*(\[)\s*
@@ -2257,7 +2292,7 @@ repository:
           - include: "#attribute-selectors"
           - include: $self
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.expression.style.pta
+        name: keyword.operator.expression.pta
       - include: "#style-selectors"
       - include: "#format-language"
       - include: "#tag-names"
@@ -4033,7 +4068,7 @@ repository:
             captures:
               1: {name: keyword.operator.assignment.pta}
           - include: "#style-rules"
-          - include: "#style-property"
+          - include: "#style-pair"
           - include: "#style-block"
           - include: "#block-entities"
           - match: *entity-name
