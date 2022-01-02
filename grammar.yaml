@@ -279,12 +279,11 @@ repository:
           1: {name: punctuation.definition.symbol.pta}
           2: {name: constant.other.symbol.pta}
       - applyEndPatternLast: 1
-        begin: \s*\B(\\)([\p{Pc}\p{L}][\w\p{Pd}]*\b)
+        begin: \s*\B(\\)(?=\$?\w|$)
         end: (?=[\p{Z}\p{P}\p{S}])|$
         name: string.unquoted.pta
         captures:
           1: {name: punctuation.definition.string.pta}
-          2: {name: string.unquoted.pta}
         patterns: [include: "#string-content"]
 
   # Numbers
@@ -3275,6 +3274,15 @@ repository:
         begin: (?<!"+)\s*("""+|")
         contentName: string.quoted.double.pta
         end: \s*((\1)(?!"+))
+        captures:
+          1: {name: punctuation.definition.string.pta}
+        patterns:
+          - include: "#string-escapes"
+          - include: "#type-embedded"
+      - applyEndPatternLast: 1
+        begin: \s*\B(\\)(?=\$?\w|$)
+        end: (?=[\p{Z}\p{P}\p{S}])|$
+        name: string.unquoted.pta
         captures:
           1: {name: punctuation.definition.string.pta}
         patterns:
