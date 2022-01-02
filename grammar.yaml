@@ -1589,8 +1589,221 @@ repository:
   # Markdown
 
   markdown:
-    comment: Only inline Markdown syntax would be supported, plus some enhancements HAML, Textile and more. Coming soon.
-    patterns: []
+    comment: Only inline Markdown syntax would be supported, plus some enhancements from HAML, Textile and more. Coming soon.
+    patterns:
+      - include: "#inline"
+    repository:
+      inline:
+        patterns:
+          - include: "#raw"
+          - include: "#superscript"
+          - include: "#subscript"
+          - include: "#deleted"
+          - include: "#inserted"
+          - include: "#citation"
+          - include: "#span"
+          - include: "#code"
+          - include: "#bold"
+          - include: "#italic"
+          - include: "#underline"
+          - include: "#string-content"
+      raw:
+        comment: "==raw=="
+        begin: (?<!\=+)(\=\=+)(?!\s|</>?|/>)
+        end: (?<!\s|</>?|/>)(\1)
+        captures:
+          1: {name: punctuation.definition.raw.pta}
+        name: markup.raw.pta
+      superscript:
+        comment: "^superscript^"
+        begin: (?<!\^+)(\^+)(?!\s|</>?|/>)
+        end: (?<!\s|</>?|/>)(\1)
+        captures:
+          1: {name: punctuation.definition.superscript.pta}
+        name: markup.superscript.pta
+        patterns:
+          - include: "#raw"
+          - include: "#subscript"
+          - include: "#deleted"
+          - include: "#inserted"
+          - include: "#citation"
+          - include: "#span"
+          - include: "#code"
+          - include: "#bold"
+          - include: "#italic"
+          - include: "#underline"
+          - include: "#string-content"
+      subscript:
+        comment: "~subscript~"
+        begin: (?<!\~+)(\~+)(?!\s|</>?|/>)
+        end: (?<!\s|</>?|/>)(\1)
+        captures:
+          1: {name: punctuation.definition.subscript.pta}
+        name: markup.subscript.pta
+        patterns:
+          - include: "#raw"
+          - include: "#superscript"
+          - include: "#deleted"
+          - include: "#inserted"
+          - include: "#citation"
+          - include: "#span"
+          - include: "#code"
+          - include: "#bold"
+          - include: "#italic"
+          - include: "#underline"
+          - include: "#string-content"
+      deleted:
+        comment: "-deleted-"
+        begin: (?<!\-+)(\-+)(?!\s|</>?|/>)
+        end: (?<!\s|</>?|/>)(\1)
+        captures:
+          1: {name: punctuation.definition.deleted.pta}
+        name: markup.deleted.pta
+        patterns:
+          - include: "#raw"
+          - include: "#superscript"
+          - include: "#subscript"
+          - include: "#inserted"
+          - include: "#citation"
+          - include: "#span"
+          - include: "#code"
+          - include: "#bold"
+          - include: "#italic"
+          - include: "#underline"
+          - include: "#string-content"
+      inserted:
+        comment: "+inserted+"
+        begin: (?<!\++)(\++)(?!\s|</>?|/>)
+        end: (?<!\s|</>?|/>)(\1)
+        captures:
+          1: {name: punctuation.definition.inserted.pta}
+        name: markup.inserted.pta
+        patterns:
+          - include: "#raw"
+          - include: "#superscript"
+          - include: "#subscript"
+          - include: "#deleted"
+          - include: "#citation"
+          - include: "#span"
+          - include: "#code"
+          - include: "#bold"
+          - include: "#italic"
+          - include: "#underline"
+          - include: "#string-content"
+      citation:
+        comment: "??citation??"
+        begin: (?<!\?+)(\?\?+)(?!\s|</>?|/>)
+        end: (?<!\s|</>?|/>)(\1)
+        captures:
+          1: {name: punctuation.definition.citation.pta}
+        name: markup.citation.pta
+        patterns:
+          - include: "#raw"
+          - include: "#superscript"
+          - include: "#subscript"
+          - include: "#deleted"
+          - include: "#inserted"
+          - include: "#span"
+          - include: "#code"
+          - include: "#bold"
+          - include: "#italic"
+          - include: "#underline"
+          - include: "#string-content"
+      span:
+        comment: "%span%"
+        begin: (?<!\%+)(\%+)(?!\s|</>?|/>)
+        end: (?<!\s|</>?|/>)(\1)
+        captures:
+          1: {name: punctuation.definition.span.pta}
+        name: markup.span.pta
+        patterns:
+          - include: "#raw"
+          - include: "#superscript"
+          - include: "#subscript"
+          - include: "#deleted"
+          - include: "#inserted"
+          - include: "#citation"
+          - include: "#code"
+          - include: "#bold"
+          - include: "#italic"
+          - include: "#underline"
+          - include: "#string-content"
+      code:
+        comment: "`code`"
+        begin: (?<!\`+)(\`+)(?!\s|</>?|/>)
+        end: (?<!\s|</>?|/>)(\1)
+        captures:
+          1: {name: punctuation.definition.code.pta}
+        name: markup.code.pta
+        patterns:
+          - include: "#raw"
+          - include: "#superscript"
+          - include: "#subscript"
+          - include: "#deleted"
+          - include: "#inserted"
+          - include: "#citation"
+          - include: "#span"
+          - include: "#bold"
+          - include: "#italic"
+          - include: "#underline"
+          - include: "#string-content"
+      bold:
+        comment: "*bold*"
+        begin: (?<!\*+)(\*+)(?!\s|</>?|/>)
+        end: (?<!\s|</>?|/>)(\1)
+        captures:
+          1: {name: punctuation.definition.bold.pta}
+        name: markup.bold.pta
+        patterns:
+          - include: "#raw"
+          - include: "#superscript"
+          - include: "#subscript"
+          - include: "#deleted"
+          - include: "#inserted"
+          - include: "#citation"
+          - include: "#span"
+          - include: "#code"
+          - include: "#italic"
+          - include: "#underline"
+          - include: "#string-content"
+      italic:
+        comment: "/italic/"
+        begin: (?<!\/+)(\/+)(?!\s|</>?|/>)
+        end: (?<!\s|</>?|/>)(\1)
+        captures:
+          1: {name: punctuation.definition.italic.pta}
+        name: markup.italic.pta
+        patterns:
+          - include: "#raw"
+          - include: "#superscript"
+          - include: "#subscript"
+          - include: "#deleted"
+          - include: "#inserted"
+          - include: "#citation"
+          - include: "#span"
+          - include: "#code"
+          - include: "#bold"
+          - include: "#underline"
+          - include: "#string-content"
+      underline:
+        comment: "_underline_"
+        begin: (\_+)(?!\s|</>?|/>)
+        end: (?<!\s|</>?|/>)(\1)
+        captures:
+          1: {name: punctuation.definition.underline.pta}
+        name: markup.underline.pta
+        patterns:
+          - include: "#raw"
+          - include: "#superscript"
+          - include: "#subscript"
+          - include: "#deleted"
+          - include: "#inserted"
+          - include: "#citation"
+          - include: "#span"
+          - include: "#code"
+          - include: "#bold"
+          - include: "#italic"
+          - include: "#string-content"
 
   # Special code blocks
 
@@ -1605,10 +1818,6 @@ repository:
       - include: source.css.scss#constant_important
       - include: source.css.scss#constant_default
       - include: source.css.scss#constant_optional
-      - include: source.css#numeric-values
-      - include: source.css#property-keywords
-      - include: source.css#color-keywords
-      - include: source.css#property-names
       - include: "#tag-names"
       - include: "#embedded"
   tag-names:
@@ -1961,8 +2170,7 @@ repository:
       - include: "#jsx-entities"
       - include: "#tag-component-name"
       - include: "#string-content"
-      - include: markdown.math.block
-      - include: text.html.markdown#inline
+      - include: "#markdown"
   tag-attributes:
     patterns:
       - applyEndPatternLast: 1
