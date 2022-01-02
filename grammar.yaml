@@ -29,6 +29,7 @@ comment: |
   - Definition blocks
   - Tables
   - Headings and subheadings
+  - Add null end tag syntax `<h1/sample text/` to JSX
 
 define:
   number-literal: &number-literal
@@ -279,7 +280,7 @@ repository:
           2: {name: constant.other.symbol.pta}
       - applyEndPatternLast: 1
         begin: \s*\B(\\)([\p{Pc}\p{L}][\w\p{Pd}]*\b)
-        end: (?=[\p{P}\p{S}])|$
+        end: (?=[\p{Z}\p{P}\p{S}])|$
         name: string.unquoted.pta
         captures:
           1: {name: punctuation.definition.string.pta}
@@ -2159,7 +2160,7 @@ repository:
         contentName: invalid.illegal.invalid-prop.pta
         begin: |
           (?x)\s*+(<)#start tag begin
-          ([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)#tag name
+          (\b[\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*\b)#tag name
           (?=[\/>\s])(?![:])(?<!\.|:)
         end: \s*(?:(?<=</)(\2)(>)|(<?/>)|((?<=</)\O*?)>)
         beginCaptures:
@@ -2189,13 +2190,18 @@ repository:
       - include: "#markdown"
   tag-attributes:
     patterns:
+      - include: "#comma"
+      - include: "#semicolon"
       - applyEndPatternLast: 1
         begin: \s*(=)\s*
         beginCaptures:
           1: {name: punctuation.separator.key-value.pta}
         end: (?=)|$
         name: string.unquoted.pta
-        patterns: [include: "#html-properties"]
+        patterns:
+          - include: "#html-properties"
+          - match: \s+
+            name: meta.space.pta
       - include: "#style-selectors"
       - include: "#attributes"
       - include: "#comments"
@@ -2582,7 +2588,7 @@ repository:
           )
           [\p{Pc}\p{L}][\w\p{Pd}]*
           )
-          \b\s+
+          \b\s*
           (?=['"]|
           (?:[!?]\.=?|\.=)?\#?\(|
           (?:[!?]\.=?|\.=)?<(?:\b|['"`\\({\[])
