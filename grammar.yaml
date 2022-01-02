@@ -91,7 +91,7 @@ repository:
       - include: "#jsx"
       - include: "#punctuation"
       - include: "#type-annotation"
-      - include: "#format-specifier"
+      - include: "#flag-specifier"
       - include: "#symbol-strings"
       - include: "#symbols"
       - include: "#operators"
@@ -253,14 +253,22 @@ repository:
 
   symbols:
     patterns:
-      - match: (?x)\s*@[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
+      - match: (?x)\s*@[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*\b)*\s*
         name: entity.name.class.decorator.pta
       - match: \s*\B(:)(?=['"])
         name: punctuation.definition.symbol.pta
-      - match: \s*\B(:)([\p{Pc}\p{L}][\w\p{Pd}]*)
+      - match: \s*\B(:)([\p{Pc}\p{L}][\w\p{Pd}]*\b)
         captures:
           1: {name: punctuation.definition.symbol.pta}
           2: {name: constant.other.symbol.pta}
+      - applyEndPatternLast: 1
+        begin: \s*\B(\\)([\p{Pc}\p{L}][\w\p{Pd}]*\b)
+        end: (?=[\p{P}\p{S}])|$
+        name: string.unquoted.pta
+        captures:
+          1: {name: punctuation.definition.string.pta}
+          2: {name: string.unquoted.pta}
+        patterns: [include: "#string-content"]
 
   # Numbers
 
@@ -954,6 +962,46 @@ repository:
         captures:
           1: {name: punctuation.section.embedded.pta}
           2: {patterns: [include: "#embedded-content"]}
+  flag-specifier:
+    patterns:
+      - comment: // for multiple flags
+        applyEndPatternLast: 1
+        begin: (?x)(?<=^|\s|\b)(//)\b
+        end: (?=)|$
+        captures:
+          1: {name: punctuation.definition.directive.pta}
+        patterns:
+          - comment: Format switch with value /x:24
+            applyEndPatternLast: 1
+            begin: ([\p{Pc}\p{L}][\w\p{Pd}]*)(:)
+            beginCaptures:
+              1: {name: keyword.other.flag.pta}
+              2: {name: punctuation.separator.key-value.pta}
+            end: (?=)|$
+            patterns: [include: "#html-properties"]
+          - comment: Format switch without value
+            match: ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            captures:
+              1: {name: keyword.other.flag.pta}
+      - comment: Oniguruma supports only 20 levels of recursion
+        applyEndPatternLast: 1
+        begin: (?x)(?<=^|\s|\b)(/)\b
+        end: (?=)|$
+        captures:
+          1: {name: punctuation.definition.directive.pta}
+        patterns:
+          - comment: Format switch with value /x:24
+            applyEndPatternLast: 1
+            begin: ([\p{Pc}\p{L}][\w\p{Pd}]*)(:)
+            beginCaptures:
+              1: {name: keyword.modifier.pta}
+              2: {name: punctuation.separator.key-value.pta}
+            end: (?=)|$
+            patterns: [include: "#html-properties"]
+          - comment: Format switch without value
+            match: ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            captures:
+              1: {name: keyword.modifier.pta}
   format-specifier:
     comment: Oniguruma supports only 20 levels of recursion
     match: |
@@ -2255,7 +2303,32 @@ repository:
           [\p{Pc}\p{L}][\w\p{Pd}]*
           )
           \b\s+
-          (?=<\|{1,3}\s+|<\+\s+)
+          (?=
+          [\\/]\b|<\|{1,3}\s+|<\+\s+
+          |(
+          (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
+          \b(?:# keywords
+          in|of|as|is|new
+          |to|til|thru|by|del
+          |unset|ref|and|or|xor|not
+          |var|val|func?|proc|type
+          |class|data|enum|module
+          |iter|macro|struct|object
+          |trait|style|elem|prop
+          |go|defer|do|from|where|with
+          |if|elif|else|then|def|decl
+          |for|each|loop|while
+          |try|throw|catch|after
+          |match|case|goto|pass
+          |break|next|redo|retry
+          |return|yield|await|label
+          |import|export|route
+          |debug|assert|check
+          )(?!\B|\p{Pd}+\b)
+          )
+          [\p{Pc}\p{L}][\w\p{Pd}]*
+          )
+          )
         captures:
           1: {patterns: [include: "#function-names"]}
       - comment: |
@@ -2846,12 +2919,12 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s+(\#\{)\s*
+          - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\#\{)\s*
             end: \s*(\})\s*
             captures:
               1: {name: punctuation.section.class.pta}
             patterns: [include: $self]
-          - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s+(\{)\s*
+          - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\{)\s*
             end: \s*(\})\s*
             captures:
               1: {name: punctuation.definition.block.pta}
@@ -4119,12 +4192,12 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s+(\#\{)\s*
+      - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\#\{)\s*
         end: \s*(\})\s*
         captures:
           1: {name: punctuation.section.class.pta}
         patterns: [include: $self]
-      - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s+(\{)\s*
+      - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\{)\s*
         end: \s*(\})\s*
         captures:
           1: {name: punctuation.definition.block.pta}
@@ -4551,12 +4624,10 @@ repository:
     patterns:
       - match: |
           (?x)\s*\b(?:
-            # Valid media types
-            (all|print|screen|speech)
-            |# Deprecated in Media Queries 4: http://dev.w3.org/csswg/mediaqueries/#media-types
-            (aural|braille|embossed|handheld|projection|tty|tv)
+          (all|print|screen|speech)
+          |(aural|braille|embossed|handheld|projection|tty|tv)
           )(?!\B|\p{Pd}+\b)\s*
-        name: support.constant.media-type.css.pta
+        name: support.constant.media.css.pta
       - match: |
           (?x)\s*\b(
 
