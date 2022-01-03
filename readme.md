@@ -137,29 +137,69 @@ if displayGreeting
 // `message` not accessible here!
 ```
 
+### Keywords
+
+Keywords are all lowercase and are between two to six characters long. They are used to denote special meaning in Protea.
+
+Identifiers are compared with partial case-insensitively while keywords are case-sensitive. Because of this mechanism, you can use any number of leading underscores to escape an identifier.
+
+```dart
+assert _assert = null
+```
+
+    in of as is new
+    to til thru by del
+    unset ref and or xor not
+    var val func proc type
+    class data enum module
+    iter macro struct object
+    trait style elem prop
+    go defer do from where with
+    if elif else then def decl
+    for each loop while
+    try throw catch after
+    match case goto pass
+    break next redo retry
+    return yield await label
+    import export route
+    debug assert check
+
+Keywords are also escaped and become identifiers when part of a qualified name, such as `x.for` or `y::loop`. They are also subject to the same case-insensitivity rules as identifiers.
+
 ### Numbers
 
-There are two separate numeric types in Protea, unlike in JavaScript: `int` and `float`, which are 64-bit signed integers and floating-point numbers. `nat` is also used to represent unsigned integers, but by default, `int` is used.
+There are two separate numeric types in Protea, unlike in JavaScript: `int` and `float`, which are 64-bit signed integers and floating-point numbers.
 
-`rat` is a rational number type, which is a pair of `int`s.
-
-`nat`s are distinguished from `int`s with the `u` suffix.
+`nat` is also used to represent unsigned integers, but by default, `int` is used. To specify a `nat`, are distinguished from `int`s with the `u` suffix. `rat` is a rational number type, which is a pair of `int`s.
 
 There also exist `big` versions of each numerical type: `bignat`, `bigint`, `bigfloat` and also `bigrat`, all of which are arbitrary-precision and arbitrary-sized.
 
 #### Literals
 
-Underscores and leading zeroes are ignored.
+Underscores and leading zeroes are ignored. **All numbers are case-insensitive**, except their type suffixes which are subject to normal identifier comparison.
+
+```dart
+decimal = 11256099
+hex = 0xABC123
+octal = 0o52740443
+binary = 0b101010111100000100100011
+```
+
+We also provide three new numeric literals: quaternary (base 4) `0q`, senary (base 6) `0s` and duodecimal (base 12) `0z`.
 
 To improve readability, you may place underscores in the middle of numeric literals such as `1_000_000`. Note that underscores can be placed anywhere within a number, not just every three digits.
 
-Repeating digits use
+Repeating digits use the form `x.yrz` where `x` is the integer part, `y` is the decimal part and `z` is the repeating part.
 
 Rational literals use the form `xny`, `n` meaning numerator.
 
-```dart
-1n0
-```
+Exponent parts use `ex` (or `px` in the case of hexadecimal) where `x` is the exponent with an optional sign. An optional base `y` can be supplied in which case it is repeated: `exey`, `pxey` or any combination thereof.
+
+Rational literals can also be `truncated` to a given precision. `tx` or `tdx` can be used to specify the number of fractional places. `tsx` specifies the number of significant digits instead.
+
+All that can be followed by an optional type suffix which can be any identifier.
+
+Numbers can be specified in hexadecimal using `0x` or `0X` prefixes.
 
 ### Strings
 
