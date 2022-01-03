@@ -48,8 +48,8 @@ define:
     |to|til|thru|by|del
     |unset|ref|and|or|xor|not
     |var|val|func?|proc|type
-    |class|data|enum|module
-    |iter|macro|struct|object
+    |class|data|enum|mod
+    |iter|macro|struct|obj
     |trait|style|elem|prop
     |go|defer|do|from|where|with
     |if|elif|else|then|def|decl
@@ -74,8 +74,8 @@ define:
     |to|til|thru|by|del
     |unset|ref|and|or|xor|not
     |var|val|func?|proc|type
-    |class|data|enum|module
-    |iter|macro|struct|object
+    |class|data|enum|mod
+    |iter|macro|struct|obj
     |trait|style|elem|prop
     |go|defer|do|from|where|with
     |if|elif|else|then|def|decl
@@ -215,8 +215,8 @@ repository:
       |to|til|thru|by|del
       |unset|ref|and|or|xor|not
       |var|val|func?|proc|type
-      |class|data|enum|module
-      |iter|macro|struct|object
+      |class|data|enum|mod
+      |iter|macro|struct|obj
       |trait|style|elem|prop
       |go|defer|do|from|where|with
       |if|elif|else|then|def|decl
@@ -942,8 +942,8 @@ repository:
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
           |var|val|func?|proc|type
-          |class|data|enum|module
-          |iter|macro|struct|object
+          |class|data|enum|mod
+          |iter|macro|struct|obj
           |trait|style|elem|prop
           |go|defer|do|from|where|with
           |if|elif|else|then|def|decl
@@ -980,40 +980,24 @@ repository:
           2: {patterns: [include: "#embedded-content"]}
   flag-specifier:
     patterns:
-      - comment: // for multiple flags
+      - comment: // for multiple flags at once with single-character aliases
         applyEndPatternLast: 1
         begin: (?x)(?<=^|\s|\b)(//)\b
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.directive.pta}
         patterns:
-          - comment: Format switch with value /x:24
-            applyEndPatternLast: 1
-            begin: ([\p{Pc}\p{L}][\w\p{Pd}]*)(:)
-            beginCaptures:
-              1: {name: keyword.other.flag.pta}
-              2: {name: punctuation.separator.key-value.pta}
-            end: (?=)|$
-            patterns: [include: "#html-properties"]
           - comment: Format switch without value
             match: ([\p{Pc}\p{L}][\w\p{Pd}]*)
             captures:
               1: {name: keyword.other.flag.pta}
-      - comment: Oniguruma supports only 20 levels of recursion
+      - comment: / for a single flag, with optional arguments
         applyEndPatternLast: 1
         begin: (?x)(?<=^|\s|\b)(/)\b
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.directive.pta}
         patterns:
-          - comment: Format switch with value /x:24
-            applyEndPatternLast: 1
-            begin: ([\p{Pc}\p{L}][\w\p{Pd}]*)(:)
-            beginCaptures:
-              1: {name: keyword.modifier.pta}
-              2: {name: punctuation.separator.key-value.pta}
-            end: (?=)|$
-            patterns: [include: "#html-properties"]
           - comment: Format switch without value
             match: ([\p{Pc}\p{L}][\w\p{Pd}]*)
             captures:
@@ -2186,7 +2170,7 @@ repository:
       - include: "#jsx-entities"
       - include: "#tag-component-name"
       - include: "#string-content"
-      - include: "#markdown"
+      - include: text.html.markdown#inline
   tag-attributes:
     patterns:
       - include: "#comma"
@@ -2514,8 +2498,8 @@ repository:
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
           |var|val|func?|proc|type
-          |class|data|enum|module
-          |iter|macro|struct|object
+          |class|data|enum|mod
+          |iter|macro|struct|obj
           |trait|style|elem|prop
           |go|defer|do|from|where|with
           |if|elif|else|then|def|decl
@@ -2532,7 +2516,8 @@ repository:
           )
           \b\s+
           (?=
-          [\\/]\b|<\|{1,3}\s+|<\+\s+
+          (?:\\|//?)\b|<\|{1,3}\s+|<\+\s+
+          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+['"`({\[\w]
           |(
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
           \b(?:# keywords
@@ -2540,8 +2525,8 @@ repository:
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
           |var|val|func?|proc|type
-          |class|data|enum|module
-          |iter|macro|struct|object
+          |class|data|enum|mod
+          |iter|macro|struct|obj
           |trait|style|elem|prop
           |go|defer|do|from|where|with
           |if|elif|else|then|def|decl
@@ -2570,8 +2555,8 @@ repository:
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
           |var|val|func?|proc|type
-          |class|data|enum|module
-          |iter|macro|struct|object
+          |class|data|enum|mod
+          |iter|macro|struct|obj
           |trait|style|elem|prop
           |go|defer|do|from|where|with
           |if|elif|else|then|def|decl
@@ -2928,8 +2913,8 @@ repository:
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
           |var|val|func?|proc|type
-          |class|data|enum|module
-          |iter|macro|struct|object
+          |class|data|enum|mod
+          |iter|macro|struct|obj
           |trait|style|elem|prop
           |go|defer|do|from|where|with
           |if|elif|else|then|def|decl
@@ -2960,8 +2945,8 @@ repository:
               |to|til|thru|by|del
               |unset|ref|and|or|xor|not
               |var|val|func?|proc|type
-              |class|data|enum|module
-              |iter|macro|struct|object
+              |class|data|enum|mod
+              |iter|macro|struct|obj
               |trait|style|elem|prop
               |go|defer|do|from|where|with
               |if|elif|else|then|def|decl
@@ -3046,8 +3031,8 @@ repository:
       |to|til|thru|by|del
       |unset|ref|and|or|xor|not
       |var|val|func?|proc|type
-      |class|data|enum|module
-      |iter|macro|struct|object
+      |class|data|enum|mod
+      |iter|macro|struct|obj
       |trait|style|elem|prop
       |go|defer|do|from|where|with
       |if|elif|else|then|def|decl
@@ -3465,8 +3450,8 @@ repository:
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:
       var|val|func?|proc|type
-      |class|data|enum|module
-      |iter|macro|struct|object
+      |class|data|enum|mod
+      |iter|macro|struct|obj
       |trait|style|elem|prop
       )
       \b
@@ -3520,7 +3505,7 @@ repository:
         name: storage.type.data.pta
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.enum.pta
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(mod)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.module.pta
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.iterator.pta
@@ -3528,7 +3513,7 @@ repository:
         name: storage.type.macro.pta
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.structure.pta
-      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(obj)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.object.pta
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.trait.pta
@@ -3844,7 +3829,7 @@ repository:
             name: entity.name.enum.pta
       module:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(mod)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.module.pta}
@@ -3884,7 +3869,7 @@ repository:
             name: entity.name.structure.pta
       object:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(obj)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.object.pta}
@@ -4060,8 +4045,8 @@ repository:
       |to|til|thru|by|del
       |unset|ref|and|or|xor|not
       |var|val|func?|proc|type
-      |class|data|enum|module
-      |iter|macro|struct|object
+      |class|data|enum|mod
+      |iter|macro|struct|obj
       |trait|style|elem|prop
       |go|defer|do|from|where|with
       |if|elif|else|then|def|decl
@@ -4944,10 +4929,7 @@ repository:
         match: |
           (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
           True|False|Null|Void|NaN|Infin|Empty|Unit|Obj
-          |Any|Mixed|Just|Some|None|Never|(Im)?pure
-          |Class|Enum|Module|Pack|Struct|Schema|Space|Pragma
-          |Proc|Proto|Macro|Given|Style|elem|Field
-          |Ext|Pred|Data|Trait|Lemma|Iter|Sub|Prop|Const
+          |Any|Mixed|Just|Some|None|Never|(Im)?pure|Const
           # lowerFlatCase
           |true|false|null|void|nan|infin|empty|unit|obj
           |any|mixed|just|some|none|never|(im)?pure|const
