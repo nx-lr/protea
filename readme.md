@@ -3,7 +3,15 @@
 Protea is a multi-platform, multi-paradigm and multi-purpose programming language intended to enhance JavaScript with a better vision and a better experience. It has a fast compiler toolchain that is blazingly fast and outputs performance-optimized code, and boasts a unique combination of language-integrated features inspired by the best of the web.
 
 ```dart
-mod Button
+module Button
+  style button = {
+    color: paleVioletRed
+    font-size: 1em
+    margin: 1em
+    padding: 0.25em 1em
+    border: 2px solid paleVioletRed
+    border-radius: 3px }
+
   fun make(&count: int): React.Component
     val times = match count
       case 1: "once"
