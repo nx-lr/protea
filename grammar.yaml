@@ -1906,7 +1906,7 @@ repository:
     repository:
       blockquote:
         comment: "> blockquote"
-        begin: ^\s*(\>)(.*\n?)
+        begin: ^\s*(\>)(\s+.*\n?)
         end: ^(?=\S)|(?!\G)
         beginCaptures:
           1: {name: punctuation.definition.quote.begin.markdown.pta}
@@ -1921,7 +1921,7 @@ repository:
             patterns: [include: "#markdown"]
       unordered-list:
         comment: "- unordered list"
-        begin: ^\s*(\-)(?!>)(.*\n?)
+        begin: ^\s*(\-)(?!>)\s+(.*\n?)
         end: ^(?=\S)|(?!\G)
         beginCaptures:
           1: {name: punctuation.definition.list.begin.markdown.pta}
@@ -1936,7 +1936,7 @@ repository:
             patterns: [include: "#markdown"]
       ordered-list:
         comment: "+ ordered list"
-        begin: ^\s*(\+)(?!>)(.*\n?)
+        begin: ^\s*(\+)(?!>)\s+(.*\n?)
         end: ^(?=\S)|(?!\G)
         beginCaptures:
           1: {name: punctuation.definition.list.begin.markdown.pta}
@@ -1969,7 +1969,7 @@ repository:
         comment: <Tags
         applyEndPatternLast: 1
         begin: (?<=^|\s|\b)(<)\b
-        end: (>)|(?=)|$
+        end: (<?>?=?)|(?=)|$
         name: meta.tag.pta
         captures:
           1: {name: punctuation.definition.tag.pta}
@@ -1989,7 +1989,13 @@ repository:
             captures:
               1: {name: punctuation.definition.directive.pta}
             patterns: [include: $self]
-          - include: source.yaml#flow-mapping
+          - begin: (\{)\s*
+            end: \s*(\})\s*
+            captures:
+              1: {name: punctuation.definition.mapping.pta}
+            patterns:
+              - include: "#style-properties"
+              - include: $self
           - begin: (\()\s*
             end: \s*(\))\s*
             captures:
@@ -1999,6 +2005,21 @@ repository:
               - include: $self
           - match: \s*([.#])(?=[\w$])
             name: punctuation.definition.entity.pta
+          - comment: inline markup
+            begin: (?<!'+)\s*('''+|')
+            contentName: string.quoted.single.pta
+            end: \s*((\1)(?!'+))
+            captures:
+              1: {name: punctuation.definition.string.pta}
+            patterns: [include: "#markdown"]
+          - comment: inline markup
+            begin: (?<!"+)\s*("""+|")
+            contentName: string.quoted.double.pta
+            end: \s*((\1)(?!"+))
+            captures:
+              1: {name: punctuation.definition.string.pta}
+            patterns: [include: "#markdown"]
+          - include: "#regexps"
       inline-styles:
         begin: (?<=^|\s|\b)(\+>)(.*\n?)
         beginCaptures:
@@ -3942,17 +3963,7 @@ repository:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(mark)(?!\B|\p{Pd}+\b)(.*\n?)
         beginCaptures:
           1: {name: storage.type.markup.pta}
-          2:
-            patterns:
-              - match: (?<=^|\s)([?:]?=)(?=\s+|$)
-                captures:
-                  1: {name: keyword.operator.assignment.pta}
-              - include: "#comments"
-              - include: "#style-pair"
-              - include: "#style-rules"
-              - include: "#block-entities"
-              - match: *entity-name
-                name: entity.name.markup.pta
+          2: {patterns: [include: "#markdown"]}
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^(\s+)(?!\s)
