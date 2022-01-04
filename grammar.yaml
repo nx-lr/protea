@@ -50,7 +50,7 @@ define:
     |var|val|func?|proc|type
     |class|data|enum|module
     |iter|macro|struct|object
-    |trait|style|elem|prop
+    |trait|style|elem|prop|mark
     |go|defer|do|from|where|with
     |if|elif|else|then|def|decl
     |for|each|loop|while
@@ -76,7 +76,7 @@ define:
     |var|val|func?|proc|type
     |class|data|enum|module
     |iter|macro|struct|object
-    |trait|style|elem|prop
+    |trait|style|elem|prop|mark
     |go|defer|do|from|where|with
     |if|elif|else|then|def|decl
     |for|each|loop|while
@@ -91,6 +91,15 @@ define:
     ([\p{Pc}\p{L}][\w\p{Pd}]*)
     \b
 
+  html-tag-names: &html-tag-names
+    - match: "[.:]"
+      name: punctuation.separator.namespace.pta
+    - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[:.])
+      name: entity.name.tag.namespace.pta
+    - match: \b((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)\b
+      name: support.class.component.pta
+    - include: "#html-tag-names"
+
 repository:
   core:
     patterns:
@@ -101,10 +110,10 @@ repository:
       - include: "#declarations"
       - include: "#keywords"
       - include: "#comments"
-      - include: "#jsx"
       - include: "#punctuation"
       - include: "#type-annotation"
       - include: "#flag-specifier"
+      - include: "#format-specifier"
       - include: "#symbol-strings"
       - include: "#symbols"
       - include: "#operators"
@@ -124,7 +133,6 @@ repository:
       - include: "#clauses"
       - include: "#declarations"
       - include: "#keywords"
-      - include: "#jsx"
       - include: "#punctuation"
       - include: "#type-annotation"
       - include: "#symbol-strings"
@@ -217,7 +225,7 @@ repository:
       |var|val|func?|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
-      |trait|style|elem|prop
+      |trait|style|elem|prop|mark
       |go|defer|do|from|where|with
       |if|elif|else|then|def|decl
       |for|each|loop|while
@@ -744,13 +752,13 @@ repository:
   symbol-strings:
     patterns:
       - comment: multi-single quoted string
-        begin: (?<=^|\s+)(:('''+))
+        begin: (?<=^|\s)(:('''+))
         contentName: string.quoted.single.pta
         end: \s*((\2)(?!'+))
         captures:
           1: {name: punctuation.definition.string.pta}
       - comment: single quoted string
-        begin: (?<=^|\s+)(:('))
+        begin: (?<=^|\s)(:('))
         contentName: string.quoted.single.pta
         end: \s*((\2)(?!'+))
         captures:
@@ -759,7 +767,7 @@ repository:
           - match: "''"
             name: constant.character.escape.pta
       - comment: multi-double quoted string
-        begin: (?<=^|\s+)(:("""+))
+        begin: (?<=^|\s)(:("""+))
         contentName: string.quoted.double.pta
         end: \s*((\2)(?!"+))
         captures:
@@ -767,7 +775,7 @@ repository:
         patterns:
           - include: "#string-escapes"
       - comment: double quoted string
-        begin: (?<=^|\s+)(:("))
+        begin: (?<=^|\s)(:("))
         contentName: string.quoted.double.pta
         end: \s*((\2)(?!"+))
         captures:
@@ -944,7 +952,7 @@ repository:
           |var|val|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop
+          |trait|style|elem|prop|mark
           |go|defer|do|from|where|with
           |if|elif|else|then|def|decl
           |for|each|loop|while
@@ -985,7 +993,7 @@ repository:
         begin: (?x)(?<=^|\s|\b)(//)\b
         end: (?=)|$
         captures:
-          1: {name: punctuation.definition.directive.pta}
+          1: {name: punctuation.definition.flag.pta}
         patterns:
           - comment: Format switch without value
             match: ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -996,7 +1004,7 @@ repository:
         begin: (?x)(?<=^|\s|\b)(/)\b
         end: (?=)|$
         captures:
-          1: {name: punctuation.definition.directive.pta}
+          1: {name: punctuation.definition.flag.pta}
         patterns:
           - comment: Format switch without value
             match: ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -1080,11 +1088,11 @@ repository:
     comment: Grammar for Protea's format specifier language, inspired by MS-DOS, Bash and Python's f-strings.
     patterns:
       - comment: type specifier
-        match: (?<=[^\\%]%)\w+
+        match: (?<=[^\\%]%|^%)\w+
         name: entity.other.attribute-name.pta
       - comment: Format switch with value /x:24
         applyEndPatternLast: 1
-        begin: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)(:)
+        begin: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
         beginCaptures:
           1: {name: punctuation.separator.mapping.pta}
           2: {name: entity.other.attribute-name.class.pta}
@@ -1572,7 +1580,7 @@ repository:
         name: keyword.operator.logical.pta
       - match: \b(i[ns])\b
         name: keyword.operator.expression.$1.pta
-      - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)([:!=</>.^$%?*+|&~]?=)
+      - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b([:!=</>.^$%?*+|&~]?=)
         beginCaptures:
           1: {name: entity.other.attribute-name.pta}
           2: {name: keyword.operator.pattern.pta}
@@ -1589,221 +1597,65 @@ repository:
   # Markdown
 
   markdown:
-    comment: Only inline Markdown syntax would be supported, plus some enhancements from HAML, Textile and more. Coming soon.
     patterns:
-      - include: "#inline"
+      - include: "#comments"
+      - include: "#jsx-entities"
+      - include: "#html-tag"
+      - include: "#string-content"
+      - include: "#evaluated-code"
+      - include: "#executed-code"
+      - include: text.html.markdown#inline
     repository:
-      inline:
-        patterns:
-          - include: "#raw"
-          - include: "#superscript"
-          - include: "#subscript"
-          - include: "#deleted"
-          - include: "#inserted"
-          - include: "#citation"
-          - include: "#span"
-          - include: "#code"
-          - include: "#bold"
-          - include: "#italic"
-          - include: "#underline"
-          - include: "#string-content"
-      raw:
-        comment: "==raw=="
-        begin: (?<!\=+)(\=\=+)(?!\s|</>?|/>)
-        end: (?<!\s|</>?|/>)(\1)
+      evaluated-code:
+        applyEndPatternLast: 1
+        comment: Evaluated code
+        begin: (=>)
+        end: (?=|$)
         captures:
-          1: {name: punctuation.definition.raw.pta}
-        name: markup.raw.pta
-      superscript:
-        comment: "^superscript^"
-        begin: (?<!\^+)(\^+)(?!\s|</>?|/>)
-        end: (?<!\s|</>?|/>)(\1)
+          1: {name: keyword.control.flow.block-scalar.literal.pta}
+        patterns: [include: $self]
+      executed-code:
+        applyEndPatternLast: 1
+        comment: Executed code
+        begin: (->)
+        end: (?=|$)
         captures:
-          1: {name: punctuation.definition.superscript.pta}
-        name: markup.superscript.pta
-        patterns:
-          - include: "#raw"
-          - include: "#subscript"
-          - include: "#deleted"
-          - include: "#inserted"
-          - include: "#citation"
-          - include: "#span"
-          - include: "#code"
-          - include: "#bold"
-          - include: "#italic"
-          - include: "#underline"
-          - include: "#string-content"
-      subscript:
-        comment: "~subscript~"
-        begin: (?<!\~+)(\~+)(?!\s|</>?|/>)
-        end: (?<!\s|</>?|/>)(\1)
+          1: {name: keyword.control.flow.block-scalar.folded.pta}
+        patterns: [include: $self]
+      html-tag:
+        comment: <Tags
+        applyEndPatternLast: 1
+        begin: (?<=^|\s|\b)(<)\b
+        end: (>)|(?=)|$
+        name: meta.tag.pta
         captures:
-          1: {name: punctuation.definition.subscript.pta}
-        name: markup.subscript.pta
+          1: {name: punctuation.definition.tag.pta}
         patterns:
-          - include: "#raw"
-          - include: "#superscript"
-          - include: "#deleted"
-          - include: "#inserted"
-          - include: "#citation"
-          - include: "#span"
-          - include: "#code"
-          - include: "#bold"
-          - include: "#italic"
-          - include: "#underline"
-          - include: "#string-content"
-      deleted:
-        comment: "-deleted-"
-        begin: (?<!\-+)(\-+)(?!\s|</>?|/>)
-        end: (?<!\s|</>?|/>)(\1)
-        captures:
-          1: {name: punctuation.definition.deleted.pta}
-        name: markup.deleted.pta
-        patterns:
-          - include: "#raw"
-          - include: "#superscript"
-          - include: "#subscript"
-          - include: "#inserted"
-          - include: "#citation"
-          - include: "#span"
-          - include: "#code"
-          - include: "#bold"
-          - include: "#italic"
-          - include: "#underline"
-          - include: "#string-content"
-      inserted:
-        comment: "+inserted+"
-        begin: (?<!\++)(\++)(?!\s|</>?|/>)
-        end: (?<!\s|</>?|/>)(\1)
-        captures:
-          1: {name: punctuation.definition.inserted.pta}
-        name: markup.inserted.pta
-        patterns:
-          - include: "#raw"
-          - include: "#superscript"
-          - include: "#subscript"
-          - include: "#deleted"
-          - include: "#citation"
-          - include: "#span"
-          - include: "#code"
-          - include: "#bold"
-          - include: "#italic"
-          - include: "#underline"
-          - include: "#string-content"
-      citation:
-        comment: "??citation??"
-        begin: (?<!\?+)(\?\?+)(?!\s|</>?|/>)
-        end: (?<!\s|</>?|/>)(\1)
-        captures:
-          1: {name: punctuation.definition.citation.pta}
-        name: markup.citation.pta
-        patterns:
-          - include: "#raw"
-          - include: "#superscript"
-          - include: "#subscript"
-          - include: "#deleted"
-          - include: "#inserted"
-          - include: "#span"
-          - include: "#code"
-          - include: "#bold"
-          - include: "#italic"
-          - include: "#underline"
-          - include: "#string-content"
-      span:
-        comment: "!!span!!"
-        begin: (?<!\!+)(\!\!+)(?!\s|</>?|/>)
-        end: (?<!\s|</>?|/>)(\1)
-        captures:
-          1: {name: punctuation.definition.span.pta}
-        name: markup.span.pta
-        patterns:
-          - include: "#raw"
-          - include: "#superscript"
-          - include: "#subscript"
-          - include: "#deleted"
-          - include: "#inserted"
-          - include: "#citation"
-          - include: "#code"
-          - include: "#bold"
-          - include: "#italic"
-          - include: "#underline"
-          - include: "#string-content"
-      code:
-        comment: "`code`"
-        begin: (?<!\`+)(\`+)(?!\s|</>?|/>)
-        end: (?<!\s|</>?|/>)(\1)
-        captures:
-          1: {name: punctuation.definition.code.pta}
-        name: markup.code.pta
-        patterns:
-          - include: "#raw"
-          - include: "#superscript"
-          - include: "#subscript"
-          - include: "#deleted"
-          - include: "#inserted"
-          - include: "#citation"
-          - include: "#span"
-          - include: "#bold"
-          - include: "#italic"
-          - include: "#underline"
-          - include: "#string-content"
-      bold:
-        comment: "*bold*"
-        begin: (?<!\*+)(\*+)(?!\s|</>?|/>)
-        end: (?<!\s|</>?|/>)(\1)
-        captures:
-          1: {name: punctuation.definition.bold.pta}
-        name: markup.bold.pta
-        patterns:
-          - include: "#raw"
-          - include: "#superscript"
-          - include: "#subscript"
-          - include: "#deleted"
-          - include: "#inserted"
-          - include: "#citation"
-          - include: "#span"
-          - include: "#code"
-          - include: "#italic"
-          - include: "#underline"
-          - include: "#string-content"
-      italic:
-        comment: "/italic/"
-        begin: (?<!\/+)(\/+)(?!\s|</>?|/>)
-        end: (?<!\s|</>?|/>)(\1)
-        captures:
-          1: {name: punctuation.definition.italic.pta}
-        name: markup.italic.pta
-        patterns:
-          - include: "#raw"
-          - include: "#superscript"
-          - include: "#subscript"
-          - include: "#deleted"
-          - include: "#inserted"
-          - include: "#citation"
-          - include: "#span"
-          - include: "#code"
-          - include: "#bold"
-          - include: "#underline"
-          - include: "#string-content"
-      underline:
-        comment: "_underline_"
-        begin: (\_+)(?!\s|</>?|/>)
-        end: (?<!\s|</>?|/>)(\1)
-        captures:
-          1: {name: punctuation.definition.underline.pta}
-        name: markup.underline.pta
-        patterns:
-          - include: "#raw"
-          - include: "#superscript"
-          - include: "#subscript"
-          - include: "#deleted"
-          - include: "#inserted"
-          - include: "#citation"
-          - include: "#span"
-          - include: "#code"
-          - include: "#bold"
-          - include: "#italic"
-          - include: "#string-content"
+          - comment: Tag name
+            match: (?<=<)\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
+            captures:
+              1: {name: entity.name.tag.pta, patterns: *html-tag-names}
+          - comment: ID
+            match: (?<=#)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+            name: entity.other.attribute-name.id.pta
+          - comment: Class
+            match: (?<=\.)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+            name: entity.other.attribute-name.class.pta
+          - begin: (\[)\s*
+            end: \s*(\])\s*
+            captures:
+              1: {name: punctuation.definition.directive.pta}
+            patterns: [include: $self]
+          - include: source.yaml#flow-mapping
+          - begin: (\()\s*
+            end: \s*(\))\s*
+            captures:
+              1: {name: punctuation.definition.parameters.pta}
+            patterns:
+              - include: "#tag-attributes"
+              - include: $self
+          - match: \s*([.#])(?=[\w$])
+            name: punctuation.definition.entity.pta
 
   # Special code blocks
 
@@ -1826,20 +1678,7 @@ repository:
     captures:
       1:
         name: entity.name.tag.pta
-        patterns: &html-tag-names
-          - match: "[.:]"
-            name: punctuation.separator.namespace.pta
-          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[:.])
-            name: entity.name.tag.namespace.pta
-          - match: \b((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)\b
-            name: support.class.component.pta
-          - include: "#html-tag-names"
-  style-block:
-    begin: \s*(\{)\s*
-    end: \s*(\})\s*
-    captures:
-      1: {name: punctuation.definition.block.pta}
-    patterns: [include: "#style-properties"]
+        patterns: *html-tag-names
   style-pair:
     applyEndPatternLast: 1
     begin: |
@@ -1886,7 +1725,6 @@ repository:
       - include: "#clauses"
       - include: "#declarations"
       - include: "#keywords"
-      - include: "#style-block"
       - include: "#style-pair"
       - include: "#style-rules"
       - include: $self
@@ -1921,7 +1759,6 @@ repository:
           - include: "#constants"
           - include: "#declarations"
           - include: "#expression-keywords"
-          - include: "#style-block"
           - include: "#style-pair"
           - include: "#function-params"
           - include: $self
@@ -2216,7 +2053,10 @@ repository:
     captures:
       1:
         name: entity.other.attribute-name.${1:/downcase}.pta
-        patterns: [include: "#embedded", include: "#brackets"]
+        patterns:
+          - include: "#css-property-names"
+          - include: "#embedded"
+          - include: "#brackets"
     name: string.unquoted.pta
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
@@ -2268,8 +2108,8 @@ repository:
       - include: "#nested-comments"
   block-comments:
     patterns:
-      - begin: \s*(/\*\*)(?=\s+|\s*$)
-        end: \s*(\*/)
+      - begin: \s*(#=)(?=\s+|\s*$)
+        end: \s*(=#)
         name: comment.block.documentation.pta
         captures:
           1: {name: punctuation.definition.comment.pta}
@@ -2277,8 +2117,8 @@ repository:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
           - include: "#nested-jsdoc"
-      - begin: \s*(/\*)(?=\s+|\s*$)
-        end: \s*(\*/)
+      - begin: \s*(#\+)(?=\s+|\s*$)
+        end: \s*(\+#)
         name: comment.block.pta
         captures:
           1: {name: punctuation.definition.comment.pta}
@@ -2287,7 +2127,7 @@ repository:
           - include: "#nested-block"
   line-comments:
     patterns:
-      - begin: \s*(///)(?=\s+|\s*$)
+      - begin: \s*(#:)(?=\s+|\s*$)
         end: \s*$
         name: comment.line.documentation.pta
         captures:
@@ -2295,7 +2135,7 @@ repository:
         patterns:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
-      - begin: \s*(//)(?=\s+|\s*$)
+      - begin: \s*(#)(?=\s+|\s*$)
         end: \s*$
         name: comment.line.number-sign.pta
         captures:
@@ -2303,8 +2143,8 @@ repository:
         patterns:
           - include: text.html.markdown#inline
   nested-jsdoc:
-    begin: (/\*\*?)(?=\s+|\s*$)
-    end: \s*(\*/)
+    begin: (#=)(?=\s+|\s*$)
+    end: \s*(=#)
     name: comment.block.documentation.nested.pta
     captures:
       1: {name: punctuation.definition.comment.pta}
@@ -2313,8 +2153,8 @@ repository:
       - include: text.html.markdown#inline
       - include: "#nested-jsdoc"
   nested-block:
-    begin: (/\*)(?=\s+|\s*$)
-    end: \s*(\*/)
+    begin: (#\+)(?=\s+|\s*$)
+    end: \s*(\+#)
     name: comment.block.nested.pta
     captures:
       1: {name: punctuation.definition.comment.pta}
@@ -2456,15 +2296,15 @@ repository:
         captures:
           1: {name: entity.name.class.jsdoc}
           2: {name: entity.name.function.jsdoc}
-      - match: (\.)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
+      - match: (\.)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\s|$|\")
         captures:
           1: {name: keyword.operator.accessor.jsdoc}
           2: {name: entity.name.function.method.static.jsdoc}
-      - match: (\#)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
+      - match: (\#)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\s|$|\")
         captures:
           1: {name: keyword.operator.accessor.jsdoc}
           2: {name: entity.name.function.method.instance.jsdoc}
-      - match: (~|-)([\p{Pc}\p{L}][\w\p{Pd}]*)(?=\s|$|\")
+      - match: (~|-)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\s|$|\")
         captures:
           1: {name: keyword.operator.accessor.jsdoc}
           2: {name: entity.name.function.method.inner.jsdoc}
@@ -2500,7 +2340,7 @@ repository:
           |var|val|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop
+          |trait|style|elem|prop|mark
           |go|defer|do|from|where|with
           |if|elif|else|then|def|decl
           |for|each|loop|while
@@ -2527,7 +2367,7 @@ repository:
           |var|val|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop
+          |trait|style|elem|prop|mark
           |go|defer|do|from|where|with
           |if|elif|else|then|def|decl
           |for|each|loop|while
@@ -2557,7 +2397,7 @@ repository:
           |var|val|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop
+          |trait|style|elem|prop|mark
           |go|defer|do|from|where|with
           |if|elif|else|then|def|decl
           |for|each|loop|while
@@ -2915,7 +2755,7 @@ repository:
           |var|val|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop
+          |trait|style|elem|prop|mark
           |go|defer|do|from|where|with
           |if|elif|else|then|def|decl
           |for|each|loop|while
@@ -2947,7 +2787,7 @@ repository:
               |var|val|func?|proc|type
               |class|data|enum|module
               |iter|macro|struct|object
-              |trait|style|elem|prop
+              |trait|style|elem|prop|mark
               |go|defer|do|from|where|with
               |if|elif|else|then|def|decl
               |for|each|loop|while
@@ -3033,7 +2873,7 @@ repository:
       |var|val|func?|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
-      |trait|style|elem|prop
+      |trait|style|elem|prop|mark
       |go|defer|do|from|where|with
       |if|elif|else|then|def|decl
       |for|each|loop|while
@@ -3102,8 +2942,10 @@ repository:
             patterns:
               - match: ","
                 name: punctuation.separator.mapping.pta
-              - match: (?<!\s):(?!:)
+              - match: (?<!\s):(?=[\s,;}]|$)
                 name: punctuation.separator.key-value.pta
+              - match: (?<=^\s*|[,;{]\s*)(?:[-+*]\s+)*[-+*](?=\s|$)
+                name: punctuation.definition.block.sequence.item.pta
         patterns:
           - begin: \s*(?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
             end: \s*(})
@@ -3452,7 +3294,7 @@ repository:
       var|val|func?|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
-      |trait|style|elem|prop
+      |trait|style|elem|prop|mark
       )
       \b
       )
@@ -3521,6 +3363,8 @@ repository:
         name: storage.type.component.pta
       - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.property.pta
+      - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(mark)(?!\B|\p{Pd}+\b)\s*
+        name: storage.type.markup.pta
 
   general-keywords:
     comment: general keywords
@@ -3714,6 +3558,7 @@ repository:
       - include: "#variable"
       - include: "#declare"
       - include: "#style"
+      - include: "#markup"
       - include: "#function"
       - include: "#procedure"
       - include: "#class"
@@ -3729,29 +3574,49 @@ repository:
       - include: "#property"
 
     repository:
-      style:
-        applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
-        end: (?=)|$
+      markup:
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(mark)(?!\B|\p{Pd}+\b)(.*\n?)
         beginCaptures:
-          1: {name: storage.type.style.pta}
-        patterns:
-          - include: "#style-rules"
-          - include: "#style-pair"
-          - include: "#style-block"
-          - applyEndPatternLast: 1
-            begin: (?<=^|\s+)([?:]?=)(?=\s+|$)
-            captures:
-              1: {name: keyword.operator.assignment.pta}
-            end: (?=)|$
+          1: {name: storage.type.markup.pta}
+          2:
             patterns:
+              - match: (?<=^|\s)([?:]?=)(?=\s+|$)
+                captures:
+                  1: {name: keyword.operator.assignment.pta}
+              - include: "#comments"
               - include: "#style-pair"
               - include: "#style-rules"
-              - include: "#style-block"
               - include: "#block-entities"
-          - include: "#block-entities"
-          - match: *entity-name
-            name: entity.name.style.pta
+              - match: *entity-name
+                name: entity.name.markup.pta
+        end: ^(?=\S)|(?!\G)
+        patterns:
+          - begin: ^(\s+)(?!\s)
+            end: ^(?!\1|\s*$)
+            name: string.unquoted.block.pta
+            patterns: [include: "#markdown"]
+      style:
+        begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)(.*\n?)
+        beginCaptures:
+          1: {name: storage.type.style.pta}
+          2:
+            patterns:
+              - match: (?<=^|\s)([?:]?=)(?=\s+|$)
+                captures:
+                  1: {name: keyword.operator.assignment.pta}
+              - include: "#comments"
+              - include: "#style-pair"
+              - include: "#style-rules"
+              - include: "#block-entities"
+              - match: *entity-name
+                name: entity.name.style.pta
+        end: ^(?=\S)|(?!\G)
+        patterns:
+          - begin: ^(\s+)(?!\s)
+            end: ^(?!\1|\s*$)
+            name: meta.style.yaml
+            patterns: [include: "#style-properties"]
+
       component:
         applyEndPatternLast: 1
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)(?!\B|\p{Pd}+\b)\s*
@@ -4047,7 +3912,7 @@ repository:
       |var|val|func?|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
-      |trait|style|elem|prop
+      |trait|style|elem|prop|mark
       |go|defer|do|from|where|with
       |if|elif|else|then|def|decl
       |for|each|loop|while
@@ -4117,7 +3982,7 @@ repository:
             captures:
               1: {name: keyword.other.typedef.pta}
             patterns:
-              - match: (?<=^|\s+)([?:]?=)(?=\s+|$)
+              - match: (?<=^|\s)([?:]?=)(?=\s+|$)
                 captures:
                   1: {name: keyword.operator.assignment.pta}
               - include: "#types"
@@ -4169,53 +4034,12 @@ repository:
         patterns: [include: $self]
       switch-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;|})|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.switch.pta
         captures:
-          1: {name: keyword.control.switch.pta}
+          1: {name: keyword.control.match.pta}
           2: {name: punctuation.separator.colon.pta}
-        patterns:
-          - begin: (\#\{)\s*
-            end: \s*(\})\s*
-            captures:
-              1: {name: punctuation.section.class.pta}
-            patterns:
-              - &case-clause
-                begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
-                end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
-                captures:
-                  1: {name: keyword.control.switch.pta}
-                  2: {name: punctuation.separator.colon.pta}
-                patterns:
-                  - include: "#params-clause"
-                  - applyEndPatternLast: 1
-                    begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
-                    end: (?=)|$
-                    beginCaptures:
-                      1: {name: keyword.control.switch.pta}
-                    patterns:
-                      - include: "#types"
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
-                    name: keyword.control.switch.pta
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|set|get|const)(?!\B|\p{Pd}+\b)\s*
-                    name: keyword.control.switch.pta
-                  - match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
-                    name: keyword.control.switch.pta
-                  - include: "#type-keywords"
-                  - include: $self
-              - &default-clause
-                match: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(def)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.switch.pta
-              - include: $self
-          - begin: (\{)\s*
-            end: \s*(\})\s*
-            captures:
-              1: {name: punctuation.definition.block.pta}
-            patterns:
-              - *case-clause
-              - *default-clause
-              - include: $self
-          - include: $self
+        patterns: [include: $self]
       with-clause:
         begin: (?x)\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*
         end: (?<=;)|(?={)|$|(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
@@ -4396,8 +4220,11 @@ repository:
         patterns:
           - match: ","
             name: punctuation.separator.mapping.pta
-          - match: (?<!\s):(?!:)
+          - match: (?<!\s):(?=[\s,;}]|$)
             name: punctuation.separator.key-value.pta
+          - match: (?<=^\s*|[,;{]\s*)(?:[-+*]\s+)*[-+*](?=\s|$)
+            name: punctuation.definition.block.sequence.item.pta
+
     patterns:
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\{)\s*
         end: \s*(\})\s*
