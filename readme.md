@@ -23,7 +23,7 @@ module Button =
     &:focus
       outline: none
 
-  fun make(&count: int) =
+  func make(&count: int) =
     let times = match count then
       case 1 then "once"
       case 2 then "twice"
@@ -54,7 +54,7 @@ let regex = `"(\d+)":\s*\n\s*name:\s+([-.\w]+)$` `$1: {name: $2}`
 let number = if opposite then -42 else number
 
 # Functions:
-fun square(x) = x * x
+func square(x) = x * x
 let square = |x| x * x
 
 # Arrays:
@@ -119,7 +119,7 @@ The compiler command `pta doc` automatically extracts the API documentation and 
 Protea is a hybrid-form language, meaning you can use curly braces _and_ indentation to structure and organize your code.
 
 ```coffee
-rec fun List.has(item: any): bool
+rec func List.has(item: any): bool
   match this
     case []
       false
@@ -130,7 +130,7 @@ rec fun List.has(item: any): bool
 though you can also write it like this:
 
 ```coffee
-rec fun List.has(item: any): bool {
+rec func List.has(item: any): bool {
   match this {
     case [] {
       false }
@@ -141,7 +141,7 @@ rec fun List.has(item: any): bool {
 or a combination of both:
 
 ```coffee
-rec fun List.has(item: any): bool
+rec func List.has(item: any): bool
   match this
     case [] { false }
     case [a, *rest] { a == item && rest.has item }
@@ -150,7 +150,7 @@ rec fun List.has(item: any): bool
 You can also use `then` or a right-spaced colon if a code block is expected after a statement (such as `if` or `while`).
 
 ```coffee
-rec fun List.has(item: any): bool
+rec func List.has(item: any): bool
   match this
     case []: false
     case [a, *rest]: a == item && rest.has item
@@ -169,13 +169,13 @@ const regex = /\b[\p{Pc}\p{L}][\d\p{L}\p{M}\p{Pc}\p{Pd}]*\b/;
 Identifiers are compared using an approach known as partial case-insensitivity.
 
 ```coffee
-fun normalize(a: str): str = match a
+func normalize(a: str): str = match a
   case a.sub(`[^\d\pL]`g, '') ~= `\p{Upper}+`
     a.sub(`[^\d\pL]`g, '').upper!
   fail
     a[0] + a[1:].sub(`[^\d\pL]`g, '').lower!
 
-fun cmpIdent(a: str, b: str): bool =
+func cmpIdent(a: str, b: str): bool =
   normalize a == normalize b
 ```
 
@@ -260,7 +260,7 @@ Keywords become identifiers when part of a qualified name, such as `x.for` or `y
 
 ## Data types
 
-Crystal provides several literals for creating values of some basic types.
+Protea comes with literals for many familiar and new primitive types such as `str`, `int`, `float`, `bool`, `list`, `set`, `map` and more, such as `func`, `sym` and `regex`.
 
 ### Null
 
@@ -377,25 +377,22 @@ Hello World!
 """
 ```
 
-A backslash denotes a special character inside a double-quoted string, which can either be a named escape sequence or a numerical representation of a Unicode code point.
+Most of the escape sequences in JavaScript and other languages are also supported in Protea.
 
-```coffee
-"\b" "\f" "\n" "\r" "\t" "\v"
-"\e" # escape
-"\s" # space
-"\l" # newline (platform specific)
-"\0" # "\d0"
-"\255" == "\xff" # "\xff"
-"\65535" == "\uffff"
-"\1114111" == "\u10ffff"
-"\b100000000000000000000"
-"\o1000000"
-"\x{21 20 22 20 23}" # "A B C"
-```
+| Escape Sequence | Meaning                                        |
+| --------------- | ---------------------------------------------- |
+| `\p`            | platform specific newline (`\r\n`, `\n`, `\r`) |
+| `\r`            | carriage return (`\x9`)                        |
+| `\n`            | line feed (or newline) (`\xA`)                 |
+| `\f`            | form feed (`\xC`)                              |
+| `\t`            | horizontal tabulator (`\x9`)                   |
+| `\v`            | vertical tabulator (`\xB`)                     |
+| `\a`            | alert (`\x7`)                                  |
+| `\b`            | backspace (`\x8`)                              |
+| `\e`            | escape (`\xB`)                                 |
+| `\s`            | space (`\x20`)                                 |
 
-Any other character following a backslash is interpreted as the character itself.
-
-A backslash followed by at most seven digits denotes a code point written in decimal.
+A backslash followed by as many decimal digits denotes a code point written in decimal.
 
 ```coffee
 "\33" # => "A"
@@ -416,11 +413,30 @@ senary = "\s32403235" # base 6
 duodecimal = "\zB23430A19" # base 12
 ```
 
-One curly brace can contain multiple unicode characters each separated by a whitespace.
+The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
 
-```coffee
-"\u{48 45 4C 4C 4F}" # => "HELLO"
+```dart
+// "HELLO"
+"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
+"\d{72 69 76 76 69}" == "\72\69\76\76\79"
 ```
+
+Double quoted literals also allow you to embed LaTeX expressions (because why not?).
+
+```dart
+// LaTeX expressions:
+"\j{
+  \documentclass{article}
+  \title{Cartesian closed categories and the price of eggs}
+  \author{Jane Doe}
+  \date{September 1994}
+  \begin{document}
+    \maketitle Hello world!
+  \end{}
+}"
+```
+
+Any other character following a backslash is interpreted as the character itself.
 
 In single quotes, meta-characters such as `'`, `$`, `%` and `#` are doubled in order to be escaped (literal). In double quotes, you can use the backslash to escape them.
 
@@ -462,10 +478,293 @@ greeting "World" # => "Hello World!"
 
 You can also spread arguments into the string by using the `*` operator, and mark them as optional by using the `?` operator.
 
-Also, you can call functions with named arguments with the `/` operator. If a value is not specified, it is implicitly `null`.
+### Backslash strings
+
+Strings can be written with a preceding backslash instead of quotes. Backslash strings can't contain `, ; ] ) }` or whitespace.
 
 ```coffee
-sys.robocopy /j /tee /log_p 'c:\robolog.txt' /eta /bytes '//server1/share' '//server2/share'
+\word
+fn \word, \word
+fn(word)
+[\word]
+{prop: \word}
+```
+
+### Symbols
+
+A symbol represents a unique name inside the entire source code.
+
+Symbols are interpreted at compile time and cannot be created dynamically. The only way to create a Symbol is by using a symbol literal, denoted by a colon (`:`) followed by an identifier. The identifier may optionally be enclosed in quotes.
+
+```coffee
+:unquoted_symbol
+:"quoted symbol"
+:"a" # identical to :a
+:あ
+```
+
+A quoted identifier can contain any unicode character including white spaces and accepts the same escape sequences as a string literal, yet no interpolation.
+
+For an unquoted identifier the same naming rules as regular identifiers apply. The values can also include keywords.
+
+```coffee
+:identifier :name
+```
+
+### Regexes
+
+A regular expression is typically created with a regex literal using extended Oniguruma/PCRE syntax. It consists of a string of UTF-8 characters enclosed in forward slashes (backticks):
+
+````coffee
+`\b{wb}(fee|fie|foe|fum)\b{wb}`x
+`[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] `]`x
+`
+# Match a 20th or 21st century date in yyyy-mm-dd format
+(19|20)\d\d                # year (group 1)
+[- /.]                     # separator
+(0[1-9]|1[012])            # month (group 2)
+[- /.]                     # separator
+(0[1-9]|[12][0-9]|3[01])   # day (group 3)
+`
+
+# Multi-quoted regex
+```(?:[a-zA-Z_]|(?:\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}))(?:[a-zA-Z0-9_]|(?:\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}))*(?=:)```
+````
+
+Interpolation and formatting also applies but the interpolated result is usually escaped so to prevent generating invalid regular expressions.
+
+#### Basic Syntax Elements
+
+| Syntax            | Description                           |
+| ----------------- | ------------------------------------- |
+| `\`               | Escape (disable) a metacharacter      |
+| `\|`              | Alternation                           |
+| `&`               | Join operator                         |
+| `(...)`           | Capturing group                       |
+| `[...]`           | Character class (can be nested)       |
+| `[^...]` `[!...]` | Character class (can be nested)       |
+| `[...]`           | Character class (can be nested)       |
+| `{,}`             | Quantifier token (LHS 0, RHS &infin;) |
+| `"..."`           | Raw quoted literal                    |
+| `'...'`           | Quoted literal                        |
+| `\0` onward       | Numeric back-reference (0-indexed)    |
+| `%...`            | String formatting                     |
+| `#...`, `#{}`     | String anchor                         |
+| `${...}`          | String interpolation                  |
+
+#### Characters
+
+Most of these characters also appear the same way as in string literals.
+
+| Syntax                         | Description and Use                     |
+| ------------------------------ | --------------------------------------- |
+| `\a`                           | \*Alert/bell character (inside `[]`)    |
+| `\b`                           | \*Backspace character (inside `[]`)     |
+| `\e`                           | Escape character (Unicode `U+`)         |
+| `\f`                           | Form feed (Unicode `U+`)                |
+| `\n`                           | New line (Unicode `U+`)                 |
+| `\r`                           | Carriage return (Unicode `U+`)          |
+| `\t`                           | Horizontal tab (Unicode `U+`)           |
+| `\v`                           | Vertical tab (Unicode `U+`)             |
+| `\cA`...`\cZ`<br>`\ca`...`\cz` | Control character from `U+01` to `U+1A` |
+
+The following can only be used inside square brackets.
+
+| Syntax               | Description and Use                            |
+| -------------------- | ---------------------------------------------- |
+| `\b` (beside 0 or 1) | _Base 2_ - from `0` to `100001111111111111111` |
+| `\q`                 | _Base 4_ - from `0` to `10033333333`           |
+| `\s` (beside 0 to 5) | _Base 6_ - from `0` to `35513531`              |
+| `\o`                 | _Base 8_ - from `0` to `4177777`               |
+| `\d` or `\`          | _Base 10_ - from `0` to `1114111`              |
+| `\z`                 | _Base 12_ - from `0` to `4588A7`               |
+| `\x`                 | _Base 16_ - from `0` to `10FFFF`               |
+
+#### Character Sequences
+
+Character sequences in regular expressions are the same as in their string counterparts, with exception to `\b{}` outside `[]`.
+
+#### Character Classes and Sequences
+
+| Syntax | Inverse | Description |
+| --- | --- | --- |
+| `.` | None | Hexadecimal code point (1-8 digits) |
+| `\w` | `\W` | Word character `\pL\pM\pPc\pNd` |
+| `\d` | `\D` | Digit character `\pNd` |
+| `\s` | `\S` | Space character `\pZ` |
+| `\h` | `\H` | Hexadecimal digit character `[\da-fA-F]` |
+| `\u` | `\U` | Uppercase letter `[A-Z]` |
+| `\l` | `\L` | Lowercase letter `[a-z]` |
+| `\q` | `\Q` | Punctuation and symbols `[\pP\pS]` |
+| `\f` | `\F` | Form feed `[\f]` |
+| `\t` | `\T` | Horizontal tab `[\t]` |
+| `\v` | `\V` | Form feed `[\v]` |
+| `\n` | `\N` | Newline `[\n]` |
+| `\o` | `\O` | Null character `[^]` |
+| `\R` |  | General line break (CR + LF, etc); outside `[]`] |
+| `\c` | `\C` | First character of identifier; `[\pL\pPc]` by default |
+| `\i` | `\I` | Subsequent characters of identifier `[\pL\pPc\pM\pNd]` by default |
+| `\x` | `\X` | Extended grapheme cluster |
+
+##### Unicode Properties
+
+Properties are case-insensitive. Logical operators `&&`, `||`, `^^` and `!`, can be interspersed to express compound queries.
+
+| Syntax | Description |
+| --- | --- |
+| `\p{prop=value}`<br>`\p{prop==value}` | `prop` equals `value` |
+| `\p{prop!=value}`<br>`\P{prop=value}` | `prop` does not equal `value` |
+| `\p{prop^=value}` | `prop` begins with but does not equal `value` |
+| `\p{prop$=value}` | `prop` ends with but does not equal `value` |
+| `\p{prop*=value}` | `prop` contains but does not equal `value` |
+| `\p{prop\|=value}` | `prop` begins with or equals to `value` |
+| `\p{prop~=value}` | `prop` ends with or equals to `value` |
+| `\p{prop&=value}` | `prop` contains or equals to `value` |
+| `\p{in BasicLatin}`<br>`\P{!in BasicLatin}` | Block property |
+| `\p{is Latin}`<br>`\p{script==Latin}` | Script or binary property |
+| `\p{value}` | Short form\* |
+| `\p{Cc}` | Unicode character categories^ |
+
+\*Properties are checked in the order: `General_Category`, `Script`, `Block`, binary property:
+
+- `Latin` &rarr; (`Script==Latin`).
+- `BasicLatin` &rarr; (`Block==BasicLatin`).
+- `Alphabetic` &rarr; (`Alphabetic==Yes`).
+
+##### POSIX Classes
+
+Alternatively, `\p{}` notation can be used instead of `[:]`.
+
+| Syntax | ASCII | Unicode (`/u` flag) | Description |
+| --- | --- | --- | --- |
+| `[:alnum]` | `[a-zA-Z0-9]` | `[\pL\pNl}\pNd]` | Alphanumeric characters |
+| `[:alpha]` | `[a-zA-Z]` | `[\pL\pNl]` | Alphabetic characters |
+| `[:ascii]` | `[\x00-\x7F]` | `[\x00-\xFF]` | ASCII characters |
+| `[:blank]` | `[\x20\t]` | `[\pZs\t]` | Space and tab |
+| `[:cntrl]` | `[\x00-\x1F\x7F]` | `\pCc` | Control characters |
+| `[:digit]` | `[0-9]` | `\pNd` | Digits |
+| `[:graph]` | `[\x21-\x7E]` | `[^\pZ\pC]` | Visible characters (anything except spaces and controls) |
+| `[:lower]` | `[a-z]` | `\pLl` | Lowercase letters |
+| `[:number]` | `[0-9]` | `\pN` | Numeric characters |
+| `[:print]` | `[\x20-\x7E] ` | `\PC` | Printable characters (anything except controls) |
+| `[:punct]` | `[!"\#$%&'()\*+,\-./:;<=>?@\[\\\]^\_'{\|}~]` | `\pP` | Punctuation (and symbols). |
+| `[:space]` | `[\x20\t\r\n\v\f]` | `[\pZ\t\r\n\v\f]` | Spacing characters |
+| `[:symbol]` | `[\pS&&[:ascii]]` | `\pS` | Symbols |
+| `[:upper]` | `[A-Z]` | `\pLu` | Uppercase letters |
+| `[:word]` | `[A-Za-z0-9_]` | `[\pL\pNl\pNd\pPc]` | Word characters |
+| `[:xdigit]` | `[A-Fa-f0-9] ` | `[A-Fa-f0-9]` | Hexadecimal digits |
+
+#### Character Sets
+
+A set `[...]` can include nested sets. The operators below are listed in increasing precedence, meaning they are evaluated first.
+
+| Syntax | Description |
+| --- | --- |
+| `^...`, `~...`, `!...` | Negated (complement) character class |
+| `x-y` | Range (from x to y) |
+| `\|\|` | Union (`x \|\| y` &rarr; "x or y") |
+| `&&` | Intersection (`x && y` &rarr; "x and y" ) |
+| `^^` | Symmetric difference (`x ^^ y` &rarr; "x and y, but not both") |
+| `--` | Difference (`x ~~ y` &rarr; "x but not y") |
+
+#### Anchors
+
+| Syntax | Inverse | Description                                  |
+| ------ | ------- | -------------------------------------------- |
+| `^`    | None    | Beginning of the string/line                 |
+| `$`    | None    | End of the string/line                       |
+| `\b`   | `\B`    | Word boundary                                |
+| `\a`   | `\A`    | Beginning of the string/line                 |
+| `\z`   | `\Z`    | End of the string/before new line            |
+| `\G`   |         | Where the current search attempt begins/ends |
+| `\K`   |         | Keep start/end position of the result string |
+| `\m`   | `\M`    | Line boundary                                |
+| `\y`   | `\Y`    | Text segment boundary                        |
+
+#### Quantifiers
+
+| Syntax | Reluctant `?` (returns shortest match) | Possessive `+` (returns nothing) | Greedy `*` (returns longest match) | Description |
+| --- | --- | --- | --- | --- |
+| `?` | `??` | `?+` | `?*` | 1 or 0 times |
+| `+` | `+?` | `++` | `+*` | 1 or more times |
+| `*`, `{,}`, `{}` | `*?`, `{,}?`, `{}?` | `*+`, `{,}+`, `{}+` | `**`, `{,}*`, `{}*` | 0 or more times |
+| `{n,m}` | `{n,m}?` | `{n,m}+` | `{n,m}*` | At least `n` but no more than `m` times |
+| `{n,}` | `{n,}?` | `{n,}+` | `{n,}*` | At least `n` times |
+| `{,m}` | `{,m}?` | `{,m}+` | `{,m}*` | Up to `m` times |
+| `{n}` | `{n}?` | `{n}+` | `{n}*` | Exactly `n` times |
+
+#### Groups
+
+`(?'')`, `(?"")` notation can also be used.
+
+| Syntax                      | Description                            |
+| --------------------------- | -------------------------------------- |
+| `()`                        | Numbered capturing group               |
+| `(?:)`                      | Non-capturing group                    |
+| `(?\<x>)` `(?'x')` `(?"x")` | Named capturing group                  |
+| `(?<\|x>)`                  | Balancing group                        |
+| `(?<x\|x>)`                 | Balancing pair                         |
+| `(?=)`                      | Positive look-ahead                    |
+| `(?!)`                      | Negative look-ahead                    |
+| `(?<=)`                     | Positive look-behind                   |
+| `(?<!)`                     | Negative look-behind                   |
+| `(?>)`                      | Atomic group (no backtracking)         |
+| `(?())`                     | Conditional branching                  |
+| `(?\|)`                     | ...with alternatives                   |
+| `(?/)`                      | Shortest match                         |
+| `(?/=)`                     | Longest match                          |
+| `(?*)`                      | Embedded code                          |
+| `(?{})` `(?{}[tag])`        | Call-out (embedded code)               |
+| `(?y)`                      | Enable mode                            |
+| `(?-y)`                     | Disable mode                           |
+| `(?~)` `(?~\|\|)` `(?~\|)`  | Absent expression (see Oniguruma docs) |
+| `(?#...)`                   | Comment                                |
+| `(?&1)`                     | Numbered group                         |
+| `(?&-1)`                    | (?&+1) Relative back-reference         |
+| `(?&name)`                  | Named back-reference                   |
+
+### Replacement strings
+
+If there are two adjacent regular expression literals on one side, then the one on the right is the substitution (template) string for the regular expression on the left.
+
+```dart
+val str = 'James Bond'
+val newStr = str.sub(`(\w+)\W+(\w+)` `$2, $1`) // 'Bond, James'
+val newStr = str.sub(`(\w+)\W+(\w+)` `My name is $2, $0!`)
+// 'My name is Bond, James Bond'
+```
+
+| Syntax | Meaning |
+| --- | --- |
+| `$&`, `$0` | Inserts entire match |
+| `$1-` | Inserts the portion of the string that precedes the matched substring. |
+| `$+` | After matched substring |
+| `$1` `$+1` `$-1` | Numbered capture group (negative counts from back) |
+| `$<>` | Named capture group |
+
+### Lists
+
+Lists are created by using square brackets `[]`. Each element can also be separated by commas, spaces or newlines.
+
+Inside curly brackets, elements can be any expression as long as the preceding expression is not callable.
+
+```coffee
+[1, person.age, 'French Fries']
+[1 2 3 true void \word 'hello there']
+```
+
+Implicit lists created with curly brackets. The elements are prefixed with a dash, as in YAML. The elements may be separated by commas, spaces or newlines like in a list literal.
+
+```coffee
+let my-list = {
+  - 32 + 1
+  - person.height
+  - 'beautiful'
+}
+
+one-item = {
+  - 'hello'
+}
 ```
 
 <!--
