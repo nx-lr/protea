@@ -126,6 +126,10 @@ repository:
     comment: avoid parsing files with long lines of code
     match: ^.{1024,}$
 
+  space:
+    match: \s+
+    name: meta.var.expr.pta
+
   embedded-content:
     patterns:
       - include: "#brackets"
@@ -943,7 +947,7 @@ repository:
       - comment: Oniguruma supports only 20 levels of recursion
         applyEndPatternLast: 1
         begin: |
-          (?x)(?<=^|\s|\b)(\$)
+          (?x)(?<=^|[\w\s'"`])(\$)
           (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
           \b(?:# keywords
           in|of|as|is|new
@@ -983,7 +987,7 @@ repository:
     patterns:
       - comment: // for multiple flags at once with single-character aliases
         applyEndPatternLast: 1
-        begin: (?x)(?<=^|\s|\b)(//)\b
+        begin: (?x)(?<=^|[\w\s'"`])(//)\b
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.flag.pta}
@@ -994,7 +998,7 @@ repository:
               1: {name: keyword.other.flag.pta}
       - comment: / for a single flag, with optional arguments
         applyEndPatternLast: 1
-        begin: (?x)(?<=^|\s|\b)(/)\b
+        begin: (?x)(?<=^|[\w\s'"`])(/)\b
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.flag.pta}
@@ -1007,7 +1011,7 @@ repository:
   format-specifier:
     comment: Oniguruma supports only 20 levels of recursion
     applyEndPatternLast: 1
-    begin: (?x)(?<=^|\s|\b)(%)\b
+    begin: (?x)(?<=^|[\w\s'"`])(%)\b
     end: (?=)|$
     captures:
       1: {name: punctuation.definition.directive.pta}
@@ -1926,7 +1930,7 @@ repository:
       evaluated-code:
         applyEndPatternLast: 1
         comment: Evaluated code
-        begin: (?<=^|\s|\b)(=>)
+        begin: (?<=^|[\w\s'"`])(=>)
         end: (?=|$)
         captures:
           1: {name: storage.type.method.pta}
@@ -1934,7 +1938,7 @@ repository:
       executed-code:
         applyEndPatternLast: 1
         comment: Executed code
-        begin: (?<=^|\s|\b)(->)
+        begin: (?<=^|[\w\s'"`])(->)
         end: (?=|$)
         captures:
           1: {name: storage.type.subroutine.pta}
@@ -1942,7 +1946,7 @@ repository:
       html-tag:
         comment: <Tags
         applyEndPatternLast: 1
-        begin: (?<=^|\s|\b)(<)\b
+        begin: (?<=^|[\w\s'"`])(<)\b
         end: (<?>?=?)|(?=)|$
         name: meta.tag.pta
         captures:
@@ -1995,7 +1999,7 @@ repository:
             patterns: [include: "#markdown"]
           - include: "#regexps"
       inline-styles:
-        begin: (?<=^|\s|\b)(\+>)(.*\n?)
+        begin: (?<=^|[\w\s'"`])(\+>)(.*\n?)
         beginCaptures:
           1: {name: storage.type.style.pta}
           2:
@@ -2859,7 +2863,7 @@ repository:
       - PascalCase
       - camelCase
     match: |
-      (?x)\s*\b
+      (?x)\b
       (?:
       (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
       (?:# Properties
@@ -2884,7 +2888,7 @@ repository:
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       )
-      \b\s*
+      \b
     captures:
       1: {name: variable.other.index.pta}
       2: {name: variable.other.constant.property.pta}
@@ -4412,7 +4416,7 @@ repository:
           - include: $self
       for-clause:
         begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(for|each|while)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.for.pta
         captures:
           1: {name: keyword.control.loop.pta}
@@ -4439,7 +4443,7 @@ repository:
         patterns: [include: $self]
       switch-clause:
         begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.switch.pta
         captures:
           1: {name: keyword.control.match.pta}
@@ -4447,7 +4451,7 @@ repository:
         patterns: [include: $self]
       with-clause:
         begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.with.pta
         captures:
           1: {name: keyword.control.with.pta}
