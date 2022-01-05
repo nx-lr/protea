@@ -2493,8 +2493,8 @@ repository:
       - include: "#nested-comments"
   block-comments:
     patterns:
-      - begin: \s*(#=)(?=\s+|\s*$)
-        end: \s*(=#)
+      - begin: \s*(#\+)(?=\s+|\s*$)
+        end: \s*(\+#)
         name: comment.block.documentation.pta
         captures:
           1: {name: punctuation.definition.comment.pta}
@@ -2502,8 +2502,8 @@ repository:
           - include: "#jsdoc"
           - include: text.html.markdown#inline
           - include: "#nested-jsdoc"
-      - begin: \s*(#\+)(?=\s+|\s*$)
-        end: \s*(\+#)
+      - begin: \s*(#=)(?=\s+|\s*$)
+        end: \s*(=#)
         name: comment.block.pta
         captures:
           1: {name: punctuation.definition.comment.pta}
@@ -2528,8 +2528,8 @@ repository:
         patterns:
           - include: text.html.markdown#inline
   nested-jsdoc:
-    begin: (#=)(?=\s+|\s*$)
-    end: \s*(=#)
+    begin: (#\+)(?=\s+|\s*$)
+    end: \s*(\+#)
     name: comment.block.documentation.nested.pta
     captures:
       1: {name: punctuation.definition.comment.pta}
@@ -2538,8 +2538,8 @@ repository:
       - include: text.html.markdown#inline
       - include: "#nested-jsdoc"
   nested-block:
-    begin: (#\+)(?=\s+|\s*$)
-    end: \s*(\+#)
+    begin: (#=)(?=\s+|\s*$)
+    end: \s*(=#)
     name: comment.block.nested.pta
     captures:
       1: {name: punctuation.definition.comment.pta}
@@ -2715,7 +2715,33 @@ repository:
       - comment: |
           Function calls (with spacing)
         match: |
-          (?x)\s*\b
+          (?x)\s*
+          (?<=
+          ^|
+          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s+|
+          ['"`)}\]]|
+          (?:
+          (?:^|[,;'"`(){}\[\]\s])\b(?:# keywords
+          in|of|as|is|new
+          |to|til|thru|by|del
+          |unset|ref|and|or|xor|not
+          |var|val|func?|proc|type
+          |class|data|enum|module
+          |iter|macro|struct|object
+          |trait|style|elem|prop|mark
+          |go|defer|do|from|where|with
+          |if|elif|else|then|def|decl
+          |for|each|loop|while
+          |try|throw|catch|after
+          |match|case|goto|pass
+          |break|next|redo|retry
+          |return|yield|await|label
+          |import|export|route
+          |debug|assert|check
+          )\b(?:[,;'"`(){}\[\]\s]|$)
+          )
+          )
+          \s*\b
           (
           (?!(?<!(?:(?<!\.)\.|[?!:]:)=?)
           \b(?:# keywords
@@ -2737,7 +2763,7 @@ repository:
           |debug|assert|check
           )(?!\B|\p{Pd}+\b)
           )
-          [\p{Pc}\p{L}][\w\p{Pd}]*
+          [\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:[?!]?\.|[?!:]:=?)[\p{Pc}\p{L}][\w\p{Pd}]*)*
           )
           \b\s+
           (?=
@@ -2794,10 +2820,11 @@ repository:
           |debug|assert|check
           )(?!\B|\p{Pd}+\b)
           )
-          [\p{Pc}\p{L}][\w\p{Pd}]*
+          [\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:[?!]?\.|[?!:]:=?)[\p{Pc}\p{L}][\w\p{Pd}]*)*
           )
-          \b\s*
-          (?=['"]|
+          \b
+          (?=
+          \s+['"\\({\[]|
           (?:[!?]\.=?|\.=)?\#?\(|
           (?:[!?]\.=?|\.=)?<(?:\b|['"`\\({\[])
           )
@@ -4554,8 +4581,8 @@ repository:
     patterns:
       - comment: Type arguments. This is complicated since we don't want to match things like foo < 123 || bar > baz
         name: meta.type-arguments.flowtype
-        begin: (?<=\b|['"`)}\]])(<)(?=\b|['"`({\[])
-        end: (?<=\b|['"`)}\]>])(>)
+        begin: (?<=^|['"`)}\]\s\w])(<)(?=['"`({\[\w])
+        end: (?<=['"`)}\]>\w])(>)
         captures:
           1: {name: punctuation.type.arguments.pta}
         patterns:
