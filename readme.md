@@ -2,9 +2,7 @@
 
 Protea is a versatile, cross-platform and multi-paradigm programming language that seeks to enhance JavaScript with a better sense of belonging in the community, while preserving much of its original vision; all with a cleaner syntax, powerful tools and libraries, faster performance and compilation, and a more intuitive approach to development.
 
-Protea's main motive is just like Rust: empowering everyone to build reliable and efficient software, with the power of JavaScript and WebAssembly at their side.
-
-It has a fast compiler toolchain that is blazingly fast and outputs performance-optimized code, and boasts a unique combination of language-integrated features inspired by the best of the web.
+Protea's main motive is just like Rust: empowering everyone to build reliable and efficient software, with the power of JavaScript and WebAssembly at its side. It has a fast compiler toolchain that is blazingly fast and outputs performance-optimized code, and boasts a unique combination of language-integrated features inspired by the best of the web.
 
 ```dart
 module Button =
