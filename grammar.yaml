@@ -1,6 +1,6 @@
 name: Protea
-scopeName: source.dart
-fileTypes: [dart, pta]
+scopeName: source.coffee
+fileTypes: [coffee, pta]
 patterns: [include: "#core"]
 
 information for contributors: |
@@ -13,19 +13,17 @@ information for contributors: |
 
 comment: |
   To-do for the new grammar (circa 2022):
-  - Fully support indentation-based syntax as the norm
-  - Port all CSS properties as some of them do not highlight properly
-  - Revamp numeric literals again
   - Add type-regex literals
   - Document and add uncaught parsing errors
 
+  Breaking changes:
+  - Spacing is no longer captured around variables - this
+    is to let them work in embedded contexts
+  - Keywords use a slightly different capturing mechanism
+
   For the new Markdown syntax, add:
-  - Links
-  - Inline CSS
   - Selectors and anchors
   - Code blocks
-  - Unordered and ordered lists
-  - Blockquotes
   - Definition blocks
   - Tables
   - Headings and subheadings
@@ -969,12 +967,11 @@ repository:
           |import|export|route
           |debug|assert|check
           )(?!\B|\p{Pd}+\b)
-          )
+          )\b
         end: (?=)|$
         captures:
           1: {name: punctuation.section.embedded.pta}
         patterns:
-          - include: "#calls"
           - include: "#variables"
           - include: "#brackets"
           - &embedded-primary-operators
@@ -1068,7 +1065,6 @@ repository:
           3: {name: punctuation.separator.key-value.pta}
         end: (?=)|$
         patterns:
-          - include: "#calls"
           - include: "#variables"
           - include: "#brackets"
           - &embedded-primary-operators
@@ -1736,9 +1732,9 @@ repository:
       )
       | ( # Inline Link
       \( # Opening paren
-      [ \t]*+ # Optional whtiespace
+      [ \t]*+ # Optional whitespace
       <?(.*?)>? # URL
-      [ \t]*+ # Optional whtiespace
+      [ \t]*+ # Optional whitespace
       ( # Optional Title
       (?<title>['"])
       (.*?)
@@ -2697,9 +2693,9 @@ repository:
           (?x)\s*
           (?<=
           ^|[,;(){}\[\]]|['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
-          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s+|
+          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s+|
           //?[\p{Pc}\p{L}][\w\p{Pd}]*|
-          @\b[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
+          @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:[?!]?\.|[?!:]:=?)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
           (?:
           (?:^|[,;'"`(){}\[\]\s])\b(?:# keywords
           in|of|as|is|new
@@ -2782,9 +2778,9 @@ repository:
           (?x)\s*
           (?<=
           ^|[,;(){}\[\]]|['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
-          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s+|
+          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s+|
           //?[\p{Pc}\p{L}][\w\p{Pd}]*|
-          @\b[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
+          @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:[?!]?\.|[?!:]:=?)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
           (?:
           (?:^|[,;'"`(){}\[\]\s])\b(?:# keywords
           in|of|as|is|new
