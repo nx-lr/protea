@@ -42,7 +42,7 @@ define:
 
   class-name: &class-name |
     (?x)\s*\b
-    (?!(?<!(?:^|[^.])\.|[?!:]:)
+    (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
     \b(?:# keywords
     in|of|as|is|new
     |to|til|thru|by|del
@@ -68,7 +68,7 @@ define:
 
   entity-name: &entity-name |
     (?x)\s*\b
-    (?!(?<!(?:^|[^.])\.|[?!:]:)
+    (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
     \b(?:# keywords
     in|of|as|is|new
     |to|til|thru|by|del
@@ -190,7 +190,7 @@ repository:
     captures:
       1: {name: punctuation.definition.parameters.pta}
     patterns: &function-params
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(as)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.as.pta
       - match: (?<=[\w\s][(|])\.
         name: punctuation.definition.metadata.pta
@@ -218,7 +218,7 @@ repository:
 
   illegal-keywords:
     match: |
-      \s*(?<!(?:^|[^.])\.|[?!:]:)\b(
+      \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(
       in|of|as|is|new
       |to|til|thru|by|del
       |unset|ref|and|or|xor|not
@@ -251,7 +251,7 @@ repository:
   constants:
     patterns:
       - match: |
-          (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(?:
+          (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(?:
           (true)|(false)|(null)|(void)|(nan)|(infin)
           )(?!\B|\p{Pd}+\b)\s*
         captures:
@@ -262,7 +262,7 @@ repository:
           5: {name: constant.language.nan.pta}
           6: {name: constant.language.infinity.pta}
       - match: |
-          (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(?:
+          (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(?:
           (it|this|that|self)#1
           |(args)#2
           |(ctor)#3
@@ -944,7 +944,7 @@ repository:
         applyEndPatternLast: 1
         begin: |
           (?x)(?<=^|\s|\b)(\$)
-          (?!(?<!(?:^|[^.])\.|[?!:]:)
+          (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
           \b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
@@ -2112,7 +2112,7 @@ repository:
         captures:
           1: {name: punctuation.definition.parameters.pta}
         patterns:
-          - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.pta
           - include: "#clauses"
           - include: "#constants"
@@ -2128,7 +2128,7 @@ repository:
         patterns:
           - include: "#attribute-selectors"
           - include: $self
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.pta
       - include: "#style-selectors"
       - include: "#format-language"
@@ -2648,7 +2648,7 @@ repository:
           - include: "#jsdoc-name-scopes"
   jsdoc-name-path-scopes:
     patterns:
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(as)(?!\B|\p{Pd}+\b)\s*(?=[\p{Pc}\p{L}])
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*(?=[\p{Pc}\p{L}])
         captures:
           1: {name: keyword.as.jsdoc}
       - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}][\w\p{Pd}]*))(?=[\s\-~.#]|$)
@@ -2718,7 +2718,7 @@ repository:
           )
           \s*\b
           (
-          (?!(?<!(?:^|[^.])\.|[?!:]:)
+          (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
           \b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
@@ -2745,7 +2745,7 @@ repository:
           (?:\\|//?)\b|<\|{1,3}\s+|<\+\s+
           |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
           (
-          (?!(?<!(?:^|[^.])\.|[?!:]:)
+          (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
           \b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
@@ -2803,7 +2803,7 @@ repository:
           )
           \s*\b
           (
-          (?!(?<!(?:^|[^.])\.|[?!:]:)
+          (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
           \b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
@@ -3162,7 +3162,7 @@ repository:
         begin: |
           (?x)\s*(?:(\+>)|(\|{1,3}>))(?=\s*(
           [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
-          (?!(?<!(?:^|[^.])\.|[?!:]:)
+          (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
           \b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
@@ -3194,7 +3194,7 @@ repository:
         patterns:
           - match: |
               (?x)\s*\b
-              (?!(?<!(?:^|[^.])\.|[?!:]:)
+              (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
               \b(?:# keywords
               in|of|as|is|new
               |to|til|thru|by|del
@@ -3280,7 +3280,7 @@ repository:
     match: |
       (?x)\s*\b
 
-      (?!(?<!(?:^|[^.])\.|[?!:]:)
+      (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
       \b(?:# keywords
       in|of|as|is|new
       |to|til|thru|by|del
@@ -3579,15 +3579,15 @@ repository:
 
   type-keywords:
     patterns:
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(ext)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(ext)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.extends.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(impl)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(impl)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.implements.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(typeof|nameof|sizeof|keyof|attrof|infer|as|is)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(typeof|nameof|sizeof|keyof|attrof|infer|as|is)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.$1.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(instof)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(instof)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.instanceof.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(valof)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(valof)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.valueof.pta
 
   type-operators:
@@ -3685,7 +3685,7 @@ repository:
       (
       (?:
       (?:
-      \s*(?<!(?:^|[^.])\.|[?!:]:)\b
+      \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b
       (?:
       # Visibility and mutability
       pub|priv|prot|after|mut|immut
@@ -3704,7 +3704,7 @@ repository:
       )*
       )
       (?=
-      \s*(?<!(?:^|[^.])\.|[?!:]:)\b
+      \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b
       (?:
       var|let|func?|proc|type
       |class|data|enum|module
@@ -3746,73 +3746,73 @@ repository:
 
   declaration-keywords:
     patterns:
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(decl|def)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(decl|def)(?!\B|\p{Pd}+\b)\s*
         name: keyword.other.declare.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(var|let)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(var|let)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(style)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.style.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(func?)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(func?)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.function.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(proc)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(proc)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.procedure.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(class)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(class)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.class.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(data)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(data)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.data.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(enum)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(enum)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.enum.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(module)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(module)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.module.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(iter)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(iter)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.iterator.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(macro)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(macro)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.macro.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(struct)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(struct)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.structure.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(object)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(object)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.object.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(trait)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(trait)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.trait.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(elem)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(elem)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.component.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(prop)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(prop)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.property.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(mark)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(mark)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.markup.pta
 
   general-keywords:
     comment: general keywords
     patterns:
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(if|elif|else)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(if|elif|else)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.conditional.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(for|loop|while)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(for|loop|while)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.loop.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(try|throw|catch|after)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(try|throw|catch|after)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.trycatch.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(match|case|fail)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(match|case|fail)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.switch.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.flow.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(import|export|route)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(import|export|route)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.module.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(with|then|do|from|ref|go|defer)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(with|then|do|from|ref|go|defer)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.$1.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(debug|assert|check|where)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(debug|assert|check|where)(?!\B|\p{Pd}+\b)\s*
         name: keyword.other.$1.pta
 
   expression-keywords:
     comment: expression keywords
     patterns:
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(in|of|as|is|new)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(in|of|as|is|new)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.$1.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(del)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(del)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.delete.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(to|til|till|thru|by)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(to|til|till|thru|by)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.range.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(unset)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(unset)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.void.pta
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(and|or|xor|not)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(and|or|xor|not)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.logical.pta
 
   keywords:
@@ -3829,7 +3829,7 @@ repository:
     repository:
       control-expression:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(break|next|redo|retry|label|goto|pass)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(break|next|redo|retry|label|goto|pass)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: keyword.control.flow.pta}
@@ -3840,13 +3840,13 @@ repository:
       module-expression:
         patterns:
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(import|export|route)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(import|export|route)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.control.module.pta}
             patterns:
               - *modifiers
-              - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+              - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.module.pta
               - include: "#type-keywords"
               - include: "#declarations"
@@ -3859,19 +3859,19 @@ repository:
                 name: variable.other.readwrite.alias.pta
 
       validation-expression:
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(where)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(where)(?!\B|\p{Pd}+\b)\s*
         beginCaptures:
           1: {name: keyword.control.validate.pta}
         end: (?=[,;)}\]])
         patterns:
-          - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(pre|post|need|know|check|test|read|write|till|same)(?!\B|\p{Pd}+\b)\s*
+          - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(pre|post|need|know|check|test|read|write|till|same)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.validate.pta
-          - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)(?!\B|\p{Pd}+\b)\s*
+          - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.validate.pta
           - include: $self
 
       query-expression:
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(from)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(from)(?!\B|\p{Pd}+\b)\s*
         beginCaptures:
           1: {name: keyword.control.query.pta}
         end: (?=[,;)}\]])
@@ -3890,7 +3890,7 @@ repository:
           - include: "#reduce-clause"
         repository:
           in-clause:
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(in|of)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
               2: {patterns: [include: $self]}
@@ -3900,19 +3900,19 @@ repository:
               - include: "#query-body"
               - include: $self
           join-clause:
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b((?:full|part|self|cross)?(?!\B|\p{Pd}+\b)\s*\b(?:inner|outer|left|right)?(?!\B|\p{Pd}+\b)\s*\bjoin)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b((?:full|part|self|cross)?(?!\B|\p{Pd}+\b)\s*\b(?:inner|outer|left|right)?(?!\B|\p{Pd}+\b)\s*\bjoin)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
               2: {patterns: [include: $self]}
               3: {name: keyword.control.query.pta}
             end: (?=[,;)}\]])
             patterns:
-              - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(on|equals|into)(?!\B|\p{Pd}+\b)\s*
+              - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(on|equals|into)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.pta
               - include: "#query-body"
               - include: $self
           where-clause:
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(where|having|filter|reject)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(where|having|filter|reject)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
             end: (?=[,;)}\]])
@@ -3920,7 +3920,7 @@ repository:
               - include: "#query-body"
               - include: $self
           sort-clause:
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b((?:sort|order)(?!\B|\p{Pd}+\b)\s*\b(?:asc|desc)?(?!\B|\p{Pd}+\b)\s*\b(?:by|with)?)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b((?:sort|order)(?!\B|\p{Pd}+\b)\s*\b(?:asc|desc)?(?!\B|\p{Pd}+\b)\s*\b(?:by|with)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
             end: (?=[,;)}\]])
@@ -3928,42 +3928,42 @@ repository:
               - include: "#query-body"
               - include: $self
           select-clause:
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b((?:select|map)(?!\B|\p{Pd}+\b)\s*\b(?:unique|any|all)?)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b((?:select|map)(?!\B|\p{Pd}+\b)\s*\b(?:unique|any|all)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
             end: (?=[,;)}\]])
             patterns:
-              - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+              - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.pta
               - include: "#query-body"
               - include: $self
           limit-clause:
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b((?:take|drop|limit|offset)(?!\B|\p{Pd}+\b)\s*\b(?:first|last|head|tail)?)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b((?:take|drop|limit|offset)(?!\B|\p{Pd}+\b)\s*\b(?:first|last|head|tail)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
             end: (?=[,;)}\]])
             patterns:
-              - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+              - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.pta
               - include: "#query-body"
               - include: $self
           reduce-clause:
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b((?:fold|reduce|scan)(?!\B|\p{Pd}+\b)\s*\b(?:left|right)?)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b((?:fold|reduce|scan)(?!\B|\p{Pd}+\b)\s*\b(?:left|right)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
             end: (?=[,;)}\]])
             patterns:
-              - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+              - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.pta
               - include: "#query-body"
               - include: $self
           group-clause:
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(group)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(group)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.pta}
             end: (?=[,;)}\]])
             patterns:
-              - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(by|into)(?!\B|\p{Pd}+\b)\s*
+              - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(by|into)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.pta
               - include: "#query-body"
               - include: $self
@@ -3990,7 +3990,7 @@ repository:
 
     repository:
       markup:
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(mark)(?!\B|\p{Pd}+\b)(.*\n?)
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(mark)(?!\B|\p{Pd}+\b)(.*\n?)
         beginCaptures:
           1: {name: storage.type.markup.pta}
           2: {patterns: [include: "#markdown"]}
@@ -4001,7 +4001,7 @@ repository:
             name: string.unquoted.block.pta
             patterns: [include: "#markdown"]
       style:
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(style)(?!\B|\p{Pd}+\b)(.*\n?)
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)(.*\n?)
         beginCaptures:
           1: {name: storage.type.style.pta}
           2:
@@ -4024,7 +4024,7 @@ repository:
 
       component:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(elem)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(elem)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.component.pta}
@@ -4036,20 +4036,20 @@ repository:
 
       variable:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(var|let)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(var|let)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.variable.pta}
       declare:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(decl)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(decl)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: keyword.other.declare.pta}
 
       function:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(func?)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(func?)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.function.pta}
@@ -4059,7 +4059,7 @@ repository:
             name: entity.name.function.pta
       procedure:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(proc)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(proc)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.procedure.pta}
@@ -4069,7 +4069,7 @@ repository:
             name: entity.name.procedure.pta
       class:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(class)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(class)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.class.pta}
@@ -4079,7 +4079,7 @@ repository:
             name: entity.name.class.pta
       data:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(data)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(data)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.data.pta}
@@ -4089,7 +4089,7 @@ repository:
             name: entity.name.data.pta
       enum:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(enum)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(enum)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.enum.pta}
@@ -4099,7 +4099,7 @@ repository:
             name: entity.name.enum.pta
       module:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(module)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(module)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.module.pta}
@@ -4109,7 +4109,7 @@ repository:
             name: entity.name.module.pta
       iterator:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(iter)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(iter)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.iterator.pta}
@@ -4119,7 +4119,7 @@ repository:
             name: entity.name.iterator.pta
       macro:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(macro)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(macro)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.macro.pta}
@@ -4129,7 +4129,7 @@ repository:
             name: entity.name.macro.pta
       structure:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(struct)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(struct)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.structure.pta}
@@ -4139,7 +4139,7 @@ repository:
             name: entity.name.structure.pta
       object:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(object)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(object)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.object.pta}
@@ -4149,7 +4149,7 @@ repository:
             name: entity.name.object.pta
       trait:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(trait)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(trait)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.trait.pta}
@@ -4159,7 +4159,7 @@ repository:
             name: entity.name.trait.pta
       property:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(prop)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(prop)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.property.pta}
@@ -4359,7 +4359,7 @@ repository:
           - include: "#function-params"
       new-clause:
         applyEndPatternLast: 1
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(new)(?!\B|\p{Pd}+\b)
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(new)(?!\B|\p{Pd}+\b)
         end: (?=)|$
         beginCaptures:
           1: {name: keyword.operator.expression.$1.pta}
@@ -4373,14 +4373,14 @@ repository:
       type-clause:
         patterns:
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(is|as)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(is|as)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.pta}
             patterns:
               - include: "#types"
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(type)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(type)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             captures:
               1: {name: keyword.other.typedef.pta}
@@ -4390,8 +4390,8 @@ repository:
                   1: {name: keyword.operator.assignment.pta}
               - include: "#types"
       catch-clause:
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(catch)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:^|[^.])\.|[?!:]:)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(catch)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.catch.pta
         captures:
           1: {name: keyword.control.error.pta}
@@ -4402,22 +4402,22 @@ repository:
             captures:
               1: {name: punctuation.definition.expression.pta}
             patterns:
-              - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(as)(?!\B|\p{Pd}+\b)\s*
+              - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.error.pta
               - include: $self
-          - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.error.pta
           - include: $self
       for-clause:
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(for|each|while)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<!(?:^|[^.])\.|[?!:]:)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(for|each|while)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.for.pta
         captures:
           1: {name: keyword.control.loop.pta}
           2: {name: punctuation.separator.colon.pta}
         patterns:
           - &for-clause-keywords
-            match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(in|of)(?!\B|\p{Pd}+\b)\s*
+            match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.loop.pta
           - begin: \s*(\()
             end: \s*(\))\s*
@@ -4428,31 +4428,31 @@ repository:
               - include: $self
           - include: $self
       if-clause:
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(if|elif)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:^|[^.])\.|[?!:]:)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(if|elif)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.if.pta
         captures:
           1: {name: keyword.control.conditional.pta}
           2: {name: punctuation.separator.colon.pta}
         patterns: [include: $self]
       switch-clause:
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(match)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<!(?:^|[^.])\.|[?!:]:)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.switch.pta
         captures:
           1: {name: keyword.control.match.pta}
           2: {name: punctuation.separator.colon.pta}
         patterns: [include: $self]
       with-clause:
-        begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(with)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<!(?:^|[^.])\.|[?!:]:)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.with.pta
         captures:
           1: {name: keyword.control.with.pta}
           2: {name: punctuation.separator.colon.pta}
         patterns:
           - &with-clause-keywords
-            match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(as)(?!\B|\p{Pd}+\b)\s*
+            match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.with.pta
           - begin: \s*(\()
             end: \s*(\))\s*
@@ -4592,29 +4592,29 @@ repository:
 
   closures:
     patterns:
-      - begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(case)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:^|[^.])\.|[?!:]:)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+      - begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         captures:
           1: {name: keyword.control.match.pta}
           2: {name: punctuation.separator.colon.pta}
         patterns:
           - include: "#params-clause"
           - applyEndPatternLast: 1
-            begin: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(is)(?!\B|\p{Pd}+\b)\s*
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.control.match.pta}
             patterns:
               - include: "#types"
-          - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
+          - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.pta
-          - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(var|let|let|set|get|const)(?!\B|\p{Pd}+\b)\s*
+          - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(var|let|let|set|get|const)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.pta
-          - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+          - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.pta
           - include: "#type-keywords"
           - include: $self
-      - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(fail)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(fail)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.match.pta
 
   curly-brackets:
@@ -4687,7 +4687,7 @@ repository:
         patterns:
           - match: ","
             name: punctuation.separator.arguments.pta
-          - match: (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.pta
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.pta
@@ -5127,7 +5127,7 @@ repository:
     patterns:
       - comment: Primitive classes
         match: |
-          (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(
+          (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(
           Bool|[NR]at|Real|Num|(Big)?(U?Int|Float|[NR]at)
           |Imag|Comp|Char|Rune|Str|Sym
           |U?Int(8|16|32|64|128)
@@ -5145,7 +5145,7 @@ repository:
         name: support.type.builtin.primitive.pta
       - comment: Data structure classes
         match: |
-          (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(
+          (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(
           Array|Tuple|(Mut)?(List|Set|Map|Bag|Str)|Dict|Func|Iter
           |Proc|Seq|Gen|Range|Stack|Heap|Queue|Tree|Trie
           |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
@@ -5157,7 +5157,7 @@ repository:
         name: support.type.builtin.pta
       - comment: Constant/algebraic classes
         match: |
-          (?x)\s*(?<!(?:^|[^.])\.|[?!:]:)\b(
+          (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(
           True|False|Null|Void|NaN|Infin|Empty|Unit|Obj
           |Any|Mixed|Just|Some|None|Never|(Im)?pure|Const
           # lowerFlatCase
