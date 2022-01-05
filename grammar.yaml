@@ -121,6 +121,7 @@ repository:
       - include: "#calls"
       - include: "#variables"
       - include: "#illegal"
+      - include: "#space"
 
   ignore-long-lines:
     comment: avoid parsing files with long lines of code
@@ -146,6 +147,7 @@ repository:
       - include: "#calls"
       - include: "#variables"
       - include: "#illegal"
+      - include: "#space"
 
   # Function brackets (early here as not to break things)
 
@@ -947,7 +949,7 @@ repository:
       - comment: Oniguruma supports only 20 levels of recursion
         applyEndPatternLast: 1
         begin: |
-          (?x)(?<=^|[\w\s'"`])(\$)
+          (?x)(?<=^|[\w\s'"`)}\]])(\$)
           (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
           \b(?:# keywords
           in|of|as|is|new
@@ -987,7 +989,7 @@ repository:
     patterns:
       - comment: // for multiple flags at once with single-character aliases
         applyEndPatternLast: 1
-        begin: (?x)(?<=^|[\w\s'"`])(//)\b
+        begin: (?x)(?<=^|[\w\s'"`)}\]])(//)\b
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.flag.pta}
@@ -998,7 +1000,7 @@ repository:
               1: {name: keyword.other.flag.pta}
       - comment: / for a single flag, with optional arguments
         applyEndPatternLast: 1
-        begin: (?x)(?<=^|[\w\s'"`])(/)\b
+        begin: (?x)(?<=^|[\w\s'"`)}\]])(/)\b
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.flag.pta}
@@ -1011,7 +1013,7 @@ repository:
   format-specifier:
     comment: Oniguruma supports only 20 levels of recursion
     applyEndPatternLast: 1
-    begin: (?x)(?<=^|[\w\s'"`])(%)\b
+    begin: (?x)(?<=^|[\w\s'"`)}\]])(%)\b
     end: (?=)|$
     captures:
       1: {name: punctuation.definition.directive.pta}
@@ -1069,7 +1071,6 @@ repository:
           - include: "#calls"
           - include: "#variables"
           - include: "#brackets"
-          - include: "#numbers"
           - &embedded-primary-operators
             comment: Primary binary operators
             match: (?x)(?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
@@ -4635,14 +4636,14 @@ repository:
             name: punctuation.definition.block.sequence.item.pta
 
     patterns:
-      - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\{)\s*
+      - begin: (?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\{)\s*
         end: \s*(\})\s*
         captures:
           1: {name: punctuation.definition.typeparameters.pta}
         patterns:
           - include: "#types"
           - include: $self
-      - begin: \s*(?<=\b(?:var|let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
+      - begin: (?<=\b(?:var|let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
         end: \s*(\})\s*
         captures:
           1: {name: punctuation.definition.binding-pattern.object.pta}
@@ -4650,17 +4651,17 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\#\{)\s*
+      - begin: (?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\#\{)\s*
         end: \s*(\})\s*
         captures:
           1: {name: punctuation.section.class.pta}
         patterns: [include: $self]
-      - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\{)\s*
+      - begin: (?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\{)\s*
         end: \s*(\})\s*
         captures:
           1: {name: punctuation.definition.block.pta}
         patterns: [include: $self]
-      - begin: \s*(?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
+      - begin: (?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
         end: \s*(\})\s*
         captures:
           1: {name: punctuation.definition.mapping.pta}
@@ -4668,8 +4669,8 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
-        end: \s*(\})\s*
+      - begin: (?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
+        end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.pta}
         patterns:
@@ -4677,12 +4678,12 @@ repository:
           - include: "#punctuation"
           - include: $self
       - begin: (\#\{)\s*
-        end: \s*(\})\s*
+        end: \s*(\})
         captures:
           1: {name: punctuation.section.class.pta}
         patterns: [include: $self]
       - begin: (\{)\s*
-        end: \s*(\})\s*
+        end: \s*(\})
         captures:
           1: {name: punctuation.definition.block.pta}
         patterns: [include: $self]
@@ -4698,8 +4699,8 @@ repository:
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.pta
     patterns:
-      - begin: \s*(?<=[\w'"`)}\]>]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
-        end: \s*(\))\s*
+      - begin: (?<=[\w'"`)}\]>]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
+        end: \s*(\))
         captures:
           1: {name: punctuation.definition.parameters.pta}
         patterns:
@@ -4710,15 +4711,15 @@ repository:
           - include: "#expression-keywords"
           - include: "#function-params"
           - include: $self
-      - begin: \s*(?<=\b(?:var|let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
-        end: \s*(\))\s*
+      - begin: (?<=\b(?:var|let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
+        end: \s*(\))
         captures:
           1: {name: punctuation.definition.binding-pattern.tuple.pta}
         patterns:
           - include: "#labels"
           - include: $self
-      - begin: \s*(\#?\()\s*
-        end: \s*(\))\s*
+      - begin: (\#?\()\s*
+        end: \s*(\))
         captures:
           1: {name: punctuation.definition.expression.pta}
         patterns: [include: $self]
@@ -4733,31 +4734,31 @@ repository:
           - match: ","
             name: punctuation.separator.sequence.pta
     patterns:
-      - begin: \s*(?<=\b(?:var|let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
-        end: \s*(\])\s*
+      - begin: (?<=\b(?:var|let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
+        end: \s*(\])
         captures:
           1: {name: punctuation.definition.binding-pattern.array.pta}
         patterns:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
-        end: \s*(\])\s*
+      - begin: (?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
+        end: \s*(\])
         captures:
           1: {name: punctuation.definition.attribute-selector.pta}
         patterns:
           - include: "#punctuation"
           - include: $self
-      - begin: \s*(\#\[)\s*
-        end: \s*(\])\s*
+      - begin: (\#\[)\s*
+        end: \s*(\])
         captures:
           1: {name: punctuation.definition.sequence.pta}
         patterns:
           - match: ","
             name: punctuation.separator.sequence.pta
           - include: $self
-      - begin: \s*(\[)\s*
-        end: \s*(\])\s*
+      - begin: (\[)\s*
+        end: \s*(\])
         captures:
           1: {name: punctuation.definition.array.pta}
         patterns:
