@@ -415,16 +415,16 @@ duodecimal = "\zB23430A19" # base 12
 
 The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
 
-```dart
-// "HELLO"
+```coffee
+# "HELLO"
 "\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
 "\d{72 69 76 76 69}" == "\72\69\76\76\79"
 ```
 
 Double quoted literals also allow you to embed LaTeX expressions (because why not?).
 
-```dart
-// LaTeX expressions:
+```coffee
+# LaTeX expressions:
 "\j{
   \documentclass{article}
   \title{Cartesian closed categories and the price of eggs}
@@ -432,7 +432,7 @@ Double quoted literals also allow you to embed LaTeX expressions (because why no
   \date{September 1994}
   \begin{document}
     \maketitle Hello world!
-  \end{}
+  \end{document}
 }"
 ```
 
@@ -727,7 +727,7 @@ A set `[...]` can include nested sets. The operators below are listed in increas
 
 If there are two adjacent regular expression literals on one side, then the one on the right is the substitution (template) string for the regular expression on the left.
 
-```dart
+```coffee
 val str = 'James Bond'
 val newStr = str.sub(`(\w+)\W+(\w+)` `$2, $1`) // 'Bond, James'
 val newStr = str.sub(`(\w+)\W+(\w+)` `My name is $2, $0!`)
