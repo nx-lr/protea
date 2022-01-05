@@ -1593,42 +1593,42 @@ repository:
   bold:
     begin: |
       (?x) (?<open>(\*\*(?=\w)|(?<!\w)\*\*|(?<!\w)\b__))(?=\S) (?=
-        (
-          <[^>]*+>              # HTML tags
-          | (?<raw>`+)([^`]|(?!(?<!`)\k<raw>(?!`))`)*+\k<raw>
-                            # Raw
-          | \\[\\`*_{}\[\]()#.!+\->]?+      # Escapes
-          | \[
-          (
-              (?<square>          # Named group
-                [^\[\]\\]        # Match most chars
-                | \\.            # Escaped chars
-                | \[ \g<square>*+ \]    # Nested brackets
-              )*+
-            \]
-            (
-              (              # Reference Link
-                [ ]?          # Optional space
-                \[[^\]]*+\]        # Ref name
-              )
-              | (              # Inline Link
-                \(            # Opening paren
-                  [ \t]*+        # Optional whitespace
-                  <?(.*?)>?      # URL
-                  [ \t]*+        # Optional whitespace
-                  (          # Optional Title
-                    (?<title>['"])
-                    (.*?)
-                    \k<title>
-                  )?
-                \)
-              )
-            )
-          )
-          | (?!(?<=\S)\k<open>).            # Everything besides
-                            # style closer
-        )++
-        (?<=\S)(?=__\b|\*\*)\k<open>                # Close
+      (
+      <[^>]*+> # HTML tags
+      | (?<raw>`+)([^`]|(?!(?<!`)\k<raw>(?!`))`)*+\k<raw>
+      # Raw
+      | \\[\\`*_{}\[\]()#.!+\->]?+ # Escapes
+      | \[
+      (
+      (?<square> # Named group
+      [^\[\]\\] # Match most chars
+      | \\. # Escaped chars
+      | \[ \g<square>*+ \] # Nested brackets
+      )*+
+      \]
+      (
+      ( # Reference Link
+      [ ]? # Optional space
+      \[[^\]]*+\] # Ref name
+      )
+      | ( # Inline Link
+      \( # Opening paren
+      [ \t]*+ # Optional whitespace
+      <?(.*?)>? # URL
+      [ \t]*+ # Optional whitespace
+      ( # Optional Title
+      (?<title>['"])
+      (.*?)
+      \k<title>
+      )?
+      \)
+      )
+      )
+      )
+      | (?!(?<=\S)\k<open>). # Everything besides
+      # style closer
+      )++
+      (?<=\S)(?=__\b|\*\*)\k<open> # Close
       )
     captures:
       1: {name: punctuation.definition.bold.markdown}
@@ -1681,18 +1681,18 @@ repository:
       18: {name: punctuation.definition.metadata.markdown}
     match: |
       (?x)
-        (\!\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])
-                      # Match the link text.
-        (\()            # Opening paren for url
-          (<?)(\S+?)(>?)      # The url
-          [ \t]*          # Optional whitespace
-          (?:
-              ((\().+?(\)))    # Match title in parens…
-            | ((").+?("))    # or in double quotes…
-            | ((').+?('))    # or in single quotes.
-          )?            # Title is optional
-          \s*            # Optional whitespace
-        (\))
+      (\!\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])
+      # Match the link text.
+      (\() # Opening paren for url
+      (<?)(\S+?)(>?) # The url
+      [ \t]* # Optional whitespace
+      (?:
+      ((\().+?(\))) # Match title in parens…
+      | ((").+?(")) # or in double quotes…
+      | ((').+?(')) # or in single quotes.
+      )? # Title is optional
+      \s* # Optional whitespace
+      (\))
     name: meta.image.inline.markdown
 
   image-ref:
@@ -1709,46 +1709,46 @@ repository:
 
   italic:
     begin: |
-      (?x) (?<open>(\*(?=\w)|(?<!\w)\*|(?<!\w)\b_))(?=\S)                # Open
-        (?=
-          (
-            <[^>]*+>              # HTML tags
-            | (?<raw>`+)([^`]|(?!(?<!`)\k<raw>(?!`))`)*+\k<raw>
-                              # Raw
-            | \\[\\`*_{}\[\]()#.!+\->]?+      # Escapes
-            | \[
-            (
-                (?<square>          # Named group
-                  [^\[\]\\]        # Match most chars
-                  | \\.            # Escaped chars
-                  | \[ \g<square>*+ \]    # Nested brackets
-                )*+
-              \]
-              (
-                (              # Reference Link
-                  [ ]?          # Optional space
-                  \[[^\]]*+\]        # Ref name
-                )
-                | (              # Inline Link
-                  \(            # Opening paren
-                    [ \t]*+        # Optional whtiespace
-                    <?(.*?)>?      # URL
-                    [ \t]*+        # Optional whtiespace
-                    (          # Optional Title
-                      (?<title>['"])
-                      (.*?)
-                      \k<title>
-                    )?
-                  \)
-                )
-              )
-            )
-            | \k<open>\k<open>                   # Must be bold closer
-            | (?!(?<=\S)\k<open>).            # Everything besides
-                              # style closer
-          )++
-          (?<=\S)(?=_\b|\*)\k<open>                # Close
-        )
+      (?x) (?<open>(\*(?=\w)|(?<!\w)\*|(?<!\w)\b_))(?=\S) # Open
+      (?=
+      (
+      <[^>]*+> # HTML tags
+      | (?<raw>`+)([^`]|(?!(?<!`)\k<raw>(?!`))`)*+\k<raw>
+      # Raw
+      | \\[\\`*_{}\[\]()#.!+\->]?+ # Escapes
+      | \[
+      (
+      (?<square> # Named group
+      [^\[\]\\] # Match most chars
+      | \\. # Escaped chars
+      | \[ \g<square>*+ \] # Nested brackets
+      )*+
+      \]
+      (
+      ( # Reference Link
+      [ ]? # Optional space
+      \[[^\]]*+\] # Ref name
+      )
+      | ( # Inline Link
+      \( # Opening paren
+      [ \t]*+ # Optional whtiespace
+      <?(.*?)>? # URL
+      [ \t]*+ # Optional whtiespace
+      ( # Optional Title
+      (?<title>['"])
+      (.*?)
+      \k<title>
+      )?
+      \)
+      )
+      )
+      )
+      | \k<open>\k<open> # Must be bold closer
+      | (?!(?<=\S)\k<open>). # Everything besides
+      # style closer
+      )++
+      (?<=\S)(?=_\b|\*)\k<open> # Close
+      )
     captures:
       1: {name: punctuation.definition.italic.markdown}
     end: (?<=\S)(\1)((?!\1)|(?=\1\1))
@@ -1808,18 +1808,18 @@ repository:
       19: {name: punctuation.definition.metadata.markdown}
     match: |
       (?x)
-        (\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])
-                      # Match the link text.
-        (\()            # Opening paren for url
-          (<?)((?<url>(?>[^\s()]+)|\(\g<url>*\))*)(>?)      # The url
-          [ \t]*          # Optional whitespace
-          (?:
-              ((\().+?(\)))    # Match title in parens…
-            | ((").+?("))    # or in double quotes…
-            | ((').+?('))    # or in single quotes.
-          )?            # Title is optional
-          \s*            # Optional whitespace
-        (\))
+      (\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])
+      # Match the link text.
+      (\() # Opening paren for url
+      (<?)((?<url>(?>[^\s()]+)|\(\g<url>*\))*)(>?) # The url
+      [ \t]* # Optional whitespace
+      (?:
+      ((\().+?(\))) # Match title in parens…
+      | ((").+?(")) # or in double quotes…
+      | ((').+?(')) # or in single quotes.
+      )? # Title is optional
+      \s* # Optional whitespace
+      (\))
     name: meta.link.inline.markdown
     patterns: [include: "#string-content"]
 
@@ -2691,7 +2691,7 @@ repository:
         match: |
           (?x)\s*
           (?<=
-          ^|[,;(){}\[\]]|['"`(){}\[\]\w](?:[?!]?\.|[?!:]:=?)|
+          ^|[,;(){}\[\]]|['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
           [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s+|
           //?[\p{Pc}\p{L}][\w\p{Pd}]*|
           @\b[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
@@ -2776,7 +2776,7 @@ repository:
         match: |
           (?x)\s*
           (?<=
-          ^|[,;(){}\[\]]|['"`(){}\[\]\w](?:[?!]?\.|[?!:]:=?)|
+          ^|[,;(){}\[\]]|['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
           [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s+|
           //?[\p{Pc}\p{L}][\w\p{Pd}]*|
           @\b[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
@@ -3993,7 +3993,9 @@ repository:
         begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(mark)(?!\B|\p{Pd}+\b)(.*\n?)
         beginCaptures:
           1: {name: storage.type.markup.pta}
-          2: {patterns: [include: "#markdown"]}
+          2:
+            name: string.unquoted.block.pta
+            patterns: [include: "#markdown"]
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^(\s+)(?!\s)
@@ -5493,7 +5495,9 @@ repository:
           ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
+          (?=\s|$|['"`\\</({\[])
           |
+          (?<=\s|^|['"`)}\]])
           (?:# Objects
           (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
           ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
@@ -5502,11 +5506,13 @@ repository:
           )
           (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
           |
+          (?<=\s|^|['"`)}\]])
           (?:# Regular variables
           (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
           ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
+          (?=\s|$|['"`\\</({\[])
           )
           )\b
         captures:
