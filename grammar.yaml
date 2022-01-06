@@ -1454,7 +1454,7 @@ repository:
             patterns: [include: "#markdown"]
       unordered-list:
         comment: "- unordered list"
-        begin: ^\s*(\-)(?!>)\s+(.*\n?)
+        begin: ^\s*(\-)(?!>)\s+(.*)\n?
         end: ^(?=\S)|(?!\G)
         beginCaptures:
           1: {name: punctuation.definition.list.begin.markdown.pta}
@@ -1469,7 +1469,7 @@ repository:
             patterns: [include: "#markdown"]
       ordered-list:
         comment: "+ ordered list"
-        begin: ^\s*(\+)(?!>)\s+(.*\n?)
+        begin: ^\s*(\+)(?!>)\s+(.*)\n?
         end: ^(?=\S)|(?!\G)
         beginCaptures:
           1: {name: punctuation.definition.list.begin.markdown.pta}
@@ -1554,7 +1554,7 @@ repository:
             patterns: [include: "#markdown"]
           - include: "#regexps"
       inline-styles:
-        begin: (?<=^|[\w\s'"`])(\+>)(.*\n?)
+        begin: (?<=^|[\w\s'"`])(\+>)(.*)\n?
         beginCaptures:
           1: {name: storage.type.style.pta}
           2:
@@ -1597,6 +1597,12 @@ repository:
       1:
         name: entity.name.tag.pta
         patterns: *html-tag-names
+  style-block:
+    begin: \s*(\{)\s*
+    end: \s*(\})\s*
+    captures:
+      1: {name: punctuation.definition.block.pta}
+    patterns: [include: "#style-properties"]
   style-pair:
     applyEndPatternLast: 1
     begin: |
@@ -1645,6 +1651,7 @@ repository:
       - include: "#keywords"
       - include: "#style-pair"
       - include: "#style-rules"
+      - include: "#style-block"
       - include: $self
   style-rules:
     patterns:
@@ -3013,14 +3020,6 @@ repository:
               - match: ","
                 name: punctuation.separator.sequence.pta
         patterns:
-          - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
-            end: \s*(\])\s*
-            captures:
-              1: {name: punctuation.definition.attribute-selector.pta}
-            patterns:
-              - include: "#punctuation"
-              - include: "#types"
-              - include: $self
           - begin: \s*(\#\[)\s*
             end: \s*(\])\s*
             captures:
@@ -3539,7 +3538,7 @@ repository:
 
     repository:
       markup:
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(markup)(?!\B|\p{Pd}+\b)(.*\n?)
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(markup)(?!\B|\p{Pd}+\b)(.*)\n?
         beginCaptures:
           1: {name: storage.type.markup.pta}
           2:
@@ -3551,27 +3550,57 @@ repository:
             end: ^(?!\1|\s*$)
             name: string.unquoted.block.pta
             patterns: [include: "#markdown"]
+
       style:
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)(.*\n?)
-        beginCaptures:
-          1: {name: storage.type.style.pta}
-          2:
-            patterns:
-              - match: (?<=^|\s)([?:]?=)(?=\s+|$)
-                captures:
-                  1: {name: keyword.operator.assignment.pta}
-              - include: "#comments"
-              - include: "#style-pair"
-              - include: "#style-rules"
-              - include: "#block-entities"
-              - match: *entity-name
-                name: entity.name.style.pta
-        end: ^(?=\S)|(?!\G)
         patterns:
-          - begin: ^(\s+)(?!\s)
-            end: ^(?!\1|\s*$)
-            name: meta.style.yaml
-            patterns: [include: "#style-properties"]
+          # - comment: block style
+          #   applyEndPatternLast: 1
+          #   begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
+          #   end: (?=)|$
+          #   beginCaptures:
+          #     1: {name: storage.type.style.pta}
+          #   patterns:
+          #     - include: "#style-rules"
+          #     - include: "#style-pair"
+          #     - include: "#style-block"
+          #     - applyEndPatternLast: 1
+          #       begin: (?<=^|\s)([?:]?=)(?=\s+|$)
+          #       captures:
+          #         1: {name: keyword.operator.assignment.pta}
+          #       end: (?=)|$
+          #       patterns:
+          #         - include: "#style-pair"
+          #         - include: "#style-rules"
+          #         - include: "#style-block"
+          #         - include: "#block-entities"
+          #     - include: "#block-entities"
+          #     - match: *entity-name
+          #       name: entity.name.style.pta
+          #     - begin: ^(\s+)(?!\s)
+          #       end: ^(?!\1|\s*$)
+          #       name: meta.style.yaml
+          #       patterns: [include: "#style-properties"]
+          - comment: indented style
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)(.*(?![^)}\]\\'"`]{\s*\n?)\n?)
+            beginCaptures:
+              1: {name: storage.type.style.pta}
+              2:
+                patterns:
+                  - match: (?<=^|\s)([?:]?=)(?=\s+|$)
+                    captures:
+                      1: {name: keyword.operator.assignment.pta}
+                  - include: "#comments"
+                  - include: "#style-pair"
+                  - include: "#style-rules"
+                  - include: "#block-entities"
+                  - match: *entity-name
+                    name: entity.name.style.pta
+            end: ^(?=\S)|(?!\G)
+            patterns:
+              - begin: ^(\s+)(?!\s)
+                end: ^(?!\1|\s*$)
+                name: meta.style.yaml
+                patterns: [include: "#style-properties"]
 
       component:
         applyEndPatternLast: 1
@@ -4697,11 +4726,11 @@ repository:
       - comment: Data structure classes
         match: |
           (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(
-          Array|Tuple|(Mut)?(List|Set|Map|Bag|Str)|Dict|Func|Iter
+          Array|Tuple|(Mut)?(List|Set|Map|Seq|Str)|Dict|Func|Iter
           |Proc|Seq|Gen|Range|Stack|Heap|Queue|Tree|Trie
           |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
           # lowerFlatCase
-          |array|tuple|(mut)?(list|set|map|bag|str)|dict|func|iter
+          |array|tuple|(mut)?(list|set|map|seq|str)|dict|func|iter
           |proc|seq|gen|range|stack|heap|queue|tree|trie
           |future|stream|regexp?|func|buf|strbuf|bytes
           )(?!\B|\p{Pd}+\b)
