@@ -633,6 +633,7 @@ repository:
   # Unicode Named Character Language
 
   latex-sublanguage:
+    name: string.unquoted.plain.in.pta
     comment: Grammar for the Unicode Named Character Mini-Language.
     patterns:
       - include: "#embedded"
@@ -640,8 +641,9 @@ repository:
         match: (\\\\)$
         captures:
           1: {name: punctuation.line.separator.math.pta}
-      - name: meta.function.math.pta
-        begin: ((\\)(\w[\w\p{Pd}]*(?:[:.]\w[\w\p{Pd}]*)*))\b(\{)
+      - applyEndPatternLast: 1
+        name: meta.function.math.pta
+        begin: ((\\)(\w[\w\p{Pd}]*(?:[:.]\w[\w\p{Pd}]*)*))\b(?=\{)
         beginCaptures:
           1: {name: storage.type.function.math.pta}
           2: {name: punctuation.definition.function.math.pta}
@@ -655,12 +657,13 @@ repository:
                 name: punctuation.separator.namespace.pta
               - match: \b\.\b
                 name: punctuation.accessor.pta
-          4: {name: punctuation.definition.arguments.begin.math.pta}
-        end: \}
-        endCaptures:
-          0: {name: punctuation.definition.arguments.end.math.pta}
+        end: (?=)|$
         patterns:
-          - include: "#latex-sublanguage"
+          - begin: (\{)
+            end: (\})
+            captures:
+              1: {name: punctuation.definition.arguments.begin.math.pta}
+            patterns: [include: "#latex-sublanguage"]
       - match: (\\)\b(\w[\w\p{Pd}]*(?:[:.]\w[\w\p{Pd}]*)*)\b
         captures:
           1: {name: punctuation.definition.constant.pta}
@@ -674,13 +677,17 @@ repository:
                 name: punctuation.separator.namespace.pta
               - match: \b\.\b
                 name: punctuation.accessor.pta
+      - match: '[*/^%]|(?<=\s|^)[-+](?=\s|$)'
+        name: keyword.operator.arithmetic.pta
+      - match: "[!=]?=|[<>]=?|<>"
+        name: keyword.operator.comparison.pta
       - include: "#strings"
       - include: "#numbers"
       - include: "#constants"
       - include: "#regexes"
       - include: "#string-escapes"
       - include: source.yaml#flow-collection
-      - match: (?<=^|[{\s}])[^'"`\\(){}\[\]]+
+      - match: '([^*/^=%+\-<>\\(){}\[\]]|!(?!=))+'
         name: string.unquoted.plain.in.pta
 
   # Regular expressions
