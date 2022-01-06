@@ -1,9 +1,5 @@
 # Protea
 
-Protea is a versatile, cross-platform and multi-paradigm programming language that seeks to enhance JavaScript with a better sense of belonging in the community, while preserving much of its original vision; all with a cleaner syntax, powerful tools and libraries, faster performance and compilation, and a more intuitive approach to development.
-
-Protea's main motive is just like Rust: empowering everyone to build reliable and efficient software, with the power of JavaScript and WebAssembly at its side. It has a fast compiler toolchain that is blazingly fast and outputs performance-optimized code, and boasts a unique combination of language-integrated features inspired by the best of the web.
-
 ```coffee
 module Button =
   style button
@@ -13,15 +9,6 @@ module Button =
     padding: 0.5em 1em
     font-size: 1em
     font-weight: bold
-    cursor: pointer
-    &:hover
-      color: white
-      background: palevioletred
-    &:active
-      color: palevioletred
-      background: white
-    &:focus
-      outline: none
 
   func make(&count: int) =
     let times = match count then
@@ -29,20 +16,14 @@ module Button =
       case 2 then "twice"
       fail "$count times"
     let msg = "Click me $times"
-    mark <button $msg
+    markup <button $msg
 ```
 
-## Overview
+## Introduction
 
-We all know JavaScript has very tricky parts, some of which can turn our jobs into nightmares, but still, people continue to improve and expand JavaScript into new horizons. We're now in the era where JavaScript is used in almost every industry, and it's time to make it more accessible to everyone.
+Protea will be a cross-platform, versatile programming language and framework that seeks to flesh out only the best parts of JavaScript, no matter the paradigm or framework. This is tied in with a robust type system, a fast compiler/runtime and a unique combination of language features to build and maintain applications.
 
-New languages and compilers for existing languages have been developed and created, attempting to hide away the fundamental problems of JavaScript, but it's still hard to debug or learn from and use, thereby making it harder to maintain and integrate even in a large JavaScript project.
-
-## Why Protea?
-
-Protea is a new programming language that seeks to remove many of the warts of JavaScript, while preserving its fundamental nature, tied in with a robust type system, a fast compiler/runtime and a powerful combination of features and tools to make it easier to build, maintain and integrate into JavaScript projects.
-
-Protea is inspired not only from TypeScript, but also from Kotlin, Rust, Go, OCaml and Elixir, with concepts from Scala and Haskell. All this is done in an effort to enhance JavaScript's brevity and readability.
+Protea is inspired by a number of popular programming languages, including Ruby, OCaml, Go, Elixir, Python, Rust, Kotlin, Haskell, F# and Scala, with ideas from Markdown, YAML and SASS.
 
 ```coffee
 # Assignment:
@@ -81,6 +62,12 @@ let cubes = [for y in list then math.cube num]
 let cubes = from x in 1 to 100
   select Math.cube(x);
 ```
+
+## Overview
+
+We all know JavaScript has very tricky parts, some of which can turn our jobs into nightmares, but still, people continue to improve and expand JavaScript into new horizons. We're now in the era where JavaScript is used in almost every industry, and it's time to make it more accessible to everyone.
+
+New languages and compilers for existing languages have been developed and created, attempting to hide away the fundamental problems of JavaScript, but it's still hard to debug or learn from and use, thereby making it harder to maintain and integrate even in a large JavaScript project.
 
 ---
 
@@ -242,10 +229,10 @@ The following are considered keywords:
     in of as is new
     to til thru by del
     unset ref and or xor not
-    var let func proc type
+    var let fun func proc type
     class data enum module
     iter macro struct object
-    trait style elem prop mark
+    trait style elem prop markup
     go defer do from where with
     if elif else then def decl
     for each loop while
@@ -281,7 +268,7 @@ true  # A Bool that is true
 false # A Bool that is false
 ```
 
-### Integers
+### Integers and Floats
 
 There are four integer types: `int`, `nat` which are signed/unsigned 64-bit integers, and their arbitrary-precision `big` counterparts.
 
@@ -289,12 +276,14 @@ An integer literal is a sequence of digits and underscores, optionally followed 
 
 ```coffee
 1 # int
+1 # int
 1u # nat
-1n # bigint
-1nu 1un # bignat
+1u # int
+1u # int
+1u # int
 
 18446744073709551616 # bigint
-18_446_744_073_709_551_616u # bigint
+18_446_744_073_709_551_616 # bigint
 ```
 
 Underscores can be used to make numbers more readable.
@@ -306,9 +295,6 @@ decimal = 11256099
 hex = 0xABC123
 octal = 0o52740443
 binary = 0b101010111100000100100011
-quaternary = 0q122303 # base 4
-senary = 0s32403235 # base 6
-duodecimal = 0zB23430A19 # base 12
 ```
 
 ### Rationals
@@ -319,16 +305,16 @@ Floating point numbers are inherently rational.
 
 The `f` suffix is used to denote a float, and `r` is used to denote a rational. You would need to fo
 
-Repeating digits use the form `x.yrz` where `x` is the integer part, `y` is the decimal part and `z` is the repeating part.
+Repeating digits use the form `x.y~z` where `x` is the integer part, `y` is the decimal part and `z` is the repeating part.
 
 ```coffee
-1r / 30r = 0.0r3r
+1:r / 30:r = 0.~3:r
 ```
 
-Rational literals can also use a improper fraction of the form form `xny`, `n` meaning numerator. In this form, the `r` can be dropped.
+Rational literals can also use a improper fraction of the form form `x/y`, `n` meaning numerator. In this form, the `r` can be dropped.
 
 ```coffee
-1r / 30r = 0n3
+1:r / 30:r = 1/3
 ```
 
 Exponent parts use `ex` (or `px` (`p` for power) in the case of hexadecimal) where `x` is the exponent with an optional sign.
@@ -336,22 +322,22 @@ Exponent parts use `ex` (or `px` (`p` for power) in the case of hexadecimal) whe
 An optional base `y` can be supplied in which case it is repeated: `exey`, `pxey` or any combination thereof.
 
 ```coffee
-1e+40
-0x1p+40
+1^+40
+0x1*10^+40
 ```
 
 Literals can also be truncated (`t`) to a given precision. `tx` or `tdx` counts of fractional places (digits after the point in whatever base). `tsx` counts the number of significant digits instead.
 
 ```coffee
-1t10
-0x1ts40
+1^40:int
+0x1=~40
 ```
 
 All that can be followed by an optional type suffix which can be any identifier.
 
 ### Strings
 
-A string literal is enclosed using either single or double quotes. Double quotes support escape sequences, while single quotes do not. Strings are already multiline by default.
+A string literal is enclosed using either single or double quotes. Double quotes support escape sequences, while single quotes do not. Strings can span multiple lines by default.
 
 To escape a single quote, double it.
 
@@ -408,9 +394,6 @@ decimal = "\11256099"
 hex = "\xABC123"
 octal = "\o52740443"
 binary = "\b101010111100000100100011"
-quaternary = "\q122303" # base 4
-senary = "\s32403235" # base 6
-duodecimal = "\zB23430A19" # base 12
 ```
 
 The same escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces. Only `\j` requires curly brackets.
@@ -421,22 +404,14 @@ The same escapes with curly brackets allow you to insert many code points inside
 "\d{72 69 76 76 69}" == "\72\69\76\76\79"
 ```
 
+Any other character following a backslash is interpreted as the character itself.
+
 Double quoted literals also allow you to embed LaTeX expressions (because why not?).
 
 ```coffee
 # LaTeX expressions:
-"\j{
-  \documentclass{article}
-  \title{Cartesian closed categories and the price of eggs}
-  \author{Jane Doe}
-  \date{September 1994}
-  \begin{document}
-    \maketitle Hello world!
-  \end{document}
-}"
+`\j{\frac{\sum{i=1}^{n}\left(\frac{1}{i}\right)}{n}}`
 ```
-
-Any other character following a backslash is interpreted as the character itself.
 
 In single quotes, meta-characters such as `'`, `$`, `%` and `#` are doubled in order to be escaped (literal). In double quotes, you can use the backslash to escape them.
 
@@ -729,9 +704,9 @@ If there are two adjacent regular expression literals on one side, then the one 
 
 ```coffee
 val str = 'James Bond'
-val newStr = str.sub(`(\w+)\W+(\w+)` `$2, $1`) // 'Bond, James'
+val newStr = str.sub(`(\w+)\W+(\w+)` `$2, $1`) # 'Bond, James'
 val newStr = str.sub(`(\w+)\W+(\w+)` `My name is $2, $0!`)
-// 'My name is Bond, James Bond'
+# 'My name is Bond, James Bond'
 ```
 
 | Syntax | Meaning |
