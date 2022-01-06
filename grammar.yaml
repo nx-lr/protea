@@ -302,42 +302,42 @@ repository:
 
   numbers:
     patterns:
+      - comment: hexadecimal integers
+        name: constant.numeric.hexadecimal.pta
+        match: \b0x\h[\h_]*(\.?)[\h_]*(?:(e)([+-])?([\d_]+))?(_?[\p{Pc}\p{L}][\w\p{Pd}]*)?\b
+        captures:
+          1: {name: keyword.other.unit.pta}
+          2: {name: keyword.operator.exponent.pta}
+          3: {name: keyword.operator.exponent.sign.pta}
+          4: {name: constant.numeric.decimal.exponent.mantissa.pta}
+          5: {name: keyword.other.unit.pta}
+      - comment: octal integers
+        name: constant.numeric.octal.pta
+        match: \b0o[0-7][0-7_]*(\.?)[0-7_]*(?:(e)([+-])?([\d_]+))?(_?[\p{Pc}\p{L}][\w\p{Pd}]*)?\b
+        captures:
+          1: {name: keyword.other.unit.pta}
+          2: {name: keyword.operator.exponent.pta}
+          3: {name: keyword.operator.exponent.sign.pta}
+          4: {name: constant.numeric.decimal.exponent.mantissa.pta}
+          5: {name: keyword.other.unit.pta}
+      - comment: binary integers
+        name: constant.numeric.binary.pta
+        match: \b0b[01][01_]*(\.?)[01_]*(?:(e)([+-])?([\d_]+))?(_?[\p{Pc}\p{L}][\w\p{Pd}]*)?\b
+        captures:
+          1: {name: keyword.other.unit.pta}
+          2: {name: keyword.operator.exponent.pta}
+          3: {name: keyword.operator.exponent.sign.pta}
+          4: {name: constant.numeric.decimal.exponent.mantissa.pta}
+          5: {name: keyword.other.unit.pta}
       - comment: decimal integers and floats
         name: constant.numeric.decimal.pta
-        match: \b\d[\d_]*(\.?)[\d_]*(?:(e)([+-])?([\d_]+))?(_?(?:[fr]j?|[iu])n?(?:[1-9]\d*)?)?\b
+        match: \b\d[\d_]*(\.?)[\d_]*(?:(e)([+-])?([\d_]+))?(_?[\p{Pc}\p{L}][\w\p{Pd}]*)?\b
         captures:
           1: {name: punctuation.separator.dot.decimal.pta}
           2: {name: keyword.operator.exponent.pta}
           3: {name: keyword.operator.exponent.sign.pta}
           4: {name: constant.numeric.decimal.exponent.mantissa.pta}
-          5: {name: entity.name.type.numeric.pta}
-      - comment: hexadecimal integers
-        name: constant.numeric.hexadecimal.pta
-        match: \b0x\h[\h_]*(\.?)[\h_]*(?:(e)([+-])?([\d_]+))?(_?(?:[fr]j?|[iu])n?(?:[1-9]\d*)?)?\b
-        captures:
-          1: {name: entity.name.type.numeric.pta}
-          2: {name: keyword.operator.exponent.pta}
-          3: {name: keyword.operator.exponent.sign.pta}
-          4: {name: constant.numeric.decimal.exponent.mantissa.pta}
-          5: {name: entity.name.type.numeric.pta}
-      - comment: octal integers
-        name: constant.numeric.octal.pta
-        match: \b0o[0-7][0-7_]*(\.?)[0-7_]*(?:(e)([+-])?([\d_]+))?(_?(?:[fr]j?|[iu])n?(?:[1-9]\d*)?)?\b
-        captures:
-          1: {name: entity.name.type.numeric.pta}
-          2: {name: keyword.operator.exponent.pta}
-          3: {name: keyword.operator.exponent.sign.pta}
-          4: {name: constant.numeric.decimal.exponent.mantissa.pta}
-          5: {name: entity.name.type.numeric.pta}
-      - comment: binary integers
-        name: constant.numeric.binary.pta
-        match: \b0b[01][01_]*(\.?)[01_]*(?:(e)([+-])?([\d_]+))?(_?(?:[fr]j?|[iu])n?(?:[1-9]\d*)?)?\b
-        captures:
-          1: {name: entity.name.type.numeric.pta}
-          2: {name: keyword.operator.exponent.pta}
-          3: {name: keyword.operator.exponent.sign.pta}
-          4: {name: constant.numeric.decimal.exponent.mantissa.pta}
-          5: {name: entity.name.type.numeric.pta}
+          5: {name: keyword.other.unit.pta}
 
   symbol-strings:
     patterns:
@@ -608,7 +608,7 @@ repository:
         name: entity.other.attribute-name.pta
       - comment: Format switch with value /x:24
         applyEndPatternLast: 1
-        begin: (?<!\\)(/)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
+        begin: (?<!\\)(\|)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
         beginCaptures:
           1: {name: punctuation.separator.mapping.pta}
           2: {name: entity.other.attribute-name.class.pta}
@@ -867,7 +867,7 @@ repository:
           (?<ident>\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
           (
           (?<sw>
-          /\g<ident>
+          \|\g<ident>
           (?<value>:
           (?<expr>
           # Recursive brackets
