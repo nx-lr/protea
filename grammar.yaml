@@ -3552,34 +3552,35 @@ repository:
             patterns: [include: "#markdown"]
 
       style:
+        old:
+          - comment: block style
+            applyEndPatternLast: 1
+            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
+            end: (?=)|$
+            beginCaptures:
+              1: {name: storage.type.style.pta}
+            patterns:
+              - include: "#style-rules"
+              - include: "#style-pair"
+              - include: "#style-block"
+              - applyEndPatternLast: 1
+                begin: (?<=^|\s)([?:]?=)(?=\s+|$)
+                captures:
+                  1: {name: keyword.operator.assignment.pta}
+                end: (?=)|$
+                patterns:
+                  - include: "#style-pair"
+                  - include: "#style-rules"
+                  - include: "#style-block"
+                  - include: "#block-entities"
+              - include: "#block-entities"
+              - match: *entity-name
+                name: entity.name.style.pta
+              - begin: ^(\s+)(?!\s)
+                end: ^(?!\1|\s*$)
+                name: meta.style.yaml
+                patterns: [include: "#style-properties"]
         patterns:
-          # - comment: block style
-          #   applyEndPatternLast: 1
-          #   begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
-          #   end: (?=)|$
-          #   beginCaptures:
-          #     1: {name: storage.type.style.pta}
-          #   patterns:
-          #     - include: "#style-rules"
-          #     - include: "#style-pair"
-          #     - include: "#style-block"
-          #     - applyEndPatternLast: 1
-          #       begin: (?<=^|\s)([?:]?=)(?=\s+|$)
-          #       captures:
-          #         1: {name: keyword.operator.assignment.pta}
-          #       end: (?=)|$
-          #       patterns:
-          #         - include: "#style-pair"
-          #         - include: "#style-rules"
-          #         - include: "#style-block"
-          #         - include: "#block-entities"
-          #     - include: "#block-entities"
-          #     - match: *entity-name
-          #       name: entity.name.style.pta
-          #     - begin: ^(\s+)(?!\s)
-          #       end: ^(?!\1|\s*$)
-          #       name: meta.style.yaml
-          #       patterns: [include: "#style-properties"]
           - comment: indented style
             begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)(.*(?![^)}\]\\'"`]{\s*\n?)\n?)
             beginCaptures:
