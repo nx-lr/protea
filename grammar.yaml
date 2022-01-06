@@ -2376,7 +2376,8 @@ repository:
           )
           \b
           (?=
-          \s+['"\\({\[]|\b!(?:\s|$)|
+          \s+\$(?:\s|$)|
+          \s+['"\\({\[]|\b!(?:$|[\s'"`)}\]])|
           (?:[!?]\.=?|\.=)?\#?\(|
           (?:[!?]\.=?|\.=)?<(?:['"`\\({\[\w])
           )
@@ -2515,7 +2516,7 @@ repository:
           17: non-null coalescing !!
           18: compact ternary operator ?:
           19: inverse ternary operator !:
-          20: infix function call $:
+          20: function application $
         captures:
           1: {name: keyword.operator.assignment.pta}
           2: {name: keyword.operator.arithmetic.pta}
@@ -2551,7 +2552,7 @@ repository:
           |(\+>|<\+)#8
           |([<>][!:]|[!:][<>])#9
           |([<>]=?|<=?>)#10
-          |(=<|<?[/*|+$:]>?)#11
+          |(=<|<[/*|+$:]>?|[/*|+$:]>)#11
           |([!=]==?|[!=]~|~[!=])#12
           |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*~>|
           <~[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#13
@@ -2559,11 +2560,11 @@ repository:
           <=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#14
           |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*->|
           <-[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#15
-          |(\?\?)#16
-          |(!!)#17
+          |(\?\??)#16
+          |(!!?)#17
           |(\?:)#18
           |(!:)#19
-          |(\$:)#20
+          |(\$:?)#20
           )
           (?=$|[\s'"`)}\]])# closing
       - comment: |
@@ -4730,6 +4731,7 @@ repository:
   function-names:
     comment: Names for built-in functions (initial dump)
     patterns:
+      - include: "#type-names"
       - comment: Python and Perl 6/Raku built-in functions
         match: |
           (?x)\s*\b(
