@@ -48,7 +48,7 @@ define:
     |var|let|func?|proc|type
     |class|data|enum|module
     |iter|macro|struct|object
-    |trait|style|elem|prop|mark
+    |trait|style|elem|prop|markup
     |go|defer|do|from|where|with
     |if|elif|else|then|def
     |for|each|loop|while
@@ -74,7 +74,7 @@ define:
     |var|let|func?|proc|type
     |class|data|enum|module
     |iter|macro|struct|object
-    |trait|style|elem|prop|mark
+    |trait|style|elem|prop|markup
     |go|defer|do|from|where|with
     |if|elif|else|then|def
     |for|each|loop|while
@@ -229,7 +229,7 @@ repository:
       |var|let|func?|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
-      |trait|style|elem|prop|mark
+      |trait|style|elem|prop|markup
       |go|defer|do|from|where|with
       |if|elif|else|then|def
       |for|each|loop|while
@@ -302,456 +302,42 @@ repository:
 
   numbers:
     patterns:
-      - match: |
-          (?ix)\s*\b
-          ((?:[2-9]|[1-9]\d+)b)#radix
-          (?:\d+(?:\p{Pc}*\d+)*)#int/numer
-          (?:
-          (\.)(?:\d+(?:\p{Pc}*\d+)*)?(?:#frac
-          (r)(?:\d+(?:\p{Pc}*\d+)*))?|#rep
-          (n)(?:\d+(?:\p{Pc}*\d+)*)#denom
-          )?
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
+      - comment: decimal integers and floats
+        name: constant.numeric.decimal.pta
+        match: \b\d[\d_]*(\.?)[\d_]*(?:(e)([+-])?([\d_]+))?(_?(?:[fr]j?|[iu])n?(?:[1-9]\d*)?)?\b
         captures:
-          0: {name: constant.numeric.arbitrary-radix.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          ((?:[2-9]|[1-9]\d+)b)#radix
-          (?:\d+(?:\p{Pc}*\d+)*)?#int/numer
-          (?:
-          (\.)(?:\d+(?:\p{Pc}*\d+)*)?(?:#frac
-          (r)(?:\d+(?:\p{Pc}*\d+)*))?#rep
-          ()#denom
-          )
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
+          1: {name: punctuation.separator.dot.decimal.pta}
+          2: {name: keyword.operator.exponent.pta}
+          3: {name: keyword.operator.exponent.sign.pta}
+          4: {name: constant.numeric.decimal.exponent.mantissa.pta}
+          5: {name: entity.name.type.numeric.pta}
+      - comment: hexadecimal integers
+        name: constant.numeric.hexadecimal.pta
+        match: \b0x\h[\h_]*(\.?)[\h_]*(?:(e)([+-])?([\d_]+))?(_?(?:[fr]j?|[iu])n?(?:[1-9]\d*)?)?\b
         captures:
-          0: {name: constant.numeric.arbitrary-radix.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0b)#radix
-          (?:[01]+(?:\p{Pc}*[01]+)*)#int/numer
-          (?:
-          (\.)(?:[01]+(?:\p{Pc}*[01]+)*)?(?:#frac
-          (r)(?:[01]+(?:\p{Pc}*[01]+)*))?|#rep
-          (n)(?:[01]+(?:\p{Pc}*[01]+)*)#denom
-          )?
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
+          1: {name: entity.name.type.numeric.pta}
+          2: {name: keyword.operator.exponent.pta}
+          3: {name: keyword.operator.exponent.sign.pta}
+          4: {name: constant.numeric.decimal.exponent.mantissa.pta}
+          5: {name: entity.name.type.numeric.pta}
+      - comment: octal integers
+        name: constant.numeric.octal.pta
+        match: \b0o[0-7][0-7_]*(\.?)[0-7_]*(?:(e)([+-])?([\d_]+))?(_?(?:[fr]j?|[iu])n?(?:[1-9]\d*)?)?\b
         captures:
-          0: {name: constant.numeric.binary.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0b)#radix
-          (?:[01]+(?:\p{Pc}*[01]+)*)?#int/numer
-          (?:
-          (\.)(?:[01]+(?:\p{Pc}*[01]+)*)?(?:#frac
-          (r)(?:[01]+(?:\p{Pc}*[01]+)*))?#rep
-          ()#denom
-          )
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
+          1: {name: entity.name.type.numeric.pta}
+          2: {name: keyword.operator.exponent.pta}
+          3: {name: keyword.operator.exponent.sign.pta}
+          4: {name: constant.numeric.decimal.exponent.mantissa.pta}
+          5: {name: entity.name.type.numeric.pta}
+      - comment: binary integers
+        name: constant.numeric.binary.pta
+        match: \b0b[01][01_]*(\.?)[01_]*(?:(e)([+-])?([\d_]+))?(_?(?:[fr]j?|[iu])n?(?:[1-9]\d*)?)?\b
         captures:
-          0: {name: constant.numeric.binary.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0q)#radix
-          (?:[0-3]+(?:\p{Pc}*[0-3]+)*)#int/numer
-          (?:
-          (\.)(?:[0-3]+(?:\p{Pc}*[0-3]+)*)?(?:#frac
-          (r)(?:[0-3]+(?:\p{Pc}*[0-3]+)*))?|#rep
-          (n)(?:[0-3]+(?:\p{Pc}*[0-3]+)*)#denom
-          )?
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.quaternary.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0q)#radix
-          (?:[0-3]+(?:\p{Pc}*[0-3]+)*)?#int/numer
-          (?:
-          (\.)(?:[0-3]+(?:\p{Pc}*[0-3]+)*)?(?:#frac
-          (r)(?:[0-3]+(?:\p{Pc}*[0-3]+)*))?#rep
-          ()#denom
-          )
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.quaternary.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0s)#radix
-          (?:[0-5]+(?:\p{Pc}*[0-5]+)*)#int/numer
-          (?:
-          (\.)(?:[0-5]+(?:\p{Pc}*[0-5]+)*)?(?:#frac
-          (r)(?:[0-5]+(?:\p{Pc}*[0-5]+)*))?|#rep
-          (n)(?:[0-5]+(?:\p{Pc}*[0-5]+)*)#denom
-          )?
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.senary.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0s)#radix
-          (?:[0-5]+(?:\p{Pc}*[0-5]+)*)?#int/numer
-          (?:
-          (\.)(?:[0-5]+(?:\p{Pc}*[0-5]+)*)?(?:#frac
-          (r)(?:[0-5]+(?:\p{Pc}*[0-5]+)*))?#rep
-          ()#denom
-          )
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.senary.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0o)#radix
-          (?:[0-7]+(?:\p{Pc}*[0-7]+)*)#int/numer
-          (?:
-          (\.)(?:[0-7]+(?:\p{Pc}*[0-7]+)*)?(?:#frac
-          (r)(?:[0-7]+(?:\p{Pc}*[0-7]+)*))?|#rep
-          (n)(?:[0-7]+(?:\p{Pc}*[0-7]+)*)#denom
-          )?
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.octal.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0o)#radix
-          (?:[0-7]+(?:\p{Pc}*[0-7]+)*)?#int/numer
-          (?:
-          (\.)(?:[0-7]+(?:\p{Pc}*[0-7]+)*)?(?:#frac
-          (r)(?:[0-7]+(?:\p{Pc}*[0-7]+)*))?#rep
-          ()#denom
-          )
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.octal.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0z)#radix
-          (?:[\dab]+(?:\p{Pc}*[\dab]+)*)#int/numer
-          (?:
-          (\.)(?:[\dab]+(?:\p{Pc}*[\dab]+)*)?(?:#frac
-          (r)(?:[\dab]+(?:\p{Pc}*[\dab]+)*))?|#rep
-          (n)(?:[\dab]+(?:\p{Pc}*[\dab]+)*)#denom
-          )?
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\\[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.duodecimal.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0z)#radix
-          (?:[\dab]+(?:\p{Pc}*[\dab]+)*)?#int/numer
-          (?:
-          (\.)(?:[\dab]+(?:\p{Pc}*[\dab]+)*)?(?:#frac
-          (r)(?:[\dab]+(?:\p{Pc}*[\dab]+)*))?#rep
-          ()#denom
-          )
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\\[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.duodecimal.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0x)#radix
-          (?:\h+(?:\p{Pc}*\h+)*)#int/numer
-          (?:
-          (\.)(?:\h+(?:\p{Pc}*\h+)*)?(?:#frac
-          (r)(?:\h+(?:\p{Pc}*\h+)*))?|#rep
-          (n)(?:\h+(?:\p{Pc}*\h+)*)#denom
-          )?
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\\[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.hexadecimal.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (0x)#radix
-          (?:\h+(?:\p{Pc}*\h+)*)?#int/numer
-          (?:
-          (\.)(?:\h+(?:\p{Pc}*\h+)*)?(?:#frac
-          (r)(?:\h+(?:\p{Pc}*\h+)*))?#rep
-          ()#denom
-          )
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\\[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.hexadecimal.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          ()#radix
-          (?:\d+(?:\p{Pc}*\d+)*)#int/numer
-          (?:
-          (\.)(?:\d+(?:\p{Pc}*\d+)*)?(?:#frac
-          (r)(?:\d+(?:\p{Pc}*\d+)*))?|#rep
-          (n)(?:\d+(?:\p{Pc}*\d+)*)#denom
-          )?
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.decimal.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          ()#radix
-          (?:\d+(?:\p{Pc}*\d+)*)?#int/numer
-          (?:
-          (\.)(?:\d+(?:\p{Pc}*\d+)*)?(?:#frac
-          (r)(?:\d+(?:\p{Pc}*\d+)*))?#rep
-          ()#denom
-          )
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: constant.numeric.decimal.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (\d+(?=\w+))#radix
-          (?:\w+(?:\p{Pc}*\w+)*)#int/numer
-          (?:
-          (\.)(?:\w+(?:\p{Pc}*\w+)*)?(?:#frac
-          (r)(?:\w+(?:\p{Pc}*\w+)*))?|#rep
-          (n)(?:\w+(?:\p{Pc}*\w+)*)#denom
-          )?
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: invalid.illegal.numeric.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
-      - match: |
-          (?ix)\s*\b
-          (\d+(?=\w+))#radix
-          (?:\w+(?:\p{Pc}*\w+)*)?#int/numer
-          (?:
-          (\.)(?:\w+(?:\p{Pc}*\w+)*)?(?:#frac
-          (r)(?:\w+(?:\p{Pc}*\w+)*))?#rep
-          ()#denom
-          )
-          ((?:([pe])(?:0|[1-9]\d*))?([pe])[+-]?(?:0|[1-9]\d*))?#exp
-          ((t[ds]?)[+-]?(?:0|[1-9]\d*))?#sf
-          (\p{Pc}*[\p{Pc}\p{L}][\w\p{Pd}]*(?::[\p{Pc}\p{L}][\w\p{Pd}]*)*)?#type
-          \b\s*
-        captures:
-          0: {name: invalid.illegal.numeric.pta}
-          1: {name: storage.type.numeric.pta}
-          2: {name: punctuation.separator.period.pta}
-          3: {name: punctuation.separator.repeating.pta}
-          4: {name: punctuation.separator.fraction.pta}
-          5: {name: constant.numeric.other.exponent.pta}
-          6: {name: punctuation.separator.radix.pta}
-          7: {name: punctuation.separator.exponent.pta}
-          8: {name: constant.numeric.other.precision.pta}
-          9: {name: punctuation.separator.precision.pta}
-          10: {name: keyword.other.unit.pta}
+          1: {name: entity.name.type.numeric.pta}
+          2: {name: keyword.operator.exponent.pta}
+          3: {name: keyword.operator.exponent.sign.pta}
+          4: {name: constant.numeric.decimal.exponent.mantissa.pta}
+          5: {name: entity.name.type.numeric.pta}
 
   symbol-strings:
     patterns:
@@ -843,30 +429,6 @@ repository:
             name: constant.character.escape.binary.pta
           - match: \w+
             name: invalid.illegal.unrecognized-string-escape.pta
-      - comment: Quaternary escape sequences
-        match: (?ix)\\q[0-3]+
-        name: constant.character.escape.quaternary.pta
-      - comment: Quaternary escape sequences
-        begin: (?ix)\\q{
-        end: \s*}
-        name: constant.character.escape.quaternary.pta
-        patterns:
-          - match: \b[0-3]+\b
-            name: constant.character.escape.quaternary.pta
-          - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.pta
-      - comment: Senary escape sequences
-        match: (?ix)\\s[0-5]+
-        name: constant.character.escape.senary.pta
-      - comment: Senary escape sequences
-        begin: (?ix)\\s{
-        end: \s*}
-        name: constant.character.escape.senary.pta
-        patterns:
-          - match: \b[0-5]+\b
-            name: constant.character.escape.senary.pta
-          - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.pta
       - comment: Octal escape sequences
         match: (?ix)\\o[0-7]+
         name: constant.character.escape.octal.pta
@@ -889,18 +451,6 @@ repository:
         patterns:
           - match: \b\d+\b
             name: constant.character.escape.decimal.pta
-          - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.pta
-      - comment: Duodecimal escape sequences
-        match: (?ix)\\z[\dab]+
-        name: constant.character.escape.duodecimal.pta
-      - comment: Duodecimal escape sequences
-        begin: (?ix)\\z{
-        end: \s*}
-        name: constant.character.escape.duodecimal.pta
-        patterns:
-          - match: \b[\dab]+\b
-            name: constant.character.escape.duodecimal.pta
           - match: \w+
             name: invalid.illegal.unrecognized-string-escape.pta
       - comment: Hexadecimal escape sequences
@@ -956,7 +506,7 @@ repository:
           |var|let|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop|mark
+          |trait|style|elem|prop|markup
           |go|defer|do|from|where|with
           |if|elif|else|then|def
           |for|each|loop|while
@@ -2436,20 +1986,8 @@ repository:
         match: (?i)(&)#b[01]+(;)
         name: constant.character.escape.binary.pta
       - captures: *jsx-entities
-        match: (?i)(&)#q[0-3]\h+(;)
-        name: constant.character.escape.quaternary.pta
-      - captures: *jsx-entities
-        match: (?i)(&)#s[0-5]\h+(;)
-        name: constant.character.escape.senary.pta
-      - captures: *jsx-entities
         match: (?i)(&)#o[0-7]\h+(;)
         name: constant.character.escape.octal.pta
-      - captures: *jsx-entities
-        match: (?i)(&)#o[0-7]\h+(;)
-        name: constant.character.escape.octal.pta
-      - captures: *jsx-entities
-        match: (?i)(&)#z[\dab]\h+(;)
-        name: constant.character.escape.duodecimal.pta
       - captures: *jsx-entities
         match: (&)(?:\\.|[^(){}\[\]\s;])+?(;)
         name: constant.character.entity.xml
@@ -2706,7 +2244,7 @@ repository:
           |var|let|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop|mark
+          |trait|style|elem|prop|markup
           |go|defer|do|from|where|with
           |if|elif|else|then|def
           |for|each|loop|while
@@ -2729,7 +2267,7 @@ repository:
           |var|let|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop|mark
+          |trait|style|elem|prop|markup
           |go|defer|do|from|where|with
           |if|elif|else|then|def
           |for|each|loop|while
@@ -2756,7 +2294,7 @@ repository:
           |var|let|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop|mark
+          |trait|style|elem|prop|markup
           |go|defer|do|from|where|with
           |if|elif|else|then|def
           |for|each|loop|while
@@ -2793,7 +2331,7 @@ repository:
           |var|let|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop|mark
+          |trait|style|elem|prop|markup
           |go|defer|do|from|where|with
           |if|elif|else|then|def
           |for|each|loop|while
@@ -2816,7 +2354,7 @@ repository:
           |var|let|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop|mark
+          |trait|style|elem|prop|markup
           |go|defer|do|from|where|with
           |if|elif|else|then|def
           |for|each|loop|while
@@ -3175,7 +2713,7 @@ repository:
           |var|let|func?|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
-          |trait|style|elem|prop|mark
+          |trait|style|elem|prop|markup
           |go|defer|do|from|where|with
           |if|elif|else|then|def
           |for|each|loop|while
@@ -3207,7 +2745,7 @@ repository:
               |var|let|func?|proc|type
               |class|data|enum|module
               |iter|macro|struct|object
-              |trait|style|elem|prop|mark
+              |trait|style|elem|prop|markup
               |go|defer|do|from|where|with
               |if|elif|else|then|def
               |for|each|loop|while
@@ -3293,7 +2831,7 @@ repository:
       |var|let|func?|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
-      |trait|style|elem|prop|mark
+      |trait|style|elem|prop|markup
       |go|defer|do|from|where|with
       |if|elif|else|then|def
       |for|each|loop|while
@@ -3606,7 +3144,7 @@ repository:
           3: {name: keyword.operator.assert.pta}
           4: {name: keyword.operator.accessor.pta}
       - comment: type operators
-        match: (?x)\s*(?:(\+)|(\-)|(\*)|(\/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|(\#)|([<>]))(?=$|[({\[\w'"\s])
+        match: (?x)\s*(?:(\+)|(\-)|(\*)|(\/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|([<>]))(?=$|[({\[\w'"\s])
         captures:
           1: {name: keyword.operator.sum.pta}
           2: {name: keyword.operator.difference.pta}
@@ -3620,8 +3158,7 @@ repository:
           10: {name: keyword.operator.symmetric.pta}
           11: {name: keyword.operator.negation.pta}
           12: {name: keyword.operator.macro.dollar.pta}
-          13: {name: keyword.operator.private.pta}
-          14: {name: keyword.operator.class.pta}
+          13: {name: keyword.operator.class.pta}
 
   # Clauses and Keywords
 
@@ -3714,7 +3251,7 @@ repository:
       var|let|func?|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
-      |trait|style|elem|prop|mark
+      |trait|style|elem|prop|markup
       )
       \b
       )
@@ -3783,7 +3320,7 @@ repository:
         name: storage.type.component.pta
       - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(prop)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.property.pta
-      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(mark)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(markup)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.markup.pta
 
   general-keywords:
@@ -3995,7 +3532,7 @@ repository:
 
     repository:
       markup:
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(mark)(?!\B|\p{Pd}+\b)(.*\n?)
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(markup)(?!\B|\p{Pd}+\b)(.*\n?)
         beginCaptures:
           1: {name: storage.type.markup.pta}
           2:
@@ -4324,7 +3861,7 @@ repository:
       |var|let|func?|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
-      |trait|style|elem|prop|mark
+      |trait|style|elem|prop|markup
       |go|defer|do|from|where|with
       |if|elif|else|then|def
       |for|each|loop|while
