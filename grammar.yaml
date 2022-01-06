@@ -304,7 +304,7 @@ repository:
     patterns:
       - comment: hexadecimal integers
         name: constant.numeric.hexadecimal.pta
-        match: \b0x\h[\h_]*(\.?)[\h_]*(?:(e)([+-])?([\d_]+))?(_?[\p{Pc}\p{L}][\w\p{Pd}]*)?\b
+        match: \b0x\h[\h_]*(\.?)[\h_]*(?:(p)([+-])?([\d_]+))?([\p{Pc}\p{L}][\w\p{Pd}]*)?\b
         captures:
           1: {name: keyword.other.unit.pta}
           2: {name: keyword.operator.exponent.pta}
@@ -313,7 +313,7 @@ repository:
           5: {name: keyword.other.unit.pta}
       - comment: octal integers
         name: constant.numeric.octal.pta
-        match: \b0o[0-7][0-7_]*(\.?)[0-7_]*(?:(e)([+-])?([\d_]+))?(_?[\p{Pc}\p{L}][\w\p{Pd}]*)?\b
+        match: \b0o[0-7][0-7_]*(\.?)[0-7_]*(?:(p)([+-])?([\d_]+))?([\p{Pc}\p{L}][\w\p{Pd}]*)?\b
         captures:
           1: {name: keyword.other.unit.pta}
           2: {name: keyword.operator.exponent.pta}
@@ -322,7 +322,7 @@ repository:
           5: {name: keyword.other.unit.pta}
       - comment: binary integers
         name: constant.numeric.binary.pta
-        match: \b0b[01][01_]*(\.?)[01_]*(?:(e)([+-])?([\d_]+))?(_?[\p{Pc}\p{L}][\w\p{Pd}]*)?\b
+        match: \b0b[01][01_]*(\.?)[01_]*(?:(p)([+-])?([\d_]+))?([\p{Pc}\p{L}][\w\p{Pd}]*)?\b
         captures:
           1: {name: keyword.other.unit.pta}
           2: {name: keyword.operator.exponent.pta}
@@ -331,7 +331,7 @@ repository:
           5: {name: keyword.other.unit.pta}
       - comment: decimal integers and floats
         name: constant.numeric.decimal.pta
-        match: \b\d[\d_]*(\.?)[\d_]*(?:(e)([+-])?([\d_]+))?(_?[\p{Pc}\p{L}][\w\p{Pd}]*)?\b
+        match: \b\d[\d_]*(\.?)[\d_]*(?:(e)([+-])?([\d_]+))?([\p{Pc}\p{L}][\w\p{Pd}]*)?\b
         captures:
           1: {name: punctuation.separator.dot.decimal.pta}
           2: {name: keyword.operator.exponent.pta}
@@ -2238,10 +2238,9 @@ repository:
         match: |
           (?x)\s*
           (?<=
-          ^|
-          [,;({\[]|
+          ^|[,;({\[]|['"`(){}\[\]\w]:\s|
           ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
-          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s+|
+          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
           @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
           //?[\p{Pc}\p{L}][\w\p{Pd}]*|
           (?:
@@ -2325,10 +2324,9 @@ repository:
         match: |
           (?x)\s*
           (?<=
-          ^|
-          [,;({\[]|
+          ^|[,;({\[]|['"`(){}\[\]\w]:\s|
           ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
-          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s+|
+          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
           @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
           //?[\p{Pc}\p{L}][\w\p{Pd}]*|
           (?:
