@@ -641,15 +641,15 @@ repository:
         captures:
           1: {name: punctuation.line.separator.math.pta}
       - name: meta.function.math.pta
-        begin: ((\\)([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*))(\{)
+        begin: ((\\)(\w[\w\p{Pd}]*(?:[:.]\w[\w\p{Pd}]*)*))\b(\{)
         beginCaptures:
           1: {name: storage.type.function.math.pta}
           2: {name: punctuation.definition.function.math.pta}
           3:
             patterns:
-              - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
+              - match: (?x)\b(\w[\w\p{Pd}]*)\b(?=[.:])
                 name: entity.name.namespace.pta
-              - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+              - match: (?x)\b(\w[\w\p{Pd}]*)\b
                 name: entity.name.function.pta
               - match: \b\:\b
                 name: punctuation.separator.namespace.pta
@@ -661,25 +661,26 @@ repository:
           0: {name: punctuation.definition.arguments.end.math.pta}
         patterns:
           - include: "#latex-sublanguage"
-      - match: (\\)\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
+      - match: (\\)\b(\w[\w\p{Pd}]*(?:[:.]\w[\w\p{Pd}]*)*)\b
         captures:
           1: {name: punctuation.definition.constant.pta}
           2:
             patterns:
-              - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
+              - match: (?x)\b(\w[\w\p{Pd}]*)\b(?=[.:])
                 name: constant.other.character-class.pta
-              - match: (?x)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+              - match: (?x)\b(\w[\w\p{Pd}]*)\b
                 name: constant.character.math.pta
               - match: \b\:\b
                 name: punctuation.separator.namespace.pta
               - match: \b\.\b
                 name: punctuation.accessor.pta
-      - match: "[-+*/^]"
-        name: punctuation.math.operator.latex
+      - include: "#strings"
+      - include: "#numbers"
+      - include: "#constants"
+      - include: "#regexes"
       - include: "#string-escapes"
-      - include: "#literals"
       - include: source.yaml#flow-collection
-      - match: '[^\\(){}\[\]]+?'
+      - match: (?<=^|[{\s}])[^'"`\\(){}\[\]]+
         name: string.unquoted.plain.in.pta
 
   # Regular expressions
