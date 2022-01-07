@@ -51,7 +51,7 @@ define:
     in|of|as|is|new
     |to|til|thru|by|del
     |unset|ref|and|or|xor|not
-    |var|let|func|proc|type
+    |var|let|fn|proc|type
     |class|data|enum|module
     |iter|macro|struct|object
     |trait|style|elem|prop|markup
@@ -77,7 +77,7 @@ define:
     in|of|as|is|new
     |to|til|thru|by|del
     |unset|ref|and|or|xor|not
-    |var|let|func|proc|type
+    |var|let|fn|proc|type
     |class|data|enum|module
     |iter|macro|struct|object
     |trait|style|elem|prop|markup
@@ -232,7 +232,7 @@ repository:
       in|of|as|is|new
       |to|til|thru|by|del
       |unset|ref|and|or|xor|not
-      |var|let|func|proc|type
+      |var|let|fn|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
       |trait|style|elem|prop|markup
@@ -509,7 +509,7 @@ repository:
           in|of|as|is|new
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
-          |var|let|func|proc|type
+          |var|let|fn|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
           |trait|style|elem|prop|markup
@@ -2117,7 +2117,7 @@ repository:
       - include: "#jsdoc-name-path-scopes"
   jsdoc-type-name:
     comment: "@tag {optional type} name"
-    begin: (@(arg|argument|class|constant|constructor|constructs|const|function|func|kind|member|method|mixin|namespace|param|var)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(((\[(?:(?>[^\[\]]+)|\g<-1>)*\])|\S)+)?([\S\s]*))
+    begin: (@(arg|argument|class|constant|constructor|constructs|const|function|fn|kind|member|method|mixin|namespace|param|var)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(((\[(?:(?>[^\[\]]+)|\g<-1>)*\])|\S)+)?([\S\s]*))
     end: ^|(?=\*/)|(?=\7$)
     beginCaptures:
       1: {name: storage.type.class.jsdoc}
@@ -2229,17 +2229,17 @@ repository:
         match: |
           (?x)\s*
           (?<=
-          ^\s*|[,;({\[]\s*|['"`(){}\[\]\w]:\s|
-          ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)\s*|
-          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s+|
-          @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b\s*|
-          //?[\p{Pc}\p{L}][\w\p{Pd}]*\s*|
+          ^|[,;({\[]|['"`(){}\[\]\w]:\s|
+          ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
+          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
+          @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
+          //?[\p{Pc}\p{L}][\w\p{Pd}]*|
           (?:
           (?:^|[,;'"`(){}\[\]\s])\b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
-          |var|let|func|proc|type
+          |var|let|fn|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
           |trait|style|elem|prop|markup
@@ -2262,7 +2262,7 @@ repository:
           in|of|as|is|new
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
-          |var|let|func|proc|type
+          |var|let|fn|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
           |trait|style|elem|prop|markup
@@ -2281,15 +2281,17 @@ repository:
           )
           \b\s+
           (?=
-          (?:\\|//?)\b|<\|{1,3}\s+|<\+\s+
-          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
+          ['"`\\({\[]|(?:\\|//?)\b
+          |(?:[$.]|<\|{1,3}|<\+)(?:\s|$)
+          |(?!(?:[?!]?\.|[?!:]:=?)['"`\\({\[\w])
+          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
           (
           (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
           \b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
-          |var|let|func|proc|type
+          |var|let|fn|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
           |trait|style|elem|prop|markup
@@ -2315,17 +2317,17 @@ repository:
         match: |
           (?x)\s*
           (?<=
-          ^\s*|[,;({\[]\s*|['"`(){}\[\]\w]:\s|
-          ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)\s*|
-          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s+|
-          @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b\s*|
-          //?[\p{Pc}\p{L}][\w\p{Pd}]*\s*|
+          ^|[,;({\[]|['"`(){}\[\]\w]:\s|
+          ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
+          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
+          @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
+          //?[\p{Pc}\p{L}][\w\p{Pd}]*|
           (?:
           (?:^|[,;'"`(){}\[\]\s])\b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
-          |var|let|func|proc|type
+          |var|let|fn|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
           |trait|style|elem|prop|markup
@@ -2348,7 +2350,7 @@ repository:
           in|of|as|is|new
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
-          |var|let|func|proc|type
+          |var|let|fn|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
           |trait|style|elem|prop|markup
@@ -2367,10 +2369,9 @@ repository:
           )
           \b
           (?=
-          \s+\$(?:\s|$)|
-          \s+['"\\({\[]|\b!(?:$|[\s'"`)}\]])|
+          \b!(?:$|[\s'"`)}\]])|
           (?:[!?]\.=?|\.=)?\#?\(|
-          (?:[!?]\.=?|\.=)?<(?:['"`\\({\[\w])
+          (?:[!?]\.=?|\.=)?<['"`\\({\[\w]
           )
         captures:
           1: {patterns: [include: "#function-names"]}
@@ -2708,7 +2709,7 @@ repository:
           in|of|as|is|new
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
-          |var|let|func|proc|type
+          |var|let|fn|proc|type
           |class|data|enum|module
           |iter|macro|struct|object
           |trait|style|elem|prop|markup
@@ -2740,7 +2741,7 @@ repository:
               in|of|as|is|new
               |to|til|thru|by|del
               |unset|ref|and|or|xor|not
-              |var|let|func|proc|type
+              |var|let|fn|proc|type
               |class|data|enum|module
               |iter|macro|struct|object
               |trait|style|elem|prop|markup
@@ -2797,11 +2798,12 @@ repository:
   # Types
 
   types:
-    patterns:
+    old:
       - match: \s*(==?>|--?>|~~?>)
         name: keyword.operator.type.function.trin
       - match: \s*(<==|<--?|<~~?)
         name: keyword.operator.type.channel.trin
+    patterns:
       - include: "#params-clause"
       - include: "#angle-brackets"
       - include: "#type-keywords"
@@ -2826,7 +2828,7 @@ repository:
       in|of|as|is|new
       |to|til|thru|by|del
       |unset|ref|and|or|xor|not
-      |var|let|func|proc|type
+      |var|let|fn|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
       |trait|style|elem|prop|markup
@@ -3238,7 +3240,7 @@ repository:
       (?=
       \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b
       (?:
-      var|let|func|proc|type
+      var|let|fn|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
       |trait|style|elem|prop|markup
@@ -3284,7 +3286,7 @@ repository:
         name: storage.type.trin
       - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.style.trin
-      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(func)(?!\B|\p{Pd}+\b)\s*
+      - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(fn)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.function.trin
       - match: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(proc)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.procedure.trin
@@ -3614,7 +3616,7 @@ repository:
 
       function:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(func)(?!\B|\p{Pd}+\b)\s*
+        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(fn)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.function.trin}
@@ -3762,7 +3764,7 @@ repository:
           \s*)*)
           (?=\s*\b
           (?:
-          iter|func|proc|macro
+          iter|fn|proc|macro
           )\b
           )
         name: meta.object-literal.key.trin
@@ -3829,7 +3831,7 @@ repository:
           \s*)*)
           (?=\s*\b
           (?:
-          iter|func|proc|macro
+          iter|fn|proc|macro
           )\b
           )
         name: meta.object-literal.key.trin
@@ -3879,7 +3881,7 @@ repository:
       in|of|as|is|new
       |to|til|thru|by|del
       |unset|ref|and|or|xor|not
-      |var|let|func|proc|type
+      |var|let|fn|proc|type
       |class|data|enum|module
       |iter|macro|struct|object
       |trait|style|elem|prop|markup
@@ -4059,7 +4061,7 @@ repository:
           \s*)*)
           (?=\s*\b
           (?:
-          iter|func|proc|macro
+          iter|fn|proc|macro
           )\b
           )
         name: meta.object-literal.key.trin
@@ -4711,13 +4713,13 @@ repository:
       - comment: Data structure classes
         match: |
           (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(
-          Array|Tuple|(Mut)?(List|Set|Map|Seq|Str)|Dict|Func|Iter
+          Array|Tuple|(Mut)?(List|Set|Hash|Seq|Str)|Dict|Fn|Iter
           |Proc|Seq|Gen|Range|Stack|Heap|Queue|Tree|Trie
-          |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
+          |Future|Stream|RegExp?|Fn|Buf|StrBuf|Bytes
           # lowerFlatCase
-          |array|tuple|(mut)?(list|set|map|seq|str)|dict|func|iter
+          |array|tuple|(mut)?(list|set|hash|seq|str)|dict|fn|iter
           |proc|seq|gen|range|stack|heap|queue|tree|trie
-          |future|stream|regexp?|func|buf|strbuf|bytes
+          |future|stream|regexp?|fn|buf|strbuf|bytes
           )(?!\B|\p{Pd}+\b)
         name: support.type.builtin.trin
       - comment: Constant/algebraic classes
@@ -4885,7 +4887,7 @@ repository:
           |trunc|unicode|xor|matmul|rmatmul|imatmul
           |initSubclass|setName|fspath|bytes|prepare
           |all|bases|builtins|class|classGetitem|code|debug
-          |defaults|dict|doc|file|func|kwdefaults|members
+          |defaults|dict|doc|file|fn|kwdefaults|members
           |metaclass|methods|module|mro|mroEntries|name
           |qualname|postInit|self|signature|slots|subclasses
           |version|weakref|wrapped|annotations|classcell
