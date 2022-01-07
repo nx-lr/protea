@@ -1,7 +1,7 @@
-# Protea
+# Trinity
 
 ```coffee
-module Button =
+module Button
   style button
     color: palevioletred
     border: 2px solid palevioletred
@@ -10,7 +10,7 @@ module Button =
     font-size: 1em
     font-weight: bold
 
-  func make(&count: int) =
+  func make(&count: int)
     let times = match count then
       case 1 then "once"
       case 2 then "twice"
@@ -21,27 +21,27 @@ module Button =
 
 ## Introduction
 
-Protea will be a cross-platform, versatile programming language and framework that seeks to flesh out only the best parts of JavaScript, no matter the paradigm or framework. This is tied in with a robust type system, a fast compiler/runtime and a unique combination of language features to build and maintain applications.
+Trinity is an open-source multi-platform programming language designed to be a syntactically legible, beautiful and powerful dialect of JavaScript. It combines concepts from mature languages like ML, Ruby, Haskell and Python, combining the best of each, while still preserving much of the features you know and love from modern JavaScript.
 
-Protea is inspired by a number of popular programming languages, including Ruby, OCaml, Go, Elixir, Python, Rust, Kotlin, Haskell, F# and Scala, with ideas from Markdown, YAML and SASS.
+As of the moment, Trinity is still in its early stages of development.
 
 ```coffee
-# Assignment:
+# Assignment
 let number   = 42
 let opposite = true
-let regex = `"(\d+)":\s*\n\s*name:\s+([-.\w]+)$` `$1: {name: $2}`
+let regex = `\"(\d+)\":\s*\n\s*name:\s+([\-.\w]+)` `$1: {name: $2}`
 
-# Conditions:
-let number = if opposite then -42 else number
+# Conditions
+let number = if opposite: -42 else number
 
-# Functions:
+# Functions
 func square(x) = x * x
-let square = |x| x * x
+let square = |x| x * x: int
 
-# Arrays:
+# Arrays
 let list = [1 2 3 4 5]
 
-# Maps:
+# Maps
 let math = {
   root:   Math.sqrt
   square: square
@@ -52,22 +52,26 @@ let math = {
 let race = |winner, *runners|
   print winner runners
 
-# Existence:
-if ?elvis then alert "I knew it!"
+# Existence
+if elvis? then alert "I knew it!"
 
-# Array comprehensions:
-let cubes = [for y in list then math.cube num]
+# Array comprehensions
+let cubes = [for y in list: math.cube num]
 
-# LINQ:
+# LINQ
 let cubes = from x in 1 to 100
-  select Math.cube(x);
+  select $ Math.cube x
 ```
 
-## Overview
+---
 
-We all know JavaScript has very tricky parts, some of which can turn our jobs into nightmares, but still, people continue to improve and expand JavaScript into new horizons. We're now in the era where JavaScript is used in almost every industry, and it's time to make it more accessible to everyone.
+## Design Goals
 
-New languages and compilers for existing languages have been developed and created, attempting to hide away the fundamental problems of JavaScript, but it's still hard to debug or learn from and use, thereby making it harder to maintain and integrate even in a large JavaScript project.
+---
+
+## Roadmap
+
+- Jan 2022: First version of syntax complete
 
 ---
 
@@ -103,29 +107,7 @@ The compiler command `pta doc` automatically extracts the API documentation and 
 
 #### Indentation
 
-Protea is a hybrid-form language, meaning you can use curly braces _and_ indentation to structure and organize your code.
-
-```coffee
-rec func List.has(item: any): bool
-  match this
-    case []
-      false
-    case [a, *rest]
-      a == item && rest.has item
-```
-
-though you can also write it like this:
-
-```coffee
-rec func List.has(item: any): bool {
-  match this {
-    case [] {
-      false }
-    case [a, *rest] {
-      a == item && rest.has item } }
-```
-
-or a combination of both:
+Like Scala 3 and Haskell, meaning you can use curly brackets and indentation to structure and organize your code.
 
 ```coffee
 rec func List.has(item: any): bool
@@ -134,7 +116,7 @@ rec func List.has(item: any): bool
     case [a, *rest] { a == item && rest.has item }
 ```
 
-You can also use `then` or a right-spaced colon if a code block is expected after a statement (such as `if` or `while`).
+Though you can also use `then` or a right-spaced colon if a code block is expected after a statement (such as `if` or `while`).
 
 ```coffee
 rec func List.has(item: any): bool
@@ -142,6 +124,12 @@ rec func List.has(item: any): bool
     case []: false
     case [a, *rest]: a == item && rest.has item
 ```
+
+#### Newlines
+
+In other languages, inserting semicolons to separate statements is required. In JavaScript, this is not necessary, but it is completely buggy, and is not recommended.
+
+The compiler will automatically insert semicolons where needed.
 
 #### Identifiers
 
@@ -157,10 +145,10 @@ Identifiers are compared using an approach known as partial case-insensitivity.
 
 ```coffee
 func normalize(a: str): str = match a
-  case a.sub(`[^\d\pL]`g, '') ~= `\p{Upper}+`
-    a.sub(`[^\d\pL]`g, '').upper!
+  case a.sub(`[^\d\pL]`, ``) ~= `\p{Upper}+`
+    a.sub(`[^\d\pL]`, ``).upper!
   fail
-    a[0] + a[1:].sub(`[^\d\pL]`g, '').lower!
+    a[0] + a[1:].sub(`[^\d\pL]`, ``).lower!
 
 func cmpIdent(a: str, b: str): bool =
   normalize a == normalize b
@@ -191,7 +179,7 @@ print x name /sep "\n"
 
 ### Variables
 
-Protea has two ways to declare variables - `var` to declare a mutable variable and `val` to declare an immutable one.
+Trinity has two ways to declare variables - `var` to declare a mutable variable and `val` to declare an immutable one.
 
 Declarations are scoped through code blocks, one such example is `do`. Also take note that in code blocks, the last line is implicitly returned.
 
@@ -216,7 +204,7 @@ if displayGreeting
 
 ### Keywords
 
-Keywords are all lowercase and are special tokens in Protea. They are used to denote special constructs, such as functions, classes, and control structures, and are distinguished from identifiers.
+Keywords are all lowercase and are special tokens in Trinity. They are used to denote special constructs, such as functions, classes, and control structures, and are distinguished from identifiers.
 
 Because of how identifiers are compared, you can use any number of leading underscores to escape a keyword to turn it into an identifier.
 
@@ -247,7 +235,7 @@ Keywords become identifiers when part of a qualified name, such as `x.for` or `y
 
 ## Data types
 
-Protea comes with literals for many familiar and new primitive types such as `str`, `int`, `float`, `bool`, `list`, `set`, `map` and more, such as `func`, `sym` and `regex`.
+Trinity comes with literals for many familiar and new primitive types such as `str`, `int`, `float`, `bool`, `list`, `set`, `map` and more, such as `func`, `sym` and `regex`.
 
 ### Null
 
@@ -286,9 +274,9 @@ An integer literal is a sequence of digits and underscores, optionally followed 
 18_446_744_073_709_551_616 # bigint
 ```
 
-Underscores can be used to make numbers more readable.
+Underscores and leading zeroes can be used to make numbers more readable, and both are ignored. The following are all equivalent:
 
-We also provide some more literals for numbers in different bases, from binary to hexadecimal (skipping over base 14.)
+Binary, octal and hexadecimal literals are also supported.
 
 ```coffee
 decimal = 11256099
@@ -299,41 +287,32 @@ binary = 0b101010111100000100100011
 
 ### Rationals
 
-There are four rational types: `float` which is a IEEE binary64 type, and `rat`, which is a pair of one signed and one unsigned integer. Both have their arbitrary-precision `big` counterparts.
+There are four rational types: `float` which is a IEEE binary64 type, and `rat`, which is a pair of one signed and one unsigned integer. Both have their arbitrary-precision `big` counterparts. Rationals have a compulsory `r` suffix while floats do not.
 
 Floating point numbers are inherently rational.
 
-The `f` suffix is used to denote a float, and `r` is used to denote a rational. You would need to fo
-
-Repeating digits use the form `x.y~z` where `x` is the integer part, `y` is the decimal part and `z` is the repeating part.
+A floating point literal is an optional + or - sign, followed by a sequence of numbers or underscores, followed by a dot, followed by numbers or underscores, followed by an optional exponent suffix, followed by an optional type suffix. If no suffix is present, the literal's type is Float64.
 
 ```coffee
-1:r / 30:r = 0.~3:r
+1.0   # float
+1.0f # float
+1f   # float
+1r   # rat
+
+1.0n   # bigfloat
+1.0fn # bigfloat
+1fn   # bigrat
+1rn   # bigrat
 ```
 
-Rational literals can also use a improper fraction of the form form `x/y`, `n` meaning numerator. In this form, the `r` can be dropped.
+Binary, hexadecimal and octal floats are also supported, though you would use the `p` suffix for exponents, and the base is 2, rather than 10.
 
 ```coffee
-1:r / 30:r = 1/3
+decimal = 11256099e+14
+hex = 0xABC123p-40
+octal = 0o52740443p-40
+binary = 0b101010111100000100100011p-40
 ```
-
-Exponent parts use `ex` (or `px` (`p` for power) in the case of hexadecimal) where `x` is the exponent with an optional sign.
-
-An optional base `y` can be supplied in which case it is repeated: `exey`, `pxey` or any combination thereof.
-
-```coffee
-1^+40
-0x1*10^+40
-```
-
-Literals can also be truncated (`t`) to a given precision. `tx` or `tdx` counts of fractional places (digits after the point in whatever base). `tsx` counts the number of significant digits instead.
-
-```coffee
-1^40:int
-0x1=~40
-```
-
-All that can be followed by an optional type suffix which can be any identifier.
 
 ### Strings
 
@@ -363,7 +342,7 @@ Hello World!
 """
 ```
 
-Most of the escape sequences in JavaScript and other languages are also supported in Protea.
+Most of the escape sequences in JavaScript and other languages are also supported in Trinity.
 
 | Escape Sequence | Meaning                                        |
 | --------------- | ---------------------------------------------- |
@@ -406,16 +385,16 @@ The same escapes with curly brackets allow you to insert many code points inside
 
 Any other character following a backslash is interpreted as the character itself.
 
-Double quoted literals also allow you to embed LaTeX expressions (because why not?).
+Double quoted literals allow you to use a syntax inspired by LaTeX expressions to include math, symbols, and other characters without having to type them yourself.
 
 ```coffee
 # LaTeX expressions:
-`\j{\frac{\sum{i=1}^{n}\left(\frac{1}{i}\right)}{n}}`
+"\j{\frac{\sum{i=1}^{n}\left(\frac{1}{i}\right)}{n}}"
 ```
 
 In single quotes, meta-characters such as `'`, `$`, `%` and `#` are doubled in order to be escaped (literal). In double quotes, you can use the backslash to escape them.
 
-### Interpolation
+#### Interpolation
 
 Both types of strings support interpolation with `${}`, which is a way to embed variables. The braces can be omitted if the expression is only:
 
@@ -431,15 +410,15 @@ By default, all embedded expressions are converted to strings by passing it thro
 let greeting = "Hello $name!"
 ```
 
-### Formatting directives
+#### Formatting directives
 
-Format directives are used to format a value into a string using a built-in `format` method.
-
-Each directive begins with a percent sign and an identifier, followed by a set of flags prefixed with slashes `/flag`, and an optional value after the colon `/flag:value`.
+Format directives are used to transform a value into a string using the built-in `format` method. Each directive begins with a percent sign, and then a series of flags separated by pipe characters, and an optional value after the colon.
 
 ```coffee
 "Hello ${"world"}"
-"Hello ${"world"}%str/upper" # => "Hello WORLD"
+"Hello ${"world"}%upper" # => "Hello WORLD"
+"${1234567890}%sep:','" # => "1,234,567,890"
+"Percentage correct answers: ${correct / total}%dp:2|unit:'%'"
 ```
 
 ### Template strings
@@ -453,7 +432,7 @@ greeting "World" # => "Hello World!"
 
 You can also spread arguments into the string by using the `*` operator, and mark them as optional by using the `?` operator.
 
-### Backslash strings
+#### Backslash strings
 
 Strings can be written with a preceding backslash instead of quotes. Backslash strings can't contain `, ; ] ) }` or whitespace.
 
@@ -486,7 +465,7 @@ For an unquoted identifier the same naming rules as regular identifiers apply. T
 :identifier :name
 ```
 
-### Regexes
+### Regular expressions
 
 A regular expression is typically created with a regex literal using extended Oniguruma/PCRE syntax. It consists of a string of UTF-8 characters enclosed in forward slashes (backticks):
 
@@ -507,6 +486,298 @@ A regular expression is typically created with a regex literal using extended On
 ````
 
 Interpolation and formatting also applies but the interpolated result is usually escaped so to prevent generating invalid regular expressions.
+
+#### Replacement strings
+
+If there are two adjacent regular expression literals on one side, then the one on the right is the substitution (template) string for the regular expression on the left.
+
+```coffee
+let str = 'James Bond'
+let newStr = str.sub(`(\w+)\W+(\w+)` `$2, $1`) # 'Bond, James'
+let newStr = str.sub(`(\w+)\W+(\w+)` `My name is $2, $0!`)
+# 'My name is Bond, James Bond'
+```
+
+| Syntax | Meaning |
+| --- | --- |
+| `$&`, `$0` | Inserts entire match |
+| `$1-` | Inserts the portion of the string that precedes the matched substring. |
+| `$+` | After matched substring |
+| `$1` `$+1` `$-1` | Numbered capture group (negative counts from back) |
+| `$<>` | Named capture group |
+
+### Lists
+
+A list stores values in an ordered list, _usually_ of the same type. The same value can appear in a list multiple times at different positions. List contents are usually delimited by commas or newlines, and are surrounded by angle brackets `[]`.
+
+```coffee
+let list = ['hello', 'world', 'how are you']
+```
+
+The type of a list is written in full as `list[type]`, where `type` is the type of values the list is allowed to store. You can also write the type of a list in shorthand form as `[]type`.
+
+Although the two forms are functionally identical, the shorthand form is preferred and is used throughout this guide when referring to the type of a list.
+
+```coffee
+var list1: []int = [10, 20, 30]
+var list2 = ['a', 'b', 'c'] # is []str
+[] # an empty list
+```
+
+An explicit type can be specified by immediately following the closing angle with a type encased in curly brackets, without a space.
+
+This overwrites the inferred type and can be used for example to create a list that holds only some types initially but can accept other types later.
+
+```coffee
+var z = [10, '20', '30']{str | int} # with type casting operator
+```
+
+The compiler will infer a list to have a non-nullable type. If the list might store `null` values, then you will need to explicitly cast it.
+
+```coffee
+[1, 2, 3] # cannot store null
+[1, 2, 3, null]{?int} # can store null
+```
+
+The empty list is denoted using the special syntax `[]`. Often you will specify a type - for example `[]{Str}` is an empty list of strings. If a type is not specified, then the empty list is an `[]{Any}`.
+
+A multidimensional list can have many prefix `[]` in them.
+
+```coffee
+var a: [][]int = [[0, 2, 0], [0, 0, 0]]
+```
+
+You can prefix a hash sign (`#`) to a list or map literal to turn it into a mutable list or map.
+
+```coffee
+var a: #[]#[]#[]int = mutlist [[[0] * 2] * 3] * 2
+a[0][1][1] = 2
+print(a) # [[[0, 0], [0, 2], [0, 0]], [[0, 0], [0, 0], [0, 0]]]
+```
+
+#### Indexing Lists
+
+Retrieve a value from the list by using subscript syntax, passing the index of the value you want to retrieve within square brackets immediately after the name of the list:
+
+```coffee
+firstItem = shoppingList[0]
+# firstItem is equal to "Eggs"
+```
+
+The first item in the list has an index of 0, not 1. The second is 1, not 2, and so on. Lists in Nyx are always zero-indexed.
+
+You can use subscript syntax to change an existing value at a given index, provided the list is mutable:
+
+```coffee
+shoppingList[0] = 'Six eggs'
+# the first item in the list is now equal to "Six eggs" rather than "Eggs"
+```
+
+When you use subscript syntax, you can specify any integer, including negative numbers. Indices can also count backward --- the index of the last element is `-1`, the second last `-2`, and so on. This works beyond &pm;`len(list)`.
+
+So given a list of length `5`,
+
+| Subscript | -7 | -6 | -5 | -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Resultant Index | 3 | 4 | 0 | 1 | 2 | 3 | 4 | 0 | 1 | 2 | 3 | 4 | 0 | 1 | 2 |
+
+The result would always evaluate to **modulo** the length of the list (`a[k] == a[k %% len(a)]`). Using an invalid type will return `void`.
+
+You can also use subscript syntax to change a range of values at once, discarding any element once the end of the spliced list is reached, and reallocating deleted and empty entries.
+
+The following example replaces `"Chocolate Spread"`, `"Cheese"`, and `"Butter"` with `"Bananas"`, `"Apples"` and `"Bananas"`.
+
+```coffee
+shoppingList[4:6] = ['Bananas', 'Apples']
+# shoppingList now contains 7 items
+```
+
+#### List comprehensions
+
+List comprehensions provide a concise way to create lists. Common applications are to make new lists where each element is the result of some operations applied to each member of another sequence or iterable, or to create a subsequence of those elements that satisfy a certain condition.
+
+```coffee
+var a = [for x in 'abracadabra': if x !in 'abc': x]
+a == ['r', 'd', 'r']
+```
+
+For example, assume we want to create a list of squares, like:
+
+```coffee
+var squares = #[] # mutable list is prefixed with a hash
+for x in 1 to 1: squares.push(x ** 2)
+squares == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+```
+
+Note that this creates (or overwrites) a variable named x that still exists after the loop completes. We can calculate the list of squares without any side effects using:
+
+```coffee
+var squares = list (0 til 10).map(** 2)
+```
+
+or, equivalently:
+
+```coffee
+var squares = [for x in 0 til 10: x**2]
+```
+
+A list comprehension consists of a `for` expression encased between the literal and the expression in question. The result would be a new list resulting from evaluating the expression in the context of the clauses inside it.
+
+For example, this comprehension combines the elements of two lists if they are not equal:
+
+```coffee
+[for x in [1, 2, 3], y in [3, 1, 4]: if x != y: (x, y)]
+[(1, 3), (1, 4), (2, 3), (2, 1), (2, 4), (3, 1), (3, 4)]
+```
+
+which is equivalent to:
+
+```coffee
+var combs = #[]
+for x in [1, 2, 3], y in [3, 1, 4]
+  if x != y
+    combs.append((x, y))
+
+[(1, 3), (1, 4), (2, 3), (2, 1), (2, 4), (3, 1), (3, 4)]
+```
+
+If the expression is a tuple (e.g. the (x, y) in the previous example), it must be parenthesized.
+
+```coffee
+var vec = [-4, -2, 0, 2, 4]
+# create a new list with the values doubled
+[for x in vec: x * 2] # [-8, -4, 0, 4, 8]
+# filter the list to exclude negative numbers
+[for x in vec: if x >= 0: x] # [0, 2, 4]
+# apply a function to all the elements
+[for x in vec: abs] # [4, 2, 0, 2, 4]
+# flatten a list using a list-comp with two 'for'
+vec = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+[for x in vec: for num in x: num] # [1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+List comprehensions can contain complex expressions and nested functions:
+
+```coffee
+[for i in 1 til 6: str $ round $ Math::Pi, i]
+['3.1', '3.14', '3.142', '3.1416', '3.14159']
+```
+
+## Sets
+
+Trinity also includes a data type for sets. A set is an unordered collection with no duplicate elements. Basic uses include membership testing and eliminating duplicate entries.
+
+Set objects also support mathematical operations like union `|`, intersection `&`, difference `-`, and symmetric difference `^`. Curly braces or the `set()` function can be used to create sets.
+
+The type of a set is `set[type]` or `{}set`.
+
+Note: to create an empty set you have to use `set()`, not `{}`; the latter creates an empty map, a data structure that we discuss in the next section.
+
+Here is a brief demonstration:
+
+```coffee
+var basket: {}str = {'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}
+basket == {'orange', 'banana', 'pear', 'apple'}
+'orange' in basket # fast membership testing
+'crabgrass' !in basket
+
+var a = set('abracadabra') # Create sets from iterables
+var b = set('alacazam')
+
+a == {'a', 'r', 'b', 'c', 'd'}
+a - b == {'r', 'd', 'b'}
+a | b == {'a', 'c', 'r', 'd', 'b', 'm', 'z', 'l'}
+a & b == {'a', 'c'}
+a ^ b == {'r', 'd', 'b', 'm', 'z', 'l'}
+```
+
+Similarly to list comprehensions, set comprehensions are also supported:
+
+```coffee
+var a = {for x in 'abracadabra': if x !in 'abc': x}
+a == {'r', 'd'}
+```
+
+## Maps
+
+Another useful data type built into Trinity is the map. Maps are sometimes found in other languages as "hashmaps", "tables", "objects" or "associative arrays". Unlike sequences, which are indexed by a range of numbers, dictionaries are indexed by keys, which can be any value including strings, symbols, numbers, etc but **NOT any mutable object**, since those can be modified in place through various operations.
+
+It is best to think of a map as a set of `key: value` pairs, with the requirement that the keys are unique (within one dictionary). A pair of braces creates an empty dictionary: `{}`. Placing a comma-separated list of `key: value` pairs within the braces adds initial `key: value` pairs to the dictionary; this is also the way dictionaries are serialised on output.
+
+```coffee
+let map1: {str : int} = {one: 1, two: 2, three: 3}
+let map2 = {1: 2, 2: 4, 3: 6, 4: 8} # inferred as {int : int}
+{} # an empty map
+```
+
+If a key is a keyword or a valid single identifier and placed right before the colon, then it is an unquoted string which is normalized to its base form. Any other expression is parsed normally.
+
+```coffee
+let x = {one: 1, 2.2: {2.2: 2}, '3': 3, 8 / 2: 4}
+```
+
+The main operations on a map are storing a value with some key and extracting the value with the key with `::` or `[]` (not `.`). You can manipulate objects using function or method calls, like `.keys()` or `.values()`.
+
+Again, just like the keys of an object, map keys can be accessed without quotes if they are a simple identifier. Any other value can be passed without quotes if they are a single literal.
+
+```coffee
+x::one == x::'one' == x::one___
+x?:(:one) == null # symbol
+
+x::one == 1
+x::2.2::2.2 == 2
+x::'3' == 3
+x::(8 / 2) == x[8 / 2] == 4
+```
+
+`?:` or `?.[]` is like `::`, except that instead of causing an error if a reference is nullish (`null` or `void`), the expression short-circuits with a return value of `null`. The optional accessor operator, `?:`, enables you to read the value of a property located deep within a chain of connected maps without having to check that each reference in the chain is valid.
+
+```coffee
+let adventurer = {
+  name: 'Alice',
+  cat: { name: 'Dinah' }
+}
+
+let dogName = adventurer::dog?:name
+dogName # null
+```
+
+`!:` or `!.[]` is the non-null assertion operator which assures that the previous map is not `null` before accessing its property. This would raise a compile time exception if the map along this chain is `null`, but in runtime is treated the same as `::`.
+
+```coffee
+let catName = adventurer!:cat!:name
+catName # 'Dinah'
+```
+
+### Spreading
+
+The spread operator (prefix `*`) is a useful and convenient syntax for expanding iterable objects into function arguments, tuples, or other iterables.
+
+```coffee
+# Function arguments
+func multiply(a, b) = a * b
+let numbers = [3, 5]
+multiply(*numbers) == 15
+
+# List literals
+let numbers = [1, 2, 3]
+let new_numbers = [0, *numbers, 4]
+new_numbers == [0, 1, 2, 3, 4]
+
+# Set literals
+var a = set(*'abracadabra')
+a == {'a', 'r', 'b', 'c', 'd'}
+
+# Map literals
+let test_obj = { foo: 'bar' }
+{ *test_obj, foo2: 'bar2' } == {foo: 'bar', foo2: 'bar2'}
+```
+
+<!--
+Some text needs to be changed as they are copy-pasted from other sources.
+-->
+
+### Regular Expression Syntax
 
 #### Basic Syntax Elements
 
@@ -697,51 +968,3 @@ A set `[...]` can include nested sets. The operators below are listed in increas
 | `(?&1)`                     | Numbered group                         |
 | `(?&-1)`                    | (?&+1) Relative back-reference         |
 | `(?&name)`                  | Named back-reference                   |
-
-### Replacement strings
-
-If there are two adjacent regular expression literals on one side, then the one on the right is the substitution (template) string for the regular expression on the left.
-
-```coffee
-val str = 'James Bond'
-val newStr = str.sub(`(\w+)\W+(\w+)` `$2, $1`) # 'Bond, James'
-val newStr = str.sub(`(\w+)\W+(\w+)` `My name is $2, $0!`)
-# 'My name is Bond, James Bond'
-```
-
-| Syntax | Meaning |
-| --- | --- |
-| `$&`, `$0` | Inserts entire match |
-| `$1-` | Inserts the portion of the string that precedes the matched substring. |
-| `$+` | After matched substring |
-| `$1` `$+1` `$-1` | Numbered capture group (negative counts from back) |
-| `$<>` | Named capture group |
-
-### Lists
-
-Lists are created by using square brackets `[]`. Each element can also be separated by commas, spaces or newlines.
-
-Inside curly brackets, elements can be any expression as long as the preceding expression is not callable.
-
-```coffee
-[1, person.age, 'French Fries']
-[1 2 3 true void \word 'hello there']
-```
-
-Implicit lists created with curly brackets. The elements are prefixed with a dash, as in YAML. The elements may be separated by commas, spaces or newlines like in a list literal.
-
-```coffee
-let my-list = {
-  - 32 + 1
-  - person.height
-  - 'beautiful'
-}
-
-one-item = {
-  - 'hello'
-}
-```
-
-<!--
-Some text needs to be changed as they are copy-pasted from other sources.
--->
