@@ -17,6 +17,7 @@ module Button
       fail "$count times"
     let msg = "Click me $times"
     markup <button $msg
+      x y z
 ```
 
 ## Introduction
@@ -53,7 +54,7 @@ let race = |winner, *runners|
 if ?elvis: alert "I knew it!"
 
 # Array comprehensions
-let cubes = [for y in list[]: math.cube num]
+let cubes = [for y in list: x y z]
 
 # LINQ
 cubes = from x in 1 to 100
@@ -354,7 +355,7 @@ All language constructs such as control flow statements and functions also rely 
 
 ```coffee
 if displayGreeting
-  var message = "Enjoying the docs so far?"
+  let message = "Enjoying the docs so far?"
   print message
 # `message` not accessible here!
 ```
@@ -513,10 +514,10 @@ The same escapes with curly brackets allow you to insert many code points inside
 
 Any other character following a backslash is interpreted as the character itself.
 
-Double quoted literals allow you to use a syntax inspired by LaTeX expressions to include math, symbols, and other characters without having to type them yourself.
+Double quoted literals allow you to insert multiple multilingual, math, symbol or other Unicode characters as LaTeX-style expressions without having to type them yourself.
 
 ```coffee
-# LaTeX expressions:
+"\j{\emoji:smile}" # => 😀
 "\j{\frac{\sum{i=1}^{n}\left(\frac{1}{i}\right)}{n}}"
 ```
 
@@ -554,7 +555,7 @@ Format directives are used to transform a value into a string using the built-in
 You can create template strings by using the `#` character to mark placeholders in a string. The arguments can be named, as in `#name`, or positional, as in `#0` or `#-1` (negative indices count from the last).
 
 ```coffee
-var greeting = "Hello #0!"
+let greeting = "Hello #0!"
 greeting "World" # => "Hello World!"
 ```
 
@@ -566,8 +567,8 @@ Strings can be written with a preceding backslash instead of quotes. Backslash s
 
 ```coffee
 \word
-fn \word, \word
-fn(word)
+func \word, \word
+func(word)
 [\word]
 {prop: \word}
 ```
@@ -647,8 +648,8 @@ The type of a list is written in full as `list[type]`, where `type` is the type 
 Although the two forms are functionally identical, the shorthand form is preferred and is used throughout this guide when referring to the type of a list.
 
 ```coffee
-var list1: []int = [10, 20, 30]
-var list2 = ['a', 'b', 'c'] # is []str
+let list1: []int = [10, 20, 30]
+let list2 = ['a', 'b', 'c'] # is []str
 [] # an empty list
 ```
 
@@ -657,7 +658,7 @@ An explicit type can be specified by immediately following the closing angle wit
 This overwrites the inferred type and can be used for example to create a list that holds only some types initially but can accept other types later.
 
 ```coffee
-var z = [10, '20', '30']{str | int} # with type casting operator
+let z = [10, '20', '30']{str | int} # with type casting operator
 ```
 
 The compiler will infer a list to have a non-nullable type. If the list might store `null` values, then you will need to explicitly cast it.
@@ -672,13 +673,13 @@ The empty list is denoted using the special syntax `[]`. Often you will specify 
 A multidimensional list can have many prefix `[]` in them.
 
 ```coffee
-var a: [][]int = [[0, 2, 0], [0, 0, 0]]
+let a: [][]int = [[0, 2, 0], [0, 0, 0]]
 ```
 
 You can prefix a hash sign (`#`) to a list or map literal to turn it into a mutable list or map.
 
 ```coffee
-var a: #[]#[]#[]int = mutlist [[[0] * 2] * 3] * 2
+let a: #[]#[]#[]int = mutlist [[[0] * 2] * 3] * 2
 a[0][1][1] = 2
 print(a) # [[[0, 0], [0, 2], [0, 0]], [[0, 0], [0, 0], [0, 0]]]
 ```
@@ -725,14 +726,14 @@ shoppingList[4:6] = ['Bananas', 'Apples']
 List comprehensions provide a concise way to create lists. Common applications are to make new lists where each element is the result of some operations applied to each member of another sequence or iterable, or to create a subsequence of those elements that satisfy a certain condition.
 
 ```coffee
-var a = [for x in 'abracadabra': if x !in 'abc': x]
+let a = [for x in 'abracadabra': if x !in 'abc': x]
 a == ['r', 'd', 'r']
 ```
 
 For example, assume we want to create a list of squares, like:
 
 ```coffee
-var squares = #[] # mutable list is prefixed with a hash
+let squares = #[] # mutable list is prefixed with a hash
 for x in 1 to 1: squares.push(x ** 2)
 squares == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
 ```
@@ -740,13 +741,13 @@ squares == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
 Note that this creates (or overwrites) a variable named x that still exists after the loop completes. We can calculate the list of squares without any side effects using:
 
 ```coffee
-var squares = list (0 til 10).map(** 2)
+let squares = list(0 til 10).map(** 2)
 ```
 
 or, equivalently:
 
 ```coffee
-var squares = [for x in 0 til 10: x**2]
+let squares = [for x in 0 til 10: x**2]
 ```
 
 A list comprehension consists of a `for` expression encased between the literal and the expression in question. The result would be a new list resulting from evaluating the expression in the context of the clauses inside it.
@@ -761,7 +762,7 @@ For example, this comprehension combines the elements of two lists if they are n
 which is equivalent to:
 
 ```coffee
-var combs = #[]
+let combs = #[]
 for x in [1, 2, 3], y in [3, 1, 4]
   if x != y
     combs.append((x, y))
@@ -772,7 +773,7 @@ for x in [1, 2, 3], y in [3, 1, 4]
 If the expression is a tuple (e.g. the (x, y) in the previous example), it must be parenthesized.
 
 ```coffee
-var vec = [-4, -2, 0, 2, 4]
+let vec = [-4, -2, 0, 2, 4]
 # create a new list with the values doubled
 [for x in vec: x * 2] # [-8, -4, 0, 4, 8]
 # filter the list to exclude negative numbers
@@ -804,13 +805,13 @@ Note: to create an empty set you have to use `set()`, not `{}`; the latter creat
 Here is a brief demonstration:
 
 ```coffee
-var basket: {}str = {'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}
+let basket: {}str = {'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}
 basket == {'orange', 'banana', 'pear', 'apple'}
 'orange' in basket # fast membership testing
 'crabgrass' !in basket
 
-var a = set('abracadabra') # Create sets from iterables
-var b = set('alacazam')
+let a = set('abracadabra') # Create sets from iterables
+let b = set('alacazam')
 
 a == {'a', 'r', 'b', 'c', 'd'}
 a - b == {'r', 'd', 'b'}
@@ -822,7 +823,7 @@ a ^ b == {'r', 'd', 'b', 'm', 'z', 'l'}
 Similarly to list comprehensions, set comprehensions are also supported:
 
 ```coffee
-var a = {for x in 'abracadabra': if x !in 'abc': x}
+let a = {for x in 'abracadabra': if x !in 'abc': x}
 a == {'r', 'd'}
 ```
 
@@ -893,7 +894,7 @@ let new_numbers = [0, *numbers, 4]
 new_numbers == [0, 1, 2, 3, 4]
 
 # Set literals
-var a = set(*'abracadabra')
+let a = set(*'abracadabra')
 a == {'a', 'r', 'b', 'c', 'd'}
 
 # Map literals
