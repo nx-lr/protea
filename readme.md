@@ -10,7 +10,7 @@ module Button
     font-size: 1em
     font-weight: bold
 
-  func make(&count: int)
+  fn make(&count: int)
     let times = match count then
       case 1 then "once"
       case 2 then "twice"
@@ -21,22 +21,19 @@ module Button
 
 ## Introduction
 
-Trinity is an open-source multi-platform programming language designed to be a syntactically legible, beautiful and powerful dialect of JavaScript. It combines concepts from mature languages like ML, Ruby, Haskell and Python, combining the best of each, while still preserving much of the features you know and love from modern JavaScript.
-
-As of the moment, Trinity is still in its early stages of development.
+Trinity is an experimental open source programming language based on a rather peculiar idea: to build apps of the future with the power of the web. It combines concepts from mature languages like Python, ML, Ruby and Haskell, while still preserving much of the features you know and love from modern JavaScript.
 
 ```coffee
 # Assignment
-let number   = 42
+let number = 42
 let opposite = true
 let regex = `\"(\d+)\":\s*\n\s*name:\s+([\-.\w]+)` `$1: {name: $2}`
 
 # Conditions
-let number = if opposite: -42 else number
+number = if opposite: -42 else number
 
 # Functions
-func square(x) = x * x
-let square = |x| x * x: int
+let square = |x| -> x * x
 
 # Arrays
 let list = [1 2 3 4 5]
@@ -53,19 +50,31 @@ let race = |winner, *runners|
   print winner runners
 
 # Existence
-if elvis? then alert "I knew it!"
+if ?elvis: alert "I knew it!"
 
 # Array comprehensions
-let cubes = [for y in list: math.cube num]
+let cubes = [for y in list[]: math.cube num]
 
 # LINQ
-let cubes = from x in 1 to 100
-  select $ Math.cube x
+cubes = from x in 1 to 100
+  select $ math.cube x
 ```
 
 ---
 
 ## Design Goals
+
+Trinity's core idea is to formulate an ideal language to build the web, with careful consideration of the existing JavaScript ecosystem at hand. JavaScript clearly is lacking in terms of both design and performance, because of how it was raised, and this could be a problem for the future of the web.
+
+The goal of Trinity is to provide a language that is both expressive and performant, while still giving access to the features you know and love from modern JavaScript, and its growing ecosystem, without worrying about implementation or performance up ahead.
+
+<small>
+
+Trinity is currently a work-in-progress by a single person and the language is still in flux. The language is still in its early stages of conceptualisation and experimentation. This document mainly serves as a guide to the language's design and implementation.
+
+Feel free to contribute to the project by submitting issues to this repository. If you're interested in contributing to the project, tag me on GitHub.
+
+</small>
 
 ---
 
@@ -77,13 +86,233 @@ let cubes = from x in 1 to 100
 
 ## Syntax Overview
 
+> This document is an informal guide to the syntax of Trinity, meant as an aid for future programmers and authors of Trinity's implementations. This is not a tutorial or complete reference, but rather a guide you consult if you have some questions.
+>
 > This reference is structured so it can be read from top to bottom. Later sections use concepts and syntax previously introduced. Familiarity with JavaScript (or TypeScript if better) is assumed.
 
-### Syntax
+<small>
 
-#### Comments
+This language reference, like the language it describes, is a work in progress and will be improved over time (GitHub link). Contributions and corrections are welcome!
 
-Comments start with the `#` character followed by a space. All following text up to the end of the line is considered a comment. They can be on their own line or follow after a statement.
+</small>
+
+## A note on syntax
+
+Like all programming languages, Trinity is a language in which programs are not text. That means, the real truth is not written in its textual form, but more as an abstract syntax tree (AST).
+
+This document describes Trinity in terms of its default and (currently) only syntax: its written form as source code.
+
+## Top-level declarations
+
+A top-level declaration appears on the top-level or outermost scope of a file. It can be one of the following:
+
+- A declaration, like `let x = 42`, or `struct type Optional a = None | Some a`.
+- An `import` clause, like `import .base` or `import math.sqrt`.
+
+### Declarations
+
+Declarations are defined with a single keyword, such as `class`, `fn` or `let`, followed by a name and a value. They can also be supplied with optional modifiers, such as `pub` or `mut` which modify the declaration.
+
+#### Variables
+
+A variable declaration (or "variable binding") consists of the `let` keyword, a binding expression, and a definition, as well as an optional type signature. All definitions are immutable by default.
+
+For example:
+
+```coffee
+let x = 42
+let y: int = 42
+let timesTwo: |nat| nat = |x| x * 2
+```
+
+`let` can be supplied with a modifier, such as `mut`, which marks the declaration as mutable.
+
+The colon in the above example is a type signature. The signature `|nat| nat` means that the function `timesTwo` takes a natural number and returns a natural number.
+
+The `=` sign splits the definition into a left-hand side, which is/are the term(s) being defined, and the right-hand side, which is the definition of the term(s).
+
+#### Functions
+
+A function declaration is typically of the form `fn f(a: ta, b: tb...): t` where:
+
+- `f` is the name of the function being defined
+- `a`, `b`... are the parameters of the function
+- `ta`, `tb` are the types of the parameters
+- `t` is the return type of the function.
+
+What follows can be a block, or an assignment expression similar to a declaration. The block is the body of the function, and the assignment expression is the return value of the function.
+
+The names of the parameters and function are bound as local variables in the expression on the right-hand side (also known as the body of the function). When the function is called, the parameter names are bound to any arguments passed in the call.
+
+If the function is called with too many arguments, the excess arguments are ignored. If the function is called with too few arguments or no arguments, the missing arguments are bound to `void`.
+
+The expression or block comprising the right-hand side can refer to the name given to the definition. In that case, it’s a recursive definition. For example:
+
+```coffee
+fn sumUpTo(n: nat): nat =
+  if n < 2: n
+  else n + sumUpTo $ drop n 1
+```
+
+If there is no function name `f` in the expression, it is considered an anonymous function.
+
+### Type definitions
+
+A user-defined data type is introduced with the `type` keyword. The `=` sign splits the definition into a left-hand side and a right-hand side, much like term definitions.
+
+```coffee
+type intPair = int * int
+type intTriple = int * int * int
+```
+
+### Class definitions
+
+### Enum definitions
+
+### Structure definitions
+
+### Module definitions
+
+### Import clauses
+
+### Markup definitions
+
+###
+
+### Style definitions
+
+### Operator definitions
+
+Operator identifiers are valid names for Trinity definitions, but the syntax for defining them is slightly different. For example, we could define a binary operator `**`:
+
+```coffee
+infix fn ** (x, y) = Float.pow x y
+```
+
+Or we could define it using infix notation:
+
+```coffee
+x ** y = Float.pow x y
+```
+
+If we want to give the operator a qualified name, we put the operator inside the parentheses:
+
+```coffee
+ns.(**) $ x y = Float.pow x y
+```
+
+Or if defining it infix:
+
+```coffee
+x ns.(**) y = Float.pow x y
+```
+
+## Structure
+
+### Indentation
+
+Like Scala 3, YAML and Haskell, Trinity is a "hybrid" language in which you can use curly brackets and indentation to structure and organize your code. though indentation is used only for the purpose of readability.
+
+```coffee
+rec fn List.has(item: any): bool
+  match this
+    case [] { false }
+    case [a, *rest] { a == item && rest.has item }
+```
+
+Though you can also use `then` or a right-spaced colon if a code block is expected after a statement (such as `if` or `while`).
+
+```coffee
+rec fn List.has(item: any): bool
+  match this
+    case []: false
+    case [a, *rest]: a == item && rest.has item
+```
+
+### Semicolons
+
+In other languages, inserting semicolons to separate statements is required. In JavaScript, this is not necessary, but it is completely buggy.
+
+Trinity is a newline-sensitive language. This means that statements are usually not separated by semicolons. The compiler will automatically insert semicolons at the end of the line unless the line ends with an operator (or the next line begins with one).
+
+### Commas
+
+The rules for parsing commas are the same as semicolons, except they are used to separate expressions, not necessarily statements.
+
+### Parentheses
+
+You can pass arguments to functions Haskell style - parentheses here have nothing to do with function calls.
+
+```coffee
+print sys.inspect obj
+print(sys.inspect, obj)
+
+func (x + 3) x - 3
+func(x + 3, x) - 3
+```
+
+You can call functions with named arguments by using the `/` syntax. Named arguments have no order in functions, so you can call them in any order.
+
+```coffee
+print(x, name, &sep = "\n")
+print x name /sep "\n"
+```
+
+### Keywords
+
+Keywords are all lowercase and are special tokens in Trinity. They are used to denote special constructs, such as functions, classes, and control structures, and are distinguished from identifiers.
+
+Because of how identifiers are compared, you can use any number of leading underscores to escape a keyword to turn it into an identifier.
+
+```coffee
+assert _assert = null
+```
+
+The following are considered keywords:
+
+    in of as is new
+    to til thru by del
+    unset ref and or xor not
+    let fn proc type
+    class data enum module
+    iter macro struct object
+    trait style elem prop markup
+    go defer do from where with
+    if elif else then def
+    for each loop while
+    try throw catch after
+    match case goto pass fail
+    break next redo retry
+    return yield await label
+    use show hide route
+    debug assert check
+
+Keywords become identifiers when part of a qualified name, such as `x.for` or `y::loop`.
+
+### Identifiers
+
+We define an "underscore" as a Unicode combining punctuation character. This includes the Unicode character `_`.
+
+An identifier can contain any sequences of Unicode letters, decimal digits, combining marks, underscores, and dashes, provided it starts with a letter or an underscore, and does not end in any number of dashes.
+
+```ts
+const regex = /\b[\p{Pc}\p{L}][\d\p{L}\p{M}\p{Pc}\p{Pd}]*\b/;
+```
+
+Variables are compared case-insensitively until the first non-lowercase character. All underscores and dashes are ignored. This means you can use varying conventions in your program without having to worry about name collisions or case conventions.
+
+```coffee
+fn normalize(ident: str): str =
+  ret = ident[`[^\pNd\pL]` ``]
+  ret[`\b.*(?!\pL)`] + ret[`\pLl.*\b`].lower!
+
+fn cmpIdent(a: str, b: str): bool =
+  normalize a == normalize b
+```
+
+### Comments
+
+Comments start with the `#` character followed by a space. The space is compulsory. All following text up to the end of the line is considered a comment. They can be on their own line or follow after a statement.
 
 ```coffee
 # This is a single line comment.
@@ -105,77 +334,7 @@ The compiler command `pta doc` automatically extracts the API documentation and 
 +#
 ```
 
-#### Indentation
-
-Like Scala 3 and Haskell, meaning you can use curly brackets and indentation to structure and organize your code.
-
-```coffee
-rec func List.has(item: any): bool
-  match this
-    case [] { false }
-    case [a, *rest] { a == item && rest.has item }
-```
-
-Though you can also use `then` or a right-spaced colon if a code block is expected after a statement (such as `if` or `while`).
-
-```coffee
-rec func List.has(item: any): bool
-  match this
-    case []: false
-    case [a, *rest]: a == item && rest.has item
-```
-
-#### Newlines
-
-In other languages, inserting semicolons to separate statements is required. In JavaScript, this is not necessary, but it is completely buggy, and is not recommended.
-
-The compiler will automatically insert semicolons where needed.
-
-#### Identifiers
-
-Variables are compared case-insensitively except the first non-lowercase character. This means you can use varying conventions in your program without having to worry about name collisions or case conventions.
-
-An identifier can contain any sequence of letters, digits, marks,underscores, and dashes, provided it starts with a letter or underscore, and does not end in any number of dashes.
-
-```ts
-const regex = /\b[\p{Pc}\p{L}][\d\p{L}\p{M}\p{Pc}\p{Pd}]*\b/;
-```
-
-Identifiers are compared using an approach known as partial case-insensitivity.
-
-```coffee
-func normalize(a: str): str = match a
-  case a.sub(`[^\d\pL]`, ``) ~= `\p{Upper}+`
-    a.sub(`[^\d\pL]`, ``).upper!
-  fail
-    a[0] + a[1:].sub(`[^\d\pL]`, ``).lower!
-
-func cmpIdent(a: str, b: str): bool =
-  normalize a == normalize b
-```
-
-#### Semicolons
-
-Like most other modern languages, semicolons are optional. Ending the line would do just fine. (although they can be used to fit multiple statements onto a single line).
-
-#### Parentheses
-
-You can pass arguments to functions Haskell style - parentheses here have nothing to do with function calls.
-
-```coffee
-print sys.inspect obj
-print(sys.inspect, obj)
-
-fn (x + 3) x - 3
-fn(x + 3, x) - 3
-```
-
-You can call functions with named arguments by using the `/` syntax. Named arguments have no order in functions, so you can call them in any order.
-
-```coffee
-print(x, name, &sep = "\n")
-print x name /sep "\n"
-```
+## Expressions
 
 ### Variables
 
@@ -202,40 +361,9 @@ if displayGreeting
 
 `:=` updates variables outside scopes, and destructively modifies any data structure or class.
 
-### Keywords
+## Built-in data types
 
-Keywords are all lowercase and are special tokens in Trinity. They are used to denote special constructs, such as functions, classes, and control structures, and are distinguished from identifiers.
-
-Because of how identifiers are compared, you can use any number of leading underscores to escape a keyword to turn it into an identifier.
-
-```coffee
-assert _assert = null
-```
-
-The following are considered keywords:
-
-    in of as is new
-    to til thru by del
-    unset ref and or xor not
-    var let fun func proc type
-    class data enum module
-    iter macro struct object
-    trait style elem prop markup
-    go defer do from where with
-    if elif else then def decl
-    for each loop while
-    try throw catch after
-    match case goto pass
-    break next redo retry
-    return yield await label
-    import export route
-    debug assert check
-
-Keywords become identifiers when part of a qualified name, such as `x.for` or `y::loop`.
-
-## Data types
-
-Trinity comes with literals for many familiar and new primitive types such as `str`, `int`, `float`, `bool`, `list`, `set`, `map` and more, such as `func`, `sym` and `regex`.
+Trinity comes with literals for many familiar and new primitive types such as `str`, `int`, `float`, `bool`, `list`, `set`, `map` and more, such as `fn`, `sym` and `regex`.
 
 ### Null
 
@@ -401,7 +529,7 @@ Both types of strings support interpolation with `${}`, which is a way to embed 
 - a single identifier: `name`
 - a qualified name: `x.y.z` or `x::y::z`
 - an object accessor: `[][1]`
-- a function call: `func()`
+- a function call: `fn()`
 - and any combination of the like
 
 By default, all embedded expressions are converted to strings by passing it through the `str` method and concatenating the resulting string. You can override this behaviour by using the construct `ident'string'` instead.
@@ -755,7 +883,7 @@ The spread operator (prefix `*`) is a useful and convenient syntax for expanding
 
 ```coffee
 # Function arguments
-func multiply(a, b) = a * b
+fn multiply(a, b) = a * b
 let numbers = [3, 5]
 multiply(*numbers) == 15
 
