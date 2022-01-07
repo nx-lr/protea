@@ -1054,13 +1054,14 @@ repository:
       - match: \\.
         name: constant.character.escape.other.trin
   regexp-char-set:
-    patterns:
+    old:
       - begin: (\[[:])
         end: (\])
         name: constant.other.character-class.posix.trin
         captures:
           1: {name: punctuation.definition.character-class.posix.trin}
         patterns: [include: "#attribute-selectors"]
+    patterns:
       - begin: (\[[!^])
         end: (\])
         name: constant.other.character-class.negated.trin
@@ -2228,8 +2229,9 @@ repository:
           Function calls (with spacing)
         match: |
           (?x)\s*
-          (?<=
-          ^|[,;({\[]|['"`(){}\[\]\w]:\s|
+          (?<=^|
+          [,;({\[]|
+          ['"`(){}\[\]\w]:\s|
           ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
           (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
           @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
@@ -2285,7 +2287,7 @@ repository:
           |(?:[$.]|<\|{1,3}|<\+)(?:\s|$)
           |(?!(?:[?!]?\.|[?!:]:=?)['"`\\({\[\w])
           [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
-          (
+          (?:
           (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
           \b(?:# keywords
           in|of|as|is|new
@@ -2306,8 +2308,9 @@ repository:
           |debug|assert|check
           )(?!\B|\p{Pd}+\b)
           )
-          \w+
+          (?:\w+[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)*\w+
           )
+          (?:['"`({\[\s]|[:!]\s|$)
           |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+['"`({\[]
           )
         captures:
@@ -2316,8 +2319,9 @@ repository:
           Function calls (optional spacing)
         match: |
           (?x)\s*
-          (?<=
-          ^|[,;({\[]|['"`(){}\[\]\w]:\s|
+          (?<=^|
+          [,;({\[]|
+          ['"`(){}\[\]\w]:\s|
           ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
           (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
           @[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\b|
@@ -2365,7 +2369,7 @@ repository:
           |debug|assert|check
           )(?!\B|\p{Pd}+\b)
           )
-          [\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:[?!]?\.|[?!:]:=?)[\p{Pc}\p{L}][\w\p{Pd}]*)*
+          (?:\w+[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)*\w+
           )
           \b
           (?=
@@ -3091,7 +3095,7 @@ repository:
   type-operators:
     patterns:
       - comment: Function types
-        match: (?x)(?:^|\s+)(?:(\|)|(\*))(?=['"`({\[\w])|(?<=['"`)}\]\w])(?:(\|)|(\*))(?:$|\s+)
+        match: (?x)(?:^|\s+)(?:(\|)|(>))(?=['"`({\[\w])|(?<=['"`)}\]\w])(?:(\|)|(<))(?:$|\s+)
         captures:
           1: {name: keyword.operator.type.function.trin}
           2: {name: keyword.operator.type.channel.trin}
@@ -3248,30 +3252,7 @@ repository:
               3: {name: storage.type.property.trin}
               4: {name: keyword.operator.expression.trin}
 
-  modifiers:
-    match: |
-      (?x)\s*
-      \s*\b
-      (?:
-      (# Access modifiers
-      pub|priv|prot|after|mut|immut
-      |glo|loc|early|late|covar|contra
-      |seal|abst|intern|extern|imply|exply
-      |sub|impure|pure
-      )|
-      (# Function or method modifiers
-      sync|async|stat|dyn|lazy|eager|bound|free
-      )|
-      (# Property modifiers
-      rec|gen|oper|get|set|post|del|curry|inline
-      |prefix|suffix|infix|binary|unary|left|right
-      )
-      )(?!\B|\p{Pd}+\b)
-    captures:
-      1: {name: storage.modifier.trin}
-      2: {name: storage.type.accessor.trin}
-      3: {name: storage.type.property.trin}
-      4: {name: keyword.operator.expression.trin}
+  modifiers: *modifiers
 
   declaration-keywords:
     patterns:
