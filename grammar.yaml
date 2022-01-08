@@ -72,7 +72,8 @@ fixes: |
     - [ ] modifier keywords
     - [ ] anonymous functions
     - [ ] embedded content
-    - [ ] identidiers and variables
+    - [ ] operators
+    - [ ] identifiers and variables
 
 define:
   class-name: &class-name |
@@ -701,25 +702,27 @@ repository:
           (\$) # beginning of identifier
 
           # ignore all keywords
-          (?!(?<=^|[\p{P}\p{S}\s])\b
-          (?: # keywords
-            in|of|as|is|new
-            |to|til|thru|by|del
-            |unset|ref|and|or|xor|not
-            |let|fn|proc|type
-            |class|data|enum|module
-            |iter|macro|struct|object
-            |trait|style|elem|prop|markup
-            |go|defer|do|from|where|with
-            |if|elif|else|then|def
-            |for|each|loop|while
-            |try|throw|catch|after
-            |match|case|goto|pass|fail
-            |break|next|redo|retry
-            |return|yield|await|label
-            |use|show|hide|route
-            |debug|assert|check
-            )(?!\B|\p{Pd}+\b)
+          (?!
+            (?<=^|[\p{P}\p{S}\s])\b
+            (?: # keywords
+              in|of|as|is|new
+              |to|til|thru|by|del
+              |unset|ref|and|or|xor|not
+              |let|fn|proc|type
+              |class|data|enum|module
+              |iter|macro|struct|object
+              |trait|style|elem|prop|markup
+              |go|defer|do|from|where|with
+              |if|elif|else|then|def
+              |for|each|loop|while
+              |try|throw|catch|after
+              |match|case|goto|pass|fail
+              |break|next|redo|retry
+              |return|yield|await|label
+              |use|show|hide|route
+              |debug|assert|check
+            )
+            (?!\B|\p{Pd}+\b)
           )
 
           \b # next to a word
@@ -2404,163 +2407,152 @@ repository:
   # Function and method calls
 
   calls:
-    patterns:
-      - comment: |
-          Function calls (with spacing)
-        match: |
-          (?x)\s*
-          (?<=
-          ^|
-          [,;({\[]|
-          ['"`(){}\[\]\w]:\s|
-          ['"`(){}\[\]\w][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
-          ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
-          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
-          //?[\p{Pc}\p{L}][\w\p{Pd}]*|
-          (?:
-          (?:^|[,;'"`(){}\[\]\s])\b(?:# keywords
-          in|of|as|is|new
-          |to|til|thru|by|del
-          |unset|ref|and|or|xor|not
-          |let|fn|proc|type
-          |class|data|enum|module
-          |iter|macro|struct|object
-          |trait|style|elem|prop|markup
-          |go|defer|do|from|where|with
-          |if|elif|else|then|def
-          |for|each|loop|while
-          |try|throw|catch|after
-          |match|case|goto|pass|fail
-          |break|next|redo|retry
-          |return|yield|await|label
-          |use|show|hide|route
-          |debug|assert|check
-          )\b(?:[,;'"`(){}\[\]\s]|$)
+    match: |
+      (?x)
+
+      \s* # dk why this is here but anyway
+
+      (?<=
+        (?:
+          # beginning of line
+          ^
+        | # or before a delimiter
+          [,;({\[]
+        | # key-value separator
+          ['"`(){}\[\]\w]:\s
+        | # infix/suffix operators
+          (?:^ | ['"`(){}\[\]\w\s]) # anchor
+          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+ # operator
+          \s # space
+        | # open/closing bracket
+          ['"`(){}\[\]]
+          (?: [?!]?\.=? | [?!:]:=?) # accessors
+        | # command syntax
+          //?[\p{Pc}\p{L}][\w\p{Pd}]*
+        | (?:
+            (?:^ | [,;'"`(){}\[\]\s]) # beside a delimiter or space
+            \b
+              (?:# keywords
+                in|of|as|is|new
+                |to|til|thru|by|del
+                |unset|ref|and|or|xor|not
+                |let|fn|proc|type
+                |class|data|enum|module
+                |iter|macro|struct|object
+                |trait|style|elem|prop|markup
+                |go|defer|do|from|where|with
+                |if|elif|else|then|def
+                |for|each|loop|while
+                |try|throw|catch|after
+                |match|case|goto|pass|fail
+                |break|next|redo|retry
+                |return|yield|await|label
+                |use|show|hide|route
+                |debug|assert|check
+              )
+            \b
+            (?:$ | [,;'"`(){}\[\]\s]) # beside a delimiter or space
           )
+        ) \s* # before a space
+      )
+
+      \b
+
+      (
+        # ignore all keywords
+        (?!
+          (?<=^|[\p{P}\p{S}\s])\b
+          (?: # keywords
+            in|of|as|is|new
+            |to|til|thru|by|del
+            |unset|ref|and|or|xor|not
+            |let|fn|proc|type
+            |class|data|enum|module
+            |iter|macro|struct|object
+            |trait|style|elem|prop|markup
+            |go|defer|do|from|where|with
+            |if|elif|else|then|def
+            |for|each|loop|while
+            |try|throw|catch|after
+            |match|case|goto|pass|fail
+            |break|next|redo|retry
+            |return|yield|await|label
+            |use|show|hide|route
+            |debug|assert|check
           )
-          \s*\b
-          (
-          (?!(?<=^|[\p{P}\p{S}\s])
-          \b(?:# keywords
-          in|of|as|is|new
-          |to|til|thru|by|del
-          |unset|ref|and|or|xor|not
-          |let|fn|proc|type
-          |class|data|enum|module
-          |iter|macro|struct|object
-          |trait|style|elem|prop|markup
-          |go|defer|do|from|where|with
-          |if|elif|else|then|def
-          |for|each|loop|while
-          |try|throw|catch|after
-          |match|case|goto|pass|fail
-          |break|next|redo|retry
-          |return|yield|await|label
-          |use|show|hide|route
-          |debug|assert|check
-          )(?!\B|\p{Pd}+\b)
-          )
-          [\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:[?!]?\.|[?!:]:=?)[\p{Pc}\p{L}][\w\p{Pd}]*)*
-          )
-          \b\s+
-          (?=
-          ['"`\\({\[]|(?:\\|//?)\b
-          |(?:[$.]|<\|{1,3}|<\+)(?:\s|$)
-          |(?!(?:[?!]?\.|[?!:]:=?)['"`\\({\[\w])
-          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
-          (?:
-          (?!(?<=^|[\p{P}\p{S}\s])
-          \b(?:# keywords
-          in|of|as|is|new
-          |to|til|thru|by|del
-          |unset|ref|and|or|xor|not
-          |let|fn|proc|type
-          |class|data|enum|module
-          |iter|macro|struct|object
-          |trait|style|elem|prop|markup
-          |go|defer|do|from|where|with
-          |if|elif|else|then|def
-          |for|each|loop|while
-          |try|throw|catch|after
-          |match|case|goto|pass|fail
-          |break|next|redo|retry
-          |return|yield|await|label
-          |use|show|hide|route
-          |debug|assert|check
-          )(?!\B|\p{Pd}+\b)
-          )
-          (?:\w+[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)*\w+
-          )
-          (?:['"`(){}\[\]\s]|[:!]\s|$)
-          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+['"`({\[]
-          )
-        captures:
-          1: {patterns: [include: "#function-names"]}
-      - comment: |
-          Function calls (optional spacing)
-        match: |
-          (?x)\s*
-          (?<=
-          ^|
-          [,;({\[]|
-          ['"`(){}\[\]\w]:\s|
-          ['"`(){}\[\]\w][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
-          ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
-          (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
-          //?[\p{Pc}\p{L}][\w\p{Pd}]*|
-          (?:
-          (?:^|[,;'"`(){}\[\]\s])\b(?:# keywords
-          in|of|as|is|new
-          |to|til|thru|by|del
-          |unset|ref|and|or|xor|not
-          |let|fn|proc|type
-          |class|data|enum|module
-          |iter|macro|struct|object
-          |trait|style|elem|prop|markup
-          |go|defer|do|from|where|with
-          |if|elif|else|then|def
-          |for|each|loop|while
-          |try|throw|catch|after
-          |match|case|goto|pass|fail
-          |break|next|redo|retry
-          |return|yield|await|label
-          |use|show|hide|route
-          |debug|assert|check
-          )\b(?:[,;'"`(){}\[\]\s]|$)
-          )
-          )
-          \s*\b
-          (
-          (?!(?<=^|[\p{P}\p{S}\s])
-          \b(?:# keywords
-          in|of|as|is|new
-          |to|til|thru|by|del
-          |unset|ref|and|or|xor|not
-          |let|fn|proc|type
-          |class|data|enum|module
-          |iter|macro|struct|object
-          |trait|style|elem|prop|markup
-          |go|defer|do|from|where|with
-          |if|elif|else|then|def
-          |for|each|loop|while
-          |try|throw|catch|after
-          |match|case|goto|pass|fail
-          |break|next|redo|retry
-          |return|yield|await|label
-          |use|show|hide|route
-          |debug|assert|check
-          )(?!\B|\p{Pd}+\b)
-          )
-          (?:\w+[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)*\w+
-          )
-          \b
-          (?=
-          \b!(?:$|[\s'"`)}\]])|
-          (?:[!?]\.=?|\.=)?\#?\(|
-          (?:[!?]\.=?|\.=)?<['"`\\({\[\w]
-          )
-        captures:
-          1: {patterns: [include: "#function-names"]}
+          (?!\B|\p{Pd}+\b)
+        )
+        (?:
+          \w+ # identifier
+          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+ # operator
+        )*
+        \w+ # last part of identifier
+      )
+
+      \b
+
+      (?=
+        \s+
+        (?: # one space or more
+            (?:\\|//?) \b # command or string literal
+          | # operators $ . <| <|| <||| <+
+            (?: [$.] | <\|{1,3}| <\+) (?:\s | $)
+          | # prefix operator literal
+            [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+
+            ['"`({\[]
+          | # ignore orphan qualified names
+            (?!
+              (?: [?!]?\.=? | [?!:]:=?)
+              ['"`\\({\[\w]
+            )
+            # prefix operator
+            [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
+            (?:
+              # ignore all keywords
+              (?!
+                (?<=^ | [\p{P}\p{S}\s])\b
+                (?: # keywords
+                  in|of|as|is|new
+                  |to|til|thru|by|del
+                  |unset|ref|and|or|xor|not
+                  |let|fn|proc|type
+                  |class|data|enum|module
+                  |iter|macro|struct|object
+                  |trait|style|elem|prop|markup
+                  |go|defer|do|from|where|with
+                  |if|elif|else|then|def
+                  |for|each|loop|while
+                  |try|throw|catch|after
+                  |match|case|goto|pass|fail
+                  |break|next|redo|retry
+                  |return|yield|await|label
+                  |use|show|hide|route
+                  |debug|assert|check
+                )
+                (?!\B|\p{Pd}+\b)
+              )
+              (?:
+                \w+ # identifier
+                [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+ # operator
+              )*
+              \w+ # last part of identifier
+            )
+            (?:['"`(){}\[\]\s] | [:!]\s | $) # next to a space
+        )
+        | \s*  # optional space
+        (?:
+            # postfix call syntax
+            \b! (?:[\s'"`)}\]] | $)
+          | # C-style function call
+            (?:[!?]\.=?|\.=)? \#?\(
+          | # angle-bracket syntax
+            (?:[!?]\.=?|\.=)? < ['"`\\({\[\w]
+        )
+      )
+
+      \s*
+    captures:
+      1: {patterns: [include: "#function-names"]}
 
   # Variables
 
