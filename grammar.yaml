@@ -16,6 +16,59 @@ information for contributors: |
   constructive feedback, make a pull request or an issue on this repo,
   and I will be very happy to receive it/them.
 
+fixes: |
+  Changes in 2022:
+
+  - Added back shebang comments and backslash strings
+    (however with limited functionality)
+  - Added `/` and `//` command flags
+  - Removed JSX and style blocks; replaced them with indentation instead.
+  - Trinity now supports both indentation and curly-brace syntax.
+  - Fixed comments:
+    - Line comments begin with a hash sign
+    - Block comments use parentheses and asterisks
+  - Numbers and escape sequences have been reworked; bases 4, 6, and 12
+    have been scrapped.
+  - Interpolation and formatting syntax have been reworked and fixed.
+    Spacing around regular identifiers have also been removed.
+  - Function call syntax has been reworked and is still sometimes buggy.
+    By far it is the most complex of all.
+  - Added/removed a few more keywords to clean up the code.
+  - Changed some "then" keywords to:
+    - if/elif then else fi
+    - for/loop/while do done
+    - match with hctam
+    - case then ouse esac
+    - try catch after yrt
+    - do done
+
+  Fixes:
+
+  - Allow primary operators (not surrounded by spaces) preceded by a dot or
+    two colons to be highlighted separately.
+  - Grammar is a bit messy at the moment, so adding comments to some regexes
+    would help a lot. I'll be fixing this soon.
+  - Percent literals inspired by Ruby (this time using dollar signs as the
+    percent sign is used for string formatting).
+  - Things left to add for the inline Markdown syntax:
+    - Selectors and anchors
+    - Code blocks
+    - Definition blocks
+    - Tables
+    - Headings and subheadings
+  - Fix complex regular expressions and make them more readable and less confusing,
+    even without syntax highlighting.
+    - [x] function parameters
+    - [ ] function assignments
+    - [ ] function calls
+    - [x] Markdown syntax
+    - [ ] object literals
+    - [ ] object labels
+    - [ ] pipeline functions
+    - [ ] modifier keywords
+    - [ ] anonymous functions
+    - [ ] embedded content
+
 define:
   class-name: &class-name |
     (?x)\s*\b
@@ -3935,7 +3988,9 @@ repository:
       (?x)
       (?<=(?:^\s*|[,;]\s*|\#?[({\[]\s*
       |(?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s+
-      |\b(?:# keywords
+      |
+      (?:
+      (?:^|[,;'"`(){}\[\]\s])\b(?:# keywords
       in|of|as|is|new
       |to|til|thru|by|del
       |unset|ref|and|or|xor|not
@@ -3952,7 +4007,10 @@ repository:
       |return|yield|await|label
       |use|show|hide|route
       |debug|assert|check
-      )\b)\s*)
+      )\b(?:[,;'"`(){}\[\]\s]|$)
+      )
+      )
+      \s*)
       (\|)
       (?!\|)
     captures:
