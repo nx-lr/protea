@@ -2537,9 +2537,13 @@ repository:
               )*
               \w+ # last part of identifier
             )
-            (?:['"`(){}\[\]\s] | [:!]\s | $) # next to a space
+            (?:
+                ['"`(){}\[\]\s] # closing bracket
+              | [:!]\s # KV pair or postfix call
+              | $ # end of line
+            )
         )
-        | \s*  # optional space
+        | \s* # optional space
         (?:
             # no-argument call
             \b! (?:[\s'"`)}\]] | $)
