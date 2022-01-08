@@ -64,7 +64,7 @@ fixes: |
     readable and less confusing.
     - [x] function parameters
     - [ ] function assignments
-    - [ ] function calls
+    - [x] function calls
     - [x] Markdown syntax
     - [ ] object literals
     - [ ] object labels
@@ -169,8 +169,8 @@ repository:
       - include: "#format-specifier"
       - include: "#symbols-quoted"
       - include: "#symbols"
-      - include: "#operators"
       - include: "#literals"
+      - include: "#operators"
       - include: "#calls"
       - include: "#variables"
       - include: "#illegal"
@@ -508,7 +508,7 @@ repository:
 
   symbols:
     patterns:
-      - match: \@[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*\b)*\s*
+      - match: \@[\p{Pc}\p{L}][\w\p{Pd}]*\b(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*\b)*\s*
         name: entity.name.class.decorator.trin
       - match: \B(:)(?=['"])
         name: punctuation.definition.symbol.trin
@@ -850,7 +850,7 @@ repository:
           1: {name: punctuation.line.separator.math.trin}
       - applyEndPatternLast: true
         name: meta.function.math.trin
-        begin: ((\\)(\w[\w\p{Pd}]*(?:[:.]\w[\w\p{Pd}]*)*))\b(?=\{)
+        begin: ((\\)(\w[\w\p{Pd}]*\b(?:[:.]\w[\w\p{Pd}]*)*))\b(?=\{)
         beginCaptures:
           1: {name: storage.type.function.trin}
           2: {name: punctuation.definition.function.trin}
@@ -871,7 +871,7 @@ repository:
             captures:
               1: {name: punctuation.definition.arguments.trin}
             patterns: [include: "#latex-sublanguage"]
-      - match: (\\)\b(\w[\w\p{Pd}]*(?:[:.]\w[\w\p{Pd}]*)*)\b
+      - match: (\\)\b(\w[\w\p{Pd}]*\b(?:[:.]\w[\w\p{Pd}]*)*)\b
         captures:
           1: {name: punctuation.definition.constant.trin}
           2:
@@ -1430,7 +1430,7 @@ repository:
           <[^>]*+> # HTML tags
           | (?<raw>`+)([^`]|(?!(?<!`)\k<raw>(?!`))`)*+\k<raw>
           # Raw
-          | \\[\\`*_{}\[\]()#.!+\->]?+ # Escapes
+          | \\[\\`*_{}\[\]() #.!+\->]?+ # Escapes
           | \[
           (
               (?<square> # Named group
@@ -1548,7 +1548,7 @@ repository:
           <[^>]*+> # HTML tags
           | (?<raw>`+)([^`]|(?!(?<!`)\k<raw>(?!`))`)*+\k<raw>
           # Raw
-          | \\[\\`*_{}\[\]()#.!+\->]?+ # Escapes
+          | \\[\\`*_{}\[\]() #.!+\->]?+ # Escapes
           | \[
           (
               (?<square> # Named group
@@ -1788,7 +1788,7 @@ repository:
           1: {name: punctuation.definition.tag.trin}
         patterns:
           - comment: Tag name
-            match: (?<=<)\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
+            match: (?<=<)\b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
             captures:
               1: {name: entity.name.tag.trin, patterns: *html-tag-names}
           - comment: ID
@@ -1873,7 +1873,7 @@ repository:
       - include: "#embedded"
 
   tag-names:
-    match: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b\s*
+    match: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b\s*
     name: entity.name.tag.trin
     captures:
       1:
@@ -1889,31 +1889,7 @@ repository:
 
   style-pair:
     applyEndPatternLast: true
-    begin: |
-      (?x)
-      \s*
-      (
-      [\p{Pd}$]?
-      (?:
-      # Recursive brackets
-      \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
-      (?<b>
-      \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-      \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-      \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-      )|
-      \B(?<s>
-      # Strings
-      (?<q3>'''+|"""+|```+).*\g<q3>|
-      (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
-      (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
-      (?<q1>')(?:[^']|'')*\g<q1>
-      )|
-      # Rest of identifier characters
-      \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-      )+
-      )
-      (:)\s+
+    begin: '\s*([\p{Pd}\w]+)\b(:)\s+'
     beginCaptures:
       1:
         name: support.type.property-name.trin
@@ -1921,7 +1897,7 @@ repository:
           - include: "#css-property-names"
           - include: "#embedded"
           - include: "#brackets"
-      8: {name: punctuation.separator.key-value.trin}
+      2: {name: punctuation.separator.key-value.trin}
     end: (?=)|$
     name: string.unquoted.trin
     patterns:
@@ -1990,174 +1966,18 @@ repository:
     patterns:
       - match: \s*(\@|\#|\&|\*|\.|\:|::)(?=[\w$])
         name: punctuation.definition.entity.trin
-      - match: |
-          (?x)
-          \s*(?<=[^*]\*)
-          (
-          [\p{Pd}$]?
-          (?:
-          # Recursive brackets
-          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
-          (?<b>
-          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-          )|
-          \B(?<s>
-          # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
-          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
-          (?<q1>')(?:[^']|'')*\g<q1>
-          )|
-          # Rest of identifier characters
-          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )+
-          )\s*
-        captures:
-          1:
-            name: entity.name.type.alias.trin
-            patterns: *embedded-brackets
-      - match: |
-          (?x)
-          \s*(?<=[^&]\&)
-          (
-          [\p{Pd}$]?
-          (?:
-          # Recursive brackets
-          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
-          (?<b>
-          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-          )|
-          \B(?<s>
-          # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
-          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
-          (?<q1>')(?:[^']|'')*\g<q1>
-          )|
-          # Rest of identifier characters
-          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )+
-          )\s*
-        captures:
-          1:
-            name: entity.name.type.anchor.trin
-            patterns: *embedded-brackets
-      - match: |
-          (?x)
-          \s*(?<=[^@]\@)
-          (
-          [\p{Pd}$]?
-          (?:
-          # Recursive brackets
-          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
-          (?<b>
-          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-          )|
-          \B(?<s>
-          # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
-          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
-          (?<q1>')(?:[^']|'')*\g<q1>
-          )|
-          # Rest of identifier characters
-          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )+
-          )\s*
-        captures:
-          1:
-            name: keyword.control.at-rule.trin
-            patterns: *embedded-brackets
-      - match: |
-          (?x)
-          \s*(?<=[^\#]\#)
-          (
-          [\p{Pd}$]?
-          (?:
-          # Recursive brackets
-          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
-          (?<b>
-          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-          )|
-          \B(?<s>
-          # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
-          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
-          (?<q1>')(?:[^']|'')*\g<q1>
-          )|
-          # Rest of identifier characters
-          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )+
-          )\s*
-        captures:
-          1:
-            name: entity.other.attribute-name.id.trin
-            patterns: *embedded-brackets
-      - match: |
-          (?x)
-          \s*(?<=[^.]\.)
-          (
-          [\p{Pd}$]?
-          (?:
-          # Recursive brackets
-          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
-          (?<b>
-          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-          )|
-          \B(?<s>
-          # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
-          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
-          (?<q1>')(?:[^']|'')*\g<q1>
-          )|
-          # Rest of identifier characters
-          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )+
-          )\s*
-        captures:
-          1:
-            name: entity.other.attribute-name.class.trin
-            patterns: *embedded-brackets
-      - match: |
-          (?x)
-          \s*(?<=[^:]::?)
-          (
-          [\p{Pd}$]?
-          (?:
-          # Recursive brackets
-          \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
-          (?<b>
-          \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-          \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-          \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-          )|
-          \B(?<s>
-          # Strings
-          (?<q3>'''+|"""+|```+).*\g<q3>|
-          (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
-          (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
-          (?<q1>')(?:[^']|'')*\g<q1>
-          )|
-          # Rest of identifier characters
-          \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-          )+
-          )\s*
-        captures:
-          1:
-            name: entity.other.attribute-name.pseudo-component.trin
-            patterns: *embedded-brackets
+      - match: \s*(?<=@)[\p{Pc}\p{L}][\w\p{Pd}]*\s*
+        name: keyword.control.at-rule.trin
+      - match: \s*(?<=#)[\p{Pc}\p{L}][\w\p{Pd}]*\s*
+        name: entity.other.attribute-name.id.trin
+      - match: \s*(?<=&)[\p{Pc}\p{L}][\w\p{Pd}]*\s*
+        name: entity.name.type.anchor.trin
+      - match: \s*(?<=\*)[\p{Pc}\p{L}][\w\p{Pd}]*\s*
+        name: entity.name.type.alias.trin
+      - match: \s*(?<=\.)[\p{Pc}\p{L}][\w\p{Pd}]*\s*
+        name: entity.other.attribute-name.class.trin
+      - match: \s*(?<=::?)[\p{Pc}\p{L}][\w\p{Pd}]*\s*
+        name: entity.other.attribute-name.pseudo-component.trin
 
   # Comments
 
@@ -2408,9 +2228,7 @@ repository:
 
   calls:
     match: |
-      (?x)
-
-      \s* # dk why this is here but anyway
+      (?x) \s* # include spaces so as to not lag-spike Oniguruma
 
       (?<=
         (?:
@@ -2422,9 +2240,9 @@ repository:
           ['"`(){}\[\]\w]:\s
         | # infix/suffix operators
           (?:^ | ['"`(){}\[\]\w\s]) # anchor
-          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+ # operator
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+ # operator
           \s # space
-        | # open/closing bracket
+        | # open/close bracket
           ['"`(){}\[\]]
           (?: [?!]?\.=? | [?!:]:=?) # accessors
         | # command syntax
@@ -2484,7 +2302,7 @@ repository:
         )
         (?:
           \w+ # identifier
-          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+ # operator
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+ # operator
         )*
         \w+ # last part of identifier
       )
@@ -2498,15 +2316,15 @@ repository:
           | # operators $ . <| <|| <||| <+
             (?: [$.] | <\|{1,3}| <\+) (?:\s | $)
           | # prefix operator literal
-            [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+
+            [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
             ['"`({\[]
-          | # ignore orphan qualified names
+          | # ignore orphaned qname
             (?!
               (?: [?!]?\.=? | [?!:]:=?)
               ['"`\\({\[\w]
             )
             # prefix operator
-            [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
+            [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*
             (?:
               # ignore all keywords
               (?!
@@ -2533,7 +2351,7 @@ repository:
               )
               (?:
                 \w+ # identifier
-                [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+ # operator
+                [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+ # operator
               )*
               \w+ # last part of identifier
             )
@@ -2551,6 +2369,8 @@ repository:
             (?:[!?]\.=?|\.=)? \#?\(
           | # generics
             (?:[!?]\.=?|\.=)? < ['"`\\({\[\w]
+          | # string literal or expression
+            ['"`\\({\[]
         )
       )
 
@@ -2587,14 +2407,14 @@ repository:
       (?:
       (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
       (?:# Properties
-      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       |
       (?:# Objects
-      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -2602,7 +2422,7 @@ repository:
       (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
       |
       (?:# Regular variables
-      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -2668,7 +2488,7 @@ repository:
   binary-ops:
     patterns:
       - comment: augmented assignment += -= *= /= etc
-        match: (?<=^|[\s'"`({\[])([\p{S}\p{P}&&[^~<=>.,:;!'"`(){}\[\]\p{Pc}]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=)(?=$|[\s'"`)}\]])
+        match: (?<=^|[\s'"`({\[])([\p{S}\p{P}&&[^~<=>.,:;!'"`(){}\[\]\p{Pc}]][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*=)(?=$|[\s'"`)}\]])
         name: keyword.operator.assignment.augmented.trin
       - comment: |
           BUILT-IN OPERATORS
@@ -2717,32 +2537,32 @@ repository:
         match: |
           (?x)
           (?<=^|[\s'"`({\[]) # opening
-          (?:
-          (:?=)#1
-          |([+-]|\*{1,3}|~?/|%%?|\#\#?|<?\*>?)#2
-          |(\+\+|--)#3
-          |(&&|\|\||\^\^)#4
-          |([&|^~])#5
-          |(<<<?|>>>?)#6
-          |(\|{1,3}>|<\|{1,3})#7
-          |(\+>|<\+)#8
-          |([<>][!:]|[!:][<>])#9
-          |([<>]=?|<=?>)#10
-          |(=<|<[/*|+$:]>?|[/*|+$:]>)#11
-          |([!=]==?|[!=]~|~[!=])#12
-          |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*~>|
-          <~[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#13
-          |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*=>|
-          <=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#14
-          |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*->|
-          <-[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)#15
-          |(\?\??)#16
-          |(!!?)#17
-          |(\?:)#18
-          |(!:)#19
-          |(\$:?)#20
-          )
-          (?=$|[\s'"`)}\]])# closing
+            (?:
+              (:?=) # 1
+              |([+-]|\*{1,3}|~?/|%%?|\#\#?|<?\*>?) # 2
+              |(\+\+|--) # 3
+              |(&&|\|\||\^\^) # 4
+              |([&|^~]) # 5
+              |(<<<?|>>>?) # 6
+              |(\|{1,3}>|<\|{1,3}) # 7
+              |(\+>|<\+) # 8
+              |([<>][!:]|[!:][<>]) # 9
+              |([<>]=?|<=?>) # 10
+              |(=<|<[/*|+$:]>?|[/*|+$:]>) # 11
+              |([!=]==?|[!=]~|~[!=]) # 12
+              |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*~>|
+              <~[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*) # 13
+              |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*=>|
+              <=[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*) # 14
+              |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*->|
+              <-[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*) # 15
+              |(\?\??) # 16
+              |(!!?) # 17
+              |(\?:) # 18
+              |(!:) # 19
+              |(\$:?) # 20
+            )
+          (?=$|[\s'"`)}\]]) # closing
       - comment: |
           CUSTOM OPERATORS
 
@@ -2771,36 +2591,36 @@ repository:
           11: {name: keyword.operator.infix.custom.trin}
         match: |
           (?x)
-          (?<=^|[\s'"`({\[])# opening
+          (?<=^|[\s'"`({\[]) # opening
           (?:
-          ([&|^~][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#1
-          |([+\-*/%][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#2
-          |([@:][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#3
-          |(\.[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#3
-          |([!=][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#4
-          |([<>][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#5
-          |([?\#][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#6
-          |(\p{Sm}[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#7
-          |(\p{Sc}[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#8
-          |([\p{S}\p{P}&&[\x80-\xFF]][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#9
-          |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#10
+            ([&|^~][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 1
+            |([+\-*/%][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 2
+            |([@:][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 3
+            |(\.[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 3
+            |([!=][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 4
+            |([<>][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 5
+            |([?\#][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 6
+            |(\p{Sm}[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 7
+            |(\p{Sc}[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 8
+            |([\p{S}\p{P}&&[\x80-\xFF]][\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 9
+            |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 10
           )
-          (?=$|[\s'"`)}\]])# closing
+          (?=$|[\s'"`)}\]]) # closing
 
   unary-ops:
     patterns:
       - &primary-operators
         comment: Primary binary operators
         match: |
-          (?x)(?<=\b|['"`)}\]])# closing
+          (?x)(?<=\b|['"`)}\]]) # closing
           (?:
-          ([>.]\.[.<])#1
-          |(\?[.:]=?)#2
-          |(![.:]=?)#3
-          |((?:::|\.)=?)#4
-          |([\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)#5
+            ([>.]\.[.<]) # 1
+            |(\?[.:]=?) # 2
+            |(![.:]=?) # 3
+            |((?:::|\.)=?) # 4
+            |([\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+) # 5
           )
-          (?=\b|['"`({\[])# opening
+          (?=\b|['"`({\[]) # opening
         captures:
           1: {name: keyword.operator.range.trin}
           2: {name: keyword.operator.optional.trin}
@@ -2811,22 +2631,24 @@ repository:
         comment: Prefix operators
         match: |
           (?x)
-          (?:([*/])#1
-          |(\+)#2
-          |(\-)#3
-          |(\&)#4
-          |(\|)#5
-          |(\^)#6
-          |(\!)#7
-          |(\$)#8
-          |(\@)#9
-          |(\~)#10
-          |(\?)#11
-          |(\=)#12
-          |(\$)#13
-          |(\#)#14
-          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
-          (?=[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
+          (?:
+            ([*/]) # 1
+            |(\+) # 2
+            |(\-) # 3
+            |(\&) # 4
+            |(\|) # 5
+            |(\^) # 6
+            |(\!) # 7
+            |(\$) # 8
+            |(\@) # 9
+            |(\~) # 10
+            |(\?) # 11
+            |(\=) # 12
+            |(\$) # 13
+            |(\#) # 14
+            |[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]
+          ) # 15
+          (?=[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*
           [\w({\['"`])
         name: keyword.operator.prefix.trin
         captures:
@@ -2850,22 +2672,24 @@ repository:
         match: |
           (?x)
           (?<=[)}\]\w'"`]
-          [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*)
-          (?:([*/])#1
-          |(\+)#2
-          |(\-)#3
-          |(\&)#4
-          |(\|)#5
-          |(\^)#6
-          |(\!)#7
-          |(\$)#8
-          |(\@)#9
-          |(\~)#10
-          |(\?)#11
-          |(\=)#12
-          |(\$)#13
-          |(\#)#14
-          |[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]])#15
+            [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*)
+          (?:
+            ([*/]) # 1
+            |(\+) # 2
+            |(\-) # 3
+            |(\&) # 4
+            |(\|) # 5
+            |(\^) # 6
+            |(\!) # 7
+            |(\$) # 8
+            |(\@) # 9
+            |(\~) # 10
+            |(\?) # 11
+            |(\=) # 12
+            |(\$) # 13
+            |(\#) # 14
+            |[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]
+          ) # 15
         name: keyword.operator.suffix.trin
         captures:
           1: {name: keyword.operator.module.all.trin}
@@ -2888,7 +2712,7 @@ repository:
     applyEndPatternLast: true
     begin: |
       (?x)\s*(?:(\+>)|(\|{1,3}>))(?=\s*(
-      [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
+      [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*# prefix
       (?!(?<=^|[\p{P}\p{S}\s])
       \b(?:# keywords
       in|of|as|is|new
@@ -2910,9 +2734,9 @@ repository:
       )(?!\B|\p{Pd}+\b)
       )
       [\w]+
-      (?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# primary
+      (?:[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*# primary
       [\w]+)*
-      [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# suffix
+      [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*# suffix
       )\s*([^(]|$|;))
     end: (?=)|$
     beginCaptures:
@@ -2943,7 +2767,7 @@ repository:
           )
           (?:
           (?:# Objects
-          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
           ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -2952,14 +2776,14 @@ repository:
           |
           (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
           (?:# Properties
-          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
           ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
           |
           (?:# Regular variables
-          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
           ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -3032,14 +2856,14 @@ repository:
       (?:
       (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
       (?:# Properties
-      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
       )
       |
       (?:# Objects
-      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -3047,7 +2871,7 @@ repository:
       (?!\.\.+)(?=[!?]?\.=?|[?!:]:=?|\#?\[)
       |
       (?:# Regular variables
-      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+      (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
       ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
       ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
       ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -3103,7 +2927,7 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
+          - begin: \s*(?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
             end: \s*(\})\s*
             captures:
               1: {name: punctuation.definition.mapping.trin}
@@ -3112,7 +2936,7 @@ repository:
               - include: "#punctuation"
               - include: "#types"
               - include: $self
-          - begin: \s*(?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
+          - begin: \s*(?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s*(\{)\s*
             end: \s*(\})\s*
             captures:
               1: {name: punctuation.definition.dictionary.trin}
@@ -3153,7 +2977,7 @@ repository:
         repository:
           punctuation:
             patterns:
-              - match: (?<![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)
+              - match: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
                 captures:
                   1: {name: punctuation.separator.slice.trin}
               - match: ","
@@ -3338,7 +3162,7 @@ repository:
       - include: "#symbols"
       - include: "#constants"
       - applyEndPatternLast: true
-        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]))
+        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]))
         end: (?=)|$
         beginCaptures:
           1: {name: punctuation.definition.annotation.trin}
@@ -3387,7 +3211,7 @@ repository:
       1:
         patterns: &modifier-keywords
           - &decorators
-            match: \s*@[\p{Pc}\p{L}][\w\p{Pd}]*(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
+            match: \s*@[\p{Pc}\p{L}][\w\p{Pd}]*\b(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
             name: entity.name.class.decorator.trin
           - &modifiers
             match: |
@@ -3678,7 +3502,7 @@ repository:
 
       style:
         comment: indented style
-        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(style)(?!\B|\p{Pd}+\b)(.*(?![^)}\]\\'"`]{\s*\n*)\n*)
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(style)(?!\B|\p{Pd}+\b)(.*)\n*
         beginCaptures:
           1: {name: storage.type.style.trin}
           2:
@@ -3998,7 +3822,7 @@ repository:
     begin: |
       (?x)
       (?<=(?:^\s*|[,;]\s*|\#?[({\[]\s*
-      |(?:[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s+
+      |(?:[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s+
       |
       (?:
       (?:^|[,;'"`(){}\[\]\s])\b(?:# keywords
@@ -4355,7 +4179,7 @@ repository:
         captures:
           1: {name: punctuation.definition.block.trin}
         patterns: [include: $self]
-      - begin: (?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
+      - begin: (?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.trin}
@@ -4363,7 +4187,7 @@ repository:
           - include: "#labels"
           - include: "#punctuation"
           - include: $self
-      - begin: (?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
+      - begin: (?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
@@ -4422,7 +4246,7 @@ repository:
     repository:
       punctuation:
         patterns:
-          - match: (?<![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)
+          - match: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
             captures:
               1: {name: punctuation.separator.slice.trin}
           - match: ","
@@ -4886,7 +4710,7 @@ repository:
           (?x)(?:
           (?<=[!?]?\.=?|[?!:]:=?)(?<!\.\.+)
           \b(?:# Properties
-          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
           ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -4895,7 +4719,7 @@ repository:
           |
           (?<=\s|^|['"`(){}\[\]])
           \b(?:# Objects
-          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
           ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
@@ -4904,7 +4728,7 @@ repository:
           |
           (?<=\s|^|['"`(){}\[\]])
           \b(?:# Regular variables
-          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*(?!\p{Pc}+))|
+          (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))|
           ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)|
           ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)|
           ([\p{Pc}\p{L}][\w\p{Pd}]*)
