@@ -58,8 +58,8 @@ fixes: |
     - Tables
     - Headings and subheadings
   - Unify function call variables to 9 groups instead of 12:
-     - Objects, properties and variables
-     - UPPERCASE, PascalCase and camelCase
+      - Objects, properties and variables
+      - UPPERCASE, PascalCase and camelCase
   - Rewrite complex regular expressions and add some comments to make them more
     readable and less confusing.
     - [x] function parameters
@@ -696,27 +696,33 @@ repository:
       - comment: Interpolated expression
         applyEndPatternLast: true
         begin: |
-          (?x)(?<=^|[\w\s'"`)}\]])(\$)
-          (?!(?<=^|[\p{P}\p{S}\s])
-          \b(?:# keywords
-          in|of|as|is|new
-          |to|til|thru|by|del
-          |unset|ref|and|or|xor|not
-          |let|fn|proc|type
-          |class|data|enum|module
-          |iter|macro|struct|object
-          |trait|style|elem|prop|markup
-          |go|defer|do|from|where|with
-          |if|elif|else|then|def
-          |for|each|loop|while
-          |try|throw|catch|after
-          |match|case|goto|pass|fail
-          |break|next|redo|retry
-          |return|yield|await|label
-          |use|show|hide|route
-          |debug|assert|check
-          )(?!\B|\p{Pd}+\b)
-          )\b
+          (?x)
+          (?<=^|[\w\s'"`)}\]]) # SOL or after a literal or space
+          (\$) # beginning of identifier
+
+          # ignore all keywords
+          (?!(?<=^|[\p{P}\p{S}\s])\b
+          (?: # keywords
+            in|of|as|is|new
+            |to|til|thru|by|del
+            |unset|ref|and|or|xor|not
+            |let|fn|proc|type
+            |class|data|enum|module
+            |iter|macro|struct|object
+            |trait|style|elem|prop|markup
+            |go|defer|do|from|where|with
+            |if|elif|else|then|def
+            |for|each|loop|while
+            |try|throw|catch|after
+            |match|case|goto|pass|fail
+            |break|next|redo|retry
+            |return|yield|await|label
+            |use|show|hide|route
+            |debug|assert|check
+            )(?!\B|\p{Pd}+\b)
+          )
+
+          \b # next to a word
         end: (?=)|$
         captures:
           1: {name: punctuation.section.embedded.trin}
@@ -2407,6 +2413,7 @@ repository:
           ^|
           [,;({\[]|
           ['"`(){}\[\]\w]:\s|
+          ['"`(){}\[\]\w][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
           ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
           (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
           //?[\p{Pc}\p{L}][\w\p{Pd}]*|
@@ -2497,6 +2504,7 @@ repository:
           ^|
           [,;({\[]|
           ['"`(){}\[\]\w]:\s|
+          ['"`(){}\[\]\w][\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
           ['"`(){}\[\]](?:[?!]?\.|[?!:]:=?)|
           (?:^|\s)[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+\s|
           //?[\p{Pc}\p{L}][\w\p{Pd}]*|
