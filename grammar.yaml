@@ -19,7 +19,7 @@ information for contributors: |
 define:
   class-name: &class-name |
     (?x)\s*\b
-    (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
+    (?!(?<=^|[\p{P}\p{S}\s])
     \b(?:# keywords
     in|of|as|is|new
     |to|til|thru|by|del
@@ -45,7 +45,7 @@ define:
 
   entity-name: &entity-name |
     (?x)\s*\b
-    (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
+    (?!(?<=^|[\p{P}\p{S}\s])
     \b(?:# keywords
     in|of|as|is|new
     |to|til|thru|by|del
@@ -70,7 +70,7 @@ define:
 
   parameter-brackets:
     begin: \s*(\()
-    end: \s*(\))\s*
+    end: \s*(\))
     captures:
       1: {name: punctuation.definition.parameters.trin}
     patterns: &param-brackets
@@ -283,7 +283,7 @@ repository:
     captures:
       1: {name: punctuation.definition.parameters.trin}
     patterns:
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.as.trin
       - match: (?<=[\w\s][(|])\.
         name: punctuation.definition.metadata.trin
@@ -323,7 +323,7 @@ repository:
     patterns:
       - match: |
           (?x)
-          (?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b
+          (?<=^|[\p{P}\p{S}\s])\b
           (?:
             (true|false) # boolean
             |(null|nan) # null, NaN
@@ -338,7 +338,7 @@ repository:
           4: {name: constant.language.infinity.trin}
       - match: |
           (?x)
-          (?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b
+          (?<=^|[\p{P}\p{S}\s])\b
           (?:
             (it|this|that|self) # special arguments
             |(args) # arguments
@@ -640,7 +640,7 @@ repository:
         applyEndPatternLast: true
         begin: |
           (?x)(?<=^|[\w\s'"`)}\]])(\$)
-          (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
+          (?!(?<=^|[\p{P}\p{S}\s])
           \b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
@@ -957,8 +957,8 @@ repository:
   regexp-groups:
     patterns:
       - comment: Embedded expression
-        begin: \(\??([*+])
-        end: \s*(\))\s*
+        begin: \(\?([*+])
+        end: \s*(\))
         name: constant.other.pcre.trin
         captures:
           0: {name: punctuation.section.expression.trin}
@@ -966,7 +966,7 @@ repository:
       - comment: Block comment
         begin: (\()(\?#)
         contentName: comment.block.regexp.trin
-        end: \s*(\))\s*
+        end: \s*(\))
         name: comment.block.regexp.trin
         captures:
           1: {name: punctuation.definition.comment.trin}
@@ -975,28 +975,28 @@ repository:
             name: comment.block.regexp.trin
       - comment: Lookahead assertion
         begin: (\(\?=)
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.look-ahead.trin
         captures:
           1: {name: punctuation.definition.group.look-ahead.trin}
         patterns: [include: "#regexp-patterns"]
       - comment: Lookbehind assertion
         begin: (\(\?<=)
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.look-behind.trin
         captures:
           1: {name: punctuation.definition.group.look-behind.trin}
         patterns: [include: "#regexp-patterns"]
       - comment: Negative lookahead assertion
         begin: (\(\?!)
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.negative-look-ahead.trin
         captures:
           1: {name: punctuation.definition.group.negative-look-ahead.trin}
         patterns: [include: "#regexp-patterns"]
       - comment: Negative lookbehind assertion
         begin: (\(\?<!)
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.negative-look-behind.trin
         captures:
           1: {name: punctuation.definition.group.negative-look-behind.trin}
@@ -1005,21 +1005,21 @@ repository:
         begin: (?x)(\(\?)(?=%)
         captures:
           1: {name: punctuation.definition.directive.trin}
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.directive.trin
         patterns:
           - include: "#format-syntax"
           - include: "#regexp-patterns"
       - comment: Longest match
         begin: (\(\?/=?)
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.longest.trin
         captures:
           1: {name: punctuation.definition.group.longest.trin}
         patterns: [include: "#regexp-patterns"]
       - comment: Flag modifier group
         begin: (\(\?\^?(?:([+-]?\d+?)|((?:[+-]\p{Lu}+)+|\p{Lu}+(?:[+-]\p{Lu}+)*)|((?:[+-]\p{Ll}+)+|\p{Ll}+(?:[+-]\p{Ll}+)*)))\s*(:)?
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.flag.trin
         captures:
           0: {name: punctuation.definition.group.flag.trin}
@@ -1031,7 +1031,7 @@ repository:
         patterns: [include: "#regexp-patterns"]
       - comment: Callouts
         begin: (\(\?)(?={)
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.call-out.trin
         captures:
           1: {name: punctuation.definition.group.call-out.trin}
@@ -1049,28 +1049,28 @@ repository:
           - include: "#regexp-patterns"
       - comment: Atomic groups
         begin: (\(\?>)
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.atomic.trin
         captures:
           1: {name: punctuation.definition.group.atomic.trin}
         patterns: [include: "#regexp-patterns"]
       - comment: Non-capturing groups
         begin: (\(\?:)
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.non-capturing.trin
         captures:
           1: {name: punctuation.definition.group.non-capturing.trin}
         patterns: [include: "#regexp-patterns"]
       - comment: Branch groups
         begin: (\(\?)(?=[(|])
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.branch.trin
         captures:
           1: {name: punctuation.definition.group.branch.trin}
         patterns: [include: "#regexp-patterns"]
       - comment: Atomic groups
         begin: (\(\?~)
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.absent.trin
         captures:
           1: {name: punctuation.definition.group.absent.trin}
@@ -1088,7 +1088,7 @@ repository:
         patterns: [include: "#regexp-patterns"]
       - comment: Named groups (angle-brackets)
         begin: \(\?(?=<(?![!=]))
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.named.trin
         captures:
           0: {name: punctuation.definition.group.named.trin}
@@ -1102,7 +1102,7 @@ repository:
           - include: "#regexp-patterns"
       - comment: Named groups (single or double-quotes)
         begin: \(\?(?=['"])
-        end: \s*(\))\s*
+        end: \s*(\))
         name: meta.group.named.trin
         captures:
           0: {name: punctuation.definition.group.named.trin}
@@ -1329,6 +1329,7 @@ repository:
       - comment: Entity with & and invalid name
         match: '&\s*+;'
         name: invalid.illegal.bad-ampersand.trin
+
   inline-markdown:
     patterns:
       - include: "#ampersand"
@@ -1351,43 +1352,45 @@ repository:
     name: meta.other.valid-ampersand.markdown
   bold:
     begin: |
-      (?x) (?<open>(\*\*(?=\w)|(?<!\w)\*\*|(?<!\w)\b__))(?=\S) (?=
-      (
-      <[^>]*+> # HTML tags
-      | (?<raw>`+)([^`]|(?!(?<!`)\k<raw>(?!`))`)*+\k<raw>
-      # Raw
-      | \\[\\`*_{}\[\]()#.!+\->]?+ # Escapes
-      | \[
-      (
-      (?<square> # Named group
-      [^\[\]\\] # Match most chars
-      | \\. # Escaped chars
-      | \[ \g<square>*+ \] # Nested brackets
-      )*+
-      \]
-      (
-      ( # Reference Link
-      [ ]? # Optional space
-      \[[^\]]*+\] # Ref name
-      )
-      | ( # Inline Link
-      \( # Opening paren
-      [ \t]*+ # Optional whitespace
-      <?(.*?)>? # URL
-      [ \t]*+ # Optional whitespace
-      ( # Optional Title
-      (?<title>['"])
-      (.*?)
-      \k<title>
-      )?
-      \)
-      )
-      )
-      )
-      | (?!(?<=\S)\k<open>). # Everything besides
-      # style closer
-      )++
-      (?<=\S)(?=__\b|\*\*)\k<open> # Close
+      (?x)
+      (?<open>(\*\*(?=\w)|(?<!\w)\*\*|(?<!\w)\b__))(?=\S)
+      (?=
+        (
+          <[^>]*+> # HTML tags
+          | (?<raw>`+)([^`]|(?!(?<!`)\k<raw>(?!`))`)*+\k<raw>
+          # Raw
+          | \\[\\`*_{}\[\]()#.!+\->]?+ # Escapes
+          | \[
+          (
+              (?<square> # Named group
+                [^\[\]\\] # Match most chars
+                | \\. # Escaped chars
+                | \[ \g<square>*+ \] # Nested brackets
+              )*+
+            \]
+            (
+              ( # Reference Link
+                [ ]? # Optional space
+                \[[^\]]*+\] # Ref name
+              )
+              | ( # Inline Link
+                \( # Opening paren
+                  [ \t]*+ # Optional whitespace
+                  <?(.*?)>? # URL
+                  [ \t]*+ # Optional whitespace
+                  ( # Optional Title
+                    (?<title>['"])
+                    (.*?)
+                    \k<title>
+                  )?
+                \)
+              )
+            )
+          )
+          | (?!(?<=\S)\k<open>). # Everything besides
+          # style closer
+        )++
+        (?<=\S)(?=__\b|\*\*)\k<open> # Close
       )
     captures:
       1: {name: punctuation.definition.bold.markdown}
@@ -1443,14 +1446,14 @@ repository:
       (\!\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])
       # Match the link text.
       (\() # Opening paren for url
-      (<?)(\S+?)(>?) # The url
-      [ \t]* # Optional whitespace
-      (?:
-      ((\().+?(\))) # Match title in parens…
-      | ((").+?(")) # or in double quotes…
-      | ((').+?(')) # or in single quotes.
-      )? # Title is optional
-      \s* # Optional whitespace
+        (<?)(\S+?)(>?) # The url
+        [ \t]* # Optional whitespace
+        (?:
+            ((\().+?(\))) # Match title in parens…
+          | ((").+?(")) # or in double quotes…
+          | ((').+?(')) # or in single quotes.
+        )? # Title is optional
+        \s* # Optional whitespace
       (\))
     name: meta.image.inline.markdown
 
@@ -1468,45 +1471,45 @@ repository:
 
   italic:
     begin: |
-      (?x) (?<open>(\*(?=\w)|(?<!\w)\*|(?<!\w)\b_))(?=\S) # Open
+      (?x) (?<open>(\*(?=\w)|(?<!\w)\*|(?<!\w)\b_))(?=\S)                # Open
       (?=
-      (
-      <[^>]*+> # HTML tags
-      | (?<raw>`+)([^`]|(?!(?<!`)\k<raw>(?!`))`)*+\k<raw>
-      # Raw
-      | \\[\\`*_{}\[\]()#.!+\->]?+ # Escapes
-      | \[
-      (
-      (?<square> # Named group
-      [^\[\]\\] # Match most chars
-      | \\. # Escaped chars
-      | \[ \g<square>*+ \] # Nested brackets
-      )*+
-      \]
-      (
-      ( # Reference Link
-      [ ]? # Optional space
-      \[[^\]]*+\] # Ref name
-      )
-      | ( # Inline Link
-      \( # Opening paren
-      [ \t]*+ # Optional whitespace
-      <?(.*?)>? # URL
-      [ \t]*+ # Optional whitespace
-      ( # Optional Title
-      (?<title>['"])
-      (.*?)
-      \k<title>
-      )?
-      \)
-      )
-      )
-      )
-      | \k<open>\k<open> # Must be bold closer
-      | (?!(?<=\S)\k<open>). # Everything besides
-      # style closer
-      )++
-      (?<=\S)(?=_\b|\*)\k<open> # Close
+        (
+          <[^>]*+> # HTML tags
+          | (?<raw>`+)([^`]|(?!(?<!`)\k<raw>(?!`))`)*+\k<raw>
+          # Raw
+          | \\[\\`*_{}\[\]()#.!+\->]?+ # Escapes
+          | \[
+          (
+              (?<square> # Named group
+                [^\[\]\\] # Match most chars
+                | \\. # Escaped chars
+                | \[ \g<square>*+ \] # Nested brackets
+              )*+
+            \]
+            (
+              ( # Reference Link
+                [ ]? # Optional space
+                \[[^\]]*+\] # Ref name
+              )
+              | ( # Inline Link
+                \( # Opening paren
+                  [ \t]*+ # Optional whtiespace
+                  <?(.*?)>? # URL
+                  [ \t]*+ # Optional whtiespace
+                  ( # Optional Title
+                    (?<title>['"])
+                    (.*?)
+                    \k<title>
+                  )?
+                \)
+              )
+            )
+          )
+          | \k<open>\k<open> # Must be bold closer
+          | (?!(?<=\S)\k<open>). # Everything besides
+          # style closer
+        )++
+        (?<=\S)(?=_\b|\*)\k<open> # Close
       )
     captures:
       1: {name: punctuation.definition.italic.markdown}
@@ -1570,14 +1573,14 @@ repository:
       (\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])
       # Match the link text.
       (\() # Opening paren for url
-      (<?)((?<url>(?>[^\s()]+)|\(\g<url>*\))*)(>?) # The url
-      [ \t]* # Optional whitespace
-      (?:
-      ((\().+?(\))) # Match title in parens…
-      | ((").+?(")) # or in double quotes…
-      | ((').+?(')) # or in single quotes.
-      )? # Title is optional
-      \s* # Optional whitespace
+        (<?)((?<url>(?>[^\s()]+)|\(\g<url>*\))*)(>?) # The url
+        [ \t]* # Optional whitespace
+        (?:
+            ((\().+?(\))) # Match title in parens…
+          | ((").+?(")) # or in double quotes…
+          | ((').+?(')) # or in single quotes.
+        )? # Title is optional
+        \s* # Optional whitespace
       (\))
     name: meta.link.inline.markdown
     patterns: [include: "#string-content"]
@@ -1730,7 +1733,7 @@ repository:
               - include: "#style-properties"
               - include: $self
           - begin: (\()\s*
-            end: \s*(\))\s*
+            end: \s*(\))
             captures:
               1: {name: punctuation.definition.parameters.trin}
             patterns:
@@ -1874,11 +1877,11 @@ repository:
           13: {name: keyword.operator.private.trin}
           14: {name: keyword.operator.class.trin}
       - begin: \s*(\()\s*
-        end: \s*(\))\s*
+        end: \s*(\))
         captures:
           1: {name: punctuation.definition.parameters.trin}
         patterns:
-          - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: (?<=^|[\p{P}\p{S}\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.trin
           - include: "#clauses"
           - include: "#constants"
@@ -1894,7 +1897,7 @@ repository:
         patterns:
           - include: "#attribute-selectors"
           - include: $self
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.trin
       - include: "#style-selectors"
       - include: "#format-syntax"
@@ -2262,7 +2265,7 @@ repository:
           - include: "#jsdoc-name-scopes"
   jsdoc-name-path-scopes:
     patterns:
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*(?=[\p{Pc}\p{L}])
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*(?=[\p{Pc}\p{L}])
         captures:
           1: {name: keyword.as.jsdoc}
       - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}][\w\p{Pd}]*))(?=[\s\-~.#]|$)
@@ -2334,7 +2337,7 @@ repository:
           )
           \s*\b
           (
-          (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
+          (?!(?<=^|[\p{P}\p{S}\s])
           \b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
@@ -2363,7 +2366,7 @@ repository:
           |(?!(?:[?!]?\.|[?!:]:=?)['"`\\({\[\w])
           [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*
           (?:
-          (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
+          (?!(?<=^|[\p{P}\p{S}\s])
           \b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
@@ -2424,7 +2427,7 @@ repository:
           )
           \s*\b
           (
-          (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
+          (?!(?<=^|[\p{P}\p{S}\s])
           \b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
@@ -2786,7 +2789,7 @@ repository:
     begin: |
       (?x)\s*(?:(\+>)|(\|{1,3}>))(?=\s*(
       [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]*# prefix
-      (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
+      (?!(?<=^|[\p{P}\p{S}\s])
       \b(?:# keywords
       in|of|as|is|new
       |to|til|thru|by|del
@@ -2818,7 +2821,7 @@ repository:
     patterns:
       - match: |
           (?x)\s*\b
-          (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
+          (?!(?<=^|[\p{P}\p{S}\s])
           \b(?:# keywords
           in|of|as|is|new
           |to|til|thru|by|del
@@ -2906,7 +2909,7 @@ repository:
     match: |
       (?x)\s*\b
 
-      (?!(?<!(?:(?:^|[^.])\.|[?!:]:)=?)
+      (?!(?<=^|[\p{P}\p{S}\s])
       \b(?:# keywords
       in|of|as|is|new
       |to|til|thru|by|del
@@ -3033,7 +3036,7 @@ repository:
                 name: punctuation.separator.arguments.trin
         patterns:
           - begin: \s*(\#?\()\s*
-            end: \s*(\))\s*
+            end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.trin}
             patterns:
@@ -3160,15 +3163,15 @@ repository:
 
   type-keywords:
     patterns:
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(ext)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(ext)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.extends.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(impl)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(impl)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.implements.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(typeof|nameof|sizeof|keyof|attrof|infer|as|is)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(typeof|nameof|sizeof|keyof|attrof|infer|as|is)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.$1.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(instof)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(instof)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.instanceof.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(valof)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(valof)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.valueof.trin
 
   type-operators:
@@ -3272,7 +3275,7 @@ repository:
       (
       (?:
       (?:
-      \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b
+      (?<=^|[\p{P}\p{S}\s])\s*\b
       (?:
       # Visibility and mutability
       pub|priv|prot|after|mut|immut
@@ -3291,7 +3294,7 @@ repository:
       )*
       )
       (?=
-      \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b
+      (?<=^|[\p{P}\p{S}\s])\s*\b
       (?:
       let|fn|proc|type
       |class|data|enum|module
@@ -3335,73 +3338,73 @@ repository:
 
   declaration-keywords:
     patterns:
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(decl|def)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(decl|def)(?!\B|\p{Pd}+\b)\s*
         name: keyword.other.declare.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(let)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(let)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(style)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.style.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(fn)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(fn)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.function.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(proc)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(proc)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.procedure.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(class)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(class)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.class.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(data)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(data)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.data.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(enum)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(enum)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.enum.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(module)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(module)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.module.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(iter)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(iter)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.iterator.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(macro)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(macro)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.macro.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(struct)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(struct)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.structure.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(object)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(object)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.object.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(trait)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(trait)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.trait.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(elem)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(elem)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.component.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(prop)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(prop)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.property.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(markup)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(markup)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.markup.trin
 
   general-keywords:
     comment: general keywords
     patterns:
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(if|elif|else)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(if|elif|else)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.conditional.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(for|loop|while)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(for|loop|while)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.loop.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(try|throw|catch|after)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(try|throw|catch|after)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.trycatch.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(match|case|fail)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(match|case|fail)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.switch.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.flow.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(use|show|hide|route)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(use|show|hide|route)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.module.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(with|then|do|from|ref|go|defer)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(with|then|do|from|ref|go|defer)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.$1.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(debug|assert|check|where)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(debug|assert|check|where)(?!\B|\p{Pd}+\b)\s*
         name: keyword.other.$1.trin
 
   expression-keywords:
     comment: expression keywords
     patterns:
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(in|of|as|is|new)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(in|of|as|is|new)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.$1.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(del)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(del)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.delete.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(to|til|till|thru|by)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(to|til|till|thru|by)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.range.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(unset)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(unset)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.void.trin
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(and|or|xor|not)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(and|or|xor|not)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.logical.trin
 
   keywords:
@@ -3418,7 +3421,7 @@ repository:
     repository:
       control-expression:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(break|next|redo|retry|label|goto|pass)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(break|next|redo|retry|label|goto|pass)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: keyword.control.flow.trin}
@@ -3429,13 +3432,13 @@ repository:
       module-expression:
         patterns:
           - applyEndPatternLast: true
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(use|show|hide|route)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b(use|show|hide|route)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.control.module.trin}
             patterns:
               - *modifiers
-              - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+              - match: (?<=^|[\p{P}\p{S}\s])\s*\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.module.trin
               - include: "#type-keywords"
               - include: "#declarations"
@@ -3448,19 +3451,19 @@ repository:
                 name: variable.other.readwrite.alias.trin
 
       validation-expression:
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(where)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(where)(?!\B|\p{Pd}+\b)\s*
         beginCaptures:
           1: {name: keyword.control.validate.trin}
         end: (?=[,;)}\]])
         patterns:
-          - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(pre|post|need|know|check|test|read|write|till|same)(?!\B|\p{Pd}+\b)\s*
+          - match: (?<=^|[\p{P}\p{S}\s])\s*\b(pre|post|need|know|check|test|read|write|till|same)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.validate.trin
-          - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)(?!\B|\p{Pd}+\b)\s*
+          - match: (?<=^|[\p{P}\p{S}\s])\s*\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.validate.trin
           - include: $self
 
       query-expression:
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(from)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(from)(?!\B|\p{Pd}+\b)\s*
         beginCaptures:
           1: {name: keyword.control.query.trin}
         end: (?=[,;)}\]])
@@ -3479,7 +3482,7 @@ repository:
           - include: "#reduce-clause"
         repository:
           in-clause:
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b(in|of)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
               2: {patterns: [include: $self]}
@@ -3489,19 +3492,19 @@ repository:
               - include: "#query-body"
               - include: $self
           join-clause:
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b((?:full|part|self|cross)?(?!\B|\p{Pd}+\b)\s*\b(?:inner|outer|left|right)?(?!\B|\p{Pd}+\b)\s*\bjoin)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b((?:full|part|self|cross)?(?!\B|\p{Pd}+\b)\s*\b(?:inner|outer|left|right)?(?!\B|\p{Pd}+\b)\s*\bjoin)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
               2: {patterns: [include: $self]}
               3: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(on|equals|into)(?!\B|\p{Pd}+\b)\s*
+              - match: (?<=^|[\p{P}\p{S}\s])\s*\b(on|equals|into)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
               - include: "#query-body"
               - include: $self
           where-clause:
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(where|having|filter|reject)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b(where|having|filter|reject)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
@@ -3509,7 +3512,7 @@ repository:
               - include: "#query-body"
               - include: $self
           sort-clause:
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b((?:sort|order)(?!\B|\p{Pd}+\b)\s*\b(?:asc|desc)?(?!\B|\p{Pd}+\b)\s*\b(?:by|with)?)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b((?:sort|order)(?!\B|\p{Pd}+\b)\s*\b(?:asc|desc)?(?!\B|\p{Pd}+\b)\s*\b(?:by|with)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
@@ -3517,42 +3520,42 @@ repository:
               - include: "#query-body"
               - include: $self
           select-clause:
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b((?:select|map)(?!\B|\p{Pd}+\b)\s*\b(?:unique|any|all)?)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b((?:select|map)(?!\B|\p{Pd}+\b)\s*\b(?:unique|any|all)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+              - match: (?<=^|[\p{P}\p{S}\s])\s*\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
               - include: "#query-body"
               - include: $self
           limit-clause:
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b((?:take|drop|limit|offset)(?!\B|\p{Pd}+\b)\s*\b(?:first|last|head|tail)?)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b((?:take|drop|limit|offset)(?!\B|\p{Pd}+\b)\s*\b(?:first|last|head|tail)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+              - match: (?<=^|[\p{P}\p{S}\s])\s*\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
               - include: "#query-body"
               - include: $self
           reduce-clause:
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b((?:fold|reduce|scan)(?!\B|\p{Pd}+\b)\s*\b(?:left|right)?)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b((?:fold|reduce|scan)(?!\B|\p{Pd}+\b)\s*\b(?:left|right)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+              - match: (?<=^|[\p{P}\p{S}\s])\s*\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
               - include: "#query-body"
               - include: $self
           group-clause:
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(group)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b(group)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(by|into)(?!\B|\p{Pd}+\b)\s*
+              - match: (?<=^|[\p{P}\p{S}\s])\s*\b(by|into)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
               - include: "#query-body"
               - include: $self
@@ -3579,7 +3582,7 @@ repository:
 
     repository:
       markup:
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(markup)(?!\B|\p{Pd}+\b)(.*)\n*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(markup)(?!\B|\p{Pd}+\b)(.*)\n*
         beginCaptures:
           1: {name: storage.type.markup.trin}
           2:
@@ -3596,7 +3599,7 @@ repository:
         old:
           - comment: block style
             applyEndPatternLast: true
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b(style)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: storage.type.style.trin}
@@ -3623,7 +3626,7 @@ repository:
                 patterns: [include: "#style-properties"]
         patterns:
           - comment: indented style
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)(.*(?![^)}\]\\'"`]{\s*\n*)\n*)
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b(style)(?!\B|\p{Pd}+\b)(.*(?![^)}\]\\'"`]{\s*\n*)\n*)
             beginCaptures:
               1: {name: storage.type.style.trin}
               2:
@@ -3646,7 +3649,7 @@ repository:
 
       component:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(elem)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(elem)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.component.trin}
@@ -3658,20 +3661,20 @@ repository:
 
       variable:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(let)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(let)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.variable.trin}
       declare:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(decl)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(decl)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: keyword.other.declare.trin}
 
       function:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(fn)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(fn)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.function.trin}
@@ -3681,7 +3684,7 @@ repository:
             name: entity.name.function.trin
       procedure:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(proc)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(proc)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.procedure.trin}
@@ -3691,7 +3694,7 @@ repository:
             name: entity.name.procedure.trin
       class:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(class)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(class)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.class.trin}
@@ -3701,7 +3704,7 @@ repository:
             name: entity.name.class.trin
       data:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(data)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(data)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.data.trin}
@@ -3711,7 +3714,7 @@ repository:
             name: entity.name.data.trin
       enum:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(enum)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(enum)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.enum.trin}
@@ -3721,7 +3724,7 @@ repository:
             name: entity.name.enum.trin
       module:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(module)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(module)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.module.trin}
@@ -3731,7 +3734,7 @@ repository:
             name: entity.name.module.trin
       iterator:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(iter)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(iter)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.iterator.trin}
@@ -3741,7 +3744,7 @@ repository:
             name: entity.name.iterator.trin
       macro:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(macro)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(macro)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.macro.trin}
@@ -3751,7 +3754,7 @@ repository:
             name: entity.name.macro.trin
       structure:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(struct)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(struct)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.structure.trin}
@@ -3761,7 +3764,7 @@ repository:
             name: entity.name.structure.trin
       object:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(object)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(object)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.object.trin}
@@ -3771,7 +3774,7 @@ repository:
             name: entity.name.object.trin
       trait:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(trait)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(trait)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.trait.trin}
@@ -3781,7 +3784,7 @@ repository:
             name: entity.name.trait.trin
       property:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(prop)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(prop)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.property.trin}
@@ -3974,14 +3977,14 @@ repository:
     repository:
       pattern-brackets:
         begin: \s*(\()
-        end: \s*(\))\s*
+        end: \s*(\))
         captures:
           1: {name: punctuation.definition.parameters.trin}
         patterns:
           - include: "#function-params"
       new-clause:
         applyEndPatternLast: true
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(new)(?!\B|\p{Pd}+\b)
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(new)(?!\B|\p{Pd}+\b)
         end: (?=)|$
         beginCaptures:
           1: {name: keyword.operator.expression.$1.trin}
@@ -3995,14 +3998,14 @@ repository:
       type-clause:
         patterns:
           - applyEndPatternLast: true
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(is|as)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b(is|as)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.trin}
             patterns:
               - include: "#types"
           - applyEndPatternLast: true
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(type)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b(type)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             captures:
               1: {name: keyword.other.typedef.trin}
@@ -4012,37 +4015,37 @@ repository:
                   1: {name: keyword.operator.assignment.trin}
               - include: "#types"
       catch-clause:
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(catch)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(do)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(catch)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|(?<=^|[\p{P}\p{S}\s])\s*\b(do)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.catch.trin
         captures:
           1: {name: keyword.control.error.trin}
           2: {name: punctuation.separator.colon.trin}
         patterns:
           - begin: \s*(\()
-            end: \s*(\))\s*
+            end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.trin}
             patterns:
-              - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+              - match: (?<=^|[\p{P}\p{S}\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.error.trin
               - include: $self
-          - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: (?<=^|[\p{P}\p{S}\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.error.trin
           - include: $self
       for-clause:
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(for|each|while)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(do)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(for|each|while)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|(?<=^|[\p{P}\p{S}\s])\s*\b(do)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.for.trin
         captures:
           1: {name: keyword.control.loop.trin}
           2: {name: punctuation.separator.colon.trin}
         patterns:
           - &for-clause-keywords
-            match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
+            match: (?<=^|[\p{P}\p{S}\s])\s*\b(in|of)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.loop.trin
           - begin: \s*(\()
-            end: \s*(\))\s*
+            end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.trin}
             patterns:
@@ -4050,34 +4053,34 @@ repository:
               - include: $self
           - include: $self
       if-clause:
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(if|elif)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(if|elif)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|(?<=^|[\p{P}\p{S}\s])\s*\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.if.trin
         captures:
           1: {name: keyword.control.conditional.trin}
           2: {name: punctuation.separator.colon.trin}
         patterns: [include: $self]
       switch-clause:
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(match)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|(?<=^|[\p{P}\p{S}\s])\s*\b(with)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.switch.trin
         captures:
           1: {name: keyword.control.match.trin}
           2: {name: punctuation.separator.colon.trin}
         patterns: [include: $self]
       with-clause:
-        begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(try)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(with)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|(?<=^|[\p{P}\p{S}\s])\s*\b(try)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.with.trin
         captures:
           1: {name: keyword.control.with.trin}
           2: {name: punctuation.separator.colon.trin}
         patterns:
           - &with-clause-keywords
-            match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+            match: (?<=^|[\p{P}\p{S}\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.with.trin
           - begin: \s*(\()
-            end: \s*(\))\s*
+            end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.trin}
             patterns:
@@ -4214,29 +4217,29 @@ repository:
 
   closures:
     patterns:
-      - begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+      - begin: (?<=^|[\p{P}\p{S}\s])\s*\b(case)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|(?<=^|[\p{P}\p{S}\s])\s*\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         captures:
           1: {name: keyword.control.match.trin}
           2: {name: punctuation.separator.colon.trin}
         patterns:
           - include: "#params-clause"
           - applyEndPatternLast: true
-            begin: (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
+            begin: (?<=^|[\p{P}\p{S}\s])\s*\b(is)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.control.match.trin}
             patterns:
               - include: "#types"
-          - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
+          - match: (?<=^|[\p{P}\p{S}\s])\s*\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.trin
-          - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(let)(?!\B|\p{Pd}+\b)\s*
+          - match: (?<=^|[\p{P}\p{S}\s])\s*\b(let)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.trin
-          - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+          - match: (?<=^|[\p{P}\p{S}\s])\s*\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.trin
           - include: "#type-keywords"
           - include: $self
-      - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(fail)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(fail)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.match.trin
 
   curly-brackets:
@@ -4309,7 +4312,7 @@ repository:
         patterns:
           - match: ","
             name: punctuation.separator.arguments.trin
-          - match: \s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: (?<=^|[\p{P}\p{S}\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.trin
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.trin
@@ -4750,7 +4753,7 @@ repository:
       - *modifiers
       - comment: Primitive classes
         match: |
-          (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(
+          (?x)(?<=^|[\p{P}\p{S}\s])\s*\b(
           Bool|[NR]at|Real|Num|(Big)?(U?Int|Float|[NR]at)
           |Imag|Comp|Char|Rune|Str|Sym
           |U?Int(8|16|32|64|128)
@@ -4768,7 +4771,7 @@ repository:
         name: support.type.builtin.primitive.trin
       - comment: Data structure classes
         match: |
-          (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(
+          (?x)(?<=^|[\p{P}\p{S}\s])\s*\b(
           Array|Tuple|List|Set|Hash|Seq|Str|Dict|Fn|Iter
           |Proc|Range|Stack|Heap|Queue|Tree|Trie
           |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
@@ -4780,7 +4783,7 @@ repository:
         name: support.type.builtin.trin
       - comment: Constant/algebraic classes
         match: |
-          (?x)\s*(?<!(?:(?:^|[^.])\.|[?!:]:)=?)\b(
+          (?x)(?<=^|[\p{P}\p{S}\s])\s*\b(
           True|False|Null|Void|NaN|Infin|Empty|Unit|Obj
           |Any|Mixed|Just|Some|None|Never|(Im)?pure|Const
           # lowerFlatCase
