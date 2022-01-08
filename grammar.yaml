@@ -21,7 +21,7 @@ fixes: |
 
   - Added back shebang comments and backslash strings
     (however with limited functionality)
-  - Added `/` and `//` command flags
+  - Added '/' (full) and '//' (shorthand) command flags
   - Removed JSX and style blocks; replaced them with indentation instead.
   - Trinity now supports both indentation and curly-brace syntax.
   - Fixed comments:
@@ -38,12 +38,15 @@ fixes: |
 
   Fixes:
 
+  - Rename `module` to `mod`, `object` to `obj`, `struct` to `inter` and 
+    `markup` to `mark`
   - Add new keywords to end blocks:
     - if/elif then else fi
     - for/loop/while do done
-    - match with hctam
+    - match with exit
     - case then ouse esac
     - try catch after yrt
+    - with away
     - do done
   - Allow primary operators (not surrounded by spaces) preceded by a dot or
     two colons to be highlighted separately.
@@ -248,7 +251,7 @@ repository:
             | (?: ^ | \s) \b as \b \s # as keyword
           )
             \s*
-            \/ # named
+            //? # named
             \?? # optional
             \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
             \s*
@@ -304,7 +307,7 @@ repository:
             \s*
           (?=
             $ # EOL
-            | [)}\]] # close bracket
+            | [)}\]] # close brack
             | [;,] # separator
             | :\s+ # type specifier
             | \|(?!\|) # close pipe
@@ -746,7 +749,7 @@ repository:
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {name: constant.numeric.decimal.trin}
-      - match: (\#)((?:[*&%/]\??|\?)?[\p{Pc}\p{L}][\w\p{Pd}]*)
+      - match: (\#)((?:[*&%]\??|//?\?|\?)?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {patterns: [include: "#placeholder-variables"]}
@@ -1336,37 +1339,11 @@ repository:
       - include: "#comments"
 
   attributes:
-    match: |
-      (?x)
-      \s*
-      (
-      [\p{Pd}$]?
-      (?:
-      # Recursive brackets
-      \$\{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}|
-      (?<b>
-      \((?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\)|
-      \[(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\]|
-      \{(?:[^'"`(){}\[\]]+|\g<s>|\g<b>)*\}
-      )|
-      \B(?<s>
-      # Strings
-      (?<q3>'''+|"""+|```+).*\g<q3>|
-      (?<q2>")(?:[^\\"]|\\.)*\g<q2>|
-      (?<bt>`)(?:[^\\`]|\\.)*\g<bt>|
-      (?<q1>')(?:[^']|'')*\g<q1>
-      )|
-      # Rest of identifier characters
-      \$?[\p{Pc}\p{L}][\p{Pd}\w]*\b
-      )+
-      )\s*
+    match: '\s*([\p{Pd}\w]+)\b(=)\s*'
     captures:
       1:
         name: entity.other.attribute-name.${1:/downcase}.trin
-        patterns:
-          - include: "#css-property-names"
-          - include: "#embedded"
-          - include: "#brackets"
+        patterns: [include: "#css-property-names"]
     name: string.unquoted.trin
 
   spread-attribute:
@@ -2386,11 +2363,11 @@ repository:
         name: variable.parameter.optional.trin
       - match: (?i)\s*\*\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.spread.trin
-      - match: (?i)\s*\/\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: (?i)\s*//?\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.name.trin
-      - match: (?i)\s*\&\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: (?i)\s*&\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.reference.trin
-      - match: (?i)\s*\%\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: (?i)\s*%\??[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.other.trin
       - match: (?i)\s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.trin
