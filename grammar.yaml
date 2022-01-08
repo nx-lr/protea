@@ -184,7 +184,7 @@ repository:
   function-params:
     patterns:
       - match: |
-          (?x) \s*
+          (?x)
           (?<=
             ^ # SOL
             | (?:^ | [^|]) \| # open pipe
@@ -208,7 +208,7 @@ repository:
           )
         name: variable.parameter.optional.trin
       - match: |
-          (?x) \s*
+          (?x)
           (?<=
             ^ # SOL
             | (?:^ | [^|]) \| # open pipe
@@ -233,7 +233,7 @@ repository:
           )
         name: variable.parameter.spread.trin
       - match: |
-          (?x) \s*
+          (?x)
           (?<=
             ^ # SOL
             | (?:^ | [^|]) \| # open pipe
@@ -258,7 +258,7 @@ repository:
           )
         name: variable.parameter.name.trin
       - match: |
-          (?x) \s*
+          (?x)
           (?<=
             ^ # SOL
             | (?:^ | [^|]) \| # open pipe
@@ -283,7 +283,7 @@ repository:
           )
         name: variable.parameter.reference.trin
       - match: |
-          (?x) \s*
+          (?x)
           (?<=
             ^ # SOL
             | (?:^ | [^|]) \| # open pipe
@@ -308,7 +308,7 @@ repository:
           )
         name: variable.parameter.other.trin
       - match: |
-          (?x) \s*
+          (?x)
           (?<=
             ^ # SOL
             | (?:^ | [^|]) \| # open pipe
@@ -562,8 +562,7 @@ repository:
         end: \s*((\1)(?!'+))
         captures:
           1: {name: punctuation.definition.string.trin}
-        patterns:
-          - include: "#embedded-raw"
+        patterns: [include: "#embedded-verbatim"]
       - comment: single quoted string
         begin: (?<!'+)\s*(')
         contentName: string.quoted.single.trin
@@ -573,7 +572,7 @@ repository:
         patterns:
           - match: "''"
             name: constant.character.escape.trin
-          - include: "#embedded-raw"
+          - include: "#embedded-verbatim"
       - comment: multi-double quoted string
         begin: (?<!"+)\s*("""+)
         contentName: string.quoted.double.trin
@@ -673,7 +672,7 @@ repository:
       - include: "#embedded-placeholder"
       - include: "#embedded-expression"
 
-  embedded-raw:
+  embedded-verbatim:
     patterns:
       - match: '([#$%])\1'
         name: constant.character.escape.trin
@@ -734,7 +733,7 @@ repository:
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {name: constant.numeric.decimal.trin}
-      - match: (\#)((?:[*&%$]\??|\?)?[\p{Pc}\p{L}][\w\p{Pd}]*)
+      - match: (\#)((?:[*&%/]\??|\?)?[\p{Pc}\p{L}][\w\p{Pd}]*)
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {patterns: [include: "#placeholder-variables"]}
@@ -912,6 +911,7 @@ repository:
         patterns:
           - include: "#comments"
           - include: "#regexp-patterns"
+
   back-references:
     patterns:
       - match: \$(\d+[+-]?|[+-]\d*|&)
@@ -932,6 +932,7 @@ repository:
         captures:
           1: {name: keyword.other.back-reference.trin}
         patterns: *regex-back-references
+
   regexp-patterns:
     patterns:
       - match: \p{Z}+
@@ -1008,6 +1009,7 @@ repository:
       - include: "#regexp-char-class"
       - match: \\.
         name: constant.character.escape.other.trin
+
   regexp-groups:
     patterns:
       - comment: Embedded expression
@@ -1175,6 +1177,7 @@ repository:
         captures:
           1: {name: punctuation.definition.group.trin}
         patterns: [include: "#regexp-patterns"]
+
   regexp-char-class:
     patterns:
       - include: "#embedded"
@@ -1210,6 +1213,7 @@ repository:
         name: constant.character.escape.other.trin
       - match: \\\p{C}
         name: invalid.illegal.unknown-escape.trin
+
   regexp-char-ops:
     patterns:
       - match: (?<!\|)\|\|(?!\|)
@@ -1230,6 +1234,7 @@ repository:
         name: constant.other.character-class.range.to.trin
       - match: \\.
         name: constant.character.escape.other.trin
+
   regexp-char-set:
     old:
       - begin: (\[[:])
@@ -1305,6 +1310,7 @@ repository:
       - include: "#tag-component-name"
       - include: "#string-content"
       - include: text.html.markdown#inline
+
   tag-attributes:
     patterns:
       - include: "#comma"
@@ -1322,6 +1328,7 @@ repository:
       - include: "#style-selectors"
       - include: "#attributes"
       - include: "#comments"
+
   attributes:
     match: |
       (?x)
@@ -1355,10 +1362,12 @@ repository:
           - include: "#embedded"
           - include: "#brackets"
     name: string.unquoted.trin
+
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
     match: (?<!\*)\*(?!\*)
     name: keyword.operator.spread.trin
+
   jsx-entities:
     patterns:
       - captures: &jsx-entities
@@ -1400,10 +1409,12 @@ repository:
       - include: "#link-ref"
       - include: "#link-ref-literal"
       - include: "#link-ref-shortcut"
+
   ampersand:
     comment: Markdown will convert this for us. We match it so that the HTML grammar will not mark it up as invalid.
     match: "&(?!([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+);)"
     name: meta.other.valid-ampersand.markdown
+
   bold:
     begin: |
       (?x)
@@ -1693,6 +1704,7 @@ repository:
       - include: "#unordered-list"
       - include: "#ordered-list"
       - include: "#inline-markdown"
+
     repository:
       blockquote:
         comment: "> blockquote"
@@ -1709,6 +1721,7 @@ repository:
             end: ^(?!\1|\s*$)
             name: markup.quote.markdown.trin
             patterns: [include: "#markdown"]
+
       unordered-list:
         comment: "- unordered list"
         begin: ^\s*(\-)(?!>)\s+(.*)\n*
@@ -1724,6 +1737,7 @@ repository:
             end: ^(?!\1|\s*$)
             name: markup.list.unnumbered.markdown.trin
             patterns: [include: "#markdown"]
+
       ordered-list:
         comment: "+ ordered list"
         begin: ^\s*(\+)(?!>)\s+(.*)\n*
@@ -1739,6 +1753,7 @@ repository:
             end: ^(?!\1|\s*$)
             name: markup.list.numbered.markdown.trin
             patterns: [include: "#markdown"]
+
       evaluated-code:
         applyEndPatternLast: true
         comment: Evaluated code
@@ -1746,6 +1761,7 @@ repository:
         end: (?=|$)
         captures:
           1: {name: storage.type.method.trin}
+
         patterns: [include: $self]
       executed-code:
         applyEndPatternLast: true
@@ -1755,6 +1771,7 @@ repository:
         captures:
           1: {name: storage.type.subroutine.trin}
         patterns: [include: $self]
+
       html-tag:
         comment: <Tags
         applyEndPatternLast: true
@@ -1810,6 +1827,7 @@ repository:
               1: {name: punctuation.definition.string.trin}
             patterns: [include: "#markdown"]
           - include: "#regexps"
+
       inline-styles:
         begin: (?<=^|[\w\s'"`])(\+>)(.*)\n*
         beginCaptures:
@@ -3137,7 +3155,7 @@ repository:
         captures:
           1: {name: punctuation.definition.string.trin}
         patterns:
-          - include: "#type-embedded-raw"
+          - include: "#type-embedded-verbatim"
       - comment: simple single quoted raw string
         begin: (?<!'+)\s*(')
         contentName: string.quoted.single.trin
@@ -3147,7 +3165,7 @@ repository:
         patterns:
           - match: "''"
             name: constant.character.escape.trin
-          - include: "#type-embedded-raw"
+          - include: "#type-embedded-verbatim"
       - comment: double quoted standard string
         begin: (?<!"+)\s*("""+|")
         contentName: string.quoted.double.trin
@@ -3207,7 +3225,7 @@ repository:
       - include: "#embedded-placeholder"
       - include: "#type-embedded-expression"
 
-  type-embedded-raw:
+  type-embedded-verbatim:
     patterns:
       - match: \$\$|\%\%|\#\#
         name: constant.character.escape.trin
