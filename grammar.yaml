@@ -35,7 +35,6 @@ fixes: |
     By far it is the most complex of all.
   - Added/removed a few more keywords: use, show, hide;
     removed import, export, var, val, let, const
-  - Allow glob patterns in routes without quotes
 
   Fixes:
 
@@ -44,6 +43,7 @@ fixes: |
     - `object` to `obj`
     - `struct` to `map`
     - `markup` to `mark`
+  - Allow glob patterns in routes without quotes
   - Add new keywords to end blocks:
     - if/elif then else fi
     - for/loop/while do done
@@ -58,15 +58,6 @@ fixes: |
     would help a lot. I'll be fixing this soon.
   - Percent literals inspired by Ruby (this time using dollar signs as the
     percent sign is used for string formatting).
-  - Things left to add for the inline Markdown syntax:
-    - Selectors and anchors
-    - Code blocks
-    - Definition blocks
-    - Tables
-    - Headings and subheadings
-  - Unify function call variables to 9 groups instead of 12:
-      - Objects, properties and variables
-      - UPPERCASE, PascalCase and camelCase
   - Rewrite complex regular expressions and add some comments to make them more
     readable and less confusing.
     - [x] Markdown syntax
@@ -81,6 +72,22 @@ fixes: |
     - [ ] anonymous functions
     - [ ] embedded content
     - [ ] identifiers and variables
+  - Unify function call variables to 9 groups instead of 12:
+    - Objects, properties and variables
+    - UPPERCASE, PascalCase and camelCase
+  - Add for the inline Markdown syntax:
+    - Citations
+    - Strike-through
+    - Deleted and inserted text
+    - Superscript
+    - Subscript
+    - Citation
+    - Spans
+    - Selectors and anchors
+    - Code blocks
+    - Definition blocks
+    - Tables
+    - Headings and subheadings
 
 define:
   class-name: &class-name |
@@ -1545,9 +1552,9 @@ repository:
               )
               | ( # Inline Link
                 \( # Opening paren
-                  [ \t]*+ # Optional whtiespace
+                  [ \t]*+ # Optional whitespace
                   <?(.*?)>? # URL
-                  [ \t]*+ # Optional whtiespace
+                  [ \t]*+ # Optional whitespace
                   ( # Optional Title
                     (?<title>['"])
                     (.*?)
@@ -1845,7 +1852,7 @@ repository:
       - include: "#brackets"
       - include: "#literals"
       - include: "#css-value-names"
-      - include: '#hex-colors'
+      - include: "#hex-colors"
       - include: "#tag-names"
       - include: "#embedded-expression"
       - include: source.css.scss#constant_functions
@@ -2306,7 +2313,7 @@ repository:
           | # prefix operator literal
             [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
             ['"`({\[]
-          | # ignore orphaned qname
+          | # ignore orphaned qualified name
             (?!
               (?: [?!]?\.=? | [?!:]:=?)
               ['"`\\({\[\w]
