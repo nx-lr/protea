@@ -1,23 +1,31 @@
 # Trinity
 
 ```coffee
-module Button
-  style button
-    color: palevioletred
-    border: 2px solid palevioletred
-    border-radius: 3px
-    padding: 0.5em 1em
-    font-size: 1em
-    font-weight: bold
-
-  fn make(&count: int)
-    let times = match count then
-      case 1 then "once"
-      case 2 then "twice"
+mod Button
+  fn make(/count: int)
+    let times = match count with
+      case 1: "once"
+      case 2: "twice"
       fail "$count times"
     let msg = "Click me $times"
-    markup <button $msg
+    mark <button $msg
       x y z
+
+  style button
+    color: red
+    font-size: 20px
+    font-weight: bold
+    padding: 10px
+    border: 1px solid black
+    border-radius: 5px
+    background-color: white
+    cursor: pointer
+    &:hover
+      background-color: lightgray
+    &:active
+      background-color: gray
+    &:focus
+      outline: none
 ```
 
 ## Introduction
@@ -26,20 +34,20 @@ Trinity is an experimental open source programming language based on a rather pe
 
 ```coffee
 # Assignment
-let number = 42
+mut let number = 42
 let opposite = true
 let regex = `\"(\d+)\":\s*\n\s*name:\s+([\-.\w]+)` `$1: {name: $2}`
 
 # Conditions
-number = if opposite: -42 else number
+number = if opposite then -42 else number
 
 # Functions
 let square = |x| -> x * x
 
-# Arrays
+# Lists
 let list = [1 2 3 4 5]
 
-# Maps
+# Hashes
 let math = {
   root:   Math.sqrt
   square: square
@@ -47,17 +55,16 @@ let math = {
 }
 
 # Splats:
-let race = |winner, *runners|
-  print winner runners
+let race = |winner, *x| print winner runners
 
 # Existence
 if ?elvis: alert "I knew it!"
 
 # Array comprehensions
-let cubes = [for y in list: x y z]
+let cubes = [for y in list do x y]
 
 # LINQ
-cubes = from x in 1 to 100
+mut let cubes = from x in 1 to 100
   select $ math.cube x
 ```
 
@@ -112,40 +119,42 @@ A top-level declaration appears on the top-level or outermost scope of a file. I
 
 ### Declarations
 
-Declarations are defined with a single keyword, such as `class`, `fn` or `let`, followed by a name and a value. They can also be supplied with optional modifiers, such as `pub` or `mut` which modify the declaration.
+Declarations define program entities like variables or functions. They are defined with a single keyword, followed by one or several names with their optional types and values.
+
+Each declaration can modified with a number of _modifier_ keywords can be placed on either side of the keyword (but must not appear twice), which change or control the behavior of the declaration.
+
+```coffee
+let mut x = 1
+mut let x = 1
+```
+
+You can declare a variable with the shorthand `:=` syntax too: `mut x := 1`.
+
+All declarations are immutable, private and block-scoped by default. To make them public or visible, use the `pub` or `show` keyword; to make them mutable, use the `mut` keyword.
+
+```coffee
+x = do
+  part1 := \Hello
+  part2 := \World\!
+  part1 + part2
+# part1 and part2 are not accessible outside this block
+```
 
 #### Variables
 
-A variable declaration (or "variable binding") consists of the `let` keyword, a binding expression, and a definition, as well as an optional type signature. All definitions are immutable by default.
+A variable declaration (or binding) begins with the `let` keyword, and syntactically equivalent to Rust.
 
 For example:
 
 ```coffee
 let x = 42
 let y: int = 42
-let timesTwo: |nat| nat = |x| x * 2
+let timesTwo = |x: int|: int { x * 2 }
 ```
-
-`let` can be supplied with a modifier, such as `mut`, which marks the declaration as mutable.
-
-The colon in the above example is a type signature. The signature `|nat| nat` means that the function `timesTwo` takes a natural number and returns a natural number.
-
-The `=` sign splits the definition into a left-hand side, which is/are the term(s) being defined, and the right-hand side, which is the definition of the term(s).
 
 #### Functions
 
-A function declaration is typically of the form `fn f(a: ta, b: tb...): t` where:
-
-- `f` is the name of the function being defined
-- `a`, `b`... are the parameters of the function
-- `ta`, `tb` are the types of the parameters
-- `t` is the return type of the function.
-
-What follows can be a block, or an assignment expression similar to a declaration. The block is the body of the function, and the assignment expression is the return value of the function.
-
-The names of the parameters and function are bound as local variables in the expression on the right-hand side (also known as the body of the function). When the function is called, the parameter names are bound to any arguments passed in the call.
-
-If the function is called with too many arguments, the excess arguments are ignored. If the function is called with too few arguments or no arguments, the missing arguments are bound to `void`.
+Declare a function with the `fn` keyword.
 
 The expression or block comprising the right-hand side can refer to the name given to the definition. In that case, it’s a recursive definition. For example:
 
@@ -168,9 +177,73 @@ type intTriple = int * int * int
 
 ### Class definitions
 
+Class definitions are defined with the `class` keyword. The class name is also a type name, and the constructor is the function body. All declarations are either properties or methods which can be accessed through the class instance.
+
+```coffee
+class Point(let x: mut int, let y: mut int)
+  priv mut let _x = 0
+  priv mut let _y = 0
+  priv let bound = 0
+
+  fn x = _x
+  fn x_(newValue: int): void =
+    if newValue < bound then newValue else printWarning
+
+  fn y = _y
+  fn y_(newValue: int): void =
+    if newValue < bound then newValue else printWarning
+
+  priv fn printWarning: void =
+    print :warn "Value out of bounds"
+
+  fn move(dx: int, dy: int): void =
+    x = x + dx; y = y + dy
+
+  sub fn str: str = "($x, $y)"
+
+let point1 = new Point
+point1.x = 99
+point1.y = 101 # prints the warning
+```
+
+Extending and implementing classes is done with the `ext` and `impl` keywords.
+
+### Trait definitions
+
+Traits are used to share interfaces and fields between classes. Classes and objects can extend traits, but traits cannot be instantiated and therefore have no parameters.
+
+```coffee
+trait Iterator<A>
+  fn next_: A
+  fn hasNext: bool
+
+  fn map<B, C>(f: (A -> B) -> C): Iterator<C>
+  fn filter(f: (A -> bool) -> A): Iterator<A>
+  fn reduce(f: (A -> A -> void) -> A): A
+  fn forEach(f: ((A -> void) -> void)): void
+
+  fn toArray: Array<A>
+  fn toList: List<A>
+  fn toSet: Set<A>
+  fn toHash: Hash<A, A>
+  fn toObject: Obj<A>
+
+  fn toString: str
+
+class IntIterator(to: int) ext Iterator<int>
+  priv let current = 0
+  sub fn hasNext: bool = current < to
+  sub fn next_(): int =
+    if hasNext
+      let t = current
+      current += 1
+      t
+    else 0
+```
+
 ### Enum definitions
 
-### Structure definitions
+### Interface definitions
 
 ### Module definitions
 
@@ -245,8 +318,8 @@ The rules for parsing commas are the same as semicolons, except they are used to
 You can pass arguments to functions Haskell style - parentheses here have nothing to do with function calls.
 
 ```coffee
-print sys.inspect obj
-print(sys.inspect, obj)
+print sys.inspect object
+print(sys.inspect, object)
 
 func (x + 3) x - 3
 func(x + 3, x) - 3
@@ -275,9 +348,9 @@ The following are considered keywords:
     to til thru by del
     unset ref and or xor not
     let fn proc type
-    class data enum module
-    iter macro struct object
-    trait style elem prop markup
+    class data enum mod
+    iter macro inter obj
+    trait style elem prop mark
     go defer do from where with
     if elif else then def
     for each loop while
@@ -317,10 +390,10 @@ Comments start with the `#` character followed by a space. The space is compulso
 
 ```coffee
 # This is a single line comment.
-#=
+(*
   This is a multiline comment.
-  #= It can be nested. =#
-=#
+  (* It can be nested. *)
+*)
 ```
 
 Documentation comments `#:` and `#+ +#` are special forms of comments that are used to document your code. They are used to generate documentation, and support JSDoc and Markdown formatting.
@@ -329,10 +402,10 @@ The compiler command `pta doc` automatically extracts the API documentation and 
 
 ```coffee
 #: This is a single line comment.
-#+
+(**
   This is a multiline comment.
-  #+ It can be nested. +#
-+#
+  (* It can be nested. *)
+*)
 ```
 
 ## Expressions
@@ -765,7 +838,7 @@ which is equivalent to:
 let combs = #[]
 for x in [1, 2, 3], y in [3, 1, 4]
   if x != y
-    combs.append((x, y))
+    combs.append((x, y z))
 
 [(1, 3), (1, 4), (2, 3), (2, 1), (2, 4), (3, 1), (3, 4)]
 ```
