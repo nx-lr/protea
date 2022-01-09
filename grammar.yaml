@@ -96,7 +96,7 @@ define:
     |unset|ref|and|or|xor|not
     |let|fn|proc|type
     |class|data|enum|mod
-    |iter|macro|struct|obj
+    |iter|macro|inter|obj
     |trait|style|elem|prop|mark
     |go|defer|do|from|where|with
     |if|elif|else|then|def
@@ -122,7 +122,7 @@ define:
     |unset|ref|and|or|xor|not
     |let|fn|proc|type
     |class|data|enum|mod
-    |iter|macro|struct|obj
+    |iter|macro|inter|obj
     |trait|style|elem|prop|mark
     |go|defer|do|from|where|with
     |if|elif|else|then|def
@@ -709,7 +709,7 @@ repository:
         applyEndPatternLast: true
         begin: |
           (?x)
-          (?<=^|[\w\s'"`)}\]]) # SOL or after a literal or space
+          (?<=^|[,;'"`\\(){}\[\]\w\s]) # SOL or after a literal or space
           (\$) # beginning of identifier
 
           # ignore all keywords
@@ -721,7 +721,7 @@ repository:
               |unset|ref|and|or|xor|not
               |let|fn|proc|type
               |class|data|enum|mod
-              |iter|macro|struct|obj
+              |iter|macro|inter|obj
               |trait|style|elem|prop|mark
               |go|defer|do|from|where|with
               |if|elif|else|then|def
@@ -776,7 +776,7 @@ repository:
     patterns:
       - comment: // for multiple flags at once with single-character aliases
         applyEndPatternLast: true
-        begin: (?x)(?<=^|[\s'"`)}\]])(//)\b
+        begin: (?x)(?<=^|[,;'"`\\(){}\[\]\w\s])(//)\b
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.flag.trin}
@@ -787,7 +787,7 @@ repository:
               1: {name: keyword.other.flag.trin}
       - comment: / for a single flag, with optional arguments
         applyEndPatternLast: true
-        begin: (?x)(?<=^|[\s'"`)}\]])(/)\b
+        begin: (?x)(?<=^|[,;'"`\\(){}\[\]\w\s])(/)\b
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.flag.trin}
@@ -800,7 +800,7 @@ repository:
   format-specifier:
     comment: Oniguruma supports only 20 levels of recursion
     applyEndPatternLast: true
-    begin: (?x)(?<=^|[\s'"`)}\]])(%)\b
+    begin: (?x)(?<=^|[,;'"`\\(){}\[\]\w\s])(%)\b
     end: (?=)|$
     captures:
       1: {name: punctuation.definition.directive.trin}
@@ -2248,7 +2248,7 @@ repository:
                 |unset|ref|and|or|xor|not
                 |let|fn|proc|type
                 |class|data|enum|mod
-                |iter|macro|struct|obj
+                |iter|macro|inter|obj
                 |trait|style|elem|prop|mark
                 |go|defer|do|from|where|with
                 |if|elif|else|then|def
@@ -2278,7 +2278,7 @@ repository:
             |unset|ref|and|or|xor|not
             |let|fn|proc|type
             |class|data|enum|mod
-            |iter|macro|struct|obj
+            |iter|macro|inter|obj
             |trait|style|elem|prop|mark
             |go|defer|do|from|where|with
             |if|elif|else|then|def
@@ -2328,7 +2328,7 @@ repository:
                   |unset|ref|and|or|xor|not
                   |let|fn|proc|type
                   |class|data|enum|mod
-                  |iter|macro|struct|obj
+                  |iter|macro|inter|obj
                   |trait|style|elem|prop|mark
                   |go|defer|do|from|where|with
                   |if|elif|else|then|def
@@ -2393,7 +2393,7 @@ repository:
             |unset|ref|and|or|xor|not
             |let|fn|proc|type
             |class|data|enum|mod
-            |iter|macro|struct|obj
+            |iter|macro|inter|obj
             |trait|style|elem|prop|mark
             |go|defer|do|from|where|with
             |if|elif|else|then|def
@@ -2901,7 +2901,7 @@ repository:
           |unset|ref|and|or|xor|not
           |let|fn|proc|type
           |class|data|enum|mod
-          |iter|macro|struct|obj
+          |iter|macro|inter|obj
           |trait|style|elem|prop|mark
           |go|defer|do|from|where|with
           |if|elif|else|then|def
@@ -3277,7 +3277,7 @@ repository:
       (?:
       let|fn|proc|type
       |class|data|enum|mod
-      |iter|macro|struct|obj
+      |iter|macro|inter|obj
       |trait|style|elem|prop|mark
       )
       \b
@@ -3339,7 +3339,7 @@ repository:
         name: storage.type.iterator.trin
       - match: (?<=^|[\p{P}\p{S}\s])\s*\b(macro)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.macro.trin
-      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(struct)(?!\B|\p{Pd}+\b)\s*
+      - match: (?<=^|[\p{P}\p{S}\s])\s*\b(inter)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.structure.trin
       - match: (?<=^|[\p{P}\p{S}\s])\s*\b(obj)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.object.trin
@@ -3714,7 +3714,7 @@ repository:
 
       structure:
         applyEndPatternLast: true
-        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(struct)(?!\B|\p{Pd}+\b)\s*
+        begin: (?<=^|[\p{P}\p{S}\s])\s*\b(inter)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.structure.trin}
@@ -3906,7 +3906,7 @@ repository:
       |unset|ref|and|or|xor|not
       |let|fn|proc|type
       |class|data|enum|mod
-      |iter|macro|struct|obj
+      |iter|macro|inter|obj
       |trait|style|elem|prop|mark
       |go|defer|do|from|where|with
       |if|elif|else|then|def
