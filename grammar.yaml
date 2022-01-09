@@ -35,11 +35,15 @@ fixes: |
     By far it is the most complex of all.
   - Added/removed a few more keywords: use, show, hide;
     removed import, export, var, val, let, const
+  - Allow glob patterns in routes without quotes
 
   Fixes:
 
-  - Rename `module` to `mod`, `object` to `obj`, `struct` to `inter` and 
-    `markup` to `mark`
+  - Rename a few keywords:
+    - `module` to `mod`
+    - `object` to `obj`
+    - `struct` to `map`
+    - `markup` to `mark`
   - Add new keywords to end blocks:
     - if/elif then else fi
     - for/loop/while do done
@@ -1021,8 +1025,8 @@ repository:
           2: {name: keyword.operator.quantifier.eager.trin}
           3: {name: keyword.operator.quantifier.greedy.trin}
       - include: "#regexp-groups"
-      - include: "#regexp-char-set"
-      - include: "#regexp-char-class"
+      - include: "#regexp-character-set"
+      - include: "#regexp-character-class"
       - match: \\.
         name: constant.character.escape.other.trin
 
@@ -1194,7 +1198,7 @@ repository:
           1: {name: punctuation.definition.group.trin}
         patterns: [include: "#regexp-patterns"]
 
-  regexp-char-class:
+  regexp-character-class:
     patterns:
       - include: "#embedded"
       - match: \\(?=\s*$)
@@ -1230,7 +1234,7 @@ repository:
       - match: \\\p{C}
         name: invalid.illegal.unknown-escape.trin
 
-  regexp-char-ops:
+  regexp-character-operators:
     patterns:
       - match: (?<!\|)\|\|(?!\|)
         name: keyword.operator.union.trin
@@ -1251,7 +1255,7 @@ repository:
       - match: \\.
         name: constant.character.escape.other.trin
 
-  regexp-char-set:
+  regexp-character-set:
     patterns:
       - begin: (\[[!^])
         end: (\])
@@ -1260,9 +1264,9 @@ repository:
           1: {name: punctuation.definition.character-class.negated.trin}
         patterns:
           - include: "#comments"
-          - include: "#regexp-char-class"
-          - include: "#regexp-char-ops"
-          - include: "#regexp-char-set"
+          - include: "#regexp-character-class"
+          - include: "#regexp-character-operators"
+          - include: "#regexp-character-set"
       - begin: (\[)
         end: (\])
         name: constant.other.character-class.trin
@@ -1270,9 +1274,9 @@ repository:
           1: {name: punctuation.definition.character-class.trin}
         patterns:
           - include: "#comments"
-          - include: "#regexp-char-class"
-          - include: "#regexp-char-ops"
-          - include: "#regexp-char-set"
+          - include: "#regexp-character-class"
+          - include: "#regexp-character-operators"
+          - include: "#regexp-character-set"
 
   attribute-selectors:
     patterns:
@@ -1395,7 +1399,7 @@ repository:
 
   ampersand:
     comment: Markdown will convert this for us. We match it so that the HTML grammar will not mark it up as invalid.
-    match: "&(?!([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+);)"
+    match: "&(?!([a-zA-Z0-9]+|#[0-9]+|#x\\h+);)"
     name: meta.other.valid-ampersand.markdown
 
   bold:
@@ -1841,13 +1845,20 @@ repository:
       - include: "#brackets"
       - include: "#literals"
       - include: "#css-value-names"
+      - include: '#hex-colors'
+      - include: "#tag-names"
+      - include: "#embedded-expression"
       - include: source.css.scss#constant_functions
       - include: source.css.scss#constant_sass_functions
       - include: source.css.scss#constant_important
       - include: source.css.scss#constant_default
       - include: source.css.scss#constant_optional
-      - include: "#tag-names"
-      - include: "#embedded"
+
+  hex-colors:
+    match: (#)\b(?:\h{3,4}|\h{6}|\h{8})\b
+    name: constant.other.color.rgb-value.hex.css
+    captures:
+      1: {name: punctuation.definition.constant.css}
 
   tag-names:
     match: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b\s*
@@ -2003,8 +2014,8 @@ repository:
           - include: text.html.markdown#inline
 
   nested-jsdoc:
-    begin: (\(\*\*)(?=\s+|\s*$)
-    end: \s*(\+#)
+    begin: (\(\*\*?)(?=\s+|\s*$)
+    end: \s*(\*\))
     name: comment.block.documentation.nested.trin
     captures:
       1: {name: punctuation.definition.comment.trin}
@@ -2015,7 +2026,7 @@ repository:
 
   nested-block:
     begin: (\(\*)(?=\s+|\s*$)
-    end: \s*(=#)
+    end: \s*(\*\))
     name: comment.block.nested.trin
     captures:
       1: {name: punctuation.definition.comment.trin}
@@ -2425,8 +2436,8 @@ repository:
   operators:
     patterns:
       - include: "#pipeline-operator"
-      - include: "#unary-ops"
-      - include: "#binary-ops"
+      - include: "#unary-operators"
+      - include: "#binary-operators"
 
   special-operators:
     patterns:
@@ -2462,7 +2473,7 @@ repository:
             name: entity.name.function.trin
           - include: $self
 
-  binary-ops:
+  binary-operators:
     match: |
       (?xi)
       (?<=^|[\s'"`({\[]) # opening
@@ -2533,8 +2544,8 @@ repository:
           | <= [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* # left side
         ) |
         (# 21: skinny arrow
-            [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* => # right side
-          | <= [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* # left side
+            [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* -> # right side
+          | <- [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* # left side
         ) |
         (# 22: wavy arrow
             [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* ~> # right side
@@ -2620,7 +2631,7 @@ repository:
       32: {name: keyword.operator.ascii.custom.trin}
       33: {name: keyword.operator.infix.custom.trin}
 
-  unary-ops:
+  unary-operators:
     patterns:
       - &primary-operators
         comment: Primary binary operators
