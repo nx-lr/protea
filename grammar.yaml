@@ -40,9 +40,8 @@ fixes: |
 
   Fixes:
 
-  - Rename a few keywords:
-    - `struct` to `map`
-  - Allow glob patterns in routes without quotes
+  - Fix highlighting keywords within infix operators.
+  - Match unquoted glob patterns in routes without quotes
   - Add new keywords to end blocks:
     - if/elif then else fi
     - for/loop/while do done
@@ -1921,7 +1920,7 @@ repository:
     patterns:
       - include: "#calls"
       - comment: CSS operators
-        match: \s*(?:(\+)|(\-)|(\*)|(\/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|(\#)|([<>]))\s*
+        match: \s*(?:(\+)|(\-)|(\*)|(/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|(\#)|([<>]))\s*
         captures:
           1: {name: keyword.operator.sum.trin}
           2: {name: keyword.operator.difference.trin}
@@ -2574,9 +2573,9 @@ repository:
   operators:
     patterns:
       - include: "#primary-operators"
+      - include: "#infix-operators"
       - include: "#prefix-operators"
       - include: "#suffix-operators"
-      - include: "#infix-operators"
 
   special-operators:
     patterns:
@@ -2626,9 +2625,9 @@ repository:
               = # ending equal sign
             ) |
             ( # 2: arithmetic operator
-              \+ | - | \*{1,3} | \/\/? | %%?
+              \+ | - | \*{1,3} | //? | %%?
             ) |
-            ( # 3: string \/ regex
+            ( # 3: string / regex
               \+\+ | --
             ) |
             ( # 4: logical operator
@@ -2659,7 +2658,7 @@ repository:
               ~[=!] | [=!]~ | =<
             ) |
             ( # 13: functional
-              <[\/*|+$:]> | [\/*|+$:]> | <[\/*|+$:]
+              <[/*|+$:]> | [/*|+$:]> | <[/*|+$:]
             ) |
             ( # 14: null coalescing
               \?+
@@ -2795,9 +2794,9 @@ repository:
               = # ending equal sign
             ) |
             ( # 5: arithmetic operator
-              \+ | - | \*{1,3} | \/\/? | %%?
+              \+ | - | \*{1,3} | //? | %%?
             ) |
-            ( # 6: string \/ regex
+            ( # 6: string / regex
               \+\+ | --
             ) |
             ( # 7: logical operator
@@ -2828,7 +2827,7 @@ repository:
               ~[=!] | [=!]~ | =<
             ) |
             ( # 16: functional
-              <[\/*|+$:]> | [\/*|+$:]> | <[\/*|+$:]
+              <[/*|+$:]> | [/*|+$:]> | <[/*|+$:]
             ) |
             ( # 17: null coalescing
               \?+
@@ -3128,7 +3127,7 @@ repository:
 
   type-annotation:
     applyEndPatternLast: true
-    begin: (:)(?=\s|$)
+    begin: (:)(?=$|[\w\s'"`({\[])
     end: (?=)|$
     beginCaptures:
       1: {name: punctuation.definition.annotation.trin}
@@ -3335,7 +3334,7 @@ repository:
           3: {name: keyword.operator.assert.trin}
           4: {name: keyword.operator.accessor.trin}
       - comment: type operators
-        match: \s*(?:(\+)|(\-)|(\*)|(\/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|([<>]))(?=$|[({\[\w'"\s])
+        match: \s*(?:(\+)|(\-)|(\*)|(/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|([<>]))(?=$|[({\[\w'"\s])
         captures:
           1: {name: keyword.operator.sum.trin}
           2: {name: keyword.operator.difference.trin}
@@ -3988,7 +3987,7 @@ repository:
           )\s*
           (\|)
           (?!\|)
-        end: (?<=['"`)}\]\w\s])(\|)(?=:?\s|$)
+        end: (?<=['"`)}\]\w\s])(\|)(?=:?(?:[\w\s'"`({\[])|$)
         name: meta.object-literal.key.trin
         captures:
           1: {name: entity.name.method.trin}
@@ -4054,7 +4053,7 @@ repository:
           )\s*
           (\|)
           (?!\|)
-        end: (?<=['"`)}\]\w\s])(\|)(?=:?\s|$)
+        end: (?<=['"`)}\]\w\s])(\|)(?=:?(?:[\w\s'"`({\[])|$)
         name: meta.object-literal.key.trin
         captures:
           1: {name: entity.name.function.trin}
@@ -4097,7 +4096,7 @@ repository:
       (?!\|)
     captures:
       1: {name: punctuation.separator.arguments.trin}
-    end: (?<=['"`)}\]\w\s])(\|)(?=:?\s|$)
+    end: (?<=['"`)}\]\w\s])(\|)(?=:?(?:[\w\s'"`({\[])|$)
     patterns: *param-brackets
 
   clauses:
@@ -4246,7 +4245,7 @@ repository:
           (?x)
           (?<=^|[{;,\s])\s*
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
-          (:)\s+
+          (:)\s*
           ((?:
           \s*(?:
           (?:# Visibility and mutability
@@ -4278,7 +4277,7 @@ repository:
           (?x)
           (?<=^|[{;,\s])\s*
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
-          (:)\s+
+          (:)\s*
           (
           (?:
           (?:# Visibility and mutability
@@ -4297,7 +4296,7 @@ repository:
           )\s*
           (\|)
           (?!\|)
-        end: (?<=['"`)}\]\w\s])(\|)(?=:?\s|$)
+        end: (?<=['"`)}\]\w\s])(\|)(?=:?(?:[\w\s'"`({\[])|$)
         name: meta.object-literal.key.trin
         captures:
           1: {name: entity.name.function.trin}
@@ -4311,7 +4310,7 @@ repository:
           (?x)
           (?<=^|[{;,\s])\s*
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
-          (:)\s+
+          (:)\s*
         name: meta.object-literal.key.trin
         captures:
           1:
