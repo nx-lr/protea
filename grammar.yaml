@@ -65,10 +65,10 @@ fixes: |
     - [x] operators
     - [ ] object literals
     - [ ] object labels
-    - [ ] pipeline functions
+    - [x] pipeline functions
     - [ ] modifier keywords
     - [ ] function assignments
-    - [ ] anonymous functions
+    - [x] anonymous functions
     - [ ] embedded content
     - [ ] identifiers and variables
   - Unify function call variables to 9 groups instead of 12:
@@ -93,7 +93,7 @@ define:
     (?x) \s*\b
 
     (?!
-      (?<=^|[,;'"`\\(){}\[\]\s])\b
+      (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?: # keywords
         in|of|as|is|new
         |to|til|thru|by|del
@@ -123,7 +123,7 @@ define:
     (?x) \s*\b
 
     (?!
-      (?<=^|[,;'"`\\(){}\[\]\s])\b
+      (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?: # keywords
         in|of|as|is|new
         |to|til|thru|by|del
@@ -364,7 +364,7 @@ repository:
     captures:
       1: {name: punctuation.definition.parameters.trin}
     patterns:
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.as.trin
       - match: (?<=[\w\s][(|])\.
         name: punctuation.definition.metadata.trin
@@ -404,7 +404,7 @@ repository:
     patterns:
       - match: |
           (?x)
-          (?<=^|[,;'"`\\(){}\[\]\s])\b
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
           (?:
             (true|false) # boolean
             |(null|nan) # null, NaN
@@ -419,7 +419,7 @@ repository:
           4: {name: constant.language.infinity.trin}
       - match: |
           (?x)
-          (?<=^|[,;'"`\\(){}\[\]\s])\b
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
           (?:
             (it|this|that|self) # special arguments
             |(args) # arguments
@@ -725,7 +725,7 @@ repository:
 
           # ignore all keywords
           (?!
-            (?<=^|[,;'"`\\(){}\[\]\s])\b
+            (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
             (?: # keywords
               in|of|as|is|new
               |to|til|thru|by|del
@@ -1942,7 +1942,7 @@ repository:
         captures:
           1: {name: punctuation.definition.parameters.trin}
         patterns:
-          - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.trin
           - include: "#clauses"
           - include: "#constants"
@@ -1958,7 +1958,7 @@ repository:
         patterns:
           - include: "#attribute-selectors"
           - include: $self
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.trin
       - include: "#style-selectors"
       - include: "#format-syntax"
@@ -2191,7 +2191,7 @@ repository:
 
   jsdoc-name-path-scopes:
     patterns:
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*(?=[\p{Pc}\p{L}])
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*(?=[\p{Pc}\p{L}])
         captures:
           1: {name: keyword.as.jsdoc}
       - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}][\w\p{Pd}]*))(?=[\s\-~.#]|$)
@@ -2282,7 +2282,7 @@ repository:
           (
             # ignore all keywords
             (?!
-              (?<=^|[,;'"`\\(){}\[\]\s])\b
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
               (?: # keywords
                 in|of|as|is|new
                 |to|til|thru|by|del
@@ -2324,6 +2324,8 @@ repository:
               | # prefix operator literal
                 [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
                 ['"`({\[]
+              | # string literal or expression
+                [{\[]
               | # ignore orphaned qualified name
                 (?!
                   (?: [?!]?\.=? | [?!:]:=?)
@@ -2376,7 +2378,7 @@ repository:
               | # generics
                 (?:[!?]\.=?|\.=)? < ['"`\\({\[\w]
               | # string literal or expression
-                ['"`\\({\[]
+                ['"`(]
             )
           )
         captures:
@@ -2396,7 +2398,7 @@ repository:
           (
             # ignore all keywords
             (?!
-              (?<=^|[,;'"`\\(){}\[\]\s])\b
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
               (?: # keywords
                 in|of|as|is|new
                 |to|til|thru|by|del
@@ -2615,123 +2617,123 @@ repository:
       (?xi)
       (?<=^|[\s'"`({\[]) # opening
       (?:
-        (# 1: compound assignment operators
+        ( # 1: compound assignment operators
           # all operators except ~ < = > . : !
           [\p{S}\p{P}&&[^~<=>.,:;!'"`(){}\[\]\p{Pc}]]
           # operator character
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*
           = # ending equal sign
         ) |
-        (# 2: arithmetic operator
+        ( # 2: arithmetic operator
           \+ | - | \*{1,3} | \/\/? | %%?
         ) |
-        (# 3: string \/ regex
+        ( # 3: string \/ regex
           \+\+ | --
         ) |
-        (# 4: logical operator
+        ( # 4: logical operator
           \&\& | \|\| | \^\^ | !
         ) |
-        (# 5: bitwise and set
+        ( # 5: bitwise and set
           \& | \| | \^ | ~
         ) |
-        (# 6: bitwise shift
+        ( # 6: bitwise shift
           <<<? | >>>?
         ) |
-        (# 7: pipeline
+        ( # 7: pipeline
           <\|{1,3} | \|{1,3}>
         ) |
-        (# 8: composition
+        ( # 8: composition
           <\+ | \+>
         ) |
-        (# 9: membership
+        ( # 9: membership
           [<>][:!] | [:!][<>]
         ) |
-        (# 10: comparison
+        ( # 10: comparison
           < | > | <= | >= | <> | <=>
         ) |
-        (# 11: equality
+        ( # 11: equality
           == | != | === | !==
         ) |
-        (# 12: similarity
+        ( # 12: similarity
           ~[=!] | [=!]~ | =<
         ) |
-        (# 13: functional
+        ( # 13: functional
           <[\/*|+$:]> | [\/*|+$:]> | <[\/*|+$:]
         ) |
-        (# 14: null coalescing
+        ( # 14: null coalescing
           \?+
         ) |
-        (# 15: non null coalescing
+        ( # 15: non null coalescing
           !+
         ) |
-        (# 16: falsy coalescing
+        ( # 16: falsy coalescing
           \?:
         ) |
-        (# 17: truthy coalescing
+        ( # 17: truthy coalescing
           !:
         ) |
-        (# 18: function application
+        ( # 18: function application
           [.$]
         ) |
-        (# 19: assignment
+        ( # 19: assignment
           :?=
         ) |
-        (# 20: range
+        ( # 20: range
           [>.]\.[.<]
-        )|
-        (# 21: fat arrow
+        ) |
+        ( # 21: fat arrow
             [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* => # right side
           | <= [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* # left side
         ) |
-        (# 22: skinny arrow
+        ( # 22: skinny arrow
             [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* -> # right side
           | <- [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* # left side
         ) |
-        (# 23: wavy arrow
+        ( # 23: wavy arrow
             [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* ~> # right side
           | <~ [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* # left side
         ) |
-        (# 24: custom logical
+        ( # 24: custom logical
           [&|^~] # leading chars
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         ) |
-        (# 25: custom arithmetic
+        ( # 25: custom arithmetic
           [-+*/%] # leading chars
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         ) |
-        (# 26: custom prototype
+        ( # 26: custom prototype
           [@:] # leading chars
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         ) |
-        (# 27: custom accessor
+        ( # 27: custom accessor
           [.] # leading chars
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         ) |
-        (# 28: custom comparison
+        ( # 28: custom comparison
           [=!] # leading chars
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         ) |
-        (# 29: custom relational
+        ( # 29: custom relational
           [<>] # leading chars
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         ) |
-        (# 30: custom private
+        ( # 30: custom private
           [?\#] # leading chars
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         ) |
-        (# 31: custom math
+        ( # 31: custom math
           \p{Sm} # leading chars
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         ) |
-        (# 32: custom currency
+        ( # 32: custom currency
           \p{Sc} # leading chars
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         ) |
-        (# 33: custom ascii
+        ( # 33: custom ascii
           [\p{S}\p{P}&&[\x80-\xFF]] # leading chars
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         ) |
-        (# 34: catch all
+        ( # 34: catch all
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         )
       )
@@ -2770,7 +2772,7 @@ repository:
       31: {name: keyword.operator.math.custom.trin}
       32: {name: keyword.operator.currency.custom.trin}
       33: {name: keyword.operator.ascii.custom.trin}
-      34: {name: keyword.operator.infix.custom.trin}
+      34: {name: keyword.operator.infix.trin}
 
   primary-operators:
     comment: Primary binary operators
@@ -2778,16 +2780,132 @@ repository:
       (?x)
       (?<=['"`)}\]\w]) # closing
       (?:
-        ( # optional accessor
+        ( # 1: optional accessor
         \?[.:]=?
         ) |
-        ( # assertion/call operator
+        ( # 2: assertion/call operator
           ![.:]=?
         ) |
-        ( # accessor operator
+        ( # 3: accessor operator
           (?:::|\.)=?
         ) |
-        ( # all other primary operators
+        ( # 4: compound assignment operators
+          # all operators except ~ < = > . : !
+          [\p{S}\p{P}&&[^~<=>.,:;!'"`(){}\[\]\p{Pc}]]
+          # operator character
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*
+          = # ending equal sign
+        ) |
+        ( # 5: arithmetic operator
+          \+ | - | \*{1,3} | \/\/? | %%?
+        ) |
+        ( # 6: string \/ regex
+          \+\+ | --
+        ) |
+        ( # 7: logical operator
+          \&\& | \|\| | \^\^ | !
+        ) |
+        ( # 8: bitwise and set
+          \& | \| | \^ | ~
+        ) |
+        ( # 9: bitwise shift
+          <<<? | >>>?
+        ) |
+        ( # 10: pipeline
+          <\|{1,3} | \|{1,3}>
+        ) |
+        ( # 11: composition
+          <\+ | \+>
+        ) |
+        ( # 12: membership
+          [<>][:!] | [:!][<>]
+        ) |
+        ( # 13: comparison
+          < | > | <= | >= | <> | <=>
+        ) |
+        ( # 14: equality
+          == | != | === | !==
+        ) |
+        ( # 15: similarity
+          ~[=!] | [=!]~ | =<
+        ) |
+        ( # 16: functional
+          <[\/*|+$:]> | [\/*|+$:]> | <[\/*|+$:]
+        ) |
+        ( # 17: null coalescing
+          \?+
+        ) |
+        ( # 18: non null coalescing
+          !+
+        ) |
+        ( # 19: falsy coalescing
+          \?:
+        ) |
+        ( # 20: truthy coalescing
+          !:
+        ) |
+        ( # 21: function application
+          [.$]
+        ) |
+        ( # 22: assignment
+          :?=
+        ) |
+        ( # 23: range
+          [>.]\.[.<]
+        ) |
+        ( # 24: fat arrow
+            [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* => # right side
+          | <= [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* # left side
+        ) |
+        ( # 25: skinny arrow
+            [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* -> # right side
+          | <- [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* # left side
+        ) |
+        ( # 26: wavy arrow
+            [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* ~> # right side
+          | <~ [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]* # left side
+        ) |
+        ( # 27: custom logical
+          [&|^~] # leading chars
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+        ) |
+        ( # 28: custom arithmetic
+          [-+*/%] # leading chars
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+        ) |
+        ( # 29: custom prototype
+          [@:] # leading chars
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+        ) |
+        ( # 30: custom accessor
+          [.] # leading chars
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+        ) |
+        ( # 31: custom comparison
+          [=!] # leading chars
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+        ) |
+        ( # 32: custom relational
+          [<>] # leading chars
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+        ) |
+        ( # 33: custom private
+          [?\#] # leading chars
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+        ) |
+        ( # 34: custom math
+          \p{Sm} # leading chars
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+        ) |
+        ( # 35: custom currency
+          \p{Sc} # leading chars
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+        ) |
+        ( # 36: custom ascii
+          [\p{S}\p{P}&&[\x80-\xFF]] # leading chars
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+        ) |
+        ( # 37: catch all
           [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
         )
       )
@@ -2796,7 +2914,40 @@ repository:
       1: {name: keyword.operator.optional.trin}
       2: {name: keyword.operator.assert.trin}
       3: {name: keyword.operator.accessor.trin}
-      4: {name: keyword.operator.primary.trin}
+      4: {name: keyword.operator.assignment.augmented.trin}
+      5: {name: keyword.operator.arithmetic.trin}
+      6: {name: keyword.operator.successor.trin}
+      7: {name: keyword.operator.logical.trin}
+      8: {name: keyword.operator.bitwise.trin}
+      9: {name: keyword.operator.bitwise.shift.trin}
+      10: {name: keyword.operator.pipeline.trin}
+      11: {name: keyword.operator.compose.trin}
+      12: {name: keyword.operator.class.trin}
+      13: {name: keyword.operator.relational.trin}
+      14: {name: keyword.operator.comparison.trin}
+      15: {name: keyword.operator.similarity.trin}
+      16: {name: keyword.operator.functional.trin}
+      17: {name: keyword.operator.null-coalescing.trin}
+      18: {name: keyword.operator.coalescing.trin}
+      19: {name: keyword.operator.conditional.trin}
+      20: {name: keyword.operator.ternary.trin}
+      21: {name: keyword.operator.macro.trin}
+      22: {name: keyword.operator.assignment.trin}
+      23: {name: keyword.operator.range.trin}
+      24: {name: keyword.operator.arrow.fat.trin}
+      25: {name: keyword.operator.arrow.skinny.trin}
+      26: {name: keyword.operator.arrow.wavy.trin}
+      27: {name: keyword.operator.logical.custom.trin}
+      28: {name: keyword.operator.arithmetic.custom.trin}
+      29: {name: keyword.operator.prototype.custom.trin}
+      30: {name: keyword.operator.accessor.custom.trin}
+      31: {name: keyword.operator.comparison.custom.trin}
+      32: {name: keyword.operator.relational.custom.trin}
+      33: {name: keyword.operator.private.custom.trin}
+      34: {name: keyword.operator.math.custom.trin}
+      35: {name: keyword.operator.currency.custom.trin}
+      36: {name: keyword.operator.ascii.custom.trin}
+      37: {name: keyword.operator.primary.trin}
 
   prefix-operators:
     comment: Prefix operators
@@ -3153,15 +3304,15 @@ repository:
 
   type-keywords:
     patterns:
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(ext)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.extends.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(impl)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(impl)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.implements.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(typeof|nameof|sizeof|keyof|attrof|infer|as|is)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(typeof|nameof|sizeof|keyof|attrof|infer|as|is)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.$1.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(instof)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(instof)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.instanceof.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(valof)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(valof)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.valueof.trin
 
   type-operators:
@@ -3269,7 +3420,7 @@ repository:
       (
       (?:
       (?:
-      (?<=^|[,;'"`\\(){}\[\]\s])\s*\b
+      \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:
       # Visibility and mutability
       pub|priv|prot|after|mut|immut
@@ -3288,7 +3439,7 @@ repository:
       )*
       )
       (?=
-      (?<=^|[,;'"`\\(){}\[\]\s])\s*\b
+      \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:
       let|fn|proc|type
       |class|data|enum|mod
@@ -3332,73 +3483,73 @@ repository:
 
   declaration-keywords:
     patterns:
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(decl|def)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl|def)(?!\B|\p{Pd}+\b)\s*
         name: keyword.other.declare.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(let)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(let)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(style)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.style.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(fn)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fn)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.function.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(proc)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.procedure.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(class)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.class.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(data)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.data.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(enum)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.enum.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(mod)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(mod)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.module.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(iter)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.iterator.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(macro)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.macro.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(inter)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inter)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.structure.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(obj)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(obj)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.object.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(trait)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.trait.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(elem)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.component.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(prop)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.property.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(mark)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(mark)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.markup.trin
 
   general-keywords:
     comment: general keywords
     patterns:
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(if|elif|else)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|elif|else)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.conditional.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(for|loop|while)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|loop|while)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.loop.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(try|throw|catch|after)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|after)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.trycatch.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(match|case|fail)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|case|fail)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.switch.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.flow.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(use|show|hide|route)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(use|show|hide|route)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.module.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(with|then|do|from|ref|go|defer)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|then|do|from|ref|go|defer)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.$1.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(debug|assert|check|where)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|assert|check|where)(?!\B|\p{Pd}+\b)\s*
         name: keyword.other.$1.trin
 
   expression-keywords:
     comment: expression keywords
     patterns:
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(in|of|as|is|new)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of|as|is|new)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.$1.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(del)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(del)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.delete.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(to|til|till|thru|by)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(to|til|till|thru|by)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.range.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(unset)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unset)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.void.trin
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(and|or|xor|not)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(and|or|xor|not)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.logical.trin
 
   keywords:
@@ -3415,7 +3566,7 @@ repository:
     repository:
       control-expression:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(break|next|redo|retry|label|goto|pass)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|label|goto|pass)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: keyword.control.flow.trin}
@@ -3426,13 +3577,13 @@ repository:
       module-expression:
         patterns:
           - applyEndPatternLast: true
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(use|show|hide|route)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(use|show|hide|route)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.control.module.trin}
             patterns:
               - *modifiers
-              - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.module.trin
               - include: "#type-keywords"
               - include: "#declarations"
@@ -3445,19 +3596,19 @@ repository:
                 name: variable.other.readwrite.alias.trin
 
       validation-expression:
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(where)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where)(?!\B|\p{Pd}+\b)\s*
         beginCaptures:
           1: {name: keyword.control.validate.trin}
         end: (?=[,;)}\]])
         patterns:
-          - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(pre|post|need|know|check|test|read|write|till|same)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(pre|post|need|know|check|test|read|write|till|same)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.validate.trin
-          - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|only|and|x?or|not|all|any|some|none)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.validate.trin
           - include: $self
 
       query-expression:
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(from)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)(?!\B|\p{Pd}+\b)\s*
         beginCaptures:
           1: {name: keyword.control.query.trin}
         end: (?=[,;)}\]])
@@ -3478,7 +3629,7 @@ repository:
 
         repository:
           in-clause:
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(in|of)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
               2: {patterns: [include: $self]}
@@ -3489,20 +3640,20 @@ repository:
               - include: $self
 
           join-clause:
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b((?:full|part|self|cross)?(?!\B|\p{Pd}+\b)\s*\b(?:inner|outer|left|right)?(?!\B|\p{Pd}+\b)\s*\bjoin)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:full|part|self|cross)?(?!\B|\p{Pd}+\b)\s*\b(?:inner|outer|left|right)?(?!\B|\p{Pd}+\b)\s*\bjoin)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
               2: {patterns: [include: $self]}
               3: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b([io]nto|equal)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b([io]nto|equal)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
               - include: "#query-body"
               - include: $self
 
           where-clause:
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(where|having|filter|reject)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where|having|filter|reject)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
@@ -3511,7 +3662,7 @@ repository:
               - include: $self
 
           sort-clause:
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b((?:sort|order)(?!\B|\p{Pd}+\b)\s*\b(?:asc|desc)?(?!\B|\p{Pd}+\b)\s*\b(?:by|with)?)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:sort|order)(?!\B|\p{Pd}+\b)\s*\b(?:asc|desc)?(?!\B|\p{Pd}+\b)\s*\b(?:by|with)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
@@ -3520,45 +3671,45 @@ repository:
               - include: $self
 
           select-clause:
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b((?:select|map)(?!\B|\p{Pd}+\b)\s*\b(?:unique|any|all)?)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:select|map)(?!\B|\p{Pd}+\b)\s*\b(?:unique|any|all)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
               - include: "#query-body"
               - include: $self
 
           limit-clause:
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b((?:take|drop|limit|offset)(?!\B|\p{Pd}+\b)\s*\b(?:first|last|head|tail)?)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit|offset)(?!\B|\p{Pd}+\b)\s*\b(?:first|last|head|tail)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
               - include: "#query-body"
               - include: $self
 
           reduce-clause:
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b((?:fold|reduce|scan)(?!\B|\p{Pd}+\b)\s*\b(?:left|right)?)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)(?!\B|\p{Pd}+\b)\s*\b(?:left|right)?)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
               - include: "#query-body"
               - include: $self
 
           group-clause:
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(group)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(group)(?!\B|\p{Pd}+\b)\s*
             beginCaptures:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(by|into)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|into)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
               - include: "#query-body"
               - include: $self
@@ -3585,7 +3736,7 @@ repository:
 
     repository:
       markup:
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(mark)(?!\B|\p{Pd}+\b)(.*)\n*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(mark)(?!\B|\p{Pd}+\b)(.*)\n*
         beginCaptures:
           1: {name: storage.type.markup.trin}
           2:
@@ -3600,7 +3751,7 @@ repository:
 
       style:
         comment: indented style
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(style)(?!\B|\p{Pd}+\b)(.*)\n*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)(.*)\n*
         beginCaptures:
           1: {name: storage.type.style.trin}
           2:
@@ -3623,7 +3774,7 @@ repository:
 
       component:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(elem)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.component.trin}
@@ -3635,21 +3786,21 @@ repository:
 
       variable:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(let)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(let)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.variable.trin}
 
       declare:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(decl)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: keyword.other.declare.trin}
 
       function:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(fn)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fn)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.function.trin}
@@ -3660,7 +3811,7 @@ repository:
 
       procedure:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(proc)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.procedure.trin}
@@ -3671,7 +3822,7 @@ repository:
 
       class:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(class)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.class.trin}
@@ -3682,7 +3833,7 @@ repository:
 
       data:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(data)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.data.trin}
@@ -3693,7 +3844,7 @@ repository:
 
       enum:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(enum)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.enum.trin}
@@ -3704,7 +3855,7 @@ repository:
 
       module:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(mod)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(mod)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.module.trin}
@@ -3715,7 +3866,7 @@ repository:
 
       iterator:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(iter)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.iterator.trin}
@@ -3726,7 +3877,7 @@ repository:
 
       macro:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(macro)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.macro.trin}
@@ -3737,7 +3888,7 @@ repository:
 
       structure:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(inter)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inter)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.structure.trin}
@@ -3748,7 +3899,7 @@ repository:
 
       object:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(obj)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(obj)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.object.trin}
@@ -3759,7 +3910,7 @@ repository:
 
       trait:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(trait)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.trait.trin}
@@ -3770,7 +3921,7 @@ repository:
 
       property:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(prop)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.property.trin}
@@ -3976,7 +4127,7 @@ repository:
 
       new-clause:
         applyEndPatternLast: true
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(new)(?!\B|\p{Pd}+\b)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(new)(?!\B|\p{Pd}+\b)
         end: (?=)|$
         beginCaptures:
           1: {name: keyword.operator.expression.$1.trin}
@@ -3991,14 +4142,14 @@ repository:
       type-clause:
         patterns:
           - applyEndPatternLast: true
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(is|as)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.trin}
             patterns:
               - include: "#types"
           - applyEndPatternLast: true
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(type)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             captures:
               1: {name: keyword.other.typedef.trin}
@@ -4009,8 +4160,8 @@ repository:
               - include: "#types"
 
       catch-clause:
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(catch)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<=^|[,;'"`\\(){}\[\]\s])\s*\b(do)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(catch)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.catch.trin
         captures:
           1: {name: keyword.control.error.trin}
@@ -4021,23 +4172,23 @@ repository:
             captures:
               1: {name: punctuation.definition.expression.trin}
             patterns:
-              - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.error.trin
               - include: $self
-          - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.error.trin
           - include: $self
 
       for-clause:
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(for|each|while)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<=^|[,;'"`\\(){}\[\]\s])\s*\b(do)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|while)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.for.trin
         captures:
           1: {name: keyword.control.loop.trin}
           2: {name: punctuation.separator.colon.trin}
         patterns:
           - &for-clause-keywords
-            match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(in|of)(?!\B|\p{Pd}+\b)\s*
+            match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.loop.trin
           - begin: \s*(\()
             end: \s*(\))
@@ -4049,8 +4200,8 @@ repository:
           - include: $self
 
       if-clause:
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(if|elif)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<=^|[,;'"`\\(){}\[\]\s])\s*\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|elif)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.if.trin
         captures:
           1: {name: keyword.control.conditional.trin}
@@ -4058,8 +4209,8 @@ repository:
         patterns: [include: $self]
 
       switch-clause:
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(match)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<=^|[,;'"`\\(){}\[\]\s])\s*\b(with)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.switch.trin
         captures:
           1: {name: keyword.control.match.trin}
@@ -4067,15 +4218,15 @@ repository:
         patterns: [include: $self]
 
       with-clause:
-        begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(with)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<=^|[,;'"`\\(){}\[\]\s])\s*\b(try)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.with.trin
         captures:
           1: {name: keyword.control.with.trin}
           2: {name: punctuation.separator.colon.trin}
         patterns:
           - &with-clause-keywords
-            match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
+            match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.with.trin
           - begin: \s*(\()
             end: \s*(\))
@@ -4216,29 +4367,29 @@ repository:
 
   closures:
     patterns:
-      - begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(case)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|(?<=^|[,;'"`\\(){}\[\]\s])\s*\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+      - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         captures:
           1: {name: keyword.control.match.trin}
           2: {name: punctuation.separator.colon.trin}
         patterns:
           - include: "#params-clause"
           - applyEndPatternLast: true
-            begin: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(is)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.control.match.trin}
             patterns:
               - include: "#types"
-          - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.trin
-          - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(let)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(let)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.trin
-          - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.trin
           - include: "#type-keywords"
           - include: $self
-      - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(fail)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.match.trin
 
   curly-brackets:
@@ -4311,7 +4462,7 @@ repository:
         patterns:
           - match: ","
             name: punctuation.separator.arguments.trin
-          - match: (?<=^|[,;'"`\\(){}\[\]\s])\s*\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.trin
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.trin
@@ -4746,48 +4897,49 @@ repository:
       - include: "#constant-names"
       - include: "#type-names"
       - include: "#variable-names"
+
   type-names:
     comment: Names for built-in types
     patterns:
       - *modifiers
       - comment: Primitive classes
         match: |
-          (?x)(?<=^|[,;'"`\\(){}\[\]\s])\s*\b(
-          Bool|[NR]at|Real|Num|(Big)?(U?Int|Float|[NR]at)
-          |Imag|Comp|Char|Rune|Str|Sym
-          |U?Int(8|16|32|64|128)
-          |[CI]?Float(16|32|64|128)
-          |[UI](8|16|32|64|128)
-          |[CI]?F(16|32|64|128)
-          # lowerFlatCase
-          |bool|[nr]at|real|num|(big)?(u?int|float|[nr]at)
-          |imag|comp|char|rune|str|sym
-          |u?int(8|16|32|64|128)
-          |[ci]?float(16|32|64|128)
-          |[ui](8|16|32|64|128)
-          |[ci]?f(16|32|64|128)
+          (?x)\s*(?<![?!]?\.|[?!:]:)\b(
+            Bool|[NR]at|Real|Num|(Big)?(U?Int|Float|[NR]at)
+            |Imag|Comp|Char|Rune|Str|Sym
+            |U?Int(8|16|32|64|128)
+            |[CI]?Float(16|32|64|128)
+            |[UI](8|16|32|64|128)
+            |[CI]?F(16|32|64|128)
+            # lower flat case
+            |bool|[nr]at|real|num|(big)?(u?int|float|[nr]at)
+            |imag|comp|char|rune|str|sym
+            |u?int(8|16|32|64|128)
+            |[ci]?float(16|32|64|128)
+            |[ui](8|16|32|64|128)
+            |[ci]?f(16|32|64|128)
           )(?!\B|\p{Pd}+\b)
         name: support.type.builtin.primitive.trin
       - comment: Data structure classes
         match: |
-          (?x)(?<=^|[,;'"`\\(){}\[\]\s])\s*\b(
-          Array|Tuple|List|Set|Hash|Seq|Str|Dict|Fn|Iter
-          |Proc|Range|Stack|Heap|Queue|Tree|Trie
-          |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
-          # lowerFlatCase
-          |array|tuple|list|set|hash|seq|str|dict|fn|iter
-          |proc|range|stack|heap|queue|tree|trie
-          |future|stream|regexp?|Func|buf|strbuf|bytes
+          (?x)\s*(?<![?!]?\.|[?!:]:)\b(
+            Array|Tuple|List|Set|Hash|Seq|Str|Dict|Fn|Iter
+            |Proc|Range|Stack|Heap|Queue|Tree|Trie
+            |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
+            # lower flat case
+            array|tuple|list|set|hash|seq|str|dict|fn|iter
+            |proc|range|stack|heap|queue|tree|trie
+            |future|stream|regexp?|func|buf|strbuf|bytes
           )(?!\B|\p{Pd}+\b)
         name: support.type.builtin.trin
       - comment: Constant/algebraic classes
         match: |
-          (?x)(?<=^|[,;'"`\\(){}\[\]\s])\s*\b(
-          True|False|Null|Void|NaN|Infin|Empty|Unit|Obj
-          |Any|Mixed|Just|Some|None|Never|(Im)?pure|Const
-          # lowerFlatCase
-          |true|false|null|void|nan|infin|empty|unit|obj
-          |any|mixed|just|some|none|never|(im)?pure|const
+          (?x)\s*(?<![?!]?\.|[?!:]:)\b(
+            True|False|Null|Void|NaN|Infin|Empty|Unit|Obj
+            |Any|Mixed|Just|Some|None|Never|(Im)?pure|Const
+            # lower flat case
+            |true|false|null|void|nan|infin|empty|unit|obj
+            |any|mixed|just|some|none|never|(im)?pure|const
           )(?!\B|\p{Pd}+\b)
         name: support.type.primitive.trin
       - comment: Error classes | BaseError, etc
@@ -4809,299 +4961,299 @@ repository:
       - comment: Python and Perl 6/Raku built-in functions
         match: |
           (?x)\s*\b(
-          # Python
-          import|abs|all|any|ascii|bin|breakpoint|callable|chr|compile
-          |copyright|credits|delattr|dir|divmod|enumerate|eval|exec|exit|filter
-          |format|getattr|globals|hasattr|hash|help|hex|id|input|isinstance
-          |issubclass|iter|len|license|locals|map|max|memoryview|min|next|oct
-          |open|ord|pow|print|quit|range|reload|repr|reversed|round|setattr|sorted
-          |sum|vars|zip|file|reduce|intern|rawInput|unicode|cmp|basestring|execfile
-          |long|xrange|bool|bytearray|bytes|classmethod|complex|dict|float|frozenset
-          |int|list|object|property|set|slice|staticmethod|str|tuple|type
+            # Python
+            import|abs|all|any|ascii|bin|breakpoint|callable|chr|compile
+            |copyright|credits|delattr|dir|divmod|enumerate|eval|exec|exit|filter
+            |format|getattr|globals|hasattr|hash|help|hex|id|input|isinstance
+            |issubclass|iter|len|license|locals|map|max|memoryview|min|next|oct
+            |open|ord|pow|print|quit|range|reload|repr|reversed|round|setattr|sorted
+            |sum|vars|zip|file|reduce|intern|rawInput|unicode|cmp|basestring|execfile
+            |long|xrange|bool|bytearray|bytes|classmethod|complex|dict|float|frozenset
+            |int|list|object|property|set|slice|staticmethod|str|tuple|type
 
-          # JavaScript
-          |isNaN|isFinite|eval|uneval|parseInt|parseFloat|decodeURI
-          |decodeURIComponent|encodeURI|encodeURIComponent|escape|unescape|require
-          |(?:clear|set)(?:Interval|Timeout)
+            # JavaScript
+            |isNaN|isFinite|eval|uneval|parseInt|parseFloat|decodeURI
+            |decodeURIComponent|encodeURI|encodeURIComponent|escape|unescape|require
+            |(?:clear|set)(?:Interval|Timeout)
 
-          # Perl
-          |eager|hyper|substr|index|rindex|grep|map|sort|join|lines|hints
-          |chmod|split|reduce|min|max|reverse|truncate|zip|cat|roundrobin
-          |classify|first|sum|keys|values|pairs|defined|delete|exists|elems
-          |end|kv|any|all|one|wrap|shape|key|value|name|pop|push|shift
-          |splice|unshift|floor|ceiling|abs|exp|log|log10|rand|sign|sqrt
-          |sin|cos|tan|round|strand|roots|cis|unpolar|polar|atan2|pick|chop
-          |p5chop|chomp|p5chomp|lc|lcfirst|uc|ucfirst|capitalize|normalize|pack
-          |unpack|quotemeta|comb|samecase|sameaccent|chars|nfd|nfc|nfkd|nfkc
-          |printf|sprintf|caller|evalfile|run|runinstead|nothing|want|bless
-          |chr|ord|gmtime|time|eof|localtime|gethost|getpw|chroot|getlogin
-          |getpeername|kill|fork|wait|perl|graphs|codes|bytes|clone|print
-          |open|read|write|readline|say|seek|close|opendir|readdir|slurp
-          |spurt|shell|run|pos|fmt|vec|link|unlink|symlink|uniq|pair|asin
-          |atan|sec|cosec|cotan|asec|acosec|acotan|sinh|cosh|tanh|asinh
-          |done|acos|acosh|atanh|sech|cosech|cotanh|sech|acosech|acotanh
-          |asech|ok|nok|planOk|diesOk|livesOk|skip|todo|pass|flunk
-          |forceTodo|useOk|isaOk|diag|isDeeply|isnt|like|skipRest
-          |unlike|cmpOk|evalDiesOk|nokError|evalLivesOk|approx
-          |isApprox|throwsOk|versionLt|plan|eval|succ|pred|times|nonce
-          |once|signature|new|connect|operator|undef|undefine|sleep|from
-          |to|infix|postfix|prefix|circumfix|postcircumfix|minmax|lazy
-          |count|unwrap|getc|pi|e|context|void|quasi|body|each|contains
-          |rewinddir|subst|can|isa|flush|arity|assuming|rewind|callwith
-          |callsame|nextwith|nextsame|attr|evalElsewhere|none|srand|trim
-          |trimStart|trimEnd|lastcall|what|where|how|which|var|who
-          |whence|accepts|rejects|not|true|iterator|by|re|im|invert
-          |flip|gist|flat|tree|isPrime|throwsLike|trans
+            # Perl
+            |eager|hyper|substr|index|rindex|grep|map|sort|join|lines|hints
+            |chmod|split|reduce|min|max|reverse|truncate|zip|cat|roundrobin
+            |classify|first|sum|keys|values|pairs|defined|delete|exists|elems
+            |end|kv|any|all|one|wrap|shape|key|value|name|pop|push|shift
+            |splice|unshift|floor|ceiling|abs|exp|log|log10|rand|sign|sqrt
+            |sin|cos|tan|round|strand|roots|cis|unpolar|polar|atan2|pick|chop
+            |p5chop|chomp|p5chomp|lc|lcfirst|uc|ucfirst|capitalize|normalize|pack
+            |unpack|quotemeta|comb|samecase|sameaccent|chars|nfd|nfc|nfkd|nfkc
+            |printf|sprintf|caller|evalfile|run|runinstead|nothing|want|bless
+            |chr|ord|gmtime|time|eof|localtime|gethost|getpw|chroot|getlogin
+            |getpeername|kill|fork|wait|perl|graphs|codes|bytes|clone|print
+            |open|read|write|readline|say|seek|close|opendir|readdir|slurp
+            |spurt|shell|run|pos|fmt|vec|link|unlink|symlink|uniq|pair|asin
+            |atan|sec|cosec|cotan|asec|acosec|acotan|sinh|cosh|tanh|asinh
+            |done|acos|acosh|atanh|sech|cosech|cotanh|sech|acosech|acotanh
+            |asech|ok|nok|planOk|diesOk|livesOk|skip|todo|pass|flunk
+            |forceTodo|useOk|isaOk|diag|isDeeply|isnt|like|skipRest
+            |unlike|cmpOk|evalDiesOk|nokError|evalLivesOk|approx
+            |isApprox|throwsOk|versionLt|plan|eval|succ|pred|times|nonce
+            |once|signature|new|connect|operator|undef|undefine|sleep|from
+            |to|infix|postfix|prefix|circumfix|postcircumfix|minmax|lazy
+            |count|unwrap|getc|pi|e|context|void|quasi|body|each|contains
+            |rewinddir|subst|can|isa|flush|arity|assuming|rewind|callwith
+            |callsame|nextwith|nextsame|attr|evalElsewhere|none|srand|trim
+            |trimStart|trimEnd|lastcall|what|where|how|which|var|who
+            |whence|accepts|rejects|not|true|iterator|by|re|im|invert
+            |flip|gist|flat|tree|isPrime|throwsLike|trans
           )(?!\B|\p{Pd}+\b)\s*
         name: support.function.builtin.trin
       - comment: Python magic functions
         match: |
           (?x)\s*\b(
-          \p{Pc}+(?:
-          abs|add|aenter|aexit|aiter|and|anext|await
-          |bool|call|ceil|cmp|coerce|complex|contains
-          |copy|deepcopy|del|delattr|delete|delitem
-          |delslice|dir|div|divmod|enter|eq|exit|float
-          |floor|floordiv|format|ge|get|getattr
-          |getattribute|getinitargs|getitem|getnewargs
-          |getslice|getstate|gt|hash|hex|iadd|iand|idiv
-          |ifloordiv|ilshift|imod|imul|index|init
-          |instancecheck|int|invert|ior|ipow|irshift|isub
-          |iter|itruediv|ixor|le|len|long|lshift|lt
-          |missing|mod|mul|ne|neg|new|next|nonzero|oct|or
-          |pos|pow|radd|rand|rdiv|rdivmod|reduce
-          |reduceEx|repr|reversed|rfloordiv|rlshift|rmod
-          |rmul|ror|round|rpow|rrshift|rshift|rsub
-          |rtruediv|rxor|set|setattr|setitem|setslice
-          |setstate|sizeof|str|sub|subclasscheck|truediv
-          |trunc|unicode|xor|matmul|rmatmul|imatmul
-          |initSubclass|setName|fspath|bytes|prepare
-          |all|bases|builtins|class|classGetitem|code|debug
-          |defaults|dict|doc|file|fn|kwdefaults|members
-          |metaclass|methods|module|mro|mroEntries|name
-          |qualname|postInit|self|signature|slots|subclasses
-          |version|weakref|wrapped|annotations|classcell
-          |spec|path|package|future|traceback
-          )\p{Pc}+
+            _+ (?:
+              abs|add|aenter|aexit|aiter|and|anext|await
+              |bool|call|ceil|cmp|coerce|complex|contains
+              |copy|deepcopy|del|delattr|delete|delitem
+              |delslice|dir|div|divmod|enter|eq|exit|float
+              |floor|floordiv|format|ge|get|getattr
+              |getattribute|getinitargs|getitem|getnewargs
+              |getslice|getstate|gt|hash|hex|iadd|iand|idiv
+              |ifloordiv|ilshift|imod|imul|index|init
+              |instancecheck|int|invert|ior|ipow|irshift|isub
+              |iter|itruediv|ixor|le|len|long|lshift|lt
+              |missing|mod|mul|ne|neg|new|next|nonzero|oct|or
+              |pos|pow|radd|rand|rdiv|rdivmod|reduce
+              |reduceEx|repr|reversed|rfloordiv|rlshift|rmod
+              |rmul|ror|round|rpow|rrshift|rshift|rsub
+              |rtruediv|rxor|set|setattr|setitem|setslice
+              |setstate|sizeof|str|sub|subclasscheck|truediv
+              |trunc|unicode|xor|matmul|rmatmul|imatmul
+              |initSubclass|setName|fspath|bytes|prepare
+              |all|bases|builtins|class|classGetitem|code|debug
+              |defaults|dict|doc|file|fn|kwdefaults|members
+              |metaclass|methods|module|mro|mroEntries|name
+              |qualname|postInit|self|signature|slots|subclasses
+              |version|weakref|wrapped|annotations|classcell
+              |spec|path|package|future|traceback
+            ) _+
           )(?!\B|\p{Pd}+\b)\s*
         name: support.function.magic.trin
       - comment: Ruby kernel functions
         match: |
           (?x)\s*\b(
-          # Ruby builtin functions
-          abort|atExit|autoload|binding|callcc|caller|callerLocations
-          |chomp|chop|eval|exec|exit|exit|fork|format|gets
-          |globalVariables|gsub|lambda|load|localVariables|open
-          |p|print|printf|proc|putc|puts|rand|readline|readlines
-          |select|setTraceFunc|sleep|spawn|sprintf|srand|sub
-          |syscall|system|test|traceVar|trap|untraceVar|warn
+            # Ruby builtin functions
+            abort|atExit|autoload|binding|callcc|caller|callerLocations
+            |chomp|chop|eval|exec|exit|exit|fork|format|gets
+            |globalVariables|gsub|lambda|load|localVariables|open
+            |p|print|printf|proc|putc|puts|rand|readline|readlines
+            |select|setTraceFunc|sleep|spawn|sprintf|srand|sub
+            |syscall|system|test|traceVar|trap|untraceVar|warn
 
-          # C StdLib
-          |abort|abs|acos|asctime|asctimeR|asin|assert|atan|atan2|atexit|atof|atoi|atol|bsearch|btowc|calloc
-          |catclose6|catgets6|catopen6|ceil|clearerr|clock|cos|cosh|ctime|ctime64|ctimeR|ctime64R|difftime
-          |difftime64|div|erf|erfc|exit|exp|fabs|fclose|fdopen5|feof|ferror|fflush1|fgetc1|fgetpos1|fgets1
-          |fgetwc6|fgetws6|fileno5|floor|fmod|fopen|fprintf|fputc1|fputs1|fputwc6|fputws6|fread|free|freopen
-          |frexp|fscanf|fseek1|fsetpos1|ftell1|fwide6|fwprintf6|fwrite|fwscanf6|gamma|getc1|getchar1|getenv
-          |gets|getwc6|getwchar6|gmtime|gmtime64|gmtimeR|gmtime64R|hypot|isalnum|isalpha|isascii4|isblank
-          |iscntrl|isdigit|isgraph|islower|isprint|ispunct|isspace|isupper|iswalnum4|iswalpha4|iswblank4
-          |iswcntrl4|iswctype4|iswdigit4|iswgraph4|iswlower4|iswprint4|iswpunct4|iswspace4|iswupper4|iswxdigit4
-          |isxdigit4|j0|j1|jn|labs|ldexp|ldiv|localeconv|localtime|localtime64|localtimeR|localtime64R
-          |log|log10|longjmp|malloc|mblen|mbrlen4|mbrtowc4|mbsinit4|mbsrtowcs4|mbstowcs|mbtowc|memchr|memcmp
-          |memcpy|memmove|memset|mktime|mktime64|modf|nextafter|nextafterl|nexttoward|nexttowardl
-          |nlLanginfo4|perror|pow|printf|putc1|putchar1|putenv|puts|putwc6|putwchar6|qsort|quantexpd32
-          |quantexpd64|quantexpd128|quantized32|quantized64|quantized128|samequantumd32|samequantumd64
-          |samequantumd128|raise|rand|randR|realloc|regcomp|regerror|regexec|regfree|remove|rename|rewind1
-          |scanf|setbuf|setjmp|setlocale|setvbuf|signal|sin|sinh|snprintf|sprintf|sqrt|srand|sscanf
-          |strcasecmp|strcat|strchr|strcmp|strcoll|strcpy|strcspn|strerror|strfmon4|strftime|strlen
-          |strncasecmp|strncat|strncmp|strncpy|strpbrk|strptime4|strrchr|strspn|strstr|strtod|strtod32
-          |strtod64|strtod128|strtof|strtok|strtokR|strtol|strtold|strtoul|strxfrm|swprintf|swscanf|system
-          |tan|tanh|time|time64|tmpfile|tmpnam|toascii|tolower|toupper|towctrans|towlower4|towupper4|ungetc1
-          |ungetwc6|vaArg|vaCopy|vaEnd|vaStart|vfprintf|vfscanf|vfwprintf6|vfwscanf|vprintf|vscanf|vsprintf
-          |vsnprintf|vsscanf|vswprintf|vswscanf|vwprintf6|vwscanf|wcrtomb4|wcscat|wcschr|wcscmp|wcscoll4|wcscpy
-          |wcscspn|wcsftime|wcslen|wcslocaleconv|wcsncat|wcsncmp|wcsncpy|wcspbrk|wcsptime|wcsrchr|wcsrtombs4
-          |wcsspn|wcsstr|wcstod|wcstod32|wcstod64|wcstod128|wcstof|wcstok|wcstol|wcstold|wcstombs|wcstoul
-          |wcsxfrm4|wctob|wctomb|wctrans|wctype4|wcwidth|wmemchr|wmemcmp|wmemcpy|wmemmove|wmemset|wprintf6
-          |wscanf6|y0|y1|yn
+            # C StdLib
+            |abort|abs|acos|asctime|asctimeR|asin|assert|atan|atan2|atexit|atof|atoi|atol|bsearch|btowc|calloc
+            |catclose6|catgets6|catopen6|ceil|clearerr|clock|cos|cosh|ctime|ctime64|ctimeR|ctime64R|difftime
+            |difftime64|div|erf|erfc|exit|exp|fabs|fclose|fdopen5|feof|ferror|fflush1|fgetc1|fgetpos1|fgets1
+            |fgetwc6|fgetws6|fileno5|floor|fmod|fopen|fprintf|fputc1|fputs1|fputwc6|fputws6|fread|free|freopen
+            |frexp|fscanf|fseek1|fsetpos1|ftell1|fwide6|fwprintf6|fwrite|fwscanf6|gamma|getc1|getchar1|getenv
+            |gets|getwc6|getwchar6|gmtime|gmtime64|gmtimeR|gmtime64R|hypot|isalnum|isalpha|isascii4|isblank
+            |iscntrl|isdigit|isgraph|islower|isprint|ispunct|isspace|isupper|iswalnum4|iswalpha4|iswblank4
+            |iswcntrl4|iswctype4|iswdigit4|iswgraph4|iswlower4|iswprint4|iswpunct4|iswspace4|iswupper4|iswxdigit4
+            |isxdigit4|j0|j1|jn|labs|ldexp|ldiv|localeconv|localtime|localtime64|localtimeR|localtime64R
+            |log|log10|longjmp|malloc|mblen|mbrlen4|mbrtowc4|mbsinit4|mbsrtowcs4|mbstowcs|mbtowc|memchr|memcmp
+            |memcpy|memmove|memset|mktime|mktime64|modf|nextafter|nextafterl|nexttoward|nexttowardl
+            |nlLanginfo4|perror|pow|printf|putc1|putchar1|putenv|puts|putwc6|putwchar6|qsort|quantexpd32
+            |quantexpd64|quantexpd128|quantized32|quantized64|quantized128|samequantumd32|samequantumd64
+            |samequantumd128|raise|rand|randR|realloc|regcomp|regerror|regexec|regfree|remove|rename|rewind1
+            |scanf|setbuf|setjmp|setlocale|setvbuf|signal|sin|sinh|snprintf|sprintf|sqrt|srand|sscanf
+            |strcasecmp|strcat|strchr|strcmp|strcoll|strcpy|strcspn|strerror|strfmon4|strftime|strlen
+            |strncasecmp|strncat|strncmp|strncpy|strpbrk|strptime4|strrchr|strspn|strstr|strtod|strtod32
+            |strtod64|strtod128|strtof|strtok|strtokR|strtol|strtold|strtoul|strxfrm|swprintf|swscanf|system
+            |tan|tanh|time|time64|tmpfile|tmpnam|toascii|tolower|toupper|towctrans|towlower4|towupper4|ungetc1
+            |ungetwc6|vaArg|vaCopy|vaEnd|vaStart|vfprintf|vfscanf|vfwprintf6|vfwscanf|vprintf|vscanf|vsprintf
+            |vsnprintf|vsscanf|vswprintf|vswscanf|vwprintf6|vwscanf|wcrtomb4|wcscat|wcschr|wcscmp|wcscoll4|wcscpy
+            |wcscspn|wcsftime|wcslen|wcslocaleconv|wcsncat|wcsncmp|wcsncpy|wcspbrk|wcsptime|wcsrchr|wcsrtombs4
+            |wcsspn|wcsstr|wcstod|wcstod32|wcstod64|wcstod128|wcstof|wcstok|wcstol|wcstold|wcstombs|wcstoul
+            |wcsxfrm4|wctob|wctomb|wctrans|wctype4|wcwidth|wmemchr|wmemcmp|wmemcpy|wmemmove|wmemset|wprintf6
+            |wscanf6|y0|y1|yn
           )(?!\B|\p{Pd}+\b)\s*
         name: support.function.kernel.trin
       - comment: Event handler functions
         match: |
           (?x)\s*\b(
-          on(Rowsinserted|Rowsdelete|Rowenter|Rowexit|Resize|Resizestart|Resizeend|Reset|
-          Readystatechange|Mouseout|Mouseover|Mousedown|Mouseup|Mousemove|
-          Before(cut|deactivate|unload|update|paste|print|editfocus|activate)|
-          Blur|Scrolltop|Submit|Select|Selectstart|Selectionchange|Hover|Help|
-          Change|Contextmenu|Controlselect|Cut|Cellchange|Clock|Close|Deactivate|
-          Datasetchanged|Datasetcomplete|Dataavailable|Drop|Drag|Dragstart|Dragover|
-          Dragdrop|Dragenter|Dragend|Dragleave|Dblclick|Unload|Paste|Propertychange|Error|
-          Errorupdate|Keydown|Keyup|Keypress|Focus|Load|Activate|Afterupdate|Afterprint|Abort)
+            on(Rowsinserted|Rowsdelete|Rowenter|Rowexit|Resize|Resizestart|Resizeend|Reset|
+            Readystatechange|Mouseout|Mouseover|Mousedown|Mouseup|Mousemove|
+            Before(cut|deactivate|unload|update|paste|print|editfocus|activate)|
+            Blur|Scrolltop|Submit|Select|Selectstart|Selectionchange|Hover|Help|
+            Change|Contextmenu|Controlselect|Cut|Cellchange|Clock|Close|Deactivate|
+            Datasetchanged|Datasetcomplete|Dataavailable|Drop|Drag|Dragstart|Dragover|
+            Dragdrop|Dragenter|Dragend|Dragleave|Dblclick|Unload|Paste|Propertychange|Error|
+            Errorupdate|Keydown|Keyup|Keypress|Focus|Load|Activate|Afterupdate|Afterprint|Abort)
           )(?!\B|\p{Pd}+\b)\s*
         name: support.function.event-handler.trin
       - comment: JavaScript StdLib functions
         match: |
           (?x)\s*\b(
-          shift|showModelessDialog|showModalDialog|showHelp|scroll|scrollX|scrollByPages|
-          scrollByLines|scrollY|scrollTo|stop|strike|sizeToContent|sidebar|signText|sort|
-          sup|sub|substr|substring|splice|split|send|set(Milliseconds|Seconds|Minutes|Hours|
-          Month|Year|FullYear|Date|UTC(Milliseconds|Seconds|Minutes|Hours|Month|FullYear|Date)|
-          Time|Hotkeys|Cursor|ZOptions|Active|Resizable|RequestHeader)|search|slice|
-          savePreferences|small|home|handleEvent|navigate|char|charCodeAt|charAt|concat|
-          contextual|confirm|compile|clear|captureEvents|call|createStyleSheet|createPopup|
-          createEventObject|to(GMTString|UTCString|String|Source|UpperCase|LowerCase|LocaleString)|
-          test|taint|taintEnabled|indexOf|italics|disableExternalCapture|dump|detachEvent|unshift|
-          untaint|unwatch|updateCommands|join|javaEnabled|pop|push|plugins.refresh|paddings|parse|
-          print|prompt|preference|enableExternalCapture|exec|execScript|valueOf|UTC|find|file|
-          fileModifiedDate|fileSize|fileCreatedDate|fileUpdatedDate|fixed|fontsize|fontcolor|
-          forward|fromCharCode|watch|link|load|lastIndexOf|anchor|attachEvent|atob|apply|alert|
-          abort|routeEvents|resize|resizeBy|resizeTo|recalc|returnValue|replace|reverse|reload|
-          releaseCapture|releaseEvents|go|get(Milliseconds|Seconds|Minutes|Hours|Month|Day|Year|FullYear|
-          Time|Date|TimezoneOffset|UTC(Milliseconds|Seconds|Minutes|Hours|Day|Month|FullYear|Date)|
-          Attention|Selection|ResponseHeader|AllResponseHeaders)|moveBy|moveBelow|moveTo|
-          moveToAbsolute|moveAbove|mergeAttributes|match|margins|btoa|big|bold|borderWidths|blink|back
+            shift|showModelessDialog|showModalDialog|showHelp|scroll|scrollX|scrollByPages|
+            scrollByLines|scrollY|scrollTo|stop|strike|sizeToContent|sidebar|signText|sort|
+            sup|sub|substr|substring|splice|split|send|set(Milliseconds|Seconds|Minutes|Hours|
+            Month|Year|FullYear|Date|UTC(Milliseconds|Seconds|Minutes|Hours|Month|FullYear|Date)|
+            Time|Hotkeys|Cursor|ZOptions|Active|Resizable|RequestHeader)|search|slice|
+            savePreferences|small|home|handleEvent|navigate|char|charCodeAt|charAt|concat|
+            contextual|confirm|compile|clear|captureEvents|call|createStyleSheet|createPopup|
+            createEventObject|to(GMTString|UTCString|String|Source|UpperCase|LowerCase|LocaleString)|
+            test|taint|taintEnabled|indexOf|italics|disableExternalCapture|dump|detachEvent|unshift|
+            untaint|unwatch|updateCommands|join|javaEnabled|pop|push|plugins.refresh|paddings|parse|
+            print|prompt|preference|enableExternalCapture|exec|execScript|valueOf|UTC|find|file|
+            fileModifiedDate|fileSize|fileCreatedDate|fileUpdatedDate|fixed|fontsize|fontcolor|
+            forward|fromCharCode|watch|link|load|lastIndexOf|anchor|attachEvent|atob|apply|alert|
+            abort|routeEvents|resize|resizeBy|resizeTo|recalc|returnValue|replace|reverse|reload|
+            releaseCapture|releaseEvents|go|get(Milliseconds|Seconds|Minutes|Hours|Month|Day|Year|FullYear|
+            Time|Date|TimezoneOffset|UTC(Milliseconds|Seconds|Minutes|Hours|Day|Month|FullYear|Date)|
+            Attention|Selection|ResponseHeader|AllResponseHeaders)|moveBy|moveBelow|moveTo|
+            moveToAbsolute|moveAbove|mergeAttributes|match|margins|btoa|big|bold|borderWidths|blink|back
           )(?!\B|\p{Pd}+\b)\s*
         name: support.function.builtin.trin
       - comment: DOM functions
         match: |
           (?x)\s*\b(
-          (acceptNode|add|addEventListener|addTextTrack|adoptNode|after|animate|append|
-          appendChild|appendData|before|blur|canPlayType|captureStream|
-          caretPositionFromPoint|caretRangeFromPoint|checkValidity|clear|click|
-          cloneContents|cloneNode|cloneRange|close|closest|collapse|
-          compareBoundaryPoints|compareDocumentPosition|comparePoint|contains|
-          convertPointFromNode|convertQuadFromNode|convertRectFromNode|createAttribute|
-          createAttributeNS|createCaption|createCDATASection|createComment|
-          createContextualFragment|createDocument|createDocumentFragment|
-          createDocumentType|createElement|createElementNS|createEntityReference|
-          createEvent|createExpression|createHTMLDocument|createNodeIterator|
-          createNSResolver|createProcessingInstruction|createRange|createShadowRoot|
-          createTBody|createTextNode|createTFoot|createTHead|createTreeWalker|delete|
-          deleteCaption|deleteCell|deleteContents|deleteData|deleteRow|deleteTFoot|
-          deleteTHead|detach|disconnect|dispatchEvent|elementFromPoint|elementsFromPoint|
-          enableStyleSheetsForSet|entries|evaluate|execCommand|exitFullscreen|
-          exitPointerLock|expand|extractContents|fastSeek|firstChild|focus|forEach|get|
-          getAll|getAnimations|getAttribute|getAttributeNames|getAttributeNode|
-          getAttributeNodeNS|getAttributeNS|getBoundingClientRect|getBoxQuads|
-          getClientRects|getContext|getDestinationInsertionPoints|getElementById|
-          getElementsByClassName|getElementsByName|getElementsByTagName|
-          getElementsByTagNameNS|getItem|getNamedItem|getSelection|getStartDate|
-          getVideoPlaybackQuality|has|hasAttribute|hasAttributeNS|hasAttributes|
-          hasChildNodes|hasFeature|hasFocus|importNode|initEvent|insertAdjacentElement|
-          insertAdjacentHTML|insertAdjacentText|insertBefore|insertCell|insertData|
-          insertNode|insertRow|intersectsNode|isDefaultNamespace|isEqualNode|
-          isPointInRange|isSameNode|item|key|keys|lastChild|load|lookupNamespaceURI|
-          lookupPrefix|matches|move|moveAttribute|moveAttributeNode|moveChild|
-          moveNamedItem|namedItem|nextNode|nextSibling|normalize|observe|open|
-          parentNode|pause|play|postMessage|prepend|preventDefault|previousNode|
-          previousSibling|probablySupportsContext|queryCommandEnabled|
-          queryCommandIndeterm|queryCommandState|queryCommandSupported|queryCommandValue|
-          querySelector|querySelectorAll|registerContentHandler|registerElement|
-          registerProtocolHandler|releaseCapture|releaseEvents|remove|removeAttribute|
-          removeAttributeNode|removeAttributeNS|removeChild|removeEventListener|
-          removeItem|replace|replaceChild|replaceData|replaceWith|reportValidity|
-          requestFullscreen|requestPointerLock|reset|scroll|scrollBy|scrollIntoView|
-          scrollTo|seekToNextFrame|select|selectNode|selectNodeContents|set|setAttribute|
-          setAttributeNode|setAttributeNodeNS|setAttributeNS|setCapture|
-          setCustomValidity|setEnd|setEndAfter|setEndBefore|setItem|setNamedItem|
-          setRangeText|setSelectionRange|setSinkId|setStart|setStartAfter|setStartBefore|
-          slice|splitText|stepDown|stepUp|stopImmediatePropagation|stopPropagation|
-          submit|substringData|supports|surroundContents|takeRecords|terminate|toBlob|
-          toDataURL|toggle|toString|values|write|writeln)
+            acceptNode|add|addEventListener|addTextTrack|adoptNode|after|animate|append|
+            appendChild|appendData|before|blur|canPlayType|captureStream|
+            caretPositionFromPoint|caretRangeFromPoint|checkValidity|clear|click|
+            cloneContents|cloneNode|cloneRange|close|closest|collapse|
+            compareBoundaryPoints|compareDocumentPosition|comparePoint|contains|
+            convertPointFromNode|convertQuadFromNode|convertRectFromNode|createAttribute|
+            createAttributeNS|createCaption|createCDATASection|createComment|
+            createContextualFragment|createDocument|createDocumentFragment|
+            createDocumentType|createElement|createElementNS|createEntityReference|
+            createEvent|createExpression|createHTMLDocument|createNodeIterator|
+            createNSResolver|createProcessingInstruction|createRange|createShadowRoot|
+            createTBody|createTextNode|createTFoot|createTHead|createTreeWalker|delete|
+            deleteCaption|deleteCell|deleteContents|deleteData|deleteRow|deleteTFoot|
+            deleteTHead|detach|disconnect|dispatchEvent|elementFromPoint|elementsFromPoint|
+            enableStyleSheetsForSet|entries|evaluate|execCommand|exitFullscreen|
+            exitPointerLock|expand|extractContents|fastSeek|firstChild|focus|forEach|get|
+            getAll|getAnimations|getAttribute|getAttributeNames|getAttributeNode|
+            getAttributeNodeNS|getAttributeNS|getBoundingClientRect|getBoxQuads|
+            getClientRects|getContext|getDestinationInsertionPoints|getElementById|
+            getElementsByClassName|getElementsByName|getElementsByTagName|
+            getElementsByTagNameNS|getItem|getNamedItem|getSelection|getStartDate|
+            getVideoPlaybackQuality|has|hasAttribute|hasAttributeNS|hasAttributes|
+            hasChildNodes|hasFeature|hasFocus|importNode|initEvent|insertAdjacentElement|
+            insertAdjacentHTML|insertAdjacentText|insertBefore|insertCell|insertData|
+            insertNode|insertRow|intersectsNode|isDefaultNamespace|isEqualNode|
+            isPointInRange|isSameNode|item|key|keys|lastChild|load|lookupNamespaceURI|
+            lookupPrefix|matches|move|moveAttribute|moveAttributeNode|moveChild|
+            moveNamedItem|namedItem|nextNode|nextSibling|normalize|observe|open|
+            parentNode|pause|play|postMessage|prepend|preventDefault|previousNode|
+            previousSibling|probablySupportsContext|queryCommandEnabled|
+            queryCommandIndeterm|queryCommandState|queryCommandSupported|queryCommandValue|
+            querySelector|querySelectorAll|registerContentHandler|registerElement|
+            registerProtocolHandler|releaseCapture|releaseEvents|remove|removeAttribute|
+            removeAttributeNode|removeAttributeNS|removeChild|removeEventListener|
+            removeItem|replace|replaceChild|replaceData|replaceWith|reportValidity|
+            requestFullscreen|requestPointerLock|reset|scroll|scrollBy|scrollIntoView|
+            scrollTo|seekToNextFrame|select|selectNode|selectNodeContents|set|setAttribute|
+            setAttributeNode|setAttributeNodeNS|setAttributeNS|setCapture|
+            setCustomValidity|setEnd|setEndAfter|setEndBefore|setItem|setNamedItem|
+            setRangeText|setSelectionRange|setSinkId|setStart|setStartAfter|setStartBefore|
+            slice|splitText|stepDown|stepUp|stopImmediatePropagation|stopPropagation|
+            submit|substringData|supports|surroundContents|takeRecords|terminate|toBlob|
+            toDataURL|toggle|toString|values|write|writeln
           )(?!\B|\p{Pd}+\b)\s*
         name: support.function.dom.trin
       - comment: Bash and Batch built-in functions
         match: |
           (?x)\s*\b(
-          adprep|append|arp|assoc|at|atmadm|attrib|auditpol|autochk|autoconv|autofmt
-          |bcdboot|bcdedit|bdehdcfg|bitsadmin|bootcfg|brea|cacls|cd|certreq|certutil
-          |change|chcp|chdir|chglogon|chgport|chgusr|chkdsk|chkntfs|choice|cipher
-          |clip|cls|clscluadmin|cluster|cmd|cmdkey|cmstp|color|comp|compact|convert
-          |copy|cprofile|cscript|csvde|date|dcdiag|dcgpofix|dcpromo|defra|del|dfscmd
-          |dfsdiag|dfsrmig|diantz|dir|dirquota|diskcomp|diskcopy|diskpart|diskperf
-          |diskraid|diskshadow|dispdiag|doin|dnscmd|doskey|driverquery|dsacls|dsadd
-          |dsamain|dsdbutil|dsget|dsmgmt|dsmod|dsmove|dsquery|dsrm|edit|endlocal
-          |eraseesentutl|eventcreate|eventquery|eventtriggers|evntcmd|expand|extract
-          |fc|filescrn|find|findstr|finger|flattemp|fonde|forfiles|format|freedisk
-          |fsutil|ftp|ftype|fveupdate|getmac|gettype|gpfixup|gpresult|gpupdate
-          |graftabl|hashgen|hep|helpctr|hostname|icacls|iisreset|inuse|ipconfig
-          |ipxroute|irftp|ismserv|jetpack|klist|ksetup|ktmutil|ktpass|label|ldifd
-          |ldp|lodctr|logman|logoff|lpq|lpr|macfile|makecab|manageBde|mapadmin|md
-          |mkdir|mklink|mmc|mode|more|mount|mountvol|move|mqbup|mqsvc|mqtgsvc|msdt
-          |msg|msiexec|msinfo32|mstsc|nbtstat|net|netcfg|netdiag|netdom|netsh|netstat
-          |nfsadmin|nfsshare|nfsstat|nlb|nlbmgr|nltest|nslookup|ntackup|ntcmdprompt
-          |ntdsutil|ntfrsutl|openfiles|pagefileconfig|path|pathping|pause|pbadmin
-          |pentnt|perfmon|ping|pnpunatten|pnputil|popd|powercfg|powershell|powershellIse
-          |print|prncnfg|prndrvr|prnjobs|prnmngr|prnport|prnqctl|prompt|pubprn|pushd
-          |pushprinterconnections|pwlauncher|qappsrv|qprocess|query|quser|qwinsta
-          |rasdial|rcp|rd|rdpsign|regentc|recover|redircmp|redirusr|reg|regini|regsvr32
-          |relog|ren|rename|rendom|repadmin|repairBde|replace|reset|rxec|risetup
-          |rmdir|robocopy|route|rpcinfo|rpcping|rsh|runas|rundll32|rwinsta|sc|schtasks
-          |scp|scwcmd|secedit|serverceipoptin|servrmanagercmd|serverweroptin|setspn
-          |setx|sfc|sftp|shadow|shift|showmount|shutdown|sort|ssh|sshAdd|sshAgent
-          |sshKeygen|sshKeyscan|start|storrept|subst|sxstrace|ysocmgr|systeminfo
-          |takeown|tapicfg|taskkill|tasklist|tcmsetup|telnet|tftp|time|timeout|title
-          |tlntadmn|tpmvscmgr|tpmvscmgr|tacerpt|tracert|tree|tscon|tsdiscon|tsecimp
-          |tskill|tsprof|type|typeperf|tzutil|uddiconfig|umount|unlodctr|ver|verifier
-          |verif|vol|vssadmin|w32tm|waitfor|wbadmin|wdsutil|wecutil|wevtutil|where
-          |whoami|winnt|winnt32|winpop|winrm|winrs|winsat|wlbs|wmic|wscript|wsl|xcopy
-          |alias|bg|bind|break|builtin|caller|cd|command|compgen|complete|dirs|disown
-          |echo|enable|eval|exec|exit|false|fc|fg|getopts|hash|help|history|jobs|kill
-          |let|logout|popd|printf|pushd|pwd|read|readonly|set|shift|shopt|source
-          |suspend|test|times|trap|true|type|ulimit|umask|unalias|unset|wait
-          |alias|apropos|apt|aptGet|aptitude|aspell|at|awk|basename|base32|base64
-          |bash|bc|bg|bind|break|builtin|bzip2|cal|caller|when|cat|cd|cfdisk|chattr
-          |chgrp|chmod|chown|chpasswd|chroot|chkconfig|cksum|clear|cmp|comm|command
-          |continue|cp|cpio|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|declare
-          |df|diff|diff3|dig|dir|dircolors|dirname|dirs|dos2unix|dmesg|dpkg|du|echo
-          |egrep|eject|enable|env|ethtool|eval|exec|exit|expect|expand|export|expr
-          |false|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|for|format|free|fsck|ftp
-          |function|fuser|gawk|getopts|grep|groupadd|groupdel|groupmod|groups|gzip|hash
-          |head|help|history|hostname|htop|iconv|id|if|ifconfig|ifdown|ifup|import|install
-          |iostat|ip|jobs|join|kill|killall|less|let|link|ln|local|locate|logname|logout
-          |look|lpc|lpr|lprint|lprintd|lprintq|lprm|lsattr|lsblk|ls|lsof|lspci|make|man
-          |mapfile|mkdir|mkfifo|mkfile|mkisofs|mknod|mktemp|more|most|mount|mtools|mtr|mv
-          |mmv|nc|netstat|nft|nice|nl|nohup|notifySend|nslookup|open|op|passwd|paste
-          |pathchk|Perf|ping|pgrep|pkill|popd|pr|printcap|printenv|printf|ps|pushd|pv|pwd
-          |quota|quotacheck|ram|rar|rcp|read|readarray|readonly|reboot|rename|renice
-          |remsync|return|rev|rm|rmdir|rsync|screen|scp|sdiff|sed|select|seq|set|sftp
-          |shift|shopt|shuf|shutdown|sleep|slocate|sort|source|split|ss|ssh|stat|strace
-          |su|sudo|sum|suspend|sync|tail|tar|tee|test|time|timeout|times|tmux|touch|top
-          |tput|traceroute|trap|tr|true|tsort|tty|type|ulimit|umask|umount|unalias|uname
-          |unexpand|uniq|units|unix2dos|unrar|unset|unshar|until|uptime|useradd|userdel
-          |usermod|users|uuencode|uudecode|v|vdir|vi|vmstat|w|wait|watch|wc|whereis|which
-          |while|who|whoami|wget|write|xargs|xdgOpen|xxd|xz|yes|zip
+            adprep|append|arp|assoc|at|atmadm|attrib|auditpol|autochk|autoconv|autofmt
+            |bcdboot|bcdedit|bdehdcfg|bitsadmin|bootcfg|brea|cacls|cd|certreq|certutil
+            |change|chcp|chdir|chglogon|chgport|chgusr|chkdsk|chkntfs|choice|cipher
+            |clip|cls|clscluadmin|cluster|cmd|cmdkey|cmstp|color|comp|compact|convert
+            |copy|cprofile|cscript|csvde|date|dcdiag|dcgpofix|dcpromo|defra|del|dfscmd
+            |dfsdiag|dfsrmig|diantz|dir|dirquota|diskcomp|diskcopy|diskpart|diskperf
+            |diskraid|diskshadow|dispdiag|doin|dnscmd|doskey|driverquery|dsacls|dsadd
+            |dsamain|dsdbutil|dsget|dsmgmt|dsmod|dsmove|dsquery|dsrm|edit|endlocal
+            |eraseesentutl|eventcreate|eventquery|eventtriggers|evntcmd|expand|extract
+            |fc|filescrn|find|findstr|finger|flattemp|fonde|forfiles|format|freedisk
+            |fsutil|ftp|ftype|fveupdate|getmac|gettype|gpfixup|gpresult|gpupdate
+            |graftabl|hashgen|hep|helpctr|hostname|icacls|iisreset|inuse|ipconfig
+            |ipxroute|irftp|ismserv|jetpack|klist|ksetup|ktmutil|ktpass|label|ldifd
+            |ldp|lodctr|logman|logoff|lpq|lpr|macfile|makecab|manageBde|mapadmin|md
+            |mkdir|mklink|mmc|mode|more|mount|mountvol|move|mqbup|mqsvc|mqtgsvc|msdt
+            |msg|msiexec|msinfo32|mstsc|nbtstat|net|netcfg|netdiag|netdom|netsh|netstat
+            |nfsadmin|nfsshare|nfsstat|nlb|nlbmgr|nltest|nslookup|ntackup|ntcmdprompt
+            |ntdsutil|ntfrsutl|openfiles|pagefileconfig|path|pathping|pause|pbadmin
+            |pentnt|perfmon|ping|pnpunatten|pnputil|popd|powercfg|powershell|powershellIse
+            |print|prncnfg|prndrvr|prnjobs|prnmngr|prnport|prnqctl|prompt|pubprn|pushd
+            |pushprinterconnections|pwlauncher|qappsrv|qprocess|query|quser|qwinsta
+            |rasdial|rcp|rd|rdpsign|regentc|recover|redircmp|redirusr|reg|regini|regsvr32
+            |relog|ren|rename|rendom|repadmin|repairBde|replace|reset|rxec|risetup
+            |rmdir|robocopy|route|rpcinfo|rpcping|rsh|runas|rundll32|rwinsta|sc|schtasks
+            |scp|scwcmd|secedit|serverceipoptin|servrmanagercmd|serverweroptin|setspn
+            |setx|sfc|sftp|shadow|shift|showmount|shutdown|sort|ssh|sshAdd|sshAgent
+            |sshKeygen|sshKeyscan|start|storrept|subst|sxstrace|ysocmgr|systeminfo
+            |takeown|tapicfg|taskkill|tasklist|tcmsetup|telnet|tftp|time|timeout|title
+            |tlntadmn|tpmvscmgr|tpmvscmgr|tacerpt|tracert|tree|tscon|tsdiscon|tsecimp
+            |tskill|tsprof|type|typeperf|tzutil|uddiconfig|umount|unlodctr|ver|verifier
+            |verif|vol|vssadmin|w32tm|waitfor|wbadmin|wdsutil|wecutil|wevtutil|where
+            |whoami|winnt|winnt32|winpop|winrm|winrs|winsat|wlbs|wmic|wscript|wsl|xcopy
+            |alias|bg|bind|break|builtin|caller|cd|command|compgen|complete|dirs|disown
+            |echo|enable|eval|exec|exit|false|fc|fg|getopts|hash|help|history|jobs|kill
+            |let|logout|popd|printf|pushd|pwd|read|readonly|set|shift|shopt|source
+            |suspend|test|times|trap|true|type|ulimit|umask|unalias|unset|wait
+            |alias|apropos|apt|aptGet|aptitude|aspell|at|awk|basename|base32|base64
+            |bash|bc|bg|bind|break|builtin|bzip2|cal|caller|when|cat|cd|cfdisk|chattr
+            |chgrp|chmod|chown|chpasswd|chroot|chkconfig|cksum|clear|cmp|comm|command
+            |continue|cp|cpio|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|declare
+            |df|diff|diff3|dig|dir|dircolors|dirname|dirs|dos2unix|dmesg|dpkg|du|echo
+            |egrep|eject|enable|env|ethtool|eval|exec|exit|expect|expand|export|expr
+            |false|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|for|format|free|fsck|ftp
+            |function|fuser|gawk|getopts|grep|groupadd|groupdel|groupmod|groups|gzip|hash
+            |head|help|history|hostname|htop|iconv|id|if|ifconfig|ifdown|ifup|import|install
+            |iostat|ip|jobs|join|kill|killall|less|let|link|ln|local|locate|logname|logout
+            |look|lpc|lpr|lprint|lprintd|lprintq|lprm|lsattr|lsblk|ls|lsof|lspci|make|man
+            |mapfile|mkdir|mkfifo|mkfile|mkisofs|mknod|mktemp|more|most|mount|mtools|mtr|mv
+            |mmv|nc|netstat|nft|nice|nl|nohup|notifySend|nslookup|open|op|passwd|paste
+            |pathchk|Perf|ping|pgrep|pkill|popd|pr|printcap|printenv|printf|ps|pushd|pv|pwd
+            |quota|quotacheck|ram|rar|rcp|read|readarray|readonly|reboot|rename|renice
+            |remsync|return|rev|rm|rmdir|rsync|screen|scp|sdiff|sed|select|seq|set|sftp
+            |shift|shopt|shuf|shutdown|sleep|slocate|sort|source|split|ss|ssh|stat|strace
+            |su|sudo|sum|suspend|sync|tail|tar|tee|test|time|timeout|times|tmux|touch|top
+            |tput|traceroute|trap|tr|true|tsort|tty|type|ulimit|umask|umount|unalias|uname
+            |unexpand|uniq|units|unix2dos|unrar|unset|unshar|until|uptime|useradd|userdel
+            |usermod|users|uuencode|uudecode|v|vdir|vi|vmstat|w|wait|watch|wc|whereis|which
+            |while|who|whoami|wget|write|xargs|xdgOpen|xxd|xz|yes|zip
           )(?!\B|\p{Pd}+\b)\s*
         name: support.function.system.trin
       - comment: Bash and Batch built-in functions
         match: |
           (?x)\s*\b(
-          avg|checksumAgg|count|countBig|grouping|groupingId|max|min|sum|stdev|stdevp|var
-          |varp|cumeDist|firstValue|lag|lastValue|lead|percentRank|percentileCont|percentileDisc
-          |cast|convert|parse|tryCast|tryConvert|tryParse|cursorStatus|coalesce|nullif|choose
-          |iif|sysdatetime|sysdatetimeoffset|sysutcdatetime|currentTime(?:stamp)?|getdate
-          |getutcdate|datename|datepart|day|month|year|datefromparts|datetime2fromparts
-          |datetimefromparts|datetimeoffsetfromparts|smalldatetimefromparts|timefromparts
-          |datediff|dateadd|eomonth|switchoffset|todatetimeoffset|isdate|cursorRows|connections
-          |cpuBusy|datefirst|dbts|error|fetchStatus|identity|idle|ioBusy|langid|language
-          |lockTimeout|maxConnections|maxPrecision|nestlevel|options|packetErrors|packReceived
-          |packSent|procid|remserver|rowcount|servername|servicename|spid|textsize|timeticks
-          |totalErrors|totalRead|totalWrite|trancount|version|abs|acos|asin|atan|atn2|ceiling
-          |cos|cot|degrees|exp|floor|log|log10|pi|power|radians|rand|round|sign|sin|sqrt|square
-          |tan|appName|applockMode|applockTest|assemblyproperty|colLength|colName|columnproperty
-          |databasePrincipalId|databasepropertyex|dbId|dbName|fileId|fileIdex|fileName|filegroupId
-          |filegroupName|filegroupproperty|fileproperty|fulltextcatalogproperty|fulltextserviceproperty
-          |indexCol|indexkeyProperty|indexproperty|objectDefinition|objectId|objectName
-          |objectSchemaName|objectproperty|objectpropertyex|originalDbName|parsename|schemaId|schemaName
-          |scopeIdentity|serverproperty|statsDate|typeId|typeName|typeproperty|rank|denseRank|ntile
-          |rowNumber|opendatasource|openrowset|openquery|openxml|certencoded|certprivatekey|currentUser
-          |databasePrincipalId|hasPermsByName|isMember|isRolemember|isSrvrolemember|originalLogin|permissions
-          |pwdcompare|pwdencrypt|schemaId|schemaName|sessionUser|suserId|suserSid|suserSname|systemUser
-          |suserName|userId|userName|ascii|char|charindex|concat|difference|format|left|len|lower|ltrim
-          |nchar|nodes|patindex|quotename|replace|replicate|reverse|right|rtrim|soundex|space|str|stringAgg
-          |stringEscape|stringSplit|stuff|substring|translate|trim|unicode|upper|patindex|textptr|textvalid
-          |binaryChecksum|checksum|compress|connectionproperty|contextInfo|currentRequestId|currentTransactionId
-          |decompress|errorLine|errorMessage|errorNumber|errorProcedure|errorSeverity|errorState|formatmessage
-          |getFilestreamTransactionContext|getansinull|hostId|hostName|isnull|isnumeric|minActiveRowversion
-          |newid|newsequentialid|rowcountBig|sessionContext|sessionId|xactState
+            avg|checksumAgg|count|countBig|grouping|groupingId|max|min|sum|stdev|stdevp|var
+            |varp|cumeDist|firstValue|lag|lastValue|lead|percentRank|percentileCont|percentileDisc
+            |cast|convert|parse|tryCast|tryConvert|tryParse|cursorStatus|coalesce|nullif|choose
+            |iif|sysdatetime|sysdatetimeoffset|sysutcdatetime|currentTime(?:stamp)?|getdate
+            |getutcdate|datename|datepart|day|month|year|datefromparts|datetime2fromparts
+            |datetimefromparts|datetimeoffsetfromparts|smalldatetimefromparts|timefromparts
+            |datediff|dateadd|eomonth|switchoffset|todatetimeoffset|isdate|cursorRows|connections
+            |cpuBusy|datefirst|dbts|error|fetchStatus|identity|idle|ioBusy|langid|language
+            |lockTimeout|maxConnections|maxPrecision|nestlevel|options|packetErrors|packReceived
+            |packSent|procid|remserver|rowcount|servername|servicename|spid|textsize|timeticks
+            |totalErrors|totalRead|totalWrite|trancount|version|abs|acos|asin|atan|atn2|ceiling
+            |cos|cot|degrees|exp|floor|log|log10|pi|power|radians|rand|round|sign|sin|sqrt|square
+            |tan|appName|applockMode|applockTest|assemblyproperty|colLength|colName|columnproperty
+            |databasePrincipalId|databasepropertyex|dbId|dbName|fileId|fileIdex|fileName|filegroupId
+            |filegroupName|filegroupproperty|fileproperty|fulltextcatalogproperty|fulltextserviceproperty
+            |indexCol|indexkeyProperty|indexproperty|objectDefinition|objectId|objectName
+            |objectSchemaName|objectproperty|objectpropertyex|originalDbName|parsename|schemaId|schemaName
+            |scopeIdentity|serverproperty|statsDate|typeId|typeName|typeproperty|rank|denseRank|ntile
+            |rowNumber|opendatasource|openrowset|openquery|openxml|certencoded|certprivatekey|currentUser
+            |databasePrincipalId|hasPermsByName|isMember|isRolemember|isSrvrolemember|originalLogin|permissions
+            |pwdcompare|pwdencrypt|schemaId|schemaName|sessionUser|suserId|suserSid|suserSname|systemUser
+            |suserName|userId|userName|ascii|char|charindex|concat|difference|format|left|len|lower|ltrim
+            |nchar|nodes|patindex|quotename|replace|replicate|reverse|right|rtrim|soundex|space|str|stringAgg
+            |stringEscape|stringSplit|stuff|substring|translate|trim|unicode|upper|patindex|textptr|textvalid
+            |binaryChecksum|checksum|compress|connectionproperty|contextInfo|currentRequestId|currentTransactionId
+            |decompress|errorLine|errorMessage|errorNumber|errorProcedure|errorSeverity|errorState|formatmessage
+            |getFilestreamTransactionContext|getansinull|hostId|hostName|isnull|isnumeric|minActiveRowversion
+            |newid|newsequentialid|rowcountBig|sessionContext|sessionId|xactState
           )(?!\B|\p{Pd}+\b)\s*
         name: support.function.database.trin
       - comment: predicate functions
