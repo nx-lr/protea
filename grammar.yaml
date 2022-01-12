@@ -37,11 +37,11 @@ fixes: |
     removed import, export, var, val, let, const;
     shortened some to three or four letters:
       struct -> inter, module -> mod, markup -> mark, object -> obj
+  - Infix operator and function call highlighting still being fixed. 
+  - Removed \ from valid operator characters.
 
   Fixes:
 
-  - Infix operators can now have no spacing. Function and keyword
-    highlighting is still broken without spacing unfortunately. Will fix soon.
   - Match unquoted glob patterns in routes without quotes
   - Add new keywords to end blocks:
     - if/elif then else fi
@@ -2275,12 +2275,7 @@ repository:
             [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
           )
 
-          \b
-        captures:
-          1: {patterns: [include: "#function-names"]}
-      - name: meta.function.call.trin
-        match: |
-          (?x)
+          \b |
 
           (?<=
             (?:
@@ -2434,6 +2429,7 @@ repository:
           )
         captures:
           1: {patterns: [include: "#function-names"]}
+          2: {patterns: [include: "#function-names"]}
 
   function-names:
     patterns:
