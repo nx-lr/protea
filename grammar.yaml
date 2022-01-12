@@ -511,7 +511,7 @@ repository:
             (\.)? # decimal point
             [\d_]* # fractional part
             (?: # exponent part
-              (p) # delimiter
+              (e) # delimiter
               ([+-])? # sign
               ([\d_]+) # mantissa
             )?
@@ -753,6 +753,7 @@ repository:
         patterns:
           - include: "#constants"
           - include: "#brackets"
+          - include: "#embedded-calls"
           - include: "#variables"
           - include: "#numbers"
           - &embedded-primary-operators
@@ -831,6 +832,7 @@ repository:
         name: entity.other.attribute-name.trin
         patterns: &format-values
           - include: "#constants"
+          - include: "#embedded-calls"
           - include: "#variables"
           - include: "#brackets"
           - include: "#regexps"
@@ -2282,6 +2284,8 @@ repository:
               ^
             | # or before a delimiter
               [,;({\[]
+            | # or before a sigil
+              [$:] \s* \b
             | # key-value separator
               ['"`(){}\[\]\w]:\s
             | # infix/suffix operators
@@ -2415,7 +2419,7 @@ repository:
             (?: # command or string literal
                 (?: \\ | //?) \b
               | # function application, composition and piping
-                (?: \$ | \s \. (?: [\s'"`)}\]] | $) | <\|{1,3}| <\+) \b
+                (?: \$ | \s \. | <\|{1,3}| <\+) [\s\w]
               | # no-argument call
                 \b! (?:[\s'"`)}\]] | $)
               | # C-style function call
@@ -2429,6 +2433,74 @@ repository:
         captures:
           1: {patterns: [include: "#function-names"]}
           2: {patterns: [include: "#function-names"]}
+
+  embedded-calls:
+    patterns:
+      - &function-names
+        name: meta.function.name.trin
+        match: |
+          (?x)
+          (?:
+            (?<=[!?]?\.=?|[?!:]:=?) (?<! \.\.+) \b
+              (?: # Properties
+                # leading or trailing underscore
+                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+              | # all uppercase or first word uppercase
+                ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+              | # Pascal case
+                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+              | # Camel case
+                ([\p{Pc}\p{L}][\w\p{Pd}]*)
+              )
+            \b
+              (?= \#? \( ) # opening bracket
+            |
+            (?<= ^ # beginning of line
+              | ['"`(){}\[\]\s\w] # literal
+              (?: # operators
+                [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+              )?
+            ) \b
+              (?: # Regular variables
+                # leading or trailing underscore
+                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+              | # all uppercase or first word uppercase
+                ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+              | # Pascal case
+                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+              | # Camel case
+                ([\p{Pc}\p{L}][\w\p{Pd}]*)
+              )
+            \b
+              (?= \#? \( ) # opening bracket
+          )
+        captures:
+          1:
+            patterns: &builtin-names
+              - include: "#type-names"
+              - include: "#support-functions"
+            name: entity.name.tag.trin
+          2:
+            patterns: *builtin-names
+            name: entity.name.tag.trin support.class.component.trin
+          3:
+            patterns: *builtin-names
+            name: entity.name.class.builtin.trin
+          4:
+            patterns: *builtin-names
+            name: entity.name.function.method.trin
+          5:
+            patterns: *builtin-names
+            name: entity.name.function.tagged-template.trin
+          6:
+            patterns: *builtin-names
+            name: entity.name.type.trin
+          7:
+            patterns: *builtin-names
+            name: entity.name.class.trin
+          8:
+            patterns: *builtin-names
+            name: entity.name.function.trin
 
   function-names:
     patterns:
@@ -3954,7 +4026,7 @@ repository:
           (?x)\s*
           (?<=[?!:]:|\b\.|[?!]\.)
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s*
-          (:?=)\s+
+          (:?=)\s*\b
           ((?:
           \s*(?:
           (?:# Visibility and mutability
@@ -3986,7 +4058,7 @@ repository:
           (?x)\s*
           (?<=[?!:]:|\b\.|[?!]\.)
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s*
-          (:?=)\s+
+          (:?=)\s*
           (
           (?:
           (?:# Visibility and mutability
@@ -4021,7 +4093,7 @@ repository:
         match: |
           (?x)\s*
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s*
-          (:?=)\s+
+          (:?=)\s*\b
           ((?:
           \s*(?:
           (?:# Visibility and mutability
@@ -4052,7 +4124,7 @@ repository:
       - begin: |
           (?x)\s*
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s*
-          (:?=)\s+
+          (:?=)\s*
           (
           (?:
           (?:# Visibility and mutability
