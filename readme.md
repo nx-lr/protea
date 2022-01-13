@@ -133,7 +133,7 @@ Comments support JSDoc and Markdown.
 (* block comment *)
 
 #: doc comment
-(** docblock comment *)
+(: docblock comment :)
 ```
 
 ### Variables
@@ -170,7 +170,64 @@ let double = fn(x: int): int = x * 2
 fn double(x: int): int = x * 2
 ```
 
+### Keywords and identifiers
+
+Keywords are all lowercase and are special tokens in Trinity. They are used to denote special constructs, such as functions, classes, and control structures, and are distinguished from identifiers.
+
+Because of how identifiers are compared, you can use any number of leading underscores to escape a keyword to turn it into an identifier.
+
+```coffee
+assert _assert = null
+```
+
+The following are considered keywords:
+
+    in of as is new
+    to til thru by del
+    unset ref and or xor not
+    let fn proc type
+    class data enum mod
+    iter macro inter obj
+    trait style elem prop mark
+    go defer do from where with
+    if elif else then def
+    for each loop while
+    try throw catch after
+    match case goto pass fail
+    break next redo retry
+    return yield await label
+    use show hide route
+    debug assert check
+
+Keywords become identifiers when part of a qualified name, such as `x.for` or `y::loop`.
+
+### Identifiers
+
+An identifier is a sequence of letters, digits, dashes, combining marks and underscores, starting with a letter.
+
+```coffee
+let regex = `\b[\pL\pPc][\d\pL\pM\pPc\pPd]*\b`
+```
+
+Variables are compared case-insensitively until the first non-lowercase character. All underscores and dashes are ignored. This means you can use varying conventions in your program without having to worry about name collisions or case conventions.
+
+```coffee
+fn normalize(ident: str): str =
+  let ret := ref ident[`[^\pL\d]` ``]
+  ret = ret[`\b.*(?!\pL)`] + ret[`\pLl.*\b`].lower!
+  ret
+
+fn cmpIdent(a: str, b: str): bool =
+  normalize a == normalize b
+
+WILDFire == WILD_Fire == WILD-Fire
+WILDFIRE____ == WILDFIRE
+wildFire == wildfire == wild_fire == wild-fire
+```
+
 ### Data types
+
+Trinity comes with many common data types, such as strings, numbers, booleans and regular expressions. These are all defined in the `core` library.
 
 ```coffee
 void: void # void
@@ -181,20 +238,35 @@ true: bool # boolean
 :sym: sym # symbol
 "hello": str # string
 `hello`: regex # regular expression
+```
+
+Trinity also comes with a handful of data structures for grouping towards data values. Note, tuples and lists are interchangeable, sets and maps are similar in which sets have their keys and values mapped to one another, thus are written the same way as lists.
+
+```coffee
 [1, 2, 3]: list<int> # list
+[1, 2, 3]: [int, int, int] # tuple
+
 {a: 1, b: 2}: dict<str, int> # dictionary
-(1, 2, 3): tuple<int> # tuple
+{1, 2, 3}: set<int> # set
 fn x: int = x: () -> int # symbol
 ```
 
 #### Constants
 
+Trinity has four constants: `null` and `void` which are both equivalent to `null` and `undefined` in JavaScript, respectively. `true` and `false` are also equivalent to `true` and `false` in JavaScript.
+
 ```coffee
-null == void # both are similar
+null == void # both are aliases for each other
 true != false
+
+true: bool
+null: null
+void: void
 ```
 
 #### Numeric types
+
+Trinity distinguishes between integers and floats as separate value types. Integers are 64-bit signed integers, while floats are 64-bit IEEE 754 floating point numbers.
 
 ```coffee
 (* integers *)
@@ -215,26 +287,35 @@ true != false
 # Numbers can contain underscores
 # or leading zeroes
 42_000.0; 042
+nan; infin # special floating point constants
+```
 
-nan, infin # special floating point constants
+Trinity also comes with other numeric types, such as rational, complex, and arbitrarily-sized numbers prefixed with `big`.
 
+```coffee
 18446744073709551616n # bigint
 1r / 3r # rational
+1 + 2i # complex
 ```
 
 #### Strings
+
+Strings are written inside single or double quotes, which can span multiple lines. They can contain any character, including newlines, tabs, and escape sequences.
+
+They can be interpolated with `#{}` and can be concatenated with `+`.
 
 ```coffee
 let x: str = "Hello World!" # escaped string
 let y: str = 'Hello World!' # verbatim string
 
 # all forms of strings can contain newlines
-let x: str = "Hello
+let x = "Hello
 World!"
-let y: str = 'Hello
+let y = 'Hello
 World!'
 
-# escapes
+(* String escapes *)
+# only applicable to double quotes
 "\n" # newline
 "\r" # carriage return
 "\t" # tab
@@ -267,10 +348,65 @@ World!'
 # within curly brackets
 "\u{1F680 1F681 1F682}"
 
-(* interpolation *)
+(* Interpolation *)
+# By default all values are converted
+# into strings and concatenated into
+# the output
 "Hello $name!"
-"Hello $x.name."
-"Hello $x[1].name"
-"Hello $x(y, z, a)[1]{int}.name!"
-"Hello ${name}!"
+"Hello $person.name, you are $person.age years old!"
+"Hello $person.upper(), you are $age[person] years old!"
+
+# A post
+
+(* String formatting *)
+# a sequence of switches with optional values
+# that are used for transforming values into
+# other strings before including them in the output
+"Hello $name%type!"
+"Hello $name%switch1:value1|switch2:value2"
+"Hello $name%switch1:value1|switch2:value2"
+
+# some examples:
+let name = "World"
+"Hello $name%upper!" # Hello WORLD!
+
+(* placeholders (same as in function calls) *)
+"Hello #name" # named argument
+"Hello #{name=1}" # `name` with a default
+"Hello #{x: int}" # `x` with a type
+"Hello #1" # positional argument
+"Hello #{1 = 1}" # positional argument
+"Hello #{-1: int}" # typed argument
+
+(* accessing strings *)
+x = "Hello"
+# if any values is omitted, the values default to [0,0,1]
+x[0] # first character
+x[1] # second character
+x[-1] # last character
+x[-2] # second-to-last character
+x[1,] # all characters except the first
+x[,-1] # all characters except the last
+x[1,-1] # all characters except the last
+x[-2,1] # all characters except the last two
+x[,,-1] # reverse order
+x[,,] # entire string
+x[,0] # empty string
+x[,,2] # skip over every second character
+x[,,3] # skip over every third character
+```
+
+#### Lists
+
+```coffee
+[] # empty list
+[1, 2, 3] # list
+[1, 2, 3,] # trailing comma
+[[1, 2, 3]] # nested list
+
+#[] # mutable list
+[1, 2, 3]{int} # list with types
+
+(* list types *)
+[1, 2, 3]
 ```
