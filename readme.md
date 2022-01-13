@@ -37,7 +37,7 @@ let math = {
   square: square
   cube: |x| x * square x }
 # Splats:
-let race = |winner, *x| print winner runners
+let race = |winner, *x| print x::y runners
 # Existence
 if ?elvis: alert "I knew it!"
 # Array comprehensions
@@ -59,11 +59,11 @@ Or at the very least, if this can't be done, let's build something that can, on 
 
 ## Introduction
 
-Trinity is a programming language that compiles to JavaScript, offering both an alternative syntax to JavaScript while also adding both compile-time and run-time features and optimizations to JavaScript. The language is clean, familiar and easy to reason about. It's meant to be a functional-first language, with improvements to both imperative and object-oriented syntax.
+Trinity is a programming language that compiles to JavaScript, while offering a rich set of compile- and run-time features and a syntax reminiscent of both functional and object-oriented/procedural languages like like Ruby, Haskell and OCaml.
 
-It is intended to be compiled and used from within JavaScript projects, augmented by the power of JavaScript (and, if possible, WebAssembly) on its side to deliver the best possible performance without having to install anything (other than Node, of course).
+It is intended to be compiled and used from within JavaScript projects on its side to deliver the best possible performance without having to install anything (other than Node, of course).
 
-Trinity consists of not only a language, but also a compiler and library (i.e. a framework) that is implemented in JavaScript and compiles to JavaScript. Trinity's features are powered by its core libraries, some using the same APIs as JavaScript.
+Trinity's compiler, package manager and core libraries will be implemented directly in JavaScript, and runs on top of any JavaScript backend. You still have access to your favorite libraries and packages, and you can use Trinity with any JavaScript runtime and projects.
 
 <small>
 
@@ -80,6 +80,16 @@ Trinity is currently still in its early stages of conceptualisation and experime
 This document is an informal guide to the design of Trinity, structured in a way that you can read from anywhere within the document. It is not meant to be a complete reference or a tutorial, but rather a guide to the language's design.
 
 Trinity is mostly inspired by Ruby, Haskell and OCaml, and contains a lot of similarities from both of them. Other influences include Rust, Scala, Go, LiveScript and Kotlin. Style, markup blocks and mappings are directly inspired by SASS, Markdown, YAML and HAML.
+
+## Hello World!
+
+```coffee
+print 'Hello World!'
+# or
+fn main = print 'Hello World!'
+```
+
+`fn main` can be skipped in single-file projects.
 
 ## Statements
 
@@ -113,16 +123,6 @@ The last statement on a line is not required to have a semicolon, and so do the 
 print sys.inspect object
 print(sys.inspect, object)
 ```
-
-### Hello World!
-
-```coffee
-print 'Hello World!'
-# or
-fn main = print 'Hello World!'
-```
-
-`fn main` can be skipped in single-file projects.
 
 ### Comments
 
