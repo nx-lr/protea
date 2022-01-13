@@ -2302,17 +2302,16 @@ repository:
             | # key-value separator
               ['"`(){}\[\]\w]:\s
             | # infix/suffix operators
-              (?:
-                ^ | ['"`(){}\[\]\s]
-                | (?:
+              (?: # variable or literal or space
+                (?:
                   \b
                   [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
                   \b
                   (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
                   )*
                 [\p{Pc}\p{L}][\w\p{Pd}]* \b # last part of identifier
+                | ^ | ['"`(){}\[\]\s]
               )
-              # anchor
               [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+ # operator
             | # open/close bracket
               ['"`(){}\[\]]
