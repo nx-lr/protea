@@ -225,12 +225,17 @@ repository:
             \s*
           (?=
             $ # EOL
-            | [)}\]] # close bracket
-            | [;,] # separator
-            | : [\w\s'"`\\({\[] # type specifier
-            | \|(?!\|) # close pipe
-            | [?:]?= [\w\s'"`\\({\[] # assignment
-            | \s \b as \b \s # as keyword
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # assignment
+              \s* [?:]?= [\w\s'"`\\({\[]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
           )
         name: variable.parameter.optional.trin
       - match: |
@@ -247,15 +252,19 @@ repository:
             \* # spread
             \?? # optional
             \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-            \s*
           (?=
             $ # EOL
-            | [)}\]] # close bracket
-            | [;,] # separator
-            | : [\w\s'"`\\({\[] # type specifier
-            | \|(?!\|) # close pipe
-            | [?:]?= [\w\s'"`\\({\[] # assignment
-            | \s \b as \b \s # as keyword
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # assignment
+              \s* [?:]?= [\w\s'"`\\({\[]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
           )
         name: variable.parameter.spread.trin
       - match: |
@@ -272,15 +281,19 @@ repository:
             //? # named
             \?? # optional
             \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-            \s*
           (?=
             $ # EOL
-            | [)}\]] # close bracket
-            | [;,] # separator
-            | : [\w\s'"`\\({\[] # type specifier
-            | \|(?!\|) # close pipe
-            | [?:]?= [\w\s'"`\\({\[] # assignment
-            | \s \b as \b \s # as keyword
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # assignment
+              \s* [?:]?= [\w\s'"`\\({\[]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
           )
         name: variable.parameter.name.trin
       - match: |
@@ -297,15 +310,19 @@ repository:
             \& # reference
             \?? # optional
             \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-            \s*
           (?=
             $ # EOL
-            | [)}\]] # close bracket
-            | [;,] # separator
-            | : [\w\s'"`\\({\[] # type specifier
-            | \|(?!\|) # close pipe
-            | [?:]?= [\w\s'"`\\({\[] # assignment
-            | \s \b as \b \s # as keyword
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # assignment
+              \s* [?:]?= [\w\s'"`\\({\[]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
           )
         name: variable.parameter.reference.trin
       - match: |
@@ -322,15 +339,19 @@ repository:
             \% # other
             \?? # optional
             \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-            \s*
           (?=
             $ # EOL
-            | [)}\]] # close brack
-            | [;,] # separator
-            | : [\w\s'"`\\({\[] # type specifier
-            | \|(?!\|) # close pipe
-            | [?:]?= [\w\s'"`\\({\[] # assignment
-            | \s \b as \b \s # as keyword
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # assignment
+              \s* [?:]?= [\w\s'"`\\({\[]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
           )
         name: variable.parameter.other.trin
       - match: |
@@ -345,15 +366,19 @@ repository:
           )
             \s*
             \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-            \s*
           (?=
             $ # EOL
-            | [)}\]] # close bracket
-            | [;,] # separator
-            | : [\w\s'"`\\({\[] # type specifier
-            | \|(?!\|) # close pipe
-            | [?:]?= [\w\s'"`\\({\[] # assignment
-            | \s \b as \b \s # as keyword
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # assignment
+              \s* [?:]?= [\w\s'"`\\({\[]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
           )
         name: variable.parameter.trin
 
