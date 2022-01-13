@@ -226,7 +226,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -253,7 +253,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -280,7 +280,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -307,7 +307,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -334,7 +334,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -359,7 +359,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \| [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -2302,7 +2302,17 @@ repository:
             | # key-value separator
               ['"`(){}\[\]\w]:\s
             | # infix/suffix operators
-              (?:^|['"`(){}\[\]\s]) # anchor
+              (?:
+                ^ | ['"`(){}\[\]\s]
+                | (?:
+                  \b
+                  [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+                  \b
+                  (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
+                  )*
+                [\p{Pc}\p{L}][\w\p{Pd}]* \b # last part of identifier
+              )
+              # anchor
               [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+ # operator
             | # open/close bracket
               ['"`(){}\[\]]
