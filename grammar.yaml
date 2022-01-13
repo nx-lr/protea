@@ -2300,21 +2300,12 @@ repository:
             | # or before a sigil
               [$:] \s* \b
             | # key-value separator
-              ['"`(){}\[\]\w]:\s
-            | # infix/suffix operators
-              (?: # variable or literal or space
-                (?:
-                  \b
-                  [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
-                  \b
-                  (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
-                  )*
-                [\p{Pc}\p{L}][\w\p{Pd}]* \b # last part of identifier
-                | ^ | ['"`(){}\[\]\s]
-              )
-              [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+ # operator
+              ['"`(){}\[\]\w]: \s
+            | # operator
+              (?:\b | ^ | ['"`(){}\[\]]) # anchor
+              [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
             | # open/close bracket
-              ['"`(){}\[\]]
+              (?:['"`(){}\[\]] | \\.)
               (?: [?!]?\.=? | [?!:]:=?) # accessors
             | # command syntax
               //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
@@ -3103,7 +3094,7 @@ repository:
     comment: Suffix operators
     match: |
       (?x)
-      (?<=['"`)}\]\w]|\\.]
+      (?<=(?:['"`)}\]\w]|\\.)
         [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*)
       (?:
         ([*/]) # 1
