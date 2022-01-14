@@ -19,25 +19,26 @@ information for contributors: |
 fixes: |
   Changes in 2022:
 
-  - Added back backslash strings (however with limited functionality)
+  - Added back backslash strings.
+  - Removed JSX and style blocks, replaced them with indentation.
+  - Fixed syntax of comments (comments require a leading space
+    after the beginning token)
+    - '# line comment'
+    - '(* block comment *)'
+    - '#: doc line comment'
+    - '(: doc block comment :)'
   - Added '/' (full) and '//' (shorthand) command flags
-  - Removed JSX and style blocks; replaced them with indentation instead.
-  - Trinity now supports both indentation and curly-brace syntax.
-  - Fixed comments:
-    - Line comments begin with a hash sign
-    - Block comments use parentheses and asterisks
   - Numbers and escape sequences have been reworked; bases 4, 6, and 12
     have been scrapped.
   - Interpolation and formatting syntax have been reworked and fixed.
-    Spacing around regular identifiers have also been removed.
+    Spacing around identifiers have also been removed.
   - Function call syntax has been reworked and is still sometimes buggy.
-    By far it is the most complex of all.
+    Still some improvements have to be made.
+  - Removed '\' from valid operator characters.
   - Added/removed a few more keywords: use, show, hide;
     removed import, export, var, val, let, const;
     shortened some to three or four letters:
-      struct -> inter, module -> mod, markup -> mark, object -> obj
-  - Infix operator and function call highlighting still being fixed.
-  - Removed \ from valid operator characters.
+      'struct' -> 'inter', 'module' -> 'mod', 'markup' -> 'mark', 'object' -> 'obj'
 
   Fixes:
 
@@ -3233,105 +3234,9 @@ repository:
 
   type-brackets:
     patterns:
-      - include: "#curly-brackets"
-      - include: "#square-brackets"
-      - include: "#round-brackets"
-
-    repository:
-      curly-brackets: &type-curly-brackets
-        repository:
-          punctuation:
-            patterns:
-              - match: ","
-                name: punctuation.separator.mapping.trin
-              - match: (?<!\s):(?=[\s,;}]|$)
-                name: punctuation.separator.key-value.trin
-              - match: (?<=^\s*|[,;{]\s*)(?:[-+*]\s+)*[-+*](?=\s|$)
-                name: punctuation.definition.block.sequence.item.trin
-        patterns:
-          - begin: \s*(?<=\b(?:let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
-            end: \s*(})
-            captures:
-              1: {name: punctuation.definition.binding-pattern.object.trin}
-            patterns:
-              - include: "#labels"
-              - include: "#punctuation"
-              - include: "#types"
-              - include: $self
-          - begin: \s*(?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
-            end: \s*(\})\s*
-            captures:
-              1: {name: punctuation.definition.mapping.trin}
-            patterns:
-              - include: "#labels"
-              - include: "#punctuation"
-              - include: "#types"
-              - include: $self
-          - begin: \s*(?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s*(\{)\s*
-            end: \s*(\})\s*
-            captures:
-              1: {name: punctuation.definition.dictionary.trin}
-            patterns:
-              - include: "#labels"
-              - include: "#punctuation"
-              - include: "#types"
-              - include: $self
-          - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\#\{)\s*
-            end: \s*(\})\s*
-            captures:
-              1: {name: punctuation.section.class.trin}
-            patterns: [include: $self]
-          - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\{)\s*
-            end: \s*(\})\s*
-            captures:
-              1: {name: punctuation.definition.block.trin}
-            patterns: [include: $self]
-
-      round-brackets: &type-round-brackets
-        repository:
-          punctuation:
-            patterns:
-              - match: ","
-                name: punctuation.separator.arguments.trin
-        patterns:
-          - begin: \s*(\#?\()\s*
-            end: \s*(\))
-            captures:
-              1: {name: punctuation.definition.expression.trin}
-            patterns:
-              - include: "#punctuation"
-              - include: "#function-params"
-              - include: "#types"
-              - include: $self
-
-      square-brackets: &type-square-brackets
-        repository:
-          punctuation:
-            patterns:
-              - match: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
-                captures:
-                  1: {name: punctuation.separator.slice.trin}
-              - match: ","
-                name: punctuation.separator.sequence.trin
-        patterns:
-          - begin: \s*(\#\[)\s*
-            end: \s*(\])\s*
-            captures:
-              1: {name: punctuation.definition.sequence.trin}
-            patterns:
-              - match: ","
-                name: punctuation.separator.sequence.trin
-              - include: "#types"
-              - include: $self
-          - begin: \s*(\[)\s*
-            end: \s*(\])\s*
-            captures:
-              1: {name: punctuation.definition.array.trin}
-            patterns:
-              - match: ","
-                name: punctuation.separator.sequence.trin
-              - include: "#types"
-              - include: $self
+      - include: "#type-curly-brackets"
+      - include: "#type-square-brackets"
+      - include: "#type-round-brackets"
 
   type-strings:
     comment: coming soon
@@ -3372,6 +3277,153 @@ repository:
         patterns:
           - include: "#string-escapes"
           - include: "#type-embedded"
+
+  type-curly-brackets:
+    repository:
+      punctuation:
+        patterns:
+          - match: ","
+            name: punctuation.separator.mapping.trin
+          - match: (?<!\s):(?=[\s,;}]|$)
+            name: punctuation.separator.key-value.trin
+          - match: (?<=^\s*|[,;{]\s*)(?:[-+*]\s+)*[-+*](?=\s|$)
+            name: punctuation.definition.block.sequence.item.trin
+
+    patterns:
+      - begin: (?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\{)\s*
+        end: \s*(\})
+        captures:
+          1: {name: punctuation.definition.typeparameters.trin}
+        patterns:
+          - include: "#types"
+          - include: $self
+      - begin: (?<=\b(?:let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
+        end: \s*(\})
+        captures:
+          1: {name: punctuation.definition.binding-pattern.object.trin}
+        patterns:
+          - include: "#labels"
+          - include: "#punctuation"
+          - include: "#types"
+          - include: $self
+      - begin: (?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\#\{)\s*
+        end: \s*(\})
+        captures:
+          1: {name: punctuation.section.class.trin}
+        patterns:
+          - include: "#types"
+          - include: $self
+      - begin: (?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\{)\s*
+        end: \s*(\})
+        captures:
+          1: {name: punctuation.definition.block.trin}
+        patterns:
+          - include: "#types"
+          - include: $self
+      - begin: (?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
+        end: \s*(\})
+        captures:
+          1: {name: punctuation.definition.mapping.trin}
+        patterns:
+          - include: "#labels"
+          - include: "#punctuation"
+          - include: "#types"
+          - include: $self
+      - begin: (?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s*(\{)\s*
+        end: \s*(\})
+        captures:
+          1: {name: punctuation.definition.dictionary.trin}
+        patterns:
+          - include: "#labels"
+          - include: "#punctuation"
+          - include: "#types"
+          - include: $self
+
+  type-round-brackets:
+    repository:
+      punctuation:
+        patterns:
+          - match: ","
+            name: punctuation.separator.arguments.trin
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.operator.expression.as.trin
+          - match: (?<=[\w\s][(|])\.
+            name: punctuation.definition.metadata.trin
+    patterns:
+      - begin: (?<=[\w'"`)}\]>]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
+        end: \s*(\))
+        captures:
+          1: {name: punctuation.definition.parameters.trin}
+        patterns:
+          - include: "#punctuation"
+          - include: "#clauses"
+          - include: "#constants"
+          - include: "#declarations"
+          - include: "#expression-keywords"
+          - include: "#function-params"
+          - include: "#types"
+          - include: self
+      - begin: (?<=\b(?:let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
+        end: \s*(\))
+        captures:
+          1: {name: punctuation.definition.binding-pattern.tuple.trin}
+        patterns:
+          - include: "#labels"
+          - include: "#types"
+          - include: $self
+      - begin: (\#?\()\s*
+        end: \s*(\))
+        captures:
+          1: {name: punctuation.definition.expression.trin}
+        patterns:
+          - include: "#types"
+          - include: $self
+
+  type-square-brackets:
+    repository:
+      punctuation:
+        patterns:
+          - match: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(:)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
+            captures:
+              1: {name: punctuation.separator.slice.trin}
+          - match: ","
+            name: punctuation.separator.sequence.trin
+    patterns:
+      - begin: (?<=\b(?:let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
+        end: \s*(\])
+        captures:
+          1: {name: punctuation.definition.binding-pattern.array.trin}
+        patterns:
+          - include: "#labels"
+          - include: "#punctuation"
+          - include: "#types"
+          - include: $self
+      - begin: (?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
+        end: \s*(\])
+        captures:
+          1: {name: punctuation.definition.attribute-selector.trin}
+        patterns:
+          - include: "#punctuation"
+          - include: "#types"
+          - include: $self
+      - begin: (\#\[)\s*
+        end: \s*(\])
+        captures:
+          1: {name: punctuation.definition.sequence.trin}
+        patterns:
+          - match: ","
+            name: punctuation.separator.sequence.trin
+          - include: "#types"
+          - include: $self
+      - begin: (\[)\s*
+        end: \s*(\])
+        captures:
+          1: {name: punctuation.definition.array.trin}
+        patterns:
+          - match: ","
+            name: punctuation.separator.sequence.trin
+          - include: "#types"
+          - include: $self
 
   type-embedded-expression:
     patterns:
@@ -3450,11 +3502,6 @@ repository:
   # Clauses and Keywords
 
   block-entities:
-    repository:
-      type-square-brackets: *type-square-brackets
-      type-round-brackets: *type-round-brackets
-      type-curly-brackets: *type-curly-brackets
-
     patterns:
       - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
         name: entity.name.namespace.trin
@@ -3523,7 +3570,7 @@ repository:
       |sub|impure|pure
 
       # Concurrency/thread
-      |sync|async|stat|dyn|lazy|eager|bound|free
+      |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
 
       # Function and methods
       |rec|gen|oper|get|set|post|del|curry|inline
@@ -3560,7 +3607,7 @@ repository:
               |sub|impure|pure
               )|
               (# Function or method modifiers
-              sync|async|stat|dyn|lazy|eager|bound|free
+              sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
               )|
               (# Property modifiers
               rec|gen|oper|get|set|post|del|curry|inline
@@ -3850,15 +3897,15 @@ repository:
           1: {name: storage.type.style.trin}
           2:
             patterns:
-              - match: (?<=^|\s)([?:]?=)(?=\s+|$)
-                captures:
-                  1: {name: keyword.operator.assignment.trin}
               - include: "#comments"
               - include: "#style-pair"
               - include: "#style-rules"
               - include: "#block-entities"
               - match: *entity-name
                 name: entity.name.style.trin
+              - match: \s*([?:]?=)\s*
+                captures:
+                  1: {name: keyword.operator.assignment.trin}
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^(\s+)(?!\s)
@@ -4043,7 +4090,7 @@ repository:
           |sub|impure|pure
 
           # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free
+          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
@@ -4075,7 +4122,7 @@ repository:
           |sub|impure|pure
 
           # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free
+          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
@@ -4110,7 +4157,7 @@ repository:
           |sub|impure|pure
 
           # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free
+          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
@@ -4141,7 +4188,7 @@ repository:
           |sub|impure|pure
 
           # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free
+          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
@@ -4248,10 +4295,10 @@ repository:
             captures:
               1: {name: keyword.other.typedef.trin}
             patterns:
-              - match: (?:^|\s)([?:]?=)(?:\s|$)
+              - include: "#types"
+              - match: \s*([?:]?=)\s*
                 captures:
                   1: {name: keyword.operator.assignment.trin}
-              - include: "#types"
 
       catch-clause:
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(catch)(?!\B|\p{Pd}+\b)\s*
@@ -4352,7 +4399,7 @@ repository:
           |sub|impure|pure
 
           # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free
+          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
@@ -4384,7 +4431,7 @@ repository:
           |sub|impure|pure
 
           # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free
+          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
@@ -4851,7 +4898,7 @@ repository:
           |crisp-edges|crispEdges|crosshair|cyclic|darken|dashed|decimal|default|dense|diagonal-fractions|difference|digits|disabled|disc|discretionary-ligatures
           |distribute|distribute-all-lines|distribute-letter|distribute-space|dot|dotted|double|double-circle|downleft|downright|e-resize|each-line|ease|ease-in
           |ease-in-out|ease-out|economy|ellipse|ellipsis|embed|end|evenodd|ew-resize|exact|exclude|exclusion|expanded|extends|extra-condensed|extra-expanded
-          |fallback|farthest-corner|farthest-side|fill|fill-available|fill-box|filled|fit-content|fixed|flat|flex|flex-end|flex-start|flip|flow-root|forwards|freeze
+          |fallback|farthest-corner|farthest-side|fill|fill-available|fill-box|filled|fit-content|fixed|flat|flex|flex-end|flex-start|flip|flow-root|forwards|free|unique|structze
           |from-image|full-width|geometricPrecision|georgian|grab|grabbing|grayscale|grid|groove|hand|hanging|hard-light|help|hidden|hide
           |historical-forms|historical-ligatures|horizontal|horizontal-tb|hue|icon|ideograph-alpha|ideograph-numeric|ideograph-parenthesis|ideograph-space
           |ideographic|inactive|infinite|inherit|initial|inline|inline-axis|inline-block|inline-end|inline-flex|inline-grid|inline-list-item|inline-start
@@ -4883,7 +4930,7 @@ repository:
           |crispEdges|crispEdges|crosshair|cyclic|darken|dashed|decimal|default|dense|diagonalFractions|difference|digits|disabled|disc|discretionaryLigatures
           |distribute|distributeAllLines|distributeLetter|distributeSpace|dot|dotted|double|doubleCircle|downleft|downright|eResize|eachLine|ease|easeIn
           |easeInOut|easeOut|economy|ellipse|ellipsis|embed|end|evenodd|ewResize|exact|exclude|exclusion|expanded|extends|extraCondensed|extraExpanded
-          |fallback|farthestCorner|farthestSide|fill|fillAvailable|fillBox|filled|fitContent|fixed|flat|flex|flexEnd|flexStart|flip|flowRoot|forwards|freeze
+          |fallback|farthestCorner|farthestSide|fill|fillAvailable|fillBox|filled|fitContent|fixed|flat|flex|flexEnd|flexStart|flip|flowRoot|forwards|free|unique|structze
           |fromImage|fullWidth|geometricPrecision|georgian|grab|grabbing|grayscale|grid|groove|hand|hanging|hardLight|help|hidden|hide
           |historicalForms|historicalLigatures|horizontal|horizontalTb|hue|icon|ideographAlpha|ideographNumeric|ideographParenthesis|ideographSpace
           |ideographic|inactive|infinite|inherit|initial|inline|inlineAxis|inlineBlock|inlineEnd|inlineFlex|inlineGrid|inlineListItem|inlineStart
@@ -5018,11 +5065,11 @@ repository:
         match: |
           (?x)\s*(?<![?!]?\.|[?!:]:)\b(
             Array|Tuple|List|Set|Hash|Seq|Str|Dict|Fn|Iter
-            |Proc|Range|Stack|Heap|Queue|Tree|Trie
+            |Proc|Range|Stack|Heap|Queue|Tree|Trie|Rec
             |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
             # lower flat case
             array|tuple|list|set|hash|seq|str|dict|fn|iter
-            |proc|range|stack|heap|queue|tree|trie
+            |proc|range|stack|heap|queue|tree|trie|rec
             |future|stream|regexp?|func|buf|strbuf|bytes
           )(?!\B|\p{Pd}+\b)
         name: support.type.builtin.trin
@@ -5146,7 +5193,7 @@ repository:
             |abort|abs|acos|asctime|asctimeR|asin|assert|atan|atan2|atexit|atof|atoi|atol|bsearch|btowc|calloc
             |catclose6|catgets6|catopen6|ceil|clearerr|clock|cos|cosh|ctime|ctime64|ctimeR|ctime64R|difftime
             |difftime64|div|erf|erfc|exit|exp|fabs|fclose|fdopen5|feof|ferror|fflush1|fgetc1|fgetpos1|fgets1
-            |fgetwc6|fgetws6|fileno5|floor|fmod|fopen|fprintf|fputc1|fputs1|fputwc6|fputws6|fread|free|freopen
+            |fgetwc6|fgetws6|fileno5|floor|fmod|fopen|fprintf|fputc1|fputs1|fputwc6|fputws6|fread|free|unique|struct|freopen
             |frexp|fscanf|fseek1|fsetpos1|ftell1|fwide6|fwprintf6|fwrite|fwscanf6|gamma|getc1|getchar1|getenv
             |gets|getwc6|getwchar6|gmtime|gmtime64|gmtimeR|gmtime64R|hypot|isalnum|isalpha|isascii4|isblank
             |iscntrl|isdigit|isgraph|islower|isprint|ispunct|isspace|isupper|iswalnum4|iswalpha4|iswblank4
@@ -5266,7 +5313,7 @@ repository:
             |diskraid|diskshadow|dispdiag|doin|dnscmd|doskey|driverquery|dsacls|dsadd
             |dsamain|dsdbutil|dsget|dsmgmt|dsmod|dsmove|dsquery|dsrm|edit|endlocal
             |eraseesentutl|eventcreate|eventquery|eventtriggers|evntcmd|expand|extract
-            |fc|filescrn|find|findstr|finger|flattemp|fonde|forfiles|format|freedisk
+            |fc|filescrn|find|findstr|finger|flattemp|fonde|forfiles|format|free|unique|structdisk
             |fsutil|ftp|ftype|fveupdate|getmac|gettype|gpfixup|gpresult|gpupdate
             |graftabl|hashgen|hep|helpctr|hostname|icacls|iisreset|inuse|ipconfig
             |ipxroute|irftp|ismserv|jetpack|klist|ksetup|ktmutil|ktpass|label|ldifd
@@ -5299,7 +5346,7 @@ repository:
             |continue|cp|cpio|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|declare
             |df|diff|diff3|dig|dir|dircolors|dirname|dirs|dos2unix|dmesg|dpkg|du|echo
             |egrep|eject|enable|env|ethtool|eval|exec|exit|expect|expand|export|expr
-            |false|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|for|format|free|fsck|ftp
+            |false|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|for|format|free|unique|struct|fsck|ftp
             |function|fuser|gawk|getopts|grep|groupadd|groupdel|groupmod|groups|gzip|hash
             |head|help|history|hostname|htop|iconv|id|if|ifconfig|ifdown|ifup|import|install
             |iostat|ip|jobs|join|kill|killall|less|let|link|ln|local|locate|logname|logout
