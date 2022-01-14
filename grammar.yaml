@@ -2247,15 +2247,12 @@ repository:
       - name: meta.function.call.trin
         match: |
           (?x)
-
           (?<=
             \s* # opening
             (?:\|{1,3}> | \+>) # operator
             \s*
           )
-
           \b
-
           (
             # ignore all keywords
             (?!
@@ -2288,9 +2285,10 @@ repository:
             )*
             [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
           )
-
           \b |
-
+          (?<! # ignore qualified names
+            (?: [?!]?\.=? | [?!:]:=?) (?: \b | ['"`\\({\[])
+          )
           (?<=
             (?:
               # beginning of line
@@ -2335,9 +2333,7 @@ repository:
               )
             ) \s* # before a space
           )
-
           \b
-
           (
             # ignore all keywords
             (?!
@@ -2370,9 +2366,7 @@ repository:
             )*
             [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
           )
-
           \b
-
           (?=
             \s+
             (?:
@@ -2536,7 +2530,7 @@ repository:
             \b
               (?= $  # end of line
                 | (?: # operators
-                  <\|{1,3} | <\+ | \|{1,3}> | \+> | ![:.]=? | ! | \$
+                  <\|{1,3} | <\+ | \|{1,3}> | \+> | ![:.]=? | [!$] | \s\.
                 ) ['"`(){}\[\]\s\w]
               )
             |
@@ -2560,7 +2554,7 @@ repository:
               (?= $ # end of line
                 | (?: # operators
                   [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
-                  <\|{1,3} | <\+ | \|{1,3}> | \+> | ![:.]=? | ! | \$
+                  <\|{1,3} | <\+ | \|{1,3}> | \+> | ![:.]=? | [!$] | \s\.
                 )? ['"`(){}\[\]\s\w]
               )
           )
