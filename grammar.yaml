@@ -1375,7 +1375,7 @@ repository:
     match: '\s*([\p{Pd}\w]+)\b(=)\s*'
     captures:
       1:
-        name: entity.other.attribute-name.${1:/downcase}.trin
+        name: entity.other.attribute-name.${1:/camelcase}.trin
         patterns: [include: "#css-property-names"]
     name: string.unquoted.trin
 
@@ -3454,12 +3454,16 @@ repository:
         name: storage.type.extends.trin
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(impl)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.implements.trin
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(typeof|nameof|sizeof|keyof|attrof|infer|as|is)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(infer|as|is)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.$1.trin
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(instof)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type|name|size|key)(?!\B|\p{Pd}+\b)\s*
+        name: keyword.operator.expression.$1of.trin
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inst)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.instanceof.trin
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(valof)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(val)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.valueof.trin
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(attr)(?!\B|\p{Pd}+\b)\s*
+        name: keyword.operator.expression.attributeof.trin
 
   type-operators:
     patterns:
