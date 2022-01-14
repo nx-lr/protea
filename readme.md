@@ -18,7 +18,7 @@ mod Button
 
 ## Introduction
 
-Trinity is a programming language in the making, with three goals: simplicity, flexibility and performance. It combines the best of functional, object-oriented and imperative programming paradigms, for the web, desktop and mobile, while compiling to JavaScript and WebAssembly.
+Trinity is a programming language intended for both backend and frontend web development, with a focus on malleability, conciseness, flexibility and performance. It combines multiple paradigms and ideas from multiple languages, all while compiling to JavaScript and WebAssembly to deliver performant, type-safe and highly-optimized code.
 
 ```coffee
 # Assignment
@@ -37,7 +37,7 @@ let math = {
   square: square
   cube: |x| x * square x }
 # Splats:
-let race = |winner, *x| print x::y runners
+let race = |winner, *runners| print winner runners
 # Existence
 if ?elvis: alert "I knew it!"
 # Array comprehensions
@@ -51,9 +51,9 @@ mut let cubes = from x in 1 to 100
 
 ## Design Goals
 
-If there is one motivating idea behind Trinity, is that technology for creating software should be as simple as possible, using as few tools as possible.
+If there is one motivating idea behind Trinity, is that the technology for creating software should be as simple as possible, using as few tools and libraries as possible, and without a steep learning curve. So we decided that given the prevalence of web-based technology and languages, we should focus on the one and only language that is most suited to the task at hand: JavaScript.
 
-Needless complexity and difficulties, fragmented builds and projects, all of that should be stripped away, leaving only the exhilarating creative essence of programming that made all of us want to learn about in the first place.
+Adding new features to a project should be easy, without us having to go through the pains of deciding which technology and stack to use. Needless complexity and difficulties, fragmented builds and projects, all of that should be stripped away, leaving only the exhilarating creative essence of programming that made all of us want to learn about in the first place.
 
 Or at the very least, if this can't be done, let's build something that can, on top of what's already there.
 
@@ -79,7 +79,43 @@ Trinity is currently still in its early stages of conceptualisation and experime
 
 This document is an informal guide to the design of Trinity, structured in a way that you can read from anywhere within the document. It is not meant to be a complete reference or a tutorial, but rather a guide to the language's design.
 
-Trinity is mostly inspired by Ruby, Haskell and OCaml, and contains a lot of similarities from both of them. Other influences include Rust, Scala, Go, LiveScript and Kotlin. Style, markup blocks and mappings are directly inspired by SASS, Markdown, YAML and HAML.
+Trinity is a language inspired by Ruby, Haskell and OCaml, and integrates concepts from languages like Rust, Scala, Go and Kotlin, as well as HAML and Stylus.
+
+### A note on syntax
+
+Like all programming languages, Trinity is a language in which programs are not text. That means, the real truth is not written in its textual form, but more as an abstract syntax tree (AST).
+
+This document describes Trinity in terms of its default and (currently) only syntax: its written form as source code.
+
+## Top-level declarations
+
+A top-level declaration appears on the top-level or outermost scope of a file. It can be one of the following:
+
+- A declaration, like `let x := 42`, or `struct type Optional a := None | Some a`.
+- A `use` clause, like `use base` or `use math.sqrt`.
+
+### Declarations
+
+Declarations define program entities like variables or functions.
+
+Each declaration can be preceded with a number of _modifier_ keywords which can be placed to the left of said keyword, which change or control the behavior of the declaration.
+
+`:=` is the declaration operator and is used to separate the name from its definition, as opposed to `=` which is assignment.
+
+```coffee
+let x := 1
+mut let x := 1
+```
+
+All declarations are immutable, private and block-scoped by default. To make them public or visible, use the `pub` or `show` keyword; to make them mutable, use the `mut` keyword.
+
+```coffee
+let x := # implicit do
+  let part1 := \Hello
+  let part2 := \World\!
+  part1 + part2
+# part1 and part2 are not accessible outside this block
+```
 
 ## Hello World!
 
@@ -91,27 +127,84 @@ fn main = print 'Hello World!'
 
 `fn main` can be skipped in single-file projects.
 
-## Statements
+### Functions
 
-### Indentation
+Function declarations begin with the `fn` keyword, followed by the name of the function, followed by a list of parameters inside the brackets, and an expression after `:=`. The parameters are separated by commas.
 
-Use indentation or curly braces to indicate code blocks.
+The expression comprising the right-hand side can refer to the name given to the definition in the left-hand side. In that case, it’s a recursive definition. For example:
 
 ```coffee
-rec fn List.has(item: any): bool
-  match this
+rec fn List.has(item: any): bool :=
+  match this:
     case [] { false }
     case [a, *rest] { a == item && rest.has item }
 ```
 
-Though you can also use a "closing keyword" such as `do`, `then` or `with`, or a right-spaced colon if a block is expected after a statement (such as `if` or `while`).
+### Operators
+
+Operators are defined with the `oper fn` compound keyword and one of three keywords: `prefix`, `infix` and `suffix`. This modifier determines how the operator is parsed. The `infix` keyword is the default.
 
 ```coffee
-rec fn List.has(item: any): bool
-  match this with
-    case [] then false
-    case [a, *rest] then a == item && rest.has item
+infix oper fn + := |x, y|: int := x + y
+prefix oper fn - := |x|: int := -x
+suffix oper fn + := |x|: int := x + 1
 ```
+
+### Types
+
+A user-defined data type is introduced with the type keyword. The left hand side declares a new type constructor with that name, followed by names for any type arguments. The right hand side is its definition.
+
+```coffee
+# sum types
+type Optional<x> := None + Some x
+
+# product types
+type Pair<x> := x * x
+type Triple<x> := x * x * x
+
+# set types
+type Union<x> := x | x
+type Intersection<x> := x & x
+type SymmetricDifference<x> := x ^ x
+type Difference<x> := x - x
+
+# nullable/optional types
+type Nullable<x> := ?a
+type Optional<a> := ?a
+
+# tuple types
+type Tuple<x, y> := (x, y)
+
+# list types
+type List<x> := []x
+# set types
+type Set<x> := :{}x
+# hash types
+type Hash<x, y> := :{x : y}
+
+# record types
+type Rec<x, y> := :{x : y}
+type RecOnly<x, y> := !{x : y}
+
+# function types
+type Fn<a, b> := a -> b
+type Fn2<a, b, c> := a -> b -> c
+
+# type operations on objects
+type TypeOf<a> := type a
+type ValuesOf<a> := val a
+type KeysOf<a> := key a
+type AttributeOf<a> := attr a
+type MethodOf<a, b> := attr a & a is fn
+```
+
+## Statements
+
+### Identifiers
+
+### Indentation
+
+Like Python, Ruby and Haskell, Trinity uses indentation as well as curly brackets to structure and organize your code. Curly brackets are typically used for the purpose of readability.
 
 ### Expressions and statements
 
@@ -248,7 +341,6 @@ Trinity also comes with a handful of data structures for grouping towards data v
 
 {a: 1, b: 2}: dict<str, int> # dictionary
 {1, 2, 3}: set<int> # set
-fn x: int = x: () -> int # symbol
 ```
 
 #### Constants
