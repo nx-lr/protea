@@ -188,7 +188,6 @@ repository:
       - include: "#symbols"
       - include: "#flag-specifier"
       - include: "#format-specifier"
-      - include: "#symbols-quoted"
       - include: "#type-annotation"
       - include: "#literals"
       - include: "#operators"
@@ -551,38 +550,6 @@ repository:
           1: {name: punctuation.definition.symbol.trin}
           2: {name: constant.other.symbol.trin}
 
-  symbols-quoted:
-    patterns:
-      - comment: multi-single quoted symbol
-        begin: (?<=^|[({\[\s])(:('''+))
-        contentName: string.quoted.single.trin
-        end: \s*((\2)(?!'+))
-        captures:
-          1: {name: punctuation.definition.string.trin}
-      - comment: single quoted symbol
-        begin: (?<=^|[({\[\s])(:('))
-        contentName: string.quoted.single.trin
-        end: \s*((\2)(?!'+))
-        captures:
-          1: {name: punctuation.definition.string.trin}
-        patterns:
-          - match: "''"
-            name: constant.character.escape.trin
-      - comment: multi-double quoted symbol
-        begin: (?<=^|[({\[\s])(:("""+))
-        contentName: string.quoted.double.trin
-        end: \s*((\2)(?!"+))
-        captures:
-          1: {name: punctuation.definition.string.trin}
-        patterns: [include: "#string-escapes"]
-      - comment: double quoted symbol
-        begin: (?<=^|[({\[\s])(:("))
-        contentName: string.quoted.double.trin
-        end: \s*((\2)(?!"+))
-        captures:
-          1: {name: punctuation.definition.string.trin}
-        patterns: [include: "#string-escapes"]
-
   strings-unquoted:
     comment: Unquoted string
     applyEndPatternLast: true
@@ -596,14 +563,14 @@ repository:
   strings:
     patterns:
       - comment: multi-single quoted string
-        begin: (?<!'+)('''+)\s*
+        begin: (?<!'+)\s*('''+)\s*
         contentName: string.quoted.single.trin
         end: \s*((\1)(?!'+))
         captures:
           1: {name: punctuation.definition.string.trin}
         patterns: [include: "#embedded-verbatim"]
       - comment: single quoted string
-        begin: (?<!'+)(')\s*
+        begin: (?<!'+)\s*(')\s*
         contentName: string.quoted.single.trin
         end: \s*((\1)(?!'+))
         captures:
@@ -613,14 +580,14 @@ repository:
             name: constant.character.escape.trin
           - include: "#embedded-verbatim"
       - comment: multi-double quoted string
-        begin: (?<!"+)("""+)\s*
+        begin: (?<!"+)\s*("""+)\s*
         contentName: string.quoted.double.trin
         end: \s*((\1)(?!"+))
         captures:
           1: {name: punctuation.definition.string.trin}
         patterns: [include: "#string-content"]
       - comment: double quoted string
-        begin: (?<!"+)(")\s*
+        begin: (?<!"+)\s*(")\s*
         contentName: string.quoted.double.trin
         end: \s*((\1)(?!"+))
         captures:
@@ -3233,50 +3200,49 @@ repository:
       - include: "#types"
 
   type-embedded-expression:
-    patterns:
-      - begin: (\${)\s*
-        end: \s*(})
-        name: entity.quasi.component.trin
-        captures:
-          1: {name: punctuation.section.embedded.trin}
-        patterns: [include: "types", include: $self]
+    begin: (\${)\s*
+    end: \s*(})
+    name: entity.quasi.component.trin
+    captures:
+      1: {name: punctuation.section.embedded.trin}
+    patterns: [include: "#types", include: $self]
 
   type-strings:
     comment: coming soon
     patterns:
       - comment: single quoted raw string
         begin: (?<!'+)\s*('''+)
-        contentName: string.quoted.single.pta
+        contentName: string.quoted.single.trin
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.pta}
+          1: {name: punctuation.definition.string.trin}
         patterns:
           - include: "#type-embedded-verbatim"
       - comment: simple single quoted raw string
         begin: (?<!'+)\s*(')
-        contentName: string.quoted.single.pta
+        contentName: string.quoted.single.trin
         end: \s*((\1)(?!'+))
         captures:
-          1: {name: punctuation.definition.string.pta}
+          1: {name: punctuation.definition.string.trin}
         patterns:
           - match: "''"
-            name: constant.character.escape.pta
+            name: constant.character.escape.trin
           - include: "#type-embedded-verbatim"
       - comment: double quoted standard string
-        begin: (?<!"+)\s*("""+|")
-        contentName: string.quoted.double.pta
+        begin: (?<!"+)\s*("""+)
+        contentName: string.quoted.double.trin
         end: \s*((\1)(?!"+))
         captures:
-          1: {name: punctuation.definition.string.pta}
+          1: {name: punctuation.definition.string.trin}
         patterns:
           - include: "#string-escapes"
           - include: "#type-embedded"
-      - applyEndPatternLast: 1
-        begin: \s*\B(\\)(?=\$?\w)
-        end: (?=[\p{Z}\p{P}\p{S}])|$
-        name: string.unquoted.pta
+      - comment: double quoted standard string
+        begin: (?<!"+)\s*(")
+        contentName: string.quoted.double.trin
+        end: \s*((\1)(?!"+))
         captures:
-          1: {name: punctuation.definition.string.pta}
+          1: {name: punctuation.definition.string.trin}
         patterns:
           - include: "#string-escapes"
           - include: "#type-embedded"
