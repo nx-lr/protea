@@ -408,15 +408,15 @@ person = { age: 23, name: "John" }
 # Simple interpolation
 greeting = "Hello $name!"
 # Accessing properties
-greeting = "Hello $person.name. "
+         = "Hello $person.name. " +
   "You are $person['age'] years old."
 # Type assertions
-greeting = "Hello $person.name. "
+         = "Hello $person.name. " +
   "You are $person{int}['age'] years old."
 # Calling functions and methods
-greeting = "Hello $name.upper(/locale='en')"
-greeting = "Hello $upper(name)"
-greeting = "Hello ${name.upper!}!"
+         = "Hello $name.upper(/locale='en')"
+         = "Hello $upper(name)"
+         = "Hello ${name.upper!}!"
 ```
 
 #### Formatting
@@ -467,7 +467,7 @@ func(word)
 {prop: \word}
 ```
 
-### Accessing and modifying strings
+#### Accessing and modifying strings
 
 Retrieve a value from the string by using subscript syntax, passing the index of the value you want to retrieve within postfix square brackets. You can also use negative indices to access characters from the end of the string.
 
@@ -514,8 +514,10 @@ Similar to block strings and comments, Trinity supports block regular expression
 They go a long way towards making complex regular expressions readable.
 
 ```coffee
-# match a url with parameters
 `^(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$`
+`[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] `]`
+
+# match a url with parameters
 
 ` (?i)
   ^ 0b[01]+    |              # binary
@@ -525,9 +527,110 @@ They go a long way towards making complex regular expressions readable.
 `i
 ```
 
-The delimiter `` ` `` must be escaped inside the top level of regular expressions.
+Protea uses the [Oniguruma](https://github.com/kkos/oniguruma/blob/master/doc/RE) regular expression flavor by default, the same regex engine that powers Ruby and PHP7, with a few key extensions that make your regexes more concisene and less repetitive.
 
-#### Lists
+The delimiter `` ` `` must be escaped inside the top level of regular expressions. Interpolation and formatting also applies but the interpolated result is usually escaped so to prevent generating invalid regular expressions.
+
+#### Basic Syntax
+
+```coffee
+`\`` # escape a meta-character
+`|` # alternation
+`&` # join operator
+`()` # group
+`[]` # character class
+`{}` # repetition
+`[^]` # negated character class
+`''` # quotation
+`""` # double quotation
+`.` # wildcard
+`\1` # numeric back-reference
+`\k<name>` # named back-reference
+`\g<name>` # subroutine
+
+(* applies also to string literals *)
+`$n ${}` # interpolation
+`#name #{}` # placeholder argument
+`%n` # Formatting
+
+`^` # beginning of line
+`$` # end of line
+`\b` # word boundary
+`\B` # non-word boundary
+`\A` # beginning of string
+`\Z` # end of string
+`\z` # end of string
+`\G` # end of last match
+`\K` # keep last match
+
+`*` # zero or more
+`+` # one or more
+`?` # zero or one
+`{2}` # exactly 2
+`{2,}` # 2 or more
+`{2,3}` # 2 to 3
+
+`**` # greedy
+`*?` # lazy
+`*+` # eager
+```
+
+#### Escapes
+
+```coffee
+# control characters
+`[\a \b \e \f \n \r \t \v
+\ca \cz \ma \mz]`
+
+# multi-escapes
+`[\x00-\xFF] [\u0000-\uFFFF]` # hexadecimal
+`[\0-\65535]` # decimal
+`[\b0-\b111111111111111]` # binary
+`[\o0-\o177777]` # octal
+```
+
+#### Character classes
+
+```coffee
+`\s \S` # whitespace
+`\d \D` # digit
+`\w \W` # word
+`\h \H` # hex digit
+`\u \U` # uppercase
+`\l \L` # lowercase
+`\q \Q` # punctuation and symbols
+`\o` # any character
+
+`\t \r \n \f \v` # control characters
+`\T \N \F \V` # control characters
+
+`\c \C` # first character of identifier
+`\i \I` # remaining characters of identifier
+`\x \X` # extended grapheme cluster
+`\p \P` # grapheme cluster
+`\R` # platform-independent newline
+
+`\s` # whitespace
+`\S` # non-whitespace
+`\d` # digit
+`\D` # non-digit
+`\w` # word character
+`\W` # non-word character
+`\h` # horizontal whitespace
+`\H` # non-horizontal whitespace
+`\v` # vertical whitespace
+`\V` # non-vertical whitespace
+
+`\p{name}` # Unicode property
+`\P{name}` # Unicode property
+`\X` # hexadecimal digit
+`\cX` # control character
+`\CX` # control character
+`\N{name}` # Unicode character name
+`\X{name}` # Unicode character name
+```
+
+### Lists
 
 Lists are written with square brackets, and whose elements are separated by newlines. They can contain any type of value. They can be nested, and can be empty.
 
