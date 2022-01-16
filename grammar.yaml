@@ -1038,7 +1038,7 @@ repository:
           4: {name: keyword.operator.quantifier.greedy.trin}
       - match: \\\d+
         name: keyword.other.back-reference.trin
-      - match: \{(\s*\d*\s*(?:,?\s*\d*\s*)*)\}
+      - match: \{(?:[-+]?\d+|[\s,;:])+}
         name: keyword.operator.quantifier.trin
       - begin: (\\k<)
         end: \s*(>)
@@ -1269,12 +1269,12 @@ repository:
         name: constant.other.character-class.unicode.trin
       - match: (?i)\\[ci]({\w+})?
         name: constant.other.character-class.xml.trin
+      - match: (?i)\\n{(?:[^\\{}]|\\.)+}
+        name: constant.character.escape.unicode.name.trin
       - match: \\[a-z]
         name: constant.other.character-class.trin
       - match: \\[A-Z]
         name: constant.other.character-class.negated.trin
-      - match: (?i)\\n{(?:[^\\{}]|\\.)+}
-        name: constant.character.escape.unicode.name.trin
       - match: (?i)\\[\p{L}\p{N}]
         name: constant.character.escape.trin
       - match: \\[\p{S}\p{P}]
@@ -1291,28 +1291,28 @@ repository:
       - match: |
           (?xi)
           ( # from
-              \\d?\d+ # decimal escape
-            | \\[xu]\h+ # hex escape
-            | \\o[0-7]+ # octal escape
-            | \\b[01]+ # binary escape
+              \\(?:d?\d+|d{[\d\s,;]+}) # decimal escape
+            | \\[xu](?:\h+|{[\h\s,;]+}) # hex escape
+            | \\o(?:[0-7]+|{[0-7\s,;]+}) # octal escape
+            | \\b(?:[01]+|{[01\s,;]+}) # binary escape
             | \\[cm][a-z] # meta-character
-            | \\p[a-z]{1,2} # Unicode char-group
-            | \\[a-zA-Z] # char-class
-            | \\. # any escape character
+            | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
+            | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
+            | \\(?:[abefnrtv]|[^a-zA-Z]) # any escape character
             | [^-\\\[\]] # any unescaped character
           )
             \s*
               (-) # range
             \s*
           ( # to
-              \\d?\d+ # decimal escape
-            | \\[xu]\h+ # hex escape
-            | \\o[0-7]+ # octal escape
-            | \\b[01]+ # binary escape
+              \\(?:d?\d+|d{[\d\s,;]+}) # decimal escape
+            | \\[xu](?:\h+|{[\h\s,;]+}) # hex escape
+            | \\o(?:[0-7]+|{[0-7\s,;]+}) # octal escape
+            | \\b(?:[01]+|{[01\s,;]+}) # binary escape
             | \\[cm][a-z] # meta-character
-            | \\p[a-z]{1,2} # Unicode char-group
-            | \\[a-zA-Z] # char-class
-            | \\. # any escape character
+            | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
+            | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
+            | \\(?:[abefnrtv]|[^a-zA-Z]) # any escape character
             | [^-\\\[\]] # any unescaped character
           )
         captures:
