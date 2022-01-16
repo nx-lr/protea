@@ -52,17 +52,15 @@ mut let cubes = from x in 1 to 100
 
 ## Design Goals
 
-If there is one motivating idea behind Trinity, is that the technology for creating software should be as simple as possible, using as few tools and libraries as possible, and without a steep learning curve. So we decided that given the prevalence of web-based technology and languages, we should focus on the one and only language that is most suited to the task at hand: JavaScript.
+Trinity's core idea is that software should be developed as fast as possible, using as few tools, libraries, frameworks and languages as possible, while giving adequate and reasonable performance improvements over existing, conventional methods. Adding new features to a project should be easy, without us having to go through the pains of deciding which technology and stack to use. Needless complexity and difficulties, fragmented builds and projects, all of that should be stripped away, leaving only the exhilarating creative essence of programming that made all of us want to learn about in the first place.
 
-Adding new features to a project should be easy, without us having to go through the pains of deciding which technology and stack to use. Needless complexity and difficulties, fragmented builds and projects, all of that should be stripped away, leaving only the exhilarating creative essence of programming that made all of us want to learn about in the first place.
-
-Or at the very least, if this can't be done, let's build something that can, on top of what's already there.
+Or at the very least, if this can't be done, let's build something that can, on top of what's already there. So given the prevalence of JavaScript over our every day lives, we should focus on it. And while we're at that, Trinity will able to compile to WebAssembly to tap on its performance benefits over vanilla JavaScript.
 
 ## Introduction
 
-Trinity is a programming language that compiles to JavaScript, while offering a rich set of compile- and run-time features and a syntax reminiscent of both functional and object-oriented/procedural languages like like Ruby, Haskell and OCaml.
+Trinity is a programming language that compiles to JavaScript, while offering a syntax that is very familiar to JavaScript, Ruby, Python, Scala, Bash, Haskell and OCaml developers. It combines multiple paradigms and ideas from these languages, all while compiling performant, type-safe and highly-optimized JavaScript code and WebAssembly modules.
 
-It is intended to be compiled and used from within JavaScript projects on its side to deliver the best possible performance without having to install anything (other than Node, of course).
+You can use Trinity from within existing JavaScript projects to give your code a new level of performance, conciseness, and flexibility, and a never-before connection to modules from other languages through the WebAssembly interop, all while not having to install anything (other than Node, of course).
 
 Trinity's compiler, package manager and core libraries will be implemented directly in JavaScript, and runs on top of any JavaScript backend. You still have access to your favorite libraries and packages, and you can use Trinity with any JavaScript runtime and projects.
 
@@ -70,7 +68,7 @@ Trinity's compiler, package manager and core libraries will be implemented direc
 
 #### Disclaimer:
 
-Trinity is currently still in its early stages of conceptualisation and experimentation. This document mainly serves as a guide to the language's design, and will touch shortly on the implementation.
+Trinity is currently still in its conceptual and experimental stage, as the creator is experimenting on the language's grammar. This document mainly serves as a guide to the its design, and will touch a bit on the implementation.
 
 </small>
 
@@ -539,7 +537,7 @@ The delimiter `` ` `` must be escaped inside the top level of regular expression
 `&` # join operator
 `()` # group
 `[]` # character class
-`{}` # repetition
+`{,}` # repetition
 `[^]` # negated character class
 `''` # quotation
 `""` # double quotation
@@ -578,14 +576,18 @@ The delimiter `` ` `` must be escaped inside the top level of regular expression
 #### Escapes
 
 ```coffee
-# control characters
-`[\a \b \e \f \n \r \t \v
-\ca \cz \ma \mz]`
+# control characters: same as in string literals
+`[
+  \a \b \e \f \n \r \t \v
+  \ca \cz \ma \mz
+]`
+
+# do note `\a` and `\b` mean something else outside []
 
 # multi-escapes
 `[\x00-\xFF] [\u0000-\uFFFF]` # hexadecimal
 `[\0-\65535]` # decimal
-`[\b0-\b111111111111111]` # binary
+`[\b0-\b1111111111111111]` # binary
 `[\o0-\o177777]` # octal
 ```
 
@@ -599,7 +601,9 @@ The delimiter `` ` `` must be escaped inside the top level of regular expression
 `\u \U` # uppercase
 `\l \L` # lowercase
 `\q \Q` # punctuation and symbols
-`\o` # any character
+`\j \J` # special characters
+`\O` # any character
+`\X` # any character
 
 `\t \r \n \f \v` # control characters
 `\T \N \F \V` # control characters
@@ -622,12 +626,11 @@ The delimiter `` ` `` must be escaped inside the top level of regular expression
 `\V` # non-vertical whitespace
 
 `\p{name}` # Unicode property
-`\P{name}` # Unicode property
+`\P{name}` # Negated Unicode property
 `\X` # hexadecimal digit
 `\cX` # control character
 `\CX` # control character
 `\N{name}` # Unicode character name
-`\X{name}` # Unicode character name
 ```
 
 ### Lists
@@ -635,7 +638,7 @@ The delimiter `` ` `` must be escaped inside the top level of regular expression
 Lists are written with square brackets, and whose elements are separated by newlines. They can contain any type of value. They can be nested, and can be empty.
 
 ```coffee
-val list = ['hello', 'world', 'how are you']
+let list = ['hello', 'world', 'how are you']
 ```
 
 The type of a list is written in full as `list<type>`, `list type` or `[]type`.
