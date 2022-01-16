@@ -39,6 +39,8 @@ fixes: |
     removed import, export, var, val, let, const;
     shortened some to three or four letters:
       'struct' -> 'inter', 'module' -> 'mod', 'markup' -> 'mark', 'object' -> 'obj'
+  - Fixed regular expression highlighting:
+    - Added range clause x-y-z
 
   Fixes:
 
@@ -1298,23 +1300,38 @@ repository:
             | \\[cm][a-z] # meta-character
             | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
             | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
-            | \\(?:[abefnrtv]|[^a-zA-Z]) # any escape character
+            | \\. # any escape character
             | [^-\\\[\]] # any unescaped character
           )
             \s*
-              (-) # range
+              (<?-<?|>?->?|>>|<<) # range
             \s*
           ( # to
               \\(?:d?\d+|d{[\d\s,;]+}) # decimal escape
             | \\[xu](?:\h+|{[\h\s,;]+}) # hex escape
             | \\o(?:[0-7]+|{[0-7\s,;]+}) # octal escape
             | \\b(?:[01]+|{[01\s,;]+}) # binary escape
-            | \\[cm][a-z] # meta-character
+            | \\[c][a-z] # meta-character
             | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
             | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
-            | \\(?:[abefnrtv]|[^a-zA-Z]) # any escape character
+            | \\. # any escape character
             | [^-\\\[\]] # any unescaped character
-          )
+          ) (?:
+              \s*
+                (-) # range
+              \s*
+            ( # to
+                \\(?:d?\d+|d{[\d\s,;]+}) # decimal escape
+              | \\[xu](?:\h+|{[\h\s,;]+}) # hex escape
+              | \\o(?:[0-7]+|{[0-7\s,;]+}) # octal escape
+              | \\b(?:[01]+|{[01\s,;]+}) # binary escape
+              | \\[c][a-z] # meta-character
+              | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
+              | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
+              | \\(?:[abefnrtv]|[^a-zA-Z]) # any escape character
+              | [^-\\\[\]] # any unescaped character
+            )
+          )?
         captures:
           1:
             name: constant.other.character-class.range.from.trin
@@ -1325,6 +1342,13 @@ repository:
             name: keyword.operator.range.trin
           3:
             name: constant.other.character-class.range.to.trin
+            patterns:
+              - include: '#regexp-character-operators'
+              - include: '#regexp-character-class'
+          4:
+            name: keyword.operator.range.trin
+          5:
+            name: constant.other.character-class.range.by.trin
             patterns:
               - include: '#regexp-character-operators'
               - include: '#regexp-character-class'
