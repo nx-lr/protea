@@ -8,6 +8,7 @@ mod Button
       font-size: 20px
       font-weight: bold
       background-color: white
+
     let times = match count with
       case 1: "once"
       case 2: "twice"
@@ -31,7 +32,7 @@ number = if opposite then -42 else number
 let square = |x|: int = x * x
 # Lists
 let list = [1, 2, 3, 4, 5]
-# Hashes
+# Dictionaries
 let math = {
   sqrt: Math.sqrt
   square: square
@@ -87,146 +88,68 @@ Like all programming languages, Trinity is a language in which programs are not 
 
 This document describes Trinity in terms of its default and (currently) only syntax: its written form as source code.
 
-## Top-level declarations
+## Statements
 
-A top-level declaration appears on the top-level or outermost scope of a file. It can be one of the following:
+### Indentation
 
-- A declaration, like `let x := 42`, or `struct type Optional a := None | Some a`.
-- A `use` clause, like `use base` or `use math.sqrt`.
-
-### Declarations
-
-Declarations define program entities like variables or functions.
-
-Each declaration can be preceded with a number of _modifier_ keywords which can be placed to the left of said keyword, which change or control the behavior of the declaration.
-
-`:=` is the declaration operator and is used to separate the name from its definition, as opposed to `=` which is assignment.
+Like Scala 3, YAML and Haskell, Trinity is a "hybrid" language in which you can use curly brackets and indentation to structure and organize your code. though indentation is used only for the purpose of readability.
 
 ```coffee
-let x := 1
-mut let x := 1
-```
-
-All declarations are immutable, private and block-scoped by default. To make them public or visible, use the `pub` or `show` keyword; to make them mutable, use the `mut` keyword.
-
-```coffee
-let x := # implicit do
-  let part1 := \Hello
-  let part2 := \World\!
-  part1 + part2
-# part1 and part2 are not accessible outside this block
-```
-
-## Hello World!
-
-```coffee
-print 'Hello World!'
-# or
-fn main = print 'Hello World!'
-```
-
-`fn main` can be skipped in single-file projects.
-
-### Functions
-
-Function declarations begin with the `fn` keyword, followed by the name of the function, followed by a list of parameters inside the brackets, and an expression after `:=`. The parameters are separated by commas.
-
-The expression comprising the right-hand side can refer to the name given to the definition in the left-hand side. In that case, it’s a recursive definition. For example:
-
-```coffee
-rec fn List.has(item: any): bool :=
-  match this:
+rec fn List.has(item: any): bool
+  match this
     case [] { false }
     case [a, *rest] { a == item && rest.has item }
 ```
 
-### Operators
-
-Operators are defined with the `oper fn` compound keyword and one of three keywords: `prefix`, `infix` and `suffix`. This modifier determines how the operator is parsed. The `infix` keyword is the default.
+Though you can also use `then` or a right-spaced colon if a code block is expected after a statement (such as `if` or `while`).
 
 ```coffee
-infix oper fn + := |x, y|: int := x + y
-prefix oper fn - := |x|: int := -x
-suffix oper fn + := |x|: int := x + 1
+rec fn List.has(item: any): bool
+  match this
+    case []: false
+    case [a, *rest]: a == item && rest.has item
 ```
-
-### Types
-
-A user-defined data type is introduced with the type keyword. The left hand side declares a new type constructor with that name, followed by names for any type arguments. The right hand side is its definition.
-
-```coffee
-# sum types
-type Optional<x> := None + Some x
-
-# product types
-type Pair<x> := x * x
-type Triple<x> := x * x * x
-
-# set types
-type Union<x> := x | x
-type Intersection<x> := x & x
-type SymmetricDifference<x> := x ^ x
-type Difference<x> := x - x
-
-# nullable/optional types
-type Nullable<x> := ?a
-type Optional<a> := ?a
-
-# tuple types
-type Tuple<x, y> := (x, y)
-
-# list types
-type List<x> := []x
-# set types
-type Set<x> := :{}x
-# hash types
-type Hash<x, y> := :{x : y}
-
-# record types
-type Rec<x, y> := :{x : y}
-type RecOnly<x, y> := !{x : y}
-
-# function types
-type Fn<a, b> := a -> b
-type Fn2<a, b, c> := a -> b -> c
-
-# type operations on objects
-type TypeOf<a> := type a
-type ValuesOf<a> := val a
-type KeysOf<a> := key a
-type AttributeOf<a> := attr a
-type MethodOf<a, b> := attr a & a is fn
-```
-
-## Statements
-
-### Identifiers
-
-### Indentation
-
-Like Python, Ruby and Haskell, Trinity uses indentation as well as curly brackets to structure and organize your code. Curly brackets are typically used for the purpose of readability.
 
 ### Expressions and statements
 
-Use semicolons to separate multiple statements on the same line, and commas to separate expressions in brackets.
+Use semicolons to separate multiple statements on the same line, and commas to separate expressions in brackets. You can pass arguments to functions Haskell style - parentheses here have nothing to do with function calls.
 
-The last statement on a line is not required to have a semicolon, and so do the last expressions in brackets.
+This kind of evaluation strategy for expressions is Applicative Order Call-by-Value. See Function application for details.
 
 ```coffee
-print sys.inspect object
-print(sys.inspect, object)
+print sys.inspect object == print(sys.inspect, object)
+func (x + 3) x - 3 == func(x + 3, x) - 3
+```
+
+You can call functions with named arguments by using the `/` syntax. Named arguments have no order in functions, so you can call them in any order.
+
+```coffee
+print(x, name, /sep = "\n")
+print x name /sep "\n"
 ```
 
 ### Comments
 
-Comments support JSDoc and Markdown.
+Comments start with the `#` character followed by a space. The space is compulsory. All following text up to the end of the line is considered a comment. They can be on their own line or follow after a statement.
 
 ```coffee
-# line comment
-(* block comment *)
+# This is a single line comment.
+(*
+  This is a multiline comment.
+  (* It can be nested. *)
+*)
+```
 
-#: doc comment
-(: docblock comment :)
+Documentation comments `#:` and `#+ +#` are special forms of comments that are used to document your code. They are used to generate documentation, and support JSDoc and Markdown formatting.
+
+The compiler command `trin doc` automatically extracts the API documentation and generates a website to present it.
+
+```coffee
+#: This is a single line comment.
+(:
+  This is a multiline comment.
+  (: It can be nested. :)
+:)
 ```
 
 ### Variables
@@ -242,7 +165,7 @@ y += 2
 y := 3
 ```
 
-Variables are block-scoped.
+Variables are block-scoped. Declarations are scoped through code blocks, one such example is `do`. Also take note that in code blocks, the last line is implicitly returned.
 
 ```coffee
 let x = do
@@ -256,8 +179,8 @@ let x = do
 
 ```coffee
 # Anonymous function
-let double = |x: int|: int = x * 2
-let double = fn(x: int): int = x * 2
+double = |x: int|: int = x * 2
+double = fn(x: int): int = x * 2
 
 # Named function declaration
 fn double(x: int): int = x * 2
@@ -306,8 +229,8 @@ Variables are compared case-insensitively until the first non-lowercase characte
 
 ```coffee
 fn normalize(ident: str): str =
-  let ret := ref ident[`[^\pL\d]` ``]
-  ret = ret[`\b.*(?!\pL)`] + ret[`\pLl.*\b`].lower!
+  ret = ref ident[`[^\pL\d]` ``]
+  ret := ret[`\b.*(?!\pL)`] + ret[`\pLl.*\b`].lower!
   ret
 
 fn cmpIdent(a: str, b: str): bool =
@@ -318,7 +241,7 @@ WILDFIRE____ == WILDFIRE
 wildFire == wildfire == wild_fire == wild-fire
 ```
 
-### Data types
+## Data types
 
 Trinity comes with many common data types, such as strings, numbers, booleans and regular expressions. These are all defined in the `core` library.
 
@@ -338,12 +261,11 @@ Trinity also comes with a handful of data structures for grouping towards data v
 ```coffee
 [1, 2, 3]: list<int> # list
 [1, 2, 3]: [int, int, int] # tuple
-
-{a: 1, b: 2}: dict<str, int> # dictionary
 {1, 2, 3}: set<int> # set
+{a: 1, b: 2}: dict<str, int> # dictionary
 ```
 
-#### Constants
+### Constants
 
 Trinity has four constants: `null` and `void` which are both equivalent to `null` and `undefined` in JavaScript, respectively. `true` and `false` are also equivalent to `true` and `false` in JavaScript.
 
@@ -356,25 +278,24 @@ null: null
 void: void
 ```
 
-#### Numeric types
+### Numeric types
 
 Trinity distinguishes between integers and floats as separate value types. Integers are 64-bit signed integers, while floats are 64-bit IEEE 754 floating point numbers.
 
 ```coffee
 (* integers *)
-42
--0x42
-0o52
-0b101010
+42 # decimal
+-0x42 # hexadecimal
+0o52 # octal
+0b101010 # binary
 
 (* floats *)
-42.0
--0.42
-0.42e2
-0.42e-2 0.42e+2
-0x0.13p2
-0o0.13p-2
-0b0.1p+2
+# decimal point
+42.0; -0.42; 42.; -.42;
+# with exponents
+0.42e2; 0.42e-2; 0.42e+2
+# hexadecimal, octal and binary
+0x0.13p2; 0o0.13p-2; 0b0.1p+2
 
 # Numbers can contain underscores
 # or leading zeroes
@@ -382,32 +303,34 @@ Trinity distinguishes between integers and floats as separate value types. Integ
 nan; infin # special floating point constants
 ```
 
-Trinity also comes with other numeric types, such as rational, complex, and arbitrarily-sized numbers prefixed with `big`.
+Trinity also comes with other numeric types, such as rational and complex numbers, and even their arbitrarily-sized counterparts.
 
 ```coffee
-18446744073709551616n # bigint
-1r / 3r # rational
-1 + 2i # complex
+18446744073709551616n: bigint
+1r / 3r: rat int int
+1 + 2i: comp int int
 ```
 
-#### Strings
+### Strings
 
-Strings are written inside single or double quotes, which can span multiple lines. They can contain any character, including newlines, tabs, and escape sequences.
+Strings are written inside single or double quotes, which can span multiple lines. They can contain any character, including newlines, tabs, and escape sequences, irrespective of indentation.
 
-They can be interpolated with `#{}` and can be concatenated with `+`.
+The difference between single quoted and double quoted strings is that single quoted strings do not need escaping.
 
 ```coffee
-let x: str = "Hello World!" # escaped string
-let y: str = 'Hello World!' # verbatim string
+mut x: str = "Hello World!" # escaped string
+mut y: str = 'Hello World!' # verbatim string
 
 # all forms of strings can contain newlines
-let x = "Hello
+x = "Hello
 World!"
-let y = 'Hello
+y = 'Hello
 World!'
+```
 
-(* String escapes *)
-# only applicable to double quotes
+Most escape sequences from other languages are allowed within double quotes, including:
+
+```coffee
 "\n" # newline
 "\r" # carriage return
 "\t" # tab
@@ -428,48 +351,87 @@ World!'
 # all characters can be escaped, including
 # spaces, backslashes and quotes
 "\ " "\\" "\""
+```
 
+Numeric escape sequences are also allowed, in which Unicode character code points can be encoded in decimal, binary, octal or hexadecimal. The same escapes with curly brackets can allow you to put in Unicode character sequences separated by spaces, semicolons or commas.
+
+```coffee
 # decimal, hexadecimal, binary and octal
 # characters can be escaped
-"\x0" "\x1F" "\x10FFFF" "\uFF"
-"\65535" "\d65535"
+"\x0"; "\x1F"; "\x10FFFF"; "\uFF"
+"\65535"; "\d65535"
 "\o377"
 "\b11111111"
 
 # Multiple characters can also be placed
 # within curly brackets
 "\u{1F680 1F681 1F682}"
+```
 
-(* Interpolation *)
-# By default all values are converted
-# into strings and concatenated into
-# the output
-"Hello $name!"
-"Hello $person.name, you are $person.age years old!"
-"Hello $person.upper(), you are $age[person] years old!"
+#### Interpolation
 
-# A post
+Both types of strings support interpolation with `${}`, which is a way to embed variables. The braces can be omitted if the expression is only:
 
-(* String formatting *)
-# a sequence of switches with optional values
-# that are used for transforming values into
-# other strings before including them in the output
+- a single identifier: `name`
+- a qualified name: `x.y.z` or `x::y::z`
+- an object accessor: `[][1]`
+- a function call: `fn()`
+- a numeric literal: `42` or `0x10`
+- and any combination of the like
+
+By default, all embedded expressions are converted to strings by passing it through the `str` method and concatenating the resulting string. You can override this behaviour by using the construct `ident'string'` instead.
+
+```coffee
+greeting = "Hello $name!"
+person = { age: 23, name: "John" }
+greeting = "Hello $person.name. You are $person['age'] years old."
+greeting = "Hello $person.name. You are $person{int}['age'] years old."
+
+greeting = "Hello $name.upper(/locale='en')"
+greeting = "Hello ${name.upper!}!"
+```
+
+#### Formatting directives
+
+Format directives are used to perform several string transformations before embedding it into the string. Each directive begins with a percent sign, and then a series of flags separated by pipe characters, and an optional value after the colon.
+
+```coffee
 "Hello $name%type!"
 "Hello $name%switch1:value1|switch2:value2"
 "Hello $name%switch1:value1|switch2:value2"
 
-# some examples:
-let name = "World"
-"Hello $name%upper!" # Hello WORLD!
+# Some examples
+"Hello ${'world'}"
+"Hello ${'world'}%upper" # => "Hello WORLD"
+"${1234567890}%sep:{','}|sep:{id + 1}" # => "1,234,567,890"
+"Percentage correct answers: ${correct // total}%dp:2|unit:{'%'}"
+```
 
-(* placeholders (same as in function calls) *)
-"Hello #name" # named argument
+#### Template strings
+
+You can create template strings by using the `#` character to mark placeholder arguments in a string. The result is a function.
+
+, as in `#name`, or positional, as in `#0` or `#-1` (negative indices count from the last).
+
+You can also spread arguments into the string by using the `*` operator, and mark them as optional by using the `?` operator.
+
+```coffee
+let greeting = "Hello #0!"
+greeting "World" # => "Hello World!"
+
+"Hello #name" || "Hello #/name" # named argument
 "Hello #{name=1}" # `name` with a default
 "Hello #{x: int}" # `x` with a type
-"Hello #1" # positional argument
+"Hello #name" # named argument
+"Hello #1..<100..10" # positional argument
 "Hello #{1 = 1}" # positional argument
 "Hello #{-1: int}" # typed argument
+"Hello #?name" # optional argument
+"Hello #*name" # spread argument
+"Hello #*?name" # optional spread argument
+```
 
+```coffee
 (* accessing strings *)
 x = "Hello"
 # if any values is omitted, the values default to [0,0,1]
@@ -501,4 +463,115 @@ x[,,3] # skip over every third character
 
 (* list types *)
 [1, 2, 3]
+```
+
+## Top-level declarations
+
+A top-level declaration appears on the top-level or outermost scope of a file. It can be one of the following:
+
+- A declaration, like `let x = 42`, or `struct type Optional a = None | Some a`.
+- A `use` clause, like `use base` or `use math.sqrt`.
+
+### Declarations
+
+Declarations define program entities like variables or functions.
+
+Each declaration can be preceded with a number of _modifier_ keywords which can be placed to the left of said keyword, which change or control the behavior of the declaration.
+
+`=` is the declaration operator and is used to separate the name from its definition, as opposed to `=` which is assignment.
+
+```coffee
+let x = 1
+mut let x = 1
+```
+
+All declarations are immutable, private and block-scoped by default. To make them public or visible, use the `pub` or `show` keyword; to make them mutable, use the `mut` keyword.
+
+```coffee
+let x = do
+  let part1 = 'Hello'
+  let part2 = 'World!'
+  part1 + part2
+# part1 and part2 are not accessible outside this block
+```
+
+## Hello World!
+
+```coffee
+print 'Hello World!'
+# or
+fn main = print 'Hello World!'
+```
+
+`fn main` can be skipped in single-file projects.
+
+### Functions
+
+Function declarations begin with the `fn` keyword, followed by the name of the function, followed by a list of parameters inside the brackets, and an expression after `=`. The parameters are separated by commas.
+
+The expression comprising the right-hand side can refer to the name given to the definition in the left-hand side. In that case, it’s a recursive definition. For example:
+
+```coffee
+rec fn List.has(item: any): bool =
+  match this:
+    case [] { false }
+    case [a, *rest] { a == item && rest.has item }
+```
+
+### Operators
+
+Operators are defined with the `oper fn` compound keyword and one of three keywords: `prefix`, `infix` and `suffix`. This modifier determines how the operator is parsed. The `infix` keyword is the default.
+
+```coffee
+infix oper fn + = |x, y|: int = x + y
+prefix oper fn - = |x|: int = -x
+suffix oper fn + = |x|: int = x + 1
+```
+
+### Types
+
+A user-defined data type is introduced with the type keyword. The left hand side declares a new type constructor with that name, followed by names for any type arguments. The right hand side is its definition.
+
+```coffee
+# sum types
+type Optional<x> = None + Some x
+
+# product types
+type Pair<x> = x * x
+type Triple<x> = x * x * x
+
+# set types
+type Union<x> = x | x
+type Intersection<x> = x & x
+type SymmetricDifference<x> = x ^ x
+type Difference<x> = x - x
+
+# nullable/optional types
+type Nullable<x> = ?a
+type Optional<a> = ?a
+
+# tuple types
+type Tuple<x, y> = (x, y)
+
+# list types
+type List<x> = []x
+# set types
+type Set<x> = :{}x
+# hash types
+type Hash<x, y> = :{x : y}
+
+# record types
+type Rec<x, y> = :{x : y}
+type RecOnly<x, y> = !{x : y}
+
+# function types
+type Fn<a, b> = a -> b
+type Fn2<a, b, c> = a -> b -> c
+
+# type operations on objects
+type TypeOf<a> = type a
+type ValuesOf<a> = val a
+type KeysOf<a> = key a
+type AttributeOf<a> = attr a
+type MethodOf<a, b> = attr a & a is fn
 ```
