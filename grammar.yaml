@@ -4599,9 +4599,11 @@ repository:
       - include: '#semicolon'
 
   line-continuation:
-    begin: (\\)\s*(?=\s\([*:]|\s#:?|$)
+    begin: \s*(\\)\s*(?=(#:?|\([*:])\s|$)
     end: ^\s*
-    name: punctuation.separator.continuation.line.trin
+    captures:
+      1: {name: punctuation.separator.continuation.line.trin}
+    patterns: [include: '#comments']
   comma:
     match: \s*(,)
     name: punctuation.separator.comma.trin
