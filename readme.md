@@ -58,7 +58,7 @@ Or at the very least, if this can't be done, let's build something that can, on 
 
 ## Introduction
 
-Trinity is a programming language that compiles to JavaScript, while offering a syntax that is very familiar to JavaScript, Ruby, Python, Scala, Bash, Haskell and OCaml developers. It combines multiple paradigms and ideas from these languages, all while compiling performant, type-safe and highly-optimized JavaScript code and WebAssembly modules.
+Trinity is a programming language that compiles to JavaScript, while offering a syntax that is very familiar to JavaScript, Ruby, Python, Scala, Kotlin, Go, Rust, Bash, Haskell and OCaml developers. It combines multiple paradigms and ideas from these languages, all while compiling performant, type-safe and highly-optimized JavaScript code and WebAssembly modules.
 
 You can use Trinity from within existing JavaScript projects to give your code a new level of performance, conciseness, and flexibility, and a never-before connection to modules from other languages through the WebAssembly interop, all while not having to install anything (other than Node, of course).
 
