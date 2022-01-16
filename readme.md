@@ -154,13 +154,15 @@ The compiler command `trin doc` automatically extracts the API documentation and
 
 ### Variables
 
+Declaring a variable is done with the `let` keyword. You don't need the `let` keyword at all.
+
 ```coffee
 let x = 42
 let y: int = 42
 
 # Definitions can be overridden
 let y = ref 1 # mutable
-mut let y = 1
+mut let y = 1 # same thing
 y += 2
 y := 3
 ```
@@ -328,6 +330,18 @@ y = 'Hello
 World!'
 ```
 
+Strings can be delimited using multiple quotes of the same type, as long as they begin with at least three quotes. The string ends with the furthest set of quotes, if the strings ends with more than the number of opening quotes.
+
+In multi-quoted strings, all starting/ending whitespace before the first/last non-whitespace character is removed. All indentation is stripped based on the first line.
+
+```coffee
+let greeting = """
+"
+Hello World!
+"
+"""
+```
+
 Most escape sequences from other languages are allowed within double quotes, including:
 
 ```coffee
@@ -368,6 +382,13 @@ Numeric escape sequences are also allowed, in which Unicode character code point
 "\u{1F680 1F681 1F682}"
 ```
 
+Using `\j{}` notation, you can express Unicode character sequences using a notation inspired by regular expressions.
+
+```coffee
+"\j{\emoji:smile}" # => 😀
+"\j{\frac{\sum{i=1}^{n}\left(\frac{1}{i}\right)}{n}}"
+```
+
 #### Interpolation
 
 Both types of strings support interpolation with `${}`, which is a way to embed variables. The braces can be omitted if the expression is only:
@@ -382,18 +403,25 @@ Both types of strings support interpolation with `${}`, which is a way to embed 
 By default, all embedded expressions are converted to strings by passing it through the `str` method and concatenating the resulting string. You can override this behaviour by using the construct `ident'string'` instead.
 
 ```coffee
-greeting = "Hello $name!"
 person = { age: 23, name: "John" }
-greeting = "Hello $person.name. You are $person['age'] years old."
-greeting = "Hello $person.name. You are $person{int}['age'] years old."
 
+# Simple interpolation
+greeting = "Hello $name!"
+# Accessing properties
+greeting = "Hello $person.name. "
+  "You are $person['age'] years old."
+# Type assertions
+greeting = "Hello $person.name. "
+  "You are $person{int}['age'] years old."
+# Calling functions and methods
 greeting = "Hello $name.upper(/locale='en')"
+greeting = "Hello $upper(name)"
 greeting = "Hello ${name.upper!}!"
 ```
 
-#### Formatting directives
+#### Formatting
 
-Format directives are used to perform several string transformations before embedding it into the string. Each directive begins with a percent sign, and then a series of flags separated by pipe characters, and an optional value after the colon.
+Strings are formatted by a use of directives, which are a set of transformation methods chained together to produce a result. Each directive begins with a percent sign, and then a series of flags separated by pipe characters, and an optional value after the colon.
 
 ```coffee
 "Hello $name%type!"
@@ -403,66 +431,116 @@ Format directives are used to perform several string transformations before embe
 # Some examples
 "Hello ${'world'}"
 "Hello ${'world'}%upper" # => "Hello WORLD"
-"${1234567890}%sep:{','}|sep:{id + 1}" # => "1,234,567,890"
-"Percentage correct answers: ${correct // total}%dp:2|unit:{'%'}"
+"${1234567890}%sep:{','}" # => "1,234,567,890"
+"Percentage correct answers: ${correct / total}%dp:2|unit:{'%'}"
 ```
 
 #### Template strings
 
-You can create template strings by using the `#` character to mark placeholder arguments in a string. The result is a function.
-
-, as in `#name`, or positional, as in `#0` or `#-1` (negative indices count from the last).
-
-You can also spread arguments into the string by using the `*` operator, and mark them as optional by using the `?` operator.
+You can create template strings by using the `#` character to mark placeholder arguments in a string. The result is a function, which can be called with the arguments to be embedded, which returns said string.
 
 ```coffee
 let greeting = "Hello #0!"
 greeting "World" # => "Hello World!"
 
-"Hello #name" || "Hello #/name" # named argument
+"Hello #name"; "Hello #/name" # named argument
 "Hello #{name=1}" # `name` with a default
-"Hello #{x: int}" # `x` with a type
+"Hello #{x:int}" # `x` with a type
 "Hello #name" # named argument
-"Hello #1..<100..10" # positional argument
+"Hello #1" # positional argument
 "Hello #{1 = 1}" # positional argument
-"Hello #{-1: int}" # typed argument
+"Hello #{-1:int}" # typed argument
 "Hello #?name" # optional argument
 "Hello #*name" # spread argument
 "Hello #*?name" # optional spread argument
 ```
 
+#### Backslash strings
+
+Strings can be written with a preceding backslash instead of quotes. Backslash strings can't contain `, ; ] ) }` or whitespace.
+
 ```coffee
-(* accessing strings *)
-x = "Hello"
-# if any values is omitted, the values default to [0,0,1]
-x[0] # first character
-x[1] # second character
-x[-1] # last character
-x[-2] # second-to-last character
-x[1,] # all characters except the first
-x[,-1] # all characters except the last
-x[1,-1] # all characters except the last
-x[-2,1] # all characters except the last two
-x[,,-1] # reverse order
-x[,,] # entire string
-x[,0] # empty string
-x[,,2] # skip over every second character
-x[,,3] # skip over every third character
+\word
+func \word, \word
+func(word)
+[\word]
+{prop: \word}
 ```
+
+### Accessing and modifying strings
+
+Retrieve a value from the string by using subscript syntax, passing the index of the value you want to retrieve within postfix square brackets. You can also use negative indices to access characters from the end of the string.
+
+The range of integers you want to retrieve is always `-l < 0 <= l` where `l` is the length of the string.
+
+```coffee
+'hello'[0]   # => 'h'
+'hello'[1]   # => 'e'
+'hello'[2]   # => 'l'
+'hello'[3]   # => 'l'
+'hello'[4]   # => 'o'
+'hello'[5]   # => ''
+'hello'[-1]  # => 'o'
+'hello'[-2]  # => 'l'
+'hello'[-3]  # => 'l'
+'hello'[-4]  # => 'e'
+'hello'[-5]  # => 'h'
+'hello'[-6]  # => ''
+```
+
+You can slice from the beginning or end of the string, using a notation `start,end,step`. All elements are optional, and default to `0,l,1` where `l` is the length of the string.
+
+```coffee
+x = "Hello"
+x[0]      # 1st character
+x[1]      # 2nd character
+x[-1]     # last character
+x[-2]     # 2nd-to-last character
+x[1,]     # all except the 1st
+x[,-1]    # all except the last
+x[1,-1]   # all except the last
+x[-2,1]   # all except the last 2
+x[,]      # copy the entire string
+x[,0]     # empty string
+x[,,-1]   # reverse the string
+x[,,2]    # skip over every 2nd character
+x[,,3]    # skip over every 3rd character
+```
+
+### Regular expressions
+
+Similar to block strings and comments, Trinity supports block regular expressions, denoted by backticks: `` ` ``---these are extended regexes that ignore whitespace, newlines, and can contain comments and interpolation.
+
+They go a long way towards making complex regular expressions readable.
+
+```coffee
+# match a url with parameters
+`^(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$`
+
+` (?i)
+  ^ 0b[01]+    |              # binary
+  ^ 0o[0-7]+   |              # octal
+  ^ 0x[\da-f]+ |              # hex
+  ^ \d*\.?\d+ (?:e[+-]?\d+)?  # decimal
+`i
+```
+
+The delimiter `` ` `` must be escaped inside the top level of regular expressions.
 
 #### Lists
 
+Lists are written with square brackets, and whose elements are separated by newlines. They can contain any type of value. They can be nested, and can be empty.
+
 ```coffee
-[] # empty list
-[1, 2, 3] # list
-[1, 2, 3,] # trailing comma
-[[1, 2, 3]] # nested list
+val list = ['hello', 'world', 'how are you']
+```
 
-#[] # mutable list
-[1, 2, 3]{int} # list with types
+The type of a list is written in full as `list<type>`, `list type` or `[]type`.
 
-(* list types *)
-[1, 2, 3]
+```coffee
+let list1: []int = [10, 20, 30]
+let list2 = ['a', 'b', 'c'] # is []str
+[] # an empty list
 ```
 
 ## Top-level declarations
@@ -534,44 +612,44 @@ A user-defined data type is introduced with the type keyword. The left hand side
 
 ```coffee
 # sum types
-type Optional<x> = None + Some x
+type Optional x = None + Some x
 
 # product types
-type Pair<x> = x * x
-type Triple<x> = x * x * x
+type Pair x = x * x
+type Triple x = x * x * x
 
 # set types
-type Union<x> = x | x
-type Intersection<x> = x & x
-type SymmetricDifference<x> = x ^ x
-type Difference<x> = x - x
+type Union x = x | x
+type Intersection x = x & x
+type SymmetricDifference x = x ^ x
+type Difference x = x - x
 
 # nullable/optional types
-type Nullable<x> = ?a
-type Optional<a> = ?a
+type Nullable x = ?a
+type Optional x = ?a
 
 # tuple types
-type Tuple<x, y> = (x, y)
+type Tuple x y = (x, y)
 
 # list types
-type List<x> = []x
+type List x = []x
 # set types
-type Set<x> = :{}x
+type Set x = :{}x
 # hash types
-type Hash<x, y> = :{x : y}
+type Hash x y = {x : y}
 
 # record types
-type Rec<x, y> = :{x : y}
-type RecOnly<x, y> = !{x : y}
+type Rec x y = {x : y}
+type RecOnly x y = {x : y}
 
 # function types
-type Fn<a, b> = a -> b
-type Fn2<a, b, c> = a -> b -> c
+type Fn a b = a -> b
+type Fn2 a b c = a -> b -> c
 
 # type operations on objects
-type TypeOf<a> = type a
-type ValuesOf<a> = val a
-type KeysOf<a> = key a
-type AttributeOf<a> = attr a
-type MethodOf<a, b> = attr a & a is fn
+type TypeOf a = type a
+type ValuesOf a = val a
+type KeysOf a = key a
+type AttributeOf a b = a attr b
+type MethodOf a b = a attr b & a is fn
 ```
