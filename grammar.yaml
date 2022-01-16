@@ -3580,6 +3580,7 @@ repository:
           - match: *class-name
             name: entity.name.trait.trin
           - include: '#comma'
+          - include: '#line-continuation'
       - applyEndPatternLast: true
         begin: \s+(ext)\s+
         end: (?=.)|$
@@ -3593,6 +3594,7 @@ repository:
           - match: *class-name
             name: entity.name.interface.trin
           - include: '#comma'
+          - include: '#line-continuation'
       - include: '#declarations'
       - include: '#type-keywords'
       - include: '#type-square-brackets'
@@ -3614,6 +3616,7 @@ repository:
       - include: '#comments'
       - include: '#brackets'
       - include: '#comma'
+      - include: '#line-continuation'
       - match: '\.|::'
         name: punctuation.separator.namespace.trin
 
@@ -4563,11 +4566,13 @@ repository:
 
   punctuation:
     patterns:
+      - include: '#line-continuation'
       - include: '#comma'
       - include: '#semicolon'
 
   line-continuation:
-    match: \\\n*|(\\)\s*(?=/[/*+]|$)
+    begin: (\\)\s*(?=\s\([*:]|\s#:?|$)
+    end: ^\s*
     name: punctuation.separator.continuation.line.trin
   comma:
     match: \s*(,)
