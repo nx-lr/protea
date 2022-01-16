@@ -111,6 +111,27 @@ class Person(pub _name: str, pub _age: int) impl Greetings
   let age = _age
   fn say-hello = print "Hello, ${name}"
   fn say-goodbye = print "Goodbye, ${name}"
+# Enums
+enum Color
+  case Red
+  case Green
+  case Blue
+  case Yellow
+  case Purple
+  case Orange
+  case Black
+  case White
+# Interfaces
+inter Greetings
+  fn say-hello(name: str)
+  fn say-goodbye(name: str)
+# Modules
+mod Greetings
+  show fn say-hello(name: str) = print "Hello, ${name}"
+  show fn say-goodbye(name: str) = print "Goodbye, ${name}"
+# Type annotations
+type Person = {name: str, age: int}
+let person: Person = new Person "John", 42
 # Generics
 let list = [1, 2, 3]
 let dict = {a: 1, b: 2}
