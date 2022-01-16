@@ -1283,26 +1283,31 @@ repository:
         name: constant.character.escape.other.trin
       - match: \\\p{C}
         name: invalid.illegal.unknown-escape.trin
+      - match: \\.
+        name: constant.character.escape.other.trin
 
   regexp-character-operators:
     patterns:
-      - match: (?<!\|)\|\|(?!\|)
-        name: keyword.operator.union.trin
-      - match: (?<!&)&&(?!&)
-        name: keyword.operator.intersection.trin
-      - match: (?<!\^)\^\^(?!\^)
-        name: keyword.operator.symmetric.trin
-      - match: (?<!~)~~(?!~)
-        name: keyword.operator.negation.trin
-      - match: (?<!-)--(?!-)
-        name: keyword.operator.difference.trin
-      - match: ([^-\\\[\]])(-)([^-\\\[\]])
+      - match: (\\.|[^-\\\[\]])(-)(\\.|[^-\\\[\]])
         captures:
-          1: {name: constant.other.character-class.range.from.trin}
-          2: {name: keyword.operator.range.trin}
-          3: {name: constant.other.character-class.range.to.trin}
-      - match: \\.
-        name: constant.character.escape.other.trin
+          1:
+            name: constant.other.character-class.range.from.trin
+            patterns: [include: "#regexp-patterns"]
+          2:
+            name: keyword.operator.range.trin
+          3:
+            name: constant.other.character-class.range.to.trin
+            patterns: [include: "#regexp-patterns"]
+      - match: \|\|
+        name: keyword.operator.union.trin
+      - match: \&\&
+        name: keyword.operator.intersection.trin
+      - match: \^\^
+        name: keyword.operator.symmetric.trin
+      - match: \~\~
+        name: keyword.operator.negation.trin
+      - match: \-\-
+        name: keyword.operator.difference.trin
 
   regexp-character-set:
     patterns:
@@ -1319,8 +1324,8 @@ repository:
           1: {name: punctuation.definition.character-class.negated.trin}
         patterns:
           - include: "#comments"
-          - include: "#regexp-character-class"
           - include: "#regexp-character-operators"
+          - include: "#regexp-character-class"
           - include: "#regexp-character-set"
       - begin: (\[)
         end: (\])
@@ -1329,8 +1334,8 @@ repository:
           1: {name: punctuation.definition.character-class.trin}
         patterns:
           - include: "#comments"
-          - include: "#regexp-character-class"
           - include: "#regexp-character-operators"
+          - include: "#regexp-character-class"
           - include: "#regexp-character-set"
 
   attribute-selectors:
