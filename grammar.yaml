@@ -746,11 +746,66 @@ repository:
 
   embedded-placeholder:
     patterns:
-      - match: (\#)([+-]?\d+)
+      - match: |
+          (?x)
+          (\#) # sigil
+          (
+            \?? \*? # optional and spread
+            [+-]? \d+ # start of range
+            (?:
+              (?:[>.]\.[.<]|\.\.=?|=\.=) # range operator
+              [+-]? \d+ # end of range
+              (?:
+                \.{1,3}
+                [+-]? \d+ # increment
+              )?
+            )?
+          )
         captures:
           1: {name: punctuation.definition.anchor.trin}
-          2: {name: constant.numeric.decimal.trin}
-      - match: (\#)((?:[*&%]\??|//?\?|\?)?[\p{Pc}\p{L}][\w\p{Pd}]*)
+          2:
+            name: constant.numeric.decimal.trin
+            patterns:
+              - match: '[+-]'
+                name: keyword.operator.arithmetic.trin
+              - match: (?:[>.]\.[.<]|\.\.=?|=\.=)
+                name: keyword.operator.range.trin
+      - match: |
+          (?x)
+          (\#) # sigil
+          (
+            (?:[*&%]\??|//?\??|\?)
+            \b
+            [\p{Pc}\p{L}][\w\p{Pd}]*
+            \b
+            |
+            # ignore all keywords
+            (?!
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+              (?: # keywords
+                in|of|as|is|new
+                |to|til|thru|by|del
+                |unset|ref|and|or|xor|not
+                |let|fn|proc|type
+                |class|data|enum|mod
+                |iter|macro|inter|obj
+                |trait|style|elem|prop|mark
+                |go|defer|do|from|where|with
+                |if|elif|else|then|def
+                |for|each|loop|while
+                |try|throw|catch|after
+                |match|case|goto|pass|fail
+                |break|next|redo|retry
+                |return|yield|await|label
+                |use|show|hide|route
+                |debug|assert|check
+              )
+              (?!\B|\p{Pd}+\b)
+            )
+            \b
+            [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+            \b
+          )
         captures:
           1: {name: punctuation.definition.anchor.trin}
           2: {patterns: [include: "#placeholder-variables"]}
