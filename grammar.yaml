@@ -766,7 +766,7 @@ repository:
           2:
             name: constant.numeric.decimal.trin
             patterns:
-              - match: '[+-]'
+              - match: "[+-]"
                 name: keyword.operator.arithmetic.trin
               - match: (?:[>.]\.[.<]|\.\.=?|=\.=)
                 name: keyword.operator.range.trin
@@ -1296,20 +1296,25 @@ repository:
         name: keyword.operator.negation.trin
       - match: (?<!-)--(?!-)
         name: keyword.operator.difference.trin
-      - match: (?<![^\\][\\\[])-(?![-\[\]])
-        name: keyword.operator.range.trin
-      - match: ([^-\\\[\]]|\\.)(?<!-+)(?=(?<!\\)-)
-        name: constant.other.character-class.range.from.trin
-      - match: (?<=[^\\]-)(?!-+)([^-\\\[\]]|\\.)
-        name: constant.other.character-class.range.to.trin
+      - match: ([^-\\\[\]])(-)([^-\\\[\]])
+        captures:
+          1: {name: constant.other.character-class.range.from.trin}
+          2: {name: keyword.operator.range.trin}
+          3: {name: constant.other.character-class.range.to.trin}
       - match: \\.
         name: constant.character.escape.other.trin
 
   regexp-character-set:
     patterns:
-      - begin: (\[[!^])
+      - begin: (\[:)
+        end: (:\])
+        name: constant.other.character-set.posix.trin
+        captures:
+          1: {name: punctuation.definition.character-class.posix.trin}
+        patterns: [include: "#attribute-selectors"]
+      - begin: (\[\^)
         end: (\])
-        name: constant.other.character-class.negated.trin
+        name: constant.other.character-set.negated.trin
         captures:
           1: {name: punctuation.definition.character-class.negated.trin}
         patterns:
@@ -1319,7 +1324,7 @@ repository:
           - include: "#regexp-character-set"
       - begin: (\[)
         end: (\])
-        name: constant.other.character-class.trin
+        name: constant.other.character-set.trin
         captures:
           1: {name: punctuation.definition.character-class.trin}
         patterns:
@@ -1339,13 +1344,13 @@ repository:
       - include: "#string-escapes"
       - match: "[:!=</>.^$%?*+|&~]?="
         name: keyword.operator.pattern.trin
-      - match: ([&|^])\1|!
+      - match: \&&|\|\||\^\^|!
         name: keyword.operator.logical.trin
       - match: \b(i[ns])\b
         name: keyword.operator.expression.$1.trin
       - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b([:!=</>.^$%?*+|&~]?=)
         beginCaptures:
-          1: {name: entity.other.attribute-name.trin}
+          1: {name: entity.other.attribute-name.key.trin}
           2: {name: keyword.operator.pattern.trin}
         end: (?=&&|\|\||\^\^|[\s,:;'"`(){}\[\]])
         name: string.unquoted.attribute-name.trin
