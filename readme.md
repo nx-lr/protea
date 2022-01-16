@@ -28,24 +28,102 @@ let opposite = true
 let regex = `\"(\d+)\":\s*\n\s*name:\s+([\-.\w]+)` `$1: {name: $2}`
 # Conditions
 number = if opposite then -42 else number
+# Symbols
+let symbol = :foo
+# Regex
+let result = regex.exec x
 # Functions
 let square = |x|: int = x * x
 # Lists
 let list = [1, 2, 3, 4, 5]
+# Sets
+let set = {1, 2, 3, 4, 5}
 # Dictionaries
 let math = {
   sqrt: Math.sqrt
   square: square
   cube: |x| x * square x }
+# Functions
+let add = |x, y|: int = x + y
+fn add(x, y) = x + y
 # Splats:
 let race = |winner, *runners| print winner runners
 # Existence
 if ?elvis: alert "I knew it!"
 # Array comprehensions
-let cubes = [for y in list do x y]
+let cubes = [for y in list do math.cube x]
 # LINQ
-mut let cubes = from x in 1 to 100
-  select $ math.cube x
+let evenCubes = from let x in 1 to 100
+  where x % 2 == 0
+  select x * x * x;
+# Loops
+for x in list do print x
+while x < 10 do x = x + 1
+loop
+  x = x + 1
+  if x > 10 then break
+loop
+  x = x + 1
+  if x > 10 then break
+while x < 10
+# Pattern matching
+match x with
+  case 1: print "one"
+  case 2: print "two"
+  case 3: print "three"
+  case _: print "many"
+# Type annotations
+let number: int = 42
+let string: str = "hello"
+let list: list int = [1, 2, 3]
+let dict: dict str int = {a: 1, b: 2}
+# Type inference
+let number = 42
+let string = "hello"
+# Type conversions
+let number = "42" as int
+let string = 42 as str
+# Type guards
+if x is int then print "int"
+if x is list then print "list"
+match x with
+  case int: print "int"
+  case list: print "list"
+# Classes
+class Person(pub _name: str, pub _age: int)
+  let name = _name
+  let age = _age
+  fn say = print "${name} is ${age} years old"
+# Inheritance
+class Occupation ext Person
+  let job = "programmer"
+# Polymorphism
+let person = new Person
+let occupation = new Occupation
+person.say "John"
+occupation.say-hello "John"
+# Traits
+trait Greetings
+  fn say-hello(name: str)
+  fn say-goodbye(name: str)
+class Person(pub _name: str, pub _age: int) impl Greetings
+  let name = _name
+  let age = _age
+  fn say-hello = print "Hello, ${name}"
+  fn say-goodbye = print "Goodbye, ${name}"
+# Generics
+let list = [1, 2, 3]
+let dict = {a: 1, b: 2}
+let list2 = list.map ( * 2 )
+let dict2 = dict.map ( * 2 )
+# Styles
+style X
+  color: red
+  font-size: 20px
+  font-weight: bold
+  background-color: white
+# Markup
+mark <div "Hello, world!"
 ```
 
 ---
@@ -103,7 +181,7 @@ Though you can also use `then` or a right-spaced colon if a code block is expect
 
 ```coffee
 rec fn List.has(item: any): bool
-  match this
+  match this:
     case []: false
     case [a, *rest]: a == item && rest.has item
 ```
