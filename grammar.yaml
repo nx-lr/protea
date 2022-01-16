@@ -1,7 +1,7 @@
 name: Trinity
 scopeName: source.coffee
 fileTypes: [coffee, 3n, trin]
-patterns: [include: "#core"]
+patterns: [include: '#core']
 
 information for contributors: |
   This is the grammar for the Trinity programming language. It is primarily
@@ -158,43 +158,43 @@ define:
         name: keyword.operator.expression.as.trin
       - match: (?<=[\w\s][(|])\.
         name: punctuation.definition.metadata.trin
-      - include: "#clauses"
-      - include: "#constants"
-      - include: "#declarations"
-      - include: "#expression-keywords"
-      - include: "#function-params"
+      - include: '#clauses'
+      - include: '#constants'
+      - include: '#declarations'
+      - include: '#expression-keywords'
+      - include: '#function-params'
       - include: $self
 
   html-tag-names: &html-tag-names
-    - match: "[.:]"
+    - match: '[.:]'
       name: punctuation.separator.namespace.trin
     - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[:.])
       name: entity.name.tag.namespace.trin
     - match: \b((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)\b
       name: support.class.component.trin
-    - include: "#html-tag-names"
+    - include: '#html-tag-names'
 
 repository:
   core:
     patterns:
-      - include: "#ignore-long-lines"
-      - include: "#comments"
-      - include: "#brackets"
-      - include: "#closures"
-      - include: "#clauses"
-      - include: "#declarations"
-      - include: "#keywords"
-      - include: "#punctuation"
-      - include: "#symbols"
-      - include: "#flag-specifier"
-      - include: "#format-specifier"
-      - include: "#type-annotation"
-      - include: "#literals"
-      - include: "#operators"
-      - include: "#calls"
-      - include: "#variables"
-      - include: "#illegal"
-      - include: "#space"
+      - include: '#ignore-long-lines'
+      - include: '#comments'
+      - include: '#brackets'
+      - include: '#closures'
+      - include: '#clauses'
+      - include: '#declarations'
+      - include: '#keywords'
+      - include: '#punctuation'
+      - include: '#symbols'
+      - include: '#flag-specifier'
+      - include: '#format-specifier'
+      - include: '#type-annotation'
+      - include: '#literals'
+      - include: '#operators'
+      - include: '#calls'
+      - include: '#variables'
+      - include: '#illegal'
+      - include: '#space'
 
   ignore-long-lines:
     comment: avoid parsing files with long lines of code
@@ -379,11 +379,11 @@ repository:
         name: keyword.operator.expression.as.trin
       - match: (?<=[\w\s][(|])\.
         name: punctuation.definition.metadata.trin
-      - include: "#clauses"
-      - include: "#constants"
-      - include: "#declarations"
-      - include: "#expression-keywords"
-      - include: "#function-params"
+      - include: '#clauses'
+      - include: '#constants'
+      - include: '#declarations'
+      - include: '#expression-keywords'
+      - include: '#function-params'
       - include: $self
 
   # Illegal Syntax
@@ -405,11 +405,11 @@ repository:
 
   literals:
     patterns:
-      - include: "#regexps"
-      - include: "#strings-unquoted"
-      - include: "#strings"
-      - include: "#numbers"
-      - include: "#constants"
+      - include: '#regexps'
+      - include: '#strings-unquoted'
+      - include: '#strings'
+      - include: '#numbers'
+      - include: '#constants'
 
   constants:
     patterns:
@@ -558,7 +558,7 @@ repository:
     name: string.unquoted.trin
     captures:
       1: {name: punctuation.definition.string.trin}
-    patterns: [include: "#string-content"]
+    patterns: [include: '#string-content']
 
   strings:
     patterns:
@@ -568,7 +568,7 @@ repository:
         end: \s*((\1)(?!'+))
         captures:
           1: {name: punctuation.definition.string.trin}
-        patterns: [include: "#embedded-verbatim"]
+        patterns: [include: '#embedded-verbatim']
       - comment: single quoted string
         begin: (?<!'+)\s*(')\s*
         contentName: string.quoted.single.trin
@@ -578,26 +578,26 @@ repository:
         patterns:
           - match: "''"
             name: constant.character.escape.trin
-          - include: "#embedded-verbatim"
+          - include: '#embedded-verbatim'
       - comment: multi-double quoted string
         begin: (?<!"+)\s*("""+)\s*
         contentName: string.quoted.double.trin
         end: \s*((\1)(?!"+))
         captures:
           1: {name: punctuation.definition.string.trin}
-        patterns: [include: "#string-content"]
+        patterns: [include: '#string-content']
       - comment: double quoted string
         begin: (?<!"+)\s*(")\s*
         contentName: string.quoted.double.trin
         end: \s*((\1)(?!"+))
         captures:
           1: {name: punctuation.definition.string.trin}
-        patterns: [include: "#string-content"]
+        patterns: [include: '#string-content']
 
   string-content:
     patterns:
-      - include: "#string-escapes"
-      - include: "#embedded"
+      - include: '#string-escapes'
+      - include: '#embedded'
 
   string-escapes:
     patterns:
@@ -606,8 +606,8 @@ repository:
       - begin: (?i)\\j{
         end: \s*}
         name: constant.character.entity.named.trin
-        patterns: [include: "#latex-sublanguage"]
-      - include: "#numeric-escapes"
+        patterns: [include: '#latex-sublanguage']
+      - include: '#numeric-escapes'
       - match: (?i)\\([cm][a-z])
         name: constant.character.control.trin
       - match: (?i)\\[a-z]
@@ -674,17 +674,17 @@ repository:
 
   embedded:
     patterns:
-      - include: "#format-specifier"
-      - include: "#embedded-placeholder"
-      - include: "#embedded-expression"
+      - include: '#format-specifier'
+      - include: '#embedded-placeholder'
+      - include: '#embedded-expression'
 
   embedded-verbatim:
     patterns:
       - match: '([#$%])\1'
         name: constant.character.escape.trin
-      - include: "#format-specifier"
-      - include: "#embedded-placeholder"
-      - include: "#embedded-expression"
+      - include: '#format-specifier'
+      - include: '#embedded-placeholder'
+      - include: '#embedded-expression'
 
   embedded-expression:
     patterns:
@@ -731,11 +731,11 @@ repository:
         captures:
           1: {name: punctuation.section.embedded.trin}
         patterns:
-          - include: "#constants"
-          - include: "#brackets"
-          - include: "#embedded-calls"
-          - include: "#variables"
-          - include: "#numbers"
+          - include: '#constants'
+          - include: '#brackets'
+          - include: '#embedded-calls'
+          - include: '#variables'
+          - include: '#numbers'
           - &embedded-primary-operators
             comment: Primary binary operators
             match: (?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
@@ -766,7 +766,7 @@ repository:
           2:
             name: constant.numeric.decimal.trin
             patterns:
-              - match: "[+-]"
+              - match: '[+-]'
                 name: keyword.operator.arithmetic.trin
               - match: (?:[>.]\.[.<]|\.\.=?|=\.=)
                 name: keyword.operator.range.trin
@@ -808,14 +808,14 @@ repository:
           )
         captures:
           1: {name: punctuation.definition.anchor.trin}
-          2: {patterns: [include: "#placeholder-variables"]}
+          2: {patterns: [include: '#placeholder-variables']}
       - begin: (\#{)\s*
         end: \s*(})
         name: entity.quasi.component.trin
         captures:
           1: {name: punctuation.definition.anchor.trin}
         patterns:
-          - include: "#function-params"
+          - include: '#function-params'
           - include: $self
 
   # Format and flag specifiers
@@ -852,7 +852,7 @@ repository:
     end: (?=)|$
     captures:
       1: {name: punctuation.definition.directive.trin}
-    patterns: [include: "#format-syntax"]
+    patterns: [include: '#format-syntax']
 
   format-syntax:
     comment: Format specifier language, inspired by MS-DOS, Bash and Python's f-strings.
@@ -866,13 +866,13 @@ repository:
           2: {name: punctuation.separator.key-value.trin}
         name: entity.other.attribute-name.trin
         patterns: &format-values
-          - include: "#constants"
-          - include: "#embedded-calls"
-          - include: "#variables"
-          - include: "#brackets"
-          - include: "#regexps"
-          - include: "#numbers"
-          - include: "#symbols"
+          - include: '#constants'
+          - include: '#embedded-calls'
+          - include: '#variables'
+          - include: '#brackets'
+          - include: '#regexps'
+          - include: '#numbers'
+          - include: '#symbols'
           - *embedded-primary-operators
       - comment: type specifier
         match: (?<=%)([\p{Pc}\p{L}][\w\p{Pd}]*)\b
@@ -900,7 +900,7 @@ repository:
     name: string.unquoted.plain.in.trin
     comment: Grammar for the Unicode Named Character Mini-Language.
     patterns:
-      - include: "#embedded"
+      - include: '#embedded'
       - name: line.separator.math.trin
         match: (\\\\)$
         captures:
@@ -927,7 +927,7 @@ repository:
             end: (\})
             captures:
               1: {name: punctuation.definition.arguments.trin}
-            patterns: [include: "#latex-sublanguage"]
+            patterns: [include: '#latex-sublanguage']
       - match: (\\)\b(\w[\w\p{Pd}]*\b(?:[:.]\w[\w\p{Pd}]*)*)\b
         captures:
           1: {name: punctuation.definition.constant.trin}
@@ -943,13 +943,13 @@ repository:
                 name: punctuation.accessor.trin
       - match: '[*/^%]|(?<=\s|^)[-+](?=\s|$)'
         name: keyword.operator.arithmetic.trin
-      - match: "[!=]?=|[<>]=?|<>"
+      - match: '[!=]?=|[<>]=?|<>'
         name: keyword.operator.comparison.trin
-      - include: "#strings"
-      - include: "#numbers"
-      - include: "#constants"
-      - include: "#regexes"
-      - include: "#string-escapes"
+      - include: '#strings'
+      - include: '#numbers'
+      - include: '#constants'
+      - include: '#regexes'
+      - include: '#string-escapes'
       - include: source.yaml#flow-collection
       - match: '([^*/^=%+\-<>\\(){}\[\]]|!(?!=))+'
         name: string.unquoted.plain.in.trin
@@ -966,8 +966,8 @@ repository:
           1: {name: punctuation.section.regexp.end.trin}
           2: {name: keyword.other.flag.trin}
         patterns:
-          - include: "#back-references"
-          - include: "#string-content"
+          - include: '#back-references'
+          - include: '#string-content'
       - comment: Pattern section
         begin: \s*(\p{Alnum}*)(?<!`+)(```+|`)
         end: \s*(?:(\2)(?!`+))(\p{Alnum}*)
@@ -979,8 +979,8 @@ repository:
           1: {name: punctuation.section.regexp.end.trin}
           2: {name: keyword.other.flag.trin}
         patterns:
-          - include: "#comments"
-          - include: "#regexp-patterns"
+          - include: '#comments'
+          - include: '#regexp-patterns'
 
   back-references:
     patterns:
@@ -992,10 +992,10 @@ repository:
         captures:
           1: {name: keyword.other.back-reference.trin}
         patterns: &regex-back-references
-          - include: "#variables"
-          - include: "#numbers"
-          - include: "#operators"
-          - include: "#string-content"
+          - include: '#variables'
+          - include: '#numbers'
+          - include: '#operators'
+          - include: '#string-content'
       - begin: (\$(['"]))\s*
         end: \s*(\2)
         name: keyword.other.back-reference.trin
@@ -1007,20 +1007,20 @@ repository:
     patterns:
       - match: \p{Z}+
         name: meta.space.trin
-      - include: "#embedded"
-      - include: "#comments"
-      - include: "#strings"
+      - include: '#embedded'
+      - include: '#comments'
+      - include: '#strings'
       - match: \|
         name: keyword.operator.or.trin
       - match: \&
         name: keyword.operator.compose.trin
       - match: \.
         name: constant.character.all.trin
-      - match: \\[bB]({[\w\s]+})?
+      - match: \\[bB](?:{(?:[^\\{}]|\\.)+})?
         name: keyword.control.anchor.trin
-      - match: \$|\\[yYzZ]({[\w\s]+})?
+      - match: \$|\\[yYzZ](?:{(?:[^\\{}]|\\.)+})?
         name: keyword.control.end.trin}
-      - match: \^|\\[AmM]({[\w\s]+})?
+      - match: \^|\\[AmM](?:{(?:[^\\{}]|\\.)+})?
         name: keyword.control.begin.trin
       - match: \\K
         name: keyword.control.keepout.trin
@@ -1074,9 +1074,9 @@ repository:
           1: {name: keyword.operator.quantifier.lazy.trin}
           2: {name: keyword.operator.quantifier.eager.trin}
           3: {name: keyword.operator.quantifier.greedy.trin}
-      - include: "#regexp-groups"
-      - include: "#regexp-character-set"
-      - include: "#regexp-character-class"
+      - include: '#regexp-groups'
+      - include: '#regexp-character-set'
+      - include: '#regexp-character-class'
       - match: \\.
         name: constant.character.escape.other.trin
 
@@ -1105,28 +1105,28 @@ repository:
         name: meta.group.look-ahead.trin
         captures:
           1: {name: punctuation.definition.group.look-ahead.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
       - comment: Lookbehind assertion
         begin: (\(\?<=)
         end: \s*(\))
         name: meta.group.look-behind.trin
         captures:
           1: {name: punctuation.definition.group.look-behind.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
       - comment: Negative lookahead assertion
         begin: (\(\?!)
         end: \s*(\))
         name: meta.group.negative-look-ahead.trin
         captures:
           1: {name: punctuation.definition.group.negative-look-ahead.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
       - comment: Negative lookbehind assertion
         begin: (\(\?<!)
         end: \s*(\))
         name: meta.group.negative-look-behind.trin
         captures:
           1: {name: punctuation.definition.group.negative-look-behind.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
       - comment: Match directive Oniguruma supports only 20 levels of recursion
         begin: (?x)(\(\?)(?=%)
         captures:
@@ -1134,15 +1134,15 @@ repository:
         end: \s*(\))
         name: meta.group.directive.trin
         patterns:
-          - include: "#format-syntax"
-          - include: "#regexp-patterns"
+          - include: '#format-syntax'
+          - include: '#regexp-patterns'
       - comment: Longest match
         begin: (\(\?/=?)
         end: \s*(\))
         name: meta.group.longest.trin
         captures:
           1: {name: punctuation.definition.group.longest.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
       - comment: Flag modifier group
         begin: (\(\?\^?(?:([+-]?\d+?)|((?:[+-]\p{Lu}+)+|\p{Lu}+(?:[+-]\p{Lu}+)*)|((?:[+-]\p{Ll}+)+|\p{Ll}+(?:[+-]\p{Ll}+)*)))\s*(:)?
         end: \s*(\))
@@ -1154,7 +1154,7 @@ repository:
           3: {name: keyword.control.recursion.trin}
           4: {name: keyword.other.flag.trin}
           5: {name: punctuation.separator.colon.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
       - comment: Callouts
         begin: (\(\?)(?={)
         end: \s*(\))
@@ -1169,38 +1169,38 @@ repository:
               1: {name: punctuation.definition.group.call-out.trin}
               2: {name: keyword.operator.range.trin}
               3: {name: punctuation.definition.tag.trin}
-              4: {patterns: [include: "#function-names"]}
+              4: {patterns: [include: '#function-names']}
               5: {name: punctuation.definition.tag.trin}
             patterns: [include: $self]
-          - include: "#regexp-patterns"
+          - include: '#regexp-patterns'
       - comment: Atomic groups
         begin: (\(\?>)
         end: \s*(\))
         name: meta.group.atomic.trin
         captures:
           1: {name: punctuation.definition.group.atomic.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
       - comment: Non-capturing groups
         begin: (\(\?:)
         end: \s*(\))
         name: meta.group.non-capturing.trin
         captures:
           1: {name: punctuation.definition.group.non-capturing.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
       - comment: Branch groups
         begin: (\(\?)(?=[(|])
         end: \s*(\))
         name: meta.group.branch.trin
         captures:
           1: {name: punctuation.definition.group.branch.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
       - comment: Atomic groups
         begin: (\(\?~)
         end: \s*(\))
         name: meta.group.absent.trin
         captures:
           1: {name: punctuation.definition.group.absent.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
       - comment: Back-reference groups
         begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}][\w\p{Pd}]*)))(:)?
         end: \s*\)
@@ -1209,9 +1209,9 @@ repository:
           0: {name: punctuation.definition.group.back-reference.trin}
           1: {name: punctuation.definition.group.back-reference.trin}
           2: {name: constant.numeric.index.trin}
-          3: {patterns: [include: "#variables"]}
+          3: {patterns: [include: '#variables']}
           4: {name: punctuation.separator.colon.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
       - comment: Named groups (angle-brackets)
         begin: \(\?(?=<(?![!=]))
         end: \s*(\))
@@ -1225,7 +1225,7 @@ repository:
             captures:
               1: {name: punctuation.definition.group.named.trin}
             patterns: *regex-back-references
-          - include: "#regexp-patterns"
+          - include: '#regexp-patterns'
       - comment: Named groups (single or double-quotes)
         begin: \(\?(?=['"])
         end: \s*(\))
@@ -1239,33 +1239,33 @@ repository:
             captures:
               1: {name: punctuation.definition.group.named.trin}
             patterns: *regex-back-references
-          - include: "#regexp-patterns"
+          - include: '#regexp-patterns'
       - comment: Unnamed groups
         begin: (\()
         end: (\s*\))
         name: meta.group.trin
         captures:
           1: {name: punctuation.definition.group.trin}
-        patterns: [include: "#regexp-patterns"]
+        patterns: [include: '#regexp-patterns']
 
   regexp-character-class:
     patterns:
-      - include: "#embedded"
+      - include: '#embedded'
       - match: \\(?=\s*$)
         name: constant.character.escape.newline.trin
       - begin: (?i)\\p{
         end: \s*}
         name: constant.other.character-class.unicode.trin
         patterns:
-          - include: "#attribute-selectors"
+          - include: '#attribute-selectors'
       - begin: \\j{
         end: \s*}
         name: constant.character.entity.named.trin
-        patterns: [include: "#latex-sublanguage"]
-      - include: "#numeric-escapes"
+        patterns: [include: '#latex-sublanguage']
+      - include: '#numeric-escapes'
       - match: (?i)\\([cm][a-z])
         name: constant.character.control.trin
-      - match: (?i)\\p(\w\w?)
+      - match: (?i)\\p[a-z]{1,2}
         name: constant.other.character-class.unicode.trin
       - match: (?i)\\[ci]({\w+})?
         name: constant.other.character-class.xml.trin
@@ -1273,7 +1273,7 @@ repository:
         name: constant.other.character-class.trin
       - match: \\[A-Z]
         name: constant.other.character-class.negated.trin
-      - match: (?i)\\n{[\w\s\p{Pd}]+}
+      - match: (?i)\\n{(?:[^\\{}]|\\.)+}
         name: constant.character.escape.unicode.name.trin
       - match: (?i)\\[\p{L}\p{N}]
         name: constant.character.escape.trin
@@ -1288,16 +1288,46 @@ repository:
 
   regexp-character-operators:
     patterns:
-      - match: (\\.|[^-\\\[\]])(-)(\\.|[^-\\\[\]])
+      - match: |
+          (?xi)
+          ( # from
+              \\d?\d+ # decimal escape
+            | \\[xu]\h+ # hex escape
+            | \\o[0-7]+ # octal escape
+            | \\b[01]+ # binary escape
+            | \\[cm][a-z] # meta-character
+            | \\p[a-z]{1,2} # Unicode char-group
+            | \\[a-zA-Z] # char-class
+            | \\. # any escape character
+            | [^-\\\[\]] # any unescaped character
+          )
+            \s*
+              (-) # range
+            \s*
+          ( # to
+              \\d?\d+ # decimal escape
+            | \\[xu]\h+ # hex escape
+            | \\o[0-7]+ # octal escape
+            | \\b[01]+ # binary escape
+            | \\[cm][a-z] # meta-character
+            | \\p[a-z]{1,2} # Unicode char-group
+            | \\[a-zA-Z] # char-class
+            | \\. # any escape character
+            | [^-\\\[\]] # any unescaped character
+          )
         captures:
           1:
             name: constant.other.character-class.range.from.trin
-            patterns: [include: "#regexp-patterns"]
+            patterns:
+              - include: '#regexp-character-operators'
+              - include: '#regexp-character-class'
           2:
             name: keyword.operator.range.trin
           3:
             name: constant.other.character-class.range.to.trin
-            patterns: [include: "#regexp-patterns"]
+            patterns:
+              - include: '#regexp-character-operators'
+              - include: '#regexp-character-class'
       - match: \|\|
         name: keyword.operator.union.trin
       - match: \&\&
@@ -1316,38 +1346,38 @@ repository:
         name: constant.other.character-set.posix.trin
         captures:
           1: {name: punctuation.definition.character-class.posix.trin}
-        patterns: [include: "#attribute-selectors"]
+        patterns: [include: '#attribute-selectors']
       - begin: (\[\^)
         end: (\])
         name: constant.other.character-set.negated.trin
         captures:
           1: {name: punctuation.definition.character-class.negated.trin}
         patterns:
-          - include: "#comments"
-          - include: "#regexp-character-operators"
-          - include: "#regexp-character-class"
-          - include: "#regexp-character-set"
+          - include: '#comments'
+          - include: '#regexp-character-operators'
+          - include: '#regexp-character-class'
+          - include: '#regexp-character-set'
       - begin: (\[)
         end: (\])
         name: constant.other.character-set.trin
         captures:
           1: {name: punctuation.definition.character-class.trin}
         patterns:
-          - include: "#comments"
-          - include: "#regexp-character-operators"
-          - include: "#regexp-character-class"
-          - include: "#regexp-character-set"
+          - include: '#comments'
+          - include: '#regexp-character-operators'
+          - include: '#regexp-character-class'
+          - include: '#regexp-character-set'
 
   attribute-selectors:
     patterns:
-      - match: ","
+      - match: ','
         name: punctuation.separator.sequence.trin
-      - include: "#comments"
-      - include: "#strings"
+      - include: '#comments'
+      - include: '#strings'
       - match: (?xi)\b[is]\b\s*(?=[)}\]]|([&|^])\1)
         name: storage.modifier.ignore-when.trin
-      - include: "#string-escapes"
-      - match: "[:!=</>.^$%?*+|&~]?="
+      - include: '#string-escapes'
+      - match: '[:!=</>.^$%?*+|&~]?='
         name: keyword.operator.pattern.trin
       - match: \&&|\|\||\^\^|!
         name: keyword.operator.logical.trin
@@ -1359,13 +1389,13 @@ repository:
           2: {name: keyword.operator.pattern.trin}
         end: (?=&&|\|\||\^\^|[\s,:;'"`(){}\[\]])
         name: string.unquoted.attribute-name.trin
-        patterns: [include: "#html-properties"]
+        patterns: [include: '#html-properties']
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         captures:
           1: {name: entity.other.attribute-name.trin}
           2: {name: keyword.operator.pattern.trin}
-      - include: "#operators"
+      - include: '#operators'
 
   # Markdown
 
@@ -1378,16 +1408,16 @@ repository:
     captures:
       0: {name: punctuation.definition.tag.trin}
     patterns:
-      - include: "#evaluated-code"
-      - include: "#jsx-entities"
-      - include: "#tag-component-name"
-      - include: "#string-content"
+      - include: '#evaluated-code'
+      - include: '#jsx-entities'
+      - include: '#tag-component-name'
+      - include: '#string-content'
       - include: text.html.markdown#inline
 
   tag-attributes:
     patterns:
-      - include: "#comma"
-      - include: "#semicolon"
+      - include: '#comma'
+      - include: '#semicolon'
       - applyEndPatternLast: true
         begin: \s*(=)\s*
         beginCaptures:
@@ -1395,19 +1425,19 @@ repository:
         end: (?=)|$
         name: string.unquoted.trin
         patterns:
-          - include: "#html-properties"
+          - include: '#html-properties'
           - match: \s+
             name: meta.space.trin
-      - include: "#style-selectors"
-      - include: "#attributes"
-      - include: "#comments"
+      - include: '#style-selectors'
+      - include: '#attributes'
+      - include: '#comments'
 
   attributes:
     match: '\s*([\p{Pd}\w]+)\b(=)\s*'
     captures:
       1:
         name: entity.other.attribute-name.${1:/camelcase}.trin
-        patterns: [include: "#css-property-names"]
+        patterns: [include: '#css-property-names']
     name: string.unquoted.trin
 
   spread-attribute:
@@ -1442,20 +1472,20 @@ repository:
 
   inline-markdown:
     patterns:
-      - include: "#ampersand"
-      - include: "#bracket"
-      - include: "#bold"
-      - include: "#italic"
-      - include: "#raw"
-      - include: "#escape"
-      - include: "#image-inline"
-      - include: "#image-ref"
-      - include: "#link-email"
-      - include: "#link-inet"
-      - include: "#link-inline"
-      - include: "#link-ref"
-      - include: "#link-ref-literal"
-      - include: "#link-ref-shortcut"
+      - include: '#ampersand'
+      - include: '#bracket'
+      - include: '#bold'
+      - include: '#italic'
+      - include: '#raw'
+      - include: '#escape'
+      - include: '#image-inline'
+      - include: '#image-ref'
+      - include: '#link-email'
+      - include: '#link-inet'
+      - include: '#link-inline'
+      - include: '#link-ref'
+      - include: '#link-ref-literal'
+      - include: '#link-ref-shortcut'
 
   ampersand:
     comment: Markdown will convert this for us. We match it so that the HTML grammar will not mark it up as invalid.
@@ -1509,21 +1539,21 @@ repository:
     end: (?<=\S)(\1)
     name: markup.bold.markdown
     patterns:
-      - include: "#string-content"
-      - include: "#escape"
-      - include: "#ampersand"
-      - include: "#bracket"
-      - include: "#raw"
-      - include: "#bold"
-      - include: "#italic"
-      - include: "#image-inline"
-      - include: "#link-inline"
-      - include: "#link-inet"
-      - include: "#link-email"
-      - include: "#image-ref"
-      - include: "#link-ref-literal"
-      - include: "#link-ref"
-      - include: "#link-ref-shortcut"
+      - include: '#string-content'
+      - include: '#escape'
+      - include: '#ampersand'
+      - include: '#bracket'
+      - include: '#raw'
+      - include: '#bold'
+      - include: '#italic'
+      - include: '#image-inline'
+      - include: '#link-inline'
+      - include: '#link-inet'
+      - include: '#link-email'
+      - include: '#image-ref'
+      - include: '#link-ref-literal'
+      - include: '#link-ref'
+      - include: '#link-ref-shortcut'
 
   bracket:
     comment: Markdown will convert this for us. We match it so that the HTML grammar will not mark it up as invalid.
@@ -1579,7 +1609,7 @@ repository:
       7: {name: punctuation.definition.constant.markdown}
     match: (\!\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])[ ]?(\[)(.*?)(\])
     name: meta.image.reference.markdown
-    patterns: [include: "#string-content"]
+    patterns: [include: '#string-content']
 
   italic:
     begin: |
@@ -1628,20 +1658,20 @@ repository:
     end: (?<=\S)(\1)((?!\1)|(?=\1\1))
     name: markup.italic.markdown
     patterns:
-      - include: "#string-content"
-      - include: "#escape"
-      - include: "#ampersand"
-      - include: "#bracket"
-      - include: "#raw"
-      - include: "#bold"
-      - include: "#image-inline"
-      - include: "#link-inline"
-      - include: "#link-inet"
-      - include: "#link-email"
-      - include: "#image-ref"
-      - include: "#link-ref-literal"
-      - include: "#link-ref"
-      - include: "#link-ref-shortcut"
+      - include: '#string-content'
+      - include: '#escape'
+      - include: '#ampersand'
+      - include: '#bracket'
+      - include: '#raw'
+      - include: '#bold'
+      - include: '#image-inline'
+      - include: '#link-inline'
+      - include: '#link-inet'
+      - include: '#link-email'
+      - include: '#image-ref'
+      - include: '#link-ref-literal'
+      - include: '#link-ref'
+      - include: '#link-ref-shortcut'
 
   link-email:
     captures:
@@ -1650,7 +1680,7 @@ repository:
       4: {name: punctuation.definition.link.markdown}
     match: (<)((?:mailto:)?[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)(>)
     name: meta.link.email.lt-gt.markdown
-    patterns: [include: "#string-content"]
+    patterns: [include: '#string-content']
 
   link-inet:
     captures:
@@ -1659,7 +1689,7 @@ repository:
       3: {name: punctuation.definition.link.markdown}
     match: (<)((?:https?|ftp)://.*?)(>)
     name: meta.link.inet.markdown
-    patterns: [include: "#string-content"]
+    patterns: [include: '#string-content']
 
   link-inline:
     captures:
@@ -1695,7 +1725,7 @@ repository:
         \s* # Optional whitespace
       (\))
     name: meta.link.inline.markdown
-    patterns: [include: "#string-content"]
+    patterns: [include: '#string-content']
 
   link-ref:
     captures:
@@ -1707,7 +1737,7 @@ repository:
       7: {name: punctuation.definition.constant.end.markdown}
     match: (\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])(\[)([^\]]*+)(\])
     name: meta.link.reference.markdown
-    patterns: [include: "#string-content"]
+    patterns: [include: '#string-content']
 
   link-ref-literal:
     captures:
@@ -1718,7 +1748,7 @@ repository:
       6: {name: punctuation.definition.constant.end.markdown}
     match: (\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])[ ]?(\[)(\])
     name: meta.link.reference.literal.markdown
-    patterns: [include: "#string-content"]
+    patterns: [include: '#string-content']
 
   link-ref-shortcut:
     captures:
@@ -1727,79 +1757,79 @@ repository:
       3: {name: punctuation.definition.string.end.markdown}
     match: (\[)(\S+?)(\])
     name: meta.link.reference.markdown
-    patterns: [include: "#string-content"]
+    patterns: [include: '#string-content']
 
   raw:
     captures:
       1: {name: punctuation.definition.raw.markdown}
-      2: {patterns: [include: "#string-content"]}
+      2: {patterns: [include: '#string-content']}
       3: {name: punctuation.definition.raw.markdown}
     match: (`+)([^`]|(?!(?<!`)\1(?!`))`)*+(\1)
     name: markup.inline.raw.string.markdown
-    patterns: [include: "#string-content"]
+    patterns: [include: '#string-content']
 
   markdown:
     patterns:
-      - include: "#comments"
-      - include: "#jsx-entities"
-      - include: "#html-tag"
-      - include: "#string-content"
-      - include: "#evaluated-code"
-      - include: "#executed-code"
-      - include: "#inline-styles"
-      - include: "#blockquote"
-      - include: "#unordered-list"
-      - include: "#ordered-list"
-      - include: "#inline-markdown"
+      - include: '#comments'
+      - include: '#jsx-entities'
+      - include: '#html-tag'
+      - include: '#string-content'
+      - include: '#evaluated-code'
+      - include: '#executed-code'
+      - include: '#inline-styles'
+      - include: '#blockquote'
+      - include: '#unordered-list'
+      - include: '#ordered-list'
+      - include: '#inline-markdown'
 
     repository:
       blockquote:
-        comment: "> blockquote"
+        comment: '> blockquote'
         begin: ^\s*(\>)(\s+.*)\n*
         end: ^(?=\S)|(?!\G)
         beginCaptures:
           1: {name: punctuation.definition.quote.begin.markdown.trin}
           2:
             name: markup.quote.markdown.trin
-            patterns: [include: "#markdown"]
+            patterns: [include: '#markdown']
         name: markup.quote.markdown.trin
         patterns:
           - begin: ^(\s+)(?!\s)
             end: ^(?!\1|\s*$)
             name: markup.quote.markdown.trin
-            patterns: [include: "#markdown"]
+            patterns: [include: '#markdown']
 
       unordered-list:
-        comment: "- unordered list"
+        comment: '- unordered list'
         begin: ^\s*(\-)(?!>)\s+(.*)\n*
         end: ^(?=\S)|(?!\G)
         beginCaptures:
           1: {name: punctuation.definition.list.begin.markdown.trin}
           2:
             name: markup.list.unnumbered.markdown.trin
-            patterns: [include: "#markdown"]
+            patterns: [include: '#markdown']
         name: markup.list.unnumbered.markdown.trin
         patterns:
           - begin: ^(\s+)(?!\s)
             end: ^(?!\1|\s*$)
             name: markup.list.unnumbered.markdown.trin
-            patterns: [include: "#markdown"]
+            patterns: [include: '#markdown']
 
       ordered-list:
-        comment: "+ ordered list"
+        comment: '+ ordered list'
         begin: ^\s*(\+)(?!>)\s+(.*)\n*
         end: ^(?=\S)|(?!\G)
         beginCaptures:
           1: {name: punctuation.definition.list.begin.markdown.trin}
           2:
             name: markup.list.numbered.markdown.trin
-            patterns: [include: "#markdown"]
+            patterns: [include: '#markdown']
         name: markup.list.numbered.markdown.trin
         patterns:
           - begin: ^(\s+)(?!\s)
             end: ^(?!\1|\s*$)
             name: markup.list.numbered.markdown.trin
-            patterns: [include: "#markdown"]
+            patterns: [include: '#markdown']
 
       evaluated-code:
         applyEndPatternLast: true
@@ -1848,14 +1878,14 @@ repository:
             captures:
               1: {name: punctuation.definition.mapping.trin}
             patterns:
-              - include: "#style-properties"
+              - include: '#style-properties'
               - include: $self
           - begin: (\()\s*
             end: \s*(\))
             captures:
               1: {name: punctuation.definition.parameters.trin}
             patterns:
-              - include: "#tag-attributes"
+              - include: '#tag-attributes'
               - include: $self
           - match: \s*([.#])(?=[\w$])
             name: punctuation.definition.entity.trin
@@ -1865,15 +1895,15 @@ repository:
             end: \s*((\1)(?!'+))
             captures:
               1: {name: punctuation.definition.string.trin}
-            patterns: [include: "#markdown"]
+            patterns: [include: '#markdown']
           - comment: inline markup
             begin: (?<!"+)\s*("""+|")
             contentName: string.quoted.double.trin
             end: \s*((\1)(?!"+))
             captures:
               1: {name: punctuation.definition.string.trin}
-            patterns: [include: "#markdown"]
-          - include: "#regexps"
+            patterns: [include: '#markdown']
+          - include: '#regexps'
 
       inline-styles:
         begin: (?<=^|[\w\s'"`])(\+>)(.*)\n*
@@ -1884,10 +1914,10 @@ repository:
               - match: (?<=^|\s)([?:]?=)(?=\s+|$)
                 captures:
                   1: {name: keyword.operator.assignment.trin}
-              - include: "#comments"
-              - include: "#style-pair"
-              - include: "#style-rules"
-              - include: "#block-entities"
+              - include: '#comments'
+              - include: '#style-pair'
+              - include: '#style-rules'
+              - include: '#block-entities'
               - match: *entity-name
                 name: entity.name.style.trin
         end: ^(?=\S)|(?!\G)
@@ -1895,19 +1925,19 @@ repository:
           - begin: ^(\s+)(?!\s)
             end: ^(?!\1|\s*$)
             name: meta.style.yaml
-            patterns: [include: "#style-properties"]
+            patterns: [include: '#style-properties']
 
   # Special code blocks
 
   html-properties:
     patterns:
       - include: source.yaml#flow-sequence
-      - include: "#brackets"
-      - include: "#literals"
-      - include: "#css-value-names"
-      - include: "#hex-colors"
-      - include: "#tag-names"
-      - include: "#embedded-expression"
+      - include: '#brackets'
+      - include: '#literals'
+      - include: '#css-value-names'
+      - include: '#hex-colors'
+      - include: '#tag-names'
+      - include: '#embedded-expression'
       - include: source.css.scss#constant_functions
       - include: source.css.scss#constant_sass_functions
       - include: source.css.scss#constant_important
@@ -1933,7 +1963,7 @@ repository:
     end: \s*(\})\s*
     captures:
       1: {name: punctuation.definition.block.trin}
-    patterns: [include: "#style-properties"]
+    patterns: [include: '#style-properties']
 
   style-pair:
     applyEndPatternLast: true
@@ -1942,30 +1972,30 @@ repository:
       1:
         name: support.type.property-name.trin
         patterns: &embedded-brackets
-          - include: "#css-property-names"
-          - include: "#embedded"
-          - include: "#brackets"
+          - include: '#css-property-names'
+          - include: '#embedded'
+          - include: '#brackets'
       2: {name: punctuation.separator.key-value.trin}
     end: (?=)|$
     name: string.unquoted.trin
     patterns:
-      - include: "#html-properties"
+      - include: '#html-properties'
       - match: \s+
         name: meta.var.expr.trin
 
   style-properties:
     patterns:
-      - include: "#clauses"
-      - include: "#declarations"
-      - include: "#keywords"
-      - include: "#style-pair"
-      - include: "#style-rules"
-      - include: "#style-block"
+      - include: '#clauses'
+      - include: '#declarations'
+      - include: '#keywords'
+      - include: '#style-pair'
+      - include: '#style-rules'
+      - include: '#style-block'
       - include: $self
 
   style-rules:
     patterns:
-      - include: "#calls"
+      - include: '#calls'
       - comment: CSS operators
         match: \s*(?:(\+)|(\-)|(\*)|(/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|(\#)|([<>]))\s*
         captures:
@@ -1990,25 +2020,25 @@ repository:
         patterns:
           - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.trin
-          - include: "#clauses"
-          - include: "#constants"
-          - include: "#declarations"
-          - include: "#expression-keywords"
-          - include: "#style-pair"
-          - include: "#function-params"
+          - include: '#clauses'
+          - include: '#constants'
+          - include: '#declarations'
+          - include: '#expression-keywords'
+          - include: '#style-pair'
+          - include: '#function-params'
           - include: $self
       - begin: \s*(\[)\s*
         end: \s*(\])\s*
         captures:
           1: {name: punctuation.definition.selector.trin}
         patterns:
-          - include: "#attribute-selectors"
+          - include: '#attribute-selectors'
           - include: $self
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.trin
-      - include: "#style-selectors"
-      - include: "#format-syntax"
-      - include: "#tag-names"
+      - include: '#style-selectors'
+      - include: '#format-syntax'
+      - include: '#tag-names'
 
   style-selectors:
     patterns:
@@ -2031,9 +2061,9 @@ repository:
 
   comments:
     patterns:
-      - include: "#block-comments"
-      - include: "#line-comments"
-      - include: "#nested-comments"
+      - include: '#block-comments'
+      - include: '#line-comments'
+      - include: '#nested-comments'
 
   block-comments:
     patterns:
@@ -2043,9 +2073,9 @@ repository:
         captures:
           1: {name: punctuation.definition.comment.trin}
         patterns:
-          - include: "#jsdoc"
+          - include: '#jsdoc'
           - include: text.html.markdown#inline
-          - include: "#nested-jsdoc"
+          - include: '#nested-jsdoc'
       - begin: \s*(\(\*)(?=\s+|\s*$)
         end: \s*(\*\))
         name: comment.block.trin
@@ -2053,7 +2083,7 @@ repository:
           1: {name: punctuation.definition.comment.trin}
         patterns:
           - include: text.html.markdown#inline
-          - include: "#nested-block"
+          - include: '#nested-block'
 
   line-comments:
     patterns:
@@ -2063,7 +2093,7 @@ repository:
         captures:
           1: {name: punctuation.definition.comment.trin}
         patterns:
-          - include: "#jsdoc"
+          - include: '#jsdoc'
           - include: text.html.markdown#inline
       - begin: \s*(#)(?=\s+|\s*$)
         end: \s*$
@@ -2080,9 +2110,9 @@ repository:
     captures:
       1: {name: punctuation.definition.comment.trin}
     patterns:
-      - include: "#jsdoc"
+      - include: '#jsdoc'
       - include: text.html.markdown#inline
-      - include: "#nested-jsdoc"
+      - include: '#nested-jsdoc'
 
   nested-block:
     begin: (\(\*)(?=\s+|\s*$)
@@ -2092,20 +2122,20 @@ repository:
       1: {name: punctuation.definition.comment.trin}
     patterns:
       - include: text.html.markdown#inline
-      - include: "#nested-block"
+      - include: '#nested-block'
 
   # JSDoc
 
   jsdoc:
     patterns:
-      - include: "#jsdoc-inline-tags"
-      - include: "#jsdoc-access"
-      - include: "#jsdoc-as-name-path"
-      - include: "#jsdoc-simple"
-      - include: "#jsdoc-simple-name-path"
-      - include: "#jsdoc-module"
-      - include: "#jsdoc-type-name"
-      - include: "#jsdoc-type-no-name"
+      - include: '#jsdoc-inline-tags'
+      - include: '#jsdoc-access'
+      - include: '#jsdoc-as-name-path'
+      - include: '#jsdoc-simple'
+      - include: '#jsdoc-simple-name-path'
+      - include: '#jsdoc-module'
+      - include: '#jsdoc-type-name'
+      - include: '#jsdoc-type-no-name'
       - comment: additional jsdoc V2 keywords
         match: (?<!\w)@(add|api|body|codeend|codestart|demo|download|group|hide|iframe|image|inherits|option|outline|page|parent|signature|tag)\b
         name: storage.type.class.jsdoc
@@ -2114,20 +2144,20 @@ repository:
         name: storage.type.class.jsdoc
 
   jsdoc-access:
-    comment: "@tag protected...."
+    comment: '@tag protected....'
     match: (@(access))\s*(private|protected|public)?(?=\s|$)
     captures:
       1: {name: storage.type.class.jsdoc}
       3: {name: storage.modifier.jsdoc}
 
   jsdoc-module:
-    comment: "@tag {optional type} module:file"
-    begin: (@(exports|module|listens|requires)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(\S*)([\S\s]*))
+    comment: '@tag {optional type} module:file'
+    begin: (@(exports|module|listens|requires)\b)\s*(?=({(?:(?>(?:[^\\{}]|\\.)+)|\g<-1>)*\})?\s*(\S*)([\S\s]*))
     end: ^|(?=\*/)|(?=\5$)
     beginCaptures:
       1: {name: storage.type.class.jsdoc}
     patterns:
-      - include: "#jsdoc-typedef-scopes"
+      - include: '#jsdoc-typedef-scopes'
       - match: (?:(module)(:))?(((?!\*/)\S)+)
         captures:
           1: {name: keyword.module.jsdoc}
@@ -2141,42 +2171,42 @@ repository:
     beginCaptures:
       1: {name: storage.type.class.jsdoc}
     patterns:
-      - include: "#jsdoc-name-path-scopes"
+      - include: '#jsdoc-name-path-scopes'
 
   jsdoc-simple:
-    comment: "@tag"
+    comment: '@tag'
     match: (@(abstract|author|classdesc|copyright|default|defaultvalue|deprecated|description|desc|example|external|fileoverview|file|global|host|ignore|inheritdoc|inner|instance|license|override|overview|readonly|see|since|static|summary|todo|tutorial|virtual|variation|version)\b)(?=$|\s)
     captures:
       1: {name: storage.type.class.jsdoc}
 
   jsdoc-simple-name-path:
-    comment: "@tag {opt type} Class#xxx or Class#Event:aaaa etc"
-    begin: (@(alias|augments|callback|extends|emits|event|fires|interface|memberof|mixes|name|property|prop|this|typedef)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*\S*([\S*\s]*))
+    comment: '@tag {opt type} Class#xxx or Class#Event:aaaa etc'
+    begin: (@(alias|augments|callback|extends|emits|event|fires|interface|memberof|mixes|name|property|prop|this|typedef)\b)\s*(?=({(?:(?>(?:[^\\{}]|\\.)+)|\g<-1>)*\})?\s*\S*([\S*\s]*))
     end: ^|(?=\*/)|(?=\4$)
     beginCaptures:
       1: {name: storage.type.class.jsdoc}
     patterns:
-      - include: "#jsdoc-typedef-scopes"
-      - include: "#jsdoc-name-path-scopes"
+      - include: '#jsdoc-typedef-scopes'
+      - include: '#jsdoc-name-path-scopes'
 
   jsdoc-type-name:
-    comment: "@tag {optional type} name"
-    begin: (@(arg|argument|class|constant|constructor|constructs|const|function|fn|kind|member|method|mixin|namespace|param|var)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*(((\[(?:(?>[^\[\]]+)|\g<-1>)*\])|\S)+)?([\S\s]*))
+    comment: '@tag {optional type} name'
+    begin: (@(arg|argument|class|constant|constructor|constructs|const|function|fn|kind|member|method|mixin|namespace|param|var)\b)\s*(?=({(?:(?>(?:[^\\{}]|\\.)+)|\g<-1>)*\})?\s*(((\[(?:(?>[^\[\]]+)|\g<-1>)*\])|\S)+)?([\S\s]*))
     end: ^|(?=\*/)|(?=\7$)
     beginCaptures:
       1: {name: storage.type.class.jsdoc}
     patterns:
-      - include: "#jsdoc-typedef-scopes"
-      - include: "#jsdoc-name-scopes"
+      - include: '#jsdoc-typedef-scopes'
+      - include: '#jsdoc-name-scopes'
 
   jsdoc-type-no-name:
-    comment: "@tag {types}"
-    begin: (@(enum|exception|implements|private|protected|public|returns|return|throws|type)\b)\s*(?=({(?:(?>[^{}]+)|\g<-1>)*\})?\s*([\S\s]*))
+    comment: '@tag {types}'
+    begin: (@(enum|exception|implements|private|protected|public|returns|return|throws|type)\b)\s*(?=({(?:(?>(?:[^\\{}]|\\.)+)|\g<-1>)*\})?\s*([\S\s]*))
     end: ^|(?=\*/)|(?=\4$)
     beginCaptures:
       1: {name: storage.type.class.jsdoc}
     patterns:
-      - include: "#jsdoc-typedef-scopes"
+      - include: '#jsdoc-typedef-scopes'
 
   jsdoc-inline-tags:
     name: meta.tag.inline.jsdoc
@@ -2195,14 +2225,14 @@ repository:
 
   jsdoc-typedef-scopes:
     name: entity.name.type.instance.jsdoc
-    begin: "{"
-    end: "}|^"
+    begin: '{'
+    end: '}|^'
     captures:
       0: {name: meta.brace.curly.jsdoc}
     patterns:
-      - include: "#jsdoc-typedef-primitives"
-      - include: "#jsdoc-name-path-scopes"
-      - include: "#jsdoc-typedef-obj"
+      - include: '#jsdoc-typedef-primitives'
+      - include: '#jsdoc-name-path-scopes'
+      - include: '#jsdoc-typedef-obj'
 
   jsdoc-typedef-primitives:
     match: \b(null|undefined|boolean|string|number)\b
@@ -2211,17 +2241,17 @@ repository:
 
   jsdoc-typedef-obj:
     comment: typedef object
-    begin: "{"
-    end: "}|^"
+    begin: '{'
+    end: '}|^'
     captures:
       0: {name: meta.brace.curly.jsdoc}
     patterns:
-      - include: "#jsdoc-typedef-primitives"
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\s*(:)
+      - include: '#jsdoc-typedef-primitives'
+      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b\s*(:)
         captures:
           1: {name: variable.other.readwrite.jsdoc}
-      - include: "#jsdoc-name-path-scopes"
-      - include: "#jsdoc-typedef-obj"
+      - include: '#jsdoc-name-path-scopes'
+      - include: '#jsdoc-typedef-obj'
 
   jsdoc-name-scopes:
     patterns:
@@ -2232,8 +2262,8 @@ repository:
         begin: \[
         end: \]|^
         patterns:
-          - include: "#jsdoc-string"
-          - include: "#jsdoc-name-scopes"
+          - include: '#jsdoc-string'
+          - include: '#jsdoc-name-scopes'
 
   jsdoc-name-path-scopes:
     patterns:
@@ -2266,7 +2296,7 @@ repository:
         end: (?=.)
         applyEndPatternLast: true
         patterns:
-          - include: "#jsdoc-string"
+          - include: '#jsdoc-string'
 
   jsdoc-string:
     name: string.jsdoc
@@ -2470,8 +2500,8 @@ repository:
             )
           )
         captures:
-          1: {patterns: [include: "#function-names"]}
-          2: {patterns: [include: "#function-names"]}
+          1: {patterns: [include: '#function-names']}
+          2: {patterns: [include: '#function-names']}
 
   embedded-calls:
     patterns:
@@ -2516,8 +2546,8 @@ repository:
         captures:
           1:
             patterns: &builtin-names
-              - include: "#type-names"
-              - include: "#support-functions"
+              - include: '#type-names'
+              - include: '#support-functions'
             name: entity.name.tag.trin
           2:
             patterns: *builtin-names
@@ -2593,8 +2623,8 @@ repository:
         captures:
           1:
             patterns: &builtin-names
-              - include: "#type-names"
-              - include: "#support-functions"
+              - include: '#type-names'
+              - include: '#support-functions'
             name: entity.name.tag.trin
           2:
             patterns: *builtin-names
@@ -2617,8 +2647,8 @@ repository:
           8:
             patterns: *builtin-names
             name: entity.name.function.trin
-      - include: "#variables"
-      - include: "#infix-operators"
+      - include: '#variables'
+      - include: '#infix-operators'
 
   # Variables
 
@@ -2701,10 +2731,10 @@ repository:
 
   operators:
     patterns:
-      - include: "#primary-operators"
-      - include: "#infix-operators"
-      - include: "#prefix-operators"
-      - include: "#suffix-operators"
+      - include: '#primary-operators'
+      - include: '#infix-operators'
+      - include: '#prefix-operators'
+      - include: '#suffix-operators'
 
   special-operators:
     patterns:
@@ -2716,8 +2746,8 @@ repository:
           - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
             end: \s*(?=:\s|$)
             patterns:
-              - include: "#constants"
-              - include: "#variables"
+              - include: '#constants'
+              - include: '#variables'
           - include: $self
       - begin: (?<=^|\s)(\!)(?=\s|$)
         end: (?<=^|\s)(:)(?=\s|$)
@@ -2727,8 +2757,8 @@ repository:
           - begin: \s*(?=([\p{Pc}\p{L}][\w\p{Pd}]*)\s*:)
             end: \s*(?=:\s|$)
             patterns:
-              - include: "#constants"
-              - include: "#variables"
+              - include: '#constants'
+              - include: '#variables'
           - include: $self
       - begin: (?<=^|\s)(\$)(?=\s|$)
         end: (?<=^|\s)(:)(?=\s|$)
@@ -3161,15 +3191,15 @@ repository:
 
   types:
     patterns:
-      - include: "#type-strings"
-      - include: "#literals"
-      - include: "#angle-brackets"
-      - include: "#params-clause"
-      - include: "#type-keywords"
-      - include: "#type-names"
-      - include: "#type-variables"
-      - include: "#type-brackets"
-      - include: "#type-operators"
+      - include: '#type-strings'
+      - include: '#literals'
+      - include: '#angle-brackets'
+      - include: '#params-clause'
+      - include: '#type-keywords'
+      - include: '#type-names'
+      - include: '#type-variables'
+      - include: '#type-brackets'
+      - include: '#type-operators'
 
   type-variables:
     comment: |
@@ -3262,7 +3292,7 @@ repository:
     beginCaptures:
       1: {name: punctuation.definition.annotation.trin}
     patterns:
-      - include: "#types"
+      - include: '#types'
 
   type-embedded-expression:
     begin: (\${)\s*
@@ -3270,7 +3300,7 @@ repository:
     name: entity.quasi.component.trin
     captures:
       1: {name: punctuation.section.embedded.trin}
-    patterns: [include: "#types", include: $self]
+    patterns: [include: '#types', include: $self]
 
   type-strings:
     comment: coming soon
@@ -3282,7 +3312,7 @@ repository:
         captures:
           1: {name: punctuation.definition.string.trin}
         patterns:
-          - include: "#type-embedded-verbatim"
+          - include: '#type-embedded-verbatim'
       - comment: simple single quoted raw string
         begin: (?<!'+)\s*(')
         contentName: string.quoted.single.trin
@@ -3292,7 +3322,7 @@ repository:
         patterns:
           - match: "''"
             name: constant.character.escape.trin
-          - include: "#type-embedded-verbatim"
+          - include: '#type-embedded-verbatim'
       - comment: double quoted standard string
         begin: (?<!"+)\s*("""+)
         contentName: string.quoted.double.trin
@@ -3300,8 +3330,8 @@ repository:
         captures:
           1: {name: punctuation.definition.string.trin}
         patterns:
-          - include: "#string-escapes"
-          - include: "#type-embedded"
+          - include: '#string-escapes'
+          - include: '#type-embedded'
       - comment: double quoted standard string
         begin: (?<!"+)\s*(")
         contentName: string.quoted.double.trin
@@ -3309,34 +3339,34 @@ repository:
         captures:
           1: {name: punctuation.definition.string.trin}
         patterns:
-          - include: "#string-escapes"
-          - include: "#type-embedded"
+          - include: '#string-escapes'
+          - include: '#type-embedded'
 
   type-embedded:
     patterns:
-      - include: "#format-specifier"
-      - include: "#embedded-placeholder"
-      - include: "#type-embedded-expression"
+      - include: '#format-specifier'
+      - include: '#embedded-placeholder'
+      - include: '#type-embedded-expression'
 
   type-embedded-verbatim:
     patterns:
       - match: \$\$|\%\%|\#\#
         name: constant.character.escape.trin
-      - include: "#format-specifier"
-      - include: "#embedded-placeholder"
-      - include: "#type-embedded-expression"
+      - include: '#format-specifier'
+      - include: '#embedded-placeholder'
+      - include: '#type-embedded-expression'
 
   type-brackets:
     patterns:
-      - include: "#type-curly-brackets"
-      - include: "#type-square-brackets"
-      - include: "#type-round-brackets"
+      - include: '#type-curly-brackets'
+      - include: '#type-square-brackets'
+      - include: '#type-round-brackets'
 
   type-curly-brackets:
     repository:
       punctuation:
         patterns:
-          - match: ","
+          - match: ','
             name: punctuation.separator.mapping.trin
           - match: (?<!\s):(?=[\s,;}]|$)
             name: punctuation.separator.key-value.trin
@@ -3349,55 +3379,55 @@ repository:
         captures:
           1: {name: punctuation.definition.typeparameters.trin}
         patterns:
-          - include: "#types"
+          - include: '#types'
           - include: $self
       - begin: \s*(?<=\b(?:let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.binding-pattern.object.trin}
         patterns:
-          - include: "#labels"
-          - include: "#punctuation"
-          - include: "#types"
+          - include: '#labels'
+          - include: '#punctuation'
+          - include: '#types'
           - include: $self
       - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.section.class.trin}
         patterns:
-          - include: "#types"
+          - include: '#types'
           - include: $self
       - begin: \s*(?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.block.trin}
         patterns:
-          - include: "#types"
+          - include: '#types'
           - include: $self
       - begin: \s*(?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.trin}
         patterns:
-          - include: "#labels"
-          - include: "#punctuation"
-          - include: "#types"
+          - include: '#labels'
+          - include: '#punctuation'
+          - include: '#types'
           - include: $self
       - begin: \s*(?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
         patterns:
-          - include: "#labels"
-          - include: "#punctuation"
-          - include: "#types"
+          - include: '#labels'
+          - include: '#punctuation'
+          - include: '#types'
           - include: $self
 
   type-round-brackets:
     repository:
       punctuation:
         patterns:
-          - match: ","
+          - match: ','
             name: punctuation.separator.arguments.trin
           - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.trin
@@ -3409,35 +3439,35 @@ repository:
         captures:
           1: {name: punctuation.definition.parameters.trin}
         patterns:
-          - include: "#punctuation"
-          - include: "#clauses"
-          - include: "#constants"
-          - include: "#declarations"
-          - include: "#expression-keywords"
-          - include: "#function-params"
-          - include: "#types"
+          - include: '#punctuation'
+          - include: '#clauses'
+          - include: '#constants'
+          - include: '#declarations'
+          - include: '#expression-keywords'
+          - include: '#function-params'
+          - include: '#types'
           - include: self
       - begin: \s*(?<=\b(?:let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.binding-pattern.tuple.trin}
         patterns:
-          - include: "#labels"
-          - include: "#types"
+          - include: '#labels'
+          - include: '#types'
           - include: $self
       - begin: \s*(\#?\()\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.expression.trin}
         patterns:
-          - include: "#types"
+          - include: '#types'
           - include: $self
 
   type-square-brackets:
     repository:
       punctuation:
         patterns:
-          - match: ","
+          - match: ','
             name: punctuation.separator.sequence.trin
     patterns:
       - begin: \s*(?<=\b(?:let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
@@ -3445,35 +3475,35 @@ repository:
         captures:
           1: {name: punctuation.definition.binding-pattern.array.trin}
         patterns:
-          - include: "#labels"
-          - include: "#punctuation"
-          - include: "#types"
+          - include: '#labels'
+          - include: '#punctuation'
+          - include: '#types'
           - include: $self
       - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
         end: \s*(\])
         captures:
           1: {name: punctuation.definition.attribute-selector.trin}
         patterns:
-          - include: "#punctuation"
-          - include: "#types"
+          - include: '#punctuation'
+          - include: '#types'
           - include: $self
       - begin: \s*(\#\[)\s*
         end: \s*(\])
         captures:
           1: {name: punctuation.definition.sequence.trin}
         patterns:
-          - match: ","
+          - match: ','
             name: punctuation.separator.sequence.trin
-          - include: "#types"
+          - include: '#types'
           - include: $self
       - begin: \s*(\[)\s*
         end: \s*(\])
         captures:
           1: {name: punctuation.definition.array.trin}
         patterns:
-          - match: ","
+          - match: ','
             name: punctuation.separator.sequence.trin
-          - include: "#types"
+          - include: '#types'
           - include: $self
 
   type-keywords:
@@ -3549,7 +3579,7 @@ repository:
             name: entity.name.namespace.trin
           - match: *class-name
             name: entity.name.trait.trin
-          - include: "#comma"
+          - include: '#comma'
       - applyEndPatternLast: true
         begin: \s+(ext)\s+
         end: (?=.)|$
@@ -3562,28 +3592,28 @@ repository:
             name: entity.name.module.trin
           - match: *class-name
             name: entity.name.interface.trin
-          - include: "#comma"
-      - include: "#declarations"
-      - include: "#type-keywords"
-      - include: "#type-square-brackets"
-      - include: "#parameter-brackets"
-      - include: "#round-brackets"
-      - include: "#type-annotation"
+          - include: '#comma'
+      - include: '#declarations'
+      - include: '#type-keywords'
+      - include: '#type-square-brackets'
+      - include: '#parameter-brackets'
+      - include: '#round-brackets'
+      - include: '#type-annotation'
       - match: \s*(?<!\*)\*(?!\*)\s*
         name: keyword.generator.asterisk.trin
-      - include: "#regexps"
-      - include: "#strings"
-      - include: "#symbols"
-      - include: "#constants"
+      - include: '#regexps'
+      - include: '#strings'
+      - include: '#symbols'
+      - include: '#constants'
       - applyEndPatternLast: true
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]))
         end: (?=)|$
         beginCaptures:
           1: {name: punctuation.definition.annotation.trin}
-        patterns: [include: "#types"]
-      - include: "#comments"
-      - include: "#brackets"
-      - include: "#comma"
+        patterns: [include: '#types']
+      - include: '#comments'
+      - include: '#brackets'
+      - include: '#comma'
       - match: '\.|::'
         name: punctuation.separator.namespace.trin
 
@@ -3727,14 +3757,14 @@ repository:
 
   keywords:
     patterns:
-      - include: "#validation-expression"
-      - include: "#module-expression"
-      - include: "#control-expression"
-      - include: "#query-expression"
-      - include: "#modifier-keywords"
-      - include: "#declaration-keywords"
-      - include: "#expression-keywords"
-      - include: "#general-keywords"
+      - include: '#validation-expression'
+      - include: '#module-expression'
+      - include: '#control-expression'
+      - include: '#query-expression'
+      - include: '#modifier-keywords'
+      - include: '#declaration-keywords'
+      - include: '#expression-keywords'
+      - include: '#general-keywords'
 
     repository:
       control-expression:
@@ -3758,12 +3788,12 @@ repository:
               - *modifiers
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.module.trin
-              - include: "#type-keywords"
-              - include: "#declarations"
-              - include: "#strings"
-              - include: "#symbols"
-              - include: "#type-operators"
-              - match: ","
+              - include: '#type-keywords'
+              - include: '#declarations'
+              - include: '#strings'
+              - include: '#symbols'
+              - include: '#type-operators'
+              - match: ','
                 name: punctuation.separator.comma.trin
               - match: *entity-name
                 name: variable.other.readwrite.alias.trin
@@ -3786,19 +3816,19 @@ repository:
           1: {name: keyword.control.query.trin}
         end: (?=[,;)}\]])
         patterns:
-          - include: "#query-body"
+          - include: '#query-body'
           - include: $self
 
       query-body:
         patterns:
-          - include: "#in-clause"
-          - include: "#where-clause"
-          - include: "#join-clause"
-          - include: "#sort-clause"
-          - include: "#select-clause"
-          - include: "#group-clause"
-          - include: "#limit-clause"
-          - include: "#reduce-clause"
+          - include: '#in-clause'
+          - include: '#where-clause'
+          - include: '#join-clause'
+          - include: '#sort-clause'
+          - include: '#select-clause'
+          - include: '#group-clause'
+          - include: '#limit-clause'
+          - include: '#reduce-clause'
 
         repository:
           in-clause:
@@ -3809,7 +3839,7 @@ repository:
               3: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - include: "#query-body"
+              - include: '#query-body'
               - include: $self
 
           join-clause:
@@ -3822,7 +3852,7 @@ repository:
             patterns:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b([io]nto|equal)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
-              - include: "#query-body"
+              - include: '#query-body'
               - include: $self
 
           where-clause:
@@ -3831,7 +3861,7 @@ repository:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - include: "#query-body"
+              - include: '#query-body'
               - include: $self
 
           sort-clause:
@@ -3840,7 +3870,7 @@ repository:
               1: {name: keyword.control.query.trin}
             end: (?=[,;)}\]])
             patterns:
-              - include: "#query-body"
+              - include: '#query-body'
               - include: $self
 
           select-clause:
@@ -3851,7 +3881,7 @@ repository:
             patterns:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
-              - include: "#query-body"
+              - include: '#query-body'
               - include: $self
 
           limit-clause:
@@ -3862,7 +3892,7 @@ repository:
             patterns:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
-              - include: "#query-body"
+              - include: '#query-body'
               - include: $self
 
           reduce-clause:
@@ -3873,7 +3903,7 @@ repository:
             patterns:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
-              - include: "#query-body"
+              - include: '#query-body'
               - include: $self
 
           group-clause:
@@ -3884,28 +3914,28 @@ repository:
             patterns:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|into)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.trin
-              - include: "#query-body"
+              - include: '#query-body'
               - include: $self
 
   declarations:
     patterns:
-      - include: "#variable"
-      - include: "#declare"
-      - include: "#style"
-      - include: "#markup"
-      - include: "#function"
-      - include: "#procedure"
-      - include: "#class"
-      - include: "#data"
-      - include: "#enum"
-      - include: "#module"
-      - include: "#iterator"
-      - include: "#macro"
-      - include: "#structure"
-      - include: "#object"
-      - include: "#trait"
-      - include: "#component"
-      - include: "#property"
+      - include: '#variable'
+      - include: '#declare'
+      - include: '#style'
+      - include: '#markup'
+      - include: '#function'
+      - include: '#procedure'
+      - include: '#class'
+      - include: '#data'
+      - include: '#enum'
+      - include: '#module'
+      - include: '#iterator'
+      - include: '#macro'
+      - include: '#structure'
+      - include: '#object'
+      - include: '#trait'
+      - include: '#component'
+      - include: '#property'
 
     repository:
       markup:
@@ -3914,13 +3944,13 @@ repository:
           1: {name: storage.type.markup.trin}
           2:
             name: string.unquoted.block.trin
-            patterns: [include: "#markdown"]
+            patterns: [include: '#markdown']
         end: ^(?=\S)|(?!\G)
         patterns:
           - begin: ^(\s+)(?!\s)
             end: ^(?!\1|\s*$)
             name: string.unquoted.block.trin
-            patterns: [include: "#markdown"]
+            patterns: [include: '#markdown']
 
       style:
         comment: indented style
@@ -3929,10 +3959,10 @@ repository:
           1: {name: storage.type.style.trin}
           2:
             patterns:
-              - include: "#comments"
-              - include: "#style-pair"
-              - include: "#style-rules"
-              - include: "#block-entities"
+              - include: '#comments'
+              - include: '#style-pair'
+              - include: '#style-rules'
+              - include: '#block-entities'
               - match: *entity-name
                 name: entity.name.style.trin
               - match: \s*([?:]?=)\s*
@@ -3943,7 +3973,7 @@ repository:
           - begin: ^(\s+)(?!\s)
             end: ^(?!\1|\s*$)
             name: meta.style.yaml
-            patterns: [include: "#style-properties"]
+            patterns: [include: '#style-properties']
 
       component:
         applyEndPatternLast: true
@@ -3952,7 +3982,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.component.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.component.trin
             patterns: *html-tag-names
@@ -3978,7 +4008,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.function.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.function.trin
 
@@ -3989,7 +4019,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.procedure.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.procedure.trin
 
@@ -4000,7 +4030,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.class.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.class.trin
 
@@ -4011,7 +4041,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.data.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.data.trin
 
@@ -4022,7 +4052,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.enum.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.enum.trin
 
@@ -4033,7 +4063,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.module.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.module.trin
 
@@ -4044,7 +4074,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.iterator.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.iterator.trin
 
@@ -4055,7 +4085,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.macro.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.macro.trin
 
@@ -4066,7 +4096,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.structure.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.structure.trin
 
@@ -4077,7 +4107,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.object.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.object.trin
 
@@ -4088,7 +4118,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.trait.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.trait.trin
 
@@ -4099,7 +4129,7 @@ repository:
         beginCaptures:
           1: {name: storage.type.property.trin}
         patterns:
-          - include: "#block-entities"
+          - include: '#block-entities'
           - match: *entity-name
             name: entity.name.property.trin
 
@@ -4277,17 +4307,17 @@ repository:
 
   clauses:
     patterns:
-      - include: "#for-clause"
-      - include: "#if-clause"
-      - include: "#switch-clause"
-      - include: "#match-clause"
-      - include: "#catch-clause"
-      - include: "#with-clause"
-      - include: "#do-clause"
-      - include: "#type-clause"
-      - include: "#new-clause"
-      - include: "#params-clause"
-      - include: "#function-clause"
+      - include: '#for-clause'
+      - include: '#if-clause'
+      - include: '#switch-clause'
+      - include: '#match-clause'
+      - include: '#catch-clause'
+      - include: '#with-clause'
+      - include: '#do-clause'
+      - include: '#type-clause'
+      - include: '#new-clause'
+      - include: '#params-clause'
+      - include: '#function-clause'
 
     repository:
       pattern-brackets:
@@ -4296,7 +4326,7 @@ repository:
         captures:
           1: {name: punctuation.definition.parameters.trin}
         patterns:
-          - include: "#function-params"
+          - include: '#function-params'
 
       new-clause:
         applyEndPatternLast: true
@@ -4307,27 +4337,57 @@ repository:
         patterns:
           - match: *entity-name
             name: entity.name.instance.trin
-          - include: "#type-keywords"
-          - include: "#type-square-brackets"
-          - include: "#parameter-brackets"
-          - include: "#round-brackets"
+          - include: '#type-keywords'
+          - include: '#type-square-brackets'
+          - include: '#parameter-brackets'
+          - include: '#round-brackets'
 
       type-clause:
+        repository:
+          punctuation:
+            patterns:
+              - match: ','
+                name: punctuation.separator.mapping.trin
+              - match: (?<!\s):(?=[\s,;}]|$)
+                name: punctuation.separator.key-value.trin
+              - match: (?<=^\s*|[,;{]\s*)(?:[-+*]\s+)*[-+*](?=\s|$)
+                name: punctuation.definition.block.sequence.item.trin
+          type-curly-brackets:
+            patterns:
+              - begin: \s*(\#\{)\s*
+                end: \s*(\})
+                captures:
+                  1: {name: punctuation.definition.mapping.trin}
+                patterns: &type-mapping
+                  - include: '#labels'
+                  - include: '#punctuation'
+                  - include: '#types'
+                  - include: $self
+              - begin: \s*(\{)\s*
+                end: \s*(\})
+                captures:
+                  1: {name: punctuation.definition.dictionary.trin}
+                patterns: &type-mapping
+                  - include: '#labels'
+                  - include: '#punctuation'
+                  - include: '#types'
+                  - include: $self
+
         patterns:
           - applyEndPatternLast: true
             begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.trin}
-            patterns:
-              - include: "#types"
+            patterns: [include: '#types']
           - applyEndPatternLast: true
             begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             captures:
               1: {name: keyword.other.typedef.trin}
             patterns:
-              - include: "#types"
+              - include: '#type-curly-brackets'
+              - include: '#types'
               - match: \s*([?:]?=)\s*
                 captures:
                   1: {name: keyword.operator.assignment.trin}
@@ -4492,18 +4552,18 @@ repository:
           1:
             name: constant.other.object.key.trin
             patterns:
-              - include: "#constants"
-              - include: "#numbers"
-              - include: "#symbols"
-              - include: "#string-content"
+              - include: '#constants'
+              - include: '#numbers'
+              - include: '#symbols'
+              - include: '#string-content'
           2: {name: punctuation.separator.key-value.trin}
 
   # Punctuation
 
   punctuation:
     patterns:
-      - include: "#comma"
-      - include: "#semicolon"
+      - include: '#comma'
+      - include: '#semicolon'
 
   line-continuation:
     match: \\\n*|(\\)\s*(?=/[/*+]|$)
@@ -4520,10 +4580,10 @@ repository:
 
   brackets:
     patterns:
-      - include: "#curly-brackets"
-      - include: "#square-brackets"
-      - include: "#round-brackets"
-      - include: "#angle-brackets"
+      - include: '#curly-brackets'
+      - include: '#square-brackets'
+      - include: '#round-brackets'
+      - include: '#angle-brackets'
 
   angle-brackets:
     patterns:
@@ -4534,9 +4594,9 @@ repository:
         captures:
           1: {name: punctuation.type.arguments.trin}
         patterns:
-          - include: "#punctuation"
-          - include: "#brackets"
-          - include: "#types"
+          - include: '#punctuation'
+          - include: '#brackets'
+          - include: '#types'
 
   closures:
     patterns:
@@ -4546,21 +4606,21 @@ repository:
           1: {name: keyword.control.match.trin}
           2: {name: punctuation.separator.colon.trin}
         patterns:
-          - include: "#params-clause"
+          - include: '#params-clause'
           - applyEndPatternLast: true
             begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.control.match.trin}
             patterns:
-              - include: "#types"
+              - include: '#types'
           - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.trin
           - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(let)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.trin
           - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.match.trin
-          - include: "#type-keywords"
+          - include: '#type-keywords'
           - include: $self
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.match.trin
@@ -4569,7 +4629,7 @@ repository:
     repository:
       punctuation:
         patterns:
-          - match: ","
+          - match: ','
             name: punctuation.separator.mapping.trin
           - match: (?<!\s):(?=[\s,;}]|$)
             name: punctuation.separator.key-value.trin
@@ -4582,15 +4642,15 @@ repository:
         captures:
           1: {name: punctuation.definition.typeparameters.trin}
         patterns:
-          - include: "#types"
+          - include: '#types'
           - include: $self
       - begin: (?<=\b(?:let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.binding-pattern.object.trin}
         patterns:
-          - include: "#labels"
-          - include: "#punctuation"
+          - include: '#labels'
+          - include: '#punctuation'
           - include: $self
       - begin: (?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\#\{)\s*
         end: \s*(\})
@@ -4607,16 +4667,16 @@ repository:
         captures:
           1: {name: punctuation.definition.mapping.trin}
         patterns:
-          - include: "#labels"
-          - include: "#punctuation"
+          - include: '#labels'
+          - include: '#punctuation'
           - include: $self
       - begin: (?<=^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+|(?:^|\s)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.trin}
         patterns:
-          - include: "#labels"
-          - include: "#punctuation"
+          - include: '#labels'
+          - include: '#punctuation'
           - include: $self
       - begin: (\#\{)\s*
         end: \s*(\})
@@ -4633,7 +4693,7 @@ repository:
     repository:
       punctuation:
         patterns:
-          - match: ","
+          - match: ','
             name: punctuation.separator.arguments.trin
           - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.trin
@@ -4645,19 +4705,19 @@ repository:
         captures:
           1: {name: punctuation.definition.parameters.trin}
         patterns:
-          - include: "#punctuation"
-          - include: "#clauses"
-          - include: "#constants"
-          - include: "#declarations"
-          - include: "#expression-keywords"
-          - include: "#function-params"
+          - include: '#punctuation'
+          - include: '#clauses'
+          - include: '#constants'
+          - include: '#declarations'
+          - include: '#expression-keywords'
+          - include: '#function-params'
           - include: $self
       - begin: (?<=\b(?:let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.binding-pattern.tuple.trin}
         patterns:
-          - include: "#labels"
+          - include: '#labels'
           - include: $self
       - begin: (\#?\()\s*
         end: \s*(\))
@@ -4669,7 +4729,7 @@ repository:
     repository:
       punctuation:
         patterns:
-          - match: ","
+          - match: ','
             name: punctuation.separator.sequence.trin
     patterns:
       - begin: (?<=\b(?:let|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
@@ -4677,22 +4737,22 @@ repository:
         captures:
           1: {name: punctuation.definition.binding-pattern.array.trin}
         patterns:
-          - include: "#labels"
-          - include: "#punctuation"
+          - include: '#labels'
+          - include: '#punctuation'
           - include: $self
       - begin: (?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
         end: \s*(\])
         captures:
           1: {name: punctuation.definition.attribute-selector.trin}
         patterns:
-          - include: "#punctuation"
+          - include: '#punctuation'
           - include: $self
       - begin: (\#\[)\s*
         end: \s*(\])
         captures:
           1: {name: punctuation.definition.sequence.trin}
         patterns:
-          - match: ","
+          - match: ','
             name: punctuation.separator.sequence.trin
           - include: $self
       - begin: (\[)\s*
@@ -4700,7 +4760,7 @@ repository:
         captures:
           1: {name: punctuation.definition.array.trin}
         patterns:
-          - match: ","
+          - match: ','
             name: punctuation.separator.sequence.trin
           - include: $self
 
@@ -5063,10 +5123,10 @@ repository:
 
   entities:
     patterns:
-      - include: "#function-names"
-      - include: "#constant-names"
-      - include: "#type-names"
-      - include: "#variable-names"
+      - include: '#function-names'
+      - include: '#constant-names'
+      - include: '#type-names'
+      - include: '#variable-names'
 
   type-names:
     comment: Names for built-in types
