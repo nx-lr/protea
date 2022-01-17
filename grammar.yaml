@@ -608,9 +608,9 @@ repository:
     patterns:
       - match: \\(?=\s*$)
         name: constant.character.escape.newline.trin
-      - begin: \\j{
+      - begin: \\N{
         end: \s*}
-        name: constant.character.entity.named.trin
+        name: constant.character.escape.unicode.trin
         patterns: [include: '#latex-sublanguage']
       - include: '#numeric-escapes'
       - match: \\([cm][a-z])
@@ -622,7 +622,7 @@ repository:
       - match: \\\p{Z}
         name: constant.character.escape.other.trin
       - match: \\[\p{L}\p{N}\p{C}]
-        name: invalid.illegal.unknown-escape.trin
+        name: invalid.deprecated.escape.trin
 
   numeric-escapes:
     patterns:
@@ -637,7 +637,7 @@ repository:
           - match: \b[01]+\b
             name: constant.character.escape.binary.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.escape.trin
       - comment: Octal escape sequences
         match: \\o[0-7]+
         name: constant.character.escape.octal.trin
@@ -649,7 +649,7 @@ repository:
           - match: \b[0-7]+\b
             name: constant.character.escape.octal.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.escape.trin
       - comment: Decimal escape sequences
         match: \\d?\d+
         name: constant.character.escape.decimal.trin
@@ -661,7 +661,7 @@ repository:
           - match: \b\d+\b
             name: constant.character.escape.decimal.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.escape.trin
       - comment: Hexadecimal escape sequences
         match: \\[ux]\h+
         name: constant.character.escape.hexadecimal.trin
@@ -673,7 +673,7 @@ repository:
           - match: \b\h+\b
             name: constant.character.escape.hexadecimal.trin
           - match: \w+
-            name: invalid.illegal.unrecognized-string-escape.trin
+            name: invalid.illegal.escape.trin
 
   # Embedded expressions
 
@@ -910,16 +910,16 @@ repository:
           1: {name: punctuation.line.separator.math.trin}
       - applyEndPatternLast: true
         name: meta.function.math.trin
-        begin: ((\\)(\w[\w\p{Pd}]*\b(?:[:.]\w[\w\p{Pd}]*)*))\b(?=\{)
+        begin: ((\\)([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*))\b(?=\{)
         beginCaptures:
-          1: {name: storage.type.function.trin}
-          2: {name: punctuation.definition.function.trin}
+          1: {name: storage.type.subroutine.trin}
+          2: {name: storage.type.subroutine.trin}
           3:
             patterns:
-              - match: \b(\w[\w\p{Pd}]*)\b(?=[.:])
+              - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
                 name: entity.name.namespace.trin
-              - match: \b(\w[\w\p{Pd}]*)\b
-                name: entity.name.function.trin
+              - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+                name: entity.name.function.member.trin
               - match: \b\:\b
                 name: punctuation.separator.namespace.trin
               - match: \b\.\b
@@ -929,16 +929,16 @@ repository:
           - begin: (\{)
             end: (\})
             captures:
-              1: {name: punctuation.definition.arguments.trin}
+              1: {name: storage.type.subroutine.trin}
             patterns: [include: '#latex-sublanguage']
-      - match: (\\)\b(\w[\w\p{Pd}]*\b(?:[:.]\w[\w\p{Pd}]*)*)\b
+      - match: (\\)\b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
         captures:
-          1: {name: punctuation.definition.constant.trin}
+          1: {name: storage.type.constant.trin}
           2:
             patterns:
-              - match: \b(\w[\w\p{Pd}]*)\b(?=[.:])
+              - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
                 name: constant.other.character-class.trin
-              - match: \b(\w[\w\p{Pd}]*)\b
+              - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
                 name: constant.character.math.trin
               - match: \b\:\b
                 name: punctuation.separator.namespace.trin
@@ -1041,7 +1041,7 @@ repository:
           4: {name: keyword.operator.quantifier.greedy.trin}
       - match: \\\d+
         name: keyword.other.back-reference.trin
-      - match: \{(?:[-+]?\d+|[\s,;:])+}
+      - match: '{\s*(?:\d*\s*,){,2}\s*\d*\s*}'
         name: keyword.operator.quantifier.trin
       - begin: (\\k<)
         end: \s*(>)
@@ -1261,9 +1261,9 @@ repository:
         name: constant.other.character-class.unicode.trin
         patterns:
           - include: '#attribute-selectors'
-      - begin: \\j{
+      - begin: \\N{
         end: \s*}
-        name: constant.character.entity.named.trin
+        name: constant.character.escape.unicode.trin
         patterns: [include: '#latex-sublanguage']
       - include: '#numeric-escapes'
       - match: (?i)\\([cm][a-z])
@@ -1307,7 +1307,7 @@ repository:
             | [^-\\\[\]] # any unescaped character
           )
             \s*
-              (<?-<? | >?->? | >> | <<) # range
+              (-|->|>-|>>) # range
             \s*
           ( # to
               \\(?:d?\d+|d{[\d\s,;]+}) # decimal escape
@@ -1321,7 +1321,7 @@ repository:
             | [^-\\\[\]] # any unescaped character
           ) (?:
               \s*
-                (-) # range
+                (:) # range
               \s*
             ( # to
                 \\(?:d?\d+|d{[\d\s,;]+}) # decimal escape
@@ -1333,6 +1333,7 @@ repository:
               | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
               | \\(?:[prntfvabe]|[^a-zA-Z]) # any escape character
               | [^-\\\[\]] # any unescaped character
+              | \d+ # number
             )
           )?
         captures:
@@ -1353,6 +1354,7 @@ repository:
           5:
             name: constant.other.character-class.range.by.trin
             patterns:
+              - include: '#numbers'
               - include: '#regexp-character-operators'
               - include: '#regexp-character-class'
       - match: \|\|
