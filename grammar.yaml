@@ -456,7 +456,7 @@ repository:
       - comment: hexadecimal integers
         name: constant.numeric.hexadecimal.trin
         match: |
-          (?xi) \b
+          (?x) \b
             (0x) # prefix
             \h [\h_]* # integer part
             (\.)? # decimal point
@@ -471,14 +471,14 @@ repository:
         captures:
           1: {name: storage.type.numeric.trin}
           2: {name: keyword.other.unit.trin}
-          3: {name: keyword.operator.exponent.trin}
+          3: {name: keyword.operator.expression.exponent.trin}
           4: {name: keyword.operator.exponent.sign.trin}
           5: {name: constant.numeric.decimal.exponent.mantissa.trin}
           6: {name: keyword.other.unit.trin}
       - comment: octal integers
         name: constant.numeric.octal.trin
         match: |
-          (?xi) \b
+          (?x) \b
             (0o) # prefix
             [0-7] [0-7_]* # integer part
             (\.)? # decimal point
@@ -493,14 +493,14 @@ repository:
         captures:
           1: {name: storage.type.numeric.trin}
           2: {name: keyword.other.unit.trin}
-          3: {name: keyword.operator.exponent.trin}
+          3: {name: keyword.operator.expression.exponent.trin}
           4: {name: keyword.operator.exponent.sign.trin}
           5: {name: constant.numeric.decimal.exponent.mantissa.trin}
           6: {name: keyword.other.unit.trin}
       - comment: binary 0b
         name: constant.numeric.binary.trin
         match: |
-          (?xi) \b
+          (?x) \b
             (0b) # prefix
             [01] [01_]* # integer part
             (\.)? # decimal point
@@ -515,14 +515,14 @@ repository:
         captures:
           1: {name: storage.type.numeric.trin}
           2: {name: keyword.other.unit.trin}
-          3: {name: keyword.operator.exponent.trin}
+          3: {name: keyword.operator.expression.exponent.trin}
           4: {name: keyword.operator.exponent.sign.trin}
           5: {name: constant.numeric.decimal.exponent.mantissa.trin}
           6: {name: keyword.other.unit.trin}
       - comment: decimal (no prefix)
         name: constant.numeric.decimal.trin
         match: |
-          (?xi) \b
+          (?x) \b
             () # prefix
             \d [\d_]* # integer part
             (\.)? # decimal point
@@ -537,7 +537,7 @@ repository:
         captures:
           1: {name: storage.type.numeric.trin}
           2: {name: keyword.other.unit.trin}
-          3: {name: keyword.operator.exponent.trin}
+          3: {name: keyword.operator.expression.exponent.trin}
           4: {name: keyword.operator.exponent.sign.trin}
           5: {name: constant.numeric.decimal.exponent.mantissa.trin}
           6: {name: keyword.other.unit.trin}
@@ -4465,7 +4465,7 @@ repository:
 
       catch-clause:
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(catch)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.catch.trin
         captures:
           1: {name: keyword.control.error.trin}
@@ -4485,7 +4485,7 @@ repository:
 
       for-clause:
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|while)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.for.trin
         captures:
           1: {name: keyword.control.loop.trin}
@@ -4514,7 +4514,7 @@ repository:
 
       switch-clause:
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.switch.trin
         captures:
           1: {name: keyword.control.match.trin}
@@ -4523,7 +4523,7 @@ repository:
 
       with-clause:
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(do)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
         name: meta.with.trin
         captures:
           1: {name: keyword.control.with.trin}
