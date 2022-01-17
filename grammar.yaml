@@ -1445,17 +1445,17 @@ repository:
   tag-component-name:
     patterns:
       - comment: JSX Fragment
-        contentName: invalid.illegal.invalid-prop.pta
+        contentName: invalid.illegal.invalid-prop.trin
         begin: \s*(<)\s*(?=>)
         end: (?<=</)(>)
         beginCaptures:
-          1: {name: punctuation.definition.tag.pta}
+          1: {name: punctuation.definition.tag.trin}
         endCaptures:
-          1: {name: punctuation.definition.tag.pta}
+          1: {name: punctuation.definition.tag.trin}
         patterns:
           - include: '#tag-termination'
       - comment: Tags that end > are trapped in tag-termination
-        contentName: invalid.illegal.invalid-prop.pta
+        contentName: invalid.illegal.invalid-prop.trin
         begin: |
           (?x)
           \s*
@@ -1465,7 +1465,7 @@ repository:
               \b
               [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
               \b
-              (?:\.|::) # qualified name separator
+              (?:\.|::?) # qualified name separator
             )*
             [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
             \b
@@ -1479,13 +1479,13 @@ repository:
             | ((?<=</)\O*?)>
           )
         beginCaptures:
-          1: {name: punctuation.definition.tag.pta}
+          1: {name: punctuation.definition.tag.trin}
           2: {patterns: [include: '#tag-names']}
         endCaptures:
           1: {patterns: [include: '#tag-names']}
-          2: {name: punctuation.definition.tag.pta}
-          3: {name: punctuation.definition.tag.pta}
-          4: {name: invalid.illegal.termination.pta}
+          2: {name: punctuation.definition.tag.trin}
+          3: {name: punctuation.definition.tag.trin}
+          4: {name: invalid.illegal.termination.trin}
         patterns:
           - include: '#tag-termination'
           - include: '#tag-attributes'
@@ -1508,18 +1508,15 @@ repository:
     patterns:
       - include: '#comma'
       - include: '#semicolon'
+      - include: '#style-selectors'
+      - include: '#attributes'
       - applyEndPatternLast: true
         begin: \s*(=)\s*
         beginCaptures:
           1: {name: punctuation.separator.key-value.trin}
         end: (?=)|$
         name: string.unquoted.trin
-        patterns:
-          - include: '#html-properties'
-          - match: \s+
-            name: meta.space.trin
-      - include: '#style-selectors'
-      - include: '#attributes'
+        patterns: [include: '#html-properties']
       - include: '#comments'
 
   attributes:
@@ -4052,7 +4049,7 @@ repository:
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
-          1: {name: storage.type.style.pta}
+          1: {name: storage.type.style.trin}
         name: meta.style.trin
         patterns:
           - include: '#style-rules'
@@ -4062,7 +4059,7 @@ repository:
             name: meta.style.trin
             begin: \s*([?:]?=)\s*
             captures:
-              1: {name: keyword.operator.assignment.pta}
+              1: {name: keyword.operator.assignment.trin}
             end: (?=)|$
             patterns:
               - include: '#style-pair'
@@ -4071,7 +4068,7 @@ repository:
               - include: '#block-entities'
           - include: '#block-entities'
           - match: *entity-name
-            name: entity.name.style.pta
+            name: entity.name.style.trin
 
       component:
         applyEndPatternLast: true
@@ -4713,14 +4710,14 @@ repository:
       - begin: (?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\{)\s*
         end: \s*(\})\s*
         captures:
-          1: {name: punctuation.definition.typeparameters.pta}
+          1: {name: punctuation.definition.typeparameters.trin}
         patterns:
           - include: '#types'
           - include: $self
       - begin: (?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.binding-pattern.object.pta}
+          1: {name: punctuation.definition.binding-pattern.object.trin}
         patterns:
           - include: '#labels'
           - include: '#punctuation'
@@ -4728,17 +4725,17 @@ repository:
       - begin: (?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\#\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.section.class.pta}
+          1: {name: punctuation.section.class.trin}
         patterns: [include: $self]
       - begin: (?<=(?:^|[,;({\[]|(?:^|[,;({\[]|[)}\]\w'"`]):\s+)\s*\|\s*\||^\s*\|)\s*(\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.block.pta}
+          1: {name: punctuation.definition.block.trin}
         patterns: [include: $self]
       - begin: (?<=^|[,;({\[]|[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.mapping.pta}
+          1: {name: punctuation.definition.mapping.trin}
         patterns:
           - include: '#labels'
           - include: '#punctuation'
@@ -4746,7 +4743,7 @@ repository:
       - begin: (?<=^|[,;({\[]|[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.dictionary.pta}
+          1: {name: punctuation.definition.dictionary.trin}
         patterns:
           - include: '#labels'
           - include: '#punctuation'
@@ -4754,12 +4751,12 @@ repository:
       - begin: (\#\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.section.class.pta}
+          1: {name: punctuation.section.class.trin}
         patterns: [include: $self]
       - begin: (\{)\s*
         end: \s*(\})
         captures:
-          1: {name: punctuation.definition.block.pta}
+          1: {name: punctuation.definition.block.trin}
         patterns: [include: $self]
 
   round-brackets:
