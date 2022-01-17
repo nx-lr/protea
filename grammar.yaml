@@ -608,14 +608,14 @@ repository:
     patterns:
       - match: \\(?=\s*$)
         name: constant.character.escape.newline.trin
-      - begin: (?i)\\j{
+      - begin: \\j{
         end: \s*}
         name: constant.character.entity.named.trin
         patterns: [include: '#latex-sublanguage']
       - include: '#numeric-escapes'
-      - match: (?i)\\([cm][a-z])
+      - match: \\([cm][a-z])
         name: constant.character.control.trin
-      - match: (?i)\\[a-z]
+      - match: \\[prntfvabe]
         name: constant.character.escape.trin
       - match: \\[\p{S}\p{P}]
         name: constant.character.escape.symbol.trin
@@ -627,10 +627,10 @@ repository:
   numeric-escapes:
     patterns:
       - comment: Binary escape sequences
-        match: (?i)\\b[01]+
+        match: \\b[01]+
         name: constant.character.escape.binary.trin
       - comment: Binary escape sequences
-        begin: (?ix)\\b{
+        begin: \\b{
         end: \s*}
         name: constant.character.escape.binary.trin
         patterns:
@@ -639,10 +639,10 @@ repository:
           - match: \w+
             name: invalid.illegal.unrecognized-string-escape.trin
       - comment: Octal escape sequences
-        match: (?i)\\o[0-7]+
+        match: \\o[0-7]+
         name: constant.character.escape.octal.trin
       - comment: Octal escape sequences
-        begin: (?ix)\\o{
+        begin: \\o{
         end: \s*}
         name: constant.character.escape.octal.trin
         patterns:
@@ -651,10 +651,10 @@ repository:
           - match: \w+
             name: invalid.illegal.unrecognized-string-escape.trin
       - comment: Decimal escape sequences
-        match: (?i)\\d?\d+
+        match: \\d?\d+
         name: constant.character.escape.decimal.trin
       - comment: Decimal escape sequences
-        begin: (?ix)\\d{
+        begin: \\d{
         end: \s*}
         name: constant.character.escape.decimal.trin
         patterns:
@@ -663,10 +663,10 @@ repository:
           - match: \w+
             name: invalid.illegal.unrecognized-string-escape.trin
       - comment: Hexadecimal escape sequences
-        match: (?i)\\[ux]\h+
+        match: \\[ux]\h+
         name: constant.character.escape.hexadecimal.trin
       - comment: Hexadecimal escape sequences
-        begin: (?ix)\\[ux]{
+        begin: \\[ux]{
         end: \s*}
         name: constant.character.escape.hexadecimal.trin
         patterns:
@@ -1274,7 +1274,7 @@ repository:
         name: constant.other.character-class.xml.trin
       - match: (?i)\\n{(?:[^\\{}]|\\.)+}
         name: constant.character.escape.unicode.name.trin
-      - match: \\[abcefgiknprtvxyz]
+      - match: \\[prntfvabe]
         name: constant.character.escape.trin
       - match: \\[a-z]
         name: constant.other.character-class.trin
@@ -1294,7 +1294,7 @@ repository:
   regexp-character-operators:
     patterns:
       - match: |
-          (?xi)
+          (?x)
           ( # from
               \\(?:d?\d+|d{[\d\s,;]+}) # decimal escape
             | \\[xu](?:\h+|{[\h\s,;]+}) # hex escape
@@ -1303,11 +1303,11 @@ repository:
             | \\[cm][a-z] # meta-character
             | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
             | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
-            | \\(?:[abcefgiknprtvxyz]|[^a-zA-Z]) # any escape character
+            | \\(?:[prntfvabe]|[^a-zA-Z]) # any escape character
             | [^-\\\[\]] # any unescaped character
           )
             \s*
-              (<?-<?|>?->?|>>|<<) # range
+              (<?-<? | >?->? | >> | <<) # range
             \s*
           ( # to
               \\(?:d?\d+|d{[\d\s,;]+}) # decimal escape
@@ -1317,7 +1317,7 @@ repository:
             | \\[c][a-z] # meta-character
             | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
             | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
-            | \\(?:[abcefgiknprtvxyz]|[^a-zA-Z]) # any escape character
+            | \\(?:[prntfvabe]|[^a-zA-Z]) # any escape character
             | [^-\\\[\]] # any unescaped character
           ) (?:
               \s*
@@ -1331,7 +1331,7 @@ repository:
               | \\[c][a-z] # meta-character
               | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
               | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
-              | \\(?:[abcefgiknprtvxyz]|[^a-zA-Z]) # any escape character
+              | \\(?:[prntfvabe]|[^a-zA-Z]) # any escape character
               | [^-\\\[\]] # any unescaped character
             )
           )?
