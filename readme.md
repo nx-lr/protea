@@ -1,167 +1,57 @@
 # Trinity
 
-```coffee
-mod Button
-  elem make(/count: int)
-    style button
-      color: white
-      font-size: 20px
-      font-weight: bold
-      background-color: white
+> A new language for building cross-platform apps and libraries.
 
-    let times = match count with
-      case 1: "once"
-      case 2: "twice"
-      fail "$count times"
-    let msg = "Click me $times"
-    mark <button $msg
-```
-
-## Introduction
-
-Trinity is a programming language intended for both backend and frontend web development, with a focus on malleability, conciseness, flexibility and performance. It combines multiple paradigms and ideas from multiple languages, all while compiling to JavaScript and WebAssembly to deliver performant, type-safe and highly-optimized code.
+Trinity is a project that aims to provide a simple, powerful and easy-to-use language, toolchain, framework and library for building cross-platform apps and libraries. It will be portable enough to compile to JavaScript, WebAssembly and native code, while hybridizing modern compile-time and runtime features from other languages.
 
 ```coffee
-# Assignment
-mut let number = 42
-let opposite = true
-let regex = `\"(\d+)\":\s*\n\s*name:\s+([\-.\w]+)` `$1: {name: $2}`
-# Conditions
-number = if opposite then -42 else number
-# Symbols
-let symbol = :foo
-# Regex
-let result = regex.exec x
-# Functions
-let square = |x|: int = x * x
-# Lists
-let list = [1, 2, 3, 4, 5]
-# Sets
-let set = {1, 2, 3, 4, 5}
-# Dictionaries
-let math = {
-  sqrt: Math.sqrt
-  square: square
-  cube: |x| x * square x }
-# Functions
-let add = |x, y|: int = x + y
-fn add(x, y) = x + y
-# Splats:
-let race = |winner, *runners| print winner runners
-# Existence
-if ?elvis: alert "I knew it!"
-# Array comprehensions
-let cubes = [for y in list do math.cube x]
-# LINQ
-let evenCubes = from let x in 1 to 100
-  where x % 2 == 0
-  select x * x * x;
-# Loops
-for x in list do print x
-while x < 10 do x = x + 1
-loop
-  x = x + 1
-  if x > 10 then break
-loop
-  x = x + 1
-  if x > 10 then break
-while x < 10
-# Pattern matching
-match x with
-  case 1: print "one"
-  case 2: print "two"
-  case 3: print "three"
-  case _: print "many"
-# Type annotations
-let number: int = 42
-let string: str = "hello"
-let list: list int = [1, 2, 3]
-let dict: dict str int = {a: 1, b: 2}
-# Type inference
-let number = 42
-let string = "hello"
-# Type conversions
-let number = "42" as int
-let string = 42 as str
-# Type guards
-if x is int then print "int"
-if x is list then print "list"
-match x with
-  case int: print "int"
-  case list: print "list"
-# Classes
-class Person(pub _name: str, pub _age: int)
-  let name = _name
-  let age = _age
-  fn say = print "${name} is ${age} years old"
-# Inheritance
-class Occupation ext Person
-  let job = "programmer"
-# Polymorphism
-let person = new Person
-let occupation = new Occupation
-person.say "John"
-occupation.say-hello "John"
-# Traits
-trait Greetings
-  fn say-hello(name: str)
-  fn say-goodbye(name: str)
-class Person(pub _name: str, pub _age: int) impl Greetings
-  let name = _name
-  let age = _age
-  fn say-hello = print "Hello, ${name}"
-  fn say-goodbye = print "Goodbye, ${name}"
-# Enums
-enum Color
-  case Red
-  case Green
-  case Blue
-  case Yellow
-  case Purple
-  case Orange
-  case Black
-  case White
-# Interfaces
-inter Greetings
-  fn say-hello(name: str)
-  fn say-goodbye(name: str)
-# Modules
-mod Greetings
-  show fn say-hello(name: str) = print "Hello, ${name}"
-  show fn say-goodbye(name: str) = print "Goodbye, ${name}"
-# Type annotations
-type Person = {name: str, age: int}
-let person: Person = new Person "John", 42
-# Generics
-let list = [1, 2, 3]
-let dict = {a: 1, b: 2}
-let list2 = list.map ( * 2 )
-let dict2 = dict.map ( * 2 )
-# Styles
-style X
-  color: red
-  font-size: 20px
-  font-weight: bold
-  background-color: white
-# Markup
-mark <div "Hello, world!"
+elem TodoItem {
+  prop color = style {color: 333}
+  prop label_ = ''
+  prop done = false
+
+  proc onClick { done = true }
+
+  style base {
+    align-items: center
+    display: flex
+  } label_ {
+    font-weight: bold
+    color: $color
+    flex: 1
+    if done {
+      text-decoration: line-through
+    }
+  }
+
+  return {
+    <div *base>
+      <span *label_>$label_</span>
+      <Icon.Checkmark/>
+      <Icon.Trash/>
+    </div>
+  }
+}
 ```
 
 ---
 
-## Design Goals
-
-Trinity's core idea is that software should be developed as fast as possible, using as few tools, libraries, frameworks and languages as possible, while giving adequate and reasonable performance improvements over existing, conventional methods. Adding new features to a project should be easy, without us having to go through the pains of deciding which technology and stack to use. Needless complexity and difficulties, fragmented builds and projects, all of that should be stripped away, leaving only the exhilarating creative essence of programming that made all of us want to learn about in the first place.
-
-Or at the very least, if this can't be done, let's build something that can, on top of what's already there. So given the prevalence of JavaScript over our every day lives, we should focus on it. And while we're at that, Trinity will able to compile to WebAssembly to tap on its performance benefits over vanilla JavaScript.
-
 ## Introduction
 
-Trinity is a programming language that compiles to JavaScript, while offering a syntax that is very familiar to JavaScript, Ruby, Python, Scala, Kotlin, Go, Rust, Bash, Haskell and OCaml developers. It combines multiple paradigms and ideas from these languages, all while compiling performant, type-safe and highly-optimized JavaScript code and WebAssembly modules.
+Trinity is a programming language designed for developing both client and server-side applications with a singular codebase that works across all platforms, without having to worry about the underlying APIs.
 
-You can use Trinity from within existing JavaScript projects to give your code a new level of performance, conciseness, and flexibility, and a never-before connection to modules from other languages through the WebAssembly interop, all while not having to install anything (other than Node, of course).
+The goal of Trinity is to provide a small set of developer tools---language, compiler, framework, runtime and libraries---that are used together to build, develop and test applications. Trinity is, after all, a language that focuses on simplicity, flexibility and performance.
 
-Trinity's compiler, package manager and core libraries will be implemented directly in JavaScript, and runs on top of any JavaScript backend. You still have access to your favorite libraries and packages, and you can use Trinity with any JavaScript runtime and projects.
+Trinity draws pieces of influence from:
+
+- **TypeScript** for its robust type system and type checking, being the primary influence for Trinity;
+- **Rust** for its speedy and friendly compiler, and its ability to compile to WebAssembly and native code.
+- **Ruby** and **Python** for its short keywords, dynamic programming model and the little quirks that make them shine
+- **Haskell** and **OCaml** for its evaluation order and style
+- **Scala** and **Kotlin** for its classes, interfaces and traits
+- **React**, **Vue** and **Svelte** for its extended HTML-like syntax to build and express complex components and views
+- **Styled Components** and **SCSS** to add dynamic styling while keeping everything in sync with the underlying CSS
+- **GraphQL** and **SQL** for its query language and data modelling features
 
 <small>
 
@@ -175,256 +65,329 @@ Trinity is currently still in its conceptual and experimental stage, as the crea
 
 # Trinity's language guide
 
-This document is an informal guide to the design of Trinity, structured in a way that you can read from anywhere within the document. It is not meant to be a complete reference or a tutorial, but rather a guide to the language's design.
+This document is an informal guide to the language's design, structured in a way that you can read from anywhere and still understand. It describes Trinity in terms of its default and (currently) only syntax: its written form as source code.
 
-Trinity is a language inspired by Ruby, Haskell and OCaml, and integrates concepts from languages like Rust, Scala, Go and Kotlin, as well as HAML and Stylus.
+This is not a complete reference or a tutorial, but rather something you consult if you have any questions about the language. We will introduce bits and pieces of the core Trinity language and its syntax as we go.
 
-### A note on syntax
+## Hello World!
 
-Like all programming languages, Trinity is a language in which programs are not text. That means, the real truth is not written in its textual form, but more as an abstract syntax tree (AST).
+```coffee
+// Backend
+mod App {
+  proc main: void {
+    print "Hello, world!"
+  }
+}
 
-This document describes Trinity in terms of its default and (currently) only syntax: its written form as source code.
+// Frontend
+elem App {
+  // Automatic returns
+  <div>
+    <h1>Hello, world!</h1>
+  </div>
+}
+```
 
 ## Statements
 
-### Indentation
+### Curly brackets
 
-Like Scala 3, YAML and Haskell, Trinity is a "hybrid" language in which you can use curly brackets and indentation to structure and organize your code. though indentation is used only for the purpose of readability.
+Like C#, Java, Scala, Kotlin, Rust, Go and JavaScript, Trinity is a free-form, curly-bracket language. This means code is grouped by curly brackets, statements are separated by semicolons, and expressions are separated by commas.
 
-```coffee
-rec fn List.has(item: any): bool
-  match this
-    case [] { false }
-    case [a, *rest] { a == item && rest.has item }
-```
+Trinity makes every one of these things optional. This means that you can use a mix of indentation and curly brackets in varying degrees to make your code more readable.
 
-Though you can also use `then` or a right-spaced colon if a code block is expected after a statement (such as `if` or `while`).
-
-```coffee
-rec fn List.has(item: any): bool
-  match this:
-    case []: false
-    case [a, *rest]: a == item && rest.has item
-```
-
-### Expressions and statements
-
-Use semicolons to separate multiple statements on the same line, and commas to separate expressions in brackets. You can pass arguments to functions Haskell style - parentheses here have nothing to do with function calls.
-
-This kind of evaluation strategy for expressions is Applicative Order Call-by-Value. See Function application for details.
+Parentheses are also optional in function calls, but they are used to group expressions.
 
 ```coffee
 print sys.inspect object == print(sys.inspect, object)
-func (x + 3) x - 3 == func(x + 3, x) - 3
-```
+fn(x + 3) x - 3 == fn(x + 3, x) - 3
 
-You can call functions with named arguments by using the `/` syntax. Named arguments have no order in functions, so you can call them in any order.
-
-```coffee
+// Call named arguments with slashes
 print(x, name, /sep = "\n")
 print x name /sep "\n"
 ```
 
 ### Comments
 
-Comments start with the `#` character followed by a space. The space is compulsory. All following text up to the end of the line is considered a comment. They can be on their own line or follow after a statement.
+Comments are the same as in JavaScript, though they are usually ignored. Documentation comments are not ignored, but are gathered by the compiler to produce a documentation tree to allow future developers using your software to easily find documentation, even at the convenience of their own editor.
 
 ```coffee
-# This is a single line comment.
-(*
+// This is a single line comment.
+/*
   This is a multiline comment.
-  (* It can be nested. *)
-*)
-```
+  /* It can be nested. */
+*/
 
-Documentation comments `#:` and `#+ +#` are special forms of comments that are used to document your code. They are used to generate documentation, and support JSDoc and Markdown formatting.
-
-The compiler command `trin doc` automatically extracts the API documentation and generates a website to present it.
-
-```coffee
-#: This is a single line comment.
-(:
-  This is a multiline comment.
-  (: It can be nested. :)
-:)
+/// This is a single line documentation comment.
+/**
+  This is a multiline documentation comment
+  /* It can be nested. */
+*/
 ```
 
 ### Variables
 
-Declaring a variable is done with the `let` keyword. You don't need the `let` keyword at all.
+Mutable variables are declared with the `var` keyword and immutable variables with the `val` keyword.
+
+All variables are block-scoped and are accessible from the entire scope they are declared in, but not outside. Once you declare a variable in one place, you cannot use it in another.
+
+You cannot override declared variables.
 
 ```coffee
-let x = 42
-let y: int = 42
+val x = 42
+val y: int = 42
 
-# Definitions can be overridden
-let y = ref 1 # mutable
-mut let y = 1 # same thing
-y += 2
-y := 3
+var y1 = y // mutable
+y1 += 1
+y1 = 3
 ```
 
-Variables are block-scoped. Declarations are scoped through code blocks, one such example is `do`. Also take note that in code blocks, the last line is implicitly returned.
+#### Scoping
+
+The last line of a code block is automatically returned. If you want the block to return early, you can use the `return` keyword.
 
 ```coffee
-let x = do
-  let part1 = \Hello
-  let part2 = \World
+val x = do {
+  val part1 = \Hello
+  val part2 = \World
   "$part1 $part2"
-# `part1` and `part2` are not accessible outside this block
+}
 ```
 
-### Functions
+#### Type annotations
+
+When you create a new variable or function, you can explicitly specify its type. This is useful for type-checking, and for making your code more readable.
 
 ```coffee
-# Anonymous function
-double = |x: int|: int = x * 2
-double = fn(x: int): int = x * 2
-
-# Named function declaration
-fn double(x: int): int = x * 2
+var x: int = 42
+var y: str = "Hello"
+var z: bool = true
 ```
 
-### Keywords and identifiers
-
-Keywords are all lowercase and are special tokens in Trinity. They are used to denote special constructs, such as functions, classes, and control structures, and are distinguished from identifiers.
-
-Because of how identifiers are compared, you can use any number of leading underscores to escape a keyword to turn it into an identifier.
+You can also use type inference to infer the type of a variable, however use it in moderation if you want your code to be less verbose.
 
 ```coffee
-assert _assert = null
+var johnDoe: Person = Person("John", "Doe")
 ```
-
-The following are considered keywords:
-
-    in of as is new
-    to til thru by del
-    unset ref and or xor not
-    let fn proc type
-    class data enum mod
-    iter macro inter obj
-    trait style elem prop mark
-    go defer do from where with
-    if elif else then def
-    for each loop while
-    try throw catch after
-    match case goto pass fail
-    break next redo retry
-    return yield await label
-    use show hide route
-    debug assert check
-
-Keywords become identifiers when part of a qualified name, such as `x.for` or `y::loop`.
 
 ### Identifiers
 
-An identifier is a sequence of letters, digits, dashes, combining marks and underscores, starting with a letter.
+### Identifiers
+
+Identifiers in Trinity can be any string of letters, decimal digits, marks, underscores and dashes, with the following restrictions:
+
+- begins with a letter
+- does not end with one or more trailing dashes.
+
+Any Unicode character with class `Pc`, `Pd`, and `M` is considered a 'underscore', 'dash' and 'mark' respectively. That means, an identifier is any string of said characters that match the regular expression below:
 
 ```coffee
-let regex = `\b[\pL\pPc][\d\pL\pM\pPc\pPd]*\b`
+val regex = `\b[\pL\pPc][\d\pL\pM\pPc\pPd]*\b`
 ```
 
-Variables are compared case-insensitively until the first non-lowercase character. All underscores and dashes are ignored. This means you can use varying conventions in your program without having to worry about name collisions or case conventions.
+Two identifiers are considered equal if the following method returns true:
 
 ```coffee
-fn normalize(ident: str): str =
-  ret = ref ident[`[^\pL\d]` ``]
-  ret := ret[`\b.*(?!\pL)`] + ret[`\pLl.*\b`].lower!
-  ret
+fun cmpIdent(a: str, b: str): bool = normalize a == normalize b
 
-fn cmpIdent(a: str, b: str): bool =
-  normalize a == normalize b
-
-WILDFire == WILD_Fire == WILD-Fire
-WILDFIRE____ == WILDFIRE
-wildFire == wildfire == wild_fire == wild-fire
+fun normalize(ident: str): str {
+  var ret = ident[`[^\pL\d]` ``]
+  ret = ret[`\b.*(?!\pL)`] + ret[`\pLl.*\b`].lower!
+  return ret
+}
 ```
+
+That means only the first non-lowercase letters are compared, and all non-alphanumeric characters are ignored. The rest of the identifier is are compared in a case-sensitive manner. Other letters are compared case-insensitively within the ASCII range and underscores are ignored.
+
+```coffee
+"WILDFire" == "WILD_Fire" == "WILD-Fire"
+"WILDFIRE____" == "WILDFIRE"
+"wildFire" == "wildfire" == "wild_fire" == "wild-fire"
+```
+
+This rather unorthodox way to do identifier comparisons is called **partial case-insensitivity** and has some advantages over the conventional case sensitivity.
+
+It allows programmers to use their own preferred spelling style without having to remember the exact spelling of an identifier.
+
+The exception with respect to the first few letters allows common code like `var foo: Foo == FOO` to be parsed unambiguously.
+
+Note that this rule does not apply to keywords, which are all written in all-lowercase.
+
+### Keywords
+
+Keywords are special tokens in Trinity and are not allowed as variable names. They are used to denote special constructs, such as functions, classes, and control structures, and are distinguished from identifiers.
+
+Some keywords are unused, such as `mark` and `defer`; they are reserved for future developments of the language. The following is a list of all keywords in Trinity:
+
+```coffee
+in of as is new
+to til thru by del
+unset ref and or xor not
+var val fun func proc type
+class data enum mod
+iter macro inter obj
+trait style elem prop mark
+go defer do from where with
+if elif else then def
+for each loop while
+try throw catch after
+match case fail goto pass
+break next redo retry
+return yield await label
+use show hide route
+debug assert check
+
+// Special variables
+true false null nan void infin
+it this that self args ctor proto
+```
+
+Because of how identifiers are compared, you can use any number of trailing underscores to escape a keyword to turn it into an identifier.
+
+```coffee
+var var_ = "Hello Stropping"
+
+type Obj = {
+  type_: int
+}
+
+val object_ = Obj(type_: 9)
+assert object_ is Obj
+assert object_.type == 9
+
+var var_ = 42
+val let_ = 8
+assert var_ + let_ == 50
+
+const assert_ = true
+assert assert_
+```
+
+Keywords become identifiers when part of a qualified name, such as `x.for` or `y::loop`.
 
 ## Data types
 
 Trinity comes with many common data types, such as strings, numbers, booleans and regular expressions. These are all defined in the `core` library.
 
 ```coffee
-void: void # void
-null: null # null
-1: int # 64-bit integer
-1.0: float # 64-bit integer
-true: bool # boolean
-:sym: sym # symbol
-"hello": str # string
-`hello`: regex # regular expression
+void: void // void
+null: null // null
+1: int // 64-bit integer
+1.0: float // 64-bit integer
+true: bool // boolean
+:sym: sym // symbol
+"hello": str // string
+`hello`: regex // regular expression
+
+/* Data structures */
+[1, 2, 3]: list<int> // list
+[1, 2, 3]: [int, int, int] // tuple
+{1, 2, 3}: set<int> // set
+{a: 1, b: 2}: dict<str, int> // dictionary
 ```
 
-Trinity also comes with a handful of data structures for grouping towards data values. Note, tuples and lists are interchangeable, sets and maps are similar in which sets have their keys and values mapped to one another, thus are written the same way as lists.
+## Built-in data types
+
+Trinity comes with literals for many familiar and new primitive types such as `str`, `int`, `float`, `bool`, `list`, `set`, `map` and more, such as `fn`, `sym` and `regex`.
+
+### Null
+
+The `null` type is used to represent the absence of a value, similar in other languages. It only has a single value:
 
 ```coffee
-[1, 2, 3]: list<int> # list
-[1, 2, 3]: [int, int, int] # tuple
-{1, 2, 3}: set<int> # set
-{a: 1, b: 2}: dict<str, int> # dictionary
+null
 ```
 
-### Constants
+You can also use `void`, they are conceptually identical.
 
-Trinity has four constants: `null` and `void` which are both equivalent to `null` and `undefined` in JavaScript, respectively. `true` and `false` are also equivalent to `true` and `false` in JavaScript.
+### Booleans
+
+`bool` has only two possible values: true and false. They are constructed using the following literals:
 
 ```coffee
-null == void # both are aliases for each other
-true != false
-
-true: bool
-null: null
-void: void
+true
+false
 ```
 
-### Numeric types
+### Integers and Floats
 
-Trinity distinguishes between integers and floats as separate value types. Integers are 64-bit signed integers, while floats are 64-bit IEEE 754 floating point numbers.
+There are four integer types: `int`, `nat` which are signed/unsigned 64-bit integers, and their arbitrary-precision `big` counterparts.
+
+An integer literal is a sequence of digits and underscores, optionally followed by a type suffix. All numbers are case-insensitive except their suffixes which are ordinary identifiers.
 
 ```coffee
-(* integers *)
-42 # decimal
--0x42 # hexadecimal
-0o52 # octal
-0b101010 # binary
+1 // int
+1 // int
+1u // nat
+1u // int
+1u // int
+1u // int
 
-(* floats *)
-# decimal point
-42.0; -0.42; 42.; -.42;
-# with exponents
-0.42e2; 0.42e-2; 0.42e+2
-# hexadecimal, octal and binary
-0x0.13p2; 0o0.13p-2; 0b0.1p+2
-
-# Numbers can contain underscores
-# or leading zeroes
-42_000.0; 042
-nan; infin # special floating point constants
+18446744073709551616 // bigint
+18_446_744_073_709_551_616 // bigint
 ```
 
-Trinity also comes with other numeric types, such as rational and complex numbers, and even their arbitrarily-sized counterparts.
+Underscores and leading zeroes can be used to make numbers more readable, and both are ignored. The following are all equivalent:
+
+Binary, octal and hexadecimal literals are also supported.
 
 ```coffee
-18446744073709551616n: bigint
-1r / 3r: rat int int
-1 + 2i: comp int int
+decimal = 11256099
+hex = 0xABC123
+octal = 0o52740443
+binary = 0b101010111100000100100011
+```
+
+### Rationals
+
+A floating point literal begins like an integer literal, then followed by a dot, followed by more numbers or underscores, followed by an optional exponent suffix, followed by an optional type suffix.
+
+Binary, hexadecimal and octal floats are also supported, though you would use the `p` suffix for exponents, and the base is 2, rather than 10.
+
+```coffee
+decimal = 11256099.012e+14
+hex = 0xABC1234.012p-40
+octal = 0o52740443.012p-40
+binary = 0b10101011110.0000100100011p-40
+```
+
+Floating point numbers are inherently rational.
+
+There are four rational types: `float` which is a IEEE binary64 type, and `rat`, which is a pair of one signed and one unsigned integer. Both have their arbitrary-precision `big` counterparts. Rationals have a compulsory `r` suffix while floats do not.
+
+```coffee
+1.0  // float
+1.0f // float
+1f   // float
+1r   // rat
+
+1.0n  // bigfloat
+1.0fn // bigfloat
+1fn   // bigrat
+1rn   // bigrat
 ```
 
 ### Strings
 
-Strings are written inside single or double quotes, which can span multiple lines. They can contain any character, including newlines, tabs, and escape sequences, irrespective of indentation.
+A string literal is enclosed using either single or double quotes. Double quotes support escape sequences, while single quotes do not. Strings can span multiple lines by default.
 
-The difference between single quoted and double quoted strings is that single quoted strings do not need escaping.
+To escape a single quote, double it.
 
 ```coffee
-mut x: str = "Hello World!" # escaped string
-mut y: str = 'Hello World!' # verbatim string
+val marioSays = 'It''sa me, Mario!'
 
-# all forms of strings can contain newlines
-x = "Hello
-World!"
-y = 'Hello
-World!'
+val greeting = "Hello world!"
+val multilineGreeting = "Hello
+  world!"
+
+assert "hello\nworld" == multilineGreeting
+```
+
+A trailing backslash in a double quoted string joins the next line, ignoring all indentation.
+
+```coffee
+assert "Hello \
+  world!" == "Hello world!"
 ```
 
 Strings can be delimited using multiple quotes of the same type, as long as they begin with at least three quotes. The string ends with the furthest set of quotes, if the strings ends with more than the number of opening quotes.
@@ -432,135 +395,111 @@ Strings can be delimited using multiple quotes of the same type, as long as they
 In multi-quoted strings, all starting/ending whitespace before the first/last non-whitespace character is removed. All indentation is stripped based on the first line.
 
 ```coffee
-let greeting = """
+val greeting = """
 "
 Hello World!
 "
 """
 ```
 
-Most escape sequences from other languages are allowed within double quotes, including:
+Most of the escape sequences in JavaScript and other languages are also supported in Trinity. Any other character following a backslash is interpreted as the character itself.
+
+| Escape Sequence | Meaning                                        |
+| --------------- | ---------------------------------------------- |
+| `\p`            | platform specific newline (`\r\n`, `\n`, `\r`) |
+| `\r`            | carriage return (`\x9`)                        |
+| `\n`            | line feed (or newline) (`\xA`)                 |
+| `\f`            | form feed (`\xC`)                              |
+| `\t`            | horizontal tabulator (`\x9`)                   |
+| `\v`            | vertical tabulator (`\xB`)                     |
+| `\a`            | alert (`\x7`)                                  |
+| `\b`            | backspace (`\x8`)                              |
+| `\e`            | escape (`\xB`)                                 |
+| `\s`            | space (`\x20`)                                 |
+
+A backslash followed by as many decimal digits denotes a code point written in decimal.
 
 ```coffee
-"\n" # newline
-"\r" # carriage return
-"\t" # tab
-"\b" # backspace
-"\f" # form feed
-"\v" # vertical tab
-"\a" # alert
-"\e" # escape
-"\s" # space
-"\p" # platform dependent newline
-"\l" # line continuation
-"\x{}" / "\u{}" # unicode escape
-"\b{}" # binary escape
-"\o{}" # octal escape
-"\d{}" # decimal escape
-"\0" # null
-
-# all characters can be escaped, including
-# spaces, backslashes and quotes
-"\ " "\\" "\""
+"\33" // => "A"
+"\83" // => "S"
+"\10" // => "\n"
+"\0"  // null char
 ```
 
-Numeric escape sequences are also allowed, in which Unicode character code points can be encoded in decimal, binary, octal or hexadecimal. The same escapes with curly brackets can allow you to put in Unicode character sequences separated by spaces, semicolons or commas.
+Escapes with other bases are also allowed.
 
 ```coffee
-# decimal, hexadecimal, binary and octal
-# characters can be escaped
-"\x0"; "\x1F"; "\x10FFFF"; "\uFF"
-"\65535"; "\d65535"
-"\o377"
-"\b11111111"
-
-# Multiple characters can also be placed
-# within curly brackets
-"\u{1F680 1F681 1F682}"
+decimal = "\11256099"
+hex = "\xABC123"
+octal = "\o52740443"
+binary = "\b101010111100000100100011"
 ```
 
-Using `\j{}` notation, you can express Unicode character sequences using a notation inspired by regular expressions.
+The same `\b`, `\d`, `\o` and `\x` escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces.
+
+```coffee
+// "HELLO"
+"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
+"\d{72 69 76 76 69}" == "\72\69\76\76\79"
+```
+
+Double quoted literals allow you to insert multiple multilingual, math, symbol or other Unicode characters as LaTeX-style expressions without having to type them yourself. Only `\j` requires curly brackets.
 
 ```coffee
 "\j{\emoji:smile}" # => 😀
 "\j{\frac{\sum{i=1}^{n}\left(\frac{1}{i}\right)}{n}}"
 ```
 
-#### Interpolation
+In single quotes, meta-characters such as `'`, `$`, `%` and `#` are doubled in order to be escaped (literal). In double quotes, you can use the backslash to escape them.
 
-Both types of strings support interpolation with `${}`, which is a way to embed variables. The braces can be omitted if the expression is only:
+### Interpolation
+
+Both types of strings support interpolation with `${}`, which is a way to embed variables. The braces can be omitted if the expression is any combination of the following:
 
 - a single identifier: `name`
 - a qualified name: `x.y.z` or `x::y::z`
 - an object accessor: `[][1]`
 - a function call: `fn()`
-- a numeric literal: `42` or `0x10`
 - and any combination of the like
 
 By default, all embedded expressions are converted to strings by passing it through the `str` method and concatenating the resulting string. You can override this behaviour by using the construct `ident'string'` instead.
 
 ```coffee
-person = { age: 23, name: "John" }
-
-# Simple interpolation
-greeting = "Hello $name!"
-# Accessing properties
-         = "Hello $person.name. " +
-  "You are $person['age'] years old."
-# Type assertions
-         = "Hello $person.name. " +
-  "You are $person{int}['age'] years old."
-# Calling functions and methods
-         = "Hello $name.upper(/locale='en')"
-         = "Hello $upper(name)"
-         = "Hello ${name.upper!}!"
+val greeting = "Hello $name!"
+val greeting = "Hello ${name}!"
+val greeting = "Hello $name.toUpperCase()!"
 ```
 
-#### Formatting
+#### Formatting directives
 
-Strings are formatted by a use of directives, which are a set of transformation methods chained together to produce a result. Each directive begins with a percent sign, and then a series of flags separated by pipe characters, and an optional value after the colon.
+Format directives are used to transform a value into a string using the built-in `format` method. Each directive begins with a percent sign, and then a series of flags separated by pipe characters, and an optional value after the colon.
 
 ```coffee
-"Hello $name%type!"
-"Hello $name%switch1:value1|switch2:value2"
-"Hello $name%switch1:value1|switch2:value2"
-
-# Some examples
-"Hello ${'world'}"
-"Hello ${'world'}%upper" # => "Hello WORLD"
-"${1234567890}%sep:{','}" # => "1,234,567,890"
-"Percentage correct answers: ${correct / total}%dp:2|unit:{'%'}"
+"Hello ${"world"}"
+"Hello ${"world"}%upper" // => "Hello WORLD"
+"$1234567890%sep:{','}|sep:{id + 1}" // => "1,234,567,890"
+"Percentage correct answers: \
+  ${correct / total}%dp:2|unit:('%')"
 ```
 
-#### Template strings
+### Template strings
 
-You can create template strings by using the `#` character to mark placeholder arguments in a string. The result is a function, which can be called with the arguments to be embedded, which returns said string.
+You can create template strings by using the `#` character to mark placeholders in a string. The arguments can be named, as in `#name`, or positional, as in `#0` or `#-1` (negative indices count from the last).
 
 ```coffee
-let greeting = "Hello #0!"
-greeting "World" # => "Hello World!"
-
-"Hello #name"; "Hello #/name" # named argument
-"Hello #{name=1}" # `name` with a default
-"Hello #{x:int}" # `x` with a type
-"Hello #name" # named argument
-"Hello #1" # positional argument
-"Hello #{1 = 1}" # positional argument
-"Hello #{-1:int}" # typed argument
-"Hello #?name" # optional argument
-"Hello #*name" # spread argument
-"Hello #*?name" # optional spread argument
+val greeting = "Hello #0!"
+greeting "World" // => "Hello World!"
 ```
+
+You can also spread arguments into the string by using the `*` operator, and mark them as optional by using the `?` operator.
 
 #### Backslash strings
 
-Strings can be written with a preceding backslash instead of quotes. Backslash strings can't contain `, ; ] ) }` or whitespace.
+Strings can be written with a preceding backslash instead of quotes. Backslash strings can't contain punctuation or symbol characters, nor whitespace, those have to be escaped as well.
 
 ```coffee
-\word
-func \word, \word
-func(word)
-[\word]
+\this\ is\ awesome
+[\look\ ma\,\\no\ quotes\!]
 {prop: \word}
 ```
 
@@ -571,37 +510,37 @@ Retrieve a value from the string by using subscript syntax, passing the index of
 The range of integers you want to retrieve is always `-l < 0 <= l` where `l` is the length of the string.
 
 ```coffee
-'hello'[0]   # => 'h'
-'hello'[1]   # => 'e'
-'hello'[2]   # => 'l'
-'hello'[3]   # => 'l'
-'hello'[4]   # => 'o'
-'hello'[5]   # => ''
-'hello'[-1]  # => 'o'
-'hello'[-2]  # => 'l'
-'hello'[-3]  # => 'l'
-'hello'[-4]  # => 'e'
-'hello'[-5]  # => 'h'
-'hello'[-6]  # => ''
+'hello'[0]   // => 'h'
+'hello'[1]   // => 'e'
+'hello'[2]   // => 'l'
+'hello'[3]   // => 'l'
+'hello'[4]   // => 'o'
+'hello'[5]   // => ''
+'hello'[-1]  // => 'o'
+'hello'[-2]  // => 'l'
+'hello'[-3]  // => 'l'
+'hello'[-4]  // => 'e'
+'hello'[-5]  // => 'h'
+'hello'[-6]  // => ''
 ```
 
 You can slice from the beginning or end of the string, using a notation `start,end,step`. All elements are optional, and default to `0,l,1` where `l` is the length of the string.
 
 ```coffee
 x = "Hello"
-x[0]      # 1st character
-x[1]      # 2nd character
-x[-1]     # last character
-x[-2]     # 2nd-to-last character
-x[1,]     # all except the 1st
-x[,-1]    # all except the last
-x[1,-1]   # all except the last
-x[-2,1]   # all except the last 2
-x[,]      # copy the entire string
-x[,0]     # empty string
-x[,,-1]   # reverse the string
-x[,,2]    # skip over every 2nd character
-x[,,3]    # skip over every 3rd character
+x[0]      // 1st character
+x[1]      // 2nd character
+x[-1]     // last character
+x[-2]     // 2nd-to-last character
+x[1,]     // all except the 1st
+x[,-1]    // all except the last
+x[1,-1]   // all except the last
+x[-2,1]   // all except the last 2
+x[,]      // copy the entire string
+x[,0]     // empty string
+x[,,-1]   // reverse the string
+x[,,2]    // skip over every 2nd character
+x[,,3]    // skip over every 3rd character
 ```
 
 ### Regular expressions
@@ -614,14 +553,21 @@ They go a long way towards making complex regular expressions readable.
 `^(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$`
 `[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] `]`
 
-# match a url with parameters
-
-` (?i)
-  ^ 0b[01]+    |              # binary
-  ^ 0o[0-7]+   |              # octal
-  ^ 0x[\da-f]+ |              # hex
-  ^ \d*\.?\d+ (?:e[+-]?\d+)?  # decimal
-`i
+// match a hexadecimal integer
+`
+  \b
+    (0x)          // prefix
+    \h [\h_]*     // integer part
+    (\.)?         // decimal point
+    [\h_]*        // fractional part
+    (?:           // exponent part
+      (p)         // delimiter
+      ([+-])?     // sign
+      ([\d_]+)    // mantissa
+    )?            // type suffix
+    ([\p{Pc}\p{L}][\w\p{Pd}]*)?
+  \b
+`xi
 ```
 
 Protea uses the [Oniguruma](https://github.com/kkos/oniguruma/blob/master/doc/RE) regular expression flavor by default, the same regex engine that powers Ruby and PHP7, with a few key extensions that make your regexes more concisene and less repetitive.
@@ -631,105 +577,105 @@ The delimiter `` ` `` must be escaped inside the top level of regular expression
 #### Basic Syntax
 
 ```coffee
-`\`` # escape a meta-character
-`|` # alternation
-`&` # join operator
-`()` # group
-`[]` # character class
-`{,}` # repetition
-`[^]` # negated character class
-`''` # quotation
-`""` # double quotation
-`.` # wildcard
-`\1` # numeric back-reference
-`\k<name>` # named back-reference
-`\g<name>` # subroutine
+`\`` // escape a meta-character
+`|` // alternation
+`&` // join operator
+`()` // group
+`[]` // character class
+`{,}` // repetition
+`[^]` // negated character class
+`''` // quotation
+`""` // double quotation
+`.` // wildcard
+`\1` // numeric back-reference
+`\k<name>` // named back-reference
+`\g<name>` // subroutine
 
 (* applies also to string literals *)
-`$n ${}` # interpolation
-`#name #{}` # placeholder argument
-`%n` # Formatting
+`$n ${}` // interpolation
+`#name #{}` // placeholder argument
+`%n` // Formatting
 
-`^` # beginning of line
-`$` # end of line
-`\b` # word boundary
-`\B` # non-word boundary
-`\A` # beginning of string
-`\Z` # end of string
-`\z` # end of string
-`\G` # end of last match
-`\K` # keep last match
+`^` // beginning of line
+`$` // end of line
+`\b` // word boundary
+`\B` // non-word boundary
+`\A` // beginning of string
+`\Z` // end of string
+`\z` // end of string
+`\G` // end of last match
+`\K` // keep last match
 
-`*` # zero or more
-`+` # one or more
-`?` # zero or one
-`{2}` # exactly 2
-`{2,}` # 2 or more
-`{2,3}` # 2 to 3
+`*` // zero or more
+`+` // one or more
+`?` // zero or one
+`{2}` // exactly 2
+`{2,}` // 2 or more
+`{2,3}` // 2 to 3
 
-`**` # greedy
-`*?` # lazy
-`*+` # eager
+`**` // greedy
+`*?` // lazy
+`*+` // eager
 ```
 
 #### Escapes
 
 ```coffee
-# control characters: same as in string literals
+// control characters: same as in string literals
 `[
   \a \b \e \f \n \r \t \v
   \ca \cz \ma \mz
 ]`
 
-# do note `\a` and `\b` mean something else outside []
+// do note `\a` and `\b` mean something else outside []
 
-# multi-escapes
-`[\x00-\xFF] [\u0000-\uFFFF]` # hexadecimal
-`[\0-\65535]` # decimal
-`[\b0-\b1111111111111111]` # binary
-`[\o0-\o177777]` # octal
+// multi-escapes
+`[\x00-\xFF] [\u0000-\uFFFF]` // hexadecimal
+`[\0-\65535]` // decimal
+`[\b0-\b1111111111111111]` // binary
+`[\o0-\o177777]` // octal
 ```
 
 #### Character classes
 
 ```coffee
-`\s \S` # whitespace
-`\d \D` # digit
-`\w \W` # word
-`\h \H` # hex digit
-`\u \U` # uppercase
-`\l \L` # lowercase
-`\q \Q` # punctuation and symbols
-`\j \J` # special characters
-`\O` # any character
-`\X` # any character
+`\s \S` // whitespace
+`\d \D` // digit
+`\w \W` // word
+`\h \H` // hex digit
+`\u \U` // uppercase
+`\l \L` // lowercase
+`\q \Q` // punctuation and symbols
+`\j \J` // special characters
+`\O` // any character
+`\X` // any character
 
-`\t \r \n \f \v` # control characters
-`\T \N \F \V` # control characters
+`\t \r \n \f \v` // control characters
+`\T \N \F \V` // control characters
 
-`\c \C` # first character of identifier
-`\i \I` # remaining characters of identifier
-`\x \X` # extended grapheme cluster
-`\p \P` # grapheme cluster
-`\R` # platform-independent newline
+`\c \C` // first character of identifier
+`\i \I` // remaining characters of identifier
+`\x \X` // extended grapheme cluster
+`\p \P` // grapheme cluster
+`\R` // platform-independent newline
 
-`\s` # whitespace
-`\S` # non-whitespace
-`\d` # digit
-`\D` # non-digit
-`\w` # word character
-`\W` # non-word character
-`\h` # horizontal whitespace
-`\H` # non-horizontal whitespace
-`\v` # vertical whitespace
-`\V` # non-vertical whitespace
+`\s` // whitespace
+`\S` // non-whitespace
+`\d` // digit
+`\D` // non-digit
+`\w` // word character
+`\W` // non-word character
+`\h` // horizontal whitespace
+`\H` // non-horizontal whitespace
+`\v` // vertical whitespace
+`\V` // non-vertical whitespace
 
-`\p{name}` # Unicode property
-`\P{name}` # Negated Unicode property
-`\X` # hexadecimal digit
-`\cX` # control character
-`\CX` # control character
-`\N{name}` # Unicode character name
+`\p{name}` // Unicode property
+`\P{name}` // Negated Unicode property
+`\X` // hexadecimal digit
+`\cX` // control character
+`\CX` // control character
+`\N{name}` // Unicode character name
 ```
 
 ### Lists
@@ -737,22 +683,22 @@ The delimiter `` ` `` must be escaped inside the top level of regular expression
 Lists are written with square brackets, and whose elements are separated by newlines. They can contain any type of value. They can be nested, and can be empty.
 
 ```coffee
-let list = ['hello', 'world', 'how are you']
+val list = ['hello', 'world', 'how are you']
 ```
 
 The type of a list is written in full as `list<type>`, `list type` or `[]type`.
 
 ```coffee
-let list1: []int = [10, 20, 30]
-let list2 = ['a', 'b', 'c'] # is []str
-[] # an empty list
+val list1: []int = [10, 20, 30]
+val list2 = ['a', 'b', 'c'] // is []str
+[] // an empty list
 ```
 
 ## Top-level declarations
 
 A top-level declaration appears on the top-level or outermost scope of a file. It can be one of the following:
 
-- A declaration, like `let x = 42`, or `struct type Optional a = None | Some a`.
+- A declaration, like `val x = 42`, or `struct type Optional a = None | Some a`.
 - A `use` clause, like `use base` or `use math.sqrt`.
 
 ### Declarations
@@ -764,25 +710,25 @@ Each declaration can be preceded with a number of _modifier_ keywords which can 
 `=` is the declaration operator and is used to separate the name from its definition, as opposed to `=` which is assignment.
 
 ```coffee
-let x = 1
-mut let x = 1
+val x = 1
+mut val x = 1
 ```
 
 All declarations are immutable, private and block-scoped by default. To make them public or visible, use the `pub` or `show` keyword; to make them mutable, use the `mut` keyword.
 
 ```coffee
-let x = do
-  let part1 = 'Hello'
-  let part2 = 'World!'
+val x = do
+  val part1 = 'Hello'
+  val part2 = 'World!'
   part1 + part2
-# part1 and part2 are not accessible outside this block
+// part1 and part2 are not accessible outside this block
 ```
 
 ## Hello World!
 
 ```coffee
 print 'Hello World!'
-# or
+// or
 fn main = print 'Hello World!'
 ```
 
@@ -816,42 +762,42 @@ suffix oper fn + = |x|: int = x + 1
 A user-defined data type is introduced with the type keyword. The left hand side declares a new type constructor with that name, followed by names for any type arguments. The right hand side is its definition.
 
 ```coffee
-# sum types
+// sum types
 type Optional x = None + Some x
 
-# product types
+// product types
 type Pair x = x * x
 type Triple x = x * x * x
 
-# set types
+// set types
 type Union x = x | x
 type Intersection x = x & x
 type SymmetricDifference x = x ^ x
 type Difference x = x - x
 
-# nullable/optional types
+// nullable/optional types
 type Nullable x = ?a
 type Optional x = ?a
 
-# tuple types
+// tuple types
 type Tuple x y = (x, y)
 
-# list types
+// list types
 type List x = []x
-# set types
+// set types
 type Set x = :{}x
-# hash types
+// hash types
 type Hash x y = {x : y}
 
-# record types
+// record types
 type Rec x y = {x : y}
 type RecOnly x y = {x : y}
 
-# function types
+// function types
 type Fn a b = a -> b
 type Fn2 a b c = a -> b -> c
 
-# type operations on objects
+// type operations on objects
 type TypeOf a = type a
 type ValuesOf a = val a
 type KeysOf a = key a
