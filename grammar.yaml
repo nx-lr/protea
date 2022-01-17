@@ -98,7 +98,7 @@ define:
         in|of|as|is|new
         |to|til|thru|by|del
         |unset|ref|and|or|xor|not
-        |var|val|func|proc|type
+        |var|val|func?|proc|type
         |class|data|enum|mod
         |iter|macro|inter|obj
         |trait|style|elem|prop|mark
@@ -128,7 +128,7 @@ define:
         in|of|as|is|new
         |to|til|thru|by|del
         |unset|ref|and|or|xor|not
-        |var|val|func|proc|type
+        |var|val|func?|proc|type
         |class|data|enum|mod
         |iter|macro|inter|obj
         |trait|style|elem|prop|mark
@@ -173,6 +173,8 @@ define:
       name: entity.name.tag.namespace.trin
     - match: \b((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)\b
       name: support.class.component.trin
+    - include: '#clauses'
+    - include: '#declarations'
     - include: '#keywords'
     - include: '#html-tag-names'
 
@@ -711,7 +713,7 @@ repository:
               in|of|as|is|new
               |to|til|thru|by|del
               |unset|ref|and|or|xor|not
-              |var|val|func|proc|type
+              |var|val|func?|proc|type
               |class|data|enum|mod
               |iter|macro|inter|obj
               |trait|style|elem|prop|mark
@@ -787,7 +789,7 @@ repository:
                 in|of|as|is|new
                 |to|til|thru|by|del
                 |unset|ref|and|or|xor|not
-                |var|val|func|proc|type
+                |var|val|func?|proc|type
                 |class|data|enum|mod
                 |iter|macro|inter|obj
                 |trait|style|elem|prop|mark
@@ -2024,7 +2026,7 @@ repository:
       - include: '#literals'
       - include: '#css-value-names'
       - include: '#hex-colors'
-      - include: '#tag-names'
+      - include: '#type-variables'
       - include: '#embedded-expression'
       - include: source.css.scss#constant_functions
       - include: source.css.scss#constant_sass_functions
@@ -2410,7 +2412,7 @@ repository:
                 in|of|as|is|new
                 |to|til|thru|by|del
                 |unset|ref|and|or|xor|not
-                |var|val|func|proc|type
+                |var|val|func?|proc|type
                 |class|data|enum|mod
                 |iter|macro|inter|obj
                 |trait|style|elem|prop|mark
@@ -2463,7 +2465,7 @@ repository:
                     in|of|as|is|new
                     |to|til|thru|by|del
                     |unset|ref|and|or|xor|not
-                    |var|val|func|proc|type
+                    |var|val|func?|proc|type
                     |class|data|enum|mod
                     |iter|macro|inter|obj
                     |trait|style|elem|prop|mark
@@ -2491,7 +2493,7 @@ repository:
                 in|of|as|is|new
                 |to|til|thru|by|del
                 |unset|ref|and|or|xor|not
-                |var|val|func|proc|type
+                |var|val|func?|proc|type
                 |class|data|enum|mod
                 |iter|macro|inter|obj
                 |trait|style|elem|prop|mark
@@ -2539,7 +2541,7 @@ repository:
                       in|of|as|is|new
                       |to|til|thru|by|del
                       |unset|ref|and|or|xor|not
-                      |var|val|func|proc|type
+                      |var|val|func?|proc|type
                       |class|data|enum|mod
                       |iter|macro|inter|obj
                       |trait|style|elem|prop|mark
@@ -3296,7 +3298,7 @@ repository:
       - PascalCase
       - camelCase
     match: |
-      (?x) \s* \b
+      (?x) \b
 
       (?!
         (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
@@ -3304,7 +3306,7 @@ repository:
           in|of|as|is|new
           |to|til|thru|by|del
           |unset|ref|and|or|xor|not
-          |var|val|func|proc|type
+          |var|val|func?|proc|type
           |class|data|enum|mod
           |iter|macro|inter|obj
           |trait|style|elem|prop|mark
@@ -3380,6 +3382,8 @@ repository:
       1: {name: punctuation.definition.annotation.trin}
     patterns:
       - include: '#types'
+      - match: \s+
+        name: meta.type.trin
 
   type-embedded-expression:
     begin: (\${)\s*
@@ -3708,6 +3712,8 @@ repository:
       - include: '#line-continuation'
       - match: '\.|::'
         name: punctuation.separator.namespace.trin
+      - match: \s+
+        name: meta.block.trin
 
   modifier-keywords:
     match: |
@@ -3728,7 +3734,7 @@ repository:
 
       # Function and methods
       |rec|gen|oper|get|set|post|del|curry|inline
-      |prefix|suffix|infix|binary|unary|left|right
+      |pref|suff|inf|left|right
       )
       )(?!\B|\p{Pd}+\b)\s*
       )*
@@ -3736,7 +3742,7 @@ repository:
       (?=
       \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?:
-      var|val|func|proc|type
+      var|val|func?|proc|type
       |class|data|enum|mod
       |iter|macro|inter|obj
       |trait|style|elem|prop|mark
@@ -3765,7 +3771,7 @@ repository:
               )|
               (# Property modifiers
               rec|gen|oper|get|set|post|del|curry|inline
-              |prefix|suffix|infix|binary|unary|left|right
+              |pref|suff|inf|left|right
               )
               )(?!\B|\p{Pd}+\b)\s*
             captures:
@@ -3784,7 +3790,7 @@ repository:
         name: storage.type.trin
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.style.trin
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func?)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.function.trin
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.procedure.trin
@@ -4098,7 +4104,7 @@ repository:
 
       function:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func?)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.function.trin}
@@ -4251,13 +4257,13 @@ repository:
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
-          |prefix|suffix|infix|binary|unary|left|right
+          |pref|suff|inf|left|right
           )
           )
           \s*)*)
           (?=\s*\b
           (?:
-          iter|func|proc|macro
+          iter|func?|proc|macro
           )\b
           )
         name: meta.object-literal.key.trin
@@ -4283,7 +4289,7 @@ repository:
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
-          |prefix|suffix|infix|binary|unary|left|right
+          |pref|suff|inf|left|right
           )\s*\b)*
           )\s*
           (\|)
@@ -4318,13 +4324,13 @@ repository:
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
-          |prefix|suffix|infix|binary|unary|left|right
+          |pref|suff|inf|left|right
           )
           )
           \s*)*)
           (?=\s*\b
           (?:
-          iter|func|proc|macro
+          iter|func?|proc|macro
           )\b
           )
         name: meta.object-literal.key.trin
@@ -4349,7 +4355,7 @@ repository:
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
-          |prefix|suffix|infix|binary|unary|left|right
+          |pref|suff|inf|left|right
           )\s*\b)*
           )\s*
           (\|)
@@ -4376,7 +4382,7 @@ repository:
       in|of|as|is|new
       |to|til|thru|by|del
       |unset|ref|and|or|xor|not
-      |var|val|func|proc|type
+      |var|val|func?|proc|type
       |class|data|enum|mod
       |iter|macro|inter|obj
       |trait|style|elem|prop|mark
@@ -4560,13 +4566,13 @@ repository:
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
-          |prefix|suffix|infix|binary|unary|left|right
+          |pref|suff|inf|left|right
           )
           )
           \s*)*)
           (?=\s*\b
           (?:
-          iter|func|proc|macro
+          iter|func?|proc|macro
           )\b
           )
         name: meta.object-literal.key.trin
@@ -4592,7 +4598,7 @@ repository:
 
           # Function and methods
           |rec|gen|oper|get|set|post|del|curry|inline
-          |prefix|suffix|infix|binary|unary|left|right
+          |pref|suff|inf|left|right
           )\s*\b)*
           )\s*
           (\|)
@@ -4839,7 +4845,7 @@ repository:
   css-property-names:
     patterns:
       - match: |
-          (?x)\s*\b(
+          (?x)\b(
             # Standard CSS
             additive-symbols|align-content|align-items|align-self|all|animation|animation-delay|animation-direction|animation-duration
             |animation-fill-mode|animation-iteration-count|animation-name|animation-play-state|animation-timing-function|backdrop-filter
@@ -5007,19 +5013,19 @@ repository:
             |textJustify|textOutline|textReplace|textWrap|timingFunction|topColor|topLeftRadius|topRightRadius|topStyle
             |topWidth|trim|unicode|up|userSelect|variant|voice|voiceBalance|voiceDuration|voiceFamily|voicePitch|voicePitchRange
             |voiceRate|voiceStress|voiceVolume|volume|weight|white|whiteSpaceCollapse|word|wrap
-          )(?!\B|\p{Pd}+\b)\s*
+          )(?!\B|\p{Pd}+\b)
         name: support.type.property-name.css.trin
 
   css-value-names:
     comment: TODO
     patterns:
       - match: |
-          (?x)\s*\b(
+          (?x)\b(
             aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|purple|red|silver|teal|white|yellow
-          )(?!\B|\p{Pd}+\b)\s*
+          )(?!\B|\p{Pd}+\b)
         name: support.constant.color.w3c-standard-color-name.css.trin
       - match: |
-          (?x)\s*\b(
+          (?x)\b(
             aliceblue|antiquewhite|aquamarine|azure|beige|bisque|blanchedalmond|blueviolet|brown|burlywood
             |cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan
             |darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange
@@ -5035,20 +5041,20 @@ repository:
             |powderblue|rebeccapurple|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell
             |sienna|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|thistle|tomato
             |transparent|turquoise|violet|wheat|whitesmoke|yellowgreen
-          )(?!\B|\p{Pd}+\b)\s*
+          )(?!\B|\p{Pd}+\b)
         name: support.constant.color.w3c-extended-color-name.css.trin
-      - match: \s*\b(currentColor)(?!\B|\p{Pd}+\b)\s*
+      - match: \b(currentColor)(?!\B|\p{Pd}+\b)
         name: support.constant.color.current.css.trin
       - match: |
-          (?x)\s*\b(
+          (?x)\b(
             ActiveBorder|ActiveCaption|AppWorkspace|Background|ButtonFace|ButtonHighlight|ButtonShadow
             |ButtonText|CaptionText|GrayText|Highlight|HighlightText|InactiveBorder|InactiveCaption
             |InactiveCaptionText|InfoBackground|InfoText|Menu|MenuText|Scrollbar|ThreeDDarkShadow
             |ThreeDFace|ThreeDHighlight|ThreeDLightShadow|ThreeDShadow|Window|WindowFrame|WindowText
-          )(?!\B|\p{Pd}+\b)\s*
+          )(?!\B|\p{Pd}+\b)
         name: support.constant.color.system.css.trin
       - match: |
-          (?x)\s*\b(
+          (?x)\b(
             above|absolute|active|add|additive|after-edge|alias|all|all-petite-caps|all-scroll|all-small-caps|alpha|alphabetic|alternate|alternate-reverse
             |always|antialiased|auto|auto-pos|available|avoid|avoid-column|avoid-page|avoid-region|backwards|balance|baseline|before-edge|below|bevel
             |bidi-override|blink|block|block-axis|block-start|block-end|bold|bolder|border|border-box|both|bottom|bottom-outside|break-all|break-word|bullets
@@ -5112,7 +5118,7 @@ repository:
             |ultraCondensed|ultraExpanded|under|underline|unicase|unset|upleft|uppercase|upright|useGlyphOrientation|useScript|verso|vertical
             |verticalIdeographic|verticalLr|verticalRl|verticalText|viewBox|visible|visibleFill|visiblePainted|visibleStroke|wResize|wait|wavy
             |weight|whitespace|wider|words|wrap|wrapReverse|x|xLarge|xSmall|xxLarge|xxSmall|y|zero|zoomIn|zoomOut
-          )(?!\B|\p{Pd}+\b)\s*
+          )(?!\B|\p{Pd}+\b)
         name: support.constant.property-value.css.trin
       - match: |
           (?x)\s*\b(
@@ -5133,30 +5139,29 @@ repository:
             |lowerLatin|lowerRoman|malayalam|mongolian|myanmar|oriya|persian|simpChineseFormal|simpChineseInformal
             |square|tamil|telugu|thai|tibetan|tradChineseFormal|tradChineseInformal|upperAlpha|upperArmenian
             |upperLatin|upperRoman|urdu
-          )(?!\B|\p{Pd}+\b)\s*
+          )(?!\B|\p{Pd}+\b)
         name: support.constant.property-value.list-style-type.css.trin
       - match: |
           (?x)\s*\b(
             arial|century|comic|courier|garamond|georgia|helvetica|impact|lucida|symbol|system-ui|system|tahoma
             |times|trebuchet|ui-monospace|ui-rounded|ui-sans-serif|ui-serif|utopia|verdana|webdings|sans-serif|serif
             |monospace
-
             |arial|century|comic|courier|garamond|georgia|helvetica|impact|lucida|symbol|systemUi|system|tahoma
             |times|trebuchet|uiMonospace|uiRounded|uiSansSerif|uiSerif|utopia|verdana|webdings|sansSerif|serif
             |monospace
-          )(?!\B|\p{Pd}+\b)\s*
+          )(?!\B|\p{Pd}+\b)
         name: support.constant.font-name.css.trin
 
   html-tag-names:
     patterns:
       - match: |
-          (?x)\s*\b(?:
+          (?x)\b(?:
             (all|print|screen|speech)
             |(aural|braille|embossed|handheld|projection|tty|tv)
-          )(?!\B|\p{Pd}+\b)\s*
+          )(?!\B|\p{Pd}+\b)
         name: support.constant.media.css.trin
       - match: |
-          (?x)\s*\b(
+          (?x)\b(
 
             # HTML
             a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdi|bdo|bgsound
@@ -5187,7 +5192,7 @@ repository:
             |mfrac|mglyph|mi|mlabeledtr|mlongdiv|mmultiscripts|mn|mo|mover|mpadded|mphantom|mroot
             |mrow|ms|mscarries|mscarry|msgroup|msline|mspace|msqrt|msrow|mstack|mstyle|msub|msubsup
             |msup|mtable|mtd|mtext|mtr|munder|munderover|semantics
-          )(?!\B|\p{Pd}+\b)\s*
+          )(?!\B|\p{Pd}+\b)
         name: entity.name.tag.css.trin
 
   entities:
@@ -5224,11 +5229,11 @@ repository:
           (?x)\s*(?<![?!]?\.|[?!:]:)\b(
             Array|Tuple|List|Set|Hash|Seq|Str|Dict|Iter
             |Proc|Range|Stack|Heap|Queue|Tree|Trie|Rec
-            |Future|Stream|RegExp?|Func|Buf|StrBuf|Bytes
+            |Future|Stream|RegExp?|Func?|Buf|StrBuf|Bytes
             # lower flat case
             array|tuple|list|set|hash|seq|str|dict|iter
             |proc|range|stack|heap|queue|tree|trie|rec
-            |future|stream|regexp?|func|buf|strbuf|bytes
+            |future|stream|regexp?|func?|buf|strbuf|bytes
           )(?!\B|\p{Pd}+\b)
         name: support.type.builtin.trin
       - comment: Constant/algebraic classes
