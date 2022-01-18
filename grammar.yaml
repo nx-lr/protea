@@ -39,7 +39,8 @@ fixes: |
     shortened some to three or four letters:
       'struct' -> 'inter', 'module' -> 'mod', 'markup' -> 'mark', 'object' -> 'obj'
   - Fixed regular expression highlighting:
-    - Added range clause x-y-z
+    - Added and expanded quantifiers and range highlighting
+    - Add support for fuzzy matching (edits, insertions, deletions, etc.)
 
   Fixes:
 
@@ -1082,6 +1083,67 @@ repository:
       - include: '#regexp-character-class'
       - match: \\.
         name: constant.character.escape.other.trin
+      - begin: ({)
+        end: \s*(})
+        name: meta.fuzzy.trin
+        captures:
+          1: {name: punctuation.definition.fuzzy.trin}
+        patterns:
+          - applyEndPatternLast: true
+            begin: (?<=^|\\.|[,;'"`(){}\[\]\s])(:)
+            beginCaptures:
+              1: {name: punctuation.separator.key-value.trin}
+            end: (?=[,;}]|)|$
+            patterns: [include: '#regexp-patterns']
+          - include: '#fuzzy-expression'
+
+  fuzzy-expression:
+    patterns:
+      - include: '#punctuation'
+      - include: '#comments'
+      - include: '#calls'
+      - include: '#literals'
+      - include: '#embedded'
+      - include: '#operators'
+      - include: '#clauses'
+      - include: '#declarations'
+      - include: '#keywords'
+      - include: '#fuzzy-brackets'
+      - match: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
+        name: keyword.other.unit.trin
+      - match: \s+
+        name: meta.space.trin
+
+  fuzzy-brackets:
+    patterns:
+      - begin: (\{)\s*
+        end: \s*(\})
+        captures:
+          1: {name: punctuation.definition.mapping.trin}
+        patterns:
+          - match: ','
+            name: punctuation.separator.mapping.trin
+          - include: '#labels'
+          - include: '#fuzzy-expression'
+          - include: $self
+      - begin: (\[)\s*
+        end: \s*(\])
+        captures:
+          1: {name: punctuation.definition.array.trin}
+        patterns:
+          - match: ','
+            name: punctuation.separator.sequence.trin
+          - include: '#fuzzy-expression'
+          - include: $self
+      - begin: (\()\s*
+        end: \s*(\))
+        captures:
+          1: {name: punctuation.definition.expression.trin}
+        patterns:
+          - match: ','
+            name: punctuation.separator.arguments.trin
+          - include: '#fuzzy-expression'
+          - include: $self
 
   regexp-groups:
     patterns:
@@ -1324,7 +1386,8 @@ repository:
                 (:) # range
               \s*
             ( # to
-                \\(?:d?\d+|d{[\d\s,;]+}) # decimal escape
+                \d+ # number
+              | \\(?:d?\d+|d{[\d\s,;]+}) # decimal escape
               | \\[xu](?:\h+|{[\h\s,;]+}) # hex escape
               | \\o(?:[0-7]+|{[0-7\s,;]+}) # octal escape
               | \\b(?:[01]+|{[01\s,;]+}) # binary escape
@@ -1333,7 +1396,6 @@ repository:
               | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
               | \\(?:[prntfvabe]|[^a-zA-Z]) # any escape character
               | [^-\\\[\]] # any unescaped character
-              | \d+ # number
             )
           )?
         captures:
@@ -1371,13 +1433,13 @@ repository:
   regexp-character-set:
     patterns:
       - begin: (\[:)
-        end: (:\])
+        end: \s*(:\])
         name: constant.other.character-set.posix.trin
         captures:
           1: {name: punctuation.definition.character-class.posix.trin}
         patterns: [include: '#attribute-selectors']
       - begin: (\[\^)
-        end: (\])
+        end: \s*(\])
         name: constant.other.character-set.negated.trin
         captures:
           1: {name: punctuation.definition.character-class.negated.trin}
@@ -1387,7 +1449,7 @@ repository:
           - include: '#regexp-character-class'
           - include: '#regexp-character-set'
       - begin: (\[)
-        end: (\])
+        end: \s*(\])
         name: constant.other.character-set.trin
         captures:
           1: {name: punctuation.definition.character-class.trin}
@@ -3721,68 +3783,80 @@ repository:
     match: |
       (?x)
       (
-      (?:
-      (?:
-      \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-      (?:
-      # Visibility and mutability
-      pub|priv|prot|after|mut|immut
-      |glo|loc|early|late|covar|contra
-      |seal|abst|intern|extern|imply|exply
-      |sub|impure|pure
+        (?:
+          (?:
+            \s*
+            (?<!(?:(?<!\.)\.|[?!:]:)=?)
+            \b
+              (?:
+                pub|priv|prot|final|immut|mut|over
+                |glo|loc|intern|extern|imply|exply
+                |post|[gs]et|rem
 
-      # Concurrency/thread
-      |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
+                |seal|abst|impure|pure|early|late
+                |covar|contra|a?sync|stat|dyn|lazy
+                |eager|bound|free|unique|struct
 
-      # Function and methods
-      |rec|gen|oper|get|set|post|del|curry|inline
-      |pre|suf|inf|left|right
-      )
-      )(?!\B|\p{Pd}+\b)\s*
-      )*
+                |rec|oper|curry|inline
+                |pre|suf|inf|left|right
+              )
+            )
+            (?!\B|\p{Pd}+\b)
+          \s*
+        )*
       )
       (?=
-      \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-      (?:
-      var|val|func?|proc|type
-      |class|data|enum|mod
-      |iter|macro|inter|obj
-      |trait|style|elem|prop|mark
-      )
-      \b
+        \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+        (?:
+          var|val|func?|proc|type
+          |class|data|enum|mod
+          |iter|macro|inter|obj
+          |trait|style|elem|prop|mark
+        )
+        (?!\B|\p{Pd}+\b)
       )
     captures:
       1:
-        patterns: &modifier-keywords
-          - &decorators
-            match: \s*@[\p{Pc}\p{L}][\w\p{Pd}]*\b(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*)*\s*
-            name: entity.name.class.decorator.trin
-          - &modifiers
-            match: |
-              (?x)\s*
-              \s*\b
-              (?:
-              (# Access modifiers
-              pub|priv|prot|after|mut|immut
-              |glo|loc|early|late|covar|contra
-              |seal|abst|intern|extern|imply|exply
-              |sub|impure|pure
-              )|
-              (# Function or method modifiers
-              sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
-              )|
-              (# Property modifiers
-              rec|gen|oper|get|set|post|del|curry|inline
-              |pre|suf|inf|left|right
-              )
-              )(?!\B|\p{Pd}+\b)\s*
-            captures:
-              1: {name: storage.modifier.trin}
-              2: {name: storage.type.accessor.trin}
-              3: {name: storage.type.property.trin}
-              4: {name: keyword.operator.expression.trin}
+        patterns:
+          - include: '#modifiers'
 
-  modifiers: *modifiers
+  modifiers:
+    patterns:
+      - comment: Visibility modifiers
+        match: |
+          (?x) \s*
+          \b
+          (?:
+            pub|priv|prot|final|immut|mut|over
+            |glo|loc|intern|extern|imply|exply
+            |post|[gs]et|rem
+          )
+          (?!\B|\p{Pd}+\b)
+          \s*
+        name: storage.modifier.trin
+      - comment: Visibility modifiers
+        match: |
+          (?x) \s*
+          \b
+          (?:
+            seal|abst|impure|pure|early|late
+            |covar|contra|a?sync|stat|dyn|lazy
+            |eager|bound|free|unique|struct
+          )
+          (?!\B|\p{Pd}+\b)
+          \s*
+        name: storage.type.accessor.trin
+      - comment: Functional modifiers
+        match: |
+          (?x) \s*
+          \b
+          (?:
+            rec|oper|curry|inline
+            |pre|suf|inf|left|right
+          )
+          (?!\B|\p{Pd}+\b)
+          \s*
+        name: storage.type.property.trin
 
   declaration-keywords:
     patterns:
@@ -3885,7 +3959,6 @@ repository:
             beginCaptures:
               1: {name: keyword.control.module.trin}
             patterns:
-              - *modifiers
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.module.trin
               - include: '#type-keywords'
@@ -4248,17 +4321,16 @@ repository:
           (:?=)\s*\b
           ((?:
           \s*(?:
-          (?:# Visibility and mutability
-          pub|priv|prot|after|mut|immut
-          |glo|loc|early|late|covar|contra
-          |seal|abst|intern|extern|imply|exply
-          |sub|impure|pure
+          (?:
+          pub|priv|prot|final|immut|mut|over
+          |glo|loc|intern|extern|imply|exply
+          |post|[gs]et|rem
 
-          # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
+          |seal|abst|impure|pure|early|late
+          |covar|contra|a?sync|stat|dyn|lazy
+          |eager|bound|free|unique|struct
 
-          # Function and methods
-          |rec|gen|oper|get|set|post|del|curry|inline
+          |rec|oper|curry|inline
           |pre|suf|inf|left|right
           )
           )
@@ -4272,7 +4344,7 @@ repository:
         captures:
           1: {name: entity.name.method.trin}
           2: {name: keyword.operator.assignment.trin}
-          3: {patterns: *modifier-keywords}
+          3: {patterns: [include: '#modifier-keywords']}
       - begin: |
           (?x)\s*
           (?<=[?!:]:|\b\.|[?!]\.)
@@ -4280,17 +4352,16 @@ repository:
           (:?=)\s*
           (
           (?:
-          (?:# Visibility and mutability
-          pub|priv|prot|after|mut|immut
-          |glo|loc|early|late|covar|contra
-          |seal|abst|intern|extern|imply|exply
-          |sub|impure|pure
+          (?:
+          pub|priv|prot|final|immut|mut|over
+          |glo|loc|intern|extern|imply|exply
+          |post|[gs]et|rem
 
-          # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
+          |seal|abst|impure|pure|early|late
+          |covar|contra|a?sync|stat|dyn|lazy
+          |eager|bound|free|unique|struct
 
-          # Function and methods
-          |rec|gen|oper|get|set|post|del|curry|inline
+          |rec|oper|curry|inline
           |pre|suf|inf|left|right
           )\s*\b)*
           )\s*
@@ -4301,7 +4372,7 @@ repository:
         captures:
           1: {name: entity.name.method.trin}
           2: {name: keyword.operator.assignment.trin}
-          3: {patterns: *modifier-keywords}
+          3: {patterns: [include: '#modifier-keywords']}
           4: {name: punctuation.separator.arguments.trin}
         endCaptures:
           1: {name: punctuation.separator.arguments.trin}
@@ -4315,17 +4386,16 @@ repository:
           (:?=)\s*\b
           ((?:
           \s*(?:
-          (?:# Visibility and mutability
-          pub|priv|prot|after|mut|immut
-          |glo|loc|early|late|covar|contra
-          |seal|abst|intern|extern|imply|exply
-          |sub|impure|pure
+          (?:
+          pub|priv|prot|final|immut|mut|over
+          |glo|loc|intern|extern|imply|exply
+          |post|[gs]et|rem
 
-          # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
+          |seal|abst|impure|pure|early|late
+          |covar|contra|a?sync|stat|dyn|lazy
+          |eager|bound|free|unique|struct
 
-          # Function and methods
-          |rec|gen|oper|get|set|post|del|curry|inline
+          |rec|oper|curry|inline
           |pre|suf|inf|left|right
           )
           )
@@ -4339,24 +4409,23 @@ repository:
         captures:
           1: {name: entity.name.function.trin}
           2: {name: keyword.operator.assignment.trin}
-          3: {patterns: *modifier-keywords}
+          3: {patterns: [include: '#modifier-keywords']}
       - begin: |
           (?x)\s*
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s*
           (:?=)\s*
           (
           (?:
-          (?:# Visibility and mutability
-          pub|priv|prot|after|mut|immut
-          |glo|loc|early|late|covar|contra
-          |seal|abst|intern|extern|imply|exply
-          |sub|impure|pure
+          (?:#
+          pub|priv|prot|final|immut|mut|over
+          |glo|loc|intern|extern|imply|exply
+          |post|[gs]et|rem
 
-          # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
+          |seal|abst|impure|pure|early|late
+          |covar|contra|a?sync|stat|dyn|lazy
+          |eager|bound|free|unique|struct
 
-          # Function and methods
-          |rec|gen|oper|get|set|post|del|curry|inline
+          |rec|oper|curry|inline
           |pre|suf|inf|left|right
           )\s*\b)*
           )\s*
@@ -4367,7 +4436,7 @@ repository:
         captures:
           1: {name: entity.name.function.trin}
           2: {name: keyword.operator.assignment.trin}
-          3: {patterns: *modifier-keywords}
+          3: {patterns: [include: '#modifier-keywords']}
           4: {name: punctuation.separator.arguments.trin}
         endCaptures:
           1: {name: punctuation.separator.arguments.trin}
@@ -4557,17 +4626,16 @@ repository:
           (:)\s*
           ((?:
           \s*(?:
-          (?:# Visibility and mutability
-          pub|priv|prot|after|mut|immut
-          |glo|loc|early|late|covar|contra
-          |seal|abst|intern|extern|imply|exply
-          |sub|impure|pure
+          (?:
+          pub|priv|prot|final|immut|mut|over
+          |glo|loc|intern|extern|imply|exply
+          |post|[gs]et|rem
 
-          # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
+          |seal|abst|impure|pure|early|late
+          |covar|contra|a?sync|stat|dyn|lazy
+          |eager|bound|free|unique|struct
 
-          # Function and methods
-          |rec|gen|oper|get|set|post|del|curry|inline
+          |rec|oper|curry|inline
           |pre|suf|inf|left|right
           )
           )
@@ -4581,7 +4649,7 @@ repository:
         captures:
           1: {name: entity.name.function.trin}
           2: {name: punctuation.separator.key-value.trin}
-          3: {patterns: *modifier-keywords}
+          3: {patterns: [include: '#modifier-keywords']}
       - begin: |
           (?x)
           (?<=^|[{;,\s])\s*
@@ -4589,17 +4657,16 @@ repository:
           (:)\s*
           (
           (?:
-          (?:# Visibility and mutability
-          pub|priv|prot|after|mut|immut
-          |glo|loc|early|late|covar|contra
-          |seal|abst|intern|extern|imply|exply
-          |sub|impure|pure
+          (?:
+          pub|priv|prot|final|immut|mut|over
+          |glo|loc|intern|extern|imply|exply
+          |post|[gs]et|rem
 
-          # Concurrency/thread
-          |sync|async|stat|dyn|lazy|eager|bound|free|unique|struct
+          |seal|abst|impure|pure|early|late
+          |covar|contra|a?sync|stat|dyn|lazy
+          |eager|bound|free|unique|struct
 
-          # Function and methods
-          |rec|gen|oper|get|set|post|del|curry|inline
+          |rec|oper|curry|inline
           |pre|suf|inf|left|right
           )\s*\b)*
           )\s*
@@ -4610,7 +4677,7 @@ repository:
         captures:
           1: {name: entity.name.function.trin}
           2: {name: punctuation.separator.key-value.trin}
-          3: {patterns: *modifier-keywords}
+          3: {patterns: [include: '#modifier-keywords']}
           4: {name: punctuation.separator.arguments.trin}
         endCaptures:
           1: {name: punctuation.separator.arguments.trin}
@@ -4638,7 +4705,6 @@ repository:
       - include: '#line-continuation'
       - include: '#comma'
       - include: '#semicolon'
-      - include: '#double-semicolon'
 
   line-continuation:
     begin: \s*(\\)\s*(?=/[/*]\s|$)
@@ -5207,7 +5273,6 @@ repository:
   type-names:
     comment: Names for built-in types
     patterns:
-      - *modifiers
       - comment: Primitive classes
         match: |
           (?x)\s*(?<![?!]?\.|[?!:]:)\b(
@@ -5267,7 +5332,7 @@ repository:
       - comment: Python and Perl 6/Raku built-in functions
         match: |
           (?x)
-          (?<=^|[\p{P}\p{S}\p{Z}&&\P{Pd}])
+          (?<!\B|\b\p{Pd}+)
           (
             # Python
             import|abs|all|any|ascii|bin|breakpoint|callable|chr|compile
@@ -5328,7 +5393,7 @@ repository:
       - comment: JavaScript StdLib functions
         match: |
           (?x)
-          (?<=^|[\p{P}\p{S}\p{Z}&&\P{Pd}])(
+          (?<!\B|\b\p{Pd}+)(
             shift|showModelessDialog|showModalDialog|showHelp|scroll|scrollX|scrollByPages|
             scrollByLines|scrollY|scrollTo|stop|strike|sizeToContent|sidebar|signText|sort|
             sup|sub|substr|substring|splice|split|send|set(Milliseconds|Seconds|Minutes|Hours|
@@ -5352,7 +5417,7 @@ repository:
       - comment: Python magic functions
         match: |
           (?x)
-          (?<=^|[\p{P}\p{S}\p{Z}&&\P{Pd}])
+          (?<!\B|\b\p{Pd}+)
           (
             \p{Pc}+ (?:
               abs|add|aenter|aexit|aiter|and|anext|await|bool|call|ceil|cmp|coerce|complex
@@ -5375,7 +5440,7 @@ repository:
       - comment: CSS, LESS and SASS functions
         match: |
           (?x)
-          (?<=^|[\p{P}\p{S}\p{Z}&&\P{Pd}])(
+          (?<!\B|\b\p{Pd}+)(
             abs|acos|alpha|argb|asin|atan|average|blue|calc|ceil
             |color|contrast|convert|convert|cos|darken|data-uri
             |desaturate|difference|e|escape|exclusion|extract
@@ -5390,7 +5455,7 @@ repository:
       - comment: Ruby kernel functions
         match: |
           (?x)
-          (?<=^|[\p{P}\p{S}\p{Z}&&\P{Pd}])(
+          (?<!\B|\b\p{Pd}+)(
             # Ruby builtin functions
             abort|atExit|autoload|binding|callcc|caller|callerLocations
             |chomp|chop|eval|exec|exit|exit|fork|format|gets
@@ -5430,7 +5495,7 @@ repository:
       - comment: Event handler functions
         match: |
           (?x)
-          (?<=^|[\p{P}\p{S}\p{Z}&&\P{Pd}])(
+          (?<!\B|\b\p{Pd}+)(
             on(Rowsinserted|Rowsdelete|Rowenter|Rowexit|Resize|Resizestart|Resizeend|Reset|
             Readystatechange|Mouseout|Mouseover|Mousedown|Mouseup|Mousemove|
             Before(cut|deactivate|unload|update|paste|print|editfocus|activate)|
@@ -5444,7 +5509,7 @@ repository:
       - comment: DOM functions
         match: |
           (?x)
-          (?<=^|[\p{P}\p{S}\p{Z}&&\P{Pd}])(
+          (?<!\B|\b\p{Pd}+)(
             acceptNode|add|addEventListener|addTextTrack|adoptNode|after|animate|append|
             appendChild|appendData|before|blur|canPlayType|captureStream|
             caretPositionFromPoint|caretRangeFromPoint|checkValidity|clear|click|
@@ -5493,7 +5558,7 @@ repository:
       - comment: Bash and Batch built-in functions
         match: |
           (?x)
-          (?<=^|[\p{P}\p{S}\p{Z}&&\P{Pd}])(
+          (?<!\B|\b\p{Pd}+)(
             adprep|append|arp|assoc|at|atmadm|attrib|auditpol|autochk|autoconv|autofmt
             |bcdboot|bcdedit|bdehdcfg|bitsadmin|bootcfg|brea|cacls|cd|certreq|certutil
             |change|chcp|chdir|chglogon|chgport|chgusr|chkdsk|chkntfs|choice|cipher
@@ -5557,7 +5622,7 @@ repository:
       - comment: Bash and Batch built-in functions
         match: |
           (?x)
-          (?<=^|[\p{P}\p{S}\p{Z}&&\P{Pd}])(
+          (?<!\B|\b\p{Pd}+)(
             avg|checksumAgg|count|countBig|grouping|groupingId|max|min|sum|stdev|stdevp|var
             |varp|cumeDist|firstValue|lag|lastValue|lead|percentRank|percentileCont|percentileDisc
             |cast|convert|parse|tryCast|tryConvert|tryParse|cursorStatus|coalesce|nullif|choose
