@@ -24,13 +24,11 @@ elem TodoItem {
     }
   }
 
-  return {
-    <div *base>
-      <span *label_>$label_</span>
-      <Icon.Checkmark/>
-      <Icon.Trash/>
-    </div>
-  }
+  return <div *base>
+    <span *label_>$label_</span>
+    <Icon.Checkmark/>
+    <Icon.Trash/>
+  </div>
 }
 ```
 
@@ -316,7 +314,7 @@ Binary `0b` , octal `0o` and hexadecimal `0x` literals are also supported. Note 
 
 ```coffee
 decimal = 11256099
-hex = 0xABC123
+hex = 0x0123456789ABCDEF
 octal = 0o52740443
 binary = 0b101010111100000100100011
 ```
@@ -389,24 +387,24 @@ Hello World!
 
 Double quoted string literals can contain the following escape sequences. Any other character following a backslash is interpreted as the character itself.
 
-| Escape                             | Meaning                              |
-| ---------------------------------- | ------------------------------------ |
-| `\\p`                              | platform specific newline            |
-| `\\r`                              | carriage return                      |
-| `\\n`                              | newline/line feed                    |
-| `\\f`                              | form feed                            |
-| `\\t`                              | tabulator                            |
-| `\\v`                              | vertical tabulator                   |
-| `\\a`                              | alert                                |
-| `\\b`                              | backspace                            |
-| `\\e`                              | escape                               |
-| `\\s`                              | space                                |
-| `\\c[a-z]`                         | control character (`0x01` to `0x1A`) |
-| `\\b([01]+\|{[01]})`               | binary codepoint                     |
-| `\\o([0-7]+\|{[0-7]})`             | octal codepoint                      |
-| `\\d?([0-9]+\|{[0-9]})`            | decimal codepoint                    |
-| `\\[ux]([\da-fA-F]+\|[\da-fA-F]+)` | hexadecimal codepoint                |
-| `\\N{.+}`                          | Unicode named character              |
+| Escape      | Meaning                                  |
+| ----------- | ---------------------------------------- |
+| `\\p`       | platform specific newline                |
+| `\\r`       | carriage return                          |
+| `\\n`       | newline/line feed                        |
+| `\\f`       | form feed                                |
+| `\\t`       | tabulator                                |
+| `\\v`       | vertical tabulator                       |
+| `\\a`       | alert                                    |
+| `\\b`       | backspace                                |
+| `\\e`       | escape                                   |
+| `\\s`       | space                                    |
+| `\\c[a-z]`  | control character (`0x01` to `0x1A`)     |
+| `\\b[01]+`  | binary codepoint                         |
+| `\\o[0-7]+` | octal codepoint                          |
+| `\\d?\d+`   | decimal codepoint                        |
+| `\\[ux]\h+` | hexadecimal codepoint (`\h==[\da-fA-F]`) |
+| `\\N{.+}`   | Unicode named character sequence         |
 
 A backslash followed by as many decimal digits denotes a code point written in decimal.
 
@@ -653,7 +651,7 @@ Alternatively, `\p{}` notation can be used as a more concise variant of `[::]`.
 | `[:lower:]` | `[a-z]` | `\pLl` | Lowercase letters |
 | `[:number:]` | `[0-9]` | `\pN` | Numeric characters |
 | `[:print:]` | `[\x20-\x7E] ` | `\PC` | Printable characters (anything except controls) |
-| `[:punct:]` | `[!"\#$%&'()\*+,\-./:;<=>?@\[\\\]^\_'{\|}~]` | `\pP` | Punctuation (and symbols). |
+| `[:punct:]` | `[!"#$%&'()\*+,\-./:;<=>?@\[\\\]^\_'{\|}~]` | `\pP` | Punctuation (and symbols). |
 | `[:space:]` | `[\x20\t\r\n\v\f]` | `[\pZ\t\r\n\v\f]` | Spacing characters |
 | `[:symbol:]` | `[\pS&&[:ascii:]]` | `\pS` | Symbols |
 | `[:upper:]` | `[A-Z]` | `\pLu` | Uppercase letters |
