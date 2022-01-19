@@ -3531,7 +3531,7 @@ repository:
         patterns:
           - match: ','
             name: punctuation.separator.mapping.trin
-          - match: (?<=^|\\.|['"`)}\]\w\s]):(?=['"`\\({\[\w\s]|$)
+          - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*):(?=['"`\\({\[\w\s]|$)
             name: punctuation.separator.key-value.trin
           - match: (?<=^\s*|[,;{]\s*)(?:[-+*]\s+)*[-+*](?=\s|$)
             name: punctuation.definition.block.sequence.item.trin
@@ -4692,7 +4692,7 @@ repository:
           (?x)
           (?<=^|[{;,\s])\s*
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
-          (:)\s*
+          (?=:['"`\\({\[\s\w])
         name: meta.object-literal.key.trin
         captures:
           1:
@@ -4702,7 +4702,6 @@ repository:
               - include: '#numbers'
               - include: '#symbols'
               - include: '#string-content'
-          2: {name: punctuation.separator.key-value.trin}
 
   # Punctuation
 
@@ -4781,7 +4780,7 @@ repository:
         patterns:
           - match: ','
             name: punctuation.separator.mapping.trin
-          - match: (?<=^|\\.|['"`)}\]\w\s]):(?=['"`\\({\[\w\s]|$)
+          - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]*):(?=['"`\\({\[\w\s]|$)
             name: punctuation.separator.key-value.trin
           - match: (?<=^\s*|[,;{]\s*)(?:[-+*]\s+)*[-+*](?=\s|$)
             name: punctuation.definition.block.sequence.item.trin
