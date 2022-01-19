@@ -1492,12 +1492,14 @@ repository:
       (?x)
       (?<=
         (?:
-        (?: ^ # beginning of line
-          | [,;] # separator
-          | [({\[])\s* # opening bracket
-          | \b[\p{Pc}\p{L}][\w\p{Pd}]*\b # identifier or keyword
-          | [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+ \s+ # postfix or infix operator
-        )\s*
+          (?:
+              ^ # beginning of line
+            | [,;] # separator
+            | [({\[] # opening bracket
+          )
+            | \b [\p{Pc}\p{L}][\w\p{Pd}]* \b # identifier or keyword
+            | [\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+ \s # postfix or infix operator
+        ) \s*
       )
       (?=<[\p{Pc}\p{L}]|<\s+>)
     end: (?=)|$
@@ -2519,7 +2521,7 @@ repository:
             | # key-value separator
               ['"`(){}\[\]\w]: \s
             | # operator
-              (?:^ | ['"`(){}\[\]\s\w]) # anchor
+              (?:^ | ['"`(){}\[\]\s\w] | \\.) # anchor
               [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
             | # open/close bracket
               (?:['"`(){}\[\]] | \\.)
@@ -2754,7 +2756,7 @@ repository:
               )
             |
             (?<= ^ # beginning of line
-              | (?: ^ | ['"`(){}\[\]\s\w] ) # literal
+              | (?: ^ | ['"`(){}\[\]\s\w] | \\. ) # literal
               (?: # operators
                 [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
               )?
@@ -4321,30 +4323,46 @@ repository:
           Function def before function keyword
           x = def()
         match: |
-          (?x)\s*
+          (?x)
+
+          \s*
+
           (?<=[?!:]:|\b\.|[?!]\.)
-          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s*
-          (:?=)\s*\b
-          ((?:
-          \s*(?:
-          (?:
-          pub|priv|prot|final|immut|mut|over
-          |glo|loc|intern|extern|imply|exply
-          |post|[gs]et|rem
 
-          |seal|abst|impure|pure|early|late
-          |covar|contra|a?sync|stat|dyn|lazy
-          |eager|bound|free|unique|struct
+          \s*
 
-          |rec|oper|curry|inline
-          |pre|suf|inf|left|right
+          # Label
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+
+          # Assignment operator
+          (:?=)\s+
+
+          (
+            (?:
+              \s*
+              (?: # Modifier keywords
+                pub|priv|prot|final|immut|mut|over
+                |glo|loc|intern|extern|imply|exply
+                |post|[gs]et|rem
+
+                |seal|abst|impure|pure|early|late
+                |covar|contra|a?sync|stat|dyn|lazy
+                |eager|bound|free|unique|struct
+
+                |rec|oper|curry|inline
+                |pre|suf|inf|left|right
+              )
+              \s*
+            )*
           )
-          )
-          \s*)*)
-          (?=\s*\b
-          (?:
-          iter|func?|proc|macro
-          )\b
+
+          (?=
+            \s*
+            \b
+            (?: # Function types
+              iter|func?|proc|macro
+            )
+            \b
           )
         name: meta.object-literal.key.trin
         captures:
@@ -4352,25 +4370,38 @@ repository:
           2: {name: keyword.operator.assignment.trin}
           3: {patterns: [include: '#modifier-keywords']}
       - begin: |
-          (?x)\s*
+          (?x)
+
           (?<=[?!:]:|\b\.|[?!]\.)
-          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s*
-          (:?=)\s*
+
+          \s*
+
+          # Label
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+
+          # Assignment operator
+          (:?=)\s+
+
           (
-          (?:
-          (?:
-          pub|priv|prot|final|immut|mut|over
-          |glo|loc|intern|extern|imply|exply
-          |post|[gs]et|rem
+            (?:
+              \s*
+              (?: # Modifier keywords
+                pub|priv|prot|final|immut|mut|over
+                |glo|loc|intern|extern|imply|exply
+                |post|[gs]et|rem
 
-          |seal|abst|impure|pure|early|late
-          |covar|contra|a?sync|stat|dyn|lazy
-          |eager|bound|free|unique|struct
+                |seal|abst|impure|pure|early|late
+                |covar|contra|a?sync|stat|dyn|lazy
+                |eager|bound|free|unique|struct
 
-          |rec|oper|curry|inline
-          |pre|suf|inf|left|right
-          )\s*\b)*
-          )\s*
+                |rec|oper|curry|inline
+                |pre|suf|inf|left|right
+              )
+              \s*
+            )*
+          )
+
+          \s*
           (\|)
           (?!\|)
         end: (?<=^|['"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
@@ -4387,29 +4418,42 @@ repository:
           Function def before function keyword
           x = def()
         match: |
-          (?x)\s*
-          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s*
-          (:?=)\s*\b
-          ((?:
-          \s*(?:
-          (?:
-          pub|priv|prot|final|immut|mut|over
-          |glo|loc|intern|extern|imply|exply
-          |post|[gs]et|rem
+          (?x)
 
-          |seal|abst|impure|pure|early|late
-          |covar|contra|a?sync|stat|dyn|lazy
-          |eager|bound|free|unique|struct
+          \s*
 
-          |rec|oper|curry|inline
-          |pre|suf|inf|left|right
+          # Label
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+
+          # Assignment operator
+          (:?=)\s+
+
+          (
+            (?:
+              \s*
+              (?: # Modifier keywords
+                pub|priv|prot|final|immut|mut|over
+                |glo|loc|intern|extern|imply|exply
+                |post|[gs]et|rem
+
+                |seal|abst|impure|pure|early|late
+                |covar|contra|a?sync|stat|dyn|lazy
+                |eager|bound|free|unique|struct
+
+                |rec|oper|curry|inline
+                |pre|suf|inf|left|right
+              )
+              \s*
+            )*
           )
-          )
-          \s*)*)
-          (?=\s*\b
-          (?:
-          iter|func?|proc|macro
-          )\b
+
+          (?=
+            \s*
+            \b
+            (?: # Function types
+              iter|func?|proc|macro
+            )
+            \b
           )
         name: meta.object-literal.key.trin
         captures:
@@ -4417,24 +4461,38 @@ repository:
           2: {name: keyword.operator.assignment.trin}
           3: {patterns: [include: '#modifier-keywords']}
       - begin: |
-          (?x)\s*
-          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s*
-          (:?=)\s*
+          (?x)
+
+          \s*
+
+          # Label
+          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+
+          # Assignment operator
+          (:?=)\s+
+
+          \s*
+
           (
-          (?:
-          (?:#
-          pub|priv|prot|final|immut|mut|over
-          |glo|loc|intern|extern|imply|exply
-          |post|[gs]et|rem
+            (?:
+              \s*
+              (?: # Modifier keywords
+                pub|priv|prot|final|immut|mut|over
+                |glo|loc|intern|extern|imply|exply
+                |post|[gs]et|rem
 
-          |seal|abst|impure|pure|early|late
-          |covar|contra|a?sync|stat|dyn|lazy
-          |eager|bound|free|unique|struct
+                |seal|abst|impure|pure|early|late
+                |covar|contra|a?sync|stat|dyn|lazy
+                |eager|bound|free|unique|struct
 
-          |rec|oper|curry|inline
-          |pre|suf|inf|left|right
-          )\s*\b)*
-          )\s*
+                |rec|oper|curry|inline
+                |pre|suf|inf|left|right
+              )
+              \s*
+            )*
+          )
+
+          \s*
           (\|)
           (?!\|)
         end: (?<=^|['"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
@@ -4451,31 +4509,50 @@ repository:
   params-clause:
     begin: |
       (?x)
-      (?<=(?:^\s*|[,;]\s*|\#?[({\[]\s*
-      |(?:[\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)\s+
-      |
-      (?:
-      (?:^|[,;'"`(){}\[\]\s])\b(?:# keywords
-      in|of|as|is|new
-      |to|til|thru|by|del
-      |unset|ref|and|or|xor|not
-      |var|val|func?|proc|type
-      |class|data|enum|mod
-      |iter|macro|inter|obj
-      |trait|style|elem|prop|mark
-      |go|defer|do|from|where|with
-      |if|elif|else|then|def
-      |for|each|loop|while
-      |try|throw|catch|after
-      |match|case|pass|fail|goto
-      |break|next|redo|retry
-      |return|yield|await|label
-      |use|show|hide|route
-      |debug|assert|check
-      )\b(?:[,;'"`(){}\[\]\s]|$)
-      )
-      )
-      \s*)
+      (?<=
+        (?:
+          # beginning of line
+          ^
+        | # or before a delimiter
+          [,;({\[]
+        | # or before a sigil
+          [$:] \s* \b
+        | # key-value separator
+          ['"`(){}\[\]\w]: \s
+        | # operator
+          (?:^ | ['"`(){}\[\]\s\w] | \\.) # anchor
+          [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
+        | # open/close bracket
+          (?:['"`(){}\[\]] | \\.)
+          (?: [?!]?\.=? | [?!:]:=?) # accessors
+        | # command syntax
+          //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+        | (?:
+            (?:^|[,;'"`(){}\[\]\s]) # beside a delimiter or space
+            \b
+              (?:# keywords
+                in|of|as|is|new
+                |to|til|thru|by|del
+                |unset|ref|and|or|xor|not
+                |var|val|func?|proc|type
+                |class|data|enum|mod
+                |iter|macro|inter|obj
+                |trait|style|elem|prop|mark
+                |go|defer|do|from|where|with
+                |if|elif|else|then|def
+                |for|each|loop|while
+                |try|throw|catch|after
+                |match|case|pass|fail|goto
+                |break|next|redo|retry
+                |return|yield|await|label
+                |use|show|hide|route
+                |debug|assert|check
+              )
+            \b
+            (?:$|[,;'"`(){}\[\]\s]) # beside a delimiter or space
+          )
+        )
+      ) \s* # before a space
       (\|)
       (?!\|)
     captures:
@@ -4627,29 +4704,43 @@ repository:
           x = def()
         match: |
           (?x)
-          (?<=^|[{;,\s])\s*
+          (?<=^ | [{;,\s])
+
+          \s*
+
+          # Label
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
+          # Key value separator
           (:)\s*
-          ((?:
-          \s*(?:
-          (?:
-          pub|priv|prot|final|immut|mut|over
-          |glo|loc|intern|extern|imply|exply
-          |post|[gs]et|rem
 
-          |seal|abst|impure|pure|early|late
-          |covar|contra|a?sync|stat|dyn|lazy
-          |eager|bound|free|unique|struct
+          (
+            (?:
+              \s*
+              \b
+              (?: # Modifier keywords
+                pub|priv|prot|final|immut|mut|over
+                |glo|loc|intern|extern|imply|exply
+                |post|[gs]et|rem
 
-          |rec|oper|curry|inline
-          |pre|suf|inf|left|right
+                |seal|abst|impure|pure|early|late
+                |covar|contra|a?sync|stat|dyn|lazy
+                |eager|bound|free|unique|struct
+
+                |rec|oper|curry|inline
+                |pre|suf|inf|left|right
+              )
+              \b
+              \s*
+            )*
           )
-          )
-          \s*)*)
-          (?=\s*\b
-          (?:
-          iter|func?|proc|macro
-          )\b
+
+          (?=
+            \s*
+            \b
+            (?: # Function types
+              iter|func?|proc|macro
+            )
+            \b
           )
         name: meta.object-literal.key.trin
         captures:
@@ -4658,24 +4749,39 @@ repository:
           3: {patterns: [include: '#modifier-keywords']}
       - begin: |
           (?x)
-          (?<=^|[{;,\s])\s*
+          (?<=^ | [{;,\s])
+
+          \s*
+
+          # Label
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
-          (:)\s*
+          # Key value separator
+          (:)
+
+          \s*
+
           (
-          (?:
-          (?:
-          pub|priv|prot|final|immut|mut|over
-          |glo|loc|intern|extern|imply|exply
-          |post|[gs]et|rem
+            (?:
+              \s*
+              \b
+              (?: # Modifier keywords
+                pub|priv|prot|final|immut|mut|over
+                |glo|loc|intern|extern|imply|exply
+                |post|[gs]et|rem
 
-          |seal|abst|impure|pure|early|late
-          |covar|contra|a?sync|stat|dyn|lazy
-          |eager|bound|free|unique|struct
+                |seal|abst|impure|pure|early|late
+                |covar|contra|a?sync|stat|dyn|lazy
+                |eager|bound|free|unique|struct
 
-          |rec|oper|curry|inline
-          |pre|suf|inf|left|right
-          )\s*\b)*
-          )\s*
+                |rec|oper|curry|inline
+                |pre|suf|inf|left|right
+              )
+              \b
+              \s*
+            )*
+          )
+
+          \s*
           (\|)
           (?!\|)
         end: (?<=^|['"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
@@ -4690,9 +4796,14 @@ repository:
         patterns: *param-brackets
       - match: |
           (?x)
-          (?<=^|[{;,\s])\s*
+          (?<=^ | [{;,\s])
+
+          \s*
+
+          # label
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
-          (?=:['"`\\({\[\s\w])
+
+          (?=: ['"`\\({\[\s\w])
         name: meta.object-literal.key.trin
         captures:
           1:
