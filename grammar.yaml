@@ -2515,7 +2515,7 @@ repository:
               # beginning of line
               ^
             | # or before a delimiter
-              [,;({\[]
+              [,;({\[] \s*
             | # or before a sigil
               [$:] \s* \b
             | # key-value separator
@@ -2529,7 +2529,7 @@ repository:
             | # command syntax
               //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
             | (?:
-                (?:^|[,;'"`(){}\[\]\s]) # beside a delimiter or space
+                (?:^|[,;'"`(){}\[\]\s]|\\.) # beside a delimiter or space
                 \b
                   (?:# keywords
                     in|of|as|is|new
@@ -2550,7 +2550,7 @@ repository:
                     |debug|assert|check
                   )
                 \b
-                (?:$|[,;'"`(){}\[\]\s]) # beside a delimiter or space
+                (?:$|[,;'"`(){}\[\]\\\s]) # beside a delimiter or space
               )
             ) \s* # before a space
           )
@@ -2891,9 +2891,9 @@ repository:
   operators:
     patterns:
       - include: '#primary-operators'
-      - include: '#infix-operators'
-      - include: '#prefix-operators'
       - include: '#suffix-operators'
+      - include: '#prefix-operators'
+      - include: '#infix-operators'
 
   special-operators:
     patterns:
@@ -4528,7 +4528,7 @@ repository:
         | # command syntax
           //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
         | (?:
-            (?:^|[,;'"`(){}\[\]\s]) # beside a delimiter or space
+            (?:^|[,;'"`(){}\[\]\s]|\\.) # beside a delimiter or space
             \b
               (?:# keywords
                 in|of|as|is|new
@@ -4549,7 +4549,7 @@ repository:
                 |debug|assert|check
               )
             \b
-            (?:$|[,;'"`(){}\[\]\s]) # beside a delimiter or space
+            (?:$|[,;'"`(){}\[\]\\\s]) # beside a delimiter or space
           )
         )
       ) \s* # before a space
