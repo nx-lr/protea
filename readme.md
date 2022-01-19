@@ -6,29 +6,29 @@ Trinity is a project that aims to provide a simple, powerful and easy-to-use lan
 
 ```coffee
 elem TodoItem {
-  prop color = style {color: 333}
+  prop color = { color: '#333' }
   prop label_ = ''
   prop done = false
 
   proc onClick { done = true }
 
   style base {
-    align-items: center
+    alignItems: center
     display: flex
   } label_ {
-    font-weight: bold
+    fontWeight: bold
     color: $color
     flex: 1
     if done {
-      text-decoration: line-through
+      textDecoration: lineThrough
     }
   }
 
-  return <div *base>
-    <span *label_>$label_</span>
-    <Icon.Checkmark/>
-    <Icon.Trash/>
-  </div>
+  return <_ &base>
+    <span &label>$label_</span>
+    <Icons.Checkmark/>
+    <Icons.Trash/>
+  </_>
 }
 ```
 
@@ -170,8 +170,6 @@ var johnDoe: Person = Person("John", "Doe")
 
 ### Identifiers
 
-### Identifiers
-
 Identifiers in Trinity can be any string of letters, decimal digits, marks, underscores and dashes, with the following restrictions:
 
 - begins with a letter
@@ -189,7 +187,7 @@ Two identifiers are considered equal if the following function returns true:
 fun cmpIdent(a: str, b: str): bool = normalize a == normalize b
 
 fun normalize(ident: str): str {
-  var ret = ident[`[^\pL\d]` ``]
+  var ret = ident[0] + ident[1;;][`[^\pL\d]*` ``]
   ret = ret[`\b.*(?!\pL)`] + ret[`\pLl.*\b`].lower!
   return ret
 }
@@ -387,24 +385,24 @@ Hello World!
 
 Double quoted string literals can contain the following escape sequences. Any other character following a backslash is interpreted as the character itself.
 
-| Escape      | Meaning                                  |
-| ----------- | ---------------------------------------- |
-| `\\p`       | platform specific newline                |
-| `\\r`       | carriage return                          |
-| `\\n`       | newline/line feed                        |
-| `\\f`       | form feed                                |
-| `\\t`       | tabulator                                |
-| `\\v`       | vertical tabulator                       |
-| `\\a`       | alert                                    |
-| `\\b`       | backspace                                |
-| `\\e`       | escape                                   |
-| `\\s`       | space                                    |
-| `\\c[a-z]`  | control character (`0x01` to `0x1A`)     |
-| `\\b[01]+`  | binary codepoint                         |
-| `\\o[0-7]+` | octal codepoint                          |
-| `\\d?\d+`   | decimal codepoint                        |
-| `\\[ux]\h+` | hexadecimal codepoint (`\h==[\da-fA-F]`) |
-| `\\N{.+}`   | Unicode named character sequence         |
+| Escape     | Meaning                                  |
+| ---------- | ---------------------------------------- |
+| `\p`       | platform specific newline                |
+| `\r`       | carriage return                          |
+| `\n`       | newline/line feed                        |
+| `\f`       | form feed                                |
+| `\t`       | tabulator                                |
+| `\v`       | vertical tabulator                       |
+| `\a`       | alert                                    |
+| `\b`       | backspace                                |
+| `\e`       | escape                                   |
+| `\s`       | space                                    |
+| `\c[a-z]`  | control character (`0x01` to `0x1A`)     |
+| `\b[01]+`  | binary codepoint                         |
+| `\o[0-7]+` | octal codepoint                          |
+| `\d?\d+`   | decimal codepoint                        |
+| `\[ux]`    | hexadecimal codepoint (`\h==[\da-fA-F]`) |
+| `\N{.+}`   | Unicode named character sequence         |
 
 A backslash followed by as many decimal digits denotes a code point written in decimal.
 
@@ -433,9 +431,10 @@ binary = "\b101010111100000100100011"
 Double quoted literals allow you to express multilingual, math, symbol or other Unicode characters as LaTeX-style expressions without having to know the code points.
 
 ```coffee
+// => "\u{1F60A}"
 "\u{1F600}" // => "😀"
-"\N{\emoji:smile}" // => 😀
-"\N{\frac{\sum{1}^{n}\left(\frac{1}{i}\right)}{n}}"
+"\:smile.y.z" // => 😀
+"\:func{x,y}{x,y}" // => :func{x -> x + 1}
 ```
 
 In single quotes, meta-characters such as `'`, `$`, `%` and `#` need to be doubled in order to be escaped (literal). In double quotes, you can use the backslash to escape them.
@@ -512,30 +511,32 @@ The range of integers you want to retrieve is always `-l < 0 <= l` where `l` is 
 'hello'[-6]  // => ''
 ```
 
-You can slice from the beginning or end of the string, using a notation `start,end,step`. All elements are optional, and default to `0,l,1` where `l` is the length of the string.
+You can slice from the beginning or end of the string, using a notation (`start`, `end`, `step`). All elements are optional and default to `0`, `l-1` (where `l` is the length of the string), and `1` respectively.
+
+Negative indices count from the end of the string. The step can be negative to retrieve characters in reverse order.
 
 ```coffee
 x = "Hello"
-x[0]      // 1st character
-x[1]      // 2nd character
-x[-1]     // last character
-x[-2]     // 2nd-to-last character
-x[1,]     // all except the 1st
-x[,-1]    // all except the last
-x[1,-1]   // all except the last
-x[-2,1]   // all except the last 2
-x[,]      // copy the entire string
-x[,0]     // empty string
-x[,,-1]   // reverse the string
-x[,,2]    // skip over every 2nd character
-x[,,3]    // skip over every 3rd character
+x[0]        // 1st character
+x[1]        // 2nd character
+x[-1]       // last character
+x[-2]       // 2nd-to-last character
+x[1,]       // all except the 1st
+x[,-1]      // all except the last
+x[1,-1]     // all except the last
+x[-2,1]     // all except the last 2
+x[,]; x[,,] // copy the entire string
+x[,0]       // empty string
+x[,,-1]     // reverse the string
+x[,,2]      // skip over every 2nd character
+x[,,3]      // skip over every 3rd character
 ```
 
 ### Regular expressions
 
-Similar to block strings and comments, Trinity supports block regular expressions, denoted by backticks: `` ` ``---these are extended regexes that ignore whitespace, newlines, and can contain comments and interpolation.
+Trinity natively supports regular expressions, which are an integral part in processing and manipulating text. Trinity's regexes are inspired by Perl, Ruby and Python, though with a few extensions and subtle differences to unify the three different flavors together.
 
-They go a long way towards making complex regular expressions readable.
+By default, Trinity's regular expressions allow for free spacing and comments, thus going a long way towards making complex regexes simpler and more readable.
 
 ```coffee
 `^(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$`
@@ -558,197 +559,27 @@ They go a long way towards making complex regular expressions readable.
 `xi
 ```
 
-Protea uses the [Oniguruma](https://github.com/kkos/oniguruma/blob/master/doc/RE) regular expression flavor by default, the same regex engine that powers Ruby and PHP7, with a few key extensions that make your regexes more concisene and less repetitive.
+#### Escaping
 
-The delimiter `` ` `` must be escaped inside the top level of regular expressions. Interpolation and formatting also applies but the interpolated result is usually escaped so to prevent generating invalid regular expressions.
+Regular expressions support the same escape sequences as String literals. The delimiter `` ` `` must be escaped with a backslash inside the top level of regular expressions. Meta-characters like `|`, `?`, `*` and `+` need to be escaped if they are intended as literal characters.
 
-### Regular Expression Syntax
+#### Interpolation
 
-#### Basic Syntax Elements
-
-| Syntax        | Description                           |
-| ------------- | ------------------------------------- |
-| `\`           | Escape                                |
-| `\|`          | Alternation                           |
-| `&`           | Join                                  |
-| `(...)`       | Capturing group                       |
-| `[...]`       | Character class (can be nested)       |
-| `[^...]`      | Negated char-class (can be nested)    |
-| `{,}`         | Quantifier token (LHS 0, RHS &infin;) |
-| `"..."`       | Raw quoted literal                    |
-| `'...'`       | Quoted literal                        |
-| `\0` onward   | Numeric back-reference (0-indexed)    |
-| `%...`        | String formatting                     |
-| `#...`, `#{}` | String placeholder argument           |
-| `${...}`      | String interpolation                  |
-
-#### Characters
-
-Escapes work the same way as in strings and outside character classes except `\b`. In addition, uppercase characters denote a character class that negates the corresponding character class; for example, `\D` matches any non-digit character and `\S` matches any space character.
-
-`\R` takes on the meaning of `\p` in Trinity, which matches any line terminator sequence.
-
-#### Character Classes
-
-| Syntax | Inverse | Description |
-| --- | --- | --- |
-| `.` | None | Hexadecimal code point (1-8 digits) |
-| `\w` | `\W` | Word character `\pL\pM\pPc\pNd` |
-| `\d` | `\D` | Digit character `\pNd` |
-| `\s` | `\S` | Space character `\pZ` |
-| `\h` | `\H` | Hexadecimal digit character `[\da-fA-F]` |
-| `\u` | `\U` | Uppercase letter `[A-Z]` |
-| `\l` | `\L` | Lowercase letter `[a-z]` |
-| `\q` | `\Q` | Punctuation and symbols `[\pP\pS]` |
-| `\f` | `\F` | Form feed `[\f]` |
-| `\t` | `\T` | Horizontal tab `[\t]` |
-| `\v` | `\V` | Form feed `[\v]` |
-| `\n` | `\N` | Newline `[\n]` |
-| `\o` | `\O` | Null character `[^]` |
-| `\R` |  | General line break (CR + LF, etc); outside `[]`] |
-| `\c` | `\C` | First character of identifier; `[\pL\pPc]` by default |
-| `\i` | `\I` | Subsequent characters of identifier `[\pL\pPc\pM\pNd]` by default |
-| `\x` | `\X` | Extended grapheme cluster |
-
-##### Unicode Properties
-
-Properties are case-insensitive. Logical operators `&&`, `||`, `^^` and `!`, can be interspersed to express compound queries.
-
-| Syntax | Description |
-| --- | --- |
-| `\p{p=v}`<br>`\p{p==v}` | `prop` equals `value` |
-| `\p{p!=v}`<br>`\P{p=v}` | `prop` does not equal `value` |
-| `\p{p^=v}` | `prop` begins with but does not equal `value` |
-| `\p{p$=v}` | `prop` ends with but does not equal `value` |
-| `\p{p*=v}` | `prop` contains but does not equal `value` |
-| `\p{p\|=v}` | `prop` begins with or equals to `value` |
-| `\p{p~=v}` | `prop` ends with or equals to `value` |
-| `\p{p&=v}` | `prop` contains or equals to `value` |
-| `\p{in BL}`<br>`\P{!in BL}` | Block property |
-| `\p{is S}`<br>`\p{script==S}` | Script or binary property |
-| `\p{v}` | Short form\* |
-| `\p{Cc}` | Unicode character categories^ |
-
-\*Properties are checked in the order: `General_Category`, `Script`, `Block`, binary property:
-
-- `Latin` &rarr; (`Script==Latin`).
-- `BasicLatin` &rarr; (`Block==BasicLatin`).
-- `Alphabetic` &rarr; (`Alphabetic==Yes`).
-
-##### POSIX Classes
-
-Alternatively, `\p{}` notation can be used as a more concise variant of `[::]`.
-
-| Syntax | ASCII | Unicode (`/u` flag) | Description |
-| --- | --- | --- | --- |
-| `[:alnum:]` | `[a-zA-Z0-9]` | `[\pL\pNl}\pNd]` | Alphanumeric characters |
-| `[:alpha:]` | `[a-zA-Z]` | `[\pL\pNl]` | Alphabetic characters |
-| `[:ascii:]` | `[\x00-\x7F]` | `[\x00-\xFF]` | ASCII characters |
-| `[:blank:]` | `[\x20\t]` | `[\pZs\t]` | Space and tab |
-| `[:cntrl:]` | `[\x00-\x1F\x7F]` | `\pCc` | Control characters |
-| `[:digit:]` | `[0-9]` | `\pNd` | Digits |
-| `[:graph:]` | `[\x21-\x7E]` | `[^\pZ\pC]` | Visible characters (anything except spaces and controls) |
-| `[:lower:]` | `[a-z]` | `\pLl` | Lowercase letters |
-| `[:number:]` | `[0-9]` | `\pN` | Numeric characters |
-| `[:print:]` | `[\x20-\x7E] ` | `\PC` | Printable characters (anything except controls) |
-| `[:punct:]` | `[!"#$%&'()\*+,\-./:;<=>?@\[\\\]^\_'{\|}~]` | `\pP` | Punctuation (and symbols). |
-| `[:space:]` | `[\x20\t\r\n\v\f]` | `[\pZ\t\r\n\v\f]` | Spacing characters |
-| `[:symbol:]` | `[\pS&&[:ascii:]]` | `\pS` | Symbols |
-| `[:upper:]` | `[A-Z]` | `\pLu` | Uppercase letters |
-| `[:word:]` | `[A-Za-z0-9_]` | `[\pL\pNl\pNd\pPc]` | Word characters |
-| `[:xdigit:]` | `[A-Fa-f0-9] ` | `[A-Fa-f0-9]` | Hexadecimal digits |
-
-#### Character Sets
-
-A set `[...]` can include nested sets. The operators below are listed in increasing precedence, meaning they are evaluated first.
-
-| Syntax                 | Description                          |
-| ---------------------- | ------------------------------------ |
-| `^...`, `~...`, `!...` | Negated (complement) character class |
-| `x-y`                  | Range (inclusive)                    |
-| `x->y`                 | Range (end-exclusive)                |
-| `x>-y`                 | Range (start-exclusive)              |
-| `x>>y`                 | Range (exclusive)                    |
-| `x>>y:1`               | Range (with step)                    |
-| `\|\|`                 | Union                                |
-| `&&`                   | Intersection                         |
-| `^^`                   | Symmetric difference                 |
-| `--`                   | Difference                           |
-
-#### Anchors
-
-| Syntax | Inverse | Description                                  |
-| ------ | ------- | -------------------------------------------- |
-| `^`    | None    | Beginning of the string/line                 |
-| `$`    | None    | End of the string/line                       |
-| `\b`   | `\B`    | Word boundary                                |
-| `\a`   | `\A`    | Beginning of the string/line                 |
-| `\z`   | `\Z`    | End of the string/before new line            |
-| `\G`   |         | Where the current search attempt begins/ends |
-| `\K`   |         | Keep start/end position of the result string |
-| `\m`   | `\M`    | Line boundary                                |
-| `\y`   | `\Y`    | Text segment boundary                        |
-
-#### Quantifiers
-
-In curly-brace quantifiers of the form `{x,y,z}`, where `x` is the lower limit, `y` is the upper limit and `z` is the step. The default values are `x=0`, `y=Infinity` and `z=1`.
-
-| Syntax | Reluctant `?` (returns shortest match) | Possessive `+` (does not backtrack) | Greedy `*` (returns longest match) | Description |
-| --- | --- | --- | --- | --- |
-| `?` | `??` | `?+` | `?*` | 1 or 0 times |
-| `+` | `+?` | `++` | `+*` | 1 or more times |
-| `*` | `*?` | `*+` | `**` | 0 or more times |
-| `{n}` | `{n}?` | `{n}+` | `{n}*` | Exactly `n` times |
-| `{n,m}` | `{n,m}?` | `{n,m}+` | `{n,m}*` | At least `n` but no more than `m` times |
-| `{n,}` | `{n,}?` | `{n,}+` | `{n,}*` | At least `n` times |
-| `{,m}` | `{,m}?` | `{,m}+` | `{,m}*` | Up to `m` times |
-| `{n,m,o}` | `{n,m,o}?` | `{n,m,o}+` | `{n,m,o}*` | `n`&le;`m` stepping by `o` |
-| `{n,,o}` | `{n,,o}?` | `{n,,o}+` | `{n,,o}*` | `n`&le;`Infinity` stepping by `o` |
-| `{,m,o}` | `{,m,o}?` | `{,m,o}+` | `{,m,o}*` | `0`&le;`m` stepping by `o` |
-
-#### Groups
-
-For named capturing and balancing groups, `(?'')`, `(?"")` can also be used in addition to `(?<>)`.
-
-| Syntax                      | Description                            |
-| --------------------------- | -------------------------------------- |
-| `()`                        | Numbered capturing group               |
-| `(?:)`                      | Non-capturing group                    |
-| `(?\<x>)` `(?'x')` `(?"x")` | Named capturing group                  |
-| `(?<\|x>)`                  | Balancing group                        |
-| `(?<x\|x>)`                 | Balancing pair                         |
-| `(?=)`                      | Positive look-ahead                    |
-| `(?!)`                      | Negative look-ahead                    |
-| `(?<=)`                     | Positive look-behind                   |
-| `(?<!)`                     | Negative look-behind                   |
-| `(?>)`                      | Atomic group (no backtracking)         |
-| `(?())`                     | Conditional branching                  |
-| `(?\|)`                     | ...with alternatives                   |
-| `(?/)`                      | Shortest match                         |
-| `(?/=)`                     | Longest match                          |
-| `(?*)`                      | Embedded code                          |
-| `(?{})` `(?{}[tag])`        | Call-out (embedded code)               |
-| `(?y)`                      | Enable mode                            |
-| `(?-y)`                     | Disable mode                           |
-| `(?~)` `(?~\|\|)` `(?~\|)`  | Absent expression (see Oniguruma docs) |
-| `(?#...)`                   | Comment                                |
-| `(?&1)`                     | Numbered group                         |
-| `(?&-1)`                    | (?&+1) Relative back-reference         |
-| `(?&name)`                  | Named back-reference                   |
+Interpolation works in regular expression literals just as it does in string literals. Be aware that using this feature will cause an exception to be raised at runtime, if the resulting string results in an invalid regular expression.
 
 ### Lists
 
-Lists are written with square brackets, and whose elements are separated by newlines. They can contain any type of value. They can be nested, and can be empty.
+Lists are written as a comma-separated list of values enclosed in square brackets. Lists are written with square brackets, and whose elements are separated by newlines. They can contain any type of value. They can be nested, and can be empty.
 
 ```coffee
 val list = ['hello', 'world', 'how are you']
 ```
 
-The type of a list is written in full as `list<type>`, `list type` or `[]type`.
+The type of a list is written in full as `list<type>`, `list type` or `type[]`.
 
 ```coffee
 val list1: []int = [10, 20, 30]
-val list2 = ['a', 'b', 'c'] // is []str
+val list2 = ['a', 'b', 'c'] // is str[]
 [] // an empty list
 ```
 
@@ -838,22 +669,22 @@ type Nullable x = ?a
 type Optional x = ?a
 
 // tuple types
-type Tuple x y = (x, y)
+type Tuple(x, y) = (x, y)
 
 // list types
-type List x = []x
+type List(x) = x[]
 // set types
-type Set x = :{}x
+type Set(x) = x{}
 // hash types
-type Hash x y = {x : y}
+type Hash(x, y) = {x : y}
 
 // record types
-type Rec x y = {x : y}
-type RecOnly x y = {x : y}
+type Rec(x, y) = {x : y}
+type RecOnly(x, y) = {x : y}
 
 // function types
-type Fn a b = a -> b
-type Fn2 a b c = a -> b -> c
+type Fn(x, y) = x -> y
+type Fn2(x, y) = a -> y -> z
 
 // type operations on objects
 type TypeOf a = type a
@@ -862,3 +693,177 @@ type KeysOf a = key a
 type AttributeOf a b = a attr b
 type MethodOf a b = a attr b & a is fn
 ```
+
+### Regular Expression Syntax
+
+#### Basic Syntax Elements
+
+| Syntax        | Description                           |
+| ------------- | ------------------------------------- |
+| `\`           | Escape                                |
+| `\|`          | Alternation                           |
+| `&`           | Join                                  |
+| `(...)`       | Capturing group                       |
+| `[...]`       | Character class (can be nested)       |
+| `[^...]`      | Negated char-class (can be nested)    |
+| `{,}`         | Quantifier token (LHS 0, RHS &infin;) |
+| `"..."`       | Raw quoted literal                    |
+| `'...'`       | Quoted literal                        |
+| `\0` onward   | Numeric back-reference (0-indexed)    |
+| `%...`        | String formatting                     |
+| `#...`, `#{}` | String placeholder argument           |
+| `${...}`      | String interpolation                  |
+
+#### Characters
+
+Escapes work the same way as in strings and outside character classes except `\b`. In addition, uppercase characters denote a character class that negates the corresponding character class; for example, `\D` matches any non-digit character and `\S` matches any space character.
+
+`\R` takes on the meaning of `\p` in Trinity, which matches any line terminator sequence.
+
+#### Character Classes
+
+| Syntax | Inverse | Description |
+| --- | --- | --- |
+| `.` | None | Hexadecimal code point (1-8 digits) |
+| `\w` | `\W` | Word character `\pL\pM\pPc\pNd` |
+| `\d` | `\D` | Digit character `\pNd` |
+| `\s` | `\S` | Space character `\pZ` |
+| `\h` | `\H` | Hexadecimal digit character `[\da-fA-F]` |
+| `\u` | `\U` | Uppercase letter `[A-Z]` |
+| `\l` | `\L` | Lowercase letter `[a-z]` |
+| `\q` | `\Q` | Punctuation and symbols `[\pP\pS]` |
+| `\f` | `\F` | Form feed `[\f]` |
+| `\t` | `\T` | Horizontal tab `[\t]` |
+| `\v` | `\V` | Form feed `[\v]` |
+| `\n` | `\N` | Newline `[\n]` |
+| `\o` | `\O` | Null character `[^]` |
+| `\R` |  | General line break (CR + LF, etc); outside `[]`] |
+| `\c` | `\C` | First character of identifier; `[\pL\pPc]` by default |
+| `\i` | `\I` | Subsequent characters of identifier `[\pL\pPc\pM\pNd]` by default |
+| `\x` | `\X` | Extended grapheme cluster |
+
+##### Unicode Properties
+
+Properties are case-insensitive. Logical operators `&&`, `||`, `^^` and `!`, can be interspersed to express compound queries.
+
+| Syntax | Description |
+| --- | --- |
+| `\p{p=v}`<br>`\p{p==v}` | `prop` equals `value` |
+| `\p{p!=v}`<br>`\P{p=v}` | `prop` does not equal `value` |
+| `\p{p^=v}` | `prop` begins with but does not equal `value` |
+| `\p{p$=v}` | `prop` ends with but does not equal `value` |
+| `\p{p*=v}` | `prop` contains but does not equal `value` |
+| `\p{p\|=v}` | `prop` begins with or equals to `value` |
+| `\p{p~=v}` | `prop` ends with or equals to `value` |
+| `\p{p&=v}` | `prop` contains or equals to `value` |
+| `\p{in BL}`<br>`\P{!in BL}` | Block property |
+| `\p{is S}`<br>`\p{script==S}` | Script or binary property |
+| `\p{v}` | Short form\* |
+| `\p{Cc}` | Unicode character categories^ |
+
+\*Properties are checked in the order: `General_Category`, `Script`, `Block`, binary property:
+
+- `Latin` &rarr; (`Script==Latin`).
+- `BasicLatin` &rarr; (`Block==BasicLatin`).
+- `Alphabetic` &rarr; (`Alphabetic==Yes`).
+
+##### POSIX Classes
+
+Alternatively, `\p{}` notation can be used as a more concise variant of `[::]`.
+
+| Syntax | ASCII | Unicode (`/u` flag) | Description |
+| --- | --- | --- | --- |
+| `[:alnum:]` | `[a-zA-Z0-9]` | `[\pL\pNl}\pNd]` | Alphanumeric characters |
+| `[:alpha:]` | `[a-zA-Z]` | `[\pL\pNl]` | Alphabetic characters |
+| `[:ascii:]` | `[\x00-\x7F]` | `[\x00-\xFF]` | ASCII characters |
+| `[:blank:]` | `[\x20\t]` | `[\pZs\t]` | Space and tab |
+| `[:cntrl:]` | `[\x00-\x1F\x7F]` | `\pC` | Control characters |
+| `[:digit:]` | `[0-9]` | `\pNd` | Digits |
+| `[:graph:]` | `[\x21-\x7E]` | `[^\pZ\pC]` | Visible characters (anything except spaces and controls) |
+| `[:lower:]` | `[a-z]` | `\pLl` | Lowercase letters |
+| `[:number:]` | `[0-9]` | `\pN` | Numeric characters |
+| `[:print:]` | `[\x20-\x7E] ` | `\PC` | Printable characters (anything except controls) |
+| `[:punct:]` | `[\pP--\p{ASCII}]` | `\pP` | Punctuation (and symbols). |
+| `[:space:]` | `[\x20\t\r\n\v\f]` | `[\pZ]` | Spacing characters |
+| `[:symbol:]` | `[\pS--\p{ASCII}]` | `\pS` | Symbols |
+| `[:upper:]` | `[A-Z]` | `\pLu` | Uppercase letters |
+| `[:word:]` | `[A-Za-z0-9_]` | `[\pL\pNl\pNd\pPc]` | Word characters |
+| `[:xdigit:]` | `[A-Fa-f0-9] ` | `[A-Fa-f0-9]` | Hexadecimal digits |
+
+#### Character Sets
+
+A set `[...]` can include nested sets. The operators below are listed in increasing precedence, meaning they are evaluated first.
+
+| Syntax                 | Description                          |
+| ---------------------- | ------------------------------------ |
+| `^...`, `~...`, `!...` | Negated (complement) character class |
+| `x-y`                  | Range (inclusive)                    |
+| `x->y`                 | Range (end-exclusive)                |
+| `x>-y`                 | Range (start-exclusive)              |
+| `x>>y`                 | Range (exclusive)                    |
+| `x>>y:1`               | Range (with step)                    |
+| `\|\|`                 | Union                                |
+| `&&`                   | Intersection                         |
+| `^^`                   | Symmetric difference                 |
+| `--`                   | Difference                           |
+
+#### Anchors
+
+| Syntax | Inverse | Description                                  |
+| ------ | ------- | -------------------------------------------- |
+| `^`    | None    | Beginning of the string/line                 |
+| `$`    | None    | End of the string/line                       |
+| `\b`   | `\B`    | Word boundary                                |
+| `\a`   | `\A`    | Beginning of the string/line                 |
+| `\z`   | `\Z`    | End of the string/before new line            |
+| `\G`   |         | Where the current search attempt begins/ends |
+| `\K`   |         | Keep start/end position of the result string |
+| `\m`   | `\M`    | Line boundary                                |
+| `\y`   | `\Y`    | Text segment boundary                        |
+
+#### Quantifiers
+
+Curly-brace quantifiers are of the form `{x,y,z}`, where `x` is the lower limit, `y` is the upper limit and `z` is the step. The default values are `x=0`, `y=Infinity` and `z=1`.
+
+| Syntax | Reluctant `?` (returns shortest match) | Possessive `+` (does not backtrack) | Greedy `*` (returns longest match) | Description |
+| --- | --- | --- | --- | --- |
+| `?` | `??` | `?+` | `?*` | 1 or 0 times |
+| `+` | `+?` | `++` | `+*` | 1 or more times |
+| `*` | `*?` | `*+` | `**` | 0 or more times |
+| `{n}` | `{n}?` | `{n}+` | `{n}*` | Exactly `n` times |
+| `{n,m}` | `{n,m}?` | `{n,m}+` | `{n,m}*` | At least `n` but no more than `m` times |
+| `{n,}` | `{n,}?` | `{n,}+` | `{n,}*` | At least `n` times |
+| `{,m}` | `{,m}?` | `{,m}+` | `{,m}*` | Up to `m` times |
+| `{n,m,o}` | `{n,m,o}?` | `{n,m,o}+` | `{n,m,o}*` | `n`&le;`m` stepping by `o` |
+| `{n,,o}` | `{n,,o}?` | `{n,,o}+` | `{n,,o}*` | `n`&le;`Infinity` stepping by `o` |
+| `{,m,o}` | `{,m,o}?` | `{,m,o}+` | `{,m,o}*` | `0`&le;`m` stepping by `o` |
+
+#### Groups
+
+For named capturing and balancing groups, `(?'')`, `(?"")` can also be used in addition to `(?<>)`.
+
+| Syntax                      | Description                            |
+| --------------------------- | -------------------------------------- |
+| `()`                        | Numbered capturing group               |
+| `(?:)`                      | Non-capturing group                    |
+| `(?\<x>)` `(?'x')` `(?"x")` | Named capturing group                  |
+| `(?<\|x>)`                  | Balancing group                        |
+| `(?<x\|x>)`                 | Balancing pair                         |
+| `(?=)`                      | Positive look-ahead                    |
+| `(?!)`                      | Negative look-ahead                    |
+| `(?<=)`                     | Positive look-behind                   |
+| `(?<!)`                     | Negative look-behind                   |
+| `(?>)`                      | Atomic group (no backtracking)         |
+| `(?())`                     | Conditional branching                  |
+| `(?\|)`                     | ...with alternatives                   |
+| `(?/)`                      | Shortest match                         |
+| `(?/=)`                     | Longest match                          |
+| `(?*)`                      | Embedded code                          |
+| `(?{})` `(?{}[tag])`        | Call-out (embedded code)               |
+| `(?y)`                      | Enable mode                            |
+| `(?-y)`                     | Disable mode                           |
+| `(?~)` `(?~\|\|)` `(?~\|)`  | Absent expression (see Oniguruma docs) |
+| `(?#...)`                   | Comment                                |
+| `(?&1)`                     | Numbered group                         |
+| `(?&-1)`                    | (?&+1) Relative back-reference         |
+| `(?&name)`                  | Named back-reference                   |
