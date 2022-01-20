@@ -166,7 +166,22 @@ define:
       - include: '#declarations'
       - include: '#expression-keywords'
       - include: '#function-params'
-      - include: $self
+
+      # Extras
+      - include: '#comments'
+      - include: '#jsx'
+      - include: '#brackets'
+      - include: '#closures'
+      - include: '#punctuation'
+      - include: '#symbols'
+      - include: '#flag-specifier'
+      - include: '#format-specifier'
+      - include: '#type-annotation'
+      - include: '#literals'
+      - include: '#operators'
+      - include: '#calls'
+      - include: '#variables'
+      - include: '#space'
 
   html-tag-names: &html-tag-names
     - match: '\.|:|::'
@@ -189,6 +204,8 @@ repository:
       - include: '#brackets'
       - include: '#closures'
       - include: '#clauses'
+      - include: '#params-clause'
+      - include: '#function-clause'
       - include: '#declarations'
       - include: '#keywords'
       - include: '#punctuation'
@@ -3686,9 +3703,9 @@ repository:
 
   type-operators:
     patterns:
-      - match: \s*(==?>|--?>|~~?>)
+      - match: \s*(--?>|~~?>)
         name: keyword.operator.type.function.trin
-      - match: \s*(<==|<--?|<~~?)
+      - match: \s*(<--?|<~~?)
         name: keyword.operator.type.channel.trin
       - comment: Function types
         match: (?:^|\s+)(?:(\|)|(>))(?=['"`({\[\w])|(?<=['"`)}\]\w])(?:(\|)|(<))(?:$|\s+)
@@ -3706,7 +3723,7 @@ repository:
           3: {name: keyword.operator.assert.trin}
           4: {name: keyword.operator.accessor.trin}
       - comment: type operators
-        match: \s*(?:(\+)|(\-)|(\*)|(/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|([<>]))(?=$|[({\[\w'"\s])
+        match: \s*(?:(\+)|(\-)|(\*)|(\/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|([<>]))(?=$|[({\[\w'"\s])
         captures:
           1: {name: keyword.operator.sum.trin}
           2: {name: keyword.operator.difference.trin}
@@ -4383,7 +4400,7 @@ repository:
 
           \s*
           (\|)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
-        end: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(\|)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
+        end: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(\|)(?=:?(?:[\w\s'"`({\[])|$)
         name: meta.object-literal.key.trin
         captures:
           1: {name: entity.name.method.trin}
@@ -4473,7 +4490,7 @@ repository:
 
           \s*
           (\|)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
-        end: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(\|)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
+        end: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(\|)(?=:?(?:[\w\s'"`({\[])|$)
         name: meta.object-literal.key.trin
         captures:
           1: {name: entity.name.function.trin}
@@ -4535,7 +4552,7 @@ repository:
       (?!\|)
     captures:
       1: {name: punctuation.separator.arguments.trin}
-    end: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(\|)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
+    end: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(\|)(?=:?(?:[\w\s'"`({\[])|$)
     patterns: *param-brackets
 
   clauses:
@@ -4549,8 +4566,6 @@ repository:
       - include: '#do-clause'
       - include: '#type-clause'
       - include: '#new-clause'
-      - include: '#params-clause'
-      - include: '#function-clause'
 
     repository:
       pattern-brackets:
@@ -4792,7 +4807,7 @@ repository:
 
           \s*
           (\|)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
-        end: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(\|)(?![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)
+        end: (?<![\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+)(\|)(?=:?(?:[\w\s'"`({\[])|$)
         name: meta.object-literal.key.trin
         captures:
           1: {name: entity.name.function.trin}
