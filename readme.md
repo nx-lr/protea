@@ -2,11 +2,15 @@
 
 > A new language for building cross-platform apps and libraries.
 
-Trinity is a project that aims to provide a simple, powerful and easy-to-use language, toolchain, framework and library for building cross-platform apps and libraries. It will be portable enough to compile to JavaScript, WebAssembly and native code, while hybridizing modern compile-time and runtime features from other languages.
+Trinity is a general purpose language designed with building applications and libraries using a declarative approach. It is strongly typed, and has explicit support for functional, object-oriented, concurrent, and event-driven programming.
 
-```coffee
+The grammar contains native language features for both client and server-side development using the existing NodeJS ecosystem.
+
+Its syntax resembles Kotlin and Go, but with elements from React JSX, SCSS, GraphQL, OCaml, and Haskell.
+
+```dart
 elem TodoItem {
-  prop color = { color: '#333' }
+  prop color = style { color: '#333' }
   prop label_ = ''
   prop done = false
 
@@ -24,11 +28,11 @@ elem TodoItem {
     }
   }
 
-  return <_ &base>
-    <span &label>$label_</span>
+  return <div>
+    <span>$label_</span>
     <Icons.Checkmark/>
     <Icons.Trash/>
-  </_>
+  </div>
 }
 ```
 
@@ -36,9 +40,9 @@ elem TodoItem {
 
 ## Introduction
 
-Trinity is a programming language designed for developing both client and server-side applications with a singular codebase that works across all platforms, without having to worry about the underlying APIs.
+Trinity is an alternative programming language to replace JavaScript, but without the warts, with a great type system, and with a syntax that is familiar to many other languages.
 
-The goal of Trinity is to provide a small set of developer tools---language, compiler, framework, runtime and libraries---that are used together to build, develop and test applications. Trinity is, after all, a language that focuses on simplicity, flexibility and performance.
+The goal of Trinity is to provide a small set of developer tools---language, compilers, framework, runtime and libraries---that are used together to build, develop and test applications. Trinity is, after all, a language that focuses on simplicity, flexibility and performance.
 
 Trinity draws pieces of influence from:
 
@@ -61,166 +65,144 @@ Trinity is currently still in its conceptual and experimental stage, as the crea
 
 ---
 
-# Trinity's language guide
+# Trinity's Reference
 
-This document is an informal guide to the language's design, structured in a way that you can read from anywhere and still understand. It describes Trinity in terms of its default and (currently) only syntax: its written form as source code.
+This document This document is an informal guide to the language's design, structured in a way that you can read from anywhere and still understand.
 
 This is not a complete reference or a tutorial, but rather something you consult if you have any questions about the language. We will introduce bits and pieces of the core Trinity language and its syntax as we go.
 
 ## Hello World!
 
-```coffee
+```dart
 // Backend
-mod App {
-  proc main: void {
-    print "Hello, world!"
-  }
+proc main: void {
+  print "Hello, world!"
 }
 
 // Frontend
 elem App {
-  // Automatic returns
   <div>
     <h1>Hello, world!</h1>
   </div>
 }
 ```
 
-## Statements
+### Notation
 
-### Curly brackets
+Trinity's syntax is specified using a hybrid of Extended Backus-Naur form and regular expressions.
 
-Like C#, Java, Scala, Kotlin, Rust, Go and JavaScript, Trinity is a free-form, curly-bracket language. This means code is grouped by curly brackets, statements are separated by semicolons, and expressions are separated by commas.
+`camelCase` production names are used to identify lexical tokens. Non-terminals are in `PascalCase`. Lexical tokens are enclosed in single `''` or double quotes `""`, single characters are delimited with a backslash.
 
-Trinity makes every one of these things optional. This means that you can use a mix of indentation and curly brackets in varying degrees to make your code more readable.
+### Source code representation
 
-Parentheses are also optional in function calls, but they are used to group expressions.
+Trinity source code is encoded in UTF-8. The text is not canonicalized, so a single accented code point is distinct from from the same character constructed by combining an accent and a letter; those are treated as two code points.
 
-```coffee
-print sys.inspect object == print(sys.inspect, object)
-fn(x + 3) x - 3 == fn(x + 3, x) - 3
+Each code point is distinct; upper and lower case characters are distinct.
 
-// Call named arguments with slashes
-print(x, name, /sep = "\n")
-print x name /sep "\n"
-```
+### Characters
+
+Unicode has defined a set of character categories that are used to classify Unicode characters.
+
+- `\p` followed by one or two letters: a Unicode shorthand character class; `\pL` denotes a Unicode letter
+- `\d`: a decimal digit character, i.e. `0` to `9`.
+- `\h`: a hexadecimal character (case-insensitive)
+- `\s`: a whitespace character
+
+### Letters, digits and operators
+
+All characters in the Combining Punctuation category are considered letters.
+
+- `\c`: an initial identifier character, i.e. `[\pL\pPc]`
+- `\i`: a final identifier character, i.e. `[\c\d\pM]`
+- `\w`: a medial identifier character `[\i\pPd]`
+- `\q`: a punctuation character, i.e. `` [,;'"`\\(){}\[\]] ``
+- `\o`: an operator character, which is a Unicode punctuation or symbol character that is not a punctuation mark, i.e. `` [\pP\pS--,;'"`\\(){}\[\]] ``.
+
+## Lexical elements
 
 ### Comments
 
-Comments are the same as in JavaScript, though they are usually ignored. Documentation comments are not ignored, but are gathered by the compiler to produce a documentation tree to allow future developers using your software to easily find documentation, even at the convenience of their own editor.
+Comments serve as program documentation. There are four forms of each, two of which are deleted by the compiler:
 
-```coffee
-// This is a single line comment.
-/*
-  This is a multiline comment.
-  /* It can be nested. */
-*/
+- Line comments start with `//` and a space, and stop at the end of the line.
+- General comments start with the `/*` and a space, and stop with the first subsequent character sequence `*/`.
 
-/// This is a single line documentation comment.
-/**
-  This is a multiline documentation comment
-  /* It can be nested. */
-*/
-```
+A comment cannot start inside a string literal but can appear inside of another comment. A general comment without a newline acts like a space, and any other comment thereof acts like a newline.
 
-### Variables
+### Tokens
 
-Mutable variables are declared with the `var` keyword and immutable variables with the `val` keyword.
+Tokens form the vocabulary of the Trinity language. There are four classes: identifiers, keywords, operators, punctuation and literals. Whitespace, formed from spaces, tabs, carriage returns and newlines are ignored except they separate tokens that would otherwise combine into one.
 
-All variables are block-scoped and are accessible from the entire scope they are declared in, but not outside. Once you declare a variable in one place, you cannot use it in another.
+A newline or end of file may trigger the insertion of a comma or semicolon. While breaking the input into tokens, the next token is the longest sequence of characters that form a valid token.
 
-You cannot override declared variables.
+### Terminators
 
-```coffee
-val x = 42
-val y: int = 42
+The formal grammar uses commas and semicolons in a number of productions. When the input is broken into tokens, a semicolon is automatically inserted into the token stream immediately after a line's final token if that token is:
 
-var y1 = y // mutable
-y1 += 1
-y1 = 3
-```
+- a punctuation mark
+- an identifier
+- a keyword
+- a literal
+- a suffix operator
+- a closing bracket
 
-#### Scoping
-
-The last line of a code block is automatically returned. If you want the block to return early, you can use the `return` keyword.
-
-```coffee
-val x = do {
-  val part1 = \Hello
-  val part2 = \World
-  "$part1 $part2"
-}
-```
-
-#### Type annotations
-
-When you create a new variable or function, you can explicitly specify its type. This is useful for type-checking, and for making your code more readable.
-
-```coffee
-var x: int = 42
-var y: str = "Hello"
-var z: bool = true
-```
-
-You can also use type inference to infer the type of a variable, however use it in moderation if you want your code to be less verbose.
-
-```coffee
-var johnDoe: Person = Person("John", "Doe")
-```
+To allow complex statements to occupy a single line, a semicolon or comma can be omitted before a closing bracket.
 
 ### Identifiers
 
-Identifiers in Trinity can be any string of letters, decimal digits, marks, underscores and dashes, with the following restrictions:
+Identifiers name program entities like variables and types. An identifier begins with a sequence of one or more letters, digits, marks, underscores and dashes, with the following restrictions:
 
 - begins with a letter
 - does not end with one or more trailing dashes.
 
-Any Unicode character with class `Pc`, `Pd`, and `M` is considered a 'underscore', 'dash' and 'mark' respectively. That means, an identifier is any string of said characters that match the regular expression below:
-
-```coffee
+```dart
 val regex = `\b[\pL\pPc][\d\pL\pM\pPc\pPd]*\b`
 ```
 
 Two identifiers are considered equal if the following function returns true:
 
-```coffee
-fun cmpIdent(a: str, b: str): bool = normalize a == normalize b
+```dart
+fun cmpIdent(a: str, b: str): bool =
+  normalize a == normalize b
 
 fun normalize(ident: str): str {
-  var ret = ident[0] + ident[1;;][`[^\pL\d]*` ``]
-  ret = ret[`\b.*(?!\pL)`] + ret[`\pLl.*\b`].lower!
-  return ret
+  var { start, end } = ident.match(`
+    (?!\d) // do not match if identifier begins in a digit
+    \b
+      (?'start'[\pPc\pL][\d\pL\pM\pPc\pPd--\pLl]*)?
+      (?'end'[\d\pL\pM\pPc\pPd]*)
+    \b // do not match trailing dashes
+  `)
+  return (start + end.lower).sub(`[^\pL\d]` ``)
 }
 ```
 
-That means the first letters are compared case-sensitively, and all non-alphanumeric characters (marks, underscores and dashes) are ignored. The rest of the string is compared case-insensitively.
+That means the first non-lowercase letters are compared as they are, while the rest of the identifier is compared case-insensitively. Additionally, all non-alphanumeric characters (marks, underscores and dashes) are discarded before comparison.
 
-```coffee
+```dart
 "WILDFire" == "WILD_Fire" == "WILD-Fire"
 "WILDFIRE____" == "WILDFIRE"
 "wildFire" == "wildfire" == "wild_fire" == "wild-fire"
 ```
 
-This unorthodox way of identifier comparison is called "normalization", and has some advantages over conventional case sensitivity.
+This unorthodox way of identifier comparison is called **partial** case-insensitivity, and allows programmers to use their own conventions without having to remember the exact spelling of an identifier.
 
-It allows programmers to use their own preferred spelling style without having to remember the exact spelling of an identifier. The exception with respect to the first non-lowercase characters allows common code like `var foo: Foo == FOO` to be parsed unambiguously.
+The exception with respect to the first non-lowercase characters allows common code like `var foo: Foo == FOO` to be parsed unambiguously.
 
 Note that this rule does not apply to keywords, which are all written in all-lowercase.
 
 ### Keywords
 
-Keywords are special tokens in Trinity and are not allowed as variable names. They are used to denote special constructs, such as functions, classes, and control structures, and are distinguished from identifiers.
+The following keywords are reserved and may not be used as identifiers.
 
-Some keywords are unused, such as `mark` and `defer`; they are reserved for future developments of the language. The following is a list of all keywords in Trinity:
-
-```coffee
+```
 in of as is new
 to til thru by del
 unset ref and or xor not
 var val fun func proc type
 class data enum mod
 iter macro inter obj
-trait style elem prop mark
+trait style elem prop
 go defer do from where with
 if elif else then def
 for each loop while
@@ -230,640 +212,56 @@ break next redo retry
 return yield await label
 use show hide route
 debug assert check
-
-// Special variables
-true false null nan void infin
-it this that self args ctor proto
-```
-
-Because of how identifiers are compared, you can use any number of trailing underscores to "strop" a keyword to turn it into an identifier.
-
-```coffee
-var var_ = "Hello Stropping"
-type Obj = { type_: int }
-val object_ = Obj(type_: 9)
-assert object_ is Obj
-assert object_.type == 9
-var var_ = 42; val val_ = 8
-assert var_ + val_ == 50
-var assert_ = true
-assert assert_
-```
-
-Keywords become identifiers when part of a qualified name, such as `x.for.then` or `y::loop`.
-
-## Data types
-
-Trinity comes with many common data types, such as strings, integers, floats, rational numbers, booleans, symbols, regular expressions and more, as well as a few data structures such as sequences, lists, sets and dictionaries.
-
-```coffee
-void: void // void
-null: null // null
-1: int // 64-bit integer
-1.0: float // 64-bit integer
-true: bool // boolean
-:sym: sym // symbol
-"hello": str // string
-`hello`: regex // regular expression
-
-/* Data structures */
-[1, 2, 3]: list<int> // list
-[1, 2, 3]: [int, int, int] // tuple
-{1, 2, 3}: set<int> // set
-{a: 1, b: 2}: dict<str, int> // dictionary
-```
-
-### Null
-
-The `null` type is used to represent the absence of a value, similar in other languages. It only has a single value:
-
-```coffee
-null
-```
-
-You can also use `void`, they are conceptually identical: `void` is more common as a return type, and `null` is more common as a value.
-
-### Booleans
-
-`bool` has only two possible values: true and false. They are constructed using the following literals:
-
-```coffee
-true; false
-```
-
-### Integers and Floats
-
-Trinity has four integer types: `int` and `nat` (unsigned integer types), and their arbitrary-precision `bigint` and `bignat` counterparts.
-
-An integer literal is a sequence of digits and underscores, optionally followed by a type suffix.
-
-```coffee
-1 // int
-1 // int
-1u // nat
-1i // int
-
-18446744073709551616 // bigint
-18446744073709551616n // bigint
-18_446_744_073_709_551_616 // bigint
-```
-
-Binary `0b` , octal `0o` and hexadecimal `0x` literals are also supported. Note the prefixes are case sensitive, this is to prevent confusion especially with `0o`.
-
-```coffee
-decimal = 11256099
-hex = 0x0123456789ABCDEF
-octal = 0o52740443
-binary = 0b101010111100000100100011
-```
-
-Underscores and leading zeroes can be used to make numbers more readable, and both are ignored.
-
-### Rationals
-
-There are four rational types: `float` which is a IEEE binary64 type, and `rat`, which is a pair of one signed and one unsigned integer. Both have their arbitrary-precision `big` counterparts. Rationals have a compulsory `r` suffix while floats do not.
-
-A floating-point literal is a sequence of digits and an optional decimal point followed by an optional exponent and then a type suffix. The exponent is optional, and is either an `e` followed by a sequence of digits and an optional sign.
-
-```coffee
-1.0  // float
-1.0f // float
-1f   // float
-1r   // rat
-
-1.0n  // bigfloat
-1.0fn // bigfloat
-1fn   // bigrat
-1rn   // bigrat
-
-1j // complex
-1 + 1j // complex
-```
-
-Binary, hexadecimal and octal floats are also supported, though you would use the `p` suffix for exponents, and the base is 2, rather than 10.
-
-```coffee
-decimal = 11256099.012e+14
-hex = 0xABC1234.012p-40
-octal = 0o52740443.012p-40
-binary = 0b10101011110.0000100100011p-40
-```
-
-### Strings
-
-A string literal is a sequence of Unicode characters enclosed in pairs of single or double quotes. Strings are indexed by character as opposed to bytes; the latter is reserved for the `bytestr` type. String values are immutable, and can span multiple lines by default.
-
-Single quoted strings are not escaped, so to escape a single quote in said string, double it.
-
-```coffee
-val marioSays = '"It''sa me, Mario!"'
-
-val greeting = "Hello world!"
-val multilineGreeting = "Hello
-  world!"
-
-assert "hello\nworld" == multilineGreeting
-```
-
-A trailing backslash in a double quoted string joins the next line, ignoring all indentation up to that line. This is useful for breaking up long strings into multiple lines without having to worry about indentation. The following example shows how to use this feature:
-
-```coffee
-assert "Hello \
-  world!" == "Hello world!"
-```
-
-Strings can be delimited using multiple quotes of the same type, as long as they begin with at least three quotes. The string ends with the furthest set of quotes, if the strings ends with more than the number of opening quotes.
-
-In multi-quoted strings, all leading and trailing whitespace is removed, and indentation is stripped based on the first line.
-
-```coffee
-val greeting = """
-"
-Hello World!
-""""
-```
-
-Double quoted string literals can contain the following escape sequences. Any other character following a backslash is interpreted as the character itself.
-
-| Escape     | Meaning                                  |
-| ---------- | ---------------------------------------- |
-| `\p`       | platform specific newline                |
-| `\r`       | carriage return                          |
-| `\n`       | newline/line feed                        |
-| `\f`       | form feed                                |
-| `\t`       | tabulator                                |
-| `\v`       | vertical tabulator                       |
-| `\a`       | alert                                    |
-| `\b`       | backspace                                |
-| `\e`       | escape                                   |
-| `\s`       | space                                    |
-| `\c[a-z]`  | control character (`0x01` to `0x1A`)     |
-| `\b[01]+`  | binary codepoint                         |
-| `\o[0-7]+` | octal codepoint                          |
-| `\d?\d+`   | decimal codepoint                        |
-| `\[ux]`    | hexadecimal codepoint (`\h==[\da-fA-F]`) |
-| `\N{.+}`   | Unicode named character sequence         |
-
-A backslash followed by as many decimal digits denotes a code point written in decimal.
-
-```coffee
-"\33" // => "A"
-"\83" // => "S"
-"\10" // => "\n"
-"\0"  // null char
-```
-
-In numeric escapes, if the number it represents is greater than or equal to `1114111` (`0x10FFFF`), then the escape is invalid or is truncated to a number less than that.
-
-The same `\b`, `\d`, `\o` and `\x` escapes with curly brackets allow you to insert many code points inside, with each character or code unit separated by spaces.
-
-```coffee
-decimal = "\11256099"
-hex = "\xABC123"
-octal = "\o52740443"
-binary = "\b101010111100000100100011"
-
-// "HELLO"
-"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
-"\d{72 69 76 76 79}" == "\72\69\76\76\79"
-```
-
-Double quoted literals allow you to express multilingual, math, symbol or other Unicode characters as LaTeX-style expressions without having to know the code points.
-
-```coffee
-// => "\u{1F60A}"
-"\u{1F600}" // => "😀"
-"\:smile.y.z" // => 😀
-"\:func{x,y}{x,y}" // => :func{x -> x + 1}
-```
-
-In single quotes, meta-characters such as `'`, `$`, `%` and `#` need to be doubled in order to be escaped (literal). In double quotes, you can use the backslash to escape them.
-
-### Interpolation
-
-Both types of strings support interpolation with `${}`, which is a way to embed variables. The braces can be omitted if the expression is any combination of the following:
-
-- a single identifier: `name`
-- a qualified name: `x.y.z` or `x::y::z`
-- an object accessor: `[][1]`
-- a function call: `fn()`
-- and any combination of the like
-
-By default, all embedded expressions are converted to strings by passing it through the `str` method and concatenating the resulting string. You can override this behaviour by using the construct `ident'string'` instead.
-
-```coffee
-val greeting = "Hello $name!"
-val greeting = "Hello $name.upper()!"
-val greeting = "Hello ${name.upper!}!"
-```
-
-#### Formatting directives
-
-Format directives are used to transform a value into a string using the built-in `format` method. Each directive begins with a percent sign, and then a series of flags separated by pipe characters, and an optional value after the colon.
-
-```coffee
-"Hello ${"world"}"
-"Hello ${"world"}%upper" // => "Hello WORLD"
-"$1234567890%sep:{','}|sep:{id + 1}" // => "1,234,567,890"
-"Percentage correct answers: \
-  ${correct / total}%dp:2|unit:('%')"
-```
-
-### Template strings
-
-You can create template strings by using the `#` character to mark placeholders in a string. The arguments can be named, as in `#name`, or positional, as in `#0` or `#-1` (negative indices count from the last).
-
-```coffee
-val greeting = "Hello #0!"
-greeting "World" // => "Hello World!"
-```
-
-You can also spread arguments into the string by using the `*` operator, and mark them as optional by using the `?` operator.
-
-#### Backslash strings
-
-Strings can be written with a preceding backslash instead of quotes. Backslash strings can't contain punctuation or symbol characters, nor whitespace, those have to be escaped as well.
-
-```coffee
-\this\ is\ awesome
-[\look\ ma\,\\no\ quotes\!]
-{prop: \word}
-```
-
-#### Accessing and modifying strings
-
-Retrieve a value from the string by using subscript syntax, passing the index of the value you want to retrieve within postfix square brackets. You can also use negative indices to access characters from the end of the string.
-
-The range of integers you want to retrieve is always `-l < 0 <= l` where `l` is the length of the string.
-
-```coffee
-'hello'[0]   // => 'h'
-'hello'[1]   // => 'e'
-'hello'[2]   // => 'l'
-'hello'[3]   // => 'l'
-'hello'[4]   // => 'o'
-'hello'[5]   // => ''
-'hello'[-1]  // => 'o'
-'hello'[-2]  // => 'l'
-'hello'[-3]  // => 'l'
-'hello'[-4]  // => 'e'
-'hello'[-5]  // => 'h'
-'hello'[-6]  // => ''
-```
-
-You can slice from the beginning or end of the string, using a notation (`start`, `end`, `step`). All elements are optional and default to `0`, `l-1` (where `l` is the length of the string), and `1` respectively.
-
-Negative indices count from the end of the string. The step can be negative to retrieve characters in reverse order.
-
-```coffee
-x = "Hello"
-x[0]        // 1st character
-x[1]        // 2nd character
-x[-1]       // last character
-x[-2]       // 2nd-to-last character
-x[1,]       // all except the 1st
-x[,-1]      // all except the last
-x[1,-1]     // all except the last
-x[-2,1]     // all except the last 2
-x[,]; x[,,] // copy the entire string
-x[,0]       // empty string
-x[,,-1]     // reverse the string
-x[,,2]      // skip over every 2nd character
-x[,,3]      // skip over every 3rd character
-```
-
-### Regular expressions
-
-Trinity natively supports regular expressions, which are an integral part in processing and manipulating text. Trinity's regexes are inspired by Perl, Ruby and Python, though with a few extensions and subtle differences to unify the three different flavors together.
-
-By default, Trinity's regular expressions allow for free spacing and comments, thus going a long way towards making complex regexes simpler and more readable.
-
-```coffee
-`^(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$`
-`[ ! @ " $ % ^ & * () = ? <> ' : {} \[ \] `]`
-
-// match a hexadecimal integer
-`
-  \b
-    (0x)       // prefix
-    \h [\h_]*  // integer part
-    (\.)?      // decimal point
-    [\h_]*     // fractional part
-    (?:        // exponent part
-      (p)      // delimiter
-      ([+-])?  // sign
-      ([\d_]+) // mantissa
-    )?         // type suffix
-    ([\p{Pc}\p{L}][\w\p{Pd}]*)?
-  \b
-`xi
-```
-
-#### Escaping
-
-Regular expressions support the same escape sequences as String literals. The delimiter `` ` `` must be escaped with a backslash inside the top level of regular expressions. Meta-characters like `|`, `?`, `*` and `+` need to be escaped if they are intended as literal characters.
-
-#### Interpolation
-
-Interpolation works in regular expression literals just as it does in string literals. Be aware that using this feature will cause an exception to be raised at runtime, if the resulting string results in an invalid regular expression.
-
-### Lists
-
-Lists are written as a comma-separated list of values enclosed in square brackets. Lists are written with square brackets, and whose elements are separated by newlines. They can contain any type of value. They can be nested, and can be empty.
-
-```coffee
-val list = ['hello', 'world', 'how are you']
-```
-
-The type of a list is written in full as `list<type>`, `list type` or `type[]`.
-
-```coffee
-val list1: []int = [10, 20, 30]
-val list2 = ['a', 'b', 'c'] // is str[]
-[] // an empty list
-```
-
-## Top-level declarations
-
-A top-level declaration appears on the top-level or outermost scope of a file. It can be one of the following:
-
-- A declaration, like `val x = 42`, or `struct type Optional a = None | Some a`.
-- A `use` clause, like `use base` or `use math.sqrt`.
-
-### Declarations
-
-Declarations define program entities like variables or functions.
-
-Each declaration can be preceded with a number of _modifier_ keywords which can be placed to the left of said keyword, which change or control the behavior of the declaration.
-
-`=` is the declaration operator and is used to separate the name from its definition, as opposed to `=` which is assignment.
-
-```coffee
-val x = 1
-mut val x = 1
-```
-
-All declarations are immutable, private and block-scoped by default. To make them public or visible, use the `pub` or `show` keyword; to make them mutable, use the `mut` keyword.
-
-```coffee
-val x = do
-  val part1 = 'Hello'
-  val part2 = 'World!'
-  part1 + part2
-// part1 and part2 are not accessible outside this block
-```
-
-## Hello World!
-
-```coffee
-print 'Hello World!'
-// or
-fn main = print 'Hello World!'
-```
-
-`fn main` can be skipped in single-file projects.
-
-### Functions
-
-Function declarations begin with the `fn` keyword, followed by the name of the function, followed by a list of parameters inside the brackets, and an expression after `=`. The parameters are separated by commas.
-
-The expression comprising the right-hand side can refer to the name given to the definition in the left-hand side. In that case, it’s a recursive definition. For example:
-
-```coffee
-rec fn List.has(item: any): bool =
-  match this:
-    case [] { false }
-    case [a, *rest] { a == item && rest.has item }
 ```
 
 ### Operators
 
-Operators are defined with the `oper fn` compound keyword and one of three keywords: `prefix`, `infix` and `suffix`. This modifier determines how the operator is parsed. The `infix` keyword is the default.
+Operators consist entirely of the characters `!$@%^&*-=+<>.~/|:#?`. For example, `+`, `*`, `<>`, and `>>=` are valid operators.
 
-```coffee
-infix oper fn + = |x, y|: int = x + y
-prefix oper fn - = |x|: int = -x
-suffix oper fn + = |x|: int = x + 1
+Trinity distinguishes between three types of operators: prefix, infix and suffix. Spacing around operators is significant: prefix operators have spacing on their left and suffix operators on their right. Infix operators can be spaced out or without a space between the operands.
+
+`.`, `=`, `:`, `::`, `|>`, `||>`, `|||>`, `+>`, `<|`, `<||`, `<|||`, `<+`, `?:`, `!:`, `??`, `!!`, are not available as general operators; they are used for other notational purposes.
+
+An infix operator can contain `//`, `///`, `/*` or `/**`.
+
+Infix operators whose first character is `@` are right-associative.
+
+```dart
+func &/ (y: float): float = x / y
+12 @/ 4 @/ 8 // 24.0
+12 / 4 / 8 // 24.8
 ```
 
-### Types
+Prefix, suffix and infix operators are distinguished whether they have preceding, following whitespace, or both (respectively).
 
-A user-defined data type is introduced with the type keyword. The left hand side declares a new type constructor with that name, followed by names for any type arguments. The right hand side is its definition.
+Suffix operators are evaluated first and from left to right, and prefix operators are evaluated next and from right to left.
 
-```coffee
-// sum types
-type Optional x = None + Some x
+Infix operators are evaluated last and are evaluated based on the given order below.
 
-// product types
-type Pair x = x * x
-type Triple x = x * x * x
+Operators ending in either `->`, `~>` or `=>` or starting in `<-` `<=` or `<~` are called arrow like, and have the lowest precedence of all operators.
 
-// set types
-type Union x = x | x
-type Intersection x = x & x
-type SymmetricDifference x = x ^ x
-type Difference x = x - x
+If the operator ends with `=` and its first character is none of `<`, `>`, `!`, `=`, `~`, `?`, it is an assignment operator which has the second-lowest precedence.
 
-// nullable/optional types
-type Nullable x = ?a
-type Optional x = ?a
+Otherwise, precedence is determined by the first character.
 
-// tuple types
-type Tuple(x, y) = (x, y)
-
-// list types
-type List(x) = x[]
-// set types
-type Set(x) = x{}
-// hash types
-type Hash(x, y) = {x : y}
-
-// record types
-type Rec(x, y) = {x : y}
-type RecOnly(x, y) = {x : y}
-
-// function types
-type Fn(x, y) = x -> y
-type Fn2(x, y) = a -> y -> z
-
-// type operations on objects
-type TypeOf a = type a
-type ValuesOf a = val a
-type KeysOf a = key a
-type AttributeOf a b = a attr b
-type MethodOf a b = a attr b & a is fn
-```
-
-### Regular Expression Syntax
-
-#### Basic Syntax Elements
-
-| Syntax        | Description                           |
-| ------------- | ------------------------------------- |
-| `\`           | Escape                                |
-| `\|`          | Alternation                           |
-| `&`           | Join                                  |
-| `(...)`       | Capturing group                       |
-| `[...]`       | Character class (can be nested)       |
-| `[^...]`      | Negated char-class (can be nested)    |
-| `{,}`         | Quantifier token (LHS 0, RHS &infin;) |
-| `"..."`       | Raw quoted literal                    |
-| `'...'`       | Quoted literal                        |
-| `\0` onward   | Numeric back-reference (0-indexed)    |
-| `%...`        | String formatting                     |
-| `#...`, `#{}` | String placeholder argument           |
-| `${...}`      | String interpolation                  |
-
-#### Characters
-
-Escapes work the same way as in strings and outside character classes except `\b`. In addition, uppercase characters denote a character class that negates the corresponding character class; for example, `\D` matches any non-digit character and `\S` matches any space character.
-
-`\R` takes on the meaning of `\p` in Trinity, which matches any line terminator sequence.
-
-#### Character Classes
-
-| Syntax | Inverse | Description |
+| Precedence level | Operators | First character |
 | --- | --- | --- |
-| `.` | None | Hexadecimal code point (1-8 digits) |
-| `\w` | `\W` | Word character `\pL\pM\pPc\pNd` |
-| `\d` | `\D` | Digit character `\pNd` |
-| `\s` | `\S` | Space character `\pZ` |
-| `\h` | `\H` | Hexadecimal digit character `[\da-fA-F]` |
-| `\u` | `\U` | Uppercase letter `[A-Z]` |
-| `\l` | `\L` | Lowercase letter `[a-z]` |
-| `\q` | `\Q` | Punctuation and symbols `[\pP\pS]` |
-| `\f` | `\F` | Form feed `[\f]` |
-| `\t` | `\T` | Horizontal tab `[\t]` |
-| `\v` | `\V` | Form feed `[\v]` |
-| `\n` | `\N` | Newline `[\n]` |
-| `\o` | `\O` | Null character `[^]` |
-| `\R` |  | General line break (CR + LF, etc); outside `[]`] |
-| `\c` | `\C` | First character of identifier; `[\pL\pPc]` by default |
-| `\i` | `\I` | Subsequent characters of identifier `[\pL\pPc\pM\pNd]` by default |
-| `\x` | `\X` | Extended grapheme cluster |
+| 9 (highest) | `unset` `del` `not` | `$ ^` |
+| 8 | `*` `/` `**` `//` `%` | `* % \ /` |
+| 7 | `+` `-` | `+ - ~ \|` |
+| 6 | `&` `\|` `^` `<<` `>>` | `&` |
+| 5 | `==` `<=` `<` `>=` `>` `!=`<br>`in` `!in` `of` `!of` `is` `is!` `as` `as!` `as?` `to` `til` `thru` `by` | `= < > !` |
+| 4 | `&&` `\|\|` `^^` `and` `or` `xor` |  |
+| 3 | infix `?? !! ?: !: ::` |  |
+| 2 | `@` and arrow like operator (like `->`, `=>`) |  |
+| 1 | assignment operator (like `+=`, `*=`) |  |
 
-##### Unicode Properties
+Whether an operator is used as a prefix operator is also affected by preceding or following whitespace, respectively.
 
-Properties are case-insensitive. Logical operators `&&`, `||`, `^^` and `!`, can be interspersed to express compound queries.
+```dart
+++x++ == +(+((x+)+))
+```
 
-| Syntax | Description |
-| --- | --- |
-| `\p{p=v}`<br>`\p{p==v}` | `prop` equals `value` |
-| `\p{p!=v}`<br>`\P{p=v}` | `prop` does not equal `value` |
-| `\p{p^=v}` | `prop` begins with but does not equal `value` |
-| `\p{p$=v}` | `prop` ends with but does not equal `value` |
-| `\p{p*=v}` | `prop` contains but does not equal `value` |
-| `\p{p\|=v}` | `prop` begins with or equals to `value` |
-| `\p{p~=v}` | `prop` ends with or equals to `value` |
-| `\p{p&=v}` | `prop` contains or equals to `value` |
-| `\p{in BL}`<br>`\P{!in BL}` | Block property |
-| `\p{is S}`<br>`\p{script==S}` | Script or binary property |
-| `\p{v}` | Short form\* |
-| `\p{Cc}` | Unicode character categories^ |
+Dot-like or colon-like operators are operators starting with `.`, `!.`, `?.`, `::`, `?:` or `!:`; they have the same precedence as `.`, so that `a.?b.c` is parsed as `(a.?b).c` instead of `a.?(b.c)`.
 
-\*Properties are checked in the order: `General_Category`, `Script`, `Block`, binary property:
-
-- `Latin` &rarr; (`Script==Latin`).
-- `BasicLatin` &rarr; (`Block==BasicLatin`).
-- `Alphabetic` &rarr; (`Alphabetic==Yes`).
-
-##### POSIX Classes
-
-Alternatively, `\p{}` notation can be used as a more concise variant of `[::]`.
-
-| Syntax | ASCII | Unicode (`/u` flag) | Description |
-| --- | --- | --- | --- |
-| `[:alnum:]` | `[a-zA-Z0-9]` | `[\pL\pNl}\pNd]` | Alphanumeric characters |
-| `[:alpha:]` | `[a-zA-Z]` | `[\pL\pNl]` | Alphabetic characters |
-| `[:ascii:]` | `[\x00-\x7F]` | `[\x00-\xFF]` | ASCII characters |
-| `[:blank:]` | `[\x20\t]` | `[\pZs\t]` | Space and tab |
-| `[:cntrl:]` | `[\x00-\x1F\x7F]` | `\pC` | Control characters |
-| `[:digit:]` | `[0-9]` | `\pNd` | Digits |
-| `[:graph:]` | `[\x21-\x7E]` | `[^\pZ\pC]` | Visible characters (anything except spaces and controls) |
-| `[:lower:]` | `[a-z]` | `\pLl` | Lowercase letters |
-| `[:number:]` | `[0-9]` | `\pN` | Numeric characters |
-| `[:print:]` | `[\x20-\x7E] ` | `\PC` | Printable characters (anything except controls) |
-| `[:punct:]` | `[\pP--\p{ASCII}]` | `\pP` | Punctuation (and symbols). |
-| `[:space:]` | `[\x20\t\r\n\v\f]` | `[\pZ]` | Spacing characters |
-| `[:symbol:]` | `[\pS--\p{ASCII}]` | `\pS` | Symbols |
-| `[:upper:]` | `[A-Z]` | `\pLu` | Uppercase letters |
-| `[:word:]` | `[A-Za-z0-9_]` | `[\pL\pNl\pNd\pPc]` | Word characters |
-| `[:xdigit:]` | `[A-Fa-f0-9] ` | `[A-Fa-f0-9]` | Hexadecimal digits |
-
-#### Character Sets
-
-A set `[...]` can include nested sets. The operators below are listed in increasing precedence, meaning they are evaluated first.
-
-| Syntax                 | Description                          |
-| ---------------------- | ------------------------------------ |
-| `^...`, `~...`, `!...` | Negated (complement) character class |
-| `x-y`                  | Range (inclusive)                    |
-| `x->y`                 | Range (end-exclusive)                |
-| `x>-y`                 | Range (start-exclusive)              |
-| `x>>y`                 | Range (exclusive)                    |
-| `x>>y:1`               | Range (with step)                    |
-| `\|\|`                 | Union                                |
-| `&&`                   | Intersection                         |
-| `^^`                   | Symmetric difference                 |
-| `--`                   | Difference                           |
-
-#### Anchors
-
-| Syntax | Inverse | Description                                  |
-| ------ | ------- | -------------------------------------------- |
-| `^`    | None    | Beginning of the string/line                 |
-| `$`    | None    | End of the string/line                       |
-| `\b`   | `\B`    | Word boundary                                |
-| `\a`   | `\A`    | Beginning of the string/line                 |
-| `\z`   | `\Z`    | End of the string/before new line            |
-| `\G`   |         | Where the current search attempt begins/ends |
-| `\K`   |         | Keep start/end position of the result string |
-| `\m`   | `\M`    | Line boundary                                |
-| `\y`   | `\Y`    | Text segment boundary                        |
-
-#### Quantifiers
-
-Curly-brace quantifiers are of the form `{x,y,z}`, where `x` is the lower limit, `y` is the upper limit and `z` is the step. The default values are `x=0`, `y=Infinity` and `z=1`.
-
-| Syntax | Reluctant `?` (returns shortest match) | Possessive `+` (does not backtrack) | Greedy `*` (returns longest match) | Description |
-| --- | --- | --- | --- | --- |
-| `?` | `??` | `?+` | `?*` | 1 or 0 times |
-| `+` | `+?` | `++` | `+*` | 1 or more times |
-| `*` | `*?` | `*+` | `**` | 0 or more times |
-| `{n}` | `{n}?` | `{n}+` | `{n}*` | Exactly `n` times |
-| `{n,m}` | `{n,m}?` | `{n,m}+` | `{n,m}*` | At least `n` but no more than `m` times |
-| `{n,}` | `{n,}?` | `{n,}+` | `{n,}*` | At least `n` times |
-| `{,m}` | `{,m}?` | `{,m}+` | `{,m}*` | Up to `m` times |
-| `{n,m,o}` | `{n,m,o}?` | `{n,m,o}+` | `{n,m,o}*` | `n`&le;`m` stepping by `o` |
-| `{n,,o}` | `{n,,o}?` | `{n,,o}+` | `{n,,o}*` | `n`&le;`Infinity` stepping by `o` |
-| `{,m,o}` | `{,m,o}?` | `{,m,o}+` | `{,m,o}*` | `0`&le;`m` stepping by `o` |
-
-#### Groups
-
-For named capturing and balancing groups, `(?'')`, `(?"")` can also be used in addition to `(?<>)`.
-
-| Syntax                      | Description                            |
-| --------------------------- | -------------------------------------- |
-| `()`                        | Numbered capturing group               |
-| `(?:)`                      | Non-capturing group                    |
-| `(?\<x>)` `(?'x')` `(?"x")` | Named capturing group                  |
-| `(?<\|x>)`                  | Balancing group                        |
-| `(?<x\|x>)`                 | Balancing pair                         |
-| `(?=)`                      | Positive look-ahead                    |
-| `(?!)`                      | Negative look-ahead                    |
-| `(?<=)`                     | Positive look-behind                   |
-| `(?<!)`                     | Negative look-behind                   |
-| `(?>)`                      | Atomic group (no backtracking)         |
-| `(?())`                     | Conditional branching                  |
-| `(?\|)`                     | ...with alternatives                   |
-| `(?/)`                      | Shortest match                         |
-| `(?/=)`                     | Longest match                          |
-| `(?*)`                      | Embedded code                          |
-| `(?{})` `(?{}[tag])`        | Call-out (embedded code)               |
-| `(?y)`                      | Enable mode                            |
-| `(?-y)`                     | Disable mode                           |
-| `(?~)` `(?~\|\|)` `(?~\|)`  | Absent expression (see Oniguruma docs) |
-| `(?#...)`                   | Comment                                |
-| `(?&1)`                     | Numbered group                         |
-| `(?&-1)`                    | (?&+1) Relative back-reference         |
-| `(?&name)`                  | Named back-reference                   |
+The above describes unqualified identifiers. An identifier can also be qualified - a qualified identifier consists of a qualifier or namespace, followed by one or more regular identifiers separated by `.` or `::`. For instance, `Collection.Set.toString` is a qualified identifier where `Collection.Set` is the qualifier and `toString` is the identifier.
