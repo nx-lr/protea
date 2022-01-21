@@ -1,12 +1,6 @@
-# Trinity
+# Protea
 
 > A new language for building cross-platform apps and libraries.
-
-Trinity is a general purpose language designed with building applications and libraries using a declarative approach. It is strongly typed, and has explicit support for functional, object-oriented, concurrent, and event-driven programming.
-
-The grammar contains native language features for both client and server-side development using the existing NodeJS ecosystem.
-
-Its syntax resembles Kotlin and Go, but with elements from React JSX, SCSS, GraphQL, OCaml, and Haskell.
 
 ```dart
 elem TodoItem {
@@ -40,36 +34,27 @@ elem TodoItem {
 
 ## Introduction
 
-Trinity is an alternative programming language to replace JavaScript, but without the warts, with a great type system, and with a syntax that is familiar to many other languages.
+Protea is a strongly-typed language still in the making. It is intended for cross-platform client and server development with a focus on simplicity and performance. It unifies functional, object-oriented, concurrent, and event-driven programming paradigms in a single language. It comes with a lightning fast compiler toolchain that scales to any codebase size.
 
-The goal of Trinity is to provide a small set of developer tools---language, compilers, framework, runtime and libraries---that are used together to build, develop and test applications. Trinity is, after all, a language that focuses on simplicity, flexibility and performance.
+Its syntax builds on top of Flow and contains influences from Rust, Scala, Kotlin, OCaml and Go. Also, you can use Protea as a glue language to connect to other languages through the WebAssembly API, while giving its performance benefits.
 
-Trinity draws pieces of influence from:
-
-- **TypeScript** for its robust type system and type checking, being the primary influence for Trinity;
-- **Rust** for its speedy and friendly compiler, and its ability to compile to WebAssembly and native code.
-- **Ruby** and **Python** for its short keywords, dynamic programming model and the little quirks that make them shine
-- **Haskell** and **OCaml** for its evaluation order and style
-- **Scala** and **Kotlin** for its classes, interfaces and traits
-- **React**, **Vue** and **Svelte** for its extended HTML-like syntax to build and express complex components and views
-- **Styled Components** and **SCSS** to add dynamic styling while keeping everything in sync with the underlying CSS
-- **GraphQL** and **SQL** for its query language and data modelling features
+Protea is designed to interoperate seamlessly with existing JavaScript and TypeScript projects. Protea can call JavaScript methods, create JavaScript objects, inherit from JavaScript classes and implement TypeScript interfaces. None of these would require glue code.
 
 <small>
 
 #### Disclaimer:
 
-Trinity is currently still in its conceptual and experimental stage, as the creator is experimenting on the language's grammar. This document mainly serves as a guide to the its design, and will touch a bit on the implementation.
+Protea is currently still in its conceptual and experimental stage, as the creator is experimenting on the language's grammar. This document mainly serves as a guide to the its design, and will touch a bit on the implementation.
 
 </small>
 
 ---
 
-# Trinity's Reference
+# Protea's Reference
 
-This document This document is an informal guide to the language's design, structured in a way that you can read from anywhere and still understand.
+This document is an informal guide the Protea's language structured in a way that you can read from anywhere and still understand. It is meant for implementation authors, and those who want to contribute and help me improve Protea. This is not meant to be a tutorial or introductory guide to the language, but rather something you would consult if you have questions about the language and its concepts.
 
-This is not a complete reference or a tutorial, but rather something you consult if you have any questions about the language. We will introduce bits and pieces of the core Trinity language and its syntax as we go.
+This is not a complete reference or a tutorial, but rather something you consult if you have any questions about the language. I will introduce bits and pieces of the core Protea language and its syntax as I go.
 
 ## Hello World!
 
@@ -87,36 +72,21 @@ elem App {
 }
 ```
 
-### Notation
-
-Trinity's syntax is specified using a hybrid of Extended Backus-Naur form and regular expressions.
-
-`camelCase` production names are used to identify lexical tokens. Non-terminals are in `PascalCase`. Lexical tokens are enclosed in single `''` or double quotes `""`, single characters are delimited with a backslash.
-
 ### Source code representation
 
-Trinity source code is encoded in UTF-8. The text is not canonicalized, so a single accented code point is distinct from from the same character constructed by combining an accent and a letter; those are treated as two code points.
-
-Each code point is distinct; upper and lower case characters are distinct.
+Protea source code is encoded in UTF-8. The text is not canonicalized, so a single accented code point is distinct from the same character constructed by combining an accent and a letter; those are treated as two code points. Each code point is distinct; upper and lower case characters are distinct.
 
 ### Characters
 
-Unicode has defined a set of character categories that are used to classify Unicode characters.
+To construct tokens, characters are distinguished according to the following classes (Unicode general category given in parentheses):
 
-- `\p` followed by one or two letters: a Unicode shorthand character class; `\pL` denotes a Unicode letter
-- `\d`: a decimal digit character, i.e. `0` to `9`.
-- `\h`: a hexadecimal character (case-insensitive)
-- `\s`: a whitespace character
-
-### Letters, digits and operators
-
-All characters in the Combining Punctuation category are considered letters.
-
-- `\c`: an initial identifier character, i.e. `[\pL\pPc]`
-- `\i`: a final identifier character, i.e. `[\c\d\pM]`
-- `\w`: a medial identifier character `[\i\pPd]`
-- `\q`: a punctuation character, i.e. `` [,;'"`\\(){}\[\]] ``
-- `\o`: an operator character, which is a Unicode punctuation or symbol character that is not a punctuation mark, i.e. `` [\pP\pS--,;'"`\\(){}\[\]] ``.
+- **Whitespace characters** (`Z`), which includes `\n`, `\s`, `\r`, `\t` and `\v`.
+- **Letters** in the general category (`L`).
+- **Underscores** in the category (`Pc`).
+- **Digits** in the category (`Nd`).
+- **Parentheses**: `(`, `)`, `[`, `]`, `{`, `}`
+- **Delimiters**: `,`, `;`, `:`, `'`, `"`, `\`
+- **Operator characters**. These consist of all printable ASCII characters `\u0020` - `\u007F` which are in none of the sets above, as well as any other punctuation (`P`) and symbol (`S`) characters.
 
 ## Lexical elements
 
@@ -131,22 +101,9 @@ A comment cannot start inside a string literal but can appear inside of another 
 
 ### Tokens
 
-Tokens form the vocabulary of the Trinity language. There are four classes: identifiers, keywords, operators, punctuation and literals. Whitespace, formed from spaces, tabs, carriage returns and newlines are ignored except they separate tokens that would otherwise combine into one.
+Tokens form the vocabulary of the Protea language. There are five classes: **identifiers**, **keywords**, **operators**, **punctuation** and **literals**. Whitespace, formed from spaces, tabs, carriage returns and newlines are ignored except they separate tokens that would otherwise combine into one.
 
 A newline or end of file may trigger the insertion of a comma or semicolon. While breaking the input into tokens, the next token is the longest sequence of characters that form a valid token.
-
-### Terminators
-
-The formal grammar uses commas and semicolons in a number of productions. When the input is broken into tokens, a semicolon is automatically inserted into the token stream immediately after a line's final token if that token is:
-
-- a punctuation mark
-- an identifier
-- a keyword
-- a literal
-- a suffix operator
-- a closing bracket
-
-To allow complex statements to occupy a single line, a semicolon or comma can be omitted before a closing bracket.
 
 ### Identifiers
 
@@ -156,28 +113,30 @@ Identifiers name program entities like variables and types. An identifier begins
 - does not end with one or more trailing dashes.
 
 ```dart
-val regex = `\b[\pL\pPc][\d\pL\pM\pPc\pPd]*\b`
+identifier = `\b[\pL\pPc][\d\pL\pM\pPc\pPd]*\b`
 ```
+
+### Identifier equality
 
 Two identifiers are considered equal if the following function returns true:
 
 ```dart
-fun cmpIdent(a: str, b: str): bool =
+func cmpIdent(a: str, b: str): bool =
   normalize a == normalize b
 
-fun normalize(ident: str): str {
+func normalize(ident: str): str {
   var { start, end } = ident.match(`
-    (?!\d) // do not match if identifier begins in a digit
     \b
+    (?!\d) // discard leading digits
       (?'start'[\pPc\pL][\d\pL\pM\pPc\pPd--\pLl]*)?
       (?'end'[\d\pL\pM\pPc\pPd]*)
-    \b // do not match trailing dashes
+    \b // discard trailing dashes
   `)
   return (start + end.lower).sub(`[^\pL\d]` ``)
 }
 ```
 
-That means the first non-lowercase letters are compared as they are, while the rest of the identifier is compared case-insensitively. Additionally, all non-alphanumeric characters (marks, underscores and dashes) are discarded before comparison.
+That means the first non-lowercase letters are compared as they are, while the rest of the identifier is compared irrespective of case. Additionally, non-alphanumeric characters (marks, underscores and dashes) are thrown away before comparison.
 
 ```dart
 "WILDFire" == "WILD_Fire" == "WILD-Fire"
@@ -185,7 +144,7 @@ That means the first non-lowercase letters are compared as they are, while the r
 "wildFire" == "wildfire" == "wild_fire" == "wild-fire"
 ```
 
-This unorthodox way of identifier comparison is called **partial** case-insensitivity, and allows programmers to use their own conventions without having to remember the exact spelling of an identifier.
+This rather bizarre way of identifier comparison is called **partial** case-insensitivity, and allows programmers to use their own conventions, even a mixture, without having to remember the exact spelling of an identifier.
 
 The exception with respect to the first non-lowercase characters allows common code like `var foo: Foo == FOO` to be parsed unambiguously.
 
@@ -193,75 +152,196 @@ Note that this rule does not apply to keywords, which are all written in all-low
 
 ### Keywords
 
-The following keywords are reserved and may not be used as identifiers.
+The following names are reserved words instead of being members of the syntactic class id of lexical identifiers.
 
 ```
-in of as is new
-to til thru by del
-unset ref and or xor not
-var val fun func proc type
-class data enum mod
-iter macro inter obj
-trait style elem prop
-go defer do from where with
-if elif else then def
-for each loop while
-try throw catch after
-match case fail goto pass
-break next redo retry
-return yield await label
-use show hide route
-debug assert check
+in      of      as     is     new     to
+til     thru    by     del    unset   ref
+and     or      xor    not
+
+var     val     func   proc    type   class
+data    enum    iter   macro   inter  object
+module  trait   elem   prop
+
+do      from    where  with   if      elif
+else    for     while  loop   match   case
+fail    try     catch  after  then    with
+use     show    hide   route  from    where
+
+pass    goto    break  next   redo    retry
+return  yield   await  label  throw   def
+go      defer   ref
+
+debug   assert  check
 ```
 
-### Operators
+These are not reserved words, but are used as special variables in the Protea language.
 
-Operators consist entirely of the characters `!$@%^&*-=+<>.~/|:#?`. For example, `+`, `*`, `<>`, and `>>=` are valid operators.
+- `true` and `false`
+- `null`
+- `self` and `this`
+- `super`
+- `that` and `it`
+- `args`
+- `ctor`
+- `proto`
+- identifiers beginning with `_`, including `_` itself
 
-Trinity distinguishes between three types of operators: prefix, infix and suffix. Spacing around operators is significant: prefix operators have spacing on their left and suffix operators on their right. Infix operators can be spaced out or without a space between the operands.
+The second group of reserved words are reserved for defining program entities like variables and types. They can be supplied with a number of modifiers which come after the reserved words, which are listed below.
 
-`.`, `=`, `:`, `::`, `|>`, `||>`, `|||>`, `+>`, `<|`, `<||`, `<|||`, `<+`, `?:`, `!:`, `??`, `!!`, are not available as general operators; they are used for other notational purposes.
+```
+pub     priv    prot    final   over    immut
+mut     glo     loc     stat    intern  extern
+imply   exply   post    get     set     rem
 
-An infix operator can contain `//`, `///`, `/*` or `/**`.
+seal    abst    impure  pure    early   late
+covar   contra  async   sync    stat    dyn
+lazy    eager   bound   free    uniq    struct
 
-Infix operators whose first character is `@` are right-associative.
+rec     oper    curry   inline  pre     suf
+inf     left    right   bin     uni     post
+```
+
+Many of these modifiers are for future use and are not implemented yet.
+
+### Terminators
+
+Protea is a line-oriented language where expressions may be terminated with semicolons and newlines, and commas inside bracketed literals. A newline in a source text is considered a token if these criteria are met:
+
+- The last token in the line ends an expression;
+- The first token in the next line begins an expression;
+- The token appears in a region where newlines are enabled.
+
+The tokens that can terminate an expression are:
+
+- an identifier
+- a literal
+- a closing bracket
+- a suffix operator
+- a control transfer keyword (fourth group of keywords above)
+
+Any token can begin an expression except:
+
+- a closing delimiter
+- a command flag `/x` and its shorthand form `//x`
+- a format clause `%x`
+- an infix operator
+- the keywords `catch`, `else`, `elif`, `after` and `then`.
+
+Newlines are enabled in:
+
+- all of a Trinity source file, except for nested regions where newlines are disabled, and
+- the interval between pairs of brackets.
+
+Newlines are disabled in:
+
+- The interval between these tokens: `if` `elif` `for` `each` `while` `match` `catch` `with` and the ending token `then` or `:` (while next to a valid literal), except for nested regions where newlines are enabled.
+- Declaration keywords: `var` `val` `func` `proc` `type` `class` `data` `enum` `iter` `macro` `inter` `object` `module` `trait` `elem` `prop` except for nested regions where newlines are disabled.
+- Import statements `use` `show` `hide` `route`, and the nearest closing delimiter or end of line, except for nested regions where newlines are enabled.
+- as well as `break` `next` `redo` `goto` `label`, and the nearest closing delimiter or end of line.
+
+To allow complex statements to occupy a single line, a semicolon or comma can be omitted before a closing bracket.
+
+### Literals
+
+Numeric literals are either integers or floating point numbers, though they can be extended to include other types such as unsigned, rational, complex and imaginary numbers, and whether or not the number is arbitrary-precision.
+
+Several suffixes can be used in conjunction with one another:
+
+- `u` for unsigned
+- `l` for arbitrary-precision (i.e. 'long')
+- `i` for imaginary numbers
+- `r` for rational numbers
+- `f` for floating point/'real' literals
+
+#### Integers
+
+An integer literal is a sequence of digits. An optional prefix sets a non-decimal base: `0b` for binary, `0o` for octal, `0x` for hexadecimal. In hexadecimal literals, letters `a` through `f` and `A` through `F` represent values 10 through 15.
+
+For readability, one or more underscore characters `_` may appear after a base prefix or between successive digits; such underscores do not change the literal's value.
 
 ```dart
-func &/ (y: float): float = x / y
-12 @/ 4 @/ 8 // 24.0
-12 / 4 / 8 // 24.8
+$intLit = `($decIntLit | $binIntLit | $octIntLit | $hexIntLit) $typeSuffix`
+$decIntLit = `\d [\d_]* (?!_\b)`
+$binIntLit = `0b [01] [01_]* (?!_\b)`
+$octIntLit = `0o [0-7] [0-7_]* (?!_\b)`
+$hexIntLit = `0x (?i [0-9a-f] [0-9a-f_]*) (?!_\b)`
+$typeSuffix = `$identifier`
+
+42
+4_2
+0600
+0_600
+0o600
+0xBadFace
+0xDead_Beef
+0x67_7a_2f_cc_40_c6
+170141183460469231731687303715884105727
+170_141183_460469_231731_687303_715884_105727
+
+_42         // an identifier, not an integer literal
+0_xBadFace  // invalid: _ must separate successive digits
 ```
 
-Prefix, suffix and infix operators are distinguished whether they have preceding, following whitespace, or both (respectively).
+#### Floating points
 
-Suffix operators are evaluated first and from left to right, and prefix operators are evaluated next and from right to left.
+A decimal floating literal consists of an integer part, a decimal point, a fractional and exponent part, all of which are optional. Either the integer or fractional part of the floating-point literal can be omitted, the exponent scales the mantissa (integer and fractional part) by 10<sup>exp</sup>.
 
-Infix operators are evaluated last and are evaluated based on the given order below.
+A binary, octal or hexadecimal floating literal consists of a mantissa, an optional exponent, and an optional sign. The exponent scales the mantissa by 2<sup>exp</sup>.
 
-Operators ending in either `->`, `~>` or `=>` or starting in `<-` `<=` or `<~` are called arrow like, and have the lowest precedence of all operators.
-
-If the operator ends with `=` and its first character is none of `<`, `>`, `!`, `=`, `~`, `?`, it is an assignment operator which has the second-lowest precedence.
-
-Otherwise, precedence is determined by the first character.
-
-| Precedence level | Operators | First character |
-| --- | --- | --- |
-| 9 (highest) | `unset` `del` `not` | `$ ^` |
-| 8 | `*` `/` `**` `//` `%` | `* % \ /` |
-| 7 | `+` `-` | `+ - ~ \|` |
-| 6 | `&` `\|` `^` `<<` `>>` | `&` |
-| 5 | `==` `<=` `<` `>=` `>` `!=`<br>`in` `!in` `of` `!of` `is` `is!` `as` `as!` `as?` `to` `til` `thru` `by` | `= < > !` |
-| 4 | `&&` `\|\|` `^^` `and` `or` `xor` |  |
-| 3 | infix `?? !! ?: !: ::` |  |
-| 2 | `@` and arrow like operator (like `->`, `=>`) |  |
-| 1 | assignment operator (like `+=`, `*=`) |  |
-
-Whether an operator is used as a prefix operator is also affected by preceding or following whitespace, respectively.
+For readability, an underscore character `_` may appear after a base prefix or between successive digits; such underscores do not change the literal value.
 
 ```dart
-++x++ == +(+((x+)+))
+$exponent = `e [+-]? \d [\d_]*`
+$binExponent = `p [+-]? \d [\d_]*`
+
+$floatLit = `
+  ( $decFloatLit | $hexFloatLit
+  | $binFloatLit | $octFloatLit )
+  $typeSuffix? `
+
+$decFloatLit = `
+  (\d [\d_]*)
+  (\. \d [\d_]*)
+  $exponent? `
+$binFloatLit = `
+  0b ([01] [01_]*)
+  (\. ([01] [01_]*))
+  $binExponent? `
+$octFloatLit = `
+  0o ([0-7] [0-7_]*)
+  (\. ([0-7] [0-7_]*))
+  $binExponent? `
+$hexFloatLit = `
+  0x (?i[0-9a-f] [0-9a-f_]*)
+  (\. (?i[0-9a-f] [0-9a-f_]*))
+  $binExponent? `
+
+0.
+72.40
+072.40       // == 72.40
+2.71828
+1.e+0
+6.67428e-11
+1e6
+.25
+.12345e+5
+1_5.         // == 15.0
+0.15e+0_2    // == 15.0
+
+0x1p-2       // == 0.25
+0x2.p10      // == 2048.0
+0x1.Fp+0     // == 1.9375
+0x0.8p-0     // == 0.5
+0x1FFFp-16   // == 0.1249847412109375
+0x15e-2      // == 0x15e - 2 (integer subtraction)
+0b1010.01p-2 // == 0.25
+0b1010.01p-2 // == 0.25
+0o0.2p-2     // == 0.25
+0o0.2p-2_2   // == 0.25
+0x0.8p-0     // == 0.5
+
+0x.p1        // invalid: mantissa has no digits
+1p-2         // invalid: p exponent requires hexadecimal mantissa
+0x1.5e-2     // invalid: hexadecimal mantissa requires p exponent
 ```
-
-Dot-like or colon-like operators are operators starting with `.`, `!.`, `?.`, `::`, `?:` or `!:`; they have the same precedence as `.`, so that `a.?b.c` is parsed as `(a.?b).c` instead of `a.?(b.c)`.
-
-The above describes unqualified identifiers. An identifier can also be qualified - a qualified identifier consists of a qualifier or namespace, followed by one or more regular identifiers separated by `.` or `::`. For instance, `Collection.Set.toString` is a qualified identifier where `Collection.Set` is the qualifier and `toString` is the identifier.
