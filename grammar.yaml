@@ -90,37 +90,6 @@ fixes: |
     - UPPERCASE, PascalCase and camelCase
 
 define:
-  class-name: &class-name |
-    (?x) \s*\b
-
-    (?!
-      (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-      (?: # keywords
-        in|of|as|is|new
-        |to|til|thru|by|del
-        |unset|ref|and|or|xor|not
-        |var|val|func?|proc|type
-        |class|data|enum|mod
-        |iter|macro|inter|obj
-        |trait|style|elem|prop
-        |go|defer|do|from|where|with
-        |if|elif|else|then|def
-        |for|each|loop|while
-        |try|throw|catch|after
-        |match|case|pass|fail|goto
-        |break|next|redo|retry
-        |return|yield|await|label
-        |use|show|hide|route
-        |debug|assert|check
-        |ext|impl
-      )
-      (?!\B|\p{Pd}+\b)
-    )
-
-    # identifier
-    ([\p{Pc}\p{L}][\w\p{Pd}]*)
-    \b
-
   entity-name: &entity-name |
     (?x) \s*\b
 
@@ -156,31 +125,7 @@ define:
     end: \s*(\))
     captures:
       1: {name: punctuation.definition.parameters.protea}
-    patterns: &param-brackets
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.operator.expression.as.protea
-      - match: (?<=[\w\s][(|])\.
-        name: punctuation.definition.metadata.protea
-      - include: '#clauses'
-      - include: '#constants'
-      - include: '#declarations'
-      - include: '#expression-keywords'
-      - include: '#function-params'
-      - comment: Extras
-      - include: '#comments'
-      - include: '#jsx'
-      - include: '#brackets'
-      - include: '#closures'
-      - include: '#punctuation'
-      - include: '#symbols'
-      - include: '#flag-specifier'
-      - include: '#format-specifier'
-      - include: '#type-annotation'
-      - include: '#literals'
-      - include: '#operators'
-      - include: '#calls'
-      - include: '#variables'
-      - include: '#space'
+    patterns: [include: '#param-bracket-content']
 
   html-tag-names: &html-tag-names
     - match: '\.|:|::'
@@ -198,20 +143,20 @@ repository:
   core:
     patterns:
       - include: '#ignore-long-lines'
-      - include: '#comments'
-      - include: '#jsx'
-      - include: '#brackets'
       - include: '#closures'
       - include: '#clauses'
-      - include: '#params-clause'
-      - include: '#function-clause'
       - include: '#declarations'
       - include: '#keywords'
+      - include: '#comments'
+      - include: '#params-clause'
+      - include: '#function-clause'
+      - include: '#jsx'
+      - include: '#brackets'
       - include: '#punctuation'
       - include: '#symbols'
-      - include: '#flag-specifier'
-      - include: '#format-specifier'
-      - include: '#type-annotation'
+      - include: '#switch-clause'
+      - include: '#format-clause'
+      - include: '#type-signature'
       - include: '#literals'
       - include: '#operators'
       - include: '#calls'
@@ -229,174 +174,7 @@ repository:
 
   # Function brackets (early here as not to break things)
 
-  function-params:
-    patterns:
-      - match: |
-          (?x)
-          (?<=
-            ^ # SOL
-            | (?:^ | [^|]) \| # open pipe
-            | [({\[] # open bracket
-            | [;,] # separator
-            | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
-          )
-            \s*
-            \? # optional
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-            \s*
-          (?=
-            $ # EOL
-            | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
-            | # separator
-              \s* [;,]
-            | # as keyword (aliasing)
-              \s+ \b as \b \s
-            | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
-          )
-        name: variable.parameter.optional.protea
-      - match: |
-          (?x)
-          (?<=
-            ^ # SOL
-            | (?:^ | [^|]) \| # open pipe
-            | [({\[] # open bracket
-            | [;,] # separator
-            | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
-          )
-            \s*
-            \* # spread
-            \?? # optional
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-          (?=
-            $ # EOL
-            | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
-            | # separator
-              \s* [;,]
-            | # as keyword (aliasing)
-              \s+ \b as \b \s
-            | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
-          )
-        name: variable.parameter.spread.protea
-      - match: |
-          (?x)
-          (?<=
-            ^ # SOL
-            | (?:^ | [^|]) \| # open pipe
-            | [({\[] # open bracket
-            | [;,] # separator
-            | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
-          )
-            \s*
-            //? # named
-            \?? # optional
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-          (?=
-            $ # EOL
-            | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
-            | # separator
-              \s* [;,]
-            | # as keyword (aliasing)
-              \s+ \b as \b \s
-            | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
-          )
-        name: variable.parameter.name.protea
-      - match: |
-          (?x)
-          (?<=
-            ^ # SOL
-            | (?:^ | [^|]) \| # open pipe
-            | [({\[] # open bracket
-            | [;,] # separator
-            | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
-          )
-            \s*
-            \& # reference
-            \?? # optional
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-          (?=
-            $ # EOL
-            | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
-            | # separator
-              \s* [;,]
-            | # as keyword (aliasing)
-              \s+ \b as \b \s
-            | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
-          )
-        name: variable.parameter.reference.protea
-      - match: |
-          (?x)
-          (?<=
-            ^ # SOL
-            | (?:^ | [^|]) \| # open pipe
-            | [({\[] # open bracket
-            | [;,] # separator
-            | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
-          )
-            \s*
-            \% # other
-            \?? # optional
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-          (?=
-            $ # EOL
-            | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
-            | # separator
-              \s* [;,]
-            | # as keyword (aliasing)
-              \s+ \b as \b \s
-            | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
-          )
-        name: variable.parameter.other.protea
-      - match: |
-          (?x)
-          (?<=
-            ^ # SOL
-            | (?:^ | [^|]) \| # open pipe
-            | [({\[] # open bracket
-            | [;,] # separator
-            | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
-          )
-            \s*
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-          (?=
-            $ # EOL
-            | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
-            | # separator
-              \s* [;,]
-            | # as keyword (aliasing)
-              \s+ \b as \b \s
-            | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
-          )
-        name: variable.parameter.protea
-
-  parameter-brackets:
-    begin: (\()\s*
-    end: \s*(\))
-    captures:
-      1: {name: punctuation.definition.parameters.protea}
+  param-bracket-content:
     patterns:
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.as.protea
@@ -406,8 +184,21 @@ repository:
       - include: '#constants'
       - include: '#declarations'
       - include: '#expression-keywords'
-      - include: '#function-params'
-      - include: $self
+      - include: '#parameter-variables'
+      - include: '#comments'
+      - include: '#jsx'
+      - include: '#brackets'
+      - include: '#closures'
+      - include: '#punctuation'
+      - include: '#symbols'
+      - include: '#switch-clause'
+      - include: '#format-clause'
+      - include: '#type-signature'
+      - include: '#literals'
+      - include: '#operators'
+      - include: '#calls'
+      - include: '#variables'
+      - include: '#space'
 
   # Illegal Syntax
 
@@ -727,7 +518,7 @@ repository:
 
   embedded:
     patterns:
-      - include: '#format-specifier'
+      - include: '#format-clause'
       - include: '#embedded-placeholder'
       - include: '#embedded-expression'
 
@@ -735,7 +526,7 @@ repository:
     patterns:
       - match: '([#$%])\1'
         name: constant.character.escape.protea
-      - include: '#format-specifier'
+      - include: '#format-clause'
       - include: '#embedded-placeholder'
       - include: '#embedded-expression'
 
@@ -866,12 +657,12 @@ repository:
         captures:
           1: {name: punctuation.definition.anchor.protea}
         patterns:
-          - include: '#function-params'
+          - include: '#parameter-variables'
           - include: $self
 
   # Format and flag specifiers
 
-  flag-specifier:
+  switch-clause:
     patterns:
       - comment: // for multiple flags at once with single-character aliases
         applyEndPatternLast: true
@@ -896,7 +687,7 @@ repository:
             captures:
               1: {name: keyword.modifier.protea}
 
-  format-specifier:
+  format-clause:
     comment: Oniguruma supports only 20 levels of recursion
     applyEndPatternLast: true
     begin: (?x)(?<=^|\\.|[,;'"`\\(){}\[\]\s]>?)(%)\b
@@ -2201,7 +1992,7 @@ repository:
           - include: '#declarations'
           - include: '#expression-keywords'
           - include: '#style-pair'
-          - include: '#function-params'
+          - include: '#parameter-variables'
           - include: $self
       - begin: \s*(\[)\s*
         end: \s*(\])\s*
@@ -2690,13 +2481,13 @@ repository:
           (?:
             (?<=[!?]?\.=?|[?!:]:=?) (?<! \.\.+) \b
               (?: # Properties
-                # leading or trailing underscore
+                # Leading underscore
                 (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-              | # all uppercase or first word uppercase
-                ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+              | # Train case
+                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
               | # Pascal case
                 ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-              | # Camel case
+              | # Camel or kebab case
                 ([\p{Pc}\p{L}][\w\p{Pd}]*)
               )
             \b
@@ -2709,13 +2500,13 @@ repository:
               )?
             ) \b
               (?: # Regular variables
-                # leading or trailing underscore
+                # Leading underscore
                 (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-              | # all uppercase or first word uppercase
-                ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+              | # Train case
+                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
               | # Pascal case
                 ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-              | # Camel case
+              | # Camel or kebab case
                 ([\p{Pc}\p{L}][\w\p{Pd}]*)
               )
             \b
@@ -2758,13 +2549,13 @@ repository:
           (?:
             (?<=[!?]?\.=?|[?!:]:=?) (?<! \.\.+) \b
               (?: # Properties
-                # leading or trailing underscore
+                # Leading underscore
                 (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-              | # all uppercase or first word uppercase
-                ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+              | # Train case
+                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
               | # Pascal case
                 ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-              | # Camel case
+              | # Camel or kebab case
                 ([\p{Pc}\p{L}][\w\p{Pd}]*)
               )
             \b
@@ -2784,13 +2575,13 @@ repository:
               )?
             ) \b
               (?: # Regular variables
-                # leading or trailing underscore
+                # Leading underscore
                 (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-              | # all uppercase or first word uppercase
-                ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+              | # Train case
+                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
               | # Pascal case
                 ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-              | # Camel case
+              | # Camel or kebab case
                 ([\p{Pc}\p{L}][\w\p{Pd}]*)
               )
             \b
@@ -2835,6 +2626,169 @@ repository:
 
   # Variables
 
+  parameter-variables:
+    patterns:
+      - match: |
+          (?x)
+          (?<=
+            ^ # SOL
+            | (?:^ | [^|]) \| # open pipe
+            | [({\[] # open bracket
+            | [;,] # separator
+            | [(|]\. \s # uncurried function
+            | (?:^ | \s) \b as \b \s # as keyword
+          )
+            \s*
+            \? # optional
+            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+            \s*
+          (?=
+            $ # EOL
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+          )
+        name: variable.parameter.optional.protea
+      - match: |
+          (?x)
+          (?<=
+            ^ # SOL
+            | (?:^ | [^|]) \| # open pipe
+            | [({\[] # open bracket
+            | [;,] # separator
+            | [(|]\. \s # uncurried function
+            | (?:^ | \s) \b as \b \s # as keyword
+          )
+            \s*
+            \* # spread
+            \?? # optional
+            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+          (?=
+            $ # EOL
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+          )
+        name: variable.parameter.spread.protea
+      - match: |
+          (?x)
+          (?<=
+            ^ # SOL
+            | (?:^ | [^|]) \| # open pipe
+            | [({\[] # open bracket
+            | [;,] # separator
+            | [(|]\. \s # uncurried function
+            | (?:^ | \s) \b as \b \s # as keyword
+          )
+            \s*
+            //? # named
+            \?? # optional
+            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+          (?=
+            $ # EOL
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+          )
+        name: variable.parameter.name.protea
+      - match: |
+          (?x)
+          (?<=
+            ^ # SOL
+            | (?:^ | [^|]) \| # open pipe
+            | [({\[] # open bracket
+            | [;,] # separator
+            | [(|]\. \s # uncurried function
+            | (?:^ | \s) \b as \b \s # as keyword
+          )
+            \s*
+            \& # reference
+            \?? # optional
+            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+          (?=
+            $ # EOL
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+          )
+        name: variable.parameter.reference.protea
+      - match: |
+          (?x)
+          (?<=
+            ^ # SOL
+            | (?:^ | [^|]) \| # open pipe
+            | [({\[] # open bracket
+            | [;,] # separator
+            | [(|]\. \s # uncurried function
+            | (?:^ | \s) \b as \b \s # as keyword
+          )
+            \s*
+            \% # other
+            \?? # optional
+            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+          (?=
+            $ # EOL
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+          )
+        name: variable.parameter.other.protea
+      - match: |
+          (?x)
+          (?<=
+            ^ # SOL
+            | (?:^ | [^|]) \| # open pipe
+            | [({\[] # open bracket
+            | [;,] # separator
+            | [(|]\. \s # uncurried function
+            | (?:^ | \s) \b as \b \s # as keyword
+          )
+            \s*
+            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+          (?=
+            $ # EOL
+            | # close bracket or pipe
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+            | # separator
+              \s* [;,]
+            | # as keyword (aliasing)
+              \s+ \b as \b \s
+            | # type specifier and assignment
+              (?::|[?:]?=) \s* [\w'"`\\({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+          )
+        name: variable.parameter.protea
+
   placeholder-variables:
     patterns:
       - match: (?i)\s*\?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
@@ -2863,36 +2817,36 @@ repository:
       (?:
         (?<= [!?]?\.=? | [?!:]:=?) (?<! \.\.+)
         (?: # Properties
-            # leading or trailing underscore
+            # Leading underscore
             (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-          | # all uppercase or first word uppercase
-            ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+          | # Train case
+            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
           | # Pascal case
             ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-          | # Camel case
+          | # Camel or kebab case
             ([\p{Pc}\p{L}][\w\p{Pd}]*)
         )
         |
         (?: # Objects
-            # leading or trailing underscore
+            # Leading underscore
             (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-          | # all uppercase or first word uppercase
-            ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+          | # Train case
+            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
           | # Pascal case
             ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-          | # Camel case
+          | # Camel or kebab case
             ([\p{Pc}\p{L}][\w\p{Pd}]*)
         )
         (?! \.\.+) (?= [!?]?\.=? | [?!:]:=? | \#?\[)
         |
         (?: # Regular variables
-            # leading or trailing underscore
+            # Leading underscore
             (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-          | # all uppercase or first word uppercase
-            ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+          | # Train case
+            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
           | # Pascal case
             ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-          | # Camel case
+          | # Camel or kebab case
             ([\p{Pc}\p{L}][\w\p{Pd}]*)
         )
       )\b
@@ -3410,36 +3364,36 @@ repository:
       (?:
         (?<= [!?]?\.=? | [?!:]:=?) (?<! \.\.+)
         (?: # Properties
-            # leading or trailing underscore
+            # Leading underscore
             (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-          | # all uppercase or first word uppercase
-            ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+          | # Train case
+            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
           | # Pascal case
             ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-          | # Camel case
+          | # Camel or kebab case
             ([\p{Pc}\p{L}][\w\p{Pd}]*)
         )
         |
         (?: # Objects
-            # leading or trailing underscore
+            # Leading underscore
             (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-          | # all uppercase or first word uppercase
-            ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+          | # Train case
+            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
           | # Pascal case
             ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-          | # Camel case
+          | # Camel or kebab case
             ([\p{Pc}\p{L}][\w\p{Pd}]*)
         )
         (?! \.\.+) (?= [!?]?\.=? | [?!:]:=? | \#?\[)
         |
         (?: # Regular variables
-            # leading or trailing underscore
+            # Leading underscore
             (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-          | # all uppercase or first word uppercase
-            ([\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*\p{Pd}[\w\p{Pd}]*|[\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Ll}]*)
+          | # Train case
+            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
           | # Pascal case
             ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-          | # Camel case
+          | # Camel or kebab case
             ([\p{Pc}\p{L}][\w\p{Pd}]*)
         )
       )\b
@@ -3457,7 +3411,7 @@ repository:
       11: {name: entity.name.class.protea}
       12: {name: entity.name.type.protea}
 
-  type-annotation:
+  type-signature:
     applyEndPatternLast: true
     name: meta.type.protea
     begin: (:)(?=$|[\w\s'"`({\[])
@@ -3521,7 +3475,7 @@ repository:
 
   type-embedded:
     patterns:
-      - include: '#format-specifier'
+      - include: '#format-clause'
       - include: '#embedded-placeholder'
       - include: '#type-embedded-expression'
 
@@ -3529,7 +3483,7 @@ repository:
     patterns:
       - match: \$\$|\%\%|\#\#
         name: constant.character.escape.protea
-      - include: '#format-specifier'
+      - include: '#format-clause'
       - include: '#embedded-placeholder'
       - include: '#type-embedded-expression'
 
@@ -3621,7 +3575,7 @@ repository:
           - include: '#constants'
           - include: '#declarations'
           - include: '#expression-keywords'
-          - include: '#function-params'
+          - include: '#parameter-variables'
           - include: '#types'
           - include: self
       - begin: \s*(?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
@@ -3745,7 +3699,7 @@ repository:
       - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
         name: entity.name.namespace.protea
       - applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(impl)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.implements.protea}
@@ -3754,13 +3708,13 @@ repository:
             name: punctuation.separator.namespace.protea
           - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
             name: entity.name.namespace.protea
-          - match: *class-name
+          - match: *entity-name
             name: entity.name.trait.protea
           - include: '#comments'
           - include: '#comma'
           - include: '#line-continuation'
       - applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(ext)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)(?!\B|\p{Pd}+\b)\s*
         end: (?=.)|$
         beginCaptures:
           1: {name: storage.type.extends.protea}
@@ -3769,7 +3723,7 @@ repository:
             name: punctuation.separator.namespace.protea
           - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
             name: entity.name.module.protea
-          - match: *class-name
+          - match: *entity-name
             name: entity.name.interface.protea
           - include: '#comments'
           - include: '#comma'
@@ -3780,7 +3734,7 @@ repository:
       - include: '#type-keywords'
       - include: '#type-square-brackets'
       - include: '#parameter-brackets'
-      - include: '#type-annotation'
+      - include: '#type-signature'
       - match: \s*(?<!\*)\*(?!\*)\s*
         name: keyword.generator.asterisk.protea
       - include: '#regexps'
@@ -3815,10 +3769,10 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|unique|struct
+                |eager|bound|free|uniq|struct
 
                 |rec|oper|curry|inline
-                |prefix|suffix|infix|left|right
+                |pre|suf|inf|bin|uni|left|right
               )
             )
             (?!\B|\p{Pd}+\b)
@@ -3861,7 +3815,7 @@ repository:
           (?:
             seal|abst|impure|pure|early|late
             |covar|contra|a?sync|stat|dyn|lazy
-            |eager|bound|free|unique|struct
+            |eager|bound|free|uniq|struct
           )
           (?!\B|\p{Pd}+\b)
           \s*
@@ -3872,7 +3826,7 @@ repository:
           \b
           (?:
             rec|oper|curry|inline
-            |prefix|suffix|infix|left|right
+            |pre|suf|inf|bin|uni|left|right
           )
           (?!\B|\p{Pd}+\b)
           \s*
@@ -4343,10 +4297,10 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|unique|struct
+                |eager|bound|free|uniq|struct
 
                 |rec|oper|curry|inline
-                |prefix|suffix|infix|left|right
+                |pre|suf|inf|bin|uni|left|right
               )
               \s*
             )*
@@ -4388,10 +4342,10 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|unique|struct
+                |eager|bound|free|uniq|struct
 
                 |rec|oper|curry|inline
-                |prefix|suffix|infix|left|right
+                |pre|suf|inf|bin|uni|left|right
               )
               \s*
             )*
@@ -4408,7 +4362,7 @@ repository:
           4: {name: punctuation.separator.arguments.protea}
         endCaptures:
           1: {name: punctuation.separator.arguments.protea}
-        patterns: *param-brackets
+        patterns: [include: '#param-bracket-content']
       - comment: |
           Function def before function keyword
           x = def()
@@ -4433,10 +4387,10 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|unique|struct
+                |eager|bound|free|uniq|struct
 
                 |rec|oper|curry|inline
-                |prefix|suffix|infix|left|right
+                |pre|suf|inf|bin|uni|left|right
               )
               \s*
             )*
@@ -4478,10 +4432,10 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|unique|struct
+                |eager|bound|free|uniq|struct
 
                 |rec|oper|curry|inline
-                |prefix|suffix|infix|left|right
+                |pre|suf|inf|bin|uni|left|right
               )
               \s*
             )*
@@ -4498,7 +4452,7 @@ repository:
           4: {name: punctuation.separator.arguments.protea}
         endCaptures:
           1: {name: punctuation.separator.arguments.protea}
-        patterns: *param-brackets
+        patterns: [include: '#param-bracket-content']
 
   params-clause:
     begin: |
@@ -4552,7 +4506,7 @@ repository:
     captures:
       1: {name: punctuation.separator.arguments.protea}
     end: (?<=^|['"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
-    patterns: *param-brackets
+    patterns: [include: '#param-bracket-content']
 
   clauses:
     patterns:
@@ -4566,6 +4520,33 @@ repository:
       - include: '#type-clause'
       - include: '#new-clause'
 
+  closures:
+    patterns:
+      - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
+        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        captures:
+          1: {name: keyword.control.match.protea}
+          2: {name: punctuation.separator.colon.protea}
+        patterns:
+          - include: '#params-clause'
+          - applyEndPatternLast: true
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
+            end: (?=)|$
+            beginCaptures:
+              1: {name: keyword.control.match.protea}
+            patterns:
+              - include: '#types'
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.match.protea
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.match.protea
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.match.protea
+          - include: '#type-keywords'
+          - include: $self
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?!\B|\p{Pd}+\b)\s*
+        name: keyword.control.match.protea
+
     repository:
       pattern-brackets:
         begin: \s*(\()
@@ -4573,7 +4554,7 @@ repository:
         captures:
           1: {name: punctuation.definition.parameters.protea}
         patterns:
-          - include: '#function-params'
+          - include: '#parameter-variables'
 
       new-clause:
         applyEndPatternLast: true
@@ -4747,10 +4728,10 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|unique|struct
+                |eager|bound|free|uniq|struct
 
                 |rec|oper|curry|inline
-                |prefix|suffix|infix|left|right
+                |pre|suf|inf|bin|uni|left|right
               )
               \b
               \s*
@@ -4794,10 +4775,10 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|unique|struct
+                |eager|bound|free|uniq|struct
 
                 |rec|oper|curry|inline
-                |prefix|suffix|infix|left|right
+                |pre|suf|inf|bin|uni|left|right
               )
               \b
               \s*
@@ -4815,7 +4796,7 @@ repository:
           4: {name: punctuation.separator.arguments.protea}
         endCaptures:
           1: {name: punctuation.separator.arguments.protea}
-        patterns: *param-brackets
+        patterns: [include: '#param-bracket-content']
       - match: |
           (?x)
           (?<=^ | [{;,] \s*)
@@ -4880,32 +4861,22 @@ repository:
           - include: '#brackets'
           - include: '#types'
 
-  closures:
+  parameter-brackets:
+    begin: (\()\s*
+    end: \s*(\))
+    captures:
+      1: {name: punctuation.definition.parameters.protea}
     patterns:
-      - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
-        captures:
-          1: {name: keyword.control.match.protea}
-          2: {name: punctuation.separator.colon.protea}
-        patterns:
-          - include: '#params-clause'
-          - applyEndPatternLast: true
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
-            end: (?=)|$
-            beginCaptures:
-              1: {name: keyword.control.match.protea}
-            patterns:
-              - include: '#types'
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
-            name: keyword.control.match.protea
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val)(?!\B|\p{Pd}+\b)\s*
-            name: keyword.control.match.protea
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|just|main|only|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
-            name: keyword.control.match.protea
-          - include: '#type-keywords'
-          - include: $self
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.control.match.protea
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+        name: keyword.operator.expression.as.protea
+      - match: (?<=[\w\s][(|])\.
+        name: punctuation.definition.metadata.protea
+      - include: '#clauses'
+      - include: '#constants'
+      - include: '#declarations'
+      - include: '#expression-keywords'
+      - include: '#parameter-variables'
+      - include: $self
 
   curly-brackets:
     repository:
@@ -4996,17 +4967,31 @@ repository:
           - include: '#labels'
           - include: '#punctuation'
           - include: $self
-      - begin: (?<=(?:^|[\s\p{P}\p{S}]):\|\s+\||^\s*\|)\s*(\#\{)\s*
+      - begin: |
+          (?x)
+          (?<=
+              (?:^|[\s\p{P}\p{S}]): \|\s+\|
+            | (?:^|['"`)}\]\w]|\\.)\|
+            | ^\s*\|
+          )\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.section.class.protea}
         patterns: [include: $self]
-      - begin: (?<=(?:^|[\s\p{P}\p{S}]):\|\s+\||^\s*\|)\s*(\{)\s*
+      - begin: |
+          (?x)
+          (?<=
+              (?:^|[\s\p{P}\p{S}]): \|\s+\|
+            | (?:^|['"`)}\]\w]|\\.)\|
+            | ^\s*\|
+          )\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.block.protea}
         patterns: [include: $self]
-      - begin: (?<=^|[,;({\[]|(?:^|[,;(){}\[\]\w'"`]|\\.):\s*|[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
+      - begin: |
+          (?x)
+          (?<=^|[,;({\[]|(?:^|[,;(){}\[\]\w'"`]|\\.):\s*|[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\#\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.mapping.protea}
@@ -5014,7 +4999,9 @@ repository:
           - include: '#labels'
           - include: '#punctuation'
           - include: $self
-      - begin: (?<=^|[,;({\[]|(?:^|[,;(){}\[\]\w'"`]|\\.):\s*|[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
+      - begin: |
+          (?x)
+          (?<=^|[,;({\[]|(?:^|[,;(){}\[\]\w'"`]|\\.):\s*|[\p{S}\p{P}&&[^,;'"`(){}\[\]\p{Pc}]]+)\s*(\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.dictionary.protea}
@@ -5054,7 +5041,7 @@ repository:
           - include: '#constants'
           - include: '#declarations'
           - include: '#expression-keywords'
-          - include: '#function-params'
+          - include: '#parameter-variables'
           - include: $self
       - begin: (?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
         end: \s*(\))
@@ -5331,7 +5318,7 @@ repository:
             |crisp-edges|crispEdges|crosshair|cyclic|darken|dashed|decimal|default|dense|diagonal-fractions|difference|digits|disabled|disc|discretionary-ligatures
             |distribute|distribute-all-lines|distribute-letter|distribute-space|dot|dotted|double|double-circle|downleft|downright|e-resize|each-line|ease|ease-in
             |ease-in-out|ease-out|economy|ellipse|ellipsis|embed|end|evenodd|ew-resize|exact|exclude|exclusion|expanded|extends|extra-condensed|extra-expanded
-            |fallback|farthest-corner|farthest-side|fill|fill-available|fill-box|filled|fit-content|fixed|flat|flex|flex-end|flex-start|flip|flow-root|forwards|free|unique|structze
+            |fallback|farthest-corner|farthest-side|fill|fill-available|fill-box|filled|fit-content|fixed|flat|flex|flex-end|flex-start|flip|flow-root|forwards|free|uniq|structze
             |from-image|full-width|geometricPrecision|georgian|grab|grabbing|grayscale|grid|groove|hand|hanging|hard-light|help|hidden|hide
             |historical-forms|historical-ligatures|horizontal|horizontal-tb|hue|icon|ideograph-alpha|ideograph-numeric|ideograph-parenthesis|ideograph-space
             |ideographic|inactive|infinite|inherit|initial|inline|inline-axis|inline-block|inline-end|inline-flex|inline-grid|inline-list-item|inline-start
@@ -5363,7 +5350,7 @@ repository:
             |crispEdges|crispEdges|crosshair|cyclic|darken|dashed|decimal|default|dense|diagonalFractions|difference|digits|disabled|disc|discretionaryLigatures
             |distribute|distributeAllLines|distributeLetter|distributeSpace|dot|dotted|double|doubleCircle|downleft|downright|eResize|eachLine|ease|easeIn
             |easeInOut|easeOut|economy|ellipse|ellipsis|embed|end|evenodd|ewResize|exact|exclude|exclusion|expanded|extends|extraCondensed|extraExpanded
-            |fallback|farthestCorner|farthestSide|fill|fillAvailable|fillBox|filled|fitContent|fixed|flat|flex|flexEnd|flexStart|flip|flowRoot|forwards|free|unique|structze
+            |fallback|farthestCorner|farthestSide|fill|fillAvailable|fillBox|filled|fitContent|fixed|flat|flex|flexEnd|flexStart|flip|flowRoot|forwards|free|uniq|structze
             |fromImage|fullWidth|geometricPrecision|georgian|grab|grabbing|grayscale|grid|groove|hand|hanging|hardLight|help|hidden|hide
             |historicalForms|historicalLigatures|horizontal|horizontalTb|hue|icon|ideographAlpha|ideographNumeric|ideographParenthesis|ideographSpace
             |ideographic|inactive|infinite|inherit|initial|inline|inlineAxis|inlineBlock|inlineEnd|inlineFlex|inlineGrid|inlineListItem|inlineStart
@@ -5664,7 +5651,7 @@ repository:
             |abort|abs|acos|asctime|asctimeR|asin|assert|atan|atan2|atexit|atof|atoi|atol|bsearch|btowc|calloc
             |catclose6|catgets6|catopen6|ceil|clearerr|clock|cos|cosh|ctime|ctime64|ctimeR|ctime64R|difftime
             |difftime64|div|erf|erfc|exit|exp|fabs|fclose|fdopen5|feof|ferror|fflush1|fgetc1|fgetpos1|fgets1
-            |fgetwc6|fgetws6|fileno5|floor|fmod|fopen|fprintf|fputc1|fputs1|fputwc6|fputws6|fread|free|unique|struct|freopen
+            |fgetwc6|fgetws6|fileno5|floor|fmod|fopen|fprintf|fputc1|fputs1|fputwc6|fputws6|fread|free|uniq|struct|freopen
             |frexp|fscanf|fseek1|fsetpos1|ftell1|fwide6|fwprintf6|fwrite|fwscanf6|gamma|getc1|getchar1|getenv
             |gets|getwc6|getwchar6|gmtime|gmtime64|gmtimeR|gmtime64R|hypot|isalnum|isalpha|isascii4|isblank
             |iscntrl|isdigit|isgraph|islower|isprint|ispunct|isspace|isupper|iswalnum4|iswalpha4|iswblank4
@@ -5764,7 +5751,7 @@ repository:
             |diskraid|diskshadow|dispdiag|doin|dnscmd|doskey|driverquery|dsacls|dsadd
             |dsamain|dsdbutil|dsget|dsmgmt|dsmod|dsmove|dsquery|dsrm|edit|endlocal
             |eraseesentutl|eventcreate|eventquery|eventtriggers|evntcmd|expand|extract
-            |fc|filescrn|find|findstr|finger|flattemp|fonde|forfiles|format|free|unique|structdisk
+            |fc|filescrn|find|findstr|finger|flattemp|fonde|forfiles|format|free|uniq|structdisk
             |fsutil|ftp|ftype|fveupdate|getmac|gettype|gpfixup|gpresult|gpupdate
             |graftabl|hashgen|hep|helpctr|hostname|icacls|iisreset|inuse|ipconfig
             |ipxroute|irftp|ismserv|jetpack|klist|ksetup|ktmutil|ktpass|label|ldifd
@@ -5797,7 +5784,7 @@ repository:
             |continue|cp|cpio|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|declare
             |df|diff|diff3|dig|dir|dircolors|dirname|dirs|dos2unix|dmesg|dpkg|du|echo
             |egrep|eject|enable|env|ethtool|eval|exec|exit|expect|expand|export|expr
-            |false|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|for|format|free|unique|struct|fsck|ftp
+            |false|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|for|format|free|uniq|struct|fsck|ftp
             |function|fuser|gawk|getopts|grep|groupadd|groupdel|groupmod|groups|gzip|hash
             |head|help|history|hostname|htop|iconv|id|if|ifconfig|ifdown|ifup|import|install
             |iostat|ip|jobs|join|kill|killall|less|let|link|ln|local|locate|logname|logout
