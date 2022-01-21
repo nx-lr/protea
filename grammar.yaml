@@ -460,7 +460,7 @@ repository:
       - include: '#numeric-escapes'
       - match: \\([cm][a-z])
         name: constant.character.control.protea
-      - match: \\[prntfvabe]
+      - match: \\[prntfvabes]
         name: constant.character.escape.protea
       - match: \\\p{S}
         name: constant.character.escape.symbol.protea
@@ -489,6 +489,7 @@ repository:
         patterns:
           - match: \b[01]+\b
             name: constant.character.escape.binary.protea
+          - include: '#punctuation'
           - match: \w+
             name: invalid.illegal.escape.protea
       - comment: Octal escape sequences
@@ -501,30 +502,58 @@ repository:
         patterns:
           - match: \b[0-7]+\b
             name: constant.character.escape.octal.protea
+          - include: '#punctuation'
           - match: \w+
             name: invalid.illegal.escape.protea
-      - comment: Decimal escape sequences
+      - comment: Decimal escapes
         match: \\d?\d+
         name: constant.character.escape.decimal.protea
-      - comment: Decimal escape sequences
+      - comment: Decimal escapes inside curly brackets
         begin: \\d{
         end: \s*}
         name: constant.character.escape.decimal.protea
         patterns:
           - match: \b\d+\b
             name: constant.character.escape.decimal.protea
+          - include: '#punctuation'
           - match: \w+
             name: invalid.illegal.escape.protea
       - comment: Hexadecimal escape sequences
-        match: \\[ux]\h+
+        match: \\x\h+
         name: constant.character.escape.hexadecimal.protea
       - comment: Hexadecimal escape sequences
-        begin: \\[ux]{
+        begin: \\x{
         end: \s*}
         name: constant.character.escape.hexadecimal.protea
         patterns:
           - match: \b\h+\b
             name: constant.character.escape.hexadecimal.protea
+          - include: '#punctuation'
+          - match: \w+
+            name: invalid.illegal.escape.protea
+
+      - comment: Low and high surrogates are specially highlighted as calculated in UTF-16
+      - comment: Low surrogate pairs U+DC00-DFFF
+        match: \\u(?i:d[cdef]\h{2}(?!\h))
+        name: constant.character.escape.surrogate.low.protea
+      - comment: High surrogate pairs U+D800-DBFF
+        match: \\u(?i:d[89ab]\h{2}(?!\h))
+        name: constant.character.escape.surrogate.high.protea
+      - comment: Unicode escapes
+        match: \\u\h+
+        name: constant.character.escape.unicode.protea
+      - comment: Unicode escapes
+        begin: \\u{
+        end: \s*}
+        name: constant.character.escape.unicode.protea
+        patterns:
+          - match: \b(?i:d[89ab]\h{2}(?!\h))\b
+            name: constant.character.escape.surrogate.high.protea
+          - match: \b(?i:d[cdef]\h{2}(?!\h))\b
+            name: constant.character.escape.surrogate.low.protea
+          - match: \b\h+\b
+            name: constant.character.escape.unicode.protea
+          - include: '#punctuation'
           - match: \w+
             name: invalid.illegal.escape.protea
 
