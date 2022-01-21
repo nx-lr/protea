@@ -4,17 +4,15 @@ fileTypes: [dart, pr]
 patterns: [include: '#core']
 
 information for contributors: |
-  This is the grammar for the Protea programming language. It is primarily
-  based on Ruby, Python, Haskell and ML, but is intended for building cross-
-  platform apps and software with the web.
+  This is the grammar for the Protea language, based on Its syntax builds
+  on top of Flow and contains influences from Rust, Scala, Kotlin, OCaml
+  and Go.
 
   The grammar is nearing completion but needs to be thoroughly refactored
   and reorganized. There also are some bugfixes which are on the verge of
-  being performed.
-
-  Should any fix or improvements have to be made, or even some general
-  constructive feedback, make a pull request or an issue on this repo,
-  and I will be very happy to receive it/them.
+  being performed. Should you feel any fix or improvements have to be made,
+  or even some general constructive feedback, make a pull request or an
+  issue on this repo, and I will be very happy to receive it/them.
 
 fixes: |
   Changes in 2022:
@@ -33,7 +31,7 @@ fixes: |
     Spacing around identifiers have also been removed.
   - Function call syntax has been reworked and is still sometimes buggy.
     Still some improvements have to be made.
-  - Removed '\' from valid operator characters.
+  - '\' is no longer a valid operator identifier.
   - Added/removed a few more keywords: use, show, hide;
     removed import, export, var, val, let, const;
     shortened some to three or four letters:
@@ -41,6 +39,8 @@ fixes: |
   - Fixed regular expression highlighting:
     - Added and expanded quantifiers and range highlighting
     - Add support for fuzzy matching (edits, insertions, deletions, etc.)
+  - Improved syntax highlighting for character escape sequences; now shows illegal
+    if the escape sequence results in an invalid or out of range escape.
 
   Fixes:
 
@@ -479,7 +479,7 @@ repository:
 
   numeric-escapes:
     comments: |
-      Hexadecimal escapes \u encode UTF-16 while \x encodes UTF-8 codepoints 
+      Hexadecimal escapes \u encode UTF-16 while \x encodes UTF-8 codepoints
       in addition to Unicode characters.
     patterns:
       - comment: Binary escape sequences (0 to 417777)
