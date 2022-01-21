@@ -150,6 +150,7 @@ repository:
       - include: '#comments'
       - include: '#params-clause'
       - include: '#function-clause'
+      - include: '#embedded-expression'
       - include: '#jsx'
       - include: '#brackets'
       - include: '#punctuation'
@@ -180,15 +181,19 @@ repository:
         name: keyword.operator.expression.as.protea
       - match: (?<=[\w\s][(|])\.
         name: punctuation.definition.metadata.protea
+      - include: '#closures'
       - include: '#clauses'
       - include: '#constants'
       - include: '#declarations'
       - include: '#expression-keywords'
       - include: '#parameter-variables'
+      - include: '#keywords'
       - include: '#comments'
+      - include: '#params-clause'
+      - include: '#function-clause'
+      - include: '#embedded-expression'
       - include: '#jsx'
       - include: '#brackets'
-      - include: '#closures'
       - include: '#punctuation'
       - include: '#symbols'
       - include: '#switch-clause'
@@ -198,6 +203,7 @@ repository:
       - include: '#operators'
       - include: '#calls'
       - include: '#variables'
+      - include: '#illegal'
       - include: '#space'
 
   # Illegal Syntax
@@ -205,7 +211,7 @@ repository:
   illegal:
     patterns:
       - match: \p{N}[\w.+-/\\]*?
-        name: invalid.illegal.number.protea
+        name: invalid.illegal.numeric.protea
       - match: '[\w]+?'
         name: invalid.illegal.variable.protea
       - match: '[(){}\[\]]+?'
@@ -457,12 +463,20 @@ repository:
         name: constant.character.control.protea
       - match: \\[prntfvabe]
         name: constant.character.escape.protea
-      - match: \\[\p{S}\p{P}]
+      - match: \\\p{S}
         name: constant.character.escape.symbol.protea
-      - match: \\\p{Z}
-        name: constant.character.escape.other.protea
-      - match: \\[\p{L}\p{N}\p{C}]
+      - match: \\\p{P}
+        name: constant.character.escape.punctuation.protea
+      - match: \\[a-zA-Z\p{C}]
         name: invalid.deprecated.escape.protea
+      - match: \\\s
+        name: constant.character.escape.space.protea
+      - match: \\\p{L}
+        name: constant.character.escape.letter.protea
+      - match: \\\p{N}
+        name: constant.character.escape.number.protea
+      - match: \\.
+        name: constant.character.escape.other.protea
 
   numeric-escapes:
     patterns:
@@ -668,7 +682,7 @@ repository:
     patterns:
       - comment: // for multiple flags at once with single-character aliases
         applyEndPatternLast: true
-        begin: (?x)(?<=^|\\.|[,;'"`\\(){}\[\]\s]>?)(//)\b
+        begin: (?x)(?<=^|\\.|[,;'"`(){}\[\]\s]>?)(//)\b
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.flag.protea}
@@ -679,7 +693,7 @@ repository:
               1: {name: keyword.other.flag.protea}
       - comment: / for a single flag, with optional arguments
         applyEndPatternLast: true
-        begin: (?x)(?<=^|\\.|[,;'"`\\(){}\[\]\s]>?)(/)\b
+        begin: (?x)(?<=^|\\.|[,;'"`(){}\[\]\s]>?)(/)\b
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.flag.protea}
@@ -692,7 +706,7 @@ repository:
   format-clause:
     comment: Oniguruma supports only 20 levels of recursion
     applyEndPatternLast: true
-    begin: (?x)(?<=^|\\.|[,;'"`\\(){}\[\]\s]>?)(%)\b
+    begin: (?x)(?<=^|\\.|[,;'"`(){}\[\]\s]>?)(%)\b
     end: (?=)|$
     captures:
       1: {name: punctuation.definition.directive.protea}
@@ -1146,14 +1160,18 @@ repository:
         name: constant.other.character-class.protea
       - match: \\[A-Z]
         name: constant.other.character-class.negated.protea
-      - match: (?i)\\[\p{L}\p{N}]
-        name: constant.character.escape.protea
-      - match: \\[\p{S}\p{P}]
+      - match: \\\p{S}
         name: constant.character.escape.symbol.protea
-      - match: \\\p{Z}
-        name: constant.character.escape.other.protea
-      - match: \\\p{C}
-        name: invalid.illegal.unknown-escape.protea
+      - match: \\\p{P}
+        name: constant.character.escape.punctuation.protea
+      - match: \\[a-zA-Z\p{C}]
+        name: invalid.deprecated.escape.protea
+      - match: \\\s
+        name: constant.character.escape.space.protea
+      - match: \\\p{L}
+        name: constant.character.escape.letter.protea
+      - match: \\\p{N}
+        name: constant.character.escape.number.protea
       - match: \\.
         name: constant.character.escape.other.protea
 
