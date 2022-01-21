@@ -491,7 +491,15 @@ repository:
               10000[01]{16}
             | [01]{1,20}
           )
+            (?![01])
         name: constant.character.escape.binary.protea
+      - comment: Decimal escape sequences
+        match: |
+          (?x)
+          \\b # prefix
+            [01]+
+            (?![01])
+        name: invalid.illegal.escape.binary.protea
       - begin: \\b{
         end: \s*}
         name: constant.character.escape.binary.protea
@@ -505,7 +513,7 @@ repository:
                   10000[01]{16}
                 | [01]{1,20}
               )
-                \b
+                (?![01])
             name: constant.character.escape.binary.protea
           - match: \w+
             name: invalid.illegal.escape.protea
@@ -521,7 +529,15 @@ repository:
             | [1-7][0-7]{1,4}
             | [0-7]
           )
+            (?![0-7])
         name: constant.character.escape.octal.protea
+      - comment: Decimal escape sequences
+        match: |
+          (?x)
+          \\o # prefix
+            [0-7]+
+            (?![0-7])
+        name: invalid.illegal.escape.octal.protea
       - begin: \\o{
         end: \s*}
         name: constant.character.escape.octal.protea
@@ -537,7 +553,7 @@ repository:
                 | [1-7][0-7]{1,4}
                 | [0-7]
               )
-                \b
+                (?![0-7])
             name: constant.character.escape.octal.protea
           - match: \w+
             name: invalid.illegal.escape.protea
@@ -547,7 +563,7 @@ repository:
           (?x)
           \\d? # prefix
             0* # leading zeroes
-          ( # numbers up to 1114111
+          (?: # numbers up to 1114111
               111411[01]
             | 111410\d
             | 11140\d{2}
@@ -557,7 +573,15 @@ repository:
             | [1-9]\d{1,5}
             | \d
           )
+            (?!\d)
         name: constant.character.escape.decimal.protea
+      - comment: Decimal escape sequences
+        match: |
+          (?x)
+          \\d? # prefix
+            \d+
+            (?!\d)
+        name: invalid.illegal.escape.decimal.protea
       - begin: \\d{
         end: \s*}
         name: constant.character.escape.decimal.protea
@@ -567,7 +591,7 @@ repository:
               (?x)
                 \b
               0* # leading zeroes
-              ( # numbers up to 1114111
+              (?: # numbers up to 1114111
                   111411[01]
                 | 111410\d
                 | 11140\d{2}
@@ -577,7 +601,7 @@ repository:
                 | [1-9]\d{1,5}
                 | \d
               )
-                \b
+                (?!\d)
             name: constant.character.escape.decimal.protea
           - match: \w+
             name: invalid.illegal.escape.protea
@@ -588,9 +612,9 @@ repository:
             \\x # prefix
           (?i:
             0* # leading zeroes
-            [89ab]\h # 80 to BF
-            (?!\h)
+            [89ab]\h
           )
+            (?!\h)
         name: constant.character.escape.trailing.protea
       - comment: Leading byte pair U+C2-U+F4
         match: |
@@ -599,16 +623,34 @@ repository:
           (?i:
             0* # leading zeroes
             (?: # C2 to F4
-                c[2-9a-f] # C2 to CF
-              | [de]\h # D0 to EF
-              | f[0-4] # F0 to F4
+                c[2-9a-f]
+              | [de]\h
+              | f[0-4]
             )
-            (?!\h)
           )
+            (?!\h)
         name: constant.character.escape.leading.protea
       - comment: Hexadecimal escape sequences
-        match: \\x\h+
+        match: |
+          (?x)
+            \\x # prefix
+          (?i:
+            0* # leading zeroes
+            (?: # 0 to 10FFFF
+                10\h{4}
+              | [1-9a-f]\h{1,4}
+              | \h
+            )
+          )
+            (?!\h)
         name: constant.character.escape.hexadecimal.protea
+      - comment: Hexadecimal escape sequences
+        match: |
+          (?x)
+          \\x # prefix
+            \h+
+            (?!\h)
+        name: invalid.illegal.escape.hexadecimal.protea
       - begin: \\x{
         end: \s*}
         name: constant.character.escape.hexadecimal.protea
@@ -621,9 +663,8 @@ repository:
               (?i:
                 0* # leading zeroes
                 [89ab]\h # 80 to BF
-                (?!\h)
               )
-                \b
+                (?!\h)
             name: constant.character.escape.trailing.protea
           - comment: Leading byte pair U+C2-U+F4
             match: |
@@ -632,27 +673,69 @@ repository:
               (?i:
                 0* # leading zeroes
                 (?: # C2 to F4
-                    c[2-9a-f] # C2 to CF
-                  | [de]\h # D0 to EF
-                  | f[0-4] # F0 to F4
+                    c[2-9a-f]
+                  | [de]\h
+                  | f[0-4]
                 )
-                (?!\h)
               )
-                \b
+                (?!\h)
             name: constant.character.escape.leading.protea
-          - match: \b\h+\b
+          - match: |
+              (?x)
+                \b
+              (?i:
+                0* # leading zeroes
+                (?: # 0 to 10FFFF
+                    10\h{4}
+                  | [1-9a-f]\h{1,4}
+                  | \h
+                )
+              )
+                (?!\h)
             name: constant.character.escape.hexadecimal.protea
           - match: \w+
             name: invalid.illegal.escape.protea
 
       - comment: Low surrogate pairs U+DC00-DFFF
-        match: \\u(?i:0+d[cdef]\h{2}(?!\h))
+        match: |
+          (?x)
+            \\u # prefix
+          (?i:
+            0* # leading zeroes
+            d[cdef] \h{2}
+          )
+            (?!\h)
         name: constant.character.escape.surrogate.low.protea
       - comment: High surrogate pairs U+D800-DBFF
-        match: \\u(?i:0+d[89ab]\h{2}(?!\h))
+        match: |
+          (?x)
+            \\u # prefix
+          (?i:
+            0* # leading zeroes
+            d[89ab] \h{2}
+          )
+            (?!\h)
         name: constant.character.escape.surrogate.high.protea
-      - comment: Unicode escapes
-        match: \\u0*(?i:10\h{4}|\h{1,5})
+      - comment: Unicode escape sequences
+        match: |
+          (?x)
+          \\u # prefix
+            \h+
+            (?!\h)
+        name: invalid.illegal.escape.unicode.protea
+      - comment: Unicode escape sequences
+        match: |
+          (?x)
+            \\u # prefix
+          (?i:
+            0* # leading zeroes
+            (?: # 0 to 10FFFF
+                10\h{4}
+              | [1-9a-f]\h{1,4}
+              | \h
+            )
+            (?!\h)
+          )
         name: constant.character.escape.unicode.protea
       - comment: Unicode escapes
         begin: \\u{
@@ -660,12 +743,37 @@ repository:
         name: constant.character.escape.unicode.protea
         patterns:
           - include: '#punctuation'
-          - match: \b(?i:d[89ab]\h{2}(?!\h))\b
-            name: constant.character.escape.surrogate.high.protea
-          - match: \b(?i:d[cdef]\h{2}(?!\h))\b
+          - match: |
+              (?x)
+                \b
+              (?i:
+                0* # leading zeroes
+                d [cdef] \h{2}
+              )
+                (?!\h)
             name: constant.character.escape.surrogate.low.protea
-          - match: \b0*(?i:10\h{4}|\h{1,5})\b
-            name: constant.character.escape.unicode.protea
+          - match: |
+              (?x)
+                \b
+              (?i:
+                0* # leading zeroes
+                d [89ab] \h{2}
+              )
+                (?!\h)
+            name: constant.character.escape.surrogate.high.protea
+          - match: |
+              (?x)
+                \b
+              (?i:
+                0* # leading zeroes
+                (?: # 0 to 10FFFF
+                    10\h{4}
+                  | [1-9a-f]\h{1,4}
+                  | \h
+                )
+              )
+                (?!\h)
+            name: constant.character.escape.hexadecimal.protea
           - match: \w+
             name: invalid.illegal.escape.protea
 
