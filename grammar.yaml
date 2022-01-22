@@ -3,93 +3,78 @@ scopeName: source.dart
 fileTypes: [dart, pta]
 patterns: [include: '#core']
 
-information for contributors: |
-  This is the grammar for the Protea language, based on Its syntax builds
-  on top of Flow and contains influences from Rust, Scala, Kotlin, OCaml
-  and Go.
+information for contributors:
+  - This is the grammar for the Protea language, based on Its syntax builds on
+    top of Flow and contains influences from Rust, Scala, Kotlin, OCaml and Go.
+  - The grammar is nearing completion but needs to be thoroughly refactored and
+    reorganized. There also are some bugfixes which are on the verge of being
+    performed. Should you feel any fix or improvements have to be made, or even
+    some general constructive feedback, make a pull request or an issue on this
+    repo, and I will be very happy to receive it/them.
 
-  The grammar is nearing completion but needs to be thoroughly refactored
-  and reorganized. There also are some bugfixes which are on the verge of
-  being performed. Should you feel any fix or improvements have to be made,
-  or even some general constructive feedback, make a pull request or an
-  issue on this repo, and I will be very happy to receive it/them.
-
-fixes: |
+fixes:
   Changes in 2022:
+    - Added back backslash strings, though with much more limitations. This also
+      removes '\' as an operator identifier.
+    - Removed JSX and style blocks; replaced them with indentation
+    - Comments have been standardized into Swift-style comments:
+        - // line comment
+        - /// documentation line comment
+        - /* block comment */
+        - /** documentation block comment */
+    - Added '/' (full) and '//' (shorthand) command flags
 
-  - Added back backslash strings.
-  - Removed JSX and style blocks, replaced them with indentation.
-  - Comments have been standardized into C/Swift-style comments.
-    - // line comment
-    - /* block comment */
-    - /// doc line comment
-    - /** doc block comment */
-  - Added '/' (full) and '//' (shorthand) command flags
-  - Numbers and escape sequences have been reworked; bases 4, 6, and 12
-    have been scrapped.
-  - Interpolation and formatting syntax have been reworked and fixed.
-    Spacing around identifiers have also been removed.
-  - Function call syntax has been reworked and is still sometimes buggy.
-    Still some improvements have to be made.
-  - '\' is no longer a valid operator identifier.
-  - Added/removed a few more keywords: use, show, hide;
-    removed import, export, var, val, let, const;
-    shortened some to three or four letters:
-      'struct' -> 'inter', 'module' -> 'mod',
-      'markup' -> 'mark', 'object' -> 'obj'
-  - Fixed regular expression highlighting:
-    - Added and expanded quantifiers and range highlighting
-    - Add support for fuzzy matching (edits, insertions, deletions, etc.)
-  - Improved syntax highlighting for character escape sequences; now
-    shows as illegal if the escape sequence results in an invalid or out
-    of range escape.
+    - Removed 'import', 'export', 'let', 'const' in favor of 'use', 'show',
+      'hide'.
+
+    - Numbers and escape sequences have been reworked, and will no longer accept
+      integers bigger than decimal 1114111 which now are highlighted as an
+      error.
+    - Bases 4, 6, and 12 have been scrapped, though a multi-base generic numeric
+      literal is still in the works.
+    - Interpolation and formatting syntax have been reworked and fixed. Spacing
+      around identifiers have also been removed.
+    - Function call syntax is still reworked and may still be buggy. Might have
+      a later fix in the near future, and some improvements have to be made.
+
+    - Fixed some bugs with regular expressions:
+        - Added and expanded quantifiers and range highlighting
+        - Add support for fuzzy matching (edits, insertions, deletions, etc.)
+        - Improved highlighting for regexes with flags
 
   Fixes:
-
-  - Match unquoted glob patterns in routes without quotes
-  - Fix type strings and symbol-quoted strings to match properly
-  - Add new keywords to end blocks:
-    - if/elif then else fi
-    - for/loop/while do done
-    - match with exit
-    - case then ouse esac
-    - try catch after yrt
-    - with away
-    - do done
-  - Percent literals inspired by Ruby (this time using dollar signs as the
-    percent sign is used for string formatting).
-  - Grammar is a bit messy at the moment, so adding comments to some regexes
-    would help a lot. I'll be fixing this soon.
-  - Rewrite complex regular expressions and add some comments to make them more
-    readable and less confusing.
-    - [x] Markdown syntax
-    - [x] function parameters
-    - [x] function calls
-    - [ ] identifiers and variables
-    - [x] operators
-    - [ ] object literals
-    - [ ] object labels
-    - [x] pipeline functions
-    - [ ] modifier keywords
-    - [ ] function assignments
-    - [x] anonymous functions
-    - [ ] embedded content
-  - Add some more Markdown syntax:
-    - Citations
-    - Strike-through
-    - Deleted and inserted text
-    - Superscript
-    - Subscript
-    - Citation
-    - Spans
-    - Selectors and anchors
-    - Code blocks
-    - Definition blocks
-    - Tables
-    - Headings and subheadings
-  - Unify function call variables to 9 groups instead of 12:
-    - Objects, properties and variables
-    - UPPERCASE, PascalCase and camelCase
+    - Match unquoted glob patterns in routes without quotes
+    - Fix type strings and symbol-quoted strings to match properly
+    - Percent literals inspired by Ruby (this time using dollar signs as the
+      percent sign is used for string formatting).
+    - Grammar is a bit messy at the moment, so adding comments to some regexes
+      would help a lot. I'll be fixing this soon.
+    - ? Rewrite complex regular expressions and add some comments to make them
+        more readable and less confusing
+      : - [y]: Markdown syntax
+        - [y]: function parameters
+        - [y]: function calls
+        - [y]: identifiers and variables
+        - [y]: operators
+        - [n]: object literals
+        - [n]: object labels
+        - [y]: pipeline functions
+        - [y]: modifier keywords
+        - [y]: function assignments
+        - [y]: anonymous functions
+        - [n]: embedded content
+    - Revamp Markdown syntax with these extensions:
+        - [n]: Citations
+        - [n]: Strike-through
+        - [n]: Deleted and inserted text
+        - [n]: Superscript
+        - [n]: Subscript
+        - [n]: Spans
+        - [n]: Selectors and anchors
+        - [n]: Code blocks
+        - [n]: Definition blocks
+        - [n]: Tables
+        - [n]: Headings and subheadings
 
 define:
   entity-name: &entity-name |
