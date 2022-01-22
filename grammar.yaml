@@ -3,25 +3,28 @@ scopeName: source.dart
 fileTypes: [dart, pta]
 patterns: [include: '#core']
 
-information for contributors:
-  - This is the grammar for the Protea language, based on Its syntax builds on
-    top of Flow and contains influences from Rust, Scala, Kotlin, OCaml and Go.
-  - The grammar is nearing completion but needs to be thoroughly refactored and
-    reorganized. There also are some bugfixes which are on the verge of being
-    performed. Should you feel any fix or improvements have to be made, or even
-    some general constructive feedback, make a pull request or an issue on this
-    repo, and I will be very happy to receive it/them.
+information for contributors: |
+  This is the grammar for the Protea language, based on Its syntax builds on
+  top of Flow and contains influences from Rust, Scala, Kotlin, OCaml and Go.
 
-fixes:
+  The grammar is nearing completion but needs to be thoroughly refactored and
+  reorganized. There also are some bugfixes which are on the verge of being
+  performed.
+
+  Should you feel any fix or improvements have to be made, or even some general
+  constructive feedback, make a pull request or an issue on this repo, and I
+  will be very happy to receive it/them.
+
+fixes: |
   Changes in 2022:
     - Added back backslash strings, though with much more limitations. This also
       removes '\' as an operator identifier.
     - Removed JSX and style blocks; replaced them with indentation
     - Comments have been standardized into Swift-style comments:
-        - // line comment
-        - /// documentation line comment
-        - /* block comment */
-        - /** documentation block comment */
+      - // line comment
+      - /// documentation line comment
+      - /* block comment */
+      - /** documentation block comment */
     - Added '/' (full) and '//' (shorthand) command flags
     - Removed 'import', 'export', 'let', 'const' in favor of 'use', 'show',
       'hide', 'var' and 'val'.
@@ -45,33 +48,33 @@ fixes:
       client- and server-side application development? So far I have a handful
       shown below, namely function names, HTML tags and known CSS properties and
       constants which are taken from the grammars of those languages.
-    - ? Rewrite complex regular expressions throughout this document and add
-        some comments to make them more readable and less confusing
-      : - [y]: Markdown syntax
-        - [y]: function parameters
-        - [y]: function calls
-        - [y]: identifiers and variables
-        - [y]: operators
-        - [y]: object literals
-        - [y]: object labels
-        - [y]: pipeline functions
-        - [y]: modifier keywords
-        - [y]: function assignments
-        - [y]: anonymous functions
-        - [n]: embedded content
-        - [n]: rounded and square brackets
+    - Rewrite complex regular expressions throughout this document and add
+      some comments to make them more readable and less confusing
+      - [y]: Markdown syntax
+      - [y]: function parameters
+      - [y]: function calls
+      - [y]: identifiers and variables
+      - [y]: operators
+      - [y]: object literals
+      - [y]: object labels
+      - [y]: pipeline functions
+      - [y]: modifier keywords
+      - [y]: function assignments
+      - [y]: anonymous functions
+      - [n]: embedded content
+      - [n]: rounded and square brackets
     - Revamp Markdown syntax with these extensions:
-        - [n]: Citations
-        - [n]: Strike-through
-        - [n]: Deleted and inserted text
-        - [n]: Superscript
-        - [n]: Subscript
-        - [n]: Spans
-        - [n]: Selectors and anchors
-        - [n]: Code blocks
-        - [n]: Definition blocks
-        - [n]: Tables
-        - [n]: Headings and subheadings
+      - [n]: Citations
+      - [n]: Strike-through
+      - [n]: Deleted and inserted text
+      - [n]: Superscript
+      - [n]: Subscript
+      - [n]: Spans
+      - [n]: Selectors and anchors
+      - [n]: Code blocks
+      - [n]: Definition blocks
+      - [n]: Tables
+      - [n]: Headings and subheadings
 
 define:
   entity-name: &entity-name |
@@ -971,7 +974,7 @@ repository:
         begin: (?<=[%|])([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
         end: (?=)|$
         beginCaptures:
-          1: {name: storage.type.format.main.protea}
+          1: {name: storage.type.format.protea}
           2: {name: punctuation.separator.key-value.protea}
         name: entity.other.attribute-name.protea
         patterns: &format-values
@@ -983,11 +986,22 @@ repository:
           - include: '#numbers'
           - include: '#symbols'
           - *embedded-primary-operators
-      - comment: type specifier
-        match: (?<=[%|])([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+      - comment: type specifier with switch
+        applyEndPatternLast: true
+        begin: (\|)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
+        end: (?=)|$
         name: entity.other.attribute-name.protea
         captures:
-          1: {name: storage.type.format.main.protea}
+          1: {name: punctuation.separator.mapping.protea}
+          2: {name: storage.type.format.protea}
+          3: {name: punctuation.separator.key-value.protea}
+        patterns: *format-values
+      - comment: type specifier
+        match: (\|)([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+        name: entity.other.attribute-name.protea
+        captures:
+          1: {name: punctuation.separator.mapping.protea}
+          2: {name: storage.type.format.protea}
 
   # Unicode Named Character Language
 
