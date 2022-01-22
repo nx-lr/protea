@@ -416,7 +416,7 @@ Several escapes `\b`, `\d`, `\o`, `\x` and `\u` allow you to encode Unicode code
 
 The same escapes when followed by curly brackets are used to encode multiple code points without reusing and repeating the same syntax again: `\u65e5\u672c\u8a9e` could be written as `\u{65e5 672c 8a9e}`. You can use commas, semicolons or spaces to separate the code points. The code points are encoded in the same order as they appear in the string, and are checked for validity.
 
-You can also use the 
+You can also use the
 
 All other sequences starting with a backslash are still legal except all other ASCII letters.
 
@@ -446,7 +446,6 @@ $escape = `(
 
 ### Interpolation
 
-All Protea strin i
 All Protea string literals allow for interpolation. All Protea string literals (except backslash strings) allow for interpolation. Here, placeholders can be embedded in the string, so when the string is evaluated, the placeholders are replaced with the values of the expressions. The expressions are evaluated in the same lexical scope as the string literal. String interpolation allows for easier and more intuitive string formatting and content specification as compared to string concatenation.
 
 The delimiters are `${` and `}` and the expression is surrounded by curly braces. By default the interpolated values will be evaluated and concatenated together along with the glue strings, but you can call a `macro` on a string to perform custom processing and/or return something other than strings.
