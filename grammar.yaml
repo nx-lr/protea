@@ -781,17 +781,17 @@ repository:
 
   embedded:
     patterns:
-      - include: '#format-clause'
       - include: '#embedded-placeholder'
       - include: '#embedded-expression'
+      - include: '#format-clause'
 
   embedded-verbatim:
     patterns:
-      - match: '([#$%])\1'
+      - match: \#\#|\$\$|\%\%
         name: constant.character.escape.protea
-      - include: '#format-clause'
       - include: '#embedded-placeholder'
       - include: '#embedded-expression'
+      - include: '#format-clause'
 
   embedded-expression:
     patterns:
@@ -807,7 +807,6 @@ repository:
         applyEndPatternLast: true
         begin: |
           (?x)
-          (?<=^|\\.|[,;'"`\\(){}\[\]\w\s]>?) # SOL or after a literal or space
           (\$) # beginning of identifier
           # ignore all keywords
           (?!
@@ -930,7 +929,7 @@ repository:
     patterns:
       - comment: // for multiple flags at once with single-character aliases
         applyEndPatternLast: true
-        begin: (?x)(?<=^|\\.|[,;'"`(){}\[\]\s]>?)(//)\b
+        begin: (?<=^|\\.|['"`(){}\[\]\s])(//)(?=[\p{Pc}\p{L}])
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.flag.protea}
@@ -941,7 +940,7 @@ repository:
               1: {name: keyword.other.flag.protea}
       - comment: / for a single flag, with optional arguments
         applyEndPatternLast: true
-        begin: (?x)(?<=^|\\.|[,;'"`(){}\[\]\s]>?)(/)\b
+        begin: (?<=^|\\.|['"`(){}\[\]\s])(/)(?=[\p{Pc}\p{L}])
         end: (?=)|$
         captures:
           1: {name: punctuation.definition.flag.protea}
@@ -954,7 +953,7 @@ repository:
   format-clause:
     comment: Oniguruma supports only 20 levels of recursion
     applyEndPatternLast: true
-    begin: (?x)(?<=^|\\.|[,;'"`(){}\[\]\s]>?)(%)\b
+    begin: (?<!%)(%)(?=[\p{Pc}\p{L}])
     end: (?=)|$
     captures:
       1: {name: punctuation.definition.directive.protea}
@@ -965,7 +964,7 @@ repository:
     patterns:
       - comment: initial format switch with value
         applyEndPatternLast: true
-        begin: (?<=%)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
+        begin: (?<=[%|])([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
         end: (?=)|$
         beginCaptures:
           1: {name: storage.type.format.main.protea}
@@ -981,24 +980,10 @@ repository:
           - include: '#symbols'
           - *embedded-primary-operators
       - comment: type specifier
-        match: (?<=%)([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+        match: (?<=[%|])([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         name: entity.other.attribute-name.protea
         captures:
           1: {name: storage.type.format.main.protea}
-      - comment: Format switch with value /x:24
-        applyEndPatternLast: true
-        begin: (\|)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
-        beginCaptures:
-          1: {name: punctuation.separator.mapping.protea}
-          2: {name: storage.type.format.sub.protea}
-          3: {name: punctuation.separator.key-value.protea}
-        end: (?=)|$
-        patterns: *format-values
-      - comment: Format switch without value
-        match: (\|)([\p{Pc}\p{L}][\w\p{Pd}]*)
-        captures:
-          1: {name: punctuation.separator.mapping.protea}
-          2: {name: storage.type.format.sub.protea}
 
   # Unicode Named Character Language
 
