@@ -420,23 +420,23 @@ repository:
 
   function-namespace:
     patterns:
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
+      - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
         name: support entity.name.tag.namespace.protea
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+      - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         name: support entity.name.function.member.protea
 
   character-namespace:
     patterns:
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
+      - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
         name: constant.other.character-class.protea
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+      - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         name: constant.character.escape.unicode.protea
 
   character-escapes:
     patterns:
       - applyEndPatternLast: true
         name: constant.other.function.protea
-        begin: \\:([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b(?=\{)
+        begin: \\N([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b(?=\{)
         beginCaptures:
           1: {patterns: [include: '#function-namespace']}
         end: (?=)|$
@@ -447,10 +447,33 @@ repository:
               1: {name: constant.other.function.protea}
             patterns:
           - include: '$self'
-      - match: \\:\b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
+      - match: \\N([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
         name: constant.character.escape.protea
         captures:
           1: {patterns: [include: '#character-namespace']}
+      - begin: \\N{\s*
+        end: \s*}
+        name: constant.other.character-class.unicode.protea
+        patterns:
+          - applyEndPatternLast: true
+            name: constant.other.function.protea
+            begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b(?=\{)
+            beginCaptures:
+              1: {patterns: [include: '#function-namespace']}
+            end: (?=)|$
+            patterns:
+              - begin: (\{)
+                end: (\})
+                captures:
+                  1: {name: constant.other.function.protea}
+                patterns:
+              - include: '$self'
+          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
+            name: constant.character.escape.protea
+            captures:
+              1: {patterns: [include: '#character-namespace']}
+          - include: '#string-content'
+          - include: '#illegal'
 
   string-escapes:
     patterns:
@@ -460,7 +483,7 @@ repository:
       - include: '#numeric-escapes'
       - match: \\([cm][a-z])
         name: constant.character.control.protea
-      - match: \\[prntfvabes]
+      - match: \\[abefprnstv]
         name: constant.character.escape.protea
       - match: \\\p{S}
         name: constant.character.escape.symbol.protea
@@ -515,8 +538,7 @@ repository:
               )
                 (?![01])
             name: constant.character.escape.binary.protea
-          - match: \w+
-            name: invalid.illegal.escape.protea
+          - include: '#illegal'
 
       - comment: Octal escape sequences (0 to 417777)
         match: |
@@ -555,8 +577,7 @@ repository:
               )
                 (?![0-7])
             name: constant.character.escape.octal.protea
-          - match: \w+
-            name: invalid.illegal.escape.protea
+          - include: '#illegal'
 
       - comment: Decimal escapes (0 to 1114111)
         match: |
@@ -603,8 +624,7 @@ repository:
               )
                 (?!\d)
             name: constant.character.escape.decimal.protea
-          - match: \w+
-            name: invalid.illegal.escape.protea
+          - include: '#illegal'
 
       - comment: Trailing byte pair U+80-U+BF
         match: |
@@ -693,8 +713,7 @@ repository:
               )
                 (?!\h)
             name: constant.character.escape.hexadecimal.protea
-          - match: \w+
-            name: invalid.illegal.escape.protea
+          - include: '#illegal'
 
       - comment: Low surrogate pairs U+DC00-DFFF
         match: |
@@ -774,8 +793,7 @@ repository:
               )
                 (?!\h)
             name: constant.character.escape.hexadecimal.protea
-          - match: \w+
-            name: invalid.illegal.escape.protea
+          - include: '#illegal'
 
   # Embedded expressions
 
@@ -1387,7 +1405,7 @@ repository:
         name: constant.other.character-class.xml.protea
       - match: (?i)\\n{(?:[^\\{}]|\\.)+}
         name: constant.character.escape.unicode.name.protea
-      - match: \\[prntfvabe]
+      - match: \\[abefprntv]
         name: constant.character.escape.protea
       - match: \\[a-z]
         name: constant.other.character-class.protea
@@ -1420,7 +1438,7 @@ repository:
             | \\[cm][a-z] # meta-character
             | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
             | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
-            | \\(?:[prntfvabe]|[^a-zA-Z]) # any escape character
+            | \\(?:[abefprntv]|[^a-zA-Z]) # any escape character
             | [^-\\\[\]] # any unescaped character
           )
             \s*
@@ -1434,7 +1452,7 @@ repository:
             | \\[cm][a-z] # meta-character
             | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
             | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
-            | \\(?:[prntfvabe]|[^a-zA-Z]) # any escape character
+            | \\(?:[abefprntv]|[^a-zA-Z]) # any escape character
             | [^-\\\[\]] # any unescaped character
           ) (?:
               \s*
@@ -1449,7 +1467,7 @@ repository:
               | \\[cm][a-z] # meta-character
               | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
               | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
-              | \\(?:[prntfvabe]|[^a-zA-Z]) # any escape character
+              | \\(?:[abefprntv]|[^a-zA-Z]) # any escape character
               | [^-\\\[\]] # any unescaped character
             )
           )?
