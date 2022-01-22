@@ -54,7 +54,7 @@ Protea is currently still in its conceptual and experimental stage, as the creat
 
 This document is an informal guide the Protea's language structured in a way that you can read from anywhere and still understand. It is meant for implementation authors, and those who want to contribute and help me improve Protea. This is not meant to be a tutorial or introductory guide to the language, but rather something you would consult if you have questions about the language and its concepts.
 
-This is not a complete reference or a tutorial, but rather something you consult if you have any questions about the language. I will introduce bits and pieces of the core Protea language and its syntax as I go.
+This is not a complete reference or a tutorial, but rather something you consult if you have any questions about the language. We will introduce bits and pieces of the core Protea language and its syntax as we go.
 
 ## Hello World!
 
@@ -74,7 +74,11 @@ elem App {
 
 ### Source code representation
 
-Protea source code is encoded in UTF-8. The text is not canonicalized, so a single accented code point is distinct from the same character constructed by combining an accent and a letter; those are treated as two code points. Each code point is distinct; upper and lower case characters are distinct.
+Protea source code is encoded in UTF-8 which is the same default encoding as other languages. Text is written in characters from the Basic Multilingual Plane (`U+0000`-`U+FFFF`), with support for surrogate pairs to represent higher code points up to `U+10FFFF`. Each code point is distinct.
+
+Protea modules are written with the extension `.prm`, and scripts `.prs`.
+
+The top level is the entry point of the grammar, and would be the file
 
 ### Characters
 
@@ -87,6 +91,22 @@ To construct tokens, characters are distinguished according to the following cla
 - **Parentheses**: `(`, `)`, `[`, `]`, `{`, `}`
 - **Delimiters**: `,`, `;`, `:`, `'`, `"`, `\`
 - **Operator characters**. These consist of all printable ASCII characters `\u0020` - `\u007F` which are in none of the sets above, as well as any other punctuation (`P`) and symbol (`S`) characters.
+
+### Letters and digits
+
+We would use the following character classes to distinguish between letters and digits:
+
+- `\p` is a shorthand for defining a Unicode character class, with curly brackets queries a set of Unicode properties that satisfy certain patterns.
+- `\w` is a word character, defined as `[\d\pL\pM\pPc]`. It is the character set to end an identifier.
+- `\h` is a hexadecimal digit, i.e. `[\da-fA-F]`;
+- `\o` is an octal digit, i.e. `[0-7]`;
+- `\d` is a decimal digit, i.e. `[0-9]`;
+- `\s` is a whitespace character, i.e. `[\f\n\r\s\t\v]`.
+- `\c`, `\i` are character classes used in identifiers. `\c` is defined as the leading character `[\pL\pPc]` and `\i` as the middle characters `[\w\pPd]`.
+
+`\b` marks a word boundary, which is the end of a word if it is followed or preceded by a word character and on the other side a non-word character. This is used to separate words in identifiers.
+
+The letter component of these escapes can be capitalized to indicate negation, so `\B` is not a word boundary and `\H` is not a hexadecimal digit.
 
 ## Lexical elements
 
@@ -113,7 +133,7 @@ Identifiers name program entities like variables and types. An identifier begins
 - does not end with one or more trailing dashes.
 
 ```dart
-identifier = `\b[\pL\pPc][\d\pL\pM\pPc\pPd]*\b`
+identifier = `\b\c(\i*\w)?\b`
 ```
 
 ### Identifier equality
@@ -235,10 +255,12 @@ Newlines are enabled in:
 
 Newlines are disabled in:
 
-- The interval between these tokens: `if` `elif` `for` `each` `while` `match` `catch` `with` and the ending token `then` or `:` (while next to a valid literal), except for nested regions where newlines are enabled.
-- Declaration keywords: `var` `val` `func` `proc` `type` `class` `data` `enum` `iter` `macro` `inter` `object` `module` `trait` `elem` `prop` except for nested regions where newlines are disabled.
-- Import statements `use` `show` `hide` `route`, and the nearest closing delimiter or end of line, except for nested regions where newlines are enabled.
+- The interval between these tokens: `if` `elif` `for` `each` `while` `match` `catch` `with` and the ending token `then` or `:` (while next to a valid literal)\*
+- Declaration keywords: `var` `val` `func` `proc` `type` `class` `data` `enum` `iter` `macro` `inter` `object` `module` `trait` `elem` `prop`\*
+- Import statements `use` `show` `hide` `route`, and the nearest closing delimiter or end of line\*
 - as well as `break` `next` `redo` `goto` `label`, and the nearest closing delimiter or end of line.
+
+\*...except for nested regions where newlines are enabled.
 
 To allow complex statements to occupy a single line, a semicolon or comma can be omitted before a closing bracket.
 
@@ -254,6 +276,15 @@ Several suffixes can be used in conjunction with one another:
 - `r` for rational numbers
 - `f` for floating point/'real' literals
 
+```dart
+$intLit = `( $decIntLit | $hexIntLit | $binIntLit | $octIntLit ) $typeSuffix?`
+$decIntLit = `\d [\d_]*`
+$binIntLit = `'0b' [01] [01_]*`
+$octIntLit = `'0o' \o [\o_]*`
+$hexIntLit = `'0x' (?i \h [\h_]*)`
+$typeSuffix = `$identifier`
+```
+
 #### Integers
 
 An integer literal is a sequence of digits. An optional prefix sets a non-decimal base: `0b` for binary, `0o` for octal, `0x` for hexadecimal. In hexadecimal literals, letters `a` through `f` and `A` through `F` represent values 10 through 15.
@@ -261,13 +292,15 @@ An integer literal is a sequence of digits. An optional prefix sets a non-decima
 For readability, one or more underscore characters `_` may appear after a base prefix or between successive digits; such underscores do not change the literal's value.
 
 ```dart
-$intLit = `($decIntLit | $binIntLit | $octIntLit | $hexIntLit) $typeSuffix`
-$decIntLit = `\d [\d_]* (?!_\b)`
-$binIntLit = `0b [01] [01_]* (?!_\b)`
-$octIntLit = `0o [0-7] [0-7_]* (?!_\b)`
-$hexIntLit = `0x (?i [0-9a-f] [0-9a-f_]*) (?!_\b)`
+$intLit = `($decIntLit | $hexIntLit | $binIntLit | $octIntLit) $typeSuffix?`
+$decIntLit = `\d [\d_]*`
+$binIntLit = `'0b' [01] [01_]*`
+$octIntLit = `'0o' \o [\o_]*`
+$hexIntLit = `'0x' (?i \h [\h_]*)`
 $typeSuffix = `$identifier`
+```
 
+```dart
 42
 4_2
 0600
@@ -292,31 +325,18 @@ A binary, octal or hexadecimal floating literal consists of a mantissa, an optio
 For readability, an underscore character `_` may appear after a base prefix or between successive digits; such underscores do not change the literal value.
 
 ```dart
-$exponent = `e [+-]? \d [\d_]*`
-$binExponent = `p [+-]? \d [\d_]*`
+$exponent = `'e' [+-]? \d [\d_]*`
+$binExponent = `'p' [+-]? \d [\d_]*`
 
-$floatLit = `
-  ( $decFloatLit | $hexFloatLit
-  | $binFloatLit | $octFloatLit )
-  $typeSuffix? `
+$floatLit = `($decFloatLit | $hexFloatLit | $binFloatLit | $octFloatLit) $typeSuffix?`
 
-$decFloatLit = `
-  (\d [\d_]*)
-  (\. \d [\d_]*)
-  $exponent? `
-$binFloatLit = `
-  0b ([01] [01_]*)
-  (\. ([01] [01_]*))
-  $binExponent? `
-$octFloatLit = `
-  0o ([0-7] [0-7_]*)
-  (\. ([0-7] [0-7_]*))
-  $binExponent? `
-$hexFloatLit = `
-  0x (?i[0-9a-f] [0-9a-f_]*)
-  (\. (?i[0-9a-f] [0-9a-f_]*))
-  $binExponent? `
+$decFloatLit = `(\d [\d_]*) ('.' \d [\d_]*) $exponent?`
+$binFloatLit = `'0b' ([01] [01_]*) ('.' ([01] [01_]*)) $binExponent`
+$octFloatLit = `'0o' (\o [\o_]*) ('.' (\o [\o_]*)) $binExponent?`
+$hexFloatLit = `'0x' (?i\h [\h_]*) ('.' (?i\h [\h_]*)) $binExponent?`
+```
 
+```dart
 0.
 72.40
 072.40       // == 72.40
@@ -344,4 +364,132 @@ $hexFloatLit = `
 0x.p1        // invalid: mantissa has no digits
 1p-2         // invalid: p exponent requires hexadecimal mantissa
 0x1.5e-2     // invalid: hexadecimal mantissa requires p exponent
+```
+
+### Strings
+
+A string literal consists of a character sequence enclosed in single or double quotes. The underlying implementation denotes how the string should be encoded, usually UTF-16. There are two forms - verbatim and interpreted string literals. The verbatim form is a sequence of characters enclosed in single quotes, and the interpreted form is a sequence of characters enclosed in double quotes, with the escape sequences enclosed in single quote ihsi :
+
+```dart
+$stringLit = `(?/
+    $rawMultiStringLit | $rawStringLit
+  | $escapedMultiStringLit | $escapedStringLit )`
+$escapedMultiStringLit = `
+  (?<! '"'+) (?<opening> '"'{3,})
+  ( $escape | $interpolation | $formatting | .* )+
+  \k<opening> (?! '"') `
+$escapedStringLit = `
+  (?<! '"'+) '"'
+  ( $escape | $interpolation | $formatting | .* )+
+  '"' (?! "'"+) `
+$rawMultiStringLit = `
+  (?<! "'"+) (?<opening> "'"{3,})
+  ( $rawEscape | $interpolation | $formatting | .* )+
+  \k<opening> (?! "'") `
+$rawStringLit = `
+  (?<! "'"+) "'"
+  ( "''" | $rawEscape | $interpolation | $formatting | .* )+
+  "'" (?! "'"+) `
+$rawEscape = `"$$" | "##" | "%%"`
+```
+
+### Escapes
+
+Escape sequences are used to represent characters in a string without triggering a syntax error. An escape character on its own does not have meaning, so all escape sequences are of two or more characters, which all begin with a backslash. The first character of an escape sequence is the escape character, and the second character is the character to be escaped.
+
+Certain single-letter escapes represent special values:
+
+```
+\a   U+0007 alert or bell
+\b   U+0008 backspace
+\e   U+000b escape
+\f   U+000C form feed
+\n   U+000A line feed or newline
+\p          platform-dependent newline
+\r   U+000D carriage return
+\s   U+0020 space
+\t   U+0009 horizontal tab
+\v   U+000B vertical tab
+```
+
+Several escapes `\b`, `\d`, `\o`, `\x` and `\u` allow you to encode Unicode code points in a string literal. The `\b` escape encodes a backspace character, `\d` a digit, `\o` an octal digit, `\x` a hexadecimal digit, and `\u` a Unicode code point. `\x` and `\u` differ in how they are interpreted - `\x` interprets the escape as UTF-8, and `\u` interprets it as UTF-16. In each case the value of the literal is the value represented by the digits in the corresponding base.
+
+The same escapes when followed by curly brackets are used to encode multiple code points without reusing and repeating the same syntax again: `\u65e5\u672c\u8a9e` could be written as `\u{65e5 672c 8a9e}`. You can use commas, semicolons or spaces to separate the code points. The code points are encoded in the same order as they appear in the string, and are checked for validity.
+
+You can also use the 
+
+All other sequences starting with a backslash are still legal except all other ASCII letters.
+
+```dart
+val decimal = "\112569"
+val hex = "\xABC12"
+val octal = "\o52740"
+val binary = "\b10101011110000010010"
+
+// "HELLO"
+"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
+"\d{72 69 76 76 79 65535}" == "\72\69\76\76\79"
+
+$lineJoiner = `\\ \s+ (?=\n)`
+$escAny = `'\' [[^\pC] -- [a-z A-Z -- a b e f n p r s t v N]]`
+$escOct = `'\o' (\o* | '{' \o* &* [\pZ;,] '}')`
+$escHex = `'\' [ux]? (\h* | '{' \h* &* [\pZ;,] '}')`
+$escBin = `'\b' ([01]* | '{' [01]* &* [\pZ;,] '}')`
+$escDec = `'\' d? (\d* | '{' \d* &* [\pZ;,] '}')`
+$escNamed = `'\N' $identifier &* [.:] ('{' $identifier '}')*`
+
+$escape = `(
+  $escHex | $escOct | $escBin | $escDec
+| $escNamed | $escAny | $lineJoiner
+)`
+```
+
+### Interpolation
+
+All Protea strin i
+All Protea string literals allow for interpolation. All Protea string literals (except backslash strings) allow for interpolation. Here, placeholders can be embedded in the string, so when the string is evaluated, the placeholders are replaced with the values of the expressions. The expressions are evaluated in the same lexical scope as the string literal. String interpolation allows for easier and more intuitive string formatting and content specification as compared to string concatenation.
+
+The delimiters are `${` and `}` and the expression is surrounded by curly braces. By default the interpolated values will be evaluated and concatenated together along with the glue strings, but you can call a `macro` on a string to perform custom processing and/or return something other than strings.
+
+Protea allows for a subset of **non-spacing expressions** to be interpolated without the need for writing curly braces. The following values are supported:
+
+- a single identifier: `name`
+- a qualified name: `x.y.z` or `x::y::z`
+- an object accessor: `x[1]`
+- a function call: `fn()`
+- a type casting operation: `<int>`
+- a type assertion: `name{int}`
+- and any combination of the like
+
+```dart
+val apples = 4
+printf "I have $apples apples"
+
+$interActivation = `(?s ^ | $escAny | [,;'"`(){}\[\]] >?)`
+$interpolation = `(?<= $interActivation) '$' ($placeholderExpression | $placeholder)`
+$placeholderExpression = `'{' $expression &* [,;] '}'`
+$placeholder = `$identifier $innerMembers`
+$innerMembers = `$separator $identifier | $separator? $bracket`
+$separator = `(?s ('.' | '::' | '?.' | '?:' | '!.' | '!:') '='?)`
+$bracket = `
+  '[' $expression &* [,;] ']'
+| '{' $expression &* [,;] '}'
+| '(' $expression &* [,;] ')'
+| '<' $typeExpression '>'
+`
+```
+
+### Formatting
+
+Formatting transforms the string value of the interpolated expression into a string. Formatting is done by specifying a value, and a set of arguments. The format string is a sequence of characters that specifies how the interpolated expression is to be formatted. The format arguments are the methods to be performed, in order, on the interpolated expression before it is "inserted" into the string.
+
+```dart
+$format = `'%' $formatSwitch &* '|'`
+$formatSwitch = `$formatSwitch (":" ($placeholder | $bracket))?`
+
+"Hello ${"world"}"
+"Hello ${"world"}%upper" // => "Hello WORLD"
+"${1234567890}%sep:(',')|sep:(id + 1)" // => "1,234,567,890"
+"Percentage correct answers: \
+  ${correct / total}%dp:2|unit:('%')"
 ```
