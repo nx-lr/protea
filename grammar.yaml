@@ -17,65 +17,56 @@ information for contributors: |
 
 fixes: |
   Changes in 2022:
-    - Added back backslash strings, though with much more limitations. This also
-      removes '\' as an operator identifier.
-    - Removed JSX and style blocks; replaced them with indentation
-    - Comments have been standardized into Swift-style comments:
-      - // line comment
-      - /// documentation line comment
-      - /* block comment */
-      - /** documentation block comment */
-    - Added '/' (full) and '//' (shorthand) command flags
-    - Removed 'import', 'export', 'let', 'const' in favor of 'use', 'show',
-      'hide', 'var' and 'val'.
-    - Numbers and escape sequences have been reworked, and will no longer accept
-      integers bigger than decimal 1114111 which now are highlighted as an
-      error.
-    - Bases 4, 6, and 12 have been scrapped, though a multi-base generic numeric
-      literal is still in the works.
-    - Interpolation and formatting syntax have been reworked and fixed. Spacing
-      around identifiers have also been removed.
-    - Function call syntax is still reworked and may still be buggy. Might have
-      a later fix in the near future, and some improvements have to be made.
-    - Fixed some bugs with regular expressions:
-        - Added and expanded quantifiers and range highlighting
-        - Add support for fuzzy matching (edits, insertions, deletions, etc.)
-        - Improved highlighting for regexes with flags
+
+  - Added back backslash strings, though with much more limitations. This also removes `\` as an operator identifier.
+  - Removed JSX and style blocks; replaced them with indentation
+  - Comments have been standardized into Swift-style comments:
+    - `//` line comment
+    - `///` documentation line comment
+    - `/*` block comment `*/`
+    - `/**` documentation block comment `*/`
+  - Added `/` (full) and `//` (shorthand) command flags
+  - Removed `import`, `export`, `let`, `const` in favor of `use`, `show`, `hide`, `var` and `val`.
+  - Numbers and escape sequences have been reworked, and will no longer accept integers bigger than decimal 1114111 which now are highlighted as an error.
+  - Bases 4, 6, and 12 have been scrapped, though a multi-base generic numeric literal is still in the works.
+  - Interpolation and formatting syntax have been reworked and fixed. Spacing around identifiers have also been removed.
+  - Function call syntax is still reworked and may still be buggy. Might have a later fix in the near future, and some improvements have to be made.
+  - Fixed some bugs with regular expressions:
+    - Added and expanded quantifiers and range highlighting
+    - Add support for fuzzy matching (edits, insertions, deletions, etc.)
+    - Improved highlighting for regexes with flags
 
   Fixes:
-    - Match unquoted glob patterns in routes without quotes
-    - What would Trinity's standard library look like, since it is used both in
-      client- and server-side application development? So far I have a handful
-      shown below, namely function names, HTML tags and known CSS properties and
-      constants which are taken from the grammars of those languages.
-    - Rewrite complex regular expressions throughout this document and add
-      some comments to make them more readable and less confusing
-      - [y]: Markdown syntax
-      - [y]: function parameters
-      - [y]: function calls
-      - [y]: identifiers and variables
-      - [y]: operators
-      - [y]: object literals
-      - [y]: object labels
-      - [y]: pipeline functions
-      - [y]: modifier keywords
-      - [y]: function assignments
-      - [y]: anonymous functions
-      - [n]: embedded content
-      - [n]: rounded and square brackets
-      - [n]: LINQ, inline SQL and validation syntax (more to come later)
-    - Revamp Markdown syntax with these extensions:
-      - [n]: Citations
-      - [n]: Strike-through
-      - [n]: Deleted and inserted text
-      - [n]: Superscript
-      - [n]: Subscript
-      - [n]: Spans
-      - [n]: Selectors and anchors
-      - [n]: Code blocks
-      - [n]: Definition blocks
-      - [n]: Tables
-      - [n]: Headings and subheadings
+
+  - Match unquoted glob patterns in routes without quotes
+  - What would Trinity's standard library look like, since it is used both in client- and server-side application development? So far I have a handful shown below, namely function names, HTML tags and known CSS properties and constants which are taken from the grammars of those languages.
+  - Rewrite complex regular expressions throughout this document and add some comments to make them more readable and less confusing
+    - [x] Markdown syntax
+    - [x] function parameters
+    - [x] function calls
+    - [x] identifiers and variables
+    - [x] operators
+    - [x] object literals
+    - [x] object labels
+    - [x] pipeline functions
+    - [x] modifier keywords
+    - [x] function assignments
+    - [x] anonymous functions
+    - [ ] embedded content
+    - [ ] rounded and square brackets
+    - [ ] LINQ, inline SQL and validation syntax (more to come later)
+  - Revamp Markdown syntax with these extensions:
+    - [ ] Citations
+    - [ ] Strike-through
+    - [ ] Deleted and inserted text
+    - [ ] Superscript
+    - [ ] Subscript
+    - [ ] Spans
+    - [ ] Selectors and anchors
+    - [ ] Code blocks
+    - [ ] Definition blocks
+    - [ ] Tables
+    - [ ] Headings and subheadings
 
 define:
   entity-name: &entity-name |
@@ -2616,7 +2607,7 @@ repository:
               (?:['"`(){}\[\]] | \\.)
               (?: [?!]?\.=? | [?!:]:=?) # accessors
             | # command syntax
-              //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+              (?:^ | [,;({\[] | \s) //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
             | (?:
                 (?:^|[,;'"`(){}\[\]\s]|\\.) # beside a delimiter or space
                 \b
@@ -2686,7 +2677,7 @@ repository:
               | # array literal
                 \[
               | # command literal
-                 //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+                 (?:^ | [,;({\[] | \s) //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
               | # ignore orphaned qualified name
                 (?!
                   (?: [?!]?\.=? | [?!:]:=?)
@@ -5521,26 +5512,26 @@ repository:
   css-value-names:
     comment: TODO
     patterns:
-      - match: (?x)\b( aqua| black| blue| fuchsia| gray| green| lime| maroon| navy| olive| orange| purple| red| silver| teal| white| yellow )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|purple|red|silver|teal|white|yellow )(?!\B|\p{Pd}+\b)
         name: support.constant.color.w3c-standard-color-name.css.protea
-      - match: (?x)\b( aliceblue| antiquewhite| aquamarine| azure| beige| bisque| blanchedalmond| blueviolet| brown| burlywood| cadetblue| chartreuse| chocolate| coral| cornflowerblue| cornsilk| crimson| cyan| darkblue| darkcyan| darkgoldenrod| darkgray| darkgreen| darkgrey| darkkhaki| darkmagenta| darkolivegreen| darkorange| darkorchid| darkred| darksalmon| darkseagreen| darkslateblue| darkslategray| darkslategrey| darkturquoise| darkviolet| deeppink| deepskyblue| dimgray| dimgrey| dodgerblue| firebrick| floralwhite| forestgreen| gainsboro| ghostwhite| gold| goldenrod| greenyellow| grey| honeydew| hotpink| indianred| indigo| ivory| khaki| lavender| lavenderblush| lawngreen| lemonchiffon| lightblue| lightcoral| lightcyan| lightgoldenrodyellow| lightgray| lightgreen| lightgrey| lightpink| lightsalmon| lightseagreen| lightskyblue| lightslategray| lightslategrey| lightsteelblue| lightyellow| limegreen| linen| magenta| mediumaquamarine| mediumblue| mediumorchid| mediumpurple| mediumseagreen| mediumslateblue| mediumspringgreen| mediumturquoise| mediumvioletred| midnightblue| mintcream| mistyrose| moccasin| navajowhite| oldlace| olivedrab| orangered| orchid| palegoldenrod| palegreen| paleturquoise| palevioletred| papayawhip| peachpuff| peru| pink| plum| powderblue| rebeccapurple| rosybrown| royalblue| saddlebrown| salmon| sandybrown| seagreen| seashell| sienna| skyblue| slateblue| slategray| slategrey| snow| springgreen| steelblue| tan| thistle| tomato| transparent| turquoise| violet| wheat| whitesmoke| yellowgreen )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( aliceblue|antiquewhite|aquamarine|azure|beige|bisque|blanchedalmond|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|gainsboro|ghostwhite|gold|goldenrod|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|limegreen|linen|magenta|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|oldlace|olivedrab|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|rebeccapurple|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|thistle|tomato|transparent|turquoise|violet|wheat|whitesmoke|yellowgreen )(?!\B|\p{Pd}+\b)
         name: support.constant.color.w3c-extended-color-name.css.protea
-      - match: \b(currentColor)(?!\B|\p{Pd}+\b)
+      - match: (?x)\b(currentColor)(?!\B|\p{Pd}+\b)
         name: support.constant.color.current.css.protea
-      - match: (?x)\b( ActiveBorder| ActiveCaption| AppWorkspace| Background| ButtonFace| ButtonHighlight| ButtonShadow| ButtonText| CaptionText| GrayText| Highlight| HighlightText| InactiveBorder| InactiveCaption| InactiveCaptionText| InfoBackground| InfoText| Menu| MenuText| Scrollbar| ThreeDDarkShadow| ThreeDFace| ThreeDHighlight| ThreeDLightShadow| ThreeDShadow| Window| WindowFrame| WindowText )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( ActiveBorder|ActiveCaption|AppWorkspace|Background|ButtonFace|ButtonHighlight|ButtonShadow|ButtonText|CaptionText|GrayText|Highlight|HighlightText|InactiveBorder|InactiveCaption|InactiveCaptionText|InfoBackground|InfoText|Menu|MenuText|Scrollbar|ThreeDDarkShadow|ThreeDFace|ThreeDHighlight|ThreeDLightShadow|ThreeDShadow|Window|WindowFrame|WindowText )(?!\B|\p{Pd}+\b)
         name: support.constant.color.system.css.protea
-      - match: (?x)\b( above| absolute| active| add| additive| after-edge| afterEdge| alias| all| all-petite-caps| all-scroll| all-small-caps| allPetiteCaps| allScroll| allSmallCaps| alpha| alphabetic| alternate| alternate-reverse| alternateReverse| always| antialiased| auto| auto-pos| autoPos| available| avoid| avoid-column| avoid-page| avoid-region| avoidColumn| avoidPage| avoidRegion| backwards| balance| baseline| before-edge| beforeEdge| below| bevel| bidi-override| bidiOverride| blink| block| block-axis| block-end| block-start| blockAxis| blockEnd| blockStart| bold| bolder| border| border-box| borderBox| both| bottom| bottom-outside| bottomOutside| break-all| break-word| breakAll| breakWord| bullets| butt| capitalize| caption| cell| center| central| char| circle| clip| clone| close-quote| closeQuote| closest-corner| closest-side| closestCorner| closestSide| col-resize| collapse| color| color-burn| color-dodge| colorBurn| colorDodge| colResize| column| column-reverse| columnReverse| common-ligatures| commonLigatures| compact| condensed| contain| content| content-box| contentBox| contents| context-menu| contextMenu| contextual| copy| cover| crisp-edges| crispEdges| crosshair| cyclic| darken| dashed| decimal| default| dense| diagonal-fractions| diagonalFractions| difference| digits| disabled| disc| discretionary-ligatures| discretionaryLigatures| distribute| distribute-all-lines| distribute-letter| distribute-space| distributeAllLines| distributeLetter| distributeSpace| dot| dotted| double| double-circle| doubleCircle| downleft| downright| e-resize| each-line| eachLine| ease| ease-in| ease-in-out| ease-out| easeIn| easeInOut| easeOut| economy| ellipse| ellipsis| embed| end| eResize| evenodd| ew-resize| ewResize| exact| exclude| exclusion| expanded| extends| extra-condensed| extra-expanded| extraCondensed| extraExpanded| fallback| farthest-corner| farthest-side| farthestCorner| farthestSide| fill| fill-available| fill-box| fillAvailable| fillBox| filled| fit-content| fitContent| fixed| flat| flex| flex-end| flex-start| flexEnd| flexStart| flip| flow-root| flowRoot| forwards| free| from-image| fromImage| full-width| fullWidth| geometricPrecision| georgian| grab| grabbing| grayscale| grid| groove| hand| hanging| hard-light| hardLight| help| hidden| hide| historical-forms| historical-ligatures| historicalForms| historicalLigatures| horizontal| horizontal-tb| horizontalTb| hue| icon| ideograph-alpha| ideograph-numeric| ideograph-parenthesis| ideograph-space| ideographAlpha| ideographic| ideographNumeric| ideographParenthesis| ideographSpace| inactive| infinite| inherit| initial| inline| inline-axis| inline-block| inline-end| inline-flex| inline-grid| inline-list-item| inline-start| inline-table| inlineAxis| inlineBlock| inlineEnd| inlineFlex| inlineGrid| inlineListItem| inlineStart| inlineTable| inset| inside| inter-character| inter-ideograph| inter-word| interCharacter| interIdeograph| intersect| interWord| invert| isolate| isolate-override| isolateOverride| italic| jis04| jis78| jis83| jis90| justify| justify-all| justifyAll| kannada| keep-all| keepAll| landscape| large| larger| left| lighten| lighter| line| line-edge| line-through| linear| linearRGB| lineEdge| lineThrough| lining-nums| liningNums| list-item| listItem| local| loose| lowercase| lr| lr-tb| lrTb| ltr| luminance| luminosity| main-size| mainSize| mandatory| manipulation| manual| margin-box| marginBox| match-parent| match-source| matchParent| matchSource| mathematical| max-content| maxContent| medium| menu| message-box| messageBox| middle| min-content| minContent| miter| mixed| move| multiply| n-resize| narrower| ne-resize| nearest-neighbor| nearestNeighbor| neResize| nesw-resize| neswResize| newspaper| no-change| no-clip| no-close-quote| no-common-ligatures| no-contextual| no-discretionary-ligatures| no-drop| no-historical-ligatures| no-open-quote| no-repeat| noChange| noClip| noCloseQuote| noCommonLigatures| noContextual| noDiscretionaryLigatures| noDrop| noHistoricalLigatures| none| nonzero| noOpenQuote| noRepeat| normal| not-allowed| notAllowed| nowrap| nResize| ns-resize| nsResize| numbers| numeric| nw-resize| nwResize| nwse-resize| nwseResize| oblique| oldstyle-nums| oldstyleNums| open| open-quote| openQuote| optimizeLegibility| optimizeQuality| optimizeSpeed| optional| ordinal| outset| outside| over| overlay| overline| padding| padding-box| paddingBox| page| painted| pan-down| pan-left| pan-right| pan-up| pan-x| pan-y| panDown| panLeft| panRight| panUp| panX| panY| paused| petite-caps| petiteCaps| pixelated| plaintext| pointer| portrait| pre| pre-line| pre-wrap| preLine| preserve-3d| preserve3d| preWrap| progress| progressive| proportional-nums| proportional-width| proportionalNums| proportionalWidth| proximity| radial| recto| region| relative| remove| repeat| repeat-[xy]| repeat[xy]| reset-size| resetSize| reverse| revert| ridge| right| rl| rl-tb| rlTb| round| row| row-resize| row-reverse| row-severse| rowResize| rowReverse| rowSeverse| rtl| ruby| ruby-base| ruby-base-container| ruby-text| ruby-text-container| rubyBase| rubyBaseContainer| rubyText| rubyTextContainer| run-in| runIn| running| s-resize| saturation| scale-down| scaleDown| screen| scroll| scroll-position| scrollPosition| se-resize| semi-condensed| semi-expanded| semiCondensed| semiExpanded| separate| seResize| sesame| show| sideways| sideways-left| sideways-lr| sideways-right| sideways-rl| sidewaysLeft| sidewaysLr| sidewaysRight| sidewaysRl| simplified| slashed-zero| slashedZero| slice| small| small-caps| small-caption| smallCaps| smallCaption| smaller| smooth| soft-light| softLight| solid| space| space-around| space-between| space-evenly| spaceAround| spaceBetween| spaceEvenly| spell-out| spellOut| square| sResize| sRGB| stacked-fractions| stackedFractions| start| static| status-bar| statusBar| step-end| step-start| stepEnd| stepStart| sticky| stretch| strict| stroke| stroke-box| strokeBox| structze| style| sub| subgrid| subpixel-antialiased| subpixelAntialiased| subtract| super| sw-resize| swap| swResize| symbolic| table| table-caption| table-cell| table-column| table-column-group| table-footer-group| table-header-group| table-row| table-row-group| tableCaption| tableCell| tableColumn| tableColumnGroup| tableFooterGroup| tableHeaderGroup| tableRow| tableRowGroup| tabular-nums| tabularNums| tb| tb-rl| tbRl| text| text-after-edge| text-before-edge| text-bottom| text-top| textAfterEdge| textBeforeEdge| textBottom| textTop| thick| thin| titling-caps| titlingCaps| top| top-outside| topOutside| touch| traditional| transparent| triangle| ultra-condensed| ultra-expanded| ultraCondensed| ultraExpanded| under| underline| unicase| uniq| unset| upleft| uppercase| upright| use-glyph-orientation| use-script| useGlyphOrientation| useScript| verso| vertical| vertical-ideographic| vertical-lr| vertical-rl| vertical-text| verticalIdeographic| verticalLr| verticalRl| verticalText| view-box| viewBox| visible| visibleFill| visiblePainted| visibleStroke| w-resize| wait| wavy| weight| whitespace| wider| words| wrap| wrap-reverse| wrapReverse| wResize| x| x-large| x-small| xLarge| xSmall| xx-large| xx-small| xxLarge| xxSmall| y| zero| zoom-in| zoom-out| zoomIn| zoomOut )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( above|absolute|active|add|additive|after-edge|afterEdge|alias|all|all-petite-caps|all-scroll|all-small-caps|allPetiteCaps|allScroll|allSmallCaps|alpha|alphabetic|alternate|alternate-reverse|alternateReverse|always|antialiased|auto|auto-pos|autoPos|available|avoid|avoid-column|avoid-page|avoid-region|avoidColumn|avoidPage|avoidRegion|backwards|balance|baseline|before-edge|beforeEdge|below|bevel|bidi-override|bidiOverride|blink|block|block-axis|block-end|block-start|blockAxis|blockEnd|blockStart|bold|bolder|border|border-box|borderBox|both|bottom|bottom-outside|bottomOutside|break-all|break-word|breakAll|breakWord|bullets|butt|capitalize|caption|cell|center|central|char|circle|clip|clone|close-quote|closeQuote|closest-corner|closest-side|closestCorner|closestSide|col-resize|collapse|color|color-burn|color-dodge|colorBurn|colorDodge|colResize|column|column-reverse|columnReverse|common-ligatures|commonLigatures|compact|condensed|contain|content|content-box|contentBox|contents|context-menu|contextMenu|contextual|copy|cover|crisp-edges|crispEdges|crosshair|cyclic|darken|dashed|decimal|default|dense|diagonal-fractions|diagonalFractions|difference|digits|disabled|disc|discretionary-ligatures|discretionaryLigatures|distribute|distribute-all-lines|distribute-letter|distribute-space|distributeAllLines|distributeLetter|distributeSpace|dot|dotted|double|double-circle|doubleCircle|downleft|downright|e-resize|each-line|eachLine|ease|ease-in|ease-in-out|ease-out|easeIn|easeInOut|easeOut|economy|ellipse|ellipsis|embed|end|eResize|evenodd|ew-resize|ewResize|exact|exclude|exclusion|expanded|extends|extra-condensed|extra-expanded|extraCondensed|extraExpanded|fallback|farthest-corner|farthest-side|farthestCorner|farthestSide|fill|fill-available|fill-box|fillAvailable|fillBox|filled|fit-content|fitContent|fixed|flat|flex|flex-end|flex-start|flexEnd|flexStart|flip|flow-root|flowRoot|forwards|free|from-image|fromImage|full-width|fullWidth|geometricPrecision|georgian|grab|grabbing|grayscale|grid|groove|hand|hanging|hard-light|hardLight|help|hidden|hide|historical-forms|historical-ligatures|historicalForms|historicalLigatures|horizontal|horizontal-tb|horizontalTb|hue|icon|ideograph-alpha|ideograph-numeric|ideograph-parenthesis|ideograph-space|ideographAlpha|ideographic|ideographNumeric|ideographParenthesis|ideographSpace|inactive|infinite|inherit|initial|inline|inline-axis|inline-block|inline-end|inline-flex|inline-grid|inline-list-item|inline-start|inline-table|inlineAxis|inlineBlock|inlineEnd|inlineFlex|inlineGrid|inlineListItem|inlineStart|inlineTable|inset|inside|inter-character|inter-ideograph|inter-word|interCharacter|interIdeograph|intersect|interWord|invert|isolate|isolate-override|isolateOverride|italic|jis04|jis78|jis83|jis90|justify|justify-all|justifyAll|kannada|keep-all|keepAll|landscape|large|larger|left|lighten|lighter|line|line-edge|line-through|linear|linearRGB|lineEdge|lineThrough|lining-nums|liningNums|list-item|listItem|local|loose|lowercase|lr|lr-tb|lrTb|ltr|luminance|luminosity|main-size|mainSize|mandatory|manipulation|manual|margin-box|marginBox|match-parent|match-source|matchParent|matchSource|mathematical|max-content|maxContent|medium|menu|message-box|messageBox|middle|min-content|minContent|miter|mixed|move|multiply|n-resize|narrower|ne-resize|nearest-neighbor|nearestNeighbor|neResize|nesw-resize|neswResize|newspaper|no-change|no-clip|no-close-quote|no-common-ligatures|no-contextual|no-discretionary-ligatures|no-drop|no-historical-ligatures|no-open-quote|no-repeat|noChange|noClip|noCloseQuote|noCommonLigatures|noContextual|noDiscretionaryLigatures|noDrop|noHistoricalLigatures|none|nonzero|noOpenQuote|noRepeat|normal|not-allowed|notAllowed|nowrap|nResize|ns-resize|nsResize|numbers|numeric|nw-resize|nwResize|nwse-resize|nwseResize|oblique|oldstyle-nums|oldstyleNums|open|open-quote|openQuote|optimizeLegibility|optimizeQuality|optimizeSpeed|optional|ordinal|outset|outside|over|overlay|overline|padding|padding-box|paddingBox|page|painted|pan-down|pan-left|pan-right|pan-up|pan-x|pan-y|panDown|panLeft|panRight|panUp|panX|panY|paused|petite-caps|petiteCaps|pixelated|plaintext|pointer|portrait|pre|pre-line|pre-wrap|preLine|preserve-3d|preserve3d|preWrap|progress|progressive|proportional-nums|proportional-width|proportionalNums|proportionalWidth|proximity|radial|recto|region|relative|remove|repeat|repeat-[xy]| repeat[xy]| reset-size|resetSize|reverse|revert|ridge|right|rl|rl-tb|rlTb|round|row|row-resize|row-reverse|row-severse|rowResize|rowReverse|rowSeverse|rtl|ruby|ruby-base|ruby-base-container|ruby-text|ruby-text-container|rubyBase|rubyBaseContainer|rubyText|rubyTextContainer|run-in|runIn|running|s-resize|saturation|scale-down|scaleDown|screen|scroll|scroll-position|scrollPosition|se-resize|semi-condensed|semi-expanded|semiCondensed|semiExpanded|separate|seResize|sesame|show|sideways|sideways-left|sideways-lr|sideways-right|sideways-rl|sidewaysLeft|sidewaysLr|sidewaysRight|sidewaysRl|simplified|slashed-zero|slashedZero|slice|small|small-caps|small-caption|smallCaps|smallCaption|smaller|smooth|soft-light|softLight|solid|space|space-around|space-between|space-evenly|spaceAround|spaceBetween|spaceEvenly|spell-out|spellOut|square|sResize|sRGB|stacked-fractions|stackedFractions|start|static|status-bar|statusBar|step-end|step-start|stepEnd|stepStart|sticky|stretch|strict|stroke|stroke-box|strokeBox|structze|style|sub|subgrid|subpixel-antialiased|subpixelAntialiased|subtract|super|sw-resize|swap|swResize|symbolic|table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row|table-row-group|tableCaption|tableCell|tableColumn|tableColumnGroup|tableFooterGroup|tableHeaderGroup|tableRow|tableRowGroup|tabular-nums|tabularNums|tb|tb-rl|tbRl|text|text-after-edge|text-before-edge|text-bottom|text-top|textAfterEdge|textBeforeEdge|textBottom|textTop|thick|thin|titling-caps|titlingCaps|top|top-outside|topOutside|touch|traditional|transparent|triangle|ultra-condensed|ultra-expanded|ultraCondensed|ultraExpanded|under|underline|unicase|uniq|unset|upleft|uppercase|upright|use-glyph-orientation|use-script|useGlyphOrientation|useScript|verso|vertical|vertical-ideographic|vertical-lr|vertical-rl|vertical-text|verticalIdeographic|verticalLr|verticalRl|verticalText|view-box|viewBox|visible|visibleFill|visiblePainted|visibleStroke|w-resize|wait|wavy|weight|whitespace|wider|words|wrap|wrap-reverse|wrapReverse|wResize|x|x-large|x-small|xLarge|xSmall|xx-large|xx-small|xxLarge|xxSmall|y|zero|zoom-in|zoom-out|zoomIn|zoomOut )(?!\B|\p{Pd}+\b)
         name: support.constant.property-value.css.protea
-      - match: (?x)\s*\b( arabic-indic| arabicIndic| armenian| bengali| cambodian| circle| cjk-decimal| cjk-earthly-branch| cjk-heavenly-stem| cjk-ideographic| cjkDecimal| cjkEarthlyBranch| cjkHeavenlyStem| cjkIdeographic| decimal| decimal-leading-zero| decimalLeadingZero| devanagari| disc| disclosure-closed| disclosure-open| disclosureClosed| disclosureOpen| ethiopic-halehame-am| ethiopic-halehame-ti-e[rt]| ethiopic-numeric| ethiopicHalehameAm| ethiopicHalehameTiE[rt]| ethiopicNumeric| georgian| gujarati| gurmukhi| hangul| hangul-consonant| hangulConsonant| hebrew| hiragana| hiragana-iroha| hiraganaIroha| japanese-formal| japanese-informal| japaneseFormal| japaneseInformal| kannada| katakana| katakana-iroha| katakanaIroha| khmer| korean-hangul-formal| korean-hanja-formal| korean-hanja-informal| koreanHangulFormal| koreanHanjaFormal| koreanHanjaInformal| lao| lower-alpha| lower-armenian| lower-greek| lower-latin| lower-roman| lowerAlpha| lowerArmenian| lowerGreek| lowerLatin| lowerRoman| malayalam| mongolian| myanmar| oriya| persian| simp-chinese-formal| simp-chinese-informal| simpChineseFormal| simpChineseInformal| square| tamil| telugu| thai| tibetan| trad-chinese-formal| trad-chinese-informal| tradChineseFormal| tradChineseInformal| upper-alpha| upper-armenian| upper-latin| upper-roman| upperAlpha| upperArmenian| upperLatin| upperRoman| urdu )(?!\B|\p{Pd}+\b)
+      - match: (?x)\s*\b( arabic-indic|arabicIndic|armenian|bengali|cambodian|circle|cjk-decimal|cjk-earthly-branch|cjk-heavenly-stem|cjk-ideographic|cjkDecimal|cjkEarthlyBranch|cjkHeavenlyStem|cjkIdeographic|decimal|decimal-leading-zero|decimalLeadingZero|devanagari|disc|disclosure-closed|disclosure-open|disclosureClosed|disclosureOpen|ethiopic-halehame-am|ethiopic-halehame-ti-e[rt]| ethiopic-numeric|ethiopicHalehameAm|ethiopicHalehameTiE[rt]| ethiopicNumeric|georgian|gujarati|gurmukhi|hangul|hangul-consonant|hangulConsonant|hebrew|hiragana|hiragana-iroha|hiraganaIroha|japanese-formal|japanese-informal|japaneseFormal|japaneseInformal|kannada|katakana|katakana-iroha|katakanaIroha|khmer|korean-hangul-formal|korean-hanja-formal|korean-hanja-informal|koreanHangulFormal|koreanHanjaFormal|koreanHanjaInformal|lao|lower-alpha|lower-armenian|lower-greek|lower-latin|lower-roman|lowerAlpha|lowerArmenian|lowerGreek|lowerLatin|lowerRoman|malayalam|mongolian|myanmar|oriya|persian|simp-chinese-formal|simp-chinese-informal|simpChineseFormal|simpChineseInformal|square|tamil|telugu|thai|tibetan|trad-chinese-formal|trad-chinese-informal|tradChineseFormal|tradChineseInformal|upper-alpha|upper-armenian|upper-latin|upper-roman|upperAlpha|upperArmenian|upperLatin|upperRoman|urdu )(?!\B|\p{Pd}+\b)
         name: support.constant.property-value.list-style-type.css.protea
-      - match: (?x)\s*\b( arial| century| comic| courier| garamond| georgia| helvetica| impact| lucida| monospace| sans-serif| sansSerif| serif| symbol| system| system-ui| systemUi| tahoma| times| trebuchet| ui-monospace| ui-rounded| ui-sans-serif| ui-serif| uiMonospace| uiRounded| uiSansSerif| uiSerif| utopia| verdana| webdings )(?!\B|\p{Pd}+\b)
+      - match: (?x)\s*\b( arial|century|comic|courier|garamond|georgia|helvetica|impact|lucida|monospace|sans-serif|sansSerif|serif|symbol|system|system-ui|systemUi|tahoma|times|trebuchet|ui-monospace|ui-rounded|ui-sans-serif|ui-serif|uiMonospace|uiRounded|uiSansSerif|uiSerif|utopia|verdana|webdings )(?!\B|\p{Pd}+\b)
         name: support.constant.font-name.css.protea
 
   html-tag-names:
     patterns:
-      - match: '(?x)\b(?: all| print| screen| speech| aural| braille| embossed| handheld| projection| tty| tv )(?!\B|\p{Pd}+\b)'
+      - match: '(?x)\b( all|print|screen|speech|aural|braille|embossed|handheld|projection|tty|tv )(?!\B|\p{Pd}+\b)'
         name: support.constant.media.css.protea
-      - match: (?x)\b( a| abbr| acronym| address| altGlyph| altGlyphDef| altGlyphItem| animate| animateColor| animateMotion| animateTransform| annotation| annotationXml| applet| area| article| aside| audio| b| base| basefont| bdi| bdo| bgsound| big| blink| blockquote| body| br| button| canvas| caption| center| circle| cite| clipPath| code| col| colgroup| colorProfile| command| content| cursor| data| datalist| dd| defs| del| desc| details| dfn| dialog| dir| discard| div| dl| dt| element| ellipse| em| embed| feBlend| feColorMatrix| feComponentTransfer| feComposite| feConvolveMatrix| feDiffuseLighting| feDisplacementMap| feDistantLight| feDropShadow| feFlood| feFuncA| feFuncB| feFuncG| feFuncR| feGaussianBlur| feImage| feMerge| feMergeNode| feMorphology| feOffset| fePointLight| feSpecularLighting| feSpotLight| feTile| feTurbulence| fieldset| figcaption| figure| filter| font| fontFace| fontFaceFormat| fontFaceName| fontFaceSrc| fontFaceUri| footer| foreignObject| form| frame| frameset| g| glyph| glyphRef| hatch| hatchpath| hd| head| header| hgroup| hkern| hr| html| h[1-6]| i| iframe| image| img| input| ins| isindex| kbd| keygen| label| legend| li| line| linearGradient| link| listing| maction| main| maligngroup| malignmark| map| mark| marker| marquee| mask| math| menclose| menu| menuitem| merror| mesh| meshgradient| meshpatch| meshrow| meta| metadata| meter| mfenced| mfrac| mglyph| mi| missingGlyph| mlabeledtr| mlongdiv| mmultiscripts| mn| mo| mover| mpadded| mpath| mphantom| mroot| mrow| ms| mscarries| mscarry| msgroup| msline| mspace| msqrt| msrow| mstack| mstyle| msub| msubsup| msup| mtable| mtd| mtext| mtr| multicol| munder| munderover| nav| nextid| nobr| noembed| noframes| noscript| object| ol| optgroup| option| output| p| param| path| pattern| picture| plaintext| polygon| polyline| pre| progress| q| radialGradient| rb| rect| rp| rt| rtc| ruby| s| samp| script| section| select| semantics| set| shadow| slot| small| solidcolor| source| spacer| span| stop| strike| strong| style| sub| summary| sup| svg| switch| symbol| table| tbody| td| template| text| textarea| textPath| tfoot| th| thead| time| title| tr| track| tref| tspan| tt| u| ul| use| var| video| view| vkern| wbr| xmp )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( a|abbr|acronym|address|altGlyph|altGlyphDef|altGlyphItem|animate|animateColor|animateMotion|animateTransform|annotation|annotationXml|applet|area|article|aside|audio|b|base|basefont|bdi|bdo|bgsound|big|blink|blockquote|body|br|button|canvas|caption|center|circle|cite|clipPath|code|col|colgroup|colorProfile|command|content|cursor|data|datalist|dd|defs|del|desc|details|dfn|dialog|dir|discard|div|dl|dt|element|ellipse|em|embed|feBlend|feColorMatrix|feComponentTransfer|feComposite|feConvolveMatrix|feDiffuseLighting|feDisplacementMap|feDistantLight|feDropShadow|feFlood|feFuncA|feFuncB|feFuncG|feFuncR|feGaussianBlur|feImage|feMerge|feMergeNode|feMorphology|feOffset|fePointLight|feSpecularLighting|feSpotLight|feTile|feTurbulence|fieldset|figcaption|figure|filter|font|fontFace|fontFaceFormat|fontFaceName|fontFaceSrc|fontFaceUri|footer|foreignObject|form|frame|frameset|g|glyph|glyphRef|hatch|hatchpath|hd|head|header|hgroup|hkern|hr|html|h[1-6]| i|iframe|image|img|input|ins|isindex|kbd|keygen|label|legend|li|line|linearGradient|link|listing|maction|main|maligngroup|malignmark|map|mark|marker|marquee|mask|math|menclose|menu|menuitem|merror|mesh|meshgradient|meshpatch|meshrow|meta|metadata|meter|mfenced|mfrac|mglyph|mi|missingGlyph|mlabeledtr|mlongdiv|mmultiscripts|mn|mo|mover|mpadded|mpath|mphantom|mroot|mrow|ms|mscarries|mscarry|msgroup|msline|mspace|msqrt|msrow|mstack|mstyle|msub|msubsup|msup|mtable|mtd|mtext|mtr|multicol|munder|munderover|nav|nextid|nobr|noembed|noframes|noscript|object|ol|optgroup|option|output|p|param|path|pattern|picture|plaintext|polygon|polyline|pre|progress|q|radialGradient|rb|rect|rp|rt|rtc|ruby|s|samp|script|section|select|semantics|set|shadow|slot|small|solidcolor|source|spacer|span|stop|strike|strong|style|sub|summary|sup|svg|switch|symbol|table|tbody|td|template|text|textarea|textPath|tfoot|th|thead|time|title|tr|track|tref|tspan|tt|u|ul|use|var|video|view|vkern|wbr|xmp )(?!\B|\p{Pd}+\b)
         name: entity.name.tag.css.protea
 
   entities:
