@@ -172,7 +172,13 @@ Note that this rule does not apply to keywords, which are all written in all-low
 
 ### Keywords
 
-The following names are reserved words instead of being members of the syntactic class id of lexical identifiers.
+The following names are reserved words instead of being members of the syntactic class id of lexical identifiers. These keywords are divided into five groups:
+
+- Group 1: operator keywords
+- Group 2: declaration keywords
+- Group 3: control flow keywords
+- Group 4: control transfer keywords
+- Group 5: test-driven keywords
 
 ```
 in      of      as     is     new     to
@@ -223,6 +229,17 @@ inf     left    right   bin     uni     post
 ```
 
 Many of these modifiers are for future use and are not implemented yet.
+
+Keywords are interpreted as (part of) identifiers only if they are beside the following tokens:
+
+- an accessor
+- a map key
+- beside dashes of an identifier
+- a string, regular expression or symbol literal, or the suffix of a numeric literal
+- the flags of a regular expression on either side of the literal
+- an XML tag or its attributes
+- a style property name
+- a non-positional, spread, optional or required parameter in a function definition
 
 ### Terminators
 
@@ -289,7 +306,7 @@ $typeSuffix = `$identifier`
 
 An integer literal is a sequence of digits. An optional prefix sets a non-decimal base: `0b` for binary, `0o` for octal, `0x` for hexadecimal. In hexadecimal literals, letters `a` through `f` and `A` through `F` represent values 10 through 15.
 
-For readability, one or more underscore characters `_` may appear after a base prefix or between successive digits; such underscores do not change the literal's value.
+For readability, one or more underscore characters `_` may appear after a base prefix or between successive digits; such underscores do not change the literal value. One or more leading zeroes may also appear at the beginning of said literal or after the prefix of multi-base literals.
 
 ```dart
 $intLit = `($decIntLit | $hexIntLit | $binIntLit | $octIntLit) $typeSuffix?`
@@ -308,7 +325,7 @@ $typeSuffix = `$identifier`
 0o600
 0xBadFace
 0xDead_Beef
-0x67_7a_2f_cc_40_c6
+0x67_7A_2F_CC_40_C6
 170141183460469231731687303715884105727
 170_141183_460469_231731_687303_715884_105727
 
@@ -318,11 +335,9 @@ _42         // an identifier, not an integer literal
 
 #### Floating points
 
-A decimal floating literal consists of an integer part, a decimal point, a fractional and exponent part, all of which are optional. Either the integer or fractional part of the floating-point literal can be omitted, the exponent scales the mantissa (integer and fractional part) by 10<sup>exp</sup>.
+A decimal floating literal consists of an integer part, a decimal point, a fractional and exponent part, all of which are optional. Either the integer or fractional part of the floating-point literal can be omitted. The exponent scales the mantissa (integer and fractional part) by powers of 10.
 
-A binary, octal or hexadecimal floating literal consists of a mantissa, an optional exponent, and an optional sign. The exponent scales the mantissa by 2<sup>exp</sup>.
-
-For readability, an underscore character `_` may appear after a base prefix or between successive digits; such underscores do not change the literal value.
+A binary, octal or hexadecimal floating literal consists of a mantissa, an optional exponent, and an optional sign. The exponent scales the mantissa by powers of 2.
 
 ```dart
 $exponent = `'e' [+-]? \d [\d_]*`
@@ -368,7 +383,7 @@ $hexFloatLit = `'0x' (?i\h [\h_]*) ('.' (?i\h [\h_]*)) $binExponent?`
 
 ### Strings
 
-A string literal consists of a character sequence enclosed in single or double quotes. The underlying implementation denotes how the string should be encoded, usually UTF-16. There are two forms - verbatim and interpreted string literals. The verbatim form is a sequence of characters enclosed in single quotes, and the interpreted form is a sequence of characters enclosed in double quotes, with the escape sequences enclosed in single quote ihsi :
+A string literal consists of a character sequence enclosed in single or double quotes. The underlying implementation denotes how the string should be encoded, usually UTF-16. There are two forms - verbatim (raw) and interpreted (escaped) string literals. The verbatim form is enclosed in single quotes while the interpreted form is enclosed in double.
 
 ```dart
 $stringLit = `(?/
@@ -393,9 +408,17 @@ $rawStringLit = `
 $rawEscape = `"$$" | "##" | "%%"`
 ```
 
+String literals can also be delimited by at least three single or double quotes, provided they end with _at least_ that many quotes of the same type. The rules for single- and double-quoted strings also apply.
+
+Some transformations are applied to string literals of this type:
+
+- all beginning and ending newlines and whitespace are discarded
+- newlines are normalized to `\n` and carriage returns discarded
+- all beginning indentation is based on the column of the opening quote, discarding whitespace as needed.
+
 ### Escapes
 
-Escape sequences are used to represent characters in a string without triggering a syntax error. An escape character on its own does not have meaning, so all escape sequences are of two or more characters, which all begin with a backslash. The first character of an escape sequence is the escape character, and the second character is the character to be escaped.
+Escape sequences are used to represent characters that would otherwise have a syntax error. Like a lot of languages, all escapes begin with a backslash. The first character of an escape sequence is the escape character, and the second character is the character to be escaped.
 
 Certain single-letter escapes represent special values:
 
@@ -412,11 +435,15 @@ Certain single-letter escapes represent special values:
 \v   U+000B vertical tab
 ```
 
-Several escapes `\b`, `\d`, `\o`, `\x` and `\u` allow you to encode Unicode code points in a string literal. The `\b` escape encodes a backspace character, `\d` a digit, `\o` an octal digit, `\x` a hexadecimal digit, and `\u` a Unicode code point. `\x` and `\u` differ in how they are interpreted - `\x` interprets the escape as UTF-8, and `\u` interprets it as UTF-16. In each case the value of the literal is the value represented by the digits in the corresponding base.
+A backslash-newline joins the next line to the current line, skipping any indentation.
 
-The same escapes when followed by curly brackets are used to encode multiple code points without reusing and repeating the same syntax again: `\u65e5\u672c\u8a9e` could be written as `\u{65e5 672c 8a9e}`. You can use commas, semicolons or spaces to separate the code points. The code points are encoded in the same order as they appear in the string, and are checked for validity.
+Several escapes `\b`, `\d`, `\o`, `\u` and `\x`, allow you to encode Unicode code points in a double-quoted string. The prefixes are the same as in integer literals except with the beginning `0` is replaced with a backslash. In all these cases, the value of the literal is the value represented by the digits in the corresponding base.
 
-You can also use the
+There is a difference between `\x` and `\u` - they are interpreted differently: `\x` encodes raw UTF-8 characters, while `\u` encodes UTF-16 code points. Any sequence of characters that is not a valid UTF-8/16 sequence gives a compile time error.
+
+The same escape characters when followed immediately by curly brackets are used to encode code points or byte sequences without reusing and repeating the same syntax again. You can use commas, semicolons or spaces to separate the numbers, and each running sequence is checked for validity.
+
+The escape `\N` is used to represent a Unicode character sequence as named (namespaced) characters, for instance `\NA` would equal capital A, and `\NAlpha` would equal the Greek capital letter `Α` (alpha). The escape `\N` can be followed by script and/or language as the prefix, for instance `\Nlatin`, then the letter name prefixed with colons, and its variations as the suffix written with a dot.
 
 All other sequences starting with a backslash are still legal except all other ASCII letters.
 
@@ -433,24 +460,27 @@ val binary = "\b10101011110000010010"
 $lineJoiner = `\\ \s+ (?=\n)`
 $escAny = `'\' [[^\pC] -- [a-z A-Z -- a b e f n p r s t v N]]`
 $escOct = `'\o' (\o* | '{' \o* &* [\pZ;,] '}')`
-$escHex = `'\' [ux]? (\h* | '{' \h* &* [\pZ;,] '}')`
+$escUtf8 = `'\' [ux]? (\h* | '{' \h* &* [\pZ;,] '}')`
+$escUtf16 = `'\' [ux]? (\h* | '{' \h* &* [\pZ;,] '}')`
 $escBin = `'\b' ([01]* | '{' [01]* &* [\pZ;,] '}')`
 $escDec = `'\' d? (\d* | '{' \d* &* [\pZ;,] '}')`
 $escNamed = `'\N' $identifier &* [.:] ('{' $identifier '}')*`
 
 $escape = `(
-  $escHex | $escOct | $escBin | $escDec
+  $escUtf8 | $escUtf16 | $escOct | $escBin | $escDec
 | $escNamed | $escAny | $lineJoiner
 )`
 ```
 
 ### Interpolation
 
-All Protea string literals allow for interpolation. All Protea string literals (except backslash strings) allow for interpolation. Here, placeholders can be embedded in the string, so when the string is evaluated, the placeholders are replaced with the values of the expressions. The expressions are evaluated in the same lexical scope as the string literal. String interpolation allows for easier and more intuitive string formatting and content specification as compared to string concatenation.
+An interpolated string consists of an identifier starting with a letter immediately followed by a string literal. There may be no whitespace characters or comments between the leading identifier and the opening quote `"` of the string. The string literal in an interpolated string can be standard (single quote) or multi-line (triple quote).
 
-The delimiters are `${` and `}` and the expression is surrounded by curly braces. By default the interpolated values will be evaluated and concatenated together along with the glue strings, but you can call a `macro` on a string to perform custom processing and/or return something other than strings.
+Inside an interpolated string none of the usual escape characters are interpreted no matter whether the string literal is normal (enclosed in single quotes) or multi-line (enclosed in triple quotes). Note that the sequence `\"` does not close a normal string literal (enclosed in single quotes).
 
-Protea allows for a subset of **non-spacing expressions** to be interpolated without the need for writing curly braces. The following values are supported:
+There are three forms of dollar sign escape. The most general form encloses an expression in `${` and `}`, i.e. `${expr}`. The expression enclosed in the braces that follow the leading `$` is a block statement. Hence, it can contain multiple statements, and newlines are significant. Escaping rules apply, so either `$` or `{` can be escaped in a backslash, and `$` be doubled.
+
+The simpler form consists of a `$`-sign without having to write curly braces around the expression. A subset of these expressions are supported:
 
 - a single identifier: `name`
 - a qualified name: `x.y.z` or `x::y::z`
@@ -460,22 +490,34 @@ Protea allows for a subset of **non-spacing expressions** to be interpolated wit
 - a type assertion: `name{int}`
 - and any combination of the like
 
+Protea allows for a subset of **non-spacing expressions** to be interpolated without the need for writing curly braces. The following values are supported:
+
 ```dart
 val apples = 4
 printf "I have $apples apples"
 
-$interActivation = `(?s ^ | $escAny | [,;'"`(){}\[\]] >?)`
-$interpolation = `(?<= $interActivation) '$' ($placeholderExpression | $placeholder)`
+$interpolation = `'$' ($placeholderExpression | $placeholder)`
 $placeholderExpression = `'{' $expression &* [,;] '}'`
-$placeholder = `$identifier $innerMembers`
-$innerMembers = `$separator $identifier | $separator? $bracket`
+$placeholder = `$identifier $innerMember*`
+$innerMember = `
+  $separator $identifier | $separator? $placeholderBrack`
 $separator = `(?s ('.' | '::' | '?.' | '?:' | '!.' | '!:') '='?)`
-$bracket = `
+$placeholderBrack = `
   '[' $expression &* [,;] ']'
 | '{' $expression &* [,;] '}'
 | '(' $expression &* [,;] ')'
 | '<' $typeExpression '>'
 `
+```
+
+The expanded expression is type checked as with all other expressions. The type of the expression is the type of the expression in the placeholder, and can be explicitly specified using either postfix curly or angle brackets. If the types are compatible, the expression is evaluated and the result is converted to the type of the placeholder. If the types are not compatible, a type error is raised.
+
+One could write an extension
+
+```dart
+macro template(keys, params) {
+  join $ weave keys params
+}
 ```
 
 ### Formatting
@@ -492,3 +534,34 @@ $formatSwitch = `$formatSwitch (":" ($placeholder | $bracket))?`
 "Percentage correct answers: \
   ${correct / total}%dp:2|unit:('%')"
 ```
+
+### Placeholders
+
+Placeholders are used to create template strings that can be called with arguments to produce a string as an output. The semantics of a placeholder is the same as function arguments, which are normally defined in between `#{` and `}`. The placeholder is replaced by the value of the expression in the braces.
+
+You can create template strings by using the `#` character to mark placeholders in a string. The arguments can be named, as in `#name`, or positional, as in `#0` or `#-1` (negative indices count from the last).
+
+```dart
+val greeting = "Hello #0!"
+greeting "World" // => "Hello World!"
+
+$templateArgument = `
+  $identifier | $number | $string | $expression
+| $identifier &* [,;]
+`
+
+$interpolation = `'$' ($placeholderExpression | $placeholder)`
+$placeholderExpression = `'{' $expression &* [,;] '}'`
+$placeholder = `$identifier $innerMember*`
+$innerMember = `
+  $separator $identifier | $separator? $placeholderBrack`
+$separator = `(?s ('.' | '::' | '?.' | '?:' | '!.' | '!:') '='?)`
+$placeholderBrack = `
+  '[' $expression &* [,;] ']'
+| '{' $expression &* [,;] '}'
+| '(' $expression &* [,;] ')'
+| '<' $typeExpression '>'
+`
+```
+
+You can also spread arguments into the string by using the `*` operator, and mark them as optional by using the `?` operator.
