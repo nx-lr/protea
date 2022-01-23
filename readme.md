@@ -1,6 +1,6 @@
 # Protea
 
-> A new language for building cross-platform apps and libraries.
+Protea is a strongly-typed language still in the making. It is intended for cross-platform client and server development with a focus on simplicity and performance. It was born out of the overall frustration of the JavaScript language and ecosystem, so to (hopefully) return to the original intent of the language.
 
 ```dart
 elem TodoItem {
@@ -34,11 +34,9 @@ elem TodoItem {
 
 ## Introduction
 
-Protea is a strongly-typed language still in the making. It is intended for cross-platform client and server development with a focus on simplicity and performance. It unifies functional, object-oriented, concurrent, and event-driven programming paradigms in a single language. It comes with a lightning fast compiler toolchain that scales to any codebase size.
+Protea is a strongly-typed functional, imperative, concurrent and reactive programming language designed for building cross-platform client and server applications, with a clean and elegant syntax. It comes with a lightning fast compiler that outputs clean and readable JavaScript, while still keeping the familiar JS ecosystem at your fingertips.
 
-Its syntax builds on top of Flow and contains influences from Rust, Scala, Kotlin, OCaml and Go. Also, you can use Protea as a glue language to connect to other languages through the WebAssembly API, while giving its performance benefits.
-
-Protea is designed to interoperate seamlessly with existing JavaScript and TypeScript projects. Protea can call JavaScript methods, create JavaScript objects, inherit from JavaScript classes and implement TypeScript interfaces. None of these would require glue code.
+Protea draws inspiration from many excellent languages, including Rust, Scala, Kotlin, Go, Haskell and many others, while simultaneously keeping things you know and love from the JavaScript community. It tries to achieve this through a combination of a strong static type system with type inference, an extensive collection of compile-time checks, and by avoiding many of the mistakes of languages past. It comes with a fast and easy to use API for building components, and a simple, declarative syntax for defining the structure of your application.
 
 <small>
 
@@ -546,21 +544,14 @@ val greeting = "Hello #0!"
 greeting "World" // => "Hello World!"
 
 $templateArgument = `
-  $identifier | $number | $string | $expression
-| $identifier &* [,;]
+  $identifier
 `
-
-$interpolation = `'$' ($placeholderExpression | $placeholder)`
-$placeholderExpression = `'{' $expression &* [,;] '}'`
-$placeholder = `$identifier $innerMember*`
-$innerMember = `
-  $separator $identifier | $separator? $placeholderBrack`
-$separator = `(?s ('.' | '::' | '?.' | '?:' | '!.' | '!:') '='?)`
-$placeholderBrack = `
-  '[' $expression &* [,;] ']'
-| '{' $expression &* [,;] '}'
-| '(' $expression &* [,;] ')'
-| '<' $typeExpression '>'
+$positionalArgument = `
+  \d+
+  ('..' | '..<' | '>..' | '>.<')
+  \d+
+  '..'
+  \d+
 `
 ```
 
