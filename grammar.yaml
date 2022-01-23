@@ -615,16 +615,14 @@ repository:
           )
             (?!\h)
         name: constant.character.escape.trailing.protea
-      - comment: Leading byte pair U+C2-U+F4
+      - comment: Leading byte pair U+C0-U+FF
         match: |
           (?x)
             \\x # prefix
           (?i:
             0* # leading zeroes
-            (?: # C2 to F4
-                c[2-9a-f]
-              | [de]\h
-              | f[0-4]
+            (?: # C0 to FF
+                [c-f]\h
             )
           )
             (?!\h)
@@ -665,16 +663,14 @@ repository:
               )
                 (?!\h)
             name: constant.character.escape.trailing.protea
-          - comment: Leading byte pair U+C2-U+F4
+          - comment: Leading byte pair U+C0-U+FF
             match: |
               (?x)
                 \b # prefix
               (?i:
                 0* # leading zeroes
-                (?: # C2 to F4
-                    c[2-9a-f]
-                  | [de]\h
-                  | f[0-4]
+                (?: # C0 to FF
+                    [c-f]\h
                 )
               )
                 (?!\h)
@@ -700,7 +696,7 @@ repository:
             \\u # prefix
           (?i:
             0* # leading zeroes
-            d[cdef] \h{2}
+            d[c-f] \h{2}
           )
             (?!\h)
         name: constant.character.escape.surrogate.low.protea
@@ -714,6 +710,20 @@ repository:
           )
             (?!\h)
         name: constant.character.escape.surrogate.high.protea
+      - comment: Hexadecimal escape sequences
+        match: |
+          (?x)
+            \\u # prefix
+          (?i:
+            0* # leading zeroes
+            (?: # 0 to 10FFFF
+                10\h{4}
+              | [1-9a-f]\h{1,4}
+              | \h
+            )
+          )
+            (?!\h)
+        name: constant.character.escape.unicode.protea
       - comment: Unicode escape sequences
         match: |
           (?x)
@@ -746,7 +756,7 @@ repository:
                 \b
               (?i:
                 0* # leading zeroes
-                d [cdef] \h{2}
+                d [c-f] \h{2}
               )
                 (?!\h)
             name: constant.character.escape.surrogate.low.protea
@@ -771,7 +781,7 @@ repository:
                 )
               )
                 (?!\h)
-            name: constant.character.escape.hexadecimal.protea
+            name: constant.character.escape.unicode.protea
           - include: '#illegal'
 
   # Embedded expressions
@@ -852,7 +862,10 @@ repository:
           (?x)
           (\#) # sigil
           (
-            \?? \*? # optional and spread
+            (?:
+              (?:&|%|\$|//?|\*\*?)? # sigil
+              [!?]? # required or optional
+            )?
             [+-]? \d+ # start of range
             (?:
               (?:[>.]\.[.<]|\.\.=?|=\.=) # range operator
@@ -876,9 +889,12 @@ repository:
           (?x)
           (\#) # sigil
           (
-            (?:[*&%]\??|//?\??|\?)
+            (?:
+              (?:&|%|\$|//?|\*\*?)? # sigil
+              [!?]? # required or optional
+            )
             \b
-            [\p{Pc}\p{L}][\w\p{Pd}]*
+             [\p{Pc}\p{L}][\w\p{Pd}]*
             \b
             |
             # ignore all keywords
@@ -2937,7 +2953,7 @@ repository:
             | (?:^ | \s) \b as \b \s # as keyword
           )
             \s*
-            \* # spread
+            \*\*? # spread
             [?!]? # optional or required
             \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
           (?=
@@ -3064,7 +3080,7 @@ repository:
     patterns:
       - match: (?i)\s*[?!][\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.optional.protea
-      - match: (?i)\s*\*[?!]?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: (?i)\s*\*\*?[?!]?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.spread.protea
       - match: (?i)\s*//?[?!]?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: variable.parameter.name.protea
