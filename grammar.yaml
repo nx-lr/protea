@@ -104,7 +104,8 @@ define:
     end: \s*(\))
     captures:
       1: {name: punctuation.definition.parameters.protea}
-    patterns: [include: '#param-bracket-content']
+    patterns:
+      - include: '#param-bracket-content'
 
   html-tag-names: &html-tag-names
     - match: '\.|:|::'
@@ -356,7 +357,8 @@ repository:
     name: string.unquoted.protea
     captures:
       1: {name: punctuation.definition.string.protea}
-    patterns: [include: '#string-escapes']
+    patterns:
+      - include: '#string-escapes'
 
   strings:
     patterns:
@@ -366,7 +368,8 @@ repository:
         end: \s*((\1)(?!'+))
         captures:
           1: {name: punctuation.definition.string.protea}
-        patterns: [include: '#embedded-verbatim']
+        patterns:
+          - include: '#embedded-verbatim'
       - comment: single quoted string
         begin: (?<!'+)\s*(')\s*
         contentName: string.quoted.single.protea
@@ -383,14 +386,16 @@ repository:
         end: \s*((\1)(?!"+))
         captures:
           1: {name: punctuation.definition.string.protea}
-        patterns: [include: '#string-content']
+        patterns:
+          - include: '#string-content'
       - comment: double quoted string
         begin: (?<!"+)\s*(")\s*
         contentName: string.quoted.double.protea
         end: \s*((\1)(?!"+))
         captures:
           1: {name: punctuation.definition.string.protea}
-        patterns: [include: '#string-content']
+        patterns:
+          - include: '#string-content'
 
   string-content:
     patterns:
@@ -970,7 +975,8 @@ repository:
     end: (?=)|$
     captures:
       1: {name: punctuation.definition.directive.protea}
-    patterns: [include: '#format-syntax']
+    patterns:
+      - include: '#format-syntax'
 
   format-syntax:
     comment: Format specifier language, inspired by MS-DOS, Bash and Python's f-strings.
@@ -1215,7 +1221,8 @@ repository:
             beginCaptures:
               1: {name: punctuation.separator.key-value.protea}
             end: (?=[,;}]|)|$
-            patterns: [include: '#regexp-patterns']
+            patterns:
+              - include: '#regexp-patterns'
           - include: '#fuzzy-expression'
       - include: '#regexp-groups'
       - include: '#regexp-character-set'
@@ -1247,28 +1254,32 @@ repository:
         name: meta.group.look-ahead.protea
         captures:
           1: {name: punctuation.definition.group.look-ahead.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
       - comment: Lookbehind assertion
         begin: (\(\?<=)
         end: \s*(\))
         name: meta.group.look-behind.protea
         captures:
           1: {name: punctuation.definition.group.look-behind.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
       - comment: Negative lookahead assertion
         begin: (\(\?!)
         end: \s*(\))
         name: meta.group.negative-look-ahead.protea
         captures:
           1: {name: punctuation.definition.group.negative-look-ahead.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
       - comment: Negative lookbehind assertion
         begin: (\(\?<!)
         end: \s*(\))
         name: meta.group.negative-look-behind.protea
         captures:
           1: {name: punctuation.definition.group.negative-look-behind.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
       - comment: Match directive Oniguruma supports only 20 levels of recursion
         begin: (?x)(\(\?)(?=%)
         captures:
@@ -1284,7 +1295,8 @@ repository:
         name: meta.group.longest.protea
         captures:
           1: {name: punctuation.definition.group.longest.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
       - comment: Flag modifier group
         begin: (\(\?\^?(?:([+-]?\d+?)|((?:[+-]\p{Lu}+)+|\p{Lu}+(?:[+-]\p{Lu}+)*)|((?:[+-]\p{Ll}+)+|\p{Ll}+(?:[+-]\p{Ll}+)*)))\s*(:)?
         end: \s*(\))
@@ -1296,7 +1308,8 @@ repository:
           3: {name: keyword.control.recursion.protea}
           4: {name: keyword.other.flag.protea}
           5: {name: punctuation.separator.colon.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
       - comment: Callouts
         begin: (\(\?)(?={)
         end: \s*(\))
@@ -1322,28 +1335,32 @@ repository:
         name: meta.group.atomic.protea
         captures:
           1: {name: punctuation.definition.group.atomic.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
       - comment: Non-capturing groups
         begin: (\(\?:)
         end: \s*(\))
         name: meta.group.non-capturing.protea
         captures:
           1: {name: punctuation.definition.group.non-capturing.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
       - comment: Branch groups
         begin: (\(\?)(?=[(|])
         end: \s*(\))
         name: meta.group.branch.protea
         captures:
           1: {name: punctuation.definition.group.branch.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
       - comment: Atomic groups
         begin: (\(\?~)
         end: \s*(\))
         name: meta.group.absent.protea
         captures:
           1: {name: punctuation.definition.group.absent.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
       - comment: Back-reference groups
         begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}][\w\p{Pd}]*)))(:)?
         end: \s*\)
@@ -1354,7 +1371,8 @@ repository:
           2: {name: constant.numeric.index.protea}
           3: {patterns: [include: '#variables']}
           4: {name: punctuation.separator.colon.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
       - comment: Named groups (angle-brackets)
         begin: \(\?(?=<(?![!=]))
         end: \s*(\))
@@ -1389,7 +1407,8 @@ repository:
         name: meta.group.protea
         captures:
           1: {name: punctuation.definition.group.protea}
-        patterns: [include: '#regexp-patterns']
+        patterns:
+          - include: '#regexp-patterns'
 
   regexp-character-class:
     patterns:
@@ -1516,7 +1535,8 @@ repository:
         name: constant.other.character-set.posix.protea
         captures:
           1: {name: punctuation.definition.character-class.posix.protea}
-        patterns: [include: '#attribute-selectors']
+        patterns:
+          - include: '#attribute-selectors'
       - begin: (\[\^)
         end: \s*(\])
         name: constant.other.character-set.negated.protea
@@ -1549,17 +1569,18 @@ repository:
       - include: '#string-escapes'
       - match: '[:!=</>.^$%?*+|&~]?='
         name: keyword.operator.pattern.protea
-      - match: \&&|\|\||\^\^|!
+      - match: \&\&|\|\||\^\^|\!
         name: keyword.operator.logical.protea
-      - match: \b(i[ns])\b
+      - match: \b(in|is)\b
         name: keyword.operator.expression.$1.protea
       - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b([:!=</>.^$%?*+|&~]?=)
         beginCaptures:
           1: {name: entity.other.attribute-name.key.protea}
           2: {name: keyword.operator.pattern.protea}
-        end: (?=&&|\|\||\^\^|[\s,:;'"`(){}\[\]])
+        end: (?=\&\&|\|\||\^\^|[\s,:;'"`(){}\[\]])
         name: string.unquoted.attribute-name.protea
-        patterns: [include: '#html-properties']
+        patterns:
+          - include: '#html-properties'
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         captures:
@@ -1590,7 +1611,8 @@ repository:
       )
       (?=<[\p{Pc}\p{L}]|<\s+>)
     end: (?=)|$
-    patterns: [include: '#tag-component-name']
+    patterns:
+      - include: '#tag-component-name'
 
   tag-component-name:
     patterns:
@@ -1674,7 +1696,8 @@ repository:
           1: {name: punctuation.separator.key-value.protea}
         end: (?=)|$
         name: string.unquoted.protea
-        patterns: [include: '#html-properties']
+        patterns:
+          - include: '#html-properties'
       - include: '#strings'
       - include: '#comments'
 
@@ -1683,7 +1706,8 @@ repository:
     captures:
       1:
         name: entity.other.attribute-name.${1:/camelcase}.protea
-        patterns: [include: '#css-property-names']
+        patterns:
+          - include: '#css-property-names'
     name: string.unquoted.protea
 
   spread-attribute:
@@ -1855,7 +1879,8 @@ repository:
       7: {name: punctuation.definition.constant.markdown}
     match: (\!\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])[ ]?(\[)(.*?)(\])
     name: meta.image.reference.markdown
-    patterns: [include: '#string-content']
+    patterns:
+      - include: '#string-content'
 
   italic:
     begin: |
@@ -1926,7 +1951,8 @@ repository:
       4: {name: punctuation.definition.link.markdown}
     match: (<)((?:mailto:)?[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)(>)
     name: meta.link.email.lt-gt.markdown
-    patterns: [include: '#string-content']
+    patterns:
+      - include: '#string-content'
 
   link-inet:
     captures:
@@ -1935,7 +1961,8 @@ repository:
       3: {name: punctuation.definition.link.markdown}
     match: (<)((?:https?|ftp)://.*?)(>)
     name: meta.link.inet.markdown
-    patterns: [include: '#string-content']
+    patterns:
+      - include: '#string-content'
 
   link-inline:
     captures:
@@ -1971,7 +1998,8 @@ repository:
         \s* # Optional whitespace
       (\))
     name: meta.link.inline.markdown
-    patterns: [include: '#string-content']
+    patterns:
+      - include: '#string-content'
 
   link-ref:
     captures:
@@ -1983,7 +2011,8 @@ repository:
       7: {name: punctuation.definition.constant.end.markdown}
     match: (\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])(\[)([^\]]*+)(\])
     name: meta.link.reference.markdown
-    patterns: [include: '#string-content']
+    patterns:
+      - include: '#string-content'
 
   link-ref-literal:
     captures:
@@ -1994,7 +2023,8 @@ repository:
       6: {name: punctuation.definition.constant.end.markdown}
     match: (\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])[ ]?(\[)(\])
     name: meta.link.reference.literal.markdown
-    patterns: [include: '#string-content']
+    patterns:
+      - include: '#string-content'
 
   link-ref-shortcut:
     captures:
@@ -2003,7 +2033,8 @@ repository:
       3: {name: punctuation.definition.string.end.markdown}
     match: (\[)(\S+?)(\])
     name: meta.link.reference.markdown
-    patterns: [include: '#string-content']
+    patterns:
+      - include: '#string-content'
 
   raw:
     captures:
@@ -2012,7 +2043,8 @@ repository:
       3: {name: punctuation.definition.raw.markdown}
     match: (`+)([^`]|(?!(?<!`)\1(?!`))`)*+(\1)
     name: markup.inline.raw.string.markdown
-    patterns: [include: '#string-content']
+    patterns:
+      - include: '#string-content'
 
   markdown:
     patterns:
@@ -2213,7 +2245,8 @@ repository:
     end: \s*(\})\s*
     captures:
       1: {name: punctuation.section.property-list.protea}
-    patterns: [include: '#style-properties']
+    patterns:
+      - include: '#style-properties'
 
   style-pair:
     applyEndPatternLast: true
@@ -3167,13 +3200,15 @@ repository:
         captures:
           1: {name: keyword.operator.conditional.protea}
           2: {name: keyword.operator.conditional.protea}
-        patterns: [include: $self]
+        patterns:
+          - include: $self
       - begin: (?<=^|[\s({\[])(\!)(?=['"`\\({\[\w])|(?<=['"`)}\]\w]|\\.)(\!)(?=['"`\\({\[\w])
         end: (?<=^|[\s({\[])(\:)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\:)(?=['"`\\({\[\w])
         captures:
           1: {name: keyword.operator.ternary.protea}
           2: {name: keyword.operator.ternary.protea}
-        patterns: [include: $self]
+        patterns:
+          - include: $self
 
   infix-operators:
     patterns:
@@ -4119,6 +4154,7 @@ repository:
           - include: '#comments'
           - include: '#comma'
           - include: '#line-continuation'
+
       - include: '#comments'
       - include: '#comma'
       - include: '#line-continuation'
@@ -4138,7 +4174,8 @@ repository:
         end: (?=)|$
         beginCaptures:
           1: {name: punctuation.definition.annotation.protea}
-        patterns: [include: '#types']
+        patterns:
+          - include: '#types'
       - match: '\.|::'
         name: punctuation.separator.namespace.protea
       - match: \s+
@@ -4753,7 +4790,8 @@ repository:
           4: {name: punctuation.separator.arguments.protea}
         endCaptures:
           1: {name: punctuation.separator.arguments.protea}
-        patterns: [include: '#param-bracket-content']
+        patterns:
+          - include: '#param-bracket-content'
       - comment: |
           Function def before function keyword
           x = def()
@@ -4843,7 +4881,8 @@ repository:
           4: {name: punctuation.separator.arguments.protea}
         endCaptures:
           1: {name: punctuation.separator.arguments.protea}
-        patterns: [include: '#param-bracket-content']
+        patterns:
+          - include: '#param-bracket-content'
 
   params-clause:
     begin: |
@@ -4897,7 +4936,8 @@ repository:
     captures:
       1: {name: punctuation.separator.arguments.protea}
     end: (?<=^|['"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
-    patterns: [include: '#param-bracket-content']
+    patterns:
+      - include: '#param-bracket-content'
 
   clauses:
     patterns:
@@ -4998,7 +5038,8 @@ repository:
             end: (?=)|$
             beginCaptures:
               1: {name: keyword.operator.expression.$1.protea}
-            patterns: [include: '#types']
+            patterns:
+              - include: '#types'
           - applyEndPatternLast: true
             begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
@@ -5188,7 +5229,8 @@ repository:
           4: {name: punctuation.separator.arguments.protea}
         endCaptures:
           1: {name: punctuation.separator.arguments.protea}
-        patterns: [include: '#param-bracket-content']
+        patterns:
+          - include: '#param-bracket-content'
       - match: |
           (?x)
           (?<=^ | [{;,] \s*)
@@ -5222,7 +5264,8 @@ repository:
     end: ^\s*
     captures:
       1: {name: punctuation.separator.continuation.line.protea}
-    patterns: [include: '#comments']
+    patterns:
+      - include: '#comments'
   comma:
     match: \s*(,)
     name: punctuation.separator.comma.protea
