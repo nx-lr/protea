@@ -81,7 +81,7 @@ define:
         |class|data|enum|module
         |iter|macro|inter|object
         |trait|style|elem|prop
-        |go|defer|do|from|where|with
+        |go|defer|do|with|from|where
         |if|elif|else|then|def
         |for|each|loop|while
         |try|throw|catch|after
@@ -442,7 +442,7 @@ repository:
             captures:
               1: {name: constant.other.function.protea}
             patterns:
-              - include: '$self'
+              - include: $self
       - match: \\N([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
         name: constant.character.escape.protea
         captures:
@@ -463,7 +463,7 @@ repository:
                 captures:
                   1: {name: constant.other.function.protea}
                 patterns:
-              - include: '$self'
+              - include: $self
           - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
             name: constant.character.escape.protea
             captures:
@@ -826,7 +826,7 @@ repository:
         captures:
           1: {name: punctuation.section.embedded.protea}
         patterns:
-          - include: '$self'
+          - include: $self
       - comment: Interpolated expression
         applyEndPatternLast: true
         begin: |
@@ -843,7 +843,7 @@ repository:
               |class|data|enum|module
               |iter|macro|inter|object
               |trait|style|elem|prop
-              |go|defer|do|from|where|with
+              |go|defer|do|with|from|where
               |if|elif|else|then|def
               |for|each|loop|while
               |try|throw|catch|after
@@ -925,7 +925,7 @@ repository:
                 |class|data|enum|module
                 |iter|macro|inter|object
                 |trait|style|elem|prop
-                |go|defer|do|from|where|with
+                |go|defer|do|with|from|where
                 |if|elif|else|then|def
                 |for|each|loop|while
                 |try|throw|catch|after
@@ -1240,7 +1240,7 @@ repository:
         captures:
           0: {name: punctuation.section.expression.protea}
         patterns:
-          - include: '$self'
+          - include: $self
       - comment: Block comment
         begin: (\()(\?#)
         contentName: comment.block.regexp.protea
@@ -1330,7 +1330,7 @@ repository:
               4: {patterns: [include: '#function-names']}
               5: {name: punctuation.definition.tag.protea}
             patterns:
-          - include: '$self'
+          - include: $self
           - include: '#regexp-patterns'
       - comment: Atomic groups
         begin: (\(\?>)
@@ -2120,7 +2120,7 @@ repository:
         captures:
           1: {name: storage.type.method.protea}
         patterns:
-          - include: '$self'
+          - include: $self
 
       executed-code:
         applyEndPatternLast: true
@@ -2130,7 +2130,7 @@ repository:
         captures:
           1: {name: storage.type.subroutine.protea}
         patterns:
-          - include: '$self'
+          - include: $self
 
       html-tag:
         comment: <Tags
@@ -2156,7 +2156,7 @@ repository:
             captures:
               1: {name: punctuation.definition.directive.protea}
             patterns:
-          - include: '$self'
+          - include: $self
           - begin: (\{)\s*
             end: \s*(\})\s*
             captures:
@@ -2613,7 +2613,7 @@ repository:
                 |class|data|enum|module
                 |iter|macro|inter|object
                 |trait|style|elem|prop
-                |go|defer|do|from|where|with
+                |go|defer|do|with|from|where
                 |if|elif|else|then|def
                 |for|each|loop|while
                 |try|throw|catch|after
@@ -2637,7 +2637,8 @@ repository:
         captures:
           1: {patterns: [include: '#function-names']}
 
-      - match: |
+      - name: meta.function.call.protea
+        match: |
           (?x)
           (?<! # ignore qualified names
             \b (?: [?!]?\.=? | [?!:]:=?) (?: \b | ['"`\\({\[])
@@ -2671,7 +2672,7 @@ repository:
                     |class|data|enum|module
                     |iter|macro|inter|object
                     |trait|style|elem|prop
-                    |go|defer|do|from|where|with
+                    |go|defer|do|with|from|where
                     |if|elif|else|then|def
                     |for|each|loop|while
                     |try|throw|catch|after
@@ -2699,7 +2700,7 @@ repository:
                 |class|data|enum|module
                 |iter|macro|inter|object
                 |trait|style|elem|prop
-                |go|defer|do|from|where|with
+                |go|defer|do|with|from|where
                 |if|elif|else|then|def
                 |for|each|loop|while
                 |try|throw|catch|after
@@ -2749,7 +2750,7 @@ repository:
                       |class|data|enum|module
                       |iter|macro|inter|object
                       |trait|style|elem|prop
-                      |go|defer|do|from|where|with
+                      |go|defer|do|with|from|where
                       |if|elif|else|then|def
                       |for|each|loop|while
                       |try|throw|catch|after
@@ -2781,9 +2782,7 @@ repository:
             (?: # command or string literal
                 (?: \\ )
               | # function application, composition and piping
-                (?: \$ | \s \. | <\|{1,3}| <\+) [\s\w]
-              | # no-argument call
-                \b! (?:[,;'"`)}\]\s] | $)
+                (?: \$ | \s \. | <\|{1,3}| <\+) ['"`\\({\[\s\w]
               | # C-style function call
                 (?:[!?]\.=?|\.=)? \#?\(
               | # generics
@@ -2885,7 +2884,6 @@ repository:
               (?=
                   $ # end of line
                 | (?: # operators
-                    [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
                     <\|{1,3} | <\+ | \|{1,3}> | \+> | \$ | \s\.
                   )?
                   ['"`(){}\[\]\s\w]
@@ -2911,7 +2909,6 @@ repository:
               (?=
                   $ # end of line
                 | (?: # operators
-                    [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
                     <\|{1,3} | <\+ | \|{1,3}> | \+> | \$ | \s\.
                   )?
                   ['"`(){}\[\]\s\w]
@@ -3672,7 +3669,7 @@ repository:
           |class|data|enum|module
           |iter|macro|inter|object
           |trait|style|elem|prop
-          |go|defer|do|from|where|with
+          |go|defer|do|with|from|where
           |if|elif|else|then|def
           |for|each|loop|while
           |try|throw|catch|after
@@ -3924,7 +3921,7 @@ repository:
         captures:
           1: {name: punctuation.section.class.protea}
         patterns:
-          - include: '$self'
+          - include: $self
       - begin: |
           (?x)
           (?<=
@@ -3941,7 +3938,7 @@ repository:
           1: {name: punctuation.definition.block.protea}
         patterns:
           - include: '#types'
-          - include: '$self'
+          - include: $self
       - begin: |
           (?x)
           (?<=
@@ -4303,7 +4300,7 @@ repository:
     patterns:
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|elif|else)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.conditional.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|loop|while)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|loop|while)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.loop.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|after)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.trycatch.protea
@@ -4325,7 +4322,7 @@ repository:
         name: keyword.operator.expression.$1.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(del)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.delete.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(to|til|till|thru|by)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(to|til|thru|by)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.range.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unset)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.void.protea
@@ -4919,7 +4916,7 @@ repository:
                 |class|data|enum|module
                 |iter|macro|inter|object
                 |trait|style|elem|prop
-                |go|defer|do|from|where|with
+                |go|defer|do|with|from|where
                 |if|elif|else|then|def
                 |for|each|loop|while
                 |try|throw|catch|after
@@ -5099,7 +5096,7 @@ repository:
         captures:
           1: {name: keyword.control.conditional.protea}
         patterns:
-          - include: '$self'
+          - include: $self
 
       match-clause:
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*(?=\()
@@ -5108,7 +5105,7 @@ repository:
         captures:
           1: {name: keyword.control.match.protea}
         patterns:
-          - include: '$self'
+          - include: $self
 
       with-clause:
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*(?=\()
@@ -5412,7 +5409,7 @@ repository:
         captures:
           1: {name: punctuation.section.class.protea}
         patterns:
-          - include: '$self'
+          - include: $self
       - begin: |
           (?x)
           (?<=
@@ -5428,7 +5425,7 @@ repository:
         captures:
           1: {name: punctuation.definition.block.protea}
         patterns:
-          - include: '$self'
+          - include: $self
       - begin: |
           (?x)
           (?<=
@@ -5472,13 +5469,13 @@ repository:
         captures:
           1: {name: punctuation.section.class.protea}
         patterns:
-          - include: '$self'
+          - include: $self
       - begin: (\{)\s*
         end: \s*(\})
         captures:
           1: {name: punctuation.definition.block.protea}
         patterns:
-          - include: '$self'
+          - include: $self
 
   round-brackets:
     repository:
@@ -5491,31 +5488,50 @@ repository:
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.protea
     patterns:
-      - begin: (?<=[\w'"`)}\]>]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
+      - begin: |
+          (?x)
+          (?<=
+              [\w'"`)}\]] | \\. # literal
+            | [^.]\.=?|[?!:]:=?
+          )
+          (\#?\()\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.parameters.protea}
         patterns:
-          - include: '#punctuation'
-          - include: '#clauses'
-          - include: '#constants'
-          - include: '#declarations'
-          - include: '#expression-keywords'
-          - include: '#parameter-variables'
+          - include: '#param-bracket-content'
           - include: $self
-      - begin: (?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
+      - begin: |
+          (?x)
+          (?<=
+            (?:^|[,;'"`(){}\[\]\s]|\\.) # beside a delimiter or space
+            \b
+              (?: # destructuring keywords
+                var|val
+              )
+            \b
+            (?:$|[,;'"`(){}\[\]\\\s]) # beside a delimiter or space
+            \s*
+          )
+          (\#?\()\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.binding-pattern.tuple.protea}
         patterns:
-          - include: '#labels'
+          - include: '#punctuation'
           - include: $self
-      - begin: (\#?\()\s*
+      - begin: (\#\()\s*
+        end: \s*(\))
+        captures:
+          1: {name: punctuation.definition.tuple.protea}
+        patterns:
+          - include: $self
+      - begin: (\()\s*
         end: \s*(\))
         captures:
           1: {name: punctuation.definition.expression.protea}
         patterns:
-          - include: '$self'
+          - include: $self
 
   square-brackets:
     repository:
@@ -5524,36 +5540,50 @@ repository:
           - match: ','
             name: punctuation.separator.sequence.protea
     patterns:
-      - begin: (?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
+      - begin: |
+          (?x)
+          (?<=
+              [\w'"`)}\]] | \\. # literal
+            | [^.]\.=?|[?!:]:=?
+          )
+          (\#?\[)\s*
+        end: \s*(\])
+        captures:
+          1: {name: punctuation.definition.parameters.protea}
+        patterns:
+          - include: $self
+      - begin: |
+          (?x)
+          (?<=
+            (?:^|[,;'"`(){}\[\]\s]|\\.) # beside a delimiter or space
+            \b
+              (?: # destructuring keywords
+                var|val
+              )
+            \b
+            (?:$|[,;'"`(){}\[\]\\\s]) # beside a delimiter or space
+            \s*
+          )
+          (\#?\[)\s*
         end: \s*(\])
         captures:
           1: {name: punctuation.definition.binding-pattern.array.protea}
-        patterns:
-          - include: '#labels'
-          - include: '#punctuation'
-          - include: $self
-      - begin: (?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
-        end: \s*(\])
-        captures:
-          1: {name: punctuation.definition.attribute-selector.protea}
         patterns:
           - include: '#punctuation'
           - include: $self
       - begin: (\#\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.sequence.protea}
+          1: {name: punctuation.definition.tuple.protea}
         patterns:
-          - match: ','
-            name: punctuation.separator.sequence.protea
+          - include: '#punctuation'
           - include: $self
       - begin: (\[)\s*
         end: \s*(\])
         captures:
-          1: {name: punctuation.definition.array.protea}
+          1: {name: punctuation.definition.expression.protea}
         patterns:
-          - match: ','
-            name: punctuation.separator.sequence.protea
+          - include: '#punctuation'
           - include: $self
 
   # Support
