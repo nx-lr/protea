@@ -1,6 +1,6 @@
 name: Protea
 scopeName: source.dart
-fileTypes: [dart, pta]
+fileTypes: [dart, pro]
 patterns: [include: '#core']
 
 information for contributors: |
@@ -34,6 +34,7 @@ fixes: |
     - Added and expanded quantifiers and range highlighting
     - Add support for fuzzy matching (edits, insertions, deletions, etc.)
     - Improved highlighting for regexes with flags
+  - Added back symbol strings
 
   Fixes:
 
@@ -125,7 +126,6 @@ repository:
       - include: '#brackets'
       - include: '#punctuation'
       - include: '#symbols'
-      - include: '#switch-clause'
       - include: '#type-signature'
       - include: '#literals'
       - include: '#operators'
@@ -177,7 +177,6 @@ repository:
   literals:
     patterns:
       - include: '#regexps'
-      - include: '#strings-unquoted'
       - include: '#strings'
       - include: '#numbers'
       - include: '#constants'
@@ -203,7 +202,7 @@ repository:
           (?x)
           (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
           (?:
-            (it|this|that|self) # special arguments
+            (it|this|that|self|super) # special arguments
             |(args) # arguments
             |(ctor) # constructor
             |(proto) # prototype
@@ -310,25 +309,51 @@ repository:
 
   # Symbols
 
+  decorators:
+    - applyEndPatternLast: true
+      begin: \@[\p{Pc}\p{L}][\w\p{Pd}]*\b
+      end: (?=)|$
+      name: entity.name.class.decorator.protea
+      patterns:
+        - include: '#brackets'
+        - &embedded-primary-operators
+          comment: Primary binary operators
+          match: (?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
+          captures:
+            1: {name: keyword.operator.optional.protea}
+            2: {name: keyword.operator.assert.protea}
+            3: {name: keyword.operator.accessor.protea}
+        - match: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
+          name: entity.name.class.decorator.protea
+
   symbols:
     patterns:
-      - applyEndPatternLast: true
-        begin: \@[\p{Pc}\p{L}][\w\p{Pd}]*\b
+      - comment: quoted symbol
+        applyEndPatternLast: true
+        begin: \B(:)(?=[\\'"])
         end: (?=)|$
-        name: entity.name.class.decorator.protea
+        name: constant.language.symbol-type.protea
+        captures:
+          1: {name: punctuation.definition.symbol.protea}
         patterns:
-          - include: '#brackets'
-          - &embedded-primary-operators
-            comment: Primary binary operators
-            match: (?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
+          - include: '#strings-single-quoted'
+          - include: '#strings-unquoted'
+          - comment: multi-double quoted string
+            begin: (?<!"+)\s*("""+)\s*
+            contentName: string.quoted.double.protea
+            end: \s*((\1)(?!"+))
             captures:
-              1: {name: keyword.operator.optional.protea}
-              2: {name: keyword.operator.assert.protea}
-              3: {name: keyword.operator.accessor.protea}
-          - match: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
-            name: entity.name.class.decorator.protea
-      - match: \B(:)(?=['"])
-        name: punctuation.definition.symbol.protea
+              1: {name: punctuation.definition.string.protea}
+            patterns:
+              - include: '#string-escapes'
+          - comment: double quoted string
+            begin: (?<!"+)\s*(")\s*
+            contentName: string.quoted.double.protea
+            end: \s*((\1)(?!"+))
+            captures:
+              1: {name: punctuation.definition.string.protea}
+            patterns:
+              - include: '#string-escapes'
       - match: \B(:)([\p{Pc}\p{L}][\w\p{Pd}]*\b)
         captures:
           1: {name: punctuation.definition.symbol.protea}
@@ -347,6 +372,12 @@ repository:
 
   strings:
     patterns:
+      - include: '#strings-single-quoted'
+      - include: '#strings-double-quoted'
+      - include: '#strings-unquoted'
+
+  strings-single-quoted:
+    patterns:
       - comment: multi-single quoted string
         begin: (?<!'+)\s*('''+)\s*
         contentName: string.quoted.single.protea
@@ -354,7 +385,6 @@ repository:
         captures:
           1: {name: punctuation.definition.string.protea}
         patterns:
-          - include: '#embedded-verbatim'
       - comment: single quoted string
         begin: (?<!'+)\s*(')\s*
         contentName: string.quoted.single.protea
@@ -364,7 +394,9 @@ repository:
         patterns:
           - match: "''"
             name: constant.character.escape.protea
-          - include: '#embedded-verbatim'
+
+  strings-double-quoted:
+    patterns:
       - comment: multi-double quoted string
         begin: (?<!"+)\s*("""+)\s*
         contentName: string.quoted.double.protea
@@ -1657,8 +1689,6 @@ repository:
 
   tag-attributes:
     patterns:
-      - include: '#comma'
-      - include: '#semicolon'
       - include: '#style-selectors'
       - include: '#attribute-names'
       - applyEndPatternLast: true
@@ -1666,20 +1696,21 @@ repository:
         beginCaptures:
           1: {name: punctuation.separator.key-value.protea}
         end: (?=)|$
-        name: string.unquoted.protea
+        name: meta.property.jsx.protea
         patterns:
           - include: '#html-properties'
-      - include: '#strings'
+      - include: '#literals'
       - include: '#comments'
+      - include: '#punctuation'
 
   attribute-names:
-    match: '\s*([\p{Pd}\w]+)\b\s*'
+    match: \s*([\p{Pd}\w]+)\b\s*
+    name: meta.attribute.protea
     captures:
       1:
         name: entity.other.attribute-name.${1:/camelcase}.protea
         patterns:
           - include: '#css-property-names'
-    name: string.unquoted.protea
 
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
@@ -2189,14 +2220,27 @@ repository:
       - include: source.css.scss#constant_default
       - include: source.css.scss#constant_optional
 
+  property-name:
+    match: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:(?:\.|::?)[\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
+    name: meta.property-name.protea
+    captures:
+      1:
+        patterns:
+          - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
+            name: constant.other.protea
+          - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+            name: constant.language.protea
+          - match: '\.|:|::'
+            name: punctuation.separator.namespace.protea
+
   html-properties:
     patterns:
       - include: source.yaml#flow-sequence
       - include: '#brackets'
       - include: '#literals'
       - include: '#css-value-names'
+      - include: '#property-name'
       - include: '#hex-colors'
-      - include: '#type-variables'
       - include: '#embedded-expression'
       - include: '#html-builtins'
       - include: '#line-continuation'
@@ -2218,6 +2262,7 @@ repository:
   style-block:
     begin: \s*(\{)\s*
     end: \s*(\})\s*
+    name: meta.brace.style.protea
     captures:
       1: {name: punctuation.section.property-list.protea}
     patterns:
@@ -2225,9 +2270,9 @@ repository:
 
   style-pair:
     applyEndPatternLast: true
-    begin: '\s*([\p{Pd}\w]+)\b(:)\s*'
+    begin: \s*([\p{Pd}\w]+)\b(:)\s*
     end: (?=)|$
-    name: string.unquoted.protea
+    name: meta.property.css.protea
     beginCaptures:
       1:
         name: support.type.property-name.protea
@@ -2241,6 +2286,7 @@ repository:
 
   style-properties:
     patterns:
+      - include: '#comments'
       - include: '#embedded'
       - include: '#clauses'
       - include: '#declarations'
@@ -2299,7 +2345,7 @@ repository:
 
   style-selectors:
     patterns:
-      - match: \s*(\@|\#|\&|\*|\.|\:|::)(?=[\w$])
+      - match: \s*([@#&*.:]|::)(?=[\w$])
         name: punctuation.definition.entity.protea
       - match: \s*(?<=@)[\p{Pc}\p{L}][\w\p{Pd}]*\s*
         name: keyword.control.at-rule.protea
@@ -2562,7 +2608,219 @@ repository:
   # Function and method calls
 
   calls:
+    old:
+      name: meta.function.call.protea
+      match: |
+        (?x)
+        (?<! # ignore qualified names
+          \b (?: [?!]?\.=? | [?!:]:=?) (?: \b | ['"`\\({\[])
+        )
+        (?<=
+          (?:
+            # beginning of line
+            ^
+          | # or before a delimiter
+            [,;({\[] \s*
+          | # or before a sigil
+            [$:] \s* \b
+          | # key-value separator
+            ['"`({\[)}\]\w]: \s
+          | # operator
+            (?:^ | ['"`({\[)}\]\s\w] | \\.) # anchor
+            [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+          | # open/close bracket
+            (?:['"`({\[)}\]] | \\.)
+            (?: [?!]?\.=? | [?!:]:=?) # accessors
+          | # command syntax
+            (?:^ | [,;({\[] | \s) //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+          | (?:
+              (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+              \b
+                (?: # keywords
+                  in|of|as|is|new
+                  |to|til|thru|by|del
+                  |unset|ref|and|or|xor|not
+                  |var|val|func|proc|type
+                  |class|data|enum|module
+                  |iter|macro|inter|object
+                  |trait|style|elem|prop
+                  |go|defer|do|with|from|where
+                  |if|elif|else|then|def
+                  |for|each|loop|while
+                  |try|throw|catch|after
+                  |match|case|pass|fail|goto
+                  |break|next|redo|retry
+                  |return|yield|await|label
+                  |use|show|hide|route
+                  |debug|assert|check
+                )
+              \b
+              (?:$|[,;'"`({\[)}\]\\\s]) # beside a delimiter or space
+            )
+          ) \s* # before a space
+        )
+        \b
+        (
+          # ignore all keywords
+          (?!
+            (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+            (?: # keywords
+              in|of|as|is|new
+              |to|til|thru|by|del
+              |unset|ref|and|or|xor|not
+              |var|val|func|proc|type
+              |class|data|enum|module
+              |iter|macro|inter|object
+              |trait|style|elem|prop
+              |go|defer|do|with|from|where
+              |if|elif|else|then|def
+              |for|each|loop|while
+              |try|throw|catch|after
+              |match|case|pass|fail|goto
+              |break|next|redo|retry
+              |return|yield|await|label
+              |use|show|hide|route
+              |debug|assert|check
+            )
+            (?!\B|\p{Pd}+\b)
+          )
+          (?:
+            \b
+            [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+            \b
+            (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
+          )*
+          [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
+        )
+        \b
+        (?=
+          \s+
+          (?:
+              # prefix operator literal
+              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              ['"`({\[]
+            | # array literal
+              \[
+            | # command literal
+               (?:^ | [,;({\[] | \s) //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+            | # ignore orphaned qualified name
+              (?!
+                (?: [?!]?\.=? | [?!:]:=?)
+                ['"`\\({\[\w]
+              )
+              # prefix operator
+              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]*
+              (?:
+                # ignore all keywords
+                (?!
+                  (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+                  (?: # keywords
+                    in|of|as|is|new
+                    |to|til|thru|by|del
+                    |unset|ref|and|or|xor|not
+                    |var|val|func|proc|type
+                    |class|data|enum|module
+                    |iter|macro|inter|object
+                    |trait|style|elem|prop
+                    |go|defer|do|with|from|where
+                    |if|elif|else|then|def
+                    |for|each|loop|while
+                    |try|throw|catch|after
+                    |match|case|pass|fail|goto
+                    |break|next|redo|retry
+                    |return|yield|await|label
+                    |use|show|hide|route
+                    |debug|assert|check
+                  )
+                  (?!\B|\p{Pd}+\b)
+                )
+                (?:
+                  \b
+                  [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+                  \b
+                  (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
+                )*
+                [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
+              )
+              (?: # closing bracket
+                  [,;'"`({\[)}\]\s]
+                | # operator
+                  [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+                | # end of line
+                  $
+              )
+          )
+          | \s* # optional space
+          (?: # command or string literal
+              (?: \\ )
+            | # function application, composition and piping
+              (?: \$ | \s \. | <\|{1,3}| <\+) ['"`\\({\[\s\w]
+            | # C-style function call
+              (?:[!?]\.=?|\.=)? \#?\(
+            | # generics
+              (?:[!?]\.=?|\.=)? < ['"`\\({\[\w]
+            | # string literal or expression
+              ['"`(]
+          )
+        )
+      captures:
+        1: {patterns: [include: '#function-names']}
+
     patterns:
+      - include: '#embedded-calls'
+      - name: |
+          (?x)
+          \b
+          (
+            # ignore all keywords
+            (?!
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+              (?: # keywords
+                in|of|as|is|new
+                |to|til|thru|by|del
+                |unset|ref|and|or|xor|not
+                |var|val|func|proc|type
+                |class|data|enum|module
+                |iter|macro|inter|object
+                |trait|style|elem|prop
+                |go|defer|do|with|from|where
+                |if|elif|else|then|def
+                |for|each|loop|while
+                |try|throw|catch|after
+                |match|case|pass|fail|goto
+                |break|next|redo|retry
+                |return|yield|await|label
+                |use|show|hide|route
+                |debug|assert|check
+              )
+              (?!\B|\p{Pd}+\b)
+            )
+            (?:
+              \b
+              [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+              \b
+              (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
+            )*
+            [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
+          )
+          \b
+          (?=
+            \s*
+            (?: # command or string literal
+                (?: \\ )
+              | # function application, composition and piping
+                (?: \$ | \s \. | <\|{1,3}| <\+) ['"`\\({\[\s\w]
+              | # C-style function call
+                (?:[!?]\.=?|\.=)? \#?\(
+              | # generics
+                (?:[!?]\.=?|\.=)? < ['"`\\({\[\w]
+              | # string literal or expression
+                ['"`(]
+            )
+          )
+        captures:
+          1: {patterns: [include: '#function-names']}
+
       - name: meta.function.call.protea
         match: |
           (?x)
@@ -2605,163 +2863,6 @@ repository:
             [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
           )
           \b
-        captures:
-          1: {patterns: [include: '#function-names']}
-
-      - name: meta.function.call.protea
-        match: |
-          (?x)
-          (?<! # ignore qualified names
-            \b (?: [?!]?\.=? | [?!:]:=?) (?: \b | ['"`\\({\[])
-          )
-          (?<=
-            (?:
-              # beginning of line
-              ^
-            | # or before a delimiter
-              [,;({\[] \s*
-            | # or before a sigil
-              [$:] \s* \b
-            | # key-value separator
-              ['"`({\[)}\]\w]: \s
-            | # operator
-              (?:^ | ['"`({\[)}\]\s\w] | \\.) # anchor
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
-            | # open/close bracket
-              (?:['"`({\[)}\]] | \\.)
-              (?: [?!]?\.=? | [?!:]:=?) # accessors
-            | # command syntax
-              (?:^ | [,;({\[] | \s) //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-            | (?:
-                (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
-                \b
-                  (?: # keywords
-                    in|of|as|is|new
-                    |to|til|thru|by|del
-                    |unset|ref|and|or|xor|not
-                    |var|val|func|proc|type
-                    |class|data|enum|module
-                    |iter|macro|inter|object
-                    |trait|style|elem|prop
-                    |go|defer|do|with|from|where
-                    |if|elif|else|then|def
-                    |for|each|loop|while
-                    |try|throw|catch|after
-                    |match|case|pass|fail|goto
-                    |break|next|redo|retry
-                    |return|yield|await|label
-                    |use|show|hide|route
-                    |debug|assert|check
-                  )
-                \b
-                (?:$|[,;'"`({\[)}\]\\\s]) # beside a delimiter or space
-              )
-            ) \s* # before a space
-          )
-          \b
-          (
-            # ignore all keywords
-            (?!
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-              (?: # keywords
-                in|of|as|is|new
-                |to|til|thru|by|del
-                |unset|ref|and|or|xor|not
-                |var|val|func|proc|type
-                |class|data|enum|module
-                |iter|macro|inter|object
-                |trait|style|elem|prop
-                |go|defer|do|with|from|where
-                |if|elif|else|then|def
-                |for|each|loop|while
-                |try|throw|catch|after
-                |match|case|pass|fail|goto
-                |break|next|redo|retry
-                |return|yield|await|label
-                |use|show|hide|route
-                |debug|assert|check
-              )
-              (?!\B|\p{Pd}+\b)
-            )
-            (?:
-              \b
-              [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
-              \b
-              (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
-            )*
-            [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
-          )
-          \b
-          (?=
-            \s+
-            (?:
-                # prefix operator literal
-                [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
-                ['"`({\[]
-              | # array literal
-                \[
-              | # command literal
-                 (?:^ | [,;({\[] | \s) //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-              | # ignore orphaned qualified name
-                (?!
-                  (?: [?!]?\.=? | [?!:]:=?)
-                  ['"`\\({\[\w]
-                )
-                # prefix operator
-                [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]*
-                (?:
-                  # ignore all keywords
-                  (?!
-                    (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                    (?: # keywords
-                      in|of|as|is|new
-                      |to|til|thru|by|del
-                      |unset|ref|and|or|xor|not
-                      |var|val|func|proc|type
-                      |class|data|enum|module
-                      |iter|macro|inter|object
-                      |trait|style|elem|prop
-                      |go|defer|do|with|from|where
-                      |if|elif|else|then|def
-                      |for|each|loop|while
-                      |try|throw|catch|after
-                      |match|case|pass|fail|goto
-                      |break|next|redo|retry
-                      |return|yield|await|label
-                      |use|show|hide|route
-                      |debug|assert|check
-                    )
-                    (?!\B|\p{Pd}+\b)
-                  )
-                  (?:
-                    \b
-                    [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
-                    \b
-                    (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
-                  )*
-                  [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
-                )
-                (?: # closing bracket
-                    [,;'"`({\[)}\]\s]
-                  | # operator
-                    [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
-                  | # end of line
-                    $
-                )
-            )
-            | \s* # optional space
-            (?: # command or string literal
-                (?: \\ )
-              | # function application, composition and piping
-                (?: \$ | \s \. | <\|{1,3}| <\+) ['"`\\({\[\s\w]
-              | # C-style function call
-                (?:[!?]\.=?|\.=)? \#?\(
-              | # generics
-                (?:[!?]\.=?|\.=)? < ['"`\\({\[\w]
-              | # string literal or expression
-                ['"`(]
-            )
-          )
         captures:
           1: {patterns: [include: '#function-names']}
 
@@ -3789,7 +3890,6 @@ repository:
         captures:
           1: {name: punctuation.definition.string.protea}
         patterns:
-          - include: '#type-embedded-verbatim'
       - comment: simple single quoted raw string
         begin: (?<!'+)\s*(')
         contentName: string.quoted.single.protea
@@ -3799,7 +3899,6 @@ repository:
         patterns:
           - match: "''"
             name: constant.character.escape.protea
-          - include: '#type-embedded-verbatim'
       - comment: double quoted standard string
         begin: (?<!"+)\s*("""+)
         contentName: string.quoted.double.protea
@@ -4599,17 +4698,6 @@ repository:
           - include: '#style-rules'
           - include: '#style-pair'
           - include: '#style-block'
-          - applyEndPatternLast: true
-            name: meta.style.protea
-            begin: \s*([?:]?=)\s*
-            captures:
-              1: {name: keyword.operator.assignment.protea}
-            end: (?=)|$
-            patterns:
-              - include: '#style-pair'
-              - include: '#style-rules'
-              - include: '#style-block'
-              - include: '#block-entities'
           - include: '#block-entities'
           - match: *entity-name
             name: entity.name.style.protea
@@ -4858,7 +4946,7 @@ repository:
 
           \s*
           (\|)(?![\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+)
-        end: (?<=^|['"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
+        end: (?<=^|[,;'"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
         name: meta.object-literal.key.protea
         captures:
           1: {name: entity.name.method.protea}
@@ -4950,7 +5038,7 @@ repository:
 
           \s*
           (\|)(?![\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+)
-        end: (?<=^|['"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
+        end: (?<=^|[,;'"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
         name: meta.object-literal.key.protea
         captures:
           1: {name: entity.name.function.protea}
@@ -5014,7 +5102,7 @@ repository:
       (?!\|)
     captures:
       1: {name: punctuation.separator.arguments.protea}
-    end: (?<=^|['"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
+    end: (?<=^|[,;'"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
     patterns:
       - include: '#param-bracket-content'
       - include: $self
@@ -5310,7 +5398,7 @@ repository:
 
           \s*
           (\|)(?![\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+)
-        end: (?<=^|['"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
+        end: (?<=^|[,;'"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
         name: meta.object-literal.key.protea
         captures:
           1: {name: entity.name.function.protea}
