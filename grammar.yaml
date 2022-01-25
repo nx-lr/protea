@@ -442,7 +442,7 @@ repository:
             captures:
               1: {name: constant.other.function.protea}
             patterns:
-          - include: '$self'
+              - include: '$self'
       - match: \\N([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
         name: constant.character.escape.protea
         captures:
@@ -993,14 +993,15 @@ repository:
   format-syntax:
     comment: Format specifier language, inspired by MS-DOS, Bash and Python's f-strings.
     patterns:
-      - comment: initial format switch with value
+      - comment: with optional value
         applyEndPatternLast: true
-        begin: (?<=[%|])([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
+        begin: (?:(?<=%)|(\|))([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
         end: (?=)|$
-        beginCaptures:
-          1: {name: storage.type.format.protea}
-          2: {name: punctuation.separator.key-value.protea}
         name: entity.other.attribute-name.protea
+        captures:
+          1: {name: punctuation.separator.mapping.protea}
+          2: {name: storage.type.format.protea}
+          3: {name: punctuation.separator.key-value.protea}
         patterns: &format-values
           - include: '#constants'
           - include: '#embedded-calls'
@@ -1010,18 +1011,8 @@ repository:
           - include: '#numbers'
           - include: '#symbols'
           - *embedded-primary-operators
-      - comment: type specifier with switch
-        applyEndPatternLast: true
-        begin: (\|)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
-        end: (?=)|$
-        name: entity.other.attribute-name.protea
-        captures:
-          1: {name: punctuation.separator.mapping.protea}
-          2: {name: storage.type.format.protea}
-          3: {name: punctuation.separator.key-value.protea}
-        patterns: *format-values
       - comment: type specifier
-        match: (\|)([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+        match: (?:(?<=%)|(\|))([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         name: entity.other.attribute-name.protea
         captures:
           1: {name: punctuation.separator.mapping.protea}
@@ -2895,7 +2886,7 @@ repository:
                   $ # end of line
                 | (?: # operators
                     [\p{S}\p{P}&&[^,;'"`\\(){}\[\]\p{Pc}]]+
-                    <\|{1,3} | <\+ | \|{1,3}> | \+> | ![:.]=? | [!$] | \s\.
+                    <\|{1,3} | <\+ | \|{1,3}> | \+> | \$ | \s\.
                   )?
                   ['"`(){}\[\]\s\w]
               )
@@ -4205,7 +4196,7 @@ repository:
               (?:
                 pub|priv|prot|final|immut|mut|over
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|rem
+                |post|[gs]et|del
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
@@ -4243,7 +4234,7 @@ repository:
           (?:
             pub|priv|prot|final|immut|mut|over
             |global|local|intern|extern|imply|exply
-            |post|[gs]et|rem
+            |post|[gs]et|del
           )
           (?!\B|\p{Pd}+\b)
           \s*
@@ -4733,7 +4724,7 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|over
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|rem
+                |post|[gs]et|del
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
@@ -4778,7 +4769,7 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|over
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|rem
+                |post|[gs]et|del
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
@@ -4824,7 +4815,7 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|over
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|rem
+                |post|[gs]et|del
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
@@ -4869,7 +4860,7 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|over
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|rem
+                |post|[gs]et|del
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
@@ -4964,28 +4955,32 @@ repository:
 
   closures:
     patterns:
-      - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+      - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*(?=\()
+        end: (?<=;|\))|(?={)
         captures:
           1: {name: keyword.control.match.protea}
-          2: {name: punctuation.separator.colon.protea}
         patterns:
-          - include: '#params-clause'
-          - applyEndPatternLast: true
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
-            end: (?=)|$
-            beginCaptures:
-              1: {name: keyword.control.match.protea}
+          - begin: \s*(\()
+            end: \s*(\))
+            captures:
+              1: {name: punctuation.definition.expression.protea}
             patterns:
-              - include: '#types'
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
-            name: keyword.control.match.protea
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val)(?!\B|\p{Pd}+\b)\s*
-            name: keyword.control.match.protea
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|only|just|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
-            name: keyword.control.match.protea
-          - include: '#type-keywords'
-          - include: $self
+              - include: '#params-clause'
+              - applyEndPatternLast: true
+                begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
+                end: (?=)|$
+                beginCaptures:
+                  1: {name: keyword.control.match.protea}
+                patterns:
+                  - include: '#types'
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.match.protea
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.match.protea
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|only|just|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.match.protea
+              - include: '#type-keywords'
+              - include: $self
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.match.protea
 
@@ -5065,12 +5060,11 @@ repository:
                   1: {name: keyword.operator.assignment.protea}
 
       catch-clause:
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(catch)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(catch)(?!\B|\p{Pd}+\b)\s*(?=\()
+        end: (?<=;|\))|(?={)
         name: meta.catch.protea
         captures:
           1: {name: keyword.control.error.protea}
-          2: {name: punctuation.separator.colon.protea}
         patterns:
           - begin: \s*(\()
             end: \s*(\))
@@ -5080,67 +5074,56 @@ repository:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.error.protea
               - include: $self
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
-            name: keyword.control.error.protea
-          - include: $self
 
       for-clause:
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|while)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|while)(?!\B|\p{Pd}+\b)\s*(?=\()
+        end: (?<=;|\))|(?={)
         name: meta.for.protea
         captures:
           1: {name: keyword.control.loop.protea}
-          2: {name: punctuation.separator.colon.protea}
         patterns:
-          - &for-clause-keywords
-            match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
-            name: keyword.control.loop.protea
           - begin: \s*(\()
             end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.protea}
             patterns:
-              - *for-clause-keywords
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.loop.protea
               - include: $self
           - include: $self
 
       if-clause:
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|elif)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|elif)(?!\B|\p{Pd}+\b)\s*(?=\()
+        end: (?<=;|\))|(?={)
         name: meta.if.protea
         captures:
           1: {name: keyword.control.conditional.protea}
-          2: {name: punctuation.separator.colon.protea}
         patterns:
           - include: '$self'
 
       match-clause:
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*(?=\()
+        end: (?<=;|\))|(?={)
         name: meta.switch.protea
         captures:
           1: {name: keyword.control.match.protea}
-          2: {name: punctuation.separator.colon.protea}
         patterns:
           - include: '$self'
 
       with-clause:
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*
-        end: (?<=;)|(?={)|$|\s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(then)(?!\B|\p{Pd}+\b)|(?<=[)}\]\w'"`])(:)(?=\s|$)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*(?=\()
+        end: (?<=;|\))|(?={)
         name: meta.with.protea
         captures:
           1: {name: keyword.control.with.protea}
-          2: {name: punctuation.separator.colon.protea}
         patterns:
-          - &with-clause-keywords
-            match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
-            name: keyword.control.with.protea
           - begin: \s*(\()
             end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.protea}
             patterns:
-              - *with-clause-keywords
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.with.protea
               - include: $self
           - include: $self
 
@@ -5169,7 +5152,7 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|over
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|rem
+                |post|[gs]et|del
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
@@ -5216,7 +5199,7 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|over
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|rem
+                |post|[gs]et|del
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
