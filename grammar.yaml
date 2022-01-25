@@ -98,14 +98,6 @@ define:
     ([\p{Pc}\p{L}][\w\p{Pd}]*)
     \b
 
-  parameter-brackets:
-    begin: \s*(\()
-    end: \s*(\))
-    captures:
-      1: {name: punctuation.definition.parameters.protea}
-    patterns:
-      - include: '#param-bracket-content'
-
   html-tag-names: &html-tag-names
     - match: '\.|:|::'
       name: punctuation.separator.namespace.protea
@@ -3855,8 +3847,6 @@ repository:
             name: punctuation.separator.mapping.protea
           - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]*):(?=['"`\\({\[\w\s]|$)
             name: punctuation.separator.key-value.protea
-          - match: (?<=^\s*|[,;{]\s*)(?:[-+*]\s+)*[-+*](?=\s|$)
-            name: punctuation.definition.block.sequence.item.protea
 
     patterns:
       - begin: |
@@ -3866,7 +3856,8 @@ repository:
             | [^.]\.=?|[?!:]:=?
           )
           (\#?\{)\s*
-        end: \s*(\})\s*
+        end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.typeparameters.protea}
         patterns:
@@ -3886,6 +3877,7 @@ repository:
           )
           (\#?\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.binding-pattern.object.protea}
         patterns:
@@ -3909,6 +3901,7 @@ repository:
           )
           (\#\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.mapping.protea}
         patterns:
@@ -3932,6 +3925,7 @@ repository:
           )
           (\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.dictionary.protea}
         patterns:
@@ -3951,9 +3945,11 @@ repository:
           )
           (\#\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.section.class.protea}
         patterns:
+          - include: '#types'
           - include: $self
       - begin: |
           (?x)
@@ -3967,6 +3963,7 @@ repository:
           )
           (\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.block.protea}
         patterns:
@@ -3985,6 +3982,7 @@ repository:
           )
           (\#\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.mapping.protea}
         patterns:
@@ -4005,6 +4003,7 @@ repository:
           )
           (\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.dictionary.protea}
         patterns:
@@ -4024,29 +4023,53 @@ repository:
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.protea
     patterns:
-      - begin: \s*(?<=[\w'"`)}\]>]|[^.]\.=?|[?!:]:=?)(\#?\()\s*
+      - begin: |
+          (?x)
+          (?<=
+              [\w'"`)}\]] | \\. # literal
+            | [^.]\.=?|[?!:]:=?
+          )
+          (\#?\()\s*
         end: \s*(\))
+        name: meta.brace.round.protea
         captures:
           1: {name: punctuation.definition.parameters.protea}
         patterns:
-          - include: '#punctuation'
-          - include: '#clauses'
-          - include: '#constants'
-          - include: '#declarations'
-          - include: '#expression-keywords'
-          - include: '#parameter-variables'
+          - include: '#param-bracket-content'
           - include: '#types'
-          - include: self
-      - begin: \s*(?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
+          - include: $self
+      - begin: |
+          (?x)
+          (?<=
+            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+            \b
+              (?: # destructuring keywords
+                var|val
+              )
+            \b
+            (?:$|[,;'"`({\[)}\]\\\s]) # beside a delimiter or space
+            \s*
+          )
+          (\#?\()\s*
         end: \s*(\))
+        name: meta.brace.round.protea
         captures:
           1: {name: punctuation.definition.binding-pattern.tuple.protea}
         patterns:
-          - include: '#labels'
+          - include: '#punctuation'
           - include: '#types'
           - include: $self
-      - begin: \s*(\#?\()\s*
+      - begin: (\#\()\s*
         end: \s*(\))
+        name: meta.brace.round.protea
+        captures:
+          1: {name: punctuation.definition.tuple.protea}
+        patterns:
+          - include: '#types'
+          - include: $self
+      - begin: (\()\s*
+        end: \s*(\))
+        name: meta.brace.round.protea
         captures:
           1: {name: punctuation.definition.expression.protea}
         patterns:
@@ -4060,39 +4083,56 @@ repository:
           - match: ','
             name: punctuation.separator.sequence.protea
     patterns:
-      - begin: \s*(?<=\b(?:var|val|in|of|as|is|new|to|til|thru|by|del|unset|ref|and|or|xor|not)\b\s*)(\#?\{)\s*
+      - begin: |
+          (?x)
+          (?<=
+              [\w'"`)}\]] | \\. # literal
+            | [^.]\.=?|[?!:]:=?
+          )
+          (\#?\[)\s*
         end: \s*(\])
-        captures:
-          1: {name: punctuation.definition.binding-pattern.array.protea}
-        patterns:
-          - include: '#labels'
-          - include: '#punctuation'
-          - include: '#types'
-          - include: $self
-      - begin: \s*(?<=[\w'"`)}\]]|[^.]\.=?|[?!:]:=?)(\#?\[)\s*
-        end: \s*(\])
+        name: meta.brace.square.protea
         captures:
           1: {name: punctuation.definition.attribute-selector.protea}
         patterns:
+          - include: '#types'
+          - include: $self
+      - begin: |
+          (?x)
+          (?<=
+            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+            \b
+              (?: # destructuring keywords
+                var|val
+              )
+            \b
+            (?:$|[,;'"`({\[)}\]\\\s]) # beside a delimiter or space
+            \s*
+          )
+          (\#?\[)\s*
+        end: \s*(\])
+        name: meta.brace.square.protea
+        captures:
+          1: {name: punctuation.definition.binding-pattern.array.protea}
+        patterns:
           - include: '#punctuation'
           - include: '#types'
           - include: $self
-      - begin: \s*(\#\[)\s*
+      - begin: (\#\[)\s*
         end: \s*(\])
+        name: meta.brace.square.protea
         captures:
-          1: {name: punctuation.definition.sequence.protea}
+          1: {name: punctuation.definition.tuple.protea}
         patterns:
-          - match: ','
-            name: punctuation.separator.sequence.protea
-          - include: '#types'
+          - include: '#punctuation'
           - include: $self
-      - begin: \s*(\[)\s*
+      - begin: (\[)\s*
         end: \s*(\])
+        name: meta.brace.square.protea
         captures:
-          1: {name: punctuation.definition.array.protea}
+          1: {name: punctuation.definition.expression.protea}
         patterns:
-          - match: ','
-            name: punctuation.separator.sequence.protea
+          - include: '#punctuation'
           - include: '#types'
           - include: $self
 
@@ -4153,6 +4193,15 @@ repository:
 
   # Clauses and Keywords
 
+  parameter-brackets:
+    begin: \s*(\()
+    end: \s*(\))
+    captures:
+      1: {name: punctuation.definition.parameters.protea}
+    patterns:
+      - include: '#param-bracket-content'
+      - include: $self
+
   block-entities:
     patterns:
       - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
@@ -4187,21 +4236,16 @@ repository:
           - include: '#comments'
           - include: '#comma'
           - include: '#line-continuation'
-
+      - match: \s*(?<!\*)\*(?!\*)\s*
+        name: keyword.generator.asterisk.protea
       - include: '#comments'
       - include: '#comma'
       - include: '#line-continuation'
       - include: '#type-keywords'
       - include: '#type-square-brackets'
-      - include: '#parameter-brackets'
+      - include: '#brackets'
       - include: '#type-signature'
-      - match: \s*(?<!\*)\*(?!\*)\s*
-        name: keyword.generator.asterisk.protea
-      - include: '#regexps'
-      - include: '#strings'
-      - include: '#symbols'
-      - include: '#constants'
-
+      - include: '#literals'
       - applyEndPatternLast: true
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]))
         end: (?=)|$
@@ -5343,23 +5387,6 @@ repository:
           - include: '#brackets'
           - include: '#types'
 
-  parameter-brackets:
-    begin: (\()\s*
-    end: \s*(\))
-    captures:
-      1: {name: punctuation.definition.parameters.protea}
-    patterns:
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.operator.expression.as.protea
-      - match: (?<=[\w\s][(|])\.
-        name: punctuation.definition.metadata.protea
-      - include: '#clauses'
-      - include: '#constants'
-      - include: '#declarations'
-      - include: '#expression-keywords'
-      - include: '#parameter-variables'
-      - include: $self
-
   curly-brackets:
     repository:
       punctuation:
@@ -5368,8 +5395,6 @@ repository:
             name: punctuation.separator.mapping.protea
           - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]*):(?=['"`\\({\[\w\s]|$)
             name: punctuation.separator.key-value.protea
-          - match: (?<=^\s*|[,;{]\s*)(?:[-+*]\s+)*[-+*](?=\s|$)
-            name: punctuation.definition.block.sequence.item.protea
 
     patterns:
       - begin: |
