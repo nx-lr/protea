@@ -2,7 +2,7 @@
 
 ```dart
 elem TodoItem {
-  prop color = style { color: '#333' }
+  prop color = style { color: #333 }
   prop label_ = ''
   prop done = false
 
@@ -150,25 +150,18 @@ Note that this rule does not apply to keywords, which are all written in all-low
 The following names are reserved words. These keywords are divided into five groups:
 
 ```dart
-in of as is new
-to til thru by del
-unset ref and or xor not
+in of as is new to til thru by del
+unset ref and or xor not go defer
 
-var val func func proc type
-class data enum mod
-iter macro inter obj
-trait style elem prop
+var val func proc type class data enum module
+iter macro inter object trait style elem prop
 
-go defer do from where with
-if elif else then def
-for each loop while
-try throw catch after
-match case fail
-use show hide route
+do with from where if elif else
+for each loop while try throw catch after
+match case fail then def
 
-goto pass
-break next redo retry
-return yield await label
+goto pass break next redo retry return
+yield await label use show hide route
 
 debug assert check
 
@@ -177,20 +170,29 @@ true false null nan void infin
 it this that self args ctor proto
 ```
 
-- visibility `pub` `priv` `prot` `final` `over` `immut` `mut` `glo` `loc` `stat` `intern` `extern` `imply` `exply` `post` `get` `set` `del`
-- declaration modifiers: `seal` `abst` `impure` `pure` `early` `late` `covar` `contra` `async` `sync` `stat` `dyn` `lazy` `eager` `bound` `free` `uniq` `struct`
-- functional modifiers: `rec` `oper` `curry` `inline` `prefix` `suffix` `infix` `left` `right` `binary` `unary`
+Modifier keywords go before a declaration keyword.
+
+```dart
+pub priv prot final over immut mut
+global local intern extern imply exply
+
+seal abst impure pure early late covar
+contra async sync stat dyn lazy eager
+bound free uniq struct
+
+rec oper curry inline prefix suffix infix
+left right binary unary
+```
 
 Some of these modifiers are for future use.
 
 Because of how identifiers are compared, you can use any number of trailing underscores to "strop" a keyword to turn it into an identifier. Keywords also become identifiers when part of a qualified name, such as `x.for.then` or `y::loop`, as well as within literals (with some exceptions).
 
 ```dart
-;x y z
 var var_ = "Hello Stropping"
-type Obj = { type_: int }
+type obj = { type_: int }
 val object_ = Obj(type_: 9)
-assert object_ is Obj
+assert object_ is obj
 assert object_.type == 9
 var var_ = 42; val val_ = 8
 assert var_ + val_ == 50
