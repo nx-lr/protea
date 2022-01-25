@@ -339,8 +339,21 @@ repository:
 
   symbols:
     patterns:
-      - match: \@[\p{Pc}\p{L}][\w\p{Pd}]*\b(?:(?:\.|::)[\p{Pc}\p{L}][\w\p{Pd}]*\b)*\s*
+      - applyEndPatternLast: true
+        begin: \@[\p{Pc}\p{L}][\w\p{Pd}]*\b
+        end: (?=)|$
         name: entity.name.class.decorator.protea
+        patterns:
+          - include: '#brackets'
+          - &embedded-primary-operators
+            comment: Primary binary operators
+            match: (?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
+            captures:
+              1: {name: keyword.operator.optional.protea}
+              2: {name: keyword.operator.assert.protea}
+              3: {name: keyword.operator.accessor.protea}
+          - match: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
+            name: entity.name.class.decorator.protea
       - match: \B(:)(?=['"])
         name: punctuation.definition.symbol.protea
       - match: \B(:)([\p{Pc}\p{L}][\w\p{Pd}]*\b)
