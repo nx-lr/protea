@@ -122,7 +122,6 @@ repository:
   core:
     patterns:
       - include: '#ignore-long-lines'
-      - include: '#closures'
       - include: '#clauses'
       - include: '#declarations'
       - include: '#keywords'
@@ -135,7 +134,6 @@ repository:
       - include: '#punctuation'
       - include: '#symbols'
       - include: '#switch-clause'
-      - include: '#format-clause'
       - include: '#type-signature'
       - include: '#literals'
       - include: '#operators'
@@ -160,7 +158,6 @@ repository:
         name: keyword.operator.expression.as.protea
       - match: (?<=[\w\s][(|])\.
         name: punctuation.definition.metadata.protea
-      - include: '#closures'
       - include: '#clauses'
       - include: '#constants'
       - include: '#declarations'
@@ -176,7 +173,6 @@ repository:
       - include: '#punctuation'
       - include: '#symbols'
       - include: '#switch-clause'
-      - include: '#format-clause'
       - include: '#type-signature'
       - include: '#literals'
       - include: '#operators'
@@ -2213,9 +2209,16 @@ repository:
 
   # Special code blocks
 
+  html-builtins:
+    patterns:
+      - include: source.css.scss#constant_functions
+      - include: source.css.scss#constant_sass_functions
+      - include: source.css.scss#constant_important
+      - include: source.css.scss#constant_default
+      - include: source.css.scss#constant_optional
+
   html-properties:
     patterns:
-      - include: '#line-continuation'
       - include: source.yaml#flow-sequence
       - include: '#brackets'
       - include: '#literals'
@@ -2223,11 +2226,8 @@ repository:
       - include: '#hex-colors'
       - include: '#type-variables'
       - include: '#embedded-expression'
-      - include: source.css.scss#constant_functions
-      - include: source.css.scss#constant_sass_functions
-      - include: source.css.scss#constant_important
-      - include: source.css.scss#constant_default
-      - include: source.css.scss#constant_optional
+      - include: '#html-builtins'
+      - include: '#line-continuation'
 
   hex-colors:
     match: (#)\b(?:\h{3,4}|\h{6}|\h{8})\b
@@ -2270,7 +2270,6 @@ repository:
   style-properties:
     patterns:
       - include: '#embedded'
-      - include: '#closures'
       - include: '#clauses'
       - include: '#declarations'
       - include: '#keywords'
@@ -4197,7 +4196,7 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|uniq|struct
+                |eager|bound|free|uniq|struct|union
 
                 |rec|oper|curry|inline
                 |prefix|suffix|infix|binary|unary|left|right
@@ -4243,7 +4242,7 @@ repository:
           (?:
             seal|abst|impure|pure|early|late
             |covar|contra|a?sync|stat|dyn|lazy
-            |eager|bound|free|uniq|struct
+            |eager|bound|free|uniq|struct|union
           )
           (?!\B|\p{Pd}+\b)
           \s*
@@ -4725,7 +4724,7 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|uniq|struct
+                |eager|bound|free|uniq|struct|union
 
                 |rec|oper|curry|inline
                 |prefix|suffix|infix|binary|unary|left|right
@@ -4770,7 +4769,7 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|uniq|struct
+                |eager|bound|free|uniq|struct|union
 
                 |rec|oper|curry|inline
                 |prefix|suffix|infix|binary|unary|left|right
@@ -4816,7 +4815,7 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|uniq|struct
+                |eager|bound|free|uniq|struct|union
 
                 |rec|oper|curry|inline
                 |prefix|suffix|infix|binary|unary|left|right
@@ -4861,7 +4860,7 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|uniq|struct
+                |eager|bound|free|uniq|struct|union
 
                 |rec|oper|curry|inline
                 |prefix|suffix|infix|binary|unary|left|right
@@ -4949,37 +4948,7 @@ repository:
       - include: '#do-clause'
       - include: '#type-clause'
       - include: '#new-clause'
-
-  closures:
-    patterns:
-      - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*(?=\()
-        end: (?<=;|\))|(?={)
-        captures:
-          1: {name: keyword.control.match.protea}
-        patterns:
-          - begin: \s*(\()
-            end: \s*(\))
-            captures:
-              1: {name: punctuation.definition.expression.protea}
-            patterns:
-              - include: '#params-clause'
-              - applyEndPatternLast: true
-                begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
-                end: (?=)|$
-                beginCaptures:
-                  1: {name: keyword.control.match.protea}
-                patterns:
-                  - include: '#types'
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.match.protea
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.match.protea
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|only|just|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.match.protea
-              - include: '#type-keywords'
-              - include: $self
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.control.match.protea
+      - include: '#case-clause'
 
     repository:
       pattern-brackets:
@@ -5005,6 +4974,26 @@ repository:
           - include: '#round-brackets'
 
       type-clause:
+        patterns:
+          - applyEndPatternLast: true
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?!\B|\p{Pd}+\b)\s*
+            end: (?=)|$
+            beginCaptures:
+              1: {name: keyword.operator.expression.$1.protea}
+            patterns:
+              - include: '#types'
+          - applyEndPatternLast: true
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)(?!\B|\p{Pd}+\b)\s*
+            end: (?=)|$
+            captures:
+              1: {name: keyword.other.typedef.protea}
+            patterns:
+              - include: '#type-records'
+              - include: '#types'
+              - match: \s*([?:]?=)\s*
+                captures:
+                  1: {name: keyword.operator.assignment.protea}
+
         repository:
           punctuation:
             patterns:
@@ -5014,7 +5003,6 @@ repository:
                 name: punctuation.separator.key-value.protea
               - match: (?<=^\s*|[,;{]\s*)(?:[-+*]\s+)*[-+*](?=\s|$)
                 name: punctuation.definition.block.sequence.item.protea
-
           type-records:
             patterns:
               - begin: \s*(\#\{)\s*
@@ -5036,34 +5024,15 @@ repository:
                   - include: '#types'
                   - include: $self
 
-        patterns:
-          - applyEndPatternLast: true
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?!\B|\p{Pd}+\b)\s*
-            end: (?=)|$
-            beginCaptures:
-              1: {name: keyword.operator.expression.$1.protea}
-            patterns:
-              - include: '#types'
-          - applyEndPatternLast: true
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)(?!\B|\p{Pd}+\b)\s*
-            end: (?=)|$
-            captures:
-              1: {name: keyword.other.typedef.protea}
-            patterns:
-              - include: '#type-records'
-              - include: '#types'
-              - match: \s*([?:]?=)\s*
-                captures:
-                  1: {name: keyword.operator.assignment.protea}
-
       catch-clause:
+        applyEndPatternLast: true
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(catch)(?!\B|\p{Pd}+\b)\s*(?=\()
-        end: (?<=;|\))|(?={)
+        end: (?=)|$
         name: meta.catch.protea
         captures:
           1: {name: keyword.control.error.protea}
         patterns:
-          - begin: \s*(\()
+          - begin: \s*(\()\s*
             end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.protea}
@@ -5073,13 +5042,14 @@ repository:
               - include: $self
 
       for-clause:
+        applyEndPatternLast: true
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|while)(?!\B|\p{Pd}+\b)\s*(?=\()
-        end: (?<=;|\))|(?={)
+        end: (?=)|$
         name: meta.for.protea
         captures:
           1: {name: keyword.control.loop.protea}
         patterns:
-          - begin: \s*(\()
+          - begin: \s*(\()\s*
             end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.protea}
@@ -5087,42 +5057,89 @@ repository:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.loop.protea
               - include: $self
-          - include: $self
 
       if-clause:
+        applyEndPatternLast: true
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|elif)(?!\B|\p{Pd}+\b)\s*(?=\()
-        end: (?<=;|\))|(?={)
+        end: (?=)|$
         name: meta.if.protea
         captures:
           1: {name: keyword.control.conditional.protea}
         patterns:
-          - include: $self
-
-      match-clause:
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*(?=\()
-        end: (?<=;|\))|(?={)
-        name: meta.switch.protea
-        captures:
-          1: {name: keyword.control.match.protea}
-        patterns:
-          - include: $self
-
-      with-clause:
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*(?=\()
-        end: (?<=;|\))|(?={)
-        name: meta.with.protea
-        captures:
-          1: {name: keyword.control.with.protea}
-        patterns:
-          - begin: \s*(\()
+          - begin: \s*(\()\s*
             end: \s*(\))
             captures:
               1: {name: punctuation.definition.expression.protea}
             patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.conditional.protea
+              - include: $self
+
+      match-clause:
+        applyEndPatternLast: true
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*(?=\()
+        end: (?=)|$
+        name: meta.switch.protea
+        captures:
+          1: {name: keyword.control.match.protea}
+        patterns:
+          - begin: \s*(\()\s*
+            end: \s*(\))
+            captures:
+              1: {name: punctuation.definition.expression.protea}
+            patterns:
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.match.protea
+              - include: $self
+
+      case-clause:
+        patterns:
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(fail)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.match.protea
+          - applyEndPatternLast: true
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*(?=\()
+            end: (?=)|$
+            captures:
+              1: {name: keyword.control.match.protea}
+            patterns:
+              - begin: \s*(\()\s*
+                end: \s*(\))
+                captures:
+                  1: {name: punctuation.definition.expression.protea}
+                patterns:
+                  - include: '#params-clause'
+                  - applyEndPatternLast: true
+                    begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
+                    end: (?=)|$
+                    beginCaptures:
+                      1: {name: keyword.control.match.protea}
+                    patterns:
+                      - include: '#types'
+                  - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|lest|elif|elest|else)(?!\B|\p{Pd}+\b)\s*
+                    name: keyword.control.match.protea
+                  - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val)(?!\B|\p{Pd}+\b)\s*
+                    name: keyword.control.match.protea
+                  - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|thru|but|only|just|and|x?or|not|as|all|any|some|none|in|of)(?!\B|\p{Pd}+\b)\s*
+                    name: keyword.control.match.protea
+                  - include: '#type-keywords'
+                  - include: $self
+
+      with-clause:
+        applyEndPatternLast: true
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*(?=\()
+        end: (?=)|$
+        name: meta.with.protea
+        captures:
+          1: {name: keyword.control.with.protea}
+        patterns:
+          - begin: \s*(\()\s*
+            end: \s*(\))
+            captures:
+              1: {name: punctuation.definition.expression.protea}
+            patterns:
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await|as)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.with.protea
               - include: $self
-          - include: $self
 
   # Object labels
 
@@ -5153,7 +5170,7 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|uniq|struct
+                |eager|bound|free|uniq|struct|union
 
                 |rec|oper|curry|inline
                 |prefix|suffix|infix|binary|unary|left|right
@@ -5200,7 +5217,7 @@ repository:
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
-                |eager|bound|free|uniq|struct
+                |eager|bound|free|uniq|struct|union
 
                 |rec|oper|curry|inline
                 |prefix|suffix|infix|binary|unary|left|right
@@ -5487,6 +5504,7 @@ repository:
             name: keyword.operator.expression.as.protea
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.protea
+
     patterns:
       - begin: |
           (?x)
@@ -5539,6 +5557,7 @@ repository:
         patterns:
           - match: ','
             name: punctuation.separator.sequence.protea
+
     patterns:
       - begin: |
           (?x)
@@ -5612,7 +5631,7 @@ repository:
 
   html-tag-names:
     patterns:
-      - match: '(?x)\b( all|print|screen|speech|aural|braille|embossed|handheld|projection|tty|tv )(?!\B|\p{Pd}+\b)'
+      - match: (?x)\b( all|print|screen|speech|aural|braille|embossed|handheld|projection|tty|tv )(?!\B|\p{Pd}+\b)
         name: support.constant.media.css.protea
       - match: (?x)\b( a|abbr|acronym|address|altGlyph|altGlyphDef|altGlyphItem|animate|animateColor|animateMotion|animateTransform|annotation|annotationXml|applet|area|article|aside|audio|b|base|basefont|bdi|bdo|bgsound|big|blink|blockquote|body|br|button|canvas|caption|center|circle|cite|clipPath|code|col|colgroup|colorProfile|command|content|cursor|data|datalist|dd|defs|del|desc|details|dfn|dialog|dir|discard|div|dl|dt|element|ellipse|em|embed|feBlend|feColorMatrix|feComponentTransfer|feComposite|feConvolveMatrix|feDiffuseLighting|feDisplacementMap|feDistantLight|feDropShadow|feFlood|feFuncA|feFuncB|feFuncG|feFuncR|feGaussianBlur|feImage|feMerge|feMergeNode|feMorphology|feOffset|fePointLight|feSpecularLighting|feSpotLight|feTile|feTurbulence|fieldset|figcaption|figure|filter|font|fontFace|fontFaceFormat|fontFaceName|fontFaceSrc|fontFaceUri|footer|foreignObject|form|frame|frameset|g|glyph|glyphRef|hatch|hatchpath|hd|head|header|hgroup|hkern|hr|html|h[1-6]| i|iframe|image|img|input|ins|isindex|kbd|keygen|label|legend|li|line|linearGradient|link|listing|maction|main|maligngroup|malignmark|map|mark|marker|marquee|mask|math|menclose|menu|menuitem|merror|mesh|meshgradient|meshpatch|meshrow|meta|metadata|meter|mfenced|mfrac|mglyph|mi|missingGlyph|mlabeledtr|mlongdiv|mmultiscripts|mn|mo|mover|mpadded|mpath|mphantom|mroot|mrow|ms|mscarries|mscarry|msgroup|msline|mspace|msqrt|msrow|mstack|mstyle|msub|msubsup|msup|mtable|mtd|mtext|mtr|multicol|munder|munderover|nav|nextid|nobr|noembed|noframes|noscript|object|ol|optgroup|option|output|p|param|path|pattern|picture|plaintext|polygon|polyline|pre|progress|q|radialGradient|rb|rect|rp|rt|rtc|ruby|s|samp|script|section|select|semantics|set|shadow|slot|small|solidcolor|source|spacer|span|stop|strike|strong|style|sub|summary|sup|svg|switch|symbol|table|tbody|td|template|text|textarea|textPath|tfoot|th|thead|time|title|tr|track|tref|tspan|tt|u|ul|use|var|video|view|vkern|wbr|xmp )(?!\B|\p{Pd}+\b)
         name: entity.name.tag.css.protea
@@ -5818,7 +5837,7 @@ repository:
             |abort|abs|acos|asctime|asctimeR|asin|assert|atan|atan2|atexit|atof|atoi|atol|bsearch|btowc|calloc
             |catclose6|catgets6|catopen6|ceil|clearerr|clock|cos|cosh|ctime|ctime64|ctimeR|ctime64R|difftime
             |difftime64|div|erf|erfc|exit|exp|fabs|fclose|fdopen5|feof|ferror|fflush1|fgetc1|fgetpos1|fgets1
-            |fgetwc6|fgetws6|fileno5|floor|fmod|fopen|fprintf|fputc1|fputs1|fputwc6|fputws6|fread|free|uniq|struct|freopen
+            |fgetwc6|fgetws6|fileno5|floor|fmod|fopen|fprintf|fputc1|fputs1|fputwc6|fputws6|fread|free|freopen
             |frexp|fscanf|fseek1|fsetpos1|ftell1|fwide6|fwprintf6|fwrite|fwscanf6|gamma|getc1|getchar1|getenv
             |gets|getwc6|getwchar6|gmtime|gmtime64|gmtimeR|gmtime64R|hypot|isalnum|isalpha|isascii4|isblank
             |iscntrl|isdigit|isgraph|islower|isprint|ispunct|isspace|isupper|iswalnum4|iswalpha4|iswblank4
@@ -5918,7 +5937,7 @@ repository:
             |diskraid|diskshadow|dispdiag|doin|dnscmd|doskey|driverquery|dsacls|dsadd
             |dsamain|dsdbutil|dsget|dsmgmt|dsmod|dsmove|dsquery|dsrm|edit|endlocal
             |eraseesentutl|eventcreate|eventquery|eventtriggers|evntcmd|expand|extract
-            |fc|filescrn|find|findstr|finger|flattemp|fonde|forfiles|format|free|uniq|structdisk
+            |fc|filescrn|find|findstr|finger|flattemp|fonde|forfiles|format|free|uniq|struct|uniondisk
             |fsutil|ftp|ftype|fveupdate|getmac|gettype|gpfixup|gpresult|gpupdate
             |graftabl|hashgen|hep|helpctr|hostname|icacls|iisreset|inuse|ipconfig
             |ipxroute|irftp|ismserv|jetpack|klist|ksetup|ktmutil|ktpass|label|ldifd
@@ -5951,7 +5970,7 @@ repository:
             |continue|cp|cpio|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|declare
             |df|diff|diff3|dig|dir|dircolors|dirname|dirs|dos2unix|dmesg|dpkg|du|echo
             |egrep|eject|enable|env|ethtool|eval|exec|exit|expect|expand|export|expr
-            |false|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|for|format|free|uniq|struct|fsck|ftp
+            |false|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|for|format|free|uniq|struct|union|fsck|ftp
             |function|fuser|gawk|getopts|grep|groupadd|groupdel|groupmod|groups|gzip|hash
             |head|help|history|hostname|htop|iconv|id|if|ifconfig|ifdown|ifup|import|install
             |iostat|ip|jobs|join|kill|killall|less|let|link|ln|local|locate|logname|logout
