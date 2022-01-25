@@ -158,27 +158,12 @@ repository:
         name: keyword.operator.expression.as.protea
       - match: (?<=[\w\s][(|])\.
         name: punctuation.definition.metadata.protea
-      - include: '#clauses'
-      - include: '#constants'
-      - include: '#declarations'
       - include: '#expression-keywords'
+      - include: '#clauses'
+      - include: '#constants-'
+      - include: '#declaration-keywords'
       - include: '#parameter-variables'
       - include: '#keywords'
-      - include: '#comments'
-      - include: '#params-clause'
-      - include: '#function-clause'
-      - include: '#embedded-expression'
-      - include: '#jsx'
-      - include: '#brackets'
-      - include: '#punctuation'
-      - include: '#symbols'
-      - include: '#switch-clause'
-      - include: '#type-signature'
-      - include: '#literals'
-      - include: '#operators'
-      - include: '#calls'
-      - include: '#variables'
-      - include: '#space'
 
   # Illegal Syntax
 
@@ -410,6 +395,56 @@ repository:
       - include: '#string-escapes'
       - include: '#embedded'
 
+  string-escapes:
+    patterns:
+      - match: \\(?=\s*$)
+        name: constant.character.escape.newline.protea
+      - include: '#character-escapes'
+      - include: '#numeric-escapes'
+      - match: \\([cm][a-z])
+        name: constant.character.control.protea
+      - match: \\[abefprnstv]
+        name: constant.character.escape.protea
+      - match: \\\p{S}
+        name: constant.character.escape.symbol.protea
+      - match: \\\p{P}
+        name: constant.character.escape.punctuation.protea
+      - match: \\[a-zA-Z\p{C}]
+        name: invalid.deprecated.escape.protea
+      - match: \\\s
+        name: constant.character.escape.space.protea
+      - match: \\\p{L}
+        name: constant.character.escape.letter.protea
+      - match: \\\p{N}
+        name: constant.character.escape.number.protea
+      - match: \\.
+        name: constant.character.escape.other.protea
+
+  latex-sublanguage:
+    name: string.unquoted.plain.in.protea
+    comment: Grammar for the Unicode Named Character Mini-Language.
+    patterns:
+      - applyEndPatternLast: true
+        name: constant.other.function.protea
+        begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b(?=\{)
+        beginCaptures:
+          1: {patterns: [include: '#function-namespace']}
+        end: (?=)|$
+        patterns:
+          - begin: (\{)
+            end: (\})
+            captures:
+              1: {name: constant.other.function.protea}
+            patterns:
+              - include: '#latex-sublanguage'
+      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
+        name: constant.character.escape.protea
+        captures:
+          1: {patterns: [include: '#character-namespace']}
+      - include: '#string-content'
+      - include: '#regexp-patterns'
+      - include: '#illegal'
+
   function-namespace:
     patterns:
       - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
@@ -468,34 +503,9 @@ repository:
           - include: '#regexp-patterns'
           - include: '#illegal'
 
-  string-escapes:
-    patterns:
-      - match: \\(?=\s*$)
-        name: constant.character.escape.newline.protea
-      - include: '#character-escapes'
-      - include: '#numeric-escapes'
-      - match: \\([cm][a-z])
-        name: constant.character.control.protea
-      - match: \\[abefprnstv]
-        name: constant.character.escape.protea
-      - match: \\\p{S}
-        name: constant.character.escape.symbol.protea
-      - match: \\\p{P}
-        name: constant.character.escape.punctuation.protea
-      - match: \\[a-zA-Z\p{C}]
-        name: invalid.deprecated.escape.protea
-      - match: \\\s
-        name: constant.character.escape.space.protea
-      - match: \\\p{L}
-        name: constant.character.escape.letter.protea
-      - match: \\\p{N}
-        name: constant.character.escape.number.protea
-      - match: \\.
-        name: constant.character.escape.other.protea
-
   numeric-escapes:
     comments: |
-      Hexadecimal escapes \u encode UTF-16 while \x encodes UTF-8 codepoints
+      Hexadecimal escapes \u encode UTF-16 while \x encodes UTF-8 code points
       in addition to Unicode characters.
     patterns:
       - comment: Binary escape sequences (0 to 417777)
@@ -1014,36 +1024,6 @@ repository:
         captures:
           1: {name: punctuation.separator.mapping.protea}
           2: {name: storage.type.format.protea}
-
-  # Unicode Named Character Language
-
-  latex-sublanguage:
-    name: string.unquoted.plain.in.protea
-    comment: Grammar for the Unicode Named Character Mini-Language.
-    patterns:
-      - applyEndPatternLast: true
-        name: meta.function.math.protea
-        begin: (\\)([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b(?=\{)
-        beginCaptures:
-          1: {name: constant.other.function.protea}
-          2: {patterns: [include: '#function-namespace']}
-        end: (?=)|$
-        patterns:
-          - begin: (\{)
-            end: (\})
-            captures:
-              1: {name: constant.other.function.protea}
-            patterns: [include: '#latex-sublanguage']
-      - match: (\\)\b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
-        captures:
-          1: {name: constant.other.character.protea}
-          2: {patterns: [include: '#character-namespace']}
-      - include: '#string-content'
-      - include: '#literals'
-      - include: source.js#expression-operators
-      - include: source.yaml#flow-collection
-      - match: ([^\s\\(){}\[\]]+)
-        name: string.unquoted.plain.in.protea
 
   # Regular expressions
 
@@ -2955,7 +2935,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
+            | (?:^|[,;'"`(){}\[\]\s]|\\.)
+              \b (?:
+                var|val|func|proc|type
+                |class|data|enum|module
+                |iter|macro|inter|object
+                |trait|style|elem|prop|as
+              ) \b
+              (?:$|[,;'"`(){}\[\]\\\s]) # var/val/as keyword
           )
             \s*
             [?!] # optional or required
@@ -2968,7 +2955,9 @@ repository:
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
-              \s+ \b as \b \s
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`\\({\[]
             | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
@@ -2982,7 +2971,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
+            | (?:^|[,;'"`(){}\[\]\s]|\\.)
+              \b (?:
+                var|val|func|proc|type
+                |class|data|enum|module
+                |iter|macro|inter|object
+                |trait|style|elem|prop|as
+              ) \b
+              (?:$|[,;'"`(){}\[\]\\\s]) # var/val/as keyword
           )
             \s*
             \*\*? # spread
@@ -2995,7 +2991,9 @@ repository:
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
-              \s+ \b as \b \s
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`\\({\[]
             | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
@@ -3009,7 +3007,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
+            | (?:^|[,;'"`(){}\[\]\s]|\\.)
+              \b (?:
+                var|val|func|proc|type
+                |class|data|enum|module
+                |iter|macro|inter|object
+                |trait|style|elem|prop|as
+              ) \b
+              (?:$|[,;'"`(){}\[\]\\\s]) # var/val/as keyword
           )
             \s*
             //? # named
@@ -3022,7 +3027,9 @@ repository:
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
-              \s+ \b as \b \s
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`\\({\[]
             | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
@@ -3036,7 +3043,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
+            | (?:^|[,;'"`(){}\[\]\s]|\\.)
+              \b (?:
+                var|val|func|proc|type
+                |class|data|enum|module
+                |iter|macro|inter|object
+                |trait|style|elem|prop|as
+              ) \b
+              (?:$|[,;'"`(){}\[\]\\\s]) # var/val/as keyword
           )
             \s*
             \& # reference
@@ -3049,7 +3063,9 @@ repository:
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
-              \s+ \b as \b \s
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`\\({\[]
             | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
@@ -3063,7 +3079,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
+            | (?:^|[,;'"`(){}\[\]\s]|\\.)
+              \b (?:
+                var|val|func|proc|type
+                |class|data|enum|module
+                |iter|macro|inter|object
+                |trait|style|elem|prop|as
+              ) \b
+              (?:$|[,;'"`(){}\[\]\\\s]) # var/val/as keyword
           )
             \s*
             \% # other
@@ -3076,7 +3099,9 @@ repository:
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
-              \s+ \b as \b \s
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`\\({\[]
             | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
@@ -3090,7 +3115,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^ | \s) \b as \b \s # as keyword
+            | (?:^|[,;'"`(){}\[\]\s]|\\.)
+              \b (?:
+                var|val|func|proc|type
+                |class|data|enum|module
+                |iter|macro|inter|object
+                |trait|style|elem|prop|as
+              ) \b
+              (?:$|[,;'"`(){}\[\]\\\s]) # var/val/as keyword
           )
             \s*
             \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
@@ -3101,7 +3133,9 @@ repository:
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
-              \s+ \b as \b \s
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`\\({\[]
             | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
@@ -4791,6 +4825,7 @@ repository:
           1: {name: punctuation.separator.arguments.protea}
         patterns:
           - include: '#param-bracket-content'
+          - include: $self
       - comment: |
           Function def before function keyword
           x = def()
@@ -4882,6 +4917,7 @@ repository:
           1: {name: punctuation.separator.arguments.protea}
         patterns:
           - include: '#param-bracket-content'
+          - include: $self
 
   params-clause:
     begin: |
@@ -4937,6 +4973,7 @@ repository:
     end: (?<=^|['"`)}\]\w\s]|\\.)(\|)(?=:?(?:[\w\s'"`({\[])|$)
     patterns:
       - include: '#param-bracket-content'
+      - include: $self
 
   clauses:
     patterns:
@@ -5240,6 +5277,7 @@ repository:
           1: {name: punctuation.separator.arguments.protea}
         patterns:
           - include: '#param-bracket-content'
+          - include: $self
       - match: |
           (?x)
           (?<=^ | [{;,] \s*)
@@ -5341,7 +5379,8 @@ repository:
             | [^.]\.=?|[?!:]:=?
           )
           (\#?\{)\s*
-        end: \s*(\})\s*
+        end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.typeparameters.protea}
         patterns:
@@ -5361,6 +5400,7 @@ repository:
           )
           (\#?\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.binding-pattern.object.protea}
         patterns:
@@ -5383,6 +5423,7 @@ repository:
           )
           (\#\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.mapping.protea}
         patterns:
@@ -5405,6 +5446,7 @@ repository:
           )
           (\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.dictionary.protea}
         patterns:
@@ -5423,6 +5465,7 @@ repository:
           )
           (\#\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.section.class.protea}
         patterns:
@@ -5439,6 +5482,7 @@ repository:
           )
           (\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.block.protea}
         patterns:
@@ -5456,6 +5500,7 @@ repository:
           )
           (\#\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.mapping.protea}
         patterns:
@@ -5475,6 +5520,7 @@ repository:
           )
           (\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.dictionary.protea}
         patterns:
@@ -5483,12 +5529,14 @@ repository:
           - include: $self
       - begin: (\#\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.section.class.protea}
         patterns:
           - include: $self
       - begin: (\{)\s*
         end: \s*(\})
+        name: meta.brace.curly.protea
         captures:
           1: {name: punctuation.definition.block.protea}
         patterns:
@@ -5514,6 +5562,7 @@ repository:
           )
           (\#?\()\s*
         end: \s*(\))
+        name: meta.brace.round.protea
         captures:
           1: {name: punctuation.definition.parameters.protea}
         patterns:
@@ -5533,6 +5582,7 @@ repository:
           )
           (\#?\()\s*
         end: \s*(\))
+        name: meta.brace.round.protea
         captures:
           1: {name: punctuation.definition.binding-pattern.tuple.protea}
         patterns:
@@ -5540,12 +5590,14 @@ repository:
           - include: $self
       - begin: (\#\()\s*
         end: \s*(\))
+        name: meta.brace.round.protea
         captures:
           1: {name: punctuation.definition.tuple.protea}
         patterns:
           - include: $self
       - begin: (\()\s*
         end: \s*(\))
+        name: meta.brace.round.protea
         captures:
           1: {name: punctuation.definition.expression.protea}
         patterns:
@@ -5567,6 +5619,7 @@ repository:
           )
           (\#?\[)\s*
         end: \s*(\])
+        name: meta.brace.square.protea
         captures:
           1: {name: punctuation.definition.attribute-selector.protea}
         patterns:
@@ -5585,6 +5638,7 @@ repository:
           )
           (\#?\[)\s*
         end: \s*(\])
+        name: meta.brace.square.protea
         captures:
           1: {name: punctuation.definition.binding-pattern.array.protea}
         patterns:
@@ -5592,6 +5646,7 @@ repository:
           - include: $self
       - begin: (\#\[)\s*
         end: \s*(\])
+        name: meta.brace.square.protea
         captures:
           1: {name: punctuation.definition.tuple.protea}
         patterns:
@@ -5599,6 +5654,7 @@ repository:
           - include: $self
       - begin: (\[)\s*
         end: \s*(\])
+        name: meta.brace.square.protea
         captures:
           1: {name: punctuation.definition.expression.protea}
         patterns:
