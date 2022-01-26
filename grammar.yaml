@@ -363,42 +363,42 @@ repository:
       - include: '#strings-double-quoted'
       - include: '#strings-single-quoted'
 
-  strings-single-quoted:
+  strings-double-quoted:
     patterns:
-      - comment: single quoted string
-        begin: (\w+)('''+|')\s*
-        contentName: string.quoted.single.protea
-        end: \s*()(\2)
+      - comment: double-quoted plain string
+        begin: (?<!"+)((?i:\p{L}+))("""+|")\s*
+        contentName: string.quoted.double.protea
+        end: \s*()(\2)(?!"+)
         captures:
-          1: { name: invalid.illegal.prefix.protea }
+          1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
         patterns:
           - include: '#string-escapes'
-      - comment: single quoted string
-        begin: ()('''+|')\s*
-        contentName: string.quoted.single.protea
-        end: \s*()(\2)
+      - comment: double-quoted plain string
+        begin: (?<!"+)((?i:))("""+|")\s*
+        contentName: string.quoted.double.protea
+        end: \s*()(\2)(?!"+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
         patterns:
           - include: '#string-escapes'
 
-  strings-double-quoted:
+  strings-single-quoted:
     patterns:
-      - comment: double quoted string
-        begin: (\w+)("""+|")\s*
-        contentName: string.quoted.double.protea
-        end: \s*()(\2)
+      - comment: single-quoted plain string
+        begin: (?<!'+)((?i:\p{L}+))('''+|')\s*
+        contentName: string.quoted.single.protea
+        end: \s*()(\2)(?!'+)
         captures:
-          1: { name: invalid.illegal.prefix.protea }
+          1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
         patterns:
           - include: '#string-escapes'
-      - comment: double quoted string
-        begin: ()("""+|")\s*
-        contentName: string.quoted.double.protea
-        end: \s*()(\2)
+      - comment: single-quoted plain string
+        begin: (?<!'+)((?i:))('''+|')\s*
+        contentName: string.quoted.single.protea
+        end: \s*()(\2)(?!'+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -1041,20 +1041,14 @@ repository:
   # Regular expressions
 
   regexps:
+    applyEndPatternLast: true
+    begin: (?<!`+)(?=\p{L}*`+)
+    end: (?=)|$
+    name: meta.regexp.protea
     patterns:
-      - comment: Replacement section
-        begin: (?<=`+|,)\s*(```+|`)\s*
-        end: \s*(\1)(\p{L}*)
-        name: string.replace.regexp.protea
-        captures:
-          1: { name: punctuation.section.regexp.end.protea }
-          2: { name: keyword.other.flag.protea }
-        patterns:
-          - include: '#back-references'
-          - include: '#string-content'
       - comment: Pattern section
-        begin: (\p{L}*)(```+|`)\s*
-        end: \s*(\2)(\p{L}*)
+        begin: (?<!`+)\s*(\p{L}*)(```+|`)\s*
+        end: \s*(\2)(?!`+)(\p{L}*)
         name: string.pattern.regexp.protea
         beginCaptures:
           1: { name: keyword.modifier.protea }
@@ -1065,6 +1059,26 @@ repository:
         patterns:
           - include: '#comments'
           - include: '#regexp-patterns'
+      - applyEndPatternLast: true
+        begin: (?=,)
+        end: (?=)|$
+        name: meta.replace.protea
+        patterns:
+          - comment: Replacement section
+            begin: (?<=`+|,)\s*(```+|`)\s*
+            end: \s*(\1)(?!`+)(\p{L}*)
+            name: string.replace.regexp.protea
+            captures:
+              1: { name: punctuation.section.regexp.end.protea }
+              2: { name: keyword.other.flag.protea }
+            patterns:
+              - include: '#back-references'
+              - include: '#string-content'
+          - include: '#comments'
+          - include: '#comma'
+          - include: '#line-continuation'
+      - include: '#comments'
+      - include: '#line-continuation'
 
   fuzzy-expression:
     patterns:
@@ -6243,9 +6257,9 @@ repository:
           - include: '#embedded-format'
           - include: '#embedded-placeholder'
       - comment: single-quoted interpolated, format, and template string
-        begin: ((?i:fps|fsp|pfs|psf|sfp|spf))('''+|')\s*
+        begin: (?<!'+)((?i:fps|fsp|pfs|psf|sfp|spf))('''+|')\s*
         contentName: string.quoted.single.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!'+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -6255,9 +6269,9 @@ repository:
           - include: '#embedded-format'
           - include: '#embedded-placeholder'
       - comment: double-quoted interpolated, format, and template string
-        begin: ((?i:fps|fsp|pfs|psf|sfp|spf))("""+|")\s*
+        begin: (?<!"+)((?i:fps|fsp|pfs|psf|sfp|spf))("""+|")\s*
         contentName: string.quoted.double.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!"+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -6289,9 +6303,9 @@ repository:
             name: constant.character.escape.protea
           - include: '#embedded-expression'
       - comment: single-quoted interpolated and format string
-        begin: ((?i:fs|sf))('''+|')\s*
+        begin: (?<!'+)((?i:fs|sf))('''+|')\s*
         contentName: string.quoted.single.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!'+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -6300,9 +6314,9 @@ repository:
           - include: '#embedded-expression'
           - include: '#embedded-format'
       - comment: double-quoted interpolated and format string
-        begin: ((?i:fs|sf))("""+|")\s*
+        begin: (?<!"+)((?i:fs|sf))("""+|")\s*
         contentName: string.quoted.double.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!"+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -6333,9 +6347,9 @@ repository:
             name: constant.character.escape.protea
           - include: '#embedded-placeholder'
       - comment: single-quoted interpolated and template string
-        begin: ((?i:ps|sp))('''+|')\s*
+        begin: (?<!'+)((?i:ps|sp))('''+|')\s*
         contentName: string.quoted.single.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!'+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -6344,9 +6358,9 @@ repository:
           - include: '#embedded-expression'
           - include: '#embedded-placeholder'
       - comment: double-quoted interpolated and template string
-        begin: ((?i:ps|sp))("""+|")\s*
+        begin: (?<!"+)((?i:ps|sp))("""+|")\s*
         contentName: string.quoted.double.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!"+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -6355,9 +6369,9 @@ repository:
           - include: '#embedded-expression'
           - include: '#embedded-placeholder'
       - comment: single-quoted format and template string
-        begin: ((?i:fp|pf))('''+|')\s*
+        begin: (?<!'+)((?i:fp|pf))('''+|')\s*
         contentName: string.quoted.single.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!'+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -6366,9 +6380,9 @@ repository:
           - include: '#embedded-format'
           - include: '#embedded-placeholder'
       - comment: double-quoted format and template string
-        begin: ((?i:fp|pf))("""+|")\s*
+        begin: (?<!"+)((?i:fp|pf))("""+|")\s*
         contentName: string.quoted.double.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!"+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -6397,9 +6411,9 @@ repository:
           - match: '""'
             name: constant.character.escape.protea
       - comment: single-quoted interpolated string
-        begin: ((?i:s))('''+|')\s*
+        begin: (?<!'+)((?i:s))('''+|')\s*
         contentName: string.quoted.single.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!'+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -6407,9 +6421,9 @@ repository:
           - include: '#string-escapes'
           - include: '#embedded-expression'
       - comment: double-quoted interpolated string
-        begin: ((?i:s))("""+|")\s*
+        begin: (?<!"+)((?i:s))("""+|")\s*
         contentName: string.quoted.double.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!"+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -6417,9 +6431,9 @@ repository:
           - include: '#string-escapes'
           - include: '#embedded-expression'
       - comment: single-quoted template string
-        begin: ((?i:p))('''+|')\s*
+        begin: (?<!'+)((?i:p))('''+|')\s*
         contentName: string.quoted.single.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!'+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
@@ -6427,9 +6441,9 @@ repository:
           - include: '#string-escapes'
           - include: '#embedded-placeholder'
       - comment: double-quoted template string
-        begin: ((?i:p))("""+|")\s*
+        begin: (?<!"+)((?i:p))("""+|")\s*
         contentName: string.quoted.double.protea
-        end: \s*()(\2)
+        end: \s*()(\2)(?!"+)
         captures:
           1: { name: storage.type.string.protea }
           2: { name: punctuation.definition.string.protea }
