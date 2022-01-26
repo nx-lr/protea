@@ -181,6 +181,7 @@ repository:
       - include: '#strings'
       - include: '#numbers'
       - include: '#constants'
+      - include: '#strings-unquoted'
 
   constants:
     patterns:
@@ -373,7 +374,6 @@ repository:
 
   strings:
     patterns:
-      - include: '#strings-unquoted'
       - include: '#strings-prefixed'
       - include: '#strings-double-quoted'
       - include: '#strings-single-quoted'
@@ -3768,7 +3768,6 @@ repository:
       - include: '#angle-brackets'
       - include: '#type-keywords'
       - include: '#type-names'
-      - include: '#type-strings'
       - include: '#literals'
       - include: '#type-variables'
       - include: '#type-operators'
@@ -3884,40 +3883,9 @@ repository:
   type-strings:
     comment: coming soon
     patterns:
-      - comment: single quoted raw string
-        begin: (?<!'+)\s*('''+)
-        contentName: string.quoted.single.protea
-        end: \s*((\1)(?!'+))
-        captures:
-          1: {name: punctuation.definition.string.protea}
-        patterns:
-      - comment: simple single quoted raw string
-        begin: (?<!'+)\s*(')
-        contentName: string.quoted.single.protea
-        end: \s*((\1)(?!'+))
-        captures:
-          1: {name: punctuation.definition.string.protea}
-        patterns:
-          - match: "''"
-            name: constant.character.escape.protea
-      - comment: double quoted standard string
-        begin: (?<!"+)\s*("""+)
-        contentName: string.quoted.double.protea
-        end: \s*((\1)(?!"+))
-        captures:
-          1: {name: punctuation.definition.string.protea}
-        patterns:
-          - include: '#string-escapes'
-          - include: '#type-embedded'
-      - comment: double quoted standard string
-        begin: (?<!"+)\s*(")
-        contentName: string.quoted.double.protea
-        end: \s*((\1)(?!"+))
-        captures:
-          1: {name: punctuation.definition.string.protea}
-        patterns:
-          - include: '#string-escapes'
-          - include: '#type-embedded'
+      - include: '#string-double-quoted'
+      - include: '#string-single-quoted'
+      - include: '#string-unquoted'
 
   type-embedded:
     patterns:
