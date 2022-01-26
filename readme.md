@@ -46,7 +46,7 @@ elem TodoItem(
   req val id: str
 ) = <List>
   <Label for=$id>
-    <input checkbox id=$id/>
+    <input checkbox #$id/>
     <span>$title</span>
   </Label>
   <Button button icon=trash>
@@ -66,7 +66,6 @@ elem App = <Container>
   <TodoList/>
 </Container>
 
-// Line not compulsory, Protea will do it for you
 React.render(App, doc.getId(:app))
 ```
 
@@ -74,9 +73,28 @@ React.render(App, doc.getId(:app))
 
 ## Introduction
 
-Protea is a type-safe and multi-paradigm programming language designed to be used in building cross-platform client- and server-side applications, with a focus on performance and simplicity. It was born out of the overall frustration of the JavaScript ecosystem and language, while still embracing the "JS everywhere" paradigm.
+Protea is a type-safe, multi-paradigm programming language with a familiar syntax for building cross-platform full-stack applications and libraries with a single programming language. It is created out of the frustration of JavaScript with many developers, while still embracing many of its best features.
 
-Protra comes with a lightning-fast compiler that outputs a highly optimized and performant JavaScript code, while keeping a syntax that looks like it, while avoiding many of the mistakes from languages past. and the ecosystem within your reach. You can also use Protea to build your own custom components, give them styling and functionality and use them in your applications.
+### Optimized for the entire stack
+
+- A programming language that is easy to learn, with a familiar syntax and features inspired by popular languages
+- Style components with CSS them, build UIs with JSX, and bind them with data and code
+- Modules, namespacing and routing for code splitting and distribution
+- Define and manipulate data with schemas, queries and transformations, inspired by SQL and GraphQL
+- Complete support for reactive, event-driven, asynchronous or concurrent programming
+
+### Productive development
+
+- Use the Protea REPL to explore the language and its features
+- Make changes to your source code iteratively, using hot-reload to see the effects in real-time
+- Write code with a flexible yet robust type system, with rich code analysis and powerful tooling
+- Do profiling, test-driven development and code verification with a built-in testing framework
+
+### Fast on every platform (help needed!)
+
+- JIT-compilation to native machine code for the fastest possible performance
+- Run your apps on the web with the power of JavaScript and WebAssembly
+- Run backend code to support your app, while giving you access to many popular libraries across different platforms.
 
 ---
 
@@ -88,7 +106,7 @@ This document mainly serves as a guide to the its design and semantics, and will
 
 # Protea's Reference
 
-This section serves as an informal guide to the Protea language. This is not a tutorial or introductory guide but rather something you can consult if you have questions about the language and its future implementation(s). We will introduce bits and pieces of the language's syntax and features as we go.
+This document is a guide to Protea's syntax and features. If you have any questions, comments or suggestions for the language, please feel free to open an issue on GitHub and I will promptly respond. Protea is currently still in its conceptual and experimental stage, as I am still experimenting on the language's grammar. This document mainly serves as a guide to the its design and semantics, and will touch a bit on the implementation.
 
 ## Hello World!
 
@@ -108,19 +126,27 @@ elem App {
 
 ### Source code representation
 
-Protea source code is encoded in UTF-8 which is the same default encoding as other languages. Protea modules use the extension `.pta`. The module name is the file name without the extension, and is implicitly wrapped in a `module` declaration. Modules can be imported to and exported from other modules.
+Protea source code uses one of three different file extensions: `.pta`, `.pts` and `.pti`. `.pta` files are used to define modules and `.pti` files to define interfaces (which, by the way, can also be mixed with the source code). `.pts` files are used to create scripts, which do not need to run through a `main` or startup function.
 
-An interface file contain the extension `.pti` and is used to declare interfaces and types of a module with the same name. The interface file is implicitly imported by the module, and can be mixed, through type declarations and type aliases, with the module's source code, in a similar fashion to TypeScript.
-
-A script file contains the extension `.pti`. Including scripts would also run the script in the same scope as the script it is run from, similar to C header files.
+The `.pta` extension is also used by the Parrot compiler.
 
 ## Lexical elements
 
-### Comments
+This section describes the syntax and informal semantics of Protea expressions. The following is a list of the most important lexical elements:
 
-Comments are the same as in JavaScript, though they are inserted back into the output code if pretty-printing is enabled. Documentation comments are not ignored, but are gathered by the compiler to produce a documentation tree to allow devs to find docs, and with the help of extensions to do so even more easily.
+- Identifiers, for example `foo`, `foo.bar`, and `+`.
+- Blocks and statements, for example: `x = 42` and `match ((x, y)) { case ((1, "hi")) 42 }`
+- Literals, for example: `1`, `"hello"`, `[1, 2, 3]`.
+- Comments, for example `// this is a comment`.
+- Punctuation, for example `\`, `[`, `]` and `;`.
 
-Every line in documentation comments do not need to start with an asterisk. The compiler will automatically add an asterisk to every line that does not start with one. This is to make it easier to find the documentation for a given element.
+### Punctuation
+
+#### Comments
+
+There are four kinds of comments in Protea: line comments, block comments, doc comments and multiline doc comments. The first two are ignored by the compiler and the last two are used by the compiler to generate documentation.
+
+Every line in documentation comments do not need to start with an asterisk, they would be automatically inserted by the compiler when compiling to JavaScript.
 
 ```dart
 // This is a single line comment.
@@ -136,81 +162,75 @@ Every line in documentation comments do not need to start with an asterisk. The 
 */
 ```
 
-### Semicolons and commas
+#### Semicolons and commas
 
-In other languages, inserting semicolons to separate statements is required. In JavaScript, this is not necessary, but it is completely buggy.
+In other languages, inserting semicolons to separate statements is required. In JavaScript, this is not necessary, but it is buggy and sometimes inconsistent.
 
-Protea is a newline-sensitive language. This means that statements are usually not separated by semicolons. The compiler will automatically insert semicolons at the end of line if the next token can begin an expression: except a closing bracket, an infix operator, and the keywords `then`, `elif`, `else`, `catch` and `after`.
+In Protea, semicolons and commas are inserted if the token on the next line can begin an expression, which is any token excluding a closing bracket, [infix operator](#infix-operator), and the keywords `then`, `elif`, `else`, `catch` and `after`.
 
 The rules for parsing commas are the same as semicolons, except they are used to separate expressions, not necessarily statements.
 
 ### Identifiers
 
-Identifiers name program entities like variables and types. An identifier begins with a sequence of one or more letters `L`, digits `Nd`, marks `M`, underscores `Pc` and dashes `Pd`, with the following restrictions:
+Protea identifiers come in two flavors: regular and operator identifiers.
 
-- begins with a letter or underscore
-- does not end with one or more trailing dashes.
-
-```dart
-identifier = `\b[\pPc\pL][\d\pL\pM\pPc\pPd]*\b`
-```
+- Regular identifiers begin with a letter then followed by any number of diacritical marks, letters, numbers, underscores, and hyphens. Trailing hyphens are not allowed.
+- Operators consist entirely of the characters `!#$%&()*+-./:<=>?@^_|~` and any other symbol and punctuation character. For example, `+`, `_`, `<>`, and `>>=` are valid operators.
 
 Non-lowercase letters are considered uppercase.
 
-#### Identifier equality
+#### Identifier comparison
 
-Protea uses a rather unorthodox/complex approach to comparing identifiers, so to accommodate different naming conventions without having to worry about how identifiers are spelled.
+Protea uses an unorthodox comparison algorithm when comparing two identifiers. This is to accommodate different naming conventions without having to worry about the actual spelling of the identifiers.
 
-The exception with respect to the first non-lowercase letters allows common code like `var foo: Foo == FOO` to be parsed unambiguously. `foobar`, `foo-bar`, `foo_bar` and `fooBar` are considered equal, but `FOOBAR`, `FooBar` and `foo_bar` are not.
+The exception with respect to the first non-lowercase letters allows common code like `var foo: Foo == FOO` to be parsed unambiguously.
 
 ```dart
+"FOOBAR" != "FooBar" != "Foo_bar" != "foo_bar"
 "FOOBar" == "FOO_Bar" == "FOO-Bar"
-"FOOBAR____" == "FOOBAR"
+"FOO__BAR__" == "FOOBAR"
+"Foo_bar" == "Foobar" == "Foo-bar"
 "fooBar" == "foobar" == "foo_bar" == "foo-bar"
 "église" == "eglise"
 ```
 
 Several transforms are performed before identifiers are compared:
 
-- Text is converted into its Unicode normalization form; this means that accents are removed, and ligatures are replaced with their base characters.
-- Non-alphanumeric characters are removed, including accents, underscores and dashes
-- The first non-lowercase letters are stripped out from the beginning of the identifier and left as-is
-- The other part of the identifier is transformed into lowercase and converted as such
+- Text is Unicode-normalized canonically.
+- Non-alphanumeric characters are discarded
+- Identifiers are case-folded to lowercase except the first few non-lowercase characters
 
 ```dart
 func cmpIdent(a: str, b: str): bool = normalize(a) == normalize(b)
 
 func normalize(id: str): str {
-  val ident = id.decompose(:nfkd).replace(`[^\pL\d]` ``)
+  val ident = id.decompose(:nfd).replace(`[^\pL\d]` ``)
   val { begin, end } = ident.match(`\b
     (?!\d) // ignore leading digits
       (?<begin>[\pPc\pL][\d\pL\pM\pPc\pPd--\pLl]*)?
       (?<end>[\d\pL\pM\pPc\pPd]*)
     \b // ignore trailing dashes
   `)
-  return (begin + end.lower)
+  return (begin + end.foldCase)
 }
 ```
 
-Two identifiers are considered equal if the following function returns true:
-
-Note that this rule does not apply to keywords, which are all written in all-lowercase.
+Note that this comparison does not apply to keywords, which are all written in all-lowercase.
 
 ### Keywords
 
-The following names are reserved words. These keywords are divided into five groups:
+The following names are reserved by Protea and cannot be used as identifiers:
 
 ```dart
 in of as is new to til thru by del unset ref and or xor not
 var val func proc type class data enum module iter macro inter object trait style elem prop
 do then def go defer with from where if elif else for each loop while try throw catch after match case fail
-goto pass break next redo retry return yield await label use show hide route
+goto pass break next redo retry return yield await mark use show hide route
 debug assert check
-
 true false null nan void infin it this that self super args ctor proto
 ```
 
-Modifier keywords go before a declaration keyword.
+Modifier keywords go before a declaration keyword (second line of keywords above) and hence are treated as keywords in the grammar.
 
 ```dart
 pub priv prot final over immut mut
@@ -226,11 +246,13 @@ left right binary unary
 
 Some of these modifiers are for future use.
 
-Because of how identifiers are compared, you can use any number of trailing underscores to "strop" a keyword to turn it into an identifier. Keywords also become identifiers when part of a qualified name, such as `x.for.then` or `y::loop`, as well as within literals (with some exceptions).
+Because of how identifiers are compared, you can use any number of non-alphanumerics to "strop" a keyword to turn it into an identifier.
+
+Keywords also become identifiers when part of a qualified name, such as `x.for.then` or `y::loop`, as well as within literals such as style blocks, interfaces and JSX (with some exceptions).
 
 ```dart
 var var_ = "Hello Stropping"
-type obj = { type: int }
+type obj = {type: int}
 val object_ = new obj(type_: 9)
 assert object_ is obj
 assert object_.type == 9
@@ -336,7 +358,6 @@ A string literal consists of a character sequence enclosed in either single or d
 val string1 = "A string primitive";
 val string2 = 'Also a string primitive';
 val regex1 = `This is a regex literal`;
-
 ```
 
 String literals can have one or more of four unique prefixes immediately before the opening quote, in any order and combination:
