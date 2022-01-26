@@ -2,27 +2,28 @@
 
 ```dart
 elem TodoItem {
-  prop color = style { color: #333 }
+  prop color = style {color: 333}
   prop label_ = ''
   prop done = false
 
   proc onClick { done = true }
 
   style base {
-    alignItems: center
+    align-items: center
     display: flex
   } label_ {
-    fontWeight: bold
-    color: $color !important
+    font-weight: bold
+    color: $color
     flex: 1
-    if (done)
-      textDecoration: lineThrough
+    if (done) {
+      text-decoration: line-through
+    }
   }
 
-  return <div>
-    <span>$label_</span>
-    <Icons.Checkmark/>
-    <Icons.Trash/>
+  return <div *base>
+    <span *label_>$label_</span>
+    <Icon.Checkmark/>
+    <Icon.Trash/>
   </div>
 }
 ```
@@ -35,8 +36,6 @@ Protea is a type-safe and multi-paradigm programming language designed to be use
 
 Protra comes with a lightning-fast compiler that outputs a highly optimized and performant JavaScript code, while keeping a syntax that looks like it, while avoiding many of the mistakes from languages past. and the ecosystem within your reach. You can also use Protea to build your own custom components, give them styling and functionality and use them in your applications.
 
-Because some people want JavaScript to be better, and this is an attempt to make it so.
-
 ---
 
 If you have any questions, comments or suggestions for the language, please feel free to open an issue on GitHub and I will promptly respond. Protea is currently still in its conceptual and experimental stage, as I am still experimenting on the language's grammar.
@@ -47,14 +46,14 @@ This document mainly serves as a guide to the its design and semantics, and will
 
 # Protea's Reference
 
-This document is a semi-formal guide to the Protea language meant for both implementation authors and users. It is meant for implementation authors, and those who want to contribute and help me improve Protea. Again, this is not a complete reference or a tutorial, but rather something you consult if you have any questions about the language. We will introduce bits and pieces of the core Protea language and its syntax as we go.
+This section serves as an informal guide to the Protea language. This is not a tutorial or introductory guide but rather something you can consult if you have questions about the language and its future implementation(s). We will introduce bits and pieces of the language's syntax and features as we go.
 
 ## Hello World!
 
 ```dart
 // Backend
-proc main: void {
-  print "Hello, world!"
+proc main(): void {
+  print("Hello, world!")
 }
 
 // Frontend
@@ -67,19 +66,19 @@ elem App {
 
 ### Source code representation
 
-Protea source code is encoded in UTF-8 which is the same default encoding as other languages.
+Protea source code is encoded in UTF-8 which is the same default encoding as other languages. Protea modules use the extension `.pta`. The module name is the file name without the extension, and is implicitly wrapped in a `module` declaration. Modules can be imported to and exported from other modules.
 
-Protea modules use the extension `.pro`. The module name is the file name without the extension, and is implicitly wrapped in a `module` declaration. Modules can be imported to and exported from other modules.
+An interface file contain the extension `.pti` and is used to declare interfaces and types of a module with the same name. The interface file is implicitly imported by the module, and can be mixed, through type declarations and type aliases, with the module's source code, in a similar fashion to TypeScript.
 
-A script file contains the extension `.prs`. Including scripts would also run the script in the same scope as the script it is run from, similar to C header files.
+A script file contains the extension `.pti`. Including scripts would also run the script in the same scope as the script it is run from, similar to C header files.
 
 ## Lexical elements
 
 ### Comments
 
-Comments are the same as in JavaScript, though they are inserted to the compiler once they are finished.
+Comments are the same as in JavaScript, though they are inserted back into the output code if pretty-printing is enabled. Documentation comments are not ignored, but are gathered by the compiler to produce a documentation tree to allow devs to find docs, and with the help of extensions to do so even more easily.
 
-Documentation comments are not ignored, but are gathered by the compiler to produce a documentation tree to allow devs to find docs, and with the help of extensions to do so even more easily.
+Every line in documentation comments do not need to start with an asterisk. The compiler will automatically add an asterisk to every line that does not start with one. This is to make it easier to find the documentation for a given element.
 
 ```dart
 // This is a single line comment.
@@ -95,9 +94,13 @@ Documentation comments are not ignored, but are gathered by the compiler to prod
 */
 ```
 
-### Tokens
+### Semicolons and commas
 
-A newline or end of file may trigger the insertion of a comma or semicolon. While breaking the input into tokens, the next token is the longest sequence of characters that form a valid token.
+In other languages, inserting semicolons to separate statements is required. In JavaScript, this is not necessary, but it is completely buggy.
+
+Protea is a newline-sensitive language. This means that statements are usually not separated by semicolons. The compiler will automatically insert semicolons at the end of line if the next token can begin an expression: except a closing bracket, an infix operator, and the keywords `then`, `elif`, `else`, `catch` and `after`.
+
+The rules for parsing commas are the same as semicolons, except they are used to separate expressions, not necessarily statements.
 
 ### Identifiers
 
@@ -112,36 +115,42 @@ identifier = `\b[\pPc\pL][\d\pL\pM\pPc\pPd]*\b`
 
 Non-lowercase letters are considered uppercase.
 
-### Identifier equality
+#### Identifier equality
 
-Two identifiers are considered equal if the following function returns true:
+Protea uses a rather unorthodox/complex approach to comparing identifiers, so to accommodate different naming conventions without having to worry about how identifiers are spelled.
+
+The exception with respect to the first non-lowercase letters allows common code like `var foo: Foo == FOO` to be parsed unambiguously. `foobar`, `foo-bar`, `foo_bar` and `fooBar` are considered equal, but `FOOBAR`, `FooBar` and `foo_bar` are not.
 
 ```dart
-func cmpIdent(a: str, b: str): bool =
-  normalize a == normalize b
+"FOOBar" == "FOO_Bar" == "FOO-Bar"
+"FOOBAR____" == "FOOBAR"
+"fooBar" == "foobar" == "foo_bar" == "foo-bar"
+"église" == "eglise"
+```
 
-func normalize(ident: str): str {
-  var { start, end } = ident.match(`\b
-    (?!\d) // no leading digits
-      (?'start'[\pPc\pL][\d\pL\pM\pPc\pPd--\pLl]*)?
-      (?'end'[\d\pL\pM\pPc\pPd]*)
-    \b // no trailing dashes
+Several transforms are performed before identifiers are compared:
+
+- Text is converted into its Unicode normalization form; this means that accents are removed, and ligatures are replaced with their base characters.
+- Non-alphanumeric characters are removed, including accents, underscores and dashes
+- The first non-lowercase letters are stripped out from the beginning of the identifier and left as-is
+- The other part of the identifier is transformed into lowercase and converted as such
+
+```dart
+func cmpIdent(a: str, b: str): bool = normalize(a) == normalize(b)
+
+func normalize(id: str): str {
+  val ident = id.decompose(:nfkd).replace(`[^\pL\d]` ``)
+  val { begin, end } = ident.match(`\b
+    (?!\d) // ignore leading digits
+      (?<begin>[\pPc\pL][\d\pL\pM\pPc\pPd--\pLl]*)?
+      (?<end>[\d\pL\pM\pPc\pPd]*)
+    \b // ignore trailing dashes
   `)
-  return (start + end.lower).sub(`[^\pL\d]` ``)
+  return (begin + end.lower)
 }
 ```
 
-Non-alphanumeric characters (marks, underscores and dashes) are thrown away. The first uppercase letters are compared as they are, while the rest of the identifier is compared irrespective of case.
-
-```dart
-"WILDFire" == "WILD_Fire" == "WILD-Fire"
-"WILDFIRE____" == "WILDFIRE"
-"wildFire" == "wildfire" == "wild_fire" == "wild-fire"
-```
-
-This rather bizarre way of identifier comparison is called **partial** case-insensitivity, and allows programmers to use their own conventions, even a mixture, without having to remember the exact spelling of an identifier.
-
-The exception with respect to the first non-lowercase characters allows common code like `var foo: Foo == FOO` to be parsed unambiguously.
+Two identifiers are considered equal if the following function returns true:
 
 Note that this rule does not apply to keywords, which are all written in all-lowercase.
 
@@ -150,24 +159,13 @@ Note that this rule does not apply to keywords, which are all written in all-low
 The following names are reserved words. These keywords are divided into five groups:
 
 ```dart
-in of as is new to til thru by del
-unset ref and or xor not go defer
-
-var val func proc type class data enum module
-iter macro inter object trait style elem prop
-
-do with from where if elif else
-for each loop while try throw catch after
-match case fail then def
-
-goto pass break next redo retry return
-yield await label use show hide route
-
+in of as is new to til thru by del unset ref and or xor not
+var val func proc type class data enum module iter macro inter object trait style elem prop
+do then def go defer with from where if elif else for each loop while try throw catch after match case fail
+goto pass break next redo retry return yield await label use show hide route
 debug assert check
 
-// Special variables
-true false null nan void infin
-it this that self args ctor proto
+true false null nan void infin it this that self super args ctor proto
 ```
 
 Modifier keywords go before a declaration keyword.
@@ -190,8 +188,8 @@ Because of how identifiers are compared, you can use any number of trailing unde
 
 ```dart
 var var_ = "Hello Stropping"
-type obj = { type_: int }
-val object_ = Obj(type_: 9)
+type obj = { type: int }
+val object_ = new obj(type_: 9)
 assert object_ is obj
 assert object_.type == 9
 var var_ = 42; val val_ = 8
@@ -216,29 +214,21 @@ The tokens that can terminate an expression are:
 - a suffix operator
 - a control transfer keyword (fourth group of keywords above)
 
-Any token can begin an expression except:
-
-- a closing bracket
-- a command flag `/x` and its shorthand form `//x`
-- a format clause `%x`
-- an infix operator
-- the keywords `then` `elif` `else` `catch` `after`
-
 Newlines are enabled in:
 
-- all of a Trinity source file, except for nested regions where newlines are disabled, and
-- the interval between pairs of brackets.
+- all of a Trinity source file, except for regions where newlines are disabled, and
+- between pairs of brackets
 
 ...and disabled in:
 
-- Control structures
-- Declaration keywords
-- Import statements and the nearest closing delimiter or end of line.
-- Control transfer statements and the nearest closing delimiter or end of line.
+- control structures
+- declarations
+- imports
+- control transfer statements
 
 ...except for nested regions where newlines are enabled.
 
-To allow complex statements or expressions to occupy a single line when the file is minified, a semicolon or comma can be omitted before a closing bracket.
+For brevity purposes, a semicolon or comma can be omitted before a closing bracket, so `[1, 2, 3]` is the same as `[1, 2, 3,]` and so on.
 
 ## Literals
 
@@ -279,7 +269,7 @@ A binary, octal or hexadecimal floating literal is structured the same way as a 
 1f   // float
 1r   // rat
 
-1j // imag
+1j     // imag
 1 + 1j // comp
 
 decimal = 11256099.012e+14
@@ -298,17 +288,25 @@ Several suffixes can be used in conjunction with one another, as shown above.
 
 ### Strings
 
-A string literal consists of a character sequence enclosed in single or double quotes. The underlying implementation denotes how the string should be encoded, usually UTF-16. There are two forms - verbatim (raw) and interpreted (escaped) string literals. The verbatim form is enclosed in single quotes while the interpreted form is enclosed in double.
+A string literal consists of a character sequence enclosed in either single or double quotes. Strings in Protea are a superset of strings in JavaScript.
 
 ```dart
-val marioSays = '"It''sa me, Mario!"'
+val string1 = "A string primitive";
+val string2 = 'Also a string primitive';
+val regex1 = `This is a regex literal`;
 
-val greeting = "Hello world!"
-val multilineGreeting = "Hello
-  world!"
-
-assert "hello\nworld" == multilineGreeting
 ```
+
+String literals can have one or more of four unique prefixes immediately before the opening quote, in any order and combination:
+
+- `r` which marks a string literal as verbatim (i.e. disables escapes)
+- `s` which enables interpolation
+- `f` which enables formatting
+- `p` which enables parameter placeholders to be embedded inside a string
+
+The `f` flag requires either `s` or `p` flags to be enabled.
+
+The verbatim form is enclosed in single quotes, while the interpreted form is enclosed in double quotes. Double quoted string literals allow for interpolation and formatting, in addition to escapes.
 
 String literals can also be delimited by at least three single or double quotes, provided they end with _at least_ that many quotes of the same type. The rules for single- and double-quoted strings also apply.
 
@@ -319,22 +317,22 @@ Some transformations are applied to string literals of this type:
 - all beginning indentation is based on the column of the opening quote, discarding whitespace as needed.
 
 ```dart
-val greeting = """
-"
-Hello World!
-""""
+val greeting =
+assert '"
+Hello World
+"' == greeting
 ```
 
 ### Escapes
 
 Escape sequences are used to represent characters that would otherwise have a syntax error. Like a lot of languages, all escapes begin with a backslash. The first character of an escape sequence is the escape character, and the second character is the character to be escaped.
 
-Certain single-letter escapes represent special values:
+Certain single-letter escapes represent non-printable, control characters:
 
 ```
 \a    U+0007  alert or bell
 \b    U+0008  backspace
-\e    U+000b  escape
+\e    U+000B  escape
 \f    U+000C  form feed
 \n    U+000A  line feed or newline
 \p            platform-dependent newline
@@ -347,7 +345,7 @@ Certain single-letter escapes represent special values:
 
 A backslash-newline joins the next line to the current line, skipping any indentation.
 
-The escapes `\b`, `\d`, `\o`, `\u` and `\x`, allow you to encode Unicode code points as integers in a double-quoted string. The value of the literal is the value represented by the digits in the corresponding base.
+The escapes `\b`, `\d`, `\o`, `\u` and `\x`, allow you to encode Unicode code points as integers in a double-quoted string. The value of the literal is the value represented by the digits in the corresponding base. Any escape that also exceeds the upper limit of 0x10FFFF (decimal 1114111) will give a compile time error.
 
 ```
 \b[01]+         binary
@@ -355,10 +353,10 @@ The escapes `\b`, `\d`, `\o`, `\u` and `\x`, allow you to encode Unicode code po
 \o[0-7]+        octal
 \u[0-9A-Fa-f]+  hexadecimal (UTF-16)
 \x[0-9A-Fa-f]+  hexadecimal (UTF-8)
-\N($id&*[:.])   unicode name
+\N($id&*[:.])   unicode name where $id is an identifier
 ```
 
-Code points in the ranges `80-FF` for `\x` and `D800-DFFF` for `\u` which are used to represent multi-byte characters or surrogate pairs respectively and hence would be invalid if they appear on their own or form an invalid byte/character sequence. Any sequence of characters that is not a valid UTF-8/16 sequence or exceeds the upper limit of 0x10FFFF (decimal 1114111) will give a compile time error.
+Code points in the ranges `80-FF` for `\x` and `D800-DFFF` for `\u` which are used to represent multi-byte characters or surrogate pairs respectively; they hence would be invalid if they appear on their own or form an invalid byte/character sequence.
 
 ```dart
 "日本語"
@@ -381,18 +379,21 @@ binary = "\b10101011110000010010"
 "\d{72 69 76 76 79 65535}" == "\72\69\76\76\79"
 ```
 
-The escape `\N` is used to represent a Unicode character sequence as named (namespaced) characters, for instance `\NA` would equal capital A, and `\NAlpha` would equal the Greek capital letter `Α` (alpha).
+The escape `\N` is used to represent a Unicode character sequences using a special notation reminiscent of LaTeX notation. The first argument can either be a name or its script, followed by the `:letter_name` or `.letter_form`.
 
-Named character sequences can begin with an optional script and a namespace name, separated by a colon. The script is optional if the character is a control or symbol character, or a character in th eLatin script.
+For instance `\NA` would equal capital A, and `\NAlpha` would equal the Greek capital letter `Α` (alpha).
+
+Use the same format within curly brackets to return multiple Unicode characters, and pass on multiple characters and spread their properties.
 
 ```dart
 // => "\u{1F60A}"
 "\u{1F600}" // => "😀"
-"\Nsmile.y.z" // => 😀
-"\Nflag{'SG'}" // => 🇸🇬
+"\Nemoji:smile" // => 😀
+"\Nflag:SG" // => 🇸🇬
+"\Nkr{an nyeong ha se yo}" // 안녕하세요
 ```
 
-All other non-control and non-ASCII-alphanumeric characters are allowed to be escaped: their value is the same as the character itself without the leading backslash. For example, `\\` evaluates to `\`, `\"` evaluates to `"`.
+All other escapes are interpreted as the character itself, and would evaluate to the same value, just without the backslash.
 
 ### Interpolation
 
@@ -431,43 +432,11 @@ Formatting transforms the string value of the interpolated expression into a str
 "Percentage correct answers: ${2 / 3}%dp:2|unit:('%')"
 ```
 
-### Template Strings
-
-Protea has a built-in support for template strings, which function very similarly to Python's `str.format`. They are similar to interpolated strings, but they allow you to pass function arguments and embed them directly into the output which you can then call later. The syntax is similar to string interpolation, but the beginning sigil is the hash sign `#` rather than the dollar `$`.
-
-You can create template strings by using the `#` character to mark placeholders in a string. The arguments can be named, as in `#name`, or positional, as in `#0` or `#-1` (negative indices count from the last). Use `!` to mark as required, and `?` to mark as optional. `*` is used to spread the arguments into a list, and `**` into a map.
-
-```dart
-val greeting = "Hello #0..0!"
-greeting "World" // => "Hello World!"
-
-$tempArg = `'#' ($tempArgSimple | $tempArgBracket)`
-
-$posInt = `[+-]? \d+`
-$defaultValue = `$expression`
-$tempArgSimple = `$argSigil? $requiredSigil? $identifier`
-$requiredSigil = `'!' | '?'`
-$argSigil = `'/' | '%' | '&' | '*'`
-$posArg = `
-  $argSigil?
-  $requiredSigil?
-  $posInt (
-    ('..' | '...' | '..<' | '>..' | '>.<') $posInt
-    ('..' $posInt)?
-  )?
-`
-
-$tempArgBracket = `"{" (
-  $tempArgSimple
-  ('as' $tempArgsSimple)*
-  $typeAnnotation?
-  $defaultValue?
-) &* [,;] "}"`
-```
-
 ### Symbols
 
-Symbol objects represent names and some strings inside the Protea interpreter. They are generated using the `:name` and `:"string"` literal syntax, beginning by a colon, or by the various `sym` methods. The same symbol object will be created for a given name or string for the duration of a program's execution, regardless of the context or meaning of that name. Thus if `Fred` is a constant in one context, a method in another, and a class in a third, the symbol `:Fred` will be the same object in all three contexts.
+Symbols represent names and strings available throughout a program's execution. They are generated using the `:name` or `:"string"` literal syntax. beginning with a colon, or by various methods that return symbols.
+
+Symbols are unique identifiers that can be used to refer to the same string or name in different contexts. Thus if `Fred` is a constant in one context, a method in another, and a class in a third, the symbol `:Fred` will be the same object in all three contexts.
 
 Protea's symbol API uses the JavaScript Symbol API as the backend. This means that symbols are not unique across contexts, and that they can be used as keys in maps. Interpolation, formatting and template strings can use symbols as placeholders, but not the other way around.
 
