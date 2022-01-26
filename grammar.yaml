@@ -1,6 +1,6 @@
 name: Protea
 scopeName: source.dart
-fileTypes: [dart, pro]
+fileTypes: [dart, pta]
 patterns: [include: '#core']
 
 information for contributors: |
@@ -89,7 +89,7 @@ define:
         |try|throw|catch|after
         |match|case|pass|fail|goto
         |break|next|redo|retry
-        |return|yield|await|label
+        |return|yield|await|mark
         |use|show|hide|route
         |debug|assert|check
       )
@@ -120,7 +120,7 @@ repository:
       - include: '#declarations'
       - include: '#keywords'
       - include: '#comments'
-      - include: '#params-clause'
+      - include: '#argument-list'
       - include: '#function-clause'
       - include: '#embedded-expression'
       - include: '#jsx'
@@ -332,7 +332,7 @@ repository:
     patterns:
       - comment: quoted symbol
         applyEndPatternLast: true
-        begin: \B(:)(?=[\\'"])
+        begin: (?<=^|\\.|['"`({\[)}\]\s:=])(:)(?=[\\'"])
         end: (?=)|$
         name: constant.language.symbol-type.protea
         captures:
@@ -341,7 +341,7 @@ repository:
           - include: '#strings-single-quoted'
           - include: '#strings-double-quoted'
           - include: '#strings-unquoted'
-      - match: \B(:)([\p{Pc}\p{L}][\w\p{Pd}]*\b)
+      - match: (?<=^|\\.|['"`({\[)}\]\s:=])(:)([\p{Pc}\p{L}][\w\p{Pd}]*\b)
         captures:
           1: { name: punctuation.definition.symbol.protea }
           2: { name: constant.other.symbol.protea }
@@ -844,7 +844,7 @@ repository:
         end: \s*(})
         name: entity.quasi.component.protea
         captures:
-          1: { name: punctuation.section.embedded.protea }
+          1: { name: punctuation.definition.variable.protea }
         patterns:
           - include: $self
       - comment: Interpolated expression
@@ -869,7 +869,7 @@ repository:
               |try|throw|catch|after
               |match|case|pass|fail|goto
               |break|next|redo|retry
-              |return|yield|await|label
+              |return|yield|await|mark
               |use|show|hide|route
               |debug|assert|check
             )
@@ -878,7 +878,7 @@ repository:
           \b # next to a word
         end: (?=)|$
         captures:
-          1: { name: punctuation.section.embedded.protea }
+          1: { name: punctuation.definition.variable.protea }
         patterns:
           - include: '#constants'
           - include: '#brackets'
@@ -951,7 +951,7 @@ repository:
                 |try|throw|catch|after
                 |match|case|pass|fail|goto
                 |break|next|redo|retry
-                |return|yield|await|label
+                |return|yield|await|mark
                 |use|show|hide|route
                 |debug|assert|check
               )
@@ -1586,7 +1586,7 @@ repository:
         end: (?=\&\&|\|\||\^\^|[\s,:;'"`({\[)}\]])
         name: string.unquoted.attribute-name.protea
         patterns:
-          - include: '#html-properties'
+          - include: '#style-property-values'
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         captures:
@@ -1669,11 +1669,13 @@ repository:
           - include: '#tag-attributes'
 
   jsx-comments:
-    begin: <!--
-    end: -->
+    begin: (<!--)
+    end: (-->)
     captures:
       1: { name: punctuation.definition.comment.protea }
-    name: comment.block.protea
+    name: comment.block.html.protea
+    patterns:
+      - include: '#jsx-comments'
 
   tag-termination:
     comment: uses non consuming search for </ in </tag>
@@ -1701,7 +1703,7 @@ repository:
         end: (?=)|$
         name: meta.property.jsx.protea
         patterns:
-          - include: '#html-properties'
+          - include: '#style-property-values'
       - include: '#literals'
       - include: '#comments'
       - include: '#punctuation'
@@ -2237,16 +2239,29 @@ repository:
           - match: '\.|:|::'
             name: punctuation.separator.namespace.protea
 
-  html-properties:
+  style-list:
+    begin: (\[)\s*
+    end: \s*(\])
+    name: meta.brace.square.protea
+    captures:
+      1: { name: punctuation.definition.expression.protea }
     patterns:
-      - include: source.yaml#flow-sequence
-      - include: '#brackets'
+      - include: '#punctuation'
+      - include: '#style-property-values'
+      - include: $self
+
+  style-property-values:
+    patterns:
+      - include: '#style-list'
+      - include: '#style-block'
       - include: '#literals'
       - include: '#property-name'
       - include: '#hex-colors'
       - include: '#embedded-expression'
       - include: '#html-builtins'
       - include: '#line-continuation'
+      - include: '#jsx'
+      - include: '#brackets'
 
   hex-colors:
     match: (#)\b(?:\h{3,4}|\h{6}|\h{8})\b
@@ -2263,8 +2278,8 @@ repository:
         patterns: *html-tag-names
 
   style-block:
-    begin: \s*(\{)\s*
-    end: \s*(\})\s*
+    begin: (\{)\s*
+    end: \s*(\})
     name: meta.brace.style.protea
     captures:
       1: { name: punctuation.section.property-list.protea }
@@ -2283,7 +2298,7 @@ repository:
       2:
         name: punctuation.separator.key-value.protea
     patterns:
-      - include: '#html-properties'
+      - include: '#style-property-values'
       - match: \s+
         name: meta.var.expr.protea
 
@@ -2653,7 +2668,7 @@ repository:
                   |try|throw|catch|after
                   |match|case|pass|fail|goto
                   |break|next|redo|retry
-                  |return|yield|await|label
+                  |return|yield|await|mark
                   |use|show|hide|route
                   |debug|assert|check
                 )
@@ -2681,7 +2696,7 @@ repository:
               |try|throw|catch|after
               |match|case|pass|fail|goto
               |break|next|redo|retry
-              |return|yield|await|label
+              |return|yield|await|mark
               |use|show|hide|route
               |debug|assert|check
             )
@@ -2731,7 +2746,7 @@ repository:
                     |try|throw|catch|after
                     |match|case|pass|fail|goto
                     |break|next|redo|retry
-                    |return|yield|await|label
+                    |return|yield|await|mark
                     |use|show|hide|route
                     |debug|assert|check
                   )
@@ -2793,7 +2808,7 @@ repository:
                 |try|throw|catch|after
                 |match|case|pass|fail|goto
                 |break|next|redo|retry
-                |return|yield|await|label
+                |return|yield|await|mark
                 |use|show|hide|route
                 |debug|assert|check
               )
@@ -2848,7 +2863,7 @@ repository:
                 |try|throw|catch|after
                 |match|case|pass|fail|goto
                 |break|next|redo|retry
-                |return|yield|await|label
+                |return|yield|await|mark
                 |use|show|hide|route
                 |debug|assert|check
               )
@@ -3763,7 +3778,7 @@ repository:
   types:
     patterns:
       - include: '#line-continuation'
-      - include: '#params-clause'
+      - include: '#argument-list'
       - include: '#angle-brackets'
       - include: '#type-keywords'
       - include: '#type-names'
@@ -3800,7 +3815,7 @@ repository:
           |try|throw|catch|after
           |match|case|pass|fail|goto
           |break|next|redo|retry
-          |return|yield|await|label
+          |return|yield|await|mark
           |use|show|hide|route
           |debug|assert|check
         )
@@ -3874,7 +3889,7 @@ repository:
     end: \s*(})
     name: entity.quasi.component.protea
     captures:
-      1: { name: punctuation.section.embedded.protea }
+      1: { name: punctuation.definition.variable.protea }
     patterns:
       - include: '#types'
       - include: $self
@@ -4284,6 +4299,7 @@ repository:
           - match: *entity-name
             name: entity.name.trait.protea
           - include: '#comments'
+          - include: '#brackets'
           - include: '#comma'
           - include: '#line-continuation'
       - applyEndPatternLast: true
@@ -4299,6 +4315,7 @@ repository:
           - match: *entity-name
             name: entity.name.interface.protea
           - include: '#comments'
+          - include: '#brackets'
           - include: '#comma'
           - include: '#line-continuation'
       - match: \s*(?<!\*)\*(?!\*)\s*
@@ -4341,7 +4358,7 @@ repository:
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline
+                |rec|oper|curry|inline|req|opt
                 |prefix|suffix|infix|binary|unary|left|right
               )
             )
@@ -4395,7 +4412,7 @@ repository:
           (?x) \s*
           \b
           (?:
-            rec|oper|curry|inline
+            rec|oper|curry|inline|req|opt
             |prefix|suffix|infix|binary|unary|left|right
           )
           (?!\B|\p{Pd}+\b)
@@ -4448,7 +4465,7 @@ repository:
         name: keyword.control.trycatch.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match|case|fail)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.switch.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|return|await|label|yield|goto|pass)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|return|await|mark|yield|goto|pass)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.flow.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(use|show|hide|route)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.module.protea
@@ -4485,7 +4502,7 @@ repository:
     repository:
       control-expression:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|label|goto|pass)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|next|redo|retry|mark|goto|pass)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: { name: keyword.control.flow.protea }
@@ -4858,7 +4875,7 @@ repository:
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline
+                |rec|oper|curry|inline|req|opt
                 |prefix|suffix|infix|binary|unary|left|right
               )
               \s*
@@ -4903,7 +4920,7 @@ repository:
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline
+                |rec|oper|curry|inline|req|opt
                 |prefix|suffix|infix|binary|unary|left|right
               )
               \s*
@@ -4950,7 +4967,7 @@ repository:
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline
+                |rec|oper|curry|inline|req|opt
                 |prefix|suffix|infix|binary|unary|left|right
               )
               \s*
@@ -4995,7 +5012,7 @@ repository:
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline
+                |rec|oper|curry|inline|req|opt
                 |prefix|suffix|infix|binary|unary|left|right
               )
               \s*
@@ -5017,7 +5034,7 @@ repository:
           - include: '#param-bracket-content'
           - include: $self
 
-  params-clause:
+  argument-list:
     name: meta.function.arguments.protea
     begin: |
       (?x)
@@ -5046,7 +5063,7 @@ repository:
                 |try|throw|catch|after
                 |match|case|pass|fail|goto
                 |break|next|redo|retry
-                |return|yield|await|label
+                |return|yield|await|mark
                 |use|show|hide|route
                 |debug|assert|check
               )
@@ -5232,7 +5249,7 @@ repository:
                 captures:
                   1: { name: punctuation.definition.expression.protea }
                 patterns:
-                  - include: '#params-clause'
+                  - include: '#argument-list'
                   - applyEndPatternLast: true
                     begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
                     end: (?=)|$
@@ -5297,7 +5314,7 @@ repository:
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline
+                |rec|oper|curry|inline|req|opt
                 |prefix|suffix|infix|binary|unary|left|right
               )
               \b
@@ -5344,7 +5361,7 @@ repository:
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline
+                |rec|oper|curry|inline|req|opt
                 |prefix|suffix|infix|binary|unary|left|right
               )
               \b
