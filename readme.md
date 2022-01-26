@@ -1,31 +1,73 @@
 # Protea
 
 ```dart
-elem TodoItem {
-  prop color = style {color: 333}
-  prop label_ = ''
-  prop done = false
+// A simple todo-list project with styling
+// Taken from https://selom.medium.com/todo-app-with-react-js-part-2-styled-components-de7bebdc8bb5
+use React
 
-  proc onClick { done = true }
-
-  style base {
-    align-items: center
-    display: flex
-  } label_ {
-    font-weight: bold
-    color: $color
-    flex: 1
-    if (done) {
-      text-decoration: line-through
-    }
-  }
-
-  return <div *base>
-    <span *label_>$label_</span>
-    <Icon.Checkmark/>
-    <Icon.Trash/>
-  </div>
+style FormInput as input {
+  width: 235px
+  outline: none
+  fontSize: 13px
+  paddingTop: 7px
+  paddingBottom: 7px
+  paddingLeft: 10px
 }
+
+elem TodoForm = <form>
+  <FormInput placeholder="Enter new to-do item"/>
+</form>
+
+style List {
+  listStyle: none
+  overflow: hidden
+  width: 100%
+  marginBottom: 10px
+}
+
+style Label as label {
+  float: left
+  cursor: pointer
+}
+
+style Button as button {
+  float: right
+  background: tomato
+  color: #FFF
+  borderRadius: 3px
+  border: 2px solid tomato
+  padding: 3px 10px
+  outline: none
+  cursor: pointer
+}
+
+elem TodoItem(
+  req val title: str,
+  req val id: str
+) = <List>
+  <Label for=$id>
+    <input checkbox id=$id/>
+    <span>$title</span>
+  </Label>
+  <Button button icon=trash>
+    Delete
+  </Button>
+</List>
+
+style Container as div {
+  width: 250px
+  margin: 10px auto
+  fontFamily: [arial, helvetica, sans-serif]
+  fontSize: 13px
+}
+
+elem App = <Container>
+  <TodoForm/>
+  <TodoList/>
+</Container>
+
+// Line not compulsory, Protea will do it for you
+React.render(App, doc.getId(:app))
 ```
 
 ---
