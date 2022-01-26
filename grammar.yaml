@@ -1611,7 +1611,7 @@ repository:
             | [,;] # separator
             | [({\[] # opening bracket
           )
-            | \b [\p{Pc}\p{L}][\w\p{Pd}]* \b # identifier or keyword
+            | \b [\p{Pc}\p{L}][\w\p{Pd}]* \b \s # identifier or keyword
             | [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s # postfix or infix operator
         ) \s*
       )
@@ -1624,7 +1624,7 @@ repository:
     patterns:
       - comment: JSX Fragment
         contentName: meta.jsx.fragment.protea
-        begin: \s*(<)\s*(?=>)
+        begin: (<)\s*(?=>)
         end: (?<=</)(>)
         beginCaptures:
           1: { name: punctuation.definition.tag.protea }
@@ -1636,7 +1636,6 @@ repository:
         contentName: meta.jsx.protea
         begin: |
           (?x)
-          \s*
           (<) # start tag begin
           (
             (?:
@@ -1648,7 +1647,7 @@ repository:
             [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
             \b
           )
-          (?=[,;'"`\\({\[)}\]/>\s])(?![:])(?<![.:=])
+          (?=[,;'"`\\({\[)}\]/>\s])#(?![:])(?<![.:=])
         end: |
           (?x) \s*
           (?:
