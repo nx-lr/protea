@@ -1043,8 +1043,8 @@ repository:
   regexps:
     patterns:
       - comment: Replacement section
-        begin: (?<=`+)\s*(```+|`)
-        end: \s*(?:(\1)(?!`+))(\p{Alnum}*)
+        begin: (?<=`+|,)\s*(```+|`)\s*
+        end: \s*(\1)(\p{L}*)
         name: string.replace.regexp.protea
         captures:
           1: {name: punctuation.section.regexp.end.protea}
@@ -1053,8 +1053,8 @@ repository:
           - include: '#back-references'
           - include: '#string-content'
       - comment: Pattern section
-        begin: \s*(\p{Alnum}*)(?<!`+)(```+|`)
-        end: \s*(?:(\2)(?!`+))(\p{Alnum}*)
+        begin: (\p{L}*)(```+|`)\s*
+        end: \s*(\2)(\p{L}*)
         name: string.pattern.regexp.protea
         beginCaptures:
           1: {name: keyword.modifier.protea}
@@ -3030,7 +3030,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -3066,7 +3066,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -3102,7 +3102,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -3138,7 +3138,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -3174,7 +3174,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -3208,7 +3208,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[]
+              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -4897,9 +4897,8 @@ repository:
           )
 
           \s*
-          (\|)
-          (?![\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+)
-        end: (?<=^|[,;'"`({\[)}\]\w\s]|\\.)(\|)(?!\|)
+          (\|)(?!\|)
+        end: (?<!\|)(\|)(?!\|)
         name: meta.object-literal.key.protea
         captures:
           1: {name: entity.name.method.protea}
@@ -4990,8 +4989,8 @@ repository:
           )
 
           \s*
-          (\|)(?![\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+)
-        end: (?<=^|[,;'"`({\[)}\]\w\s]|\\.)(\|)(?!\|)
+          (\|)(?!\|)
+        end: (?<!\|)(\|)(?!\|)
         name: meta.object-literal.key.protea
         captures:
           1: {name: entity.name.function.protea}
@@ -5005,6 +5004,7 @@ repository:
           - include: $self
 
   params-clause:
+    name: meta.function.arguments.protea
     begin: |
       (?x)
       (?<=
@@ -5044,11 +5044,10 @@ repository:
           )
         )
       ) \s* # before a space
-      (\|)
-      (?![\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+)
+      (\|)(?!\|)
     captures:
       1: {name: punctuation.separator.arguments.protea}
-    end: (?<=^|[,;'"`({\[)}\]\w\s]|\\.)(\|)(?!\|)
+    end: (?<!\|)(\|)(?!\|)
     patterns:
       - include: '#param-bracket-content'
       - include: $self
@@ -5343,8 +5342,8 @@ repository:
           )
 
           \s*
-          (\|)(?![\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+)
-        end: (?<=^|[,;'"`({\[)}\]\w\s]|\\.)(\|)(?!\|)
+          (\|)(?!\|)
+        end: (?<!\|)(\|)(?!\|)
         name: meta.object-literal.key.protea
         captures:
           1: {name: entity.name.function.protea}
@@ -6388,7 +6387,7 @@ repository:
           1: {name: storage.type.string.protea}
           2: {name: punctuation.definition.string.protea}
         patterns:
-          - match: ''''''
+          - match: "''"
             name: constant.character.escape.protea
       - comment: double-quoted verbatim string
         begin: ((?i:r))("""+|")\s*
