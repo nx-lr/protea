@@ -1060,13 +1060,11 @@ repository:
           [,;]
         | # opening bracket
           [({\[]
-        | # unquoted string literal
-          `(\w|\\.|[\p{Pc}\p{L}][\w\p{Pd}]*\b)*
         | # postfix or infix operator
           [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s
         | # a keyword
           (?:
-            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # keywords
                 in|of|as|is|new
@@ -1087,7 +1085,7 @@ repository:
                 |debug|assert|check
               )
             \b
-            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
           )
       ) \s*
       (?= /+)
@@ -1646,13 +1644,11 @@ repository:
           [,;]
         | # opening bracket
           [({\[]
-        | # unquoted string literal
-          `(\w|\\.|[\p{Pc}\p{L}][\w\p{Pd}]*\b)*
         | # postfix or infix operator
           [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s
         | # a keyword
           (?:
-            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # keywords
                 in|of|as|is|new
@@ -1673,7 +1669,7 @@ repository:
                 |debug|assert|check
               )
             \b
-            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
           )
       ) \s*
       (?=<[\p{Pc}\p{L}]|<\s+>)
@@ -2725,7 +2721,7 @@ repository:
           | # command syntax
             (?:^ | [,;({\[] | \s) //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
           | (?:
-              (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+              (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
               \b
                 (?: # keywords
                   in|of|as|is|new
@@ -2746,7 +2742,7 @@ repository:
                   |debug|assert|check
                 )
               \b
-              (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+              (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
             )
           ) \s* # before a space
         )
@@ -3116,14 +3112,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s])
+            | (?:^|[,;'"({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             [?!] # optional or required
@@ -3152,14 +3148,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s])
+            | (?:^|[,;'"({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             \*\*? # spread
@@ -3188,14 +3184,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s])
+            | (?:^|[,;'"({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             //? # named
@@ -3224,14 +3220,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s])
+            | (?:^|[,;'"({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             \& # reference
@@ -3260,14 +3256,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s])
+            | (?:^|[,;'"({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             \% # other
@@ -3296,14 +3292,14 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s])
+            | (?:^|[,;'"({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
@@ -4088,13 +4084,13 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
                 var|val
               )
             \b
-            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#?\()\s*
@@ -4147,13 +4143,13 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
                 var|val
               )
             \b
-            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#?\[)\s*
@@ -5011,13 +5007,11 @@ repository:
           [,;]
         | # opening bracket
           [({\[]
-        | # unquoted string literal
-          `(\w|\\.|[\p{Pc}\p{L}][\w\p{Pd}]*\b)*
         | # postfix or infix operator
           [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s
         | # a keyword
           (?:
-            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # keywords
                 in|of|as|is|new
@@ -5038,7 +5032,7 @@ repository:
                 |debug|assert|check
               )
             \b
-            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
           )
       ) \s*
       (\|)(?!\|)
@@ -5405,13 +5399,13 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
                 var|val
               )
             \b
-            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#?\{)\s*
@@ -5426,7 +5420,7 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # expression keywords
                 in|of|as|is|new
@@ -5434,7 +5428,7 @@ repository:
                 |unset|ref|and|or|xor|not
               )
             \b
-            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#\{)\s*
@@ -5449,7 +5443,7 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # expression keywords
                 in|of|as|is|new
@@ -5457,7 +5451,7 @@ repository:
                 |unset|ref|and|or|xor|not
               )
             \b
-            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\{)\s*
@@ -5587,13 +5581,13 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
                 var|val
               )
             \b
-            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#?\()\s*
@@ -5643,13 +5637,13 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
                 var|val
               )
             \b
-            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#?\[)\s*
