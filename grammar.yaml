@@ -1054,37 +1054,42 @@ repository:
     begin: |
       (?x)
       (?<=
-        (?:
-            ^ # beginning of line
-          | [,;] # separator
-          | [({\[] # opening bracket
-          | [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s # postfix or infix operator
-          | (?:
-              (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
-              \b
-                (?: # keywords
-                  in|of|as|is|new
-                  |to|til|thru|by|del
-                  |unset|ref|and|or|xor|not
-                  |var|val|func|proc|type
-                  |class|data|enum|module
-                  |iter|macro|inter|object
-                  |trait|style|elem|prop
-                  |go|defer|do|with|from|where
-                  |if|elif|else|then|def
-                  |for|each|loop|while
-                  |try|throw|catch|after
-                  |match|case|pass|fail|goto
-                  |break|next|redo|retry
-                  |return|yield|await|mark
-                  |use|show|hide|route
-                  |debug|assert|check
-                )
-              \b
-              (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
-            )
-        ) \s*
-      )
+          # beginning of line
+          ^
+        | # separator
+          [,;]
+        | # opening bracket
+          [({\[]
+        | # unquoted string literal
+          `(\w|\\.|[\p{Pc}\p{L}][\w\p{Pd}]*\b)*
+        | # postfix or infix operator
+          [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s
+        | # a keyword
+          (?:
+            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            \b
+              (?: # keywords
+                in|of|as|is|new
+                |to|til|thru|by|del
+                |unset|ref|and|or|xor|not
+                |var|val|func|proc|type
+                |class|data|enum|module
+                |iter|macro|inter|object
+                |trait|style|elem|prop
+                |go|defer|do|with|from|where
+                |if|elif|else|then|def
+                |for|each|loop|while
+                |try|throw|catch|after
+                |match|case|pass|fail|goto
+                |break|next|redo|retry
+                |return|yield|await|mark
+                |use|show|hide|route
+                |debug|assert|check
+              )
+            \b
+            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+          )
+      ) \s*
       (?= /+)
     end: (?=)|$
     name: meta.regexp.protea
@@ -1635,14 +1640,42 @@ repository:
     begin: |
       (?x)
       (?<=
-        (?:
-            ^ # beginning of line
-          | [,;] # separator
-          | [({\[] # opening bracket
-          | \b [\p{Pc}\p{L}][\w\p{Pd}]* \b \s # identifier or keyword
-          | [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s # postfix or infix operator
-        ) \s*
-      )
+          # beginning of line
+          ^
+        | # separator
+          [,;]
+        | # opening bracket
+          [({\[]
+        | # unquoted string literal
+          `(\w|\\.|[\p{Pc}\p{L}][\w\p{Pd}]*\b)*
+        | # postfix or infix operator
+          [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s
+        | # a keyword
+          (?:
+            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            \b
+              (?: # keywords
+                in|of|as|is|new
+                |to|til|thru|by|del
+                |unset|ref|and|or|xor|not
+                |var|val|func|proc|type
+                |class|data|enum|module
+                |iter|macro|inter|object
+                |trait|style|elem|prop
+                |go|defer|do|with|from|where
+                |if|elif|else|then|def
+                |for|each|loop|while
+                |try|throw|catch|after
+                |match|case|pass|fail|goto
+                |break|next|redo|retry
+                |return|yield|await|mark
+                |use|show|hide|route
+                |debug|assert|check
+              )
+            \b
+            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+          )
+      ) \s*
       (?=<[\p{Pc}\p{L}]|<\s+>)
     end: (?=)|$
     patterns:
@@ -2692,7 +2725,7 @@ repository:
           | # command syntax
             (?:^ | [,;({\[] | \s) //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
           | (?:
-              (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+              (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
               \b
                 (?: # keywords
                   in|of|as|is|new
@@ -3083,7 +3116,7 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s]|\\.)
+            | (?:^|[,;'"`({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
@@ -3119,7 +3152,7 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s]|\\.)
+            | (?:^|[,;'"`({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
@@ -3155,7 +3188,7 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s]|\\.)
+            | (?:^|[,;'"`({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
@@ -3191,7 +3224,7 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s]|\\.)
+            | (?:^|[,;'"`({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
@@ -3227,7 +3260,7 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s]|\\.)
+            | (?:^|[,;'"`({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
@@ -3263,7 +3296,7 @@ repository:
             | [({\[] # open bracket
             | [;,] # separator
             | [(|]\. \s # uncurried function
-            | (?:^|[,;'"`({\[)}\]\s]|\\.)
+            | (?:^|[,;'"`({\[)}\]\s])
               \b (?:
                 var|val|func|proc|type
                 |class|data|enum|module
@@ -4055,7 +4088,7 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
                 var|val
@@ -4114,7 +4147,7 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
                 var|val
@@ -4971,17 +5004,20 @@ repository:
   argument-list:
     name: meta.function.arguments.protea
     begin: |
-      (?x)
       (?<=
-        (?:
           # beginning of line
           ^
-        | # or before a delimiter
-          [,;({\[]
-        | # operator
+        | # separator
+          [,;]
+        | # opening bracket
+          [({\[]
+        | # unquoted string literal
+          `(\w|\\.|[\p{Pc}\p{L}][\w\p{Pd}]*\b)*
+        | # postfix or infix operator
           [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s
-        | (?:
-            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+        | # a keyword
+          (?:
+            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # keywords
                 in|of|as|is|new
@@ -5004,8 +5040,7 @@ repository:
             \b
             (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
           )
-        )
-      ) \s* # before a space
+      ) \s*
       (\|)(?!\|)
     captures:
       1: { name: punctuation.separator.arguments.protea }
@@ -5370,7 +5405,7 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
                 var|val
@@ -5391,7 +5426,7 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # expression keywords
                 in|of|as|is|new
@@ -5414,7 +5449,7 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # expression keywords
                 in|of|as|is|new
@@ -5552,7 +5587,7 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
                 var|val
@@ -5608,7 +5643,7 @@ repository:
       - begin: |
           (?x)
           (?<=
-            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+            (?:^|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
                 var|val
