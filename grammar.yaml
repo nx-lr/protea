@@ -17,7 +17,7 @@ information for contributors: |
 fixes: |
   Changes in 2022:
 
-  - Added back backslash strings, though with much more limitations. This also removes `\` as an operator identifier.
+  - Added back backslash strings, though with much more limitations. 
   - Removed JSX and style blocks; replaced them with indentation
   - Comments have been standardized into Swift-style comments:
     - `//` line comment
@@ -35,7 +35,9 @@ fixes: |
     - Add support for fuzzy matching (edits, insertions, deletions, etc.)
     - Improved highlighting for regexes with flags
   - Added prefixes to strings, generated using code
-  - Fix JSX highlighting and attributes:
+  - Switched around regular expressions and backslash strings. ` now triggers an unquoted string
+    and / triggers a regular expression, using the same triggers as JSX.
+  - Fixed JSX highlighting and attributes:
     - @directive
     - #id and .class
     - :event
@@ -355,8 +357,8 @@ repository:
   strings-unquoted:
     comment: Unquoted string
     applyEndPatternLast: true
-    begin: (\\)
-    end: (?=[\p{Z}\p{P}\p{S}])|$
+    begin: (`)
+    end: (?=\W)|$
     name: string.unquoted.protea
     captures:
       1: { name: punctuation.definition.string.protea }
@@ -431,7 +433,7 @@ repository:
       - match: \\\p{P}
         name: constant.character.escape.punctuation.protea
       - match: \\[a-zA-Z\p{C}]
-        name: invalid.deprecated.escape.protea
+        name: invalid.illegal.escape.protea
       - match: \\\s
         name: constant.character.escape.space.protea
       - match: \\\p{L}
@@ -911,7 +913,7 @@ repository:
             )?
             [+-]? \d+ # start of range
             (?:
-              (?:[>.]\.[.<]|\.\.=?|=\.=) # range operator
+              (?:[>.]\.[.<] | \.\. | [=.]\.[.=]|\.\.=?|=\.=) # range operator
               [+-]? \d+ # end of range
               (?:
                 \.{1,3}
@@ -926,7 +928,7 @@ repository:
             patterns:
               - match: '[+-]'
                 name: keyword.operator.arithmetic.protea
-              - match: (?:[>.]\.[.<]|\.\.=?|=\.=)
+              - match: (?:[>.]\.[.<] | \.\. | [=.]\.[.=]|\.\.=?|=\.=)
                 name: keyword.operator.range.protea
       - match: |
           (?x)
@@ -1048,43 +1050,70 @@ repository:
 
   regexps:
     applyEndPatternLast: true
-    begin: (?<!`+)(?=\p{L}*`+)
+    begin: |
+      (?x)
+      (?<=
+        (?:
+              ^ # beginning of line
+            | [,;] # separator
+            | [({\[] # opening bracket
+            | [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s # postfix or infix operator
+            | (?:
+            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+            \b
+              (?: # keywords
+                in|of|as|is|new
+                |to|til|thru|by|del
+                |unset|ref|and|or|xor|not
+                |var|val|func|proc|type
+                |class|data|enum|module
+                |iter|macro|inter|object
+                |trait|style|elem|prop
+                |go|defer|do|with|from|where
+                |if|elif|else|then|def
+                |for|each|loop|while
+                |try|throw|catch|after
+                |match|case|pass|fail|goto
+                |break|next|redo|retry
+                |return|yield|await|mark
+                |use|show|hide|route
+                |debug|assert|check
+              )
+            \b
+            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+          )
+        ) \s*
+      )
+      (?=
+        (?:/+)
+        (?:
+            [,;'"`({\[)}\]\w\s\\]
+          | \s* (?:/[/*]\s | $)
+        )
+      )
     end: (?=)|$
     name: meta.regexp.protea
     patterns:
       - comment: Pattern section
-        begin: (?<!`+)\s*(\p{L}*)(```+|`)\s*
-        end: \s*(\2)(?!`+)(\p{L}*)
+        begin: (/+)\s*
+        end: \s*(\1)(?!/+)(\p{L}*)
         name: string.pattern.regexp.protea
-        beginCaptures:
-          1: { name: keyword.modifier.protea }
-          2: { name: punctuation.section.regexp.begin.protea }
-        endCaptures:
-          1: { name: punctuation.section.regexp.end.protea }
+        captures:
+          1: { name: punctuation.definition.regexp.protea }
           2: { name: keyword.other.flag.protea }
         patterns:
           - include: '#comments'
           - include: '#regexp-patterns'
-      - applyEndPatternLast: true
-        begin: (?=,)
-        end: (?=)|$
-        name: meta.replace.protea
-        patterns:
-          - comment: Replacement section
-            begin: (?<=`+|,)\s*(```+|`)\s*
-            end: \s*(\1)(?!`+)(\p{L}*)
+          - applyEndPatternLast: true
+            comment: Replacement section
+            begin: (?<!\\)(/+)\s*
+            end: \s*(?=(?<!\\)/+)
             name: string.replace.regexp.protea
             captures:
-              1: { name: punctuation.section.regexp.end.protea }
-              2: { name: keyword.other.flag.protea }
+              1: { name: punctuation.definition.regexp.protea }
             patterns:
               - include: '#back-references'
               - include: '#string-content'
-          - include: '#comments'
-          - include: '#comma'
-          - include: '#line-continuation'
-      - include: '#comments'
-      - include: '#line-continuation'
 
   fuzzy-expression:
     patterns:
@@ -1453,7 +1482,7 @@ repository:
       - match: \\\p{P}
         name: constant.character.escape.punctuation.protea
       - match: \\[a-zA-Z\p{C}]
-        name: invalid.deprecated.escape.protea
+        name: invalid.illegal.escape.protea
       - match: \\\s
         name: constant.character.escape.space.protea
       - match: \\\p{L}
@@ -1606,19 +1635,17 @@ repository:
     applyEndPatternLast: true
     comment: |
       Only after opening brackets, commas, semicolons, keywords, and operators.
-      In addition, < > starts a JSX fragment, <?x ... ?> starts a declaration, and =
-      <! !> starts a fragment with CDATA-style syntax.
+      JSX also supports called components, so we need to be careful to also 
+      match those.
     begin: |
       (?x)
       (?<=
         (?:
-          (?:
-              ^ # beginning of line
-            | [,;] # separator
-            | [({\[] # opening bracket
-          )
-            | \b [\p{Pc}\p{L}][\w\p{Pd}]* \b \s # identifier or keyword
-            | [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s # postfix or infix operator
+            ^ # beginning of line
+          | [,;] # separator
+          | [({\[] # opening bracket
+          | \b [\p{Pc}\p{L}][\w\p{Pd}]* \b \s # identifier or keyword
+          | [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s # postfix or infix operator
         ) \s*
       )
       (?=<[\p{Pc}\p{L}]|<\s+>)
@@ -1648,12 +1675,12 @@ repository:
               \b
               [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
               \b
-              (?:\.|::?) # qualified name separator
+              (?:::|\.?) # qualified name separator
             )*
             [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
             \b
           )
-          (?=[,;'"`\\({\[)}\]/>\s])#(?![:])(?<![.:=])
+          (?=[,;'"`({\[)}\]/>\s])#(?![:])(?<![.:=])
         end: |
           (?x) \s*
           (?:
@@ -2233,7 +2260,7 @@ repository:
       - include: source.css.scss#constant_optional
 
   property-name:
-    match: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:(?:\.|::?)[\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
+    match: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:(?:::|\.?)[\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
     name: meta.property-name.protea
     captures:
       1:
@@ -2277,7 +2304,7 @@ repository:
       1: { name: punctuation.definition.constant.css }
 
   tag-names:
-    match: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:(?:\.|::?)[\p{Pc}\p{L}][\w\p{Pd}]*)*)\b\s*
+    match: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:(?:::|\.?)[\p{Pc}\p{L}][\w\p{Pd}]*)*)\b\s*
     name: entity.name.tag.protea
     captures:
       1:
@@ -2649,7 +2676,7 @@ repository:
       match: |
         (?x)
         (?<! # ignore qualified names
-          \b (?: [?!]?\.=? | [?!:]:=?) (?: \b | ['"`\\({\[])
+          \b (?: [?!]?\.=? | [?!:]:=?) (?: \b | ['"`({\[])
         )
         (?<=
           (?:
@@ -2663,7 +2690,7 @@ repository:
             ['"`({\[)}\]\w]: \s
           | # operator
             (?:^ | ['"`({\[)}\]\w\s] | \\.) # anchor
-            [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+            [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
           | # open/close bracket
             (?:['"`({\[)}\]] | \\.)
             (?: [?!]?\.=? | [?!:]:=?) # accessors
@@ -2691,7 +2718,7 @@ repository:
                   |debug|assert|check
                 )
               \b
-              (?:$|[,;'"`\\({\[)}\]\s]) # beside a delimiter or space
+              (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             )
           ) \s* # before a space
         )
@@ -2733,7 +2760,7 @@ repository:
           \s+
           (?:
               # prefix operator literal
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
               ['"`({\[]
             | # array literal
               \[
@@ -2742,10 +2769,10 @@ repository:
             | # ignore orphaned qualified name
               (?!
                 (?: [?!]?\.=? | [?!:]:=?)
-                ['"`\\({\[\w]
+                ['"`({\[\w]
               )
               # prefix operator
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]*
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*
               (?:
                 # ignore all keywords
                 (?!
@@ -2781,7 +2808,7 @@ repository:
               (?: # closing bracket
                   [,;'"`({\[)}\]\s]
                 | # operator
-                  [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+                  [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
                 | # end of line
                   $
               )
@@ -2790,11 +2817,11 @@ repository:
           (?: # command or string literal
               (?: \\ )
             | # function application, composition and piping
-              (?: \$ | \s \. | <\|{1,3}| <\+) ['"`\\({\[\w\s]
+              (?: \$ | \s \. | <\|{1,3}| <\+) ['"`({\[\w\s]
             | # C-style function call
               (?:[!?]\.=?|\.=)? \#?\(
             | # generics
-              (?:[!?]\.=?|\.=)? < ['"`\\({\[\w]
+              (?:[!?]\.=?|\.=)? < ['"`({\[\w]
             | # string literal or expression
               ['"`(]
           )
@@ -2844,11 +2871,11 @@ repository:
           (?=
             \s*
             (?: # function application, composition and piping
-                (?: \$ | \s \. | <\|{1,3}| <\+) ['"`\\({\[\w\s]
+                (?: \$ | \s \. | <\|{1,3}| <\+) ['"`({\[\w\s]
               | # C-style function call
                 (?:[!?]\.=?|\.=)? \#?\(
               | # generics
-                (?:[!?]\.=?|\.=)? < ['"`\\({\[\w]
+                (?:[!?]\.=?|\.=)? < ['"`({\[\w]
             )
           )
         captures:
@@ -2923,7 +2950,7 @@ repository:
             (?<= ^ # beginning of line
               | ['"`({\[)}\]\w\s] # literal
               (?: # operators
-                [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+                [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
               )?
             ) \b
               (?: # Regular variables
@@ -2997,7 +3024,7 @@ repository:
             (?<=
               (?: ^ | [,;'"`({\[)}\]\w\s] | \\. ) # literal
               (?: # operators
-                [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+                [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
               )?
             ) \b
               (?: # Regular variables
@@ -3068,7 +3095,7 @@ repository:
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`\\({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             [?!] # optional or required
@@ -3077,7 +3104,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
+              \s* [)}\]] | \s* \|:? [\w\s'"`({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -3085,8 +3112,8 @@ repository:
               (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
               \s*
             | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+              (?::|[?:]?=) \s* [\w'"`({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`({\[]
           )
         name: variable.parameter.optional.protea
       - match: |
@@ -3104,7 +3131,7 @@ repository:
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`\\({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             \*\*? # spread
@@ -3113,7 +3140,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
+              \s* [)}\]] | \s* \|:? [\w\s'"`({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -3121,8 +3148,8 @@ repository:
               (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
               \s*
             | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+              (?::|[?:]?=) \s* [\w'"`({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`({\[]
           )
         name: variable.parameter.spread.protea
       - match: |
@@ -3140,7 +3167,7 @@ repository:
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`\\({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             //? # named
@@ -3149,7 +3176,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
+              \s* [)}\]] | \s* \|:? [\w\s'"`({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -3157,8 +3184,8 @@ repository:
               (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
               \s*
             | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+              (?::|[?:]?=) \s* [\w'"`({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`({\[]
           )
         name: variable.parameter.name.protea
       - match: |
@@ -3176,7 +3203,7 @@ repository:
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`\\({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             \& # reference
@@ -3185,7 +3212,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
+              \s* [)}\]] | \s* \|:? [\w\s'"`({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -3193,8 +3220,8 @@ repository:
               (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
               \s*
             | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+              (?::|[?:]?=) \s* [\w'"`({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`({\[]
           )
         name: variable.parameter.reference.protea
       - match: |
@@ -3212,7 +3239,7 @@ repository:
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`\\({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             \% # other
@@ -3221,7 +3248,7 @@ repository:
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
+              \s* [)}\]] | \s* \|:? [\w\s'"`({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -3229,8 +3256,8 @@ repository:
               (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
               \s*
             | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+              (?::|[?:]?=) \s* [\w'"`({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`({\[]
           )
         name: variable.parameter.other.protea
       - match: |
@@ -3248,14 +3275,14 @@ repository:
                 |iter|macro|inter|object
                 |trait|style|elem|prop|as
               ) \b
-              (?:$|[,;'"`\\({\[)}\]\s]) # var/val/as keyword
+              (?:$|[,;'"`({\[)}\]\s]) # var/val/as keyword
           )
             \s*
             \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
           (?=
             $ # EOL
             | # close bracket or pipe
-              \s* [)}\]] | \s* \|:? [\w\s'"`\\({\[)}\]]
+              \s* [)}\]] | \s* \|:? [\w\s'"`({\[)}\]]
             | # separator
               \s* [;,]
             | # as keyword (aliasing)
@@ -3263,8 +3290,8 @@ repository:
               (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
               \s*
             | # type specifier and assignment
-              (?::|[?:]?=) \s* [\w'"`\\({\[]
-            | \s+ (?::|[?:]?=) \s+ [\w'"`\\({\[]
+              (?::|[?:]?=) \s* [\w'"`({\[]
+            | \s+ (?::|[?:]?=) \s+ [\w'"`({\[]
           )
         name: variable.parameter.protea
 
@@ -3354,15 +3381,15 @@ repository:
 
   special-operators:
     patterns:
-      - begin: (?<=^|[\s({\[])(\?)(?=['"`\\({\[\w])|(?<=['"`)}\]\w]|\\.)(\?)(?=['"`\\({\[\w])
-        end: (?<=^|[\s({\[])(\:)(?=['"`\\({\[\w])|(?<=['"`)}\]\w]|\\.)(\:)(?=['"`\\({\[\w])
+      - begin: (?<=^|[\s({\[])(\?)(?=['"`({\[\w])|(?<=['"`)}\]\w]|\\.)(\?)(?=['"`({\[\w])
+        end: (?<=^|[\s({\[])(\:)(?=['"`({\[\w])|(?<=['"`)}\]\w]|\\.)(\:)(?=['"`({\[\w])
         captures:
           1: { name: keyword.operator.conditional.protea }
           2: { name: keyword.operator.conditional.protea }
         patterns:
           - include: $self
-      - begin: (?<=^|[\s({\[])(\!)(?=['"`\\({\[\w])|(?<=['"`)}\]\w]|\\.)(\!)(?=['"`\\({\[\w])
-        end: (?<=^|[\s({\[])(\:)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\:)(?=['"`\\({\[\w])
+      - begin: (?<=^|[\s({\[])(\!)(?=['"`({\[\w])|(?<=['"`)}\]\w]|\\.)(\!)(?=['"`({\[\w])
+        end: (?<=^|[\s({\[])(\:)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\:)(?=['"`({\[\w])
         captures:
           1: { name: keyword.operator.ternary.protea }
           2: { name: keyword.operator.ternary.protea }
@@ -3380,7 +3407,7 @@ repository:
               # all operators except ~ < = > . : !
               [\p{S}\p{P}&&[^~<=>.,:;!'"`({\[)}\]\p{Pc}]]
               # operator character
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]*
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*
               = # ending equal sign
             ) |
             ( # 2: arithmetic operator
@@ -3390,7 +3417,7 @@ repository:
               \+\+ | --
             ) |
             ( # 4: logical operator
-              \&\& | \|\| | \^\^ | !
+              \&\& | \|\| | \^\^ | ! | /\\ | \\/
             ) |
             ( # 5: bitwise and set
               \& | \| | \^ | ~
@@ -3438,62 +3465,62 @@ repository:
               :?=
             ) |
             ( # 20: range
-              [>.]\.[.<]
+              [>.]\.[.<] | \.\. | [=.]\.[.=]
             ) |
             ( # 21: fat arrow
-                [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* => # right side
-              | <= [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* # left side
+                [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* => # right side
+              | <= [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* # left side
             ) |
             ( # 22: skinny arrow
-                [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* -> # right side
-              | <- [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* # left side
+                [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* -> # right side
+              | <- [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* # left side
             ) |
             ( # 23: wavy arrow
-                [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* ~> # right side
-              | <~ [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* # left side
+                [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* ~> # right side
+              | <~ [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* # left side
             ) |
             ( # 24: custom logical
               [&|^~] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 25: custom arithmetic
               [-+*/%] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 26: custom prototype
               [@:] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 27: custom accessor
               [.] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 28: custom comparison
               [=!] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 29: custom relational
               [<>] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 30: custom private
               [?\#] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 31: custom math
               \p{Sm} # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 32: custom currency
               \p{Sc} # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 33: custom ascii
               [\p{S}\p{P}&&[\x80-\xFF]] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 34: catch all
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             )
           )
           (?=$|[)}\]\s]) # closing
@@ -3553,7 +3580,7 @@ repository:
               # all operators except ~ < = > . : !
               [\p{S}\p{P}&&[^~<=>.,:;!'"`({\[)}\]\p{Pc}]]
               # operator character
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]*
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*
               = # ending equal sign
             ) |
             ( # 5: arithmetic operator
@@ -3563,7 +3590,7 @@ repository:
               \+\+ | --
             ) |
             ( # 7: logical operator
-              \&\& | \|\| | \^\^ | !
+              \&\& | \|\| | \^\^ | ! | /\\ | \\/
             ) |
             ( # 8: bitwise and set
               \& | \| | \^ | ~
@@ -3611,65 +3638,65 @@ repository:
               :?=
             ) |
             ( # 23: range
-              [>.]\.[.<]
+              [>.]\.[.<] | \.\. | [=.]\.[.=]
             ) |
             ( # 24: fat arrow
-                [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* => # right side
-              | <= [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* # left side
+                [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* => # right side
+              | <= [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* # left side
             ) |
             ( # 25: skinny arrow
-                [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* -> # right side
-              | <- [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* # left side
+                [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* -> # right side
+              | <- [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* # left side
             ) |
             ( # 26: wavy arrow
-                [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* ~> # right side
-              | <~ [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]* # left side
+                [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* ~> # right side
+              | <~ [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]* # left side
             ) |
             ( # 27: custom logical
               [&|^~] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 28: custom arithmetic
               [-+*/%] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 29: custom prototype
               [@:] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 30: custom accessor
               [.] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 31: custom comparison
               [=!] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 32: custom relational
               [<>] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 33: custom private
               [?\#] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 34: custom math
               \p{Sm} # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 35: custom currency
               \p{Sc} # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 36: custom ascii
               [\p{S}\p{P}&&[\x80-\xFF]] # leading chars
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             ) |
             ( # 37: catch all
-              [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+
+              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
             )
           )
-          (?=['"`\\({\[\w]) # opening
+          (?=['"`({\[\w]) # opening
         captures:
           1: { name: keyword.operator.optional.protea }
           2: { name: keyword.operator.assert.protea }
@@ -3728,10 +3755,10 @@ repository:
         |(\=) # 12
         |(\$) # 13
         |(\#) # 14
-        |[\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]
+        |[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]
       ) # 15
-      (?=[\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]*
-      ['"`\\({\[\w])
+      (?=[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*
+      ['"`({\[\w])
     name: keyword.operator.prefix.protea
     captures:
       1: { name: keyword.operator.module.all.protea }
@@ -3755,7 +3782,7 @@ repository:
     match: |
       (?x)
       (?<=(?:['"`)}\]\w]|\\.)
-        [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]*)
+        [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*)
       (?:
         ([*/]) # 1
         |(\+) # 2
@@ -3771,7 +3798,7 @@ repository:
         |(\=) # 12
         |(\$) # 13
         |(\#) # 14
-        |[\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]
+        |[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]
       ) # 15
     name: keyword.operator.suffix.protea
     captures:
@@ -3943,7 +3970,7 @@ repository:
         patterns:
           - match: ','
             name: punctuation.separator.mapping.protea
-          - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]*):(?=['"`\\({\[\w\s]|$)
+          - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*):(?=['"`({\[\w\s]|$)
             name: punctuation.separator.key-value.protea
 
     patterns:
@@ -4039,7 +4066,7 @@ repository:
                 var|val
               )
             \b
-            (?:$|[,;'"`\\({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#?\()\s*
@@ -4098,7 +4125,7 @@ repository:
                 var|val
               )
             \b
-            (?:$|[,;'"`\\({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#?\[)\s*
@@ -4160,7 +4187,7 @@ repository:
           4: { name: keyword.operator.type.channel.protea }
       - &primary-operators
         comment: Primary binary operators
-        match: (?<=['"`)}\]\w])(?:([>.]\.[.<])|(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=['"`\\({\[\w])
+        match: (?<=['"`)}\]\w])(?:([>.]\.[.<] | \.\. | [=.]\.[.=])|(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=['"`({\[\w])
         captures:
           1: { name: keyword.operator.range.protea }
           2: { name: keyword.operator.optional.protea }
@@ -4196,7 +4223,7 @@ repository:
 
   declaration-clause:
     patterns:
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
+      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
         name: entity.name.namespace.protea
       - applyEndPatternLast: true
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*
@@ -4204,9 +4231,9 @@ repository:
         beginCaptures:
           1: { name: storage.type.implements.protea }
         patterns:
-          - match: '\.|::'
+          - match: ::|\.
             name: punctuation.separator.namespace.protea
-          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
+          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
             name: entity.name.namespace.protea
           - match: *entity-name
             name: entity.name.trait.protea
@@ -4220,9 +4247,9 @@ repository:
         beginCaptures:
           1: { name: storage.type.extends.protea }
         patterns:
-          - match: '\.|::'
+          - match: ::|\.
             name: punctuation.separator.namespace.protea
-          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\.|::)
+          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
             name: entity.name.module.protea
           - match: *entity-name
             name: entity.name.interface.protea
@@ -4241,13 +4268,13 @@ repository:
       - include: '#type-signature'
       - include: '#literals'
       - applyEndPatternLast: true
-        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]))
+        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]))
         end: (?=)|$
         beginCaptures:
           1: { name: punctuation.definition.annotation.protea }
         patterns:
           - include: '#types'
-      - match: '\.|::'
+      - match: ::|\.
         name: punctuation.separator.namespace.protea
       - match: \s+
         name: meta.block.protea
@@ -4264,14 +4291,14 @@ repository:
               (?:
                 pub|priv|prot|final|immut|mut|def
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|del
+                |post|[gs]et|del|req|opt
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline|req|opt
-                |prefix|suffix|infix|binary|unary|left|right
+                |rec|oper|curry|inline|prefix|suffix
+                |infix|binary|unary|left|right
               )
             )
             (?!\B|\p{Pd}+\b)
@@ -4302,7 +4329,7 @@ repository:
           (?:
             pub|priv|prot|final|immut|mut|def
             |global|local|intern|extern|imply|exply
-            |post|[gs]et|del
+            |post|[gs]et|del|req|opt
           )
           (?!\B|\p{Pd}+\b)
           \s*
@@ -4324,8 +4351,8 @@ repository:
           (?x) \s*
           \b
           (?:
-            rec|oper|curry|inline|req|opt
-            |prefix|suffix|infix|binary|unary|left|right
+            rec|oper|curry|inline|prefix|suffix
+            |infix|binary|unary|left|right
           )
           (?!\B|\p{Pd}+\b)
           \s*
@@ -4781,14 +4808,14 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|def
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|del
+                |post|[gs]et|del|req|opt
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline|req|opt
-                |prefix|suffix|infix|binary|unary|left|right
+                |rec|oper|curry|inline|prefix|suffix
+                |infix|binary|unary|left|right
               )
               \s*
             )*
@@ -4826,14 +4853,14 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|def
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|del
+                |post|[gs]et|del|req|opt
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline|req|opt
-                |prefix|suffix|infix|binary|unary|left|right
+                |rec|oper|curry|inline|prefix|suffix
+                |infix|binary|unary|left|right
               )
               \s*
             )*
@@ -4873,14 +4900,14 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|def
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|del
+                |post|[gs]et|del|req|opt
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline|req|opt
-                |prefix|suffix|infix|binary|unary|left|right
+                |rec|oper|curry|inline|prefix|suffix
+                |infix|binary|unary|left|right
               )
               \s*
             )*
@@ -4918,14 +4945,14 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|def
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|del
+                |post|[gs]et|del|req|opt
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline|req|opt
-                |prefix|suffix|infix|binary|unary|left|right
+                |rec|oper|curry|inline|prefix|suffix
+                |infix|binary|unary|left|right
               )
               \s*
             )*
@@ -4957,7 +4984,7 @@ repository:
         | # or before a delimiter
           [,;({\[]
         | # operator
-          [\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]+ \s
+          [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s
         | (?:
             (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
             \b
@@ -4980,7 +5007,7 @@ repository:
                 |debug|assert|check
               )
             \b
-            (?:$|[,;'"`\\({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
           )
         )
       ) \s* # before a space
@@ -5181,14 +5208,14 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|def
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|del
+                |post|[gs]et|del|req|opt
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline|req|opt
-                |prefix|suffix|infix|binary|unary|left|right
+                |rec|oper|curry|inline|prefix|suffix
+                |infix|binary|unary|left|right
               )
               \b
               \s*
@@ -5228,14 +5255,14 @@ repository:
               (?: # Modifier keywords
                 pub|priv|prot|final|immut|mut|def
                 |global|local|intern|extern|imply|exply
-                |post|[gs]et|del
+                |post|[gs]et|del|req|opt
 
                 |seal|abst|impure|pure|early|late
                 |covar|contra|a?sync|stat|dyn|lazy
                 |eager|bound|free|uniq|struct|union
 
-                |rec|oper|curry|inline|req|opt
-                |prefix|suffix|infix|binary|unary|left|right
+                |rec|oper|curry|inline|prefix|suffix
+                |infix|binary|unary|left|right
               )
               \b
               \s*
@@ -5265,7 +5292,7 @@ repository:
           # label
           (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)
 
-          (?=: ['"`\\({\[)}\]\w\s])
+          (?=: ['"`({\[)}\]\w\s])
         name: meta.object-literal.key.protea
         captures:
           1:
@@ -5285,7 +5312,7 @@ repository:
       - include: '#semicolon'
 
   line-continuation:
-    begin: \s*(\\)\s*(?=/[/*]\s|$)
+    begin: \s*(`)\s*(?=/[/*]\s|$)
     end: ^\s*
     captures:
       1: { name: punctuation.separator.continuation.line.protea }
@@ -5327,7 +5354,7 @@ repository:
         patterns:
           - match: ','
             name: punctuation.separator.mapping.protea
-          - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`\\({\[)}\]\p{Pc}]]*):(?=['"`\\({\[\w\s]|$)
+          - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*):(?=['"`({\[\w\s]|$)
             name: punctuation.separator.key-value.protea
 
     patterns:
@@ -5354,7 +5381,7 @@ repository:
                 var|val
               )
             \b
-            (?:$|[,;'"`\\({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#?\{)\s*
@@ -5377,7 +5404,7 @@ repository:
                 |unset|ref|and|or|xor|not
               )
             \b
-            (?:$|[,;'"`\\({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#\{)\s*
@@ -5400,7 +5427,7 @@ repository:
                 |unset|ref|and|or|xor|not
               )
             \b
-            (?:$|[,;'"`\\({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\{)\s*
@@ -5536,7 +5563,7 @@ repository:
                 var|val
               )
             \b
-            (?:$|[,;'"`\\({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#?\()\s*
@@ -5592,7 +5619,7 @@ repository:
                 var|val
               )
             \b
-            (?:$|[,;'"`\\({\[)}\]\s]) # beside a delimiter or space
+            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
             \s*
           )
           (\#?\[)\s*
