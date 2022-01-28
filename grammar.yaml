@@ -40,8 +40,7 @@ fixes: |
   - Fixed JSX highlighting and attributes:
     - @directive
     - #id and .class
-    - :event
-    - $variable
+    - :event and |pipe (both from Svelte)
     - &reference and *spread
   - Fixed regular expression replacement string highlighting
 
@@ -1704,7 +1703,7 @@ repository:
             [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
             \b
           )
-          (?=[,;'"`({\[)}\]/>\s])#(?![:])(?<![.:=])
+          (?=[,;'"`({\[)}\]/>\s])
         end: |
           (?x) \s*
           (?:
@@ -1751,6 +1750,8 @@ repository:
   tag-attributes:
     patterns:
       - include: '#literals'
+      - include: '#embedded'
+      - include: '#brackets'
       - include: '#style-selectors'
       - include: '#attribute-names'
       - applyEndPatternLast: true
@@ -1763,8 +1764,6 @@ repository:
           - include: '#style-property-values'
       - include: '#comments'
       - include: '#punctuation'
-      - include: '#brackets'
-      - include: '#embedded'
 
   attribute-names:
     match: \s*([\p{Pd}\w]+)\b\s*
@@ -2421,7 +2420,7 @@ repository:
 
   style-selectors:
     patterns:
-      - match: \s*([@#&*|%.:~^]|::)(?=[\w$])
+      - match: \s*([@#&*|%.:~^]|::)(?=[\w$'"`])
         name: punctuation.definition.entity.protea
       - match: \s*(?<=\@)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: keyword.control.at-rule.protea
