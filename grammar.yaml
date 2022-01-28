@@ -359,10 +359,11 @@ repository:
     applyEndPatternLast: true
     begin: (`)
     end: (?=\W)|$
-    name: string.unquoted.protea
+    name: string.template.protea
     captures:
       1: { name: punctuation.definition.string.protea }
     patterns:
+      - match: '[\p{Pc}\p{L}][\w\p{Pd}]*\b'
       - include: '#string-escapes'
 
   strings:
@@ -1054,34 +1055,34 @@ repository:
       (?x)
       (?<=
         (?:
-              ^ # beginning of line
-            | [,;] # separator
-            | [({\[] # opening bracket
-            | [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s # postfix or infix operator
-            | (?:
-            (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
-            \b
-              (?: # keywords
-                in|of|as|is|new
-                |to|til|thru|by|del
-                |unset|ref|and|or|xor|not
-                |var|val|func|proc|type
-                |class|data|enum|module
-                |iter|macro|inter|object
-                |trait|style|elem|prop
-                |go|defer|do|with|from|where
-                |if|elif|else|then|def
-                |for|each|loop|while
-                |try|throw|catch|after
-                |match|case|pass|fail|goto
-                |break|next|redo|retry
-                |return|yield|await|mark
-                |use|show|hide|route
-                |debug|assert|check
-              )
-            \b
-            (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
-          )
+            ^ # beginning of line
+          | [,;] # separator
+          | [({\[] # opening bracket
+          | [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+ \s # postfix or infix operator
+          | (?:
+              (?:^|[,;'"`({\[)}\]\s]|\\.) # beside a delimiter or space
+              \b
+                (?: # keywords
+                  in|of|as|is|new
+                  |to|til|thru|by|del
+                  |unset|ref|and|or|xor|not
+                  |var|val|func|proc|type
+                  |class|data|enum|module
+                  |iter|macro|inter|object
+                  |trait|style|elem|prop
+                  |go|defer|do|with|from|where
+                  |if|elif|else|then|def
+                  |for|each|loop|while
+                  |try|throw|catch|after
+                  |match|case|pass|fail|goto
+                  |break|next|redo|retry
+                  |return|yield|await|mark
+                  |use|show|hide|route
+                  |debug|assert|check
+                )
+              \b
+              (?:$|[,;'"`({\[)}\]\s]) # beside a delimiter or space
+            )
         ) \s*
       )
       (?=
@@ -1635,7 +1636,7 @@ repository:
     applyEndPatternLast: true
     comment: |
       Only after opening brackets, commas, semicolons, keywords, and operators.
-      JSX also supports called components, so we need to be careful to also 
+      JSX also supports functional components, so we need to be careful to also
       match those.
     begin: |
       (?x)
