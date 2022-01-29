@@ -78,6 +78,37 @@ fixes: |
     - [ ] Headings and subheadings
 
 define:
+  class-name: &class-name |
+    (?x) \s*\b
+
+    (?!
+      (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+      (?: # keywords
+        in|of|as|is|new
+        |to|until|through|by|delete
+        |unset|ref|and|or|xor|not
+        |var|let|function|procedure|method|type
+        |class|interface|enum|module
+        |iterator|macro|query|object|contract
+        |trait|style|element|property
+        |go|defer|do|with|from|where
+        |if|elsif|else|then|def
+        |for|each|repeat|while
+        |try|throw|catch|finally
+        |match|case|fallthru|default|goto
+        |break|continue|redo|retry
+        |return|yield|await|scope
+        |import|export|route
+        |debug|assert|check
+        |extends|implements
+      )
+      (?!\B|\p{Pd}+\b)
+    )
+
+    # identifier
+    ([\p{Pc}\p{L}][\w\p{Pd}]*)
+    \b
+
   entity-name: &entity-name |
     (?x) \s*\b
 
@@ -85,12 +116,12 @@ define:
       (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
       (?: # keywords
         in|of|as|is|new
-        |to|til|thru|by|del
+        |to|until|through|by|delete
         |unset|ref|and|or|xor|not
-        |va[rl]|let|const|func|proc|type
-        |class|data|enum|module
-        |iter|macro|query|object
-        |trait|style|elem|prop
+        |var|let|function|procedure|method|type
+        |class|interface|enum|module
+        |iterator|macro|query|object|contract
+        |trait|style|element|property
         |go|defer|do|with|from|where
         |if|elsif|else|then|def
         |for|each|repeat|while
@@ -162,7 +193,6 @@ repository:
       - include: '#clauses'
       - include: '#constants'
       - include: '#declaration-keywords'
-      - include: '#declaration-keywords'
       - include: '#parameter-variables'
       - include: '#keywords'
 
@@ -200,7 +230,7 @@ repository:
             (true|false) # boolean
             |(null|nan) # null, NaN
             |(void) # undefined
-            |(infin) # infinity
+            |(infinity) # infinity
           )
           (?!\B|\p{Pd}+\b)
         captures:
@@ -212,9 +242,9 @@ repository:
           (?x)
           (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
           (?:
-            (it|this|that|self|super) # special arguments
-            |(args) # arguments
-            |(ctor) # constructor
+            (it|this|super) # special arguments
+            |(params) # arguments
+            |(self) # constructor
             |(proto) # prototype
           )
           (?!\B|\p{Pd}+\b)
@@ -223,6 +253,16 @@ repository:
           2: { name: variable.language.arguments.protea }
           3: { name: variable.language.constructor.protea }
           4: { name: variable.language.prototype.protea }
+      - match: |
+          (?x)
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+          (
+            console|document|window|global|process|require|module|exports
+            |navigator|location|history|localStorage|sessionStorage
+          )
+          (?!\B|\p{Pd}+\b)
+        captures:
+          1: { name: support.type.object.$1.protea }
 
   # Numbers
 
@@ -867,12 +907,12 @@ repository:
             (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
             (?: # keywords
               in|of|as|is|new
-              |to|til|thru|by|del
+              |to|until|through|by|delete
               |unset|ref|and|or|xor|not
-              |va[rl]|let|const|func|proc|type
-              |class|data|enum|module
-              |iter|macro|query|object
-              |trait|style|elem|prop
+              |var|let|function|procedure|method|type
+              |class|interface|enum|module
+              |iterator|macro|query|object|contract
+              |trait|style|element|property
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|each|repeat|while
@@ -951,12 +991,12 @@ repository:
               (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
               (?: # keywords
                 in|of|as|is|new
-                |to|til|thru|by|del
+                |to|until|through|by|delete
                 |unset|ref|and|or|xor|not
-                |va[rl]|let|const|func|proc|type
-                |class|data|enum|module
-                |iter|macro|query|object
-                |trait|style|elem|prop
+                |var|let|function|procedure|method|type
+                |class|interface|enum|module
+                |iterator|macro|query|object|contract
+                |trait|style|element|property
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
                 |for|each|repeat|while
@@ -1074,12 +1114,12 @@ repository:
           \b
             (?: # keywords
               in|of|as|is|new
-              |to|til|thru|by|del
+              |to|until|through|by|delete
               |unset|ref|and|or|xor|not
-              |va[rl]|let|const|func|proc|type
-              |class|data|enum|module
-              |iter|macro|query|object
-              |trait|style|elem|prop
+              |var|let|function|procedure|method|type
+              |class|interface|enum|module
+              |iterator|macro|query|object|contract
+              |trait|style|element|property
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|each|repeat|while
@@ -1657,12 +1697,12 @@ repository:
           \b
             (?: # keywords
               in|of|as|is|new
-              |to|til|thru|by|del
+              |to|until|through|by|delete
               |unset|ref|and|or|xor|not
-              |va[rl]|let|const|func|proc|type
-              |class|data|enum|module
-              |iter|macro|query|object
-              |trait|style|elem|prop
+              |var|let|function|procedure|method|type
+              |class|interface|enum|module
+              |iterator|macro|query|object|contract
+              |trait|style|element|property
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|each|repeat|while
@@ -2576,7 +2616,7 @@ repository:
 
   jsdoc-simple-name-path:
     comment: '@tag {opt type} Class#xxx or Class#Event:aaaa etc'
-    begin: (@(alias|augments|callback|extends|emits|event|fires|interface|memberof|mixes|name|property|prop|this|typedef)\b)\s*(?=({(?:(?>(?:[^\\{}]|\\.)+)|\g<-1>)*\})?\s*\S*([\S*\s]*))
+    begin: (@(alias|augments|callback|extends|emits|event|fires|interface|memberof|mixes|name|property|property|this|typedef)\b)\s*(?=({(?:(?>(?:[^\\{}]|\\.)+)|\g<-1>)*\})?\s*\S*([\S*\s]*))
     end: ^|(?=\*/)|(?=\4$)
     beginCaptures:
       1: { name: storage.type.class.jsdoc }
@@ -2730,12 +2770,12 @@ repository:
               \b
                 (?: # keywords
                   in|of|as|is|new
-                  |to|til|thru|by|del
+                  |to|until|through|by|delete
                   |unset|ref|and|or|xor|not
-                  |va[rl]|let|const|func|proc|type
-                  |class|data|enum|module
-                  |iter|macro|query|object
-                  |trait|style|elem|prop
+                  |var|let|function|procedure|method|type
+                  |class|interface|enum|module
+                  |iterator|macro|query|object|contract
+                  |trait|style|element|property
                   |go|defer|do|with|from|where
                   |if|elsif|else|then|def
                   |for|each|repeat|while
@@ -2758,12 +2798,12 @@ repository:
             (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
             (?: # keywords
               in|of|as|is|new
-              |to|til|thru|by|del
+              |to|until|through|by|delete
               |unset|ref|and|or|xor|not
-              |va[rl]|let|const|func|proc|type
-              |class|data|enum|module
-              |iter|macro|query|object
-              |trait|style|elem|prop
+              |var|let|function|procedure|method|type
+              |class|interface|enum|module
+              |iterator|macro|query|object|contract
+              |trait|style|element|property
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|each|repeat|while
@@ -2808,12 +2848,12 @@ repository:
                   (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
                   (?: # keywords
                     in|of|as|is|new
-                    |to|til|thru|by|del
+                    |to|until|through|by|delete
                     |unset|ref|and|or|xor|not
-                    |va[rl]|let|const|func|proc|type
-                    |class|data|enum|module
-                    |iter|macro|query|object
-                    |trait|style|elem|prop
+                    |var|let|function|procedure|method|type
+                    |class|interface|enum|module
+                    |iterator|macro|query|object|contract
+                    |trait|style|element|property
                     |go|defer|do|with|from|where
                     |if|elsif|else|then|def
                     |for|each|repeat|while
@@ -2870,12 +2910,12 @@ repository:
               (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
               (?: # keywords
                 in|of|as|is|new
-                |to|til|thru|by|del
+                |to|until|through|by|delete
                 |unset|ref|and|or|xor|not
-                |va[rl]|let|const|func|proc|type
-                |class|data|enum|module
-                |iter|macro|query|object
-                |trait|style|elem|prop
+                |var|let|function|procedure|method|type
+                |class|interface|enum|module
+                |iterator|macro|query|object|contract
+                |trait|style|element|property
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
                 |for|each|repeat|while
@@ -2925,12 +2965,12 @@ repository:
               (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
               (?: # keywords
                 in|of|as|is|new
-                |to|til|thru|by|del
+                |to|until|through|by|delete
                 |unset|ref|and|or|xor|not
-                |va[rl]|let|const|func|proc|type
-                |class|data|enum|module
-                |iter|macro|query|object
-                |trait|style|elem|prop
+                |var|let|function|procedure|method|type
+                |class|interface|enum|module
+                |iterator|macro|query|object|contract
+                |trait|style|element|property
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
                 |for|each|repeat|while
@@ -3120,10 +3160,10 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  va[rl]|let|const|func|proc|type
-                  |class|data|enum|module
-                  |iter|macro|query|object
-                  |trait|style|elem|prop|as
+                  var|let|function|procedure|method|type
+                  |class|interface|enum|module
+                  |iterator|macro|query|object|contract
+                  |trait|style|element|property|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3158,10 +3198,10 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  va[rl]|let|const|func|proc|type
-                  |class|data|enum|module
-                  |iter|macro|query|object
-                  |trait|style|elem|prop|as
+                  var|let|function|procedure|method|type
+                  |class|interface|enum|module
+                  |iterator|macro|query|object|contract
+                  |trait|style|element|property|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3196,10 +3236,10 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  va[rl]|let|const|func|proc|type
-                  |class|data|enum|module
-                  |iter|macro|query|object
-                  |trait|style|elem|prop|as
+                  var|let|function|procedure|method|type
+                  |class|interface|enum|module
+                  |iterator|macro|query|object|contract
+                  |trait|style|element|property|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3234,10 +3274,10 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  va[rl]|let|const|func|proc|type
-                  |class|data|enum|module
-                  |iter|macro|query|object
-                  |trait|style|elem|prop|as
+                  var|let|function|procedure|method|type
+                  |class|interface|enum|module
+                  |iterator|macro|query|object|contract
+                  |trait|style|element|property|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3272,10 +3312,10 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  va[rl]|let|const|func|proc|type
-                  |class|data|enum|module
-                  |iter|macro|query|object
-                  |trait|style|elem|prop|as
+                  var|let|function|procedure|method|type
+                  |class|interface|enum|module
+                  |iterator|macro|query|object|contract
+                  |trait|style|element|property|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3310,10 +3350,10 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  va[rl]|let|const|func|proc|type
-                  |class|data|enum|module
-                  |iter|macro|query|object
-                  |trait|style|elem|prop|as
+                  var|let|function|procedure|method|type
+                  |class|interface|enum|module
+                  |iterator|macro|query|object|contract
+                  |trait|style|element|property|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3890,12 +3930,12 @@ repository:
         (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
         (?: # keywords
           in|of|as|is|new
-          |to|til|thru|by|del
+          |to|until|through|by|delete
           |unset|ref|and|or|xor|not
-          |va[rl]|let|const|func|proc|type
-          |class|data|enum|module
-          |iter|macro|query|object
-          |trait|style|elem|prop
+          |var|let|function|procedure|method|type
+          |class|interface|enum|module
+          |iterator|macro|query|object|contract
+          |trait|style|element|property
           |go|defer|do|with|from|where
           |if|elsif|else|then|def
           |for|each|repeat|while
@@ -4105,7 +4145,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                va[rl]|let|const
+                var|let
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -4164,7 +4204,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                va[rl]|let|const
+                var|let
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -4205,14 +4245,8 @@ repository:
         name: storage.type.implements.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(infer|as|is)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.$1.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type|name|size|key)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(instance|value|pair|type|name|size|key)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.$1of.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(inst)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.operator.expression.instanceof.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(val)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.operator.expression.valueof.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(attr)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.operator.expression.attributeof.protea
 
   type-operators:
     patterns:
@@ -4268,33 +4302,33 @@ repository:
       - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
         name: entity.name.namespace.protea
       - applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(implements)(?!\B|\p{Pd}+\b)\s*
         end: (?=.)|$
         beginCaptures:
-          1: { name: storage.type.implements.protea }
+          1: { name: storage.type.$1.protea }
         patterns:
           - match: ::|\.
             name: punctuation.separator.namespace.protea
           - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
             name: entity.name.namespace.protea
-          - match: *entity-name
+          - match: *class-name
             name: entity.name.trait.protea
           - include: '#comments'
           - include: '#brackets'
           - include: '#comma'
           - include: '#line-continuation'
       - applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(extends)(?!\B|\p{Pd}+\b)\s*
         end: (?=.)|$
         beginCaptures:
-          1: { name: storage.type.extends.protea }
+          1: { name: storage.type.$1.protea }
         patterns:
           - match: ::|\.
             name: punctuation.separator.namespace.protea
           - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
             name: entity.name.module.protea
-          - match: *entity-name
-            name: entity.name.interface.protea
+          - match: *class-name
+            name: entity.name.class.protea
           - include: '#comments'
           - include: '#brackets'
           - include: '#comma'
@@ -4350,10 +4384,10 @@ repository:
       (?=
         \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
         (?:
-          va[rl]|let|const|func|proc|type
-          |class|data|enum|module
-          |iter|macro|query|object
-          |trait|style|elem|prop
+          var|let|function|procedure|method|type
+          |class|interface|enum|module
+          |iterator|macro|query|object|contract
+          |trait|style|element|property
         )
         (?!\B|\p{Pd}+\b)
       )
@@ -4404,23 +4438,25 @@ repository:
     patterns:
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl|def)(?!\B|\p{Pd}+\b)\s*
         name: keyword.other.declare.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(va[rl]|let|const)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|let)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.style.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(function)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.function.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(procedure)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.procedure.protea
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(method)(?!\B|\p{Pd}+\b)\s*
+        name: storage.type.method.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.class.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)(?!\B|\p{Pd}+\b)\s*
-        name: storage.type.data.protea
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(interface)(?!\B|\p{Pd}+\b)\s*
+        name: storage.type.interface.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.enum.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.module.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iterator)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.iterator.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.macro.protea
@@ -4430,10 +4466,12 @@ repository:
         name: storage.type.object.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.trait.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(element)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.component.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(property)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.property.protea
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(contract)(?!\B|\p{Pd}+\b)\s*
+        name: storage.type.contract.protea
 
   general-keywords:
     comment: general keywords
@@ -4460,9 +4498,9 @@ repository:
     patterns:
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of|as|is|new)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.$1.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(del)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(delete)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.delete.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(to|til|thru|by)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(to|until|through|by)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.range.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unset)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.void.protea
@@ -4638,8 +4676,9 @@ repository:
       - include: '#markup'
       - include: '#function'
       - include: '#procedure'
+      - include: '#method'
       - include: '#class'
-      - include: '#data'
+      - include: '#interface'
       - include: '#enum'
       - include: '#module'
       - include: '#iterator'
@@ -4649,6 +4688,7 @@ repository:
       - include: '#trait'
       - include: '#component'
       - include: '#property'
+      - include: '#contract'
 
     repository:
       style:
@@ -4668,7 +4708,7 @@ repository:
 
       component:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(elem)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(element)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.component.protea }
@@ -4680,7 +4720,7 @@ repository:
 
       variable:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(va[rl]|let|const)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|let)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.variable.protea }
@@ -4694,7 +4734,7 @@ repository:
 
       function:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(func)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(function)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.function.protea }
@@ -4703,9 +4743,20 @@ repository:
           - match: *entity-name
             name: entity.name.function.protea
 
+      method:
+        applyEndPatternLast: true
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(method)(?!\B|\p{Pd}+\b)\s*
+        end: (?=)|$
+        beginCaptures:
+          1: { name: storage.type.method.protea }
+        patterns:
+          - include: '#declaration-clause'
+          - match: *entity-name
+            name: entity.name.method.protea
+
       procedure:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(proc)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(procedure)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.procedure.protea }
@@ -4725,16 +4776,16 @@ repository:
           - match: *entity-name
             name: entity.name.class.protea
 
-      data:
+      interface:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(data)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(interface)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
-          1: { name: storage.type.data.protea }
+          1: { name: storage.type.interface.protea }
         patterns:
           - include: '#declaration-clause'
           - match: *entity-name
-            name: entity.name.data.protea
+            name: entity.name.interface.protea
 
       enum:
         applyEndPatternLast: true
@@ -4760,7 +4811,7 @@ repository:
 
       iterator:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iter)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iterator)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.iterator.protea }
@@ -4813,9 +4864,20 @@ repository:
           - match: *entity-name
             name: entity.name.trait.protea
 
+      contract:
+        applyEndPatternLast: true
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(contract)(?!\B|\p{Pd}+\b)\s*
+        end: (?=)|$
+        beginCaptures:
+          1: { name: storage.type.contract.protea }
+        patterns:
+          - include: '#declaration-clause'
+          - match: *entity-name
+            name: entity.name.contract.protea
+
       property:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(prop)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(property)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.property.protea }
@@ -4867,7 +4929,7 @@ repository:
             \s*
             \b
             (?: # Function types
-              iter|func|proc|macro
+              function|procedure|method|macro
             )
             \b
           )
@@ -4959,7 +5021,7 @@ repository:
             \s*
             \b
             (?: # Function types
-              iter|func|proc|macro
+              function|procedure|method|macro
             )
             \b
           )
@@ -5036,12 +5098,12 @@ repository:
           \b
             (?: # keywords
               in|of|as|is|new
-              |to|til|thru|by|del
+              |to|until|through|by|delete
               |unset|ref|and|or|xor|not
-              |va[rl]|let|const|func|proc|type
-              |class|data|enum|module
-              |iter|macro|query|object
-              |trait|style|elem|prop
+              |var|let|function|procedure|method|type
+              |class|interface|enum|module
+              |iterator|macro|query|object|contract
+              |trait|style|element|property
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|each|repeat|while
@@ -5267,7 +5329,7 @@ repository:
             \s*
             \b
             (?: # Function types
-              iter|func|proc|macro
+              function|procedure|method|macro
             )
             \b
           )
@@ -5419,7 +5481,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                va[rl]|let|const
+                var|let
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -5441,7 +5503,7 @@ repository:
             \b
               (?: # expression keywords
                 in|of|as|is|new
-                |to|til|thru|by|del
+                |to|until|through|by|delete
                 |unset|ref|and|or|xor|not
               )
             \b
@@ -5464,7 +5526,7 @@ repository:
             \b
               (?: # expression keywords
                 in|of|as|is|new
-                |to|til|thru|by|del
+                |to|until|through|by|delete
                 |unset|ref|and|or|xor|not
               )
             \b
@@ -5601,7 +5663,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                va[rl]|let|const
+                var|let
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -5657,7 +5719,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                va[rl]|let|const
+                var|let
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -5732,12 +5794,14 @@ repository:
       - comment: Primitive classes
         match: |
           (?x)\s*(?<![?!]?\.|[?!:]:)\b(
-            Boolean|Char|Rune|String|Symbol|(Big)?(
+            Boolean|bool|Char|Rune|String|Symbol
+            |(Big)?(
               Number|Int(eger)?|Float|Decimal|Natural
               |Rational|Imaginary|Complex
             )|
             # lower flat case
-            boolean|char|rune|string|symbol|(big)?(
+            boolean|bool|char|rune|string|symbol
+            |(big)?(
               number|int(eger)?|float|decimal|natural
               |rational|imaginary|complex
             )
@@ -5790,7 +5854,7 @@ repository:
             import|abs|all|any|ascii|bin|breakpoint|callable|chr|compile
             |copyright|credits|delattr|dir|divmod|enumerate|eval|exec|exit|filter
             |format|getattr|globals|hasattr|hash|help|hex|id|input|isinstance
-            |issubclass|iter|len|license|locals|map|max|memoryview|min|next|oct
+            |issubclass|iterator|len|license|locals|map|max|memoryview|min|next|oct
             |open|ord|pow|print|quit|range|reload|repr|reversed|round|setattr|sorted
             |sum|vars|zip|file|reduce|intern|rawInput|unicode|cmp|basestring|execfile
             |long|xrange|bool|bytearray|bytes|classmethod|complex|dict|float|frozenset
@@ -5876,7 +5940,7 @@ repository:
               |contains|copy|deepcopy|del|delattr|delete|delitem|delslice|dir|div|divmod|enter
               |eq|exit|float|floor|floordiv|format|ge|get|getattr|getattribute|getinitargs
               |getitem|getnewargs|getslice|getstate|gt|hash|hex|iadd|iand|idiv|ifloordiv|ilshift
-              |imod|imul|index|init|instancecheck|int|invert|ior|ipow|irshift|isub|iter|itruediv
+              |imod|imul|index|init|instancecheck|int|invert|ior|ipow|irshift|isub|iterator|itruediv
               |ixor|le|len|long|lshift|lt|missing|mod|mul|ne|neg|new|next|nonzero|oct|or|pos|pow
               |radd|rand|rdiv|rdivmod|reduce|reduceEx|repr|reversed|rfloordiv|rlshift|rmod|rmul
               |ror|round|rpow|rrshift|rshift|rsub|rtruediv|rxor|set|setattr|setitem|setslice
