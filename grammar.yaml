@@ -87,7 +87,7 @@ define:
         in|of|as|is|new
         |to|until|through|by|delete
         |unset|ref|and|or|xor|not
-        |var|let|function|procedure|method|type
+        |var|val|let|const|function|procedure|method|type
         |class|interface|enum|module
         |iterator|macro|query|object|contract
         |trait|style|element|property
@@ -118,7 +118,7 @@ define:
         in|of|as|is|new
         |to|until|through|by|delete
         |unset|ref|and|or|xor|not
-        |var|let|function|procedure|method|type
+        |var|val|let|const|function|procedure|method|type
         |class|interface|enum|module
         |iterator|macro|query|object|contract
         |trait|style|element|property
@@ -154,19 +154,17 @@ define:
 repository:
   core:
     patterns:
-      - include: '#ignore-long-lines'
       - include: '#clauses'
       - include: '#declarations'
       - include: '#keywords'
       - include: '#comments'
       - include: '#argument-list'
       - include: '#function-clause'
-      - include: '#embedded-expression'
+      - include: '#symbols'
+      - include: '#type-signature'
       - include: '#jsx'
       - include: '#brackets'
       - include: '#punctuation'
-      - include: '#symbols'
-      - include: '#type-signature'
       - include: '#literals'
       - include: '#operators'
       - include: '#calls'
@@ -389,10 +387,14 @@ repository:
           - include: '#strings-single-quoted'
           - include: '#strings-double-quoted'
           - include: '#strings-unquoted'
-      - match: (?<=^|\\.|['"`({\[)}\]\s:=])(:)([\p{Pc}\p{L}][\w\p{Pd}]*\b)
+      - match: (?<=^|\\.|['"`({\[)}\]\s:=])(:)(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)
+        name: constant.other.symbol.protea
         captures:
           1: { name: punctuation.definition.symbol.protea }
           2: { name: constant.other.symbol.protea }
+        patterns:
+          - match: ''
+          - include: '#string-escapes'
 
   strings-unquoted:
     comment: Unquoted string
@@ -909,7 +911,7 @@ repository:
               in|of|as|is|new
               |to|until|through|by|delete
               |unset|ref|and|or|xor|not
-              |var|let|function|procedure|method|type
+              |var|val|let|const|function|procedure|method|type
               |class|interface|enum|module
               |iterator|macro|query|object|contract
               |trait|style|element|property
@@ -993,7 +995,7 @@ repository:
                 in|of|as|is|new
                 |to|until|through|by|delete
                 |unset|ref|and|or|xor|not
-                |var|let|function|procedure|method|type
+                |var|val|let|const|function|procedure|method|type
                 |class|interface|enum|module
                 |iterator|macro|query|object|contract
                 |trait|style|element|property
@@ -1116,7 +1118,7 @@ repository:
               in|of|as|is|new
               |to|until|through|by|delete
               |unset|ref|and|or|xor|not
-              |var|let|function|procedure|method|type
+              |var|val|let|const|function|procedure|method|type
               |class|interface|enum|module
               |iterator|macro|query|object|contract
               |trait|style|element|property
@@ -1173,8 +1175,7 @@ repository:
       - include: '#fuzzy-brackets'
       - match: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
         name: keyword.other.unit.protea
-      - match: \s+
-        name: meta.space.protea
+      - include: '#space'
 
   fuzzy-brackets:
     patterns:
@@ -1230,8 +1231,6 @@ repository:
 
   regexp-patterns:
     patterns:
-      - match: \p{Z}+
-        name: meta.space.protea
       - include: '#embedded'
       - include: '#comments'
       - include: '#strings'
@@ -1306,12 +1305,13 @@ repository:
             beginCaptures:
               1: { name: punctuation.separator.key-value.protea }
             end: (?=[,;}]|)|$
-            patterns:
+            patterns: &regexp-patterns
               - include: '#regexp-patterns'
           - include: '#fuzzy-expression'
       - include: '#regexp-groups'
       - include: '#regexp-character-set'
       - include: '#regexp-character-class'
+      - include: '#space'
 
   regexp-groups:
     patterns:
@@ -1339,32 +1339,28 @@ repository:
         name: meta.group.look-ahead.protea
         captures:
           1: { name: punctuation.definition.group.look-ahead.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
       - comment: Lookbehind assertion
         begin: (\(\?<=)
         end: \s*(\))
         name: meta.group.look-behind.protea
         captures:
           1: { name: punctuation.definition.group.look-behind.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
       - comment: Negative lookahead assertion
         begin: (\(\?!)
         end: \s*(\))
         name: meta.group.negative-look-ahead.protea
         captures:
           1: { name: punctuation.definition.group.negative-look-ahead.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
       - comment: Negative lookbehind assertion
         begin: (\(\?<!)
         end: \s*(\))
         name: meta.group.negative-look-behind.protea
         captures:
           1: { name: punctuation.definition.group.negative-look-behind.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
       - comment: Match directive Oniguruma supports only 20 levels of recursion
         begin: (?x)(\(\?)(?=%)
         captures:
@@ -1380,8 +1376,7 @@ repository:
         name: meta.group.longest.protea
         captures:
           1: { name: punctuation.definition.group.longest.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
       - comment: Flag modifier group
         begin: (\(\?\^?(?:([+-]?\d+?)|((?:[+-]\p{Lu}+)+|\p{Lu}+(?:[+-]\p{Lu}+)*)|((?:[+-]\p{Ll}+)+|\p{Ll}+(?:[+-]\p{Ll}+)*)))\s*(:)?
         end: \s*(\))
@@ -1393,8 +1388,7 @@ repository:
           3: { name: keyword.control.recursion.protea }
           4: { name: keyword.other.flag.protea }
           5: { name: punctuation.separator.colon.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
       - comment: Callouts
         begin: (\(\?)(?={)
         end: \s*(\))
@@ -1420,32 +1414,28 @@ repository:
         name: meta.group.atomic.protea
         captures:
           1: { name: punctuation.definition.group.atomic.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
       - comment: Non-capturing groups
         begin: (\(\?:)
         end: \s*(\))
         name: meta.group.non-capturing.protea
         captures:
           1: { name: punctuation.definition.group.non-capturing.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
       - comment: Branch groups
         begin: (\(\?)(?=[(|])
         end: \s*(\))
         name: meta.group.branch.protea
         captures:
           1: { name: punctuation.definition.group.branch.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
       - comment: Atomic groups
         begin: (\(\?~)
         end: \s*(\))
         name: meta.group.absent.protea
         captures:
           1: { name: punctuation.definition.group.absent.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
       - comment: Back-reference groups
         begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}][\w\p{Pd}]*)))(:)?
         end: \s*\)
@@ -1456,8 +1446,7 @@ repository:
           2: { name: constant.numeric.index.protea }
           3: { patterns: [include: '#variables'] }
           4: { name: punctuation.separator.colon.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
       - comment: Named groups (angle-brackets)
         begin: \(\?(?=<(?![!=]))
         end: \s*(\))
@@ -1492,8 +1481,7 @@ repository:
         name: meta.group.protea
         captures:
           1: { name: punctuation.definition.group.protea }
-        patterns:
-          - include: '#regexp-patterns'
+        patterns: *regexp-patterns
 
   regexp-character-class:
     patterns:
@@ -1699,7 +1687,7 @@ repository:
               in|of|as|is|new
               |to|until|through|by|delete
               |unset|ref|and|or|xor|not
-              |var|let|function|procedure|method|type
+              |var|val|let|const|function|procedure|method|type
               |class|interface|enum|module
               |iterator|macro|query|object|contract
               |trait|style|element|property
@@ -1780,8 +1768,7 @@ repository:
 
   tag-termination:
     comment: uses non consuming search for </ in </tag>
-    contentName: string.unquoted.html.protea
-    name: string.unquoted.html.protea
+    contentName: meta.jsx.children.protea
     begin: (>)
     end: (</)
     captures:
@@ -1798,8 +1785,6 @@ repository:
       - include: '#literals'
       - include: '#embedded'
       - include: '#brackets'
-      - include: '#style-selectors'
-      - include: '#attribute-names'
       - applyEndPatternLast: true
         begin: \s*(=)\s*
         beginCaptures:
@@ -1808,6 +1793,8 @@ repository:
         name: meta.property.jsx.protea
         patterns:
           - include: '#style-property-values'
+      - include: '#style-selectors'
+      - include: '#attribute-names'
       - include: '#comments'
       - include: '#punctuation'
 
@@ -2480,17 +2467,17 @@ repository:
         name: entity.other.attribute-name.key.protea
 
       - match: \s*(?<=\&)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.name.type.anchor.protea
+        name: entity.other.attribute-name.protea entity.name.type.anchor.protea
       - match: \s*(?<=\*)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.name.type.alias.protea
+        name: entity.other.attribute-name.protea entity.name.type.alias.protea
       - match: \s*(?<=\%)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.name.function.protea
+        name: entity.other.attribute-name.protea entity.name.function.protea
       - match: \s*(?<=\|)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.name.method.protea
+        name: entity.other.attribute-name.protea entity.name.method.protea
       - match: \s*(?<=\:)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.name.procedure.protea
+        name: entity.other.attribute-name.protea entity.name.procedure.protea
       - match: \s*(?<=\^)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
-        name: entity.name.property.protea
+        name: entity.other.attribute-name.protea entity.name.property.protea
 
   # Comments
 
@@ -2772,7 +2759,7 @@ repository:
                   in|of|as|is|new
                   |to|until|through|by|delete
                   |unset|ref|and|or|xor|not
-                  |var|let|function|procedure|method|type
+                  |var|val|let|const|function|procedure|method|type
                   |class|interface|enum|module
                   |iterator|macro|query|object|contract
                   |trait|style|element|property
@@ -2800,7 +2787,7 @@ repository:
               in|of|as|is|new
               |to|until|through|by|delete
               |unset|ref|and|or|xor|not
-              |var|let|function|procedure|method|type
+              |var|val|let|const|function|procedure|method|type
               |class|interface|enum|module
               |iterator|macro|query|object|contract
               |trait|style|element|property
@@ -2850,7 +2837,7 @@ repository:
                     in|of|as|is|new
                     |to|until|through|by|delete
                     |unset|ref|and|or|xor|not
-                    |var|let|function|procedure|method|type
+                    |var|val|let|const|function|procedure|method|type
                     |class|interface|enum|module
                     |iterator|macro|query|object|contract
                     |trait|style|element|property
@@ -2912,7 +2899,7 @@ repository:
                 in|of|as|is|new
                 |to|until|through|by|delete
                 |unset|ref|and|or|xor|not
-                |var|let|function|procedure|method|type
+                |var|val|let|const|function|procedure|method|type
                 |class|interface|enum|module
                 |iterator|macro|query|object|contract
                 |trait|style|element|property
@@ -2967,7 +2954,7 @@ repository:
                 in|of|as|is|new
                 |to|until|through|by|delete
                 |unset|ref|and|or|xor|not
-                |var|let|function|procedure|method|type
+                |var|val|let|const|function|procedure|method|type
                 |class|interface|enum|module
                 |iterator|macro|query|object|contract
                 |trait|style|element|property
@@ -3160,7 +3147,7 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  var|let|function|procedure|method|type
+                  var|val|let|const|function|procedure|method|type
                   |class|interface|enum|module
                   |iterator|macro|query|object|contract
                   |trait|style|element|property|as
@@ -3198,7 +3185,7 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  var|let|function|procedure|method|type
+                  var|val|let|const|function|procedure|method|type
                   |class|interface|enum|module
                   |iterator|macro|query|object|contract
                   |trait|style|element|property|as
@@ -3236,7 +3223,7 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  var|let|function|procedure|method|type
+                  var|val|let|const|function|procedure|method|type
                   |class|interface|enum|module
                   |iterator|macro|query|object|contract
                   |trait|style|element|property|as
@@ -3274,7 +3261,7 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  var|let|function|procedure|method|type
+                  var|val|let|const|function|procedure|method|type
                   |class|interface|enum|module
                   |iterator|macro|query|object|contract
                   |trait|style|element|property|as
@@ -3312,7 +3299,7 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  var|let|function|procedure|method|type
+                  var|val|let|const|function|procedure|method|type
                   |class|interface|enum|module
                   |iterator|macro|query|object|contract
                   |trait|style|element|property|as
@@ -3350,7 +3337,7 @@ repository:
               | [(|]\. \s # uncurried function
               | (?:^|[,;'"({\[)}\]\s])
                 \b (?:
-                  var|let|function|procedure|method|type
+                  var|val|let|const|function|procedure|method|type
                   |class|interface|enum|module
                   |iterator|macro|query|object|contract
                   |trait|style|element|property|as
@@ -3932,7 +3919,7 @@ repository:
           in|of|as|is|new
           |to|until|through|by|delete
           |unset|ref|and|or|xor|not
-          |var|let|function|procedure|method|type
+          |var|val|let|const|function|procedure|method|type
           |class|interface|enum|module
           |iterator|macro|query|object|contract
           |trait|style|element|property
@@ -4059,20 +4046,6 @@ repository:
       - begin: |
           (?x)
           (?<=
-              [\w'"`)}\]] | \\. # literal
-            | [^.]\.=?|[?!:]:=?
-          )
-          (\#?\{)\s*
-        end: \s*(\})
-        name: meta.brace.curly.protea
-        captures:
-          1: { name: punctuation.definition.typeparameters.protea }
-        patterns:
-          - include: '#types'
-          - include: $self
-      - begin: |
-          (?x)
-          (?<=
             (?:
                 ^
               | [,;({\[]
@@ -4126,8 +4099,8 @@ repository:
     patterns:
       - begin: |
           (?x)
-          (?<=
-              [\w'"`)}\]] | \\. # literal
+          (?<= # literal
+              (?: [\w'"`)}\]] | \\.) \s*
             | [^.]\.=?|[?!:]:=?
           )
           (\#?\()\s*
@@ -4145,7 +4118,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                var|let
+                var|val|let|const
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -4186,8 +4159,8 @@ repository:
     patterns:
       - begin: |
           (?x)
-          (?<=
-              [\w'"`)}\]] | \\. # literal
+          (?<= # literal
+              (?: [\w'"`)}\]] | \\.) \s*
             | [^.]\.=?|[?!:]:=?
           )
           (\#?\[)\s*
@@ -4204,7 +4177,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                var|let
+                var|val|let|const
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -4373,7 +4346,7 @@ repository:
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
 
-                |rec|oper|curry|inline|prefix|suffix
+                |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
               )
             )
@@ -4384,7 +4357,7 @@ repository:
       (?=
         \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b
         (?:
-          var|let|function|procedure|method|type
+          var|val|let|const|function|procedure|method|type
           |class|interface|enum|module
           |iterator|macro|query|object|contract
           |trait|style|element|property
@@ -4421,24 +4394,24 @@ repository:
           )
           (?!\B|\p{Pd}+\b)
           \s*
-        name: storage.type.accessor.protea
+        name: storage.modifier.declaration.protea
       - comment: Functional modifiers
         match: |
           (?x) \s*
           \b
           (?:
-            rec|oper|curry|inline|prefix|suffix
+            recursive|operator|curried|inline|prefix|suffix
             |infix|binary|unary|left|right
           )
           (?!\B|\p{Pd}+\b)
           \s*
-        name: storage.type.property.protea
+        name: storage.modifier.function.protea
 
   declaration-keywords:
     patterns:
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl|def)(?!\B|\p{Pd}+\b)\s*
         name: keyword.other.declare.protea
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|let)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.style.protea
@@ -4720,7 +4693,7 @@ repository:
 
       variable:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|let)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.variable.protea }
@@ -4918,7 +4891,7 @@ repository:
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
 
-                |rec|oper|curry|inline|prefix|suffix
+                |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
               )
               \s*
@@ -4966,7 +4939,7 @@ repository:
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
 
-                |rec|oper|curry|inline|prefix|suffix
+                |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
               )
               \s*
@@ -5013,7 +4986,7 @@ repository:
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
 
-                |rec|oper|curry|inline|prefix|suffix
+                |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
               )
               \s*
@@ -5061,7 +5034,7 @@ repository:
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
 
-                |rec|oper|curry|inline|prefix|suffix
+                |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
               )
               \s*
@@ -5106,7 +5079,7 @@ repository:
               in|of|as|is|new
               |to|until|through|by|delete
               |unset|ref|and|or|xor|not
-              |var|let|function|procedure|method|type
+              |var|val|let|const|function|procedure|method|type
               |class|interface|enum|module
               |iterator|macro|query|object|contract
               |trait|style|element|property
@@ -5323,7 +5296,7 @@ repository:
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
 
-                |rec|oper|curry|inline|prefix|suffix
+                |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
               )
               \b
@@ -5373,7 +5346,7 @@ repository:
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
 
-                |rec|oper|curry|inline|prefix|suffix
+                |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
               )
               \b
@@ -5432,7 +5405,7 @@ repository:
       - include: '#comments'
   comma:
     match: \s*(,)
-    name: punctuation.separator.comma.protea
+    name: punctuation.separator.expression.protea
   double-semicolon:
     match: \s*(;;)
     name: punctuation.terminator.expression.protea
@@ -5473,24 +5446,10 @@ repository:
       - begin: |
           (?x)
           (?<=
-              [\w'"`)}\]] | \\. # literal
-            | [^.]\.=?|[?!:]:=?
-          )
-          (\#?\{)\s*
-        end: \s*(\})
-        name: meta.brace.curly.protea
-        captures:
-          1: { name: punctuation.definition.typeparameters.protea }
-        patterns:
-          - include: '#types'
-          - include: $self
-      - begin: |
-          (?x)
-          (?<=
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                var|let
+                var|val|let|const
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -5654,8 +5613,8 @@ repository:
     patterns:
       - begin: |
           (?x)
-          (?<=
-              [\w'"`)}\]] | \\. # literal
+          (?<= # literal
+              (?: [\w'"`)}\]] | \\.) \s*
             | [^.]\.=?|[?!:]:=?
           )
           (\#?\()\s*
@@ -5672,7 +5631,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                var|let
+                var|val|let|const
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -5711,8 +5670,8 @@ repository:
     patterns:
       - begin: |
           (?x)
-          (?<=
-              [\w'"`)}\]] | \\. # literal
+          (?<= # literal
+              (?: [\w'"`)}\]] | \\.) \s*
             | [^.]\.=?|[?!:]:=?
           )
           (\#?\[)\s*
@@ -5728,7 +5687,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                var|let
+                var|val|let|const
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
