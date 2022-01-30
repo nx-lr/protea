@@ -1,16 +1,16 @@
 # Protea
 
-Protea is a type-safe, multi-paradigm programming language with a familiar syntax for building cross-platform full-stack applications and libraries with a single programming language. It is created out of the frustration of JavaScript with many developers, while still embracing many of its best features.
+Protea is a type-safe, multi-paradigm programming language that combines modern, successful concepts from other languages, while still preserving the original design of JavaScript: to be used on the frontend and backend; and to build fast, scalable and maintainable cross-platform applications with ease.
 
 ```swift
 // Code
-module Fibonacci {
-  public func fibonacci(const n: int): int {
+export module Fibonacci {
+  public recursive function fibonacci(let n: int): int {
     if (n < 2) return n;
     return fibonacci(n - 1) + fibonacci(n - 2);
   }
 }
-
+x(x, y, z)
 // Styling
 style App as body {
   color: ${|props|
@@ -18,23 +18,23 @@ style App as body {
 }
 
 // JSX support
-export default elem App with React.Component {
-  return <div>
-    <h1>Hello, world!</h1>
-    <p>This is a React component.</p>
+element HelloMessage implements React.Component {
+  property yourName: string
+  return <div #greeting>
+    <h1 color=navyBlue>Hello $yourName</h1>
   </div>;
 }
 
-// GraphQL Schemas
-type BlogPost {
-  id: ID!
-  title: String!
-  content: String!
+// Schemas
+interface BlogPost {
+  id: id!
+  title: string!
+  content: string!
 }
 
-// GraphQL queries
-query MdxBlogPost(title: str) {
-  proc mdx(`title == title) {
+// Queries
+query MdxBlogPost(title: string) {
+  mdx(`title == title) {
     `id: string
     `title: string
   }
@@ -45,30 +45,22 @@ query MdxBlogPost(title: str) {
 
 ## Overview
 
-Protea's _raison d'être_ is to replace JavaScript with a simple-in-concept, robustly-typed and multi-paradigm language while still serving its domains.
+Protea is a language for building fullstack cross-platform apps and libraries for the modern and future web. Protea looks like JS, acts like JS, and compiles to the highest quality of clean, readable and performant JS, directly runnable in browsers and Node.
 
-provide a type-safe, multi-paradigm programming language with a familiar syntax for building cross-platform full-stack applications and libraries with a single programming language. It is created out of the frustration of JavaScript with many developers, while still embracing many of its best features.
+**Feature list:**
 
-### I'll take your entire stack
-
-- A programming language that is easy to learn, with a familiar syntax and features inspired by popular languages
-- Style components with CSS them, build UIs with JSX, and bind them with data and code
-- Modules, namespacing and routing for code splitting and distribution
-- Define and manipulate data with schemas, queries and transformations, inspired by SQL and GraphQL
-- Complete support for reactive, event-driven, asynchronous or concurrent programming
-
-### Productive development
-
-- Use the Protea REPL to explore the language and its features
-- Make changes to your source code iteratively, using hot-reload to see the effects in real-time
-- Write code with a flexible yet robust type system, with rich code analysis and powerful tooling
-- Do profiling, test-driven development and code verification with a built-in testing framework
-
-### Fast on every platform (help needed!)
-
-- JIT-compilation to native machine code for the fastest possible performance
-- Run your apps on the web with the power of JavaScript and WebAssembly
-- Run backend code to support your app, while giving you access to many popular libraries across different platforms.
+- Human-understandable error messages
+- Blazing-fast compiler that outputs readable JS
+- Familiar JavaScript-based syntax
+- First-class JSX, CSS and GraphQL support
+- Extensible syntax and macros
+- Strong and robust type system
+- A mix of declarative and imperative approaches
+- Compilation to JavaScript or native code
+- Comprehensive standard library
+- Unified frontend and backend features
+- Built-in testing and profiling syntax
+- Support for JS, TS and other JS frameworks
 
 ---
 
@@ -78,45 +70,212 @@ If you have any questions, comments or suggestions for the language, please feel
 
 # Protea's Reference
 
-This document serves as a guide to Protea's syntax and reference, and would probably be a big help for you if you already know some JavaScript and TypeScript. This reference is structured in a way that can be read from top to bottom,
+This document serves as a guide to Protea's syntax and reference, and would be a big help for you if you already know some JavaScript and TypeScript. This reference is structured in a way that can be read from top to bottom, and later concepts will be easily found and recognized.
 
 ## Hello World!
 
 ```swift
 // Backend
-proc main(): void {
-  print("Hello, world!")
+function main(): void {
+  console.log('Hello World!')
 }
 
 // Frontend
-elem App {
+element App {
   <div>
     <h1>Hello, world!</h1>
   </div>
 }
 ```
 
-### Source code representation
+## Installation and Project Structure
 
-Protea source code uses one of three different file extensions: `.pta`, `.pts` and `.pti`. `.pta` files are used to define modules and `.pti` files to define interfaces (which, by the way, can also be mixed with the source code). `.pts` files are used to create scripts, which do not need to run through a `main` or startup function.
+A Protea project is a directory that contains the following directories:
 
-The `.pta` extension is also used by the Parrot compiler.
+```txt
+| app/ -- frontend codes
+| dist/ -- compilation output
+| env/ -- environment files (optional)
+| node_modules/ -- Node modules (optional)
+| src/ -- backend codes
+| test/ -- testing codes
+| types/ -- type definitions (optional)
+| main.ptm -- main file (or name it something else)
+| package.yaml -- Protea's config file (very similar)
+| package.json -- JavaScript file
+```
 
-## Lexical elements
+### New Project
 
-This section describes the syntax and informal semantics of Protea expressions. The following is a list of the most important lexical elements:
+```
+cd ~/path/to/new-project
+npm install @protea-lang/core
+npm run build
+node dist/src/Demo.pt.mjs
+```
 
-- names, for example `foo`, `foo.bar`, and `+`.
-- Blocks and statements, for example: `x = 42` and `match((x, y)){case((1, "hi"))42}`
-- Literals, for example: `1`, `"hello"`, `[1, 2, 3]`.
-- Comments, for example `// this is a comment`.
-- Punctuation, for example `\`, `[`, `]` and `;`.
+The `npm run build` command compiles all your code into JavaScript and uses Node to execute it. During development you would run `npm run watch` instead to watch your files and recompile them when they change.
 
-### Punctuation
+### Integrate Into an Existing JS Project
+
+Run the same command as above, but this time you can save it as a devDependency in your `package.json` file.
+
+```
+npm install @protea-lang/core --save-dev
+npm run build
+node dist/src/Demo.pt.mjs
+```
+
+Then create a Protea configuration at the root, then you can configure convenience scripts to run your files:
+
+```json
+{
+  "name": "your-project-name",
+  "scripts": {
+    "pta:build": "pta compile /*",
+    "pta:start": "pta run init"
+  },
+  "protea": {
+    "sources": [{ "dir": "src/**" }],
+    "packageSpecs": [
+      {
+        "module": "es6",
+        "inSource": true,
+        "includeLibs": true,
+        "options": { "prettify": true }
+      },
+      {
+        "module": "ts",
+        "inSource": true,
+        "includeLibs": true,
+        "options": { "prettify": true }
+      }
+    ],
+    "suffix": ".pt.mjs",
+    "dependencies": { "three": "^0.0.1" }
+  }
+}
+```
+
+### File extensions
+
+Protea source code uses one of three different file extensions:
+
+- `.pt` for **module files**
+- `.pts` for **script files**
+- `.pti` for **interface files**
+
+The starting point for a Protea project is a `main.pt` file, which is the entry point for your application. The `main.pt` file is a module file that contains a `function main()` declaration. It is required when starting a project.
+
+Script files do not need to have a `main()` declaration, and can run other scripts, and import other modules. Script files are compiled to JavaScript and run in Node.JS.
+
+Interface files are used to define interfaces for your application. They are compiled to either TypeScript or Flow type declaration files, which supplement the compiled JavaScript. A module file can have a corresponding interface file.
+
+## Overview
+
+This section serves as a comparison of how Protea's syntax differs from TypeScript's.
+
+### Semicolons and commas
+
+| JavaScript                  | Protea                |
+| --------------------------- | --------------------- |
+| Rules enforced by formatter | No semicolons needed! |
+
+### Comments
+
+Comments require at least a leading space or a newline.
+
+| JavaScript             | Protea                   |
+| ---------------------- | ------------------------ |
+| `/* Comment */`        | Same                     |
+| `// Line comment`      | Same                     |
+| `/** JSDoc comment */` | Same                     |
+| No JSDoc line comment  | `/// JSDoc line comment` |
+
+### Semicolons and commas
+
+| JavaScript     | Protea                        |
+| -------------- | ----------------------------- |
+| `const x = 5;` | Same                          |
+| `var x = 5;`   | Same (`var` works like `let`) |
+| `let x = 5;`   | Same                          |
+
+### Numbers
+
+JavaScript has no distinction between integers and floats.
+
+| JavaScript                       | Protea     |
+| -------------------------------- | ---------- |
+| `1, 0.1`                         | Same       |
+| `.1`                             | Same       |
+| `1.`                             | Same       |
+| `010, `                          | `008`      |
+| `0b10`, `0x10`, `0o10`           | Same       |
+| `10e-10`                         | Same       |
+| `0x10*2**10`                     | `0x10p+10` |
+| `+`, `-`, `*`, `/`, `%`, `**`    | Same       |
+| `&`, `\|`, `^`, `~1`             | Same       |
+| `<`, `>`, `<=`, `>=`, `==`, `!=` | Same       |
+| `x != y`                         | `x <> y`   |
+| `x < y ? -1 : x > y ? 1 : 0`     | `x <=> y`  |
+
+### Strings
+
+| JavaScript                     | Protea                   |
+| ------------------------------ | ------------------------ |
+| `"Hello world!"`               | Same                     |
+| `'Hello world!'`               | Same                     |
+| `"\0\b\t\r\v\n\f\'\"\\"`       | Same                     |
+| `"\x00\u0000\u{10ffff}"`       | Same                     |
+| `` String.raw`Hello world!` `` | `r'Hello world!'`        |
+| `` `Hello ${name}!` ``         | `s'Hello $name!'`        |
+| No string formatting           | `sf'Hello $name%upper!'` |
+| `'x' + 'y'`                    | Same                     |
+
+### Booleans and Constants
+
+| JavaScript              | Protea               |
+| ----------------------- | -------------------- |
+| `true`, `false`, `null` | Same                 |
+| `undefined`             | `void`               |
+| `NaN`                   | `nan`                |
+| `Infinity`              | `infinity`           |
+| `this`                  | Same, `self`         |
+| `!true`                 | Same                 |
+| `&&`, `\|\|`            | Same                 |
+| No XOR operator         | `x ^^ y`             |
+| No deep equality        | `a == b`, `a != b`   |
+| Same                    | `a === b`, `a !== b` |
+| `a == b`, `a != b`      | `a =~ b`, `a !~ b`   |
+
+### Regular expressions
+
+Regular expressions use the same syntax as Ruby, Python and Perl, and use JavaScript to augment them.
+
+| JavaScript          | Protea                 |
+| ------------------- | ---------------------- |
+| `/pattern/g`        | Same                   |
+| No multi-line regex | `//pattern//g`         |
+| No multi-line regex | `//pattern/replace//g` |
+
+### Functions
+
+Regular expressions use the same syntax as Ruby, Python and Perl, and use JavaScript to augment them.
+
+| JavaScript | Protea |
+| --- | --- |
+| `arg => retVal` | `\|arg\| retVal` |
+| `(arg): int => retVal` | `\|arg\|: int => retVal` |
+| `function named(arg): int {...}` | Same |
+| `const f = function(arg) {...} ` | Same |
+| `add(4, add(5, 6))` | Same |
+| `z(y(x))` | `x\|>y\|>z`, `z<\|y<\|x`, `(y+>z)(x)`, `(z<+y)(x)` |
+
+## Basic concepts
 
 #### Comments
 
-Comments `/*` and `/**` can be nested inside other comments. Comments beginning with `///` and `/**` compile to JSDoc and support Markdown.
+Comments are the same as JavaScript, except that block comments can be nested within each other. Comments `/*` and `/**` can be nested inside other comments. Comments beginning with `///` and `/**` compile to JSDoc and support Markdown.
 
 ```swift
 // This is a single line comment.
@@ -134,20 +293,21 @@ Comments `/*` and `/**` can be nested inside other comments. Comments beginning 
 
 #### Semicolons and commas
 
-Rules regarding semicolons and commas are a bit convoluted in JavaScript and may work in mysterious ways. In Protea, both semicolons and commas are optional, but they are required in some cases especially when separating expressions.
-
-The general rule is that semicolons and commas are inserted if the token on the next line can begin an expression, which is any token excluding a closing bracket, infix operator and the keywords `then`, `elsif`, `else`, `catch` and `finally`.
-
-The rules for parsing commas are the same as semicolons, except they are used to separate expressions, not necessarily statements.
+Semicolons and commas are a bit buggy in JS, but there are two simple rules regarding the insertion of semicolons and commas. The general rule is that semicolons and commas are inserted if the token on the next line can begin a statement or expression.
 
 ### Identifiers
 
-Protea identifiers come in two flavors: regular identifiers and operators.
+Protea identifiers come in two flavors: regular identifiers and operators. Operators begin with any combination of alphanumerics, underscores, dashes, digits and marks (diacritics) provided it does not begin with a number and end in any number of dashes.
 
-- Identifiers begin with a letter then followed by any number of diacritical marks, letters, numbers, underscores, and hyphens. Trailing hyphens are not allowed.
-- Operators consist entirely of the characters `!#$%&()*+-./:<=>?@^_|~` and any other symbol and punctuation character. For example, `+`, `_`, `<>`, and `>>=` are valid operators.
+```swift
+let regex = /\b[\pL\pPc][\pL\pM\pNd\pPc\pPd]*\b/
+```
 
-Non-lowercase letters are considered uppercase.
+Operators consist of all Unicode punctuation `P` and symbol `S` characters except the comma `,`, semicolon `;`, single, double and backquote `'`, `"` and `` ` ``, and also the opening and closing brackets `(){}[]`.
+
+```swift
+/[\pP\pS--[,;'"`(){}\[\]]]+/
+```
 
 #### Identifier comparison
 
@@ -169,14 +329,14 @@ The algorithm works as follows:
 - names are case-folded to lowercase except the first few non-lowercase characters
 
 ```swift
-func cmpIdent(a: string, b: string): boolean =
+function cmpIdent(a: string, b: string): boolean =
   transformIdent(a) == transformIdent(b)
 
-func transformIdent(id: string): string {
-  const ident = id.normalize(:nfd).replace(/[^\pL\d]/, '')
-  const { begin, end } = /\b
+function transformIdent(id: string): string {
+  let ident = id.normalize(:nfd).replace(/[^\pL\d]/, '')
+  let { begin, end } = /\b
     (?!\d) // ignore leading digits
-      (?<begin>[\pPc\pL][\d\p{L:l}\pM\pPc\pPd]*)?
+      (?<begin>[\pPc\pL][\d\pL\pM\pPc\pPd--\pLl]*)?
       (?<end>[\d\pL\pM\pPc\pPd]*)
     \b // ignore trailing dashes
   /.exec(ident)
@@ -188,288 +348,372 @@ Note that this comparison does not apply to keywords, which are all written in a
 
 ### Keywords
 
-Because of how names are compared, you can use any number of non-alphanumerics to "strop" a keyword to turn it into an identifier.
+A lot of the keywords in Protea are very familiar, such as `if`, `for`, `while`, `try`, but also some new ones like `redo` and `retry`. Because of how names are compared, you can use any number of non-alphanumerics to "strop" a keyword to turn it into an identifier: insert any number of leading and/or trailing underscores as you wish.
 
 Keywords also become names when part of a qualified name, such as `x.for.then` or `y::loop`, as well as within literals such as style blocks, interfaces and JSX (with some exceptions).
 
 ```swift
-var var_ = "Hello Stropping"
+var _var = "Hello Stropping"
 type obj = { type: int }
-val object_ = new obj(~type = 9)
-assert object_ is obj
-assert object_.type == 9
-var var_ = 42; val val_ = 8
-assert var_ + val_ == 50
+let _object_ = new obj(~type = 9)
+assert _object_ is obj
+assert _object_.type == 9
+var _var = 42; let let_ = 8
+assert _var + let_ == 50
 var assert_ = true
 assert assert_
 ```
 
-### Scoping
+### Bindings
 
-Variables are scoped to the nearest enclosing block, shadowing it wherever possible. As soon as a variable is declared, it is visible everywhere in the enclosing block but not outside. There is no hoisting, so you cannot use a variable before it is declared.
-
-This is different from JavaScript and the `var` keyword where variables are visible everywhere in the enclosing function.
+Use `let` and `var` to declare mutable variables, and `let` or `val` to declare immutable variables.
 
 ```swift
-const x = do {
-  const y = 42
-  print(y) // 42
-  y
+let greeting = "hello!"
+let score = 10
+let newScore = 10 + score
+```
+
+All bindings are scoped to the nearest enclosing block, never outside. They are also bound to any arguments passed to the enclosing function, including the binding itself.
+
+The value of the last line of a block is implicitly returned.
+
+```swift
+let message = {
+  let part1 = "hello"
+  let part2 = "world"
+  part1 ++ " " ++ part2
 }
-print(y) // error: y is not defined
+// `part1` and `part2` not accessible here!
 ```
 
-## Literals
-
-### Numbers
-
-There are two basic types of numeric literals: integers and floats. They can be extended with the help of type suffixes or operations with other numeric types: unsigned, imaginary, rational and complex numbers, and even arbitrary-precision `big` numbers.
-
-Numeric literals are case-insensitive.
-
-#### Integers
-
-For readability, underscore characters `_` may appear between digits. Leading zeroes may also appear at the beginning of said literal or after the prefix of multi-base literals.
+All the code blocks and functions use the same block scoping mechanism.
 
 ```swift
-1 // int
-1n // nat
-1i // int
-1ln // bigint
+if (displayGreeting) {
+  let message = "Enjoying the docs so far?"
+  print(message)
+}
 
-18446744073709551616 // bigint
-18_446_744_073_709_551_616 // bigint
-
-decimal = 11256099
-hex = 0x0123456789ABCDEF
-octal = 0o52740443
-binary = 0b101010111100000100100011
+for (let i = 0; i < 1000; i += 1) {
+  let message = "This is a loop"
+  print(message)
+}
 ```
 
-#### Floating points
-
-A binary, octal or hexadecimal floating literal is structured the same way as a decimal one except that the exponent scales the mantissa by powers of 2, and is prefixed with `0b`, `0o` or `0x` respectively.
-
-Underscores may appear between digits in the mantissa. Leading zeroes may also appear at the beginning of the mantissa.
+All bindings are private by default; they can be made public by using the `public` or `export` keyword.
 
 ```swift
-1.0  // float
-1.0f // float
-1f   // float
-1r   // rat
-
-1j     // imag
-1 + 1j // comp
-
-decimal = 11256099.012e+14
-hex = 0xABC1234.012p-40
-octal = 0o52740443.012p-40
-binary = 0b10101011110.0000100100011p-40
+module A = {
+  public let a = 3
+  let b = 4
+}
 ```
 
-#### Suffixes
+### Types
 
-Several suffixes can be used in conjunction with one another, as shown in the previous example with floats.
+Types are what makes Protea a strongly typed language. They are used to define the type of a binding, and are used to check the type of an expression.
 
-- `n` for unsigned
-- `l` for arbitrary-precision (i.e long)
-- `i` for imaginary numbers
-- `r` for rational numbers
-- `f` for floating point literals
+Protea for the most part would infer a type of a binding from its syntax. For example, the following code would infer the type of `score` to be `int`, and `add` to be `int -> int`.
+
+```swift
+let score = 10
+let add = |x, y| {x + y}
+```
+
+But you can also optionally write down the type, or to be more formal, annotate your value:
+
+```swift
+let score: int = 10
+```
+
+If the type annotation for `score` doesn't correspond to our inferred type for it, we'll show you an error during compilation time. We won't silently assume your type annotation is correct, unlike many other languages.
+
+You can also wrap any expression in parentheses and annotate it:
+
+```swift
+let myInt = 5
+let myInt: int = 5
+let myInt = (5: int) + (4: int)
+let add = |x: int, y: int|: int {x + y}
+let drawCircle = |~radius as r: int|: Circle {}
+```
+
+Note: in the last line, `~radius as r: int` is a labeled argument. More on this in the function page.
+
+#### Aliasing
+
+You can refer to a type by a different name. They'll be equivalent:
+
+```swift
+type Score = int
+let x: Score = 10
+```
+
+#### Generics
+
+Types can accept arguments which are used to define the type of a binding.
+
+```swift
+type Coords<a> = (a, a, a)
+let a: Coords<int> = (10, 20, 20)
+let b: Coords<float> = (10.5, 20.5, 20.5)
+```
+
+Note that the above codes are just contrived examples for illustration purposes. Since the types are inferred, you could have just written:
+
+```swift
+let friend = (10, 20, 20)
+```
+
+The type system infers that it's a `(int, int, int)`. Nothing else needed to be written down.
+
+Type arguments appear in many places. For example, the following code defines a type `List<T>` which is a list of values of type `T`.
+
+```swift
+// inferred as List<string>
+let greetings = ["hello", "world", "how are you"]
+```
+
+Types can receive many arguments, and be composable.
+
+```swift
+// inferred as List<string>
+type result<a, b> = Ok<a> | Error<b>
+
+type MyPayload = {data: string}
+
+type MyPayloadResults<errorType> = Array<Result<MyPayload, errorType>>
+
+let payloadResults: MyPayloadResults<string> = [
+  Ok({data: "hi"}),
+  Ok({data: "bye"}),
+  Error("Something wrong happened!")
+]
+```
+
+#### Recursion
+
+Types can reference themselves, and can be mutually recursive:
+
+```swift
+type JSON = (
+  string | int | float | bool | null | Array | Object | JSON
+)
+
+rec type Student = {taughtBy: Teacher}
+rec type Teacher = {students: Array<Student>}
+```
+
+#### Shorthands
+
+Use a `!` on an object to mark all fields in the object as required, and `?` to mark as all optional. You can also mark individual types in an object. For example, the following code defines a type `Person` which is a person with a required name and gender, and an optional occupation.
+
+> A `data` declaration is the same as an interface in a lot of languages.
+
+```swift
+data Person {
+  name: !string // required
+  gender: `male + `female
+  age: int // required
+  occupation: ?string
+}
+```
+
+The Person For example, the following code defines a type `Maybe<T>` which is either a `T` or `null`. `null` itself is either `null` or `void` which are the same as each other.
+
+```swift
+type Maybe<T> = T + null + void
+type Maybe<T> = ?T // a shorthand
+```
+
+Use `+` to combine types that would otherwise be incompatible (this is only used for primitive types or for types that are not themselves generic).
+
+```swift
+type IntOrString = int + string
+```
+
+Or use set operations on objects:
+
+```swift
+data A {a: int, b: int, c: int}
+data B {c: int, d: int, e: int}
+
+type C = B | A // {a: int, b: int, c: int, d: int, e: int}
+type D = B & A // {c: int}
+type E = A ^ B // {a: int, b: int, d: int, e: int}
+type F = A - B // {a: int, b: int}
+```
+
+`~` negates a type. This is useful when you want to define a type that is not the same as another type.
+
+```swift
+type Not<string> = ~string
+```
+
+Use `key` and `value` to get all the keys and values of an object as a tuple. Use `pairs` to get them both.
+
+```swift
+interface Person {
+  name: !string // required
+  gender: `male + `female
+  age: int // required
+  occupation: ?string
+}
+
+type C = B | A
+```
+
+## Primitives
+
+_Quick overview: [Primitives](overview.md#built-in-types)_
+
+These are the built in types that can be used to represent information and build more complex types.
 
 ### Strings
 
-A string literal consists of a character sequence enclosed in either single or double quotes. By default, strings are escaped with a backslash. All escapes except triple-digit octal sequences are supported.
+_Quick overview: [Strings](overview.md#strings)_
 
-```swift
-val string1 = "A string primitive";
-val string2 = 'Also a string primitive';
+Create a string using double quotes:
+
+```reason
+let s = "Hello World!";
 ```
 
-Normally these escapes are interpreted as the character itself, and would evaluate to the same value, just without the backslash.
+Concatenate strings using the `++` operator:
 
-String literals can also be delimited by at least three single or double quotes, provided they end with _at least_ that many quotes of the same type. The rules for single- and double-quoted strings also apply.
-
-Some transformations are applied to string literals of this type:
-
-- all beginning and ending newlines and whitespace are discarded
-- newlines are normalized to `\n` and carriage returns discarded
-- all beginning indentation is based on the column of the opening quote, discarding whitespace as needed.
-
-```swift
-val greeting =
-assert '"
-Hello World
-"' == greeting
+```reason
+let s = "Hello " ++ "World!";
 ```
 
-### Escapes
+More String functions can be found in standard libraries:
 
-Escape sequences are used to represent characters that would otherwise have a syntax error. Like a lot of languages, all escapes begin with a backslash. The first character of an escape sequence is the escape character, and the second character is the character to be escaped.
+- Native: [`module String`](https://reasonml.github.io/api/String.html)
+- BuckleScript: [`module Js.String`](https://bucklescript.github.io/bucklescript/api/Js.String.html)
 
-Certain single-letter escapes represent non-printable, control characters:
+```reason
+let s = String.trim("  extra whitespace\n");
+/* "extra whitespace" */
 
-```
-\a    U+0007  alert or bell
-\b    U+0008  backspace
-\e    U+000B  escape
-\f    U+000C  form feed
-\n    U+000A  line feed or newline
-\p            platform-dependent newline
-\r    U+000D  carriage return
-\s    U+0020  space
-\t    U+0009  horizontal tab
-\v    U+000B  vertical tab
-\c[A-Za-z]    control character
+let s = String.concat("\n", ["line 1", "line 2"]);
+/* "Line 1\nLine 2" */
+
+let s = String.sub("Hello World!", 6, 5);
+/* "World" */
 ```
 
-A backslash-newline joins the next line to the current line, skipping any indentation.
+### Char
 
-The escapes `\b`, `\d`, `\o`, `\u` and `\x`, allow you to encode Unicode code points as integers in a double-quoted string. The value of the literal is the value represented by the digits in the corresponding base. Any escape that also exceeds the upper limit of 0x10FFFF (decimal 1114111) will give a compile time error.
+Create a char using single quotes:
 
-```
-\b[01]+         binary
-\d[0-9]+        decimal
-\o[0-7]+        octal
-\u[0-9A-Fa-f]+  hexadecimal (UTF-16)
-\x[0-9A-Fa-f]+  hexadecimal (UTF-8)
-\N($id&*[:.])   unicode name where $id is an identifier
+```reason
+let c = 'a';
 ```
 
-Code points in the ranges `80-FF` for `\x` and `D800-DFFF` for `\u` which are used to represent multi-byte characters or surrogate pairs respectively; they hence would be invalid if they appear on their own or form an invalid byte/character sequence.
+Access the char at an index using `string.[index]`:
 
-```swift
-"日本語"
-'日本語'
-"\u65e5\u672c\u8a9e"
-"\u0065e5\u0672c\u8a9e"
-"\x{E6,97,A5 E6,9C,AC E8,AA,9E}"
+```reason
+let c = "Hello".[1];
+/* 'e' */
 ```
 
-The same escape characters when followed immediately by curly brackets are used to encode code points or byte sequences without reusing and repeating the same syntax again. You can use commas, semicolons or spaces to separate the numbers, and each running sequence is checked for validity.
+Convert char to string:
 
-```swift
-decimal = "\112569"
-hex = "\xABC12"
-octal = "\o52740"
-binary = "\b10101011110000010010"
+```reason
+let s = String.make(1, 'c');
+/* "c" */
 
-// "HELLO"
-"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
-"\d{72 69 76 76 79 65535}" == "\72\69\76\76\79"
+let charArray = [| 'H', 'e', 'l', 'l', 'o' |];
+let s = String.init(5, i => charArray[i]);
+/* "Hello" */
 ```
 
-The escape `\N` is used to represent a Unicode character sequences using a special notation reminiscent of LaTeX notation. The first argument can either be a name or its script, followed by the `:letter_name` or `.letter_form`. For instance `\NA` would equal capital A, and `\NAlpha` would equal the Greek capital letter `Α` (alpha).
+## Integer
 
-```swift
-// => "\u{1F60A}"
-"\u{1F600}" // => "😀"
-"\NPeseta" // "₧"
-"\Nemoji:smile" || "\N{emoji:smile}" // => 😀
-"\Nflag:SG" // => 🇸🇬
-"\Nkr{an nyeong ha se yo}" // 안녕하세요
+_Quick overview: [Numbers](overview.md#numbers)_
+
+Integers are whole numbers. Their bit-size depends on the platform.
+
+```reason
+let x = 23;
+let x = -23;
 ```
 
-### Prefixes
+Standard operations include `+`, `-`, `*`, `/`, `mod`:
 
-String literals can have one or more of four unique prefixes immediately before the opening quote, in any order and combination. The `f` flag requires either the `s` and `p` flags to be enabled, while `s` and `p` cannot exist together.
-
-| Prefix | Sigil | Description |
-| --- | --- | --- |
-| `r` |  | Disables backslash escaping, thereby making the string verbatim |
-| `s` | `$` | Enables interpolation of variables and expressions |
-| `f` | `%` | Enables formatting |
-| `p` | `#` | Enables interpolation of template arguments |
-
-These flags trigger embedding of code in the string literal, through the use of sigil prefixing. If the `r` flag is enabled, an alternative escaping method is used, which is achieved by doubling the sigil if it forms a valid embedded expression on its own.
-
-#### Interpolation
-
-Strings can be interpolated with variables and expressions, using the `$` sigil. The most general form of interpolation encloses a block in between `${` and `}`, i.e. `${block}`.
-
-The simpler form consists of a `$`-sign without having to write curly braces around the expression. A subset of these expressions are supported, as shown below. Between the brackets, expressions and block statements are allowed.
-
-- a single identifier: `name`
-- a qualified name: `x.y.z` or `x::y::z`
-- an object accessor: `x[ ]`
-- a function call: `fn()`
-- a type casting operation: `<int>`
-- a type assertion: `name{int}`
-- and any combination of the like
-
-```swift
-val greeting = s"Hello $name!"
-val greeting = s"Hello $name.upper(){str}!"
-val greeting = s"Hello ${name.upper()}!"
+```reason
+let x = 23 + 1 - 7 * 2 / 5;
+let x = 13 mod 2;
 ```
 
-The expanded expression is type-checked as with all other expressions, and can be explicitly specified using either postfix curly or angle brackets immediately after the expression or before the closing bracket.
+### Integer literals
 
-### Templating
+Different radix literals can be created using prefixes `0x`, `0o`, `0b`:
 
-Templating is a mechanism for embedding expressions in strings, and is used to interpolate template arguments, and **return a function** as opposed to evaluating them directly. The `p` sigil prefix is used to enable this feature.
-
-The simplest form of templating is a single variable name or numeric literal referring to the position or name of the template argument in the list of arguments, this time Those can be marked as optional or required, by prefixing it with `?` or `!`.
-
-Defaults and aliases can be applied within `#{}`.
-
-```swift
-p"You're #{adjective=`pretty}, #{endearment='my love'}."(
-  adjective=`hot, endearment=`cupcake
-)
-
-fp"Hey #name, there is a 0x#errNo%hex error!"(
-  name=`John, errNo=0xb12349
-)
+```reason
+let decimal = 11256099;
+let hex = 0xABC123;
+let octal = 0o52740443;
+let binary = 0b101010111100000100100011;
 ```
 
-### Formatting
+Literals can be broken up using the `_` character which will be ignored:
 
-Formatting transforms the interpolated expressions before inserting it into the string, and is composed of a sequence of directives (i.e. methods) to be performed on said value, thus "formatting" the expression.
-
-The first directive is prefixed with the `%` sigil, followed by the name of the method to be applied. The method name can be followed by a literal or a set of arguments encased in a tuple. Further methods are chained together by a pipe `|`.
-
-```swift
-sf"Hello ${"world"}"
-sf"Hello ${"world"}%upper" // => "Hello WORLD"
-sf"${1234567890}%sep:(',')|sep:(id + 1)" // => "1,234,567,890"
-
-sf"Percentage correct answers: ${2/3}%deci:2|unit:('%')"
-s"Percentage correct answers: ${(2/3).deci(2).unit('%')}"
+```reason
+let trillion = 1_000_000_000_000;
 ```
 
-### Backtick strings
+### Bitwise operations
 
-Protea offers another way to represent unquoted (partially quoted) strings much more efficiently. It is used to represent identifiers as strings more efficiently (thus being easier to type) without having to quote them.
+Use infix functions: `land`, `lor`, `lxor`, `lnot`, `lsl`, `lsr`, `asr` from [`module Pervasives`](<https://reasonml.github.io/api/Pervasives.html#VAL(land)>)
 
-`
-
-### Symbols
-
-Symbols represent pre-defined identifiers and strings, and compile to strings at runtime. The `:` sigil prefix is used to create a symbol. They are used to represent identifiers, and can be used as keys in maps and other collections.
-
-They are generated using the `:identifier` or `:"string"` literal syntax, beginning with a colon, or by through methods that return symbols.
-
-Interpolation, formatting and template strings can use symbols as placeholders in which they are explicitly converted into strings.
-
-On the other hand, symbols cannot be used to create calculated identifiers since they are pre-compiled. For this reason, symbols are not allowed in interpolation, formatting or templating, but are explicitly converted from strings.
-
-```swift
-val obj = #{}
-
-obj.a = 'a'
-obj[:b] = 'b'
-obj::c = 'c'
-
-for (val i of obj) print(i) // logs :a, :b, "c"
+```reason
+let x = 0b1010 lor 0b1100;
+/* 0b1110, 14 */
 ```
 
-### Regular Expressions
+Many bit tricks can be found here: [bithacks](http://graphics.stanford.edu/~seander/bithacks.html)
 
-Protea's regular expressions are delimited using backticks rather than single or double quotes. The syntax resembles JavaScript's, but with many extensions inspired by other regex flavors, including Python, Ruby and Perl.
+```reason
+let isPowerOfTwo = x => {
+  x !== 0 && x land (x - 1) === 0
+};
+```
 
-Spacing is always ignored and comments can be inserted however you see fit. You can even 'quote' inside regular expressions by inserting strings literally inside the regex, and all spacing will be kept as is between the quotes. Interpolation and formatting also applies but the interpolated result is usually 'quoted' so to prevent generating invalid regular expressions.
+## Float
 
-```swift
+_Quick overview: [Numbers](overview.md#numbers)_
 
+Floats are 64-bit numbers that may have a decimal. They follow the [IEEE 754 standard](https://en.wikipedia.org/wiki/IEEE_754).
+
+```reason
+let x = 23.0;
+let x = 23.;
+let x = -23.0;
+```
+
+Standard operations include `+.`, `-.`, `*.`, `/.`, `**`:
+
+```reason
+let x = 3.0 +. 1.0 -. 7.0 *. 2.0 /. 5.0;
+
+/* Exponentiation */
+let x = 2.0 ** 3.0;
+```
+
+## Boolean
+
+_Quick overview: [Boolean](overview.md#boolean-values-and-logical-operations)_
+
+Reason supports a normal set of boolean and logical operations:
+
+- Boolean operations: `!`, `&&`, <code>&#124;&#124;</code>
+- Comparison: `>`, `<`, `>=`, `<=`
+- Reference equality: `===`, `!==`
+- Structural equality: `==`, `!=`
+
+```reason
+let x = true;
+let y = !true;
+let z = x && y || false;
 ```
