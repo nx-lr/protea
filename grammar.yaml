@@ -1,7 +1,7 @@
 name: SagaScript
 scopeName: source.swift
 fileTypes: [swift, saga]
-patterns: [include: '#core']
+patterns: [include: "#core"]
 
 information for contributors: |
   This is the grammar for the SagaScript language.
@@ -92,7 +92,7 @@ define:
         |interface|enum|module|struct
         |protocol|iterator|macro|query
         |object|contract|trait|style
-        |element|property
+        |element|property|model
         |go|defer|do|with|from|where
         |if|elsif|else|then|def
         |for|each|repeat|while
@@ -125,7 +125,7 @@ define:
         |interface|enum|module|struct
         |protocol|iterator|macro|query
         |object|contract|trait|style
-        |element|property
+        |element|property|model
         |go|defer|do|with|from|where
         |if|elsif|else|then|def
         |for|each|repeat|while
@@ -150,31 +150,32 @@ define:
       name: entity.name.tag.namespace.saga
     - match: \b((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)\b
       name: support.class.component.saga
-    - include: '#clauses'
-    - include: '#declarations'
-    - include: '#keywords'
-    - include: '#html-tag-names'
+    - include: "#clauses"
+    - include: "#declarations"
+    - include: "#keywords"
+    - include: "#html-tag-names"
 
 repository:
   core:
     patterns:
-      - include: '#clauses'
-      - include: '#declarations'
-      - include: '#keywords'
-      - include: '#comments'
-      - include: '#argument-list'
-      - include: '#function-clause'
-      - include: '#symbols'
-      - include: '#type-signature'
-      - include: '#jsx'
-      - include: '#brackets'
-      - include: '#punctuation'
-      - include: '#literals'
-      - include: '#operators'
-      - include: '#calls'
-      - include: '#variables'
-      - include: '#illegal'
-      - include: '#space'
+      - include: "#clauses"
+      - include: "#declarations"
+      - include: "#keywords"
+      - include: "#comments"
+      - include: "#argument-list"
+      - include: "#function-clause"
+      - include: "#symbols"
+      - include: "#decorators"
+      - include: "#type-signature"
+      - include: "#jsx"
+      - include: "#brackets"
+      - include: "#punctuation"
+      - include: "#literals"
+      - include: "#operators"
+      - include: "#calls"
+      - include: "#variables"
+      - include: "#illegal"
+      - include: "#space"
 
   ignore-long-lines:
     comment: avoid parsing files with long lines of code
@@ -192,11 +193,11 @@ repository:
         name: keyword.operator.expression.as.saga
       - match: (?<=[\w\s][(|])\.
         name: punctuation.definition.metadata.saga
-      - include: '#clauses'
-      - include: '#constants'
-      - include: '#declaration-keywords'
-      - include: '#parameter-variables'
-      - include: '#keywords'
+      - include: "#clauses"
+      - include: "#constants"
+      - include: "#declaration-keywords"
+      - include: "#parameter-variables"
+      - include: "#keywords"
 
   # Illegal Syntax
 
@@ -217,11 +218,11 @@ repository:
 
   literals:
     patterns:
-      - include: '#regexps'
-      - include: '#strings'
-      - include: '#numbers'
-      - include: '#constants'
-      - include: '#strings-unquoted'
+      - include: "#regexps"
+      - include: "#strings"
+      - include: "#numbers"
+      - include: "#constants"
+      - include: "#strings-unquoted"
 
   constants:
     patterns:
@@ -362,21 +363,26 @@ repository:
   # Symbols
 
   decorators:
-    - applyEndPatternLast: true
-      begin: \@[\p{Pc}\p{L}][\w\p{Pd}]*\b
-      end: (?=)|$
-      name: entity.name.class.decorator.saga
-      patterns:
-        - include: '#brackets'
-        - &embedded-primary-operators
-          comment: Primary binary operators
-          match: (?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
-          captures:
-            1: { name: keyword.operator.optional.saga }
-            2: { name: keyword.operator.assert.saga }
-            3: { name: keyword.operator.accessor.saga }
-        - match: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
-          name: entity.name.class.decorator.saga
+    applyEndPatternLast: true
+    begin: (\@)(?=[\p{Pc}\p{L}])
+    end: (?=)|$
+    name: entity.name.decorator.saga
+    captures:
+      1: { name: punctuation.definition.decorator.saga }
+      2: { name: entity.name.decorator.saga }
+    patterns:
+      - match: ::|\.
+        name: punctuation.separator.namespace.saga
+      - include: "#brackets"
+      - include: "#strings"
+      - match: (?<=::|\.)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\()
+        name: entity.name.function.member.saga
+      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\()
+        name: entity.name.decorator.saga
+      - match: (?<=::|\.)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+        name: variable.language.property.decorator.saga
+      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+        name: variable.other.readwrite.decorator.saga
 
   symbols:
     patterns:
@@ -388,17 +394,17 @@ repository:
         captures:
           1: { name: punctuation.definition.symbol.saga }
         patterns:
-          - include: '#strings-single-quoted'
-          - include: '#strings-double-quoted'
-          - include: '#strings-unquoted'
+          - include: "#strings-single-quoted"
+          - include: "#strings-double-quoted"
+          - include: "#strings-unquoted"
       - match: (?<=^|\\.|['"`({\[)}\]\s:=])(:)(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)
         name: constant.other.symbol.saga
         captures:
           1: { name: punctuation.definition.symbol.saga }
           2: { name: constant.other.symbol.saga }
         patterns:
-          - match: ''
-          - include: '#string-escapes'
+          - match: ""
+          - include: "#string-escapes"
 
   strings-unquoted:
     comment: Unquoted string
@@ -409,14 +415,14 @@ repository:
     captures:
       1: { name: punctuation.definition.string.saga }
     patterns:
-      - match: '[\p{Pc}\p{L}][\w\p{Pd}]*\b'
-      - include: '#string-escapes'
+      - match: \b\p{Pd}+\b
+      - include: "#string-escapes"
 
   strings:
     patterns:
-      - include: '#strings-prefixed'
-      - include: '#strings-double-quoted'
-      - include: '#strings-single-quoted'
+      - include: "#strings-prefixed"
+      - include: "#strings-double-quoted"
+      - include: "#strings-single-quoted"
 
   strings-single-quoted:
     patterns:
@@ -428,7 +434,7 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
+          - include: "#string-escapes"
       - comment: single-quoted plain string
         begin: (?<!'+)((?i:))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -437,7 +443,7 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
+          - include: "#string-escapes"
 
   strings-double-quoted:
     patterns:
@@ -449,7 +455,7 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
+          - include: "#string-escapes"
       - comment: double-quoted plain string
         begin: (?<!"+)((?i:))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -458,19 +464,21 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
+          - include: "#string-escapes"
 
   string-content:
     patterns:
-      - include: '#string-escapes'
-      - include: '#embedded'
+      - include: "#string-escapes"
+      - include: "#embedded"
 
   string-escapes:
     patterns:
-      - match: \\(?=\s*$)
-        name: constant.character.escape.newline.saga
-      - include: '#named-escapes'
-      - include: '#numeric-escapes'
+      - begin: (\\)(?=\s*$)
+        end: ^\s*(?=\S)
+        captures:
+          1: { name: constant.character.escape.newline.saga }
+      - include: "#named-escapes"
+      - include: "#numeric-escapes"
       - match: \\([cm][a-z])
         name: constant.character.control.saga
       - match: \\[abefprnstv]
@@ -498,7 +506,7 @@ repository:
         name: constant.other.function.saga
         begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b(?=\{)
         beginCaptures:
-          1: { patterns: [include: '#function-namespace'] }
+          1: { patterns: [include: "#function-namespace"] }
         end: (?=)|$
         patterns:
           - begin: (\{)
@@ -506,14 +514,14 @@ repository:
             captures:
               1: { name: constant.other.function.saga }
             patterns:
-              - include: '#named-characters'
+              - include: "#named-characters"
       - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
         name: constant.character.escape.saga
         captures:
-          1: { patterns: [include: '#character-namespace'] }
-      - include: '#string-content'
-      - include: '#punctuation'
-      - include: '#illegal'
+          1: { patterns: [include: "#character-namespace"] }
+      - include: "#string-content"
+      - include: "#punctuation"
+      - include: "#illegal"
 
   function-namespace:
     patterns:
@@ -535,7 +543,7 @@ repository:
         name: constant.other.function.saga
         begin: \\N([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b(?=\{)
         beginCaptures:
-          1: { patterns: [include: '#function-namespace'] }
+          1: { patterns: [include: "#function-namespace"] }
         end: (?=)|$
         patterns:
           - begin: (\{)
@@ -543,11 +551,11 @@ repository:
             captures:
               1: { name: constant.other.function.saga }
             patterns:
-              - include: '#named-characters'
+              - include: "#named-characters"
       - match: \\N([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
         name: constant.character.escape.saga
         captures:
-          1: { patterns: [include: '#character-namespace'] }
+          1: { patterns: [include: "#character-namespace"] }
       - begin: \\N{\s*
         end: \s*}
         name: constant.other.character-class.unicode.saga
@@ -556,7 +564,7 @@ repository:
             name: constant.other.function.saga
             begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b(?=\{)
             beginCaptures:
-              1: { patterns: [include: '#function-namespace'] }
+              1: { patterns: [include: "#function-namespace"] }
             end: (?=)|$
             patterns:
               - begin: (\{)
@@ -564,14 +572,14 @@ repository:
                 captures:
                   1: { name: constant.other.function.saga }
                 patterns:
-                  - include: '#named-characters'
+                  - include: "#named-characters"
           - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
             name: constant.character.escape.saga
             captures:
-              1: { patterns: [include: '#character-namespace'] }
-          - include: '#string-content'
-          - include: '#punctuation'
-          - include: '#illegal'
+              1: { patterns: [include: "#character-namespace"] }
+          - include: "#string-content"
+          - include: "#punctuation"
+          - include: "#illegal"
 
   numeric-escapes:
     comments: |
@@ -600,7 +608,7 @@ repository:
         end: \s*}
         name: constant.character.escape.binary.saga
         patterns:
-          - include: '#punctuation'
+          - include: "#punctuation"
           - match: |
               (?x)
                 \b
@@ -611,7 +619,7 @@ repository:
               )
                 (?![01])
             name: constant.character.escape.binary.saga
-          - include: '#illegal'
+          - include: "#illegal"
 
       - comment: Octal escape sequences (0 to 417777)
         match: |
@@ -637,7 +645,7 @@ repository:
         end: \s*}
         name: constant.character.escape.octal.saga
         patterns:
-          - include: '#punctuation'
+          - include: "#punctuation"
           - match: |
               (?x)
                 \b
@@ -650,7 +658,7 @@ repository:
               )
                 (?![0-7])
             name: constant.character.escape.octal.saga
-          - include: '#illegal'
+          - include: "#illegal"
 
       - comment: Decimal escapes (0 to 1114111)
         match: |
@@ -680,7 +688,7 @@ repository:
         end: \s*}
         name: constant.character.escape.decimal.saga
         patterns:
-          - include: '#punctuation'
+          - include: "#punctuation"
           - match: |
               (?x)
                 \b
@@ -697,7 +705,7 @@ repository:
               )
                 (?!\d)
             name: constant.character.escape.decimal.saga
-          - include: '#illegal'
+          - include: "#illegal"
 
       - comment: Trailing byte pair U+80-U+BF
         match: |
@@ -746,7 +754,7 @@ repository:
         end: \s*}
         name: constant.character.escape.hexadecimal.saga
         patterns:
-          - include: '#punctuation'
+          - include: "#punctuation"
           - comment: Trailing byte pair U+80-U+BF
             match: |
               (?x)
@@ -782,7 +790,7 @@ repository:
               )
                 (?!\h)
             name: constant.character.escape.hexadecimal.saga
-          - include: '#illegal'
+          - include: "#illegal"
 
       - comment: Low surrogate pairs U+DC00-DFFF
         match: |
@@ -844,7 +852,7 @@ repository:
         end: \s*}
         name: constant.character.escape.unicode.saga
         patterns:
-          - include: '#punctuation'
+          - include: "#punctuation"
           - match: |
               (?x)
                 \b
@@ -876,21 +884,21 @@ repository:
               )
                 (?!\h)
             name: constant.character.escape.unicode.saga
-          - include: '#illegal'
+          - include: "#illegal"
 
   # Embedded expressions
 
   embedded:
     patterns:
-      - include: '#embedded-expression'
-      - include: '#embedded-format'
+      - include: "#embedded-expression"
+      - include: "#embedded-format"
 
   embedded-verbatim:
     patterns:
       - match: \#\#|\$\$|\%\%
         name: constant.character.escape.saga
-      - include: '#embedded-expression'
-      - include: '#embedded-format'
+      - include: "#embedded-expression"
+      - include: "#embedded-format"
 
   embedded-expression:
     patterns:
@@ -920,7 +928,7 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|property
+              |element|property|model
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|each|repeat|while
@@ -933,16 +941,16 @@ repository:
             )
             (?!\B|\p{Pd}+\b)
           )
-          \b # next to a word
+          (?=[\p{Pc}\p{L}]) # next to a word
         end: (?=)|$
         captures:
           1: { name: punctuation.definition.variable.saga }
         patterns:
-          - include: '#constants'
-          - include: '#brackets'
-          - include: '#embedded-calls'
-          - include: '#variables'
-          - include: '#numbers'
+          - include: "#constants"
+          - include: "#brackets"
+          - include: "#embedded-calls"
+          - include: "#variables"
+          - include: "#numbers"
           - &embedded-primary-operators
             comment: Primary binary operators
             match: (?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
@@ -977,7 +985,7 @@ repository:
           2:
             name: constant.numeric.decimal.saga
             patterns:
-              - match: '[+-]'
+              - match: "[+-]"
                 name: keyword.operator.arithmetic.saga
               - match: (?:[>.]\.[.<] | \.\. | [=.]\.[.=]|\.\.=?|=\.=)
                 name: keyword.operator.range.saga
@@ -1006,7 +1014,7 @@ repository:
                 |interface|enum|module|struct
                 |protocol|iterator|macro|query
                 |object|contract|trait|style
-                |element|property
+                |element|property|model
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
                 |for|each|repeat|while
@@ -1025,14 +1033,14 @@ repository:
           )
         captures:
           1: { name: punctuation.definition.anchor.saga }
-          2: { patterns: [include: '#placeholder-variables'] }
+          2: { patterns: [include: "#placeholder-variables"] }
       - name: meta.embedded.placeholder.saga
         begin: (\#{)\s*
         end: \s*(})
         captures:
           1: { name: punctuation.definition.anchor.saga }
         patterns:
-          - include: '#parameter-variables'
+          - include: "#parameter-variables"
           - include: $self
 
   # Format and flag specifiers
@@ -1071,7 +1079,7 @@ repository:
     captures:
       1: { name: punctuation.definition.directive.saga }
     patterns:
-      - include: '#format-syntax'
+      - include: "#format-syntax"
 
   format-syntax:
     comment: Format specifier language, inspired by MS-DOS, Bash and Python's f-strings.
@@ -1086,13 +1094,13 @@ repository:
           2: { name: storage.type.format.saga }
           3: { name: punctuation.separator.key-value.saga }
         patterns: &format-values
-          - include: '#constants'
-          - include: '#embedded-calls'
-          - include: '#variables'
-          - include: '#brackets'
-          - include: '#regexps'
-          - include: '#numbers'
-          - include: '#symbols'
+          - include: "#constants"
+          - include: "#embedded-calls"
+          - include: "#variables"
+          - include: "#brackets"
+          - include: "#regexps"
+          - include: "#numbers"
+          - include: "#symbols"
           - *embedded-primary-operators
       - comment: type specifier
         match: (?:(?<=%)|(\|))([\p{Pc}\p{L}][\w\p{Pd}]*)\b
@@ -1131,7 +1139,7 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|property
+              |element|property|model
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|each|repeat|while
@@ -1158,8 +1166,8 @@ repository:
           1: { name: punctuation.definition.regexp.saga }
           2: { name: keyword.other.flag.saga }
         patterns:
-          - include: '#comments'
-          - include: '#regexp-patterns'
+          - include: "#comments"
+          - include: "#regexp-patterns"
           - applyEndPatternLast: true
             comment: Replacement section
             begin: (?<!\\)(/+)\s*
@@ -1168,24 +1176,24 @@ repository:
             captures:
               1: { name: punctuation.definition.regexp.saga }
             patterns:
-              - include: '#back-references'
-              - include: '#string-content'
+              - include: "#back-references"
+              - include: "#string-content"
 
   fuzzy-expression:
     patterns:
-      - include: '#punctuation'
-      - include: '#comments'
-      - include: '#calls'
-      - include: '#literals'
-      - include: '#embedded'
-      - include: '#operators'
-      - include: '#clauses'
-      - include: '#declarations'
-      - include: '#keywords'
-      - include: '#fuzzy-brackets'
+      - include: "#punctuation"
+      - include: "#comments"
+      - include: "#calls"
+      - include: "#literals"
+      - include: "#embedded"
+      - include: "#operators"
+      - include: "#clauses"
+      - include: "#declarations"
+      - include: "#keywords"
+      - include: "#fuzzy-brackets"
       - match: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
         name: keyword.other.unit.saga
-      - include: '#space'
+      - include: "#space"
 
   fuzzy-brackets:
     patterns:
@@ -1194,28 +1202,28 @@ repository:
         captures:
           1: { name: punctuation.definition.mapping.saga }
         patterns:
-          - match: ','
+          - match: ","
             name: punctuation.separator.mapping.saga
-          - include: '#labels'
-          - include: '#fuzzy-expression'
+          - include: "#labels"
+          - include: "#fuzzy-expression"
           - include: $self
       - begin: (\[)\s*
         end: \s*(\])
         captures:
           1: { name: punctuation.definition.array.saga }
         patterns:
-          - match: ','
+          - match: ","
             name: punctuation.separator.sequence.saga
-          - include: '#fuzzy-expression'
+          - include: "#fuzzy-expression"
           - include: $self
       - begin: (\()\s*
         end: \s*(\))
         captures:
           1: { name: punctuation.definition.expression.saga }
         patterns:
-          - match: ','
+          - match: ","
             name: punctuation.separator.arguments.saga
-          - include: '#fuzzy-expression'
+          - include: "#fuzzy-expression"
           - include: $self
 
   back-references:
@@ -1228,10 +1236,10 @@ repository:
         captures:
           1: { name: keyword.other.back-reference.saga }
         patterns: &regex-back-references
-          - include: '#variables'
-          - include: '#numbers'
-          - include: '#operators'
-          - include: '#string-content'
+          - include: "#variables"
+          - include: "#numbers"
+          - include: "#operators"
+          - include: "#string-content"
       - begin: (\$(['"]))\s*
         end: \s*(\2)
         name: keyword.other.back-reference.saga
@@ -1241,9 +1249,9 @@ repository:
 
   regexp-patterns:
     patterns:
-      - include: '#embedded'
-      - include: '#comments'
-      - include: '#strings'
+      - include: "#embedded"
+      - include: "#comments"
+      - include: "#strings"
       - match: \|
         name: keyword.operator.or.saga
       - match: \&
@@ -1316,12 +1324,12 @@ repository:
               1: { name: punctuation.separator.key-value.saga }
             end: (?=[,;}]|)|$
             patterns: &regexp-patterns
-              - include: '#regexp-patterns'
-          - include: '#fuzzy-expression'
-      - include: '#regexp-groups'
-      - include: '#regexp-character-set'
-      - include: '#regexp-character-class'
-      - include: '#space'
+              - include: "#regexp-patterns"
+          - include: "#fuzzy-expression"
+      - include: "#regexp-groups"
+      - include: "#regexp-character-set"
+      - include: "#regexp-character-class"
+      - include: "#space"
 
   regexp-groups:
     patterns:
@@ -1378,8 +1386,8 @@ repository:
         end: \s*(\))
         name: meta.group.directive.saga
         patterns:
-          - include: '#format-syntax'
-          - include: '#regexp-patterns'
+          - include: "#format-syntax"
+          - include: "#regexp-patterns"
       - comment: Longest match
         begin: (\(\?/=?)
         end: \s*(\))
@@ -1413,11 +1421,11 @@ repository:
               1: { name: punctuation.definition.group.call-out.saga }
               2: { name: keyword.operator.range.saga }
               3: { name: punctuation.definition.tag.saga }
-              4: { patterns: [include: '#function-names'] }
+              4: { patterns: [include: "#function-names"] }
               5: { name: punctuation.definition.tag.saga }
             patterns:
           - include: $self
-          - include: '#regexp-patterns'
+          - include: "#regexp-patterns"
       - comment: Atomic groups
         begin: (\(\?>)
         end: \s*(\))
@@ -1454,7 +1462,7 @@ repository:
           0: { name: punctuation.definition.group.back-reference.saga }
           1: { name: punctuation.definition.group.back-reference.saga }
           2: { name: constant.numeric.index.saga }
-          3: { patterns: [include: '#variables'] }
+          3: { patterns: [include: "#variables"] }
           4: { name: punctuation.separator.colon.saga }
         patterns: *regexp-patterns
       - comment: Named groups (angle-brackets)
@@ -1470,7 +1478,7 @@ repository:
             captures:
               1: { name: punctuation.definition.group.named.saga }
             patterns: *regex-back-references
-          - include: '#regexp-patterns'
+          - include: "#regexp-patterns"
       - comment: Named groups (single or double-quotes)
         begin: \(\?(?=['"])
         end: \s*(\))
@@ -1484,7 +1492,7 @@ repository:
             captures:
               1: { name: punctuation.definition.group.named.saga }
             patterns: *regex-back-references
-          - include: '#regexp-patterns'
+          - include: "#regexp-patterns"
       - comment: Unnamed groups
         begin: (\()
         end: (\s*\))
@@ -1495,16 +1503,18 @@ repository:
 
   regexp-character-class:
     patterns:
-      - include: '#embedded'
-      - match: \\(?=\s*$)
-        name: constant.character.escape.newline.saga
-      - include: '#named-escapes'
-      - include: '#numeric-escapes'
+      - include: "#embedded"
+      - begin: (\\)(?=\s*$)
+        end: ^\s*(?=\S)
+        captures:
+          1: { name: constant.character.escape.newline.saga }
+      - include: "#named-escapes"
+      - include: "#numeric-escapes"
       - begin: (?i)\\p{
         end: \s*}
         name: constant.other.character-class.unicode.saga
         patterns:
-          - include: '#attribute-selectors'
+          - include: "#attribute-selectors"
       - match: (?i)\\([cm][a-z])
         name: constant.character.control.saga
       - match: (?i)\\p[a-z]{1,2}
@@ -1583,23 +1593,23 @@ repository:
           1:
             name: constant.other.character-class.range.from.saga
             patterns:
-              - include: '#regexp-character-operators'
-              - include: '#regexp-character-class'
+              - include: "#regexp-character-operators"
+              - include: "#regexp-character-class"
           2:
             name: keyword.operator.range.saga
           3:
             name: constant.other.character-class.range.to.saga
             patterns:
-              - include: '#regexp-character-operators'
-              - include: '#regexp-character-class'
+              - include: "#regexp-character-operators"
+              - include: "#regexp-character-class"
           4:
             name: keyword.operator.range.saga
           5:
             name: constant.other.character-class.range.by.saga
             patterns:
-              - include: '#numbers'
-              - include: '#regexp-character-operators'
-              - include: '#regexp-character-class'
+              - include: "#numbers"
+              - include: "#regexp-character-operators"
+              - include: "#regexp-character-class"
       - match: \|\|
         name: keyword.operator.union.saga
       - match: \&&
@@ -1619,38 +1629,38 @@ repository:
         captures:
           1: { name: punctuation.definition.character-class.posix.saga }
         patterns:
-          - include: '#attribute-selectors'
+          - include: "#attribute-selectors"
       - begin: (\[\^)
         end: \s*(\])
         name: constant.other.character-set.negated.saga
         captures:
           1: { name: punctuation.definition.character-class.negated.saga }
         patterns:
-          - include: '#comments'
-          - include: '#regexp-character-operators'
-          - include: '#regexp-character-class'
-          - include: '#regexp-character-set'
+          - include: "#comments"
+          - include: "#regexp-character-operators"
+          - include: "#regexp-character-class"
+          - include: "#regexp-character-set"
       - begin: (\[)
         end: \s*(\])
         name: constant.other.character-set.saga
         captures:
           1: { name: punctuation.definition.character-class.saga }
         patterns:
-          - include: '#comments'
-          - include: '#regexp-character-operators'
-          - include: '#regexp-character-class'
-          - include: '#regexp-character-set'
+          - include: "#comments"
+          - include: "#regexp-character-operators"
+          - include: "#regexp-character-class"
+          - include: "#regexp-character-set"
 
   attribute-selectors:
     patterns:
-      - match: ','
+      - match: ","
         name: punctuation.separator.sequence.saga
-      - include: '#comments'
-      - include: '#strings'
+      - include: "#comments"
+      - include: "#strings"
       - match: (?xi)\b[is]\b\s*(?=[)}\]]|([&|^])\1)
         name: storage.modifier.ignore-when.saga
-      - include: '#string-escapes'
-      - match: '[:!=</>.^$%?*+|&~]?='
+      - include: "#string-escapes"
+      - match: "[:!=</>.^$%?*+|&~]?="
         name: keyword.operator.pattern.saga
       - match: \&\&|\|\||\^\^|\!
         name: keyword.operator.logical.saga
@@ -1663,13 +1673,13 @@ repository:
         end: (?=\&\&|\|\||\^\^|[\s,:;'"`({\[)}\]])
         name: string.unquoted.attribute-name.saga
         patterns:
-          - include: '#style-property-values'
+          - include: "#style-property-values"
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         captures:
           1: { name: entity.other.attribute-name.saga }
           2: { name: keyword.operator.pattern.saga }
-      - include: '#operators'
+      - include: "#operators"
 
   # Markdown
 
@@ -1702,7 +1712,7 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|property
+              |element|property|model
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|each|repeat|while
@@ -1720,7 +1730,7 @@ repository:
       (?=<[\p{Pc}\p{L}]|<\s+>)
     end: (?=)|$
     patterns:
-      - include: '#tag-component-name'
+      - include: "#tag-component-name"
 
   tag-component-name:
     patterns:
@@ -1733,7 +1743,7 @@ repository:
         endCaptures:
           1: { name: punctuation.definition.tag.saga }
         patterns:
-          - include: '#tag-termination'
+          - include: "#tag-termination"
       - comment: Tags that end > are trapped in tag-termination
         contentName: meta.jsx.saga
         begin: |
@@ -1759,15 +1769,15 @@ repository:
           )
         beginCaptures:
           1: { name: punctuation.definition.tag.saga }
-          2: { patterns: [include: '#tag-names'] }
+          2: { patterns: [include: "#tag-names"] }
         endCaptures:
-          1: { patterns: [include: '#tag-names'] }
+          1: { patterns: [include: "#tag-names"] }
           2: { name: punctuation.definition.tag.saga }
           3: { name: punctuation.definition.tag.saga }
           4: { name: invalid.illegal.termination.saga }
         patterns:
-          - include: '#tag-termination'
-          - include: '#tag-attributes'
+          - include: "#tag-termination"
+          - include: "#tag-attributes"
 
   jsx-comments:
     begin: (<!--)
@@ -1776,7 +1786,7 @@ repository:
       1: { name: punctuation.definition.comment.saga }
     name: comment.block.html.saga
     patterns:
-      - include: '#jsx-comments'
+      - include: "#jsx-comments"
 
   tag-termination:
     comment: uses non consuming search for </ in </tag>
@@ -1786,17 +1796,17 @@ repository:
     captures:
       0: { name: punctuation.definition.tag.saga }
     patterns:
-      - include: '#evaluated-code'
-      - include: '#jsx-entities'
-      - include: '#tag-component-name'
-      - include: '#markdown'
-      - include: '#jsx-comments'
+      - include: "#evaluated-code"
+      - include: "#jsx-entities"
+      - include: "#tag-component-name"
+      - include: "#markdown"
+      - include: "#jsx-comments"
 
   tag-attributes:
     patterns:
-      - include: '#literals'
-      - include: '#embedded'
-      - include: '#brackets'
+      - include: "#literals"
+      - include: "#embedded"
+      - include: "#brackets"
       - applyEndPatternLast: true
         begin: \s*(=)\s*
         beginCaptures:
@@ -1804,11 +1814,11 @@ repository:
         end: (?=)|$
         name: meta.property.jsx.saga
         patterns:
-          - include: '#style-property-values'
-      - include: '#style-selectors'
-      - include: '#attribute-names'
-      - include: '#comments'
-      - include: '#punctuation'
+          - include: "#style-property-values"
+      - include: "#style-selectors"
+      - include: "#attribute-names"
+      - include: "#comments"
+      - include: "#punctuation"
 
   attribute-names:
     match: \s*([\p{Pd}\w]+)\b\s*
@@ -1817,7 +1827,7 @@ repository:
       1:
         name: entity.other.attribute-name.${1:/camelcase}.saga
         patterns:
-          - include: '#css-property-names'
+          - include: "#css-property-names"
 
   spread-attribute:
     comment: Spread attribute { ... AssignmentExpression }
@@ -1851,20 +1861,20 @@ repository:
 
   inline-markdown:
     patterns:
-      - include: '#ampersand'
-      - include: '#bracket'
-      - include: '#bold'
-      - include: '#italic'
-      - include: '#raw'
-      - include: '#escape'
-      - include: '#image-inline'
-      - include: '#image-ref'
-      - include: '#link-email'
-      - include: '#link-inet'
-      - include: '#link-inline'
-      - include: '#link-ref'
-      - include: '#link-ref-literal'
-      - include: '#link-ref-shortcut'
+      - include: "#ampersand"
+      - include: "#bracket"
+      - include: "#bold"
+      - include: "#italic"
+      - include: "#raw"
+      - include: "#escape"
+      - include: "#image-inline"
+      - include: "#image-ref"
+      - include: "#link-email"
+      - include: "#link-inet"
+      - include: "#link-inline"
+      - include: "#link-ref"
+      - include: "#link-ref-literal"
+      - include: "#link-ref-shortcut"
 
   ampersand:
     comment: Markdown will convert this for us. We match it so that the HTML grammar will not mark it up as invalid.
@@ -1918,21 +1928,21 @@ repository:
     end: (?<=\S)(\1)
     name: markup.bold.markdown
     patterns:
-      - include: '#string-content'
-      - include: '#escape'
-      - include: '#ampersand'
-      - include: '#bracket'
-      - include: '#raw'
-      - include: '#bold'
-      - include: '#italic'
-      - include: '#image-inline'
-      - include: '#link-inline'
-      - include: '#link-inet'
-      - include: '#link-email'
-      - include: '#image-ref'
-      - include: '#link-ref-literal'
-      - include: '#link-ref'
-      - include: '#link-ref-shortcut'
+      - include: "#string-content"
+      - include: "#escape"
+      - include: "#ampersand"
+      - include: "#bracket"
+      - include: "#raw"
+      - include: "#bold"
+      - include: "#italic"
+      - include: "#image-inline"
+      - include: "#link-inline"
+      - include: "#link-inet"
+      - include: "#link-email"
+      - include: "#image-ref"
+      - include: "#link-ref-literal"
+      - include: "#link-ref"
+      - include: "#link-ref-shortcut"
 
   bracket:
     comment: Markdown will convert this for us. We match it so that the HTML grammar will not mark it up as invalid.
@@ -1989,7 +1999,7 @@ repository:
     match: (\!\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])[ ]?(\[)(.*?)(\])
     name: meta.image.reference.markdown
     patterns:
-      - include: '#string-content'
+      - include: "#string-content"
 
   italic:
     begin: |
@@ -2038,20 +2048,20 @@ repository:
     end: (?<=\S)(\1)((?!\1)|(?=\1\1))
     name: markup.italic.markdown
     patterns:
-      - include: '#string-content'
-      - include: '#escape'
-      - include: '#ampersand'
-      - include: '#bracket'
-      - include: '#raw'
-      - include: '#bold'
-      - include: '#image-inline'
-      - include: '#link-inline'
-      - include: '#link-inet'
-      - include: '#link-email'
-      - include: '#image-ref'
-      - include: '#link-ref-literal'
-      - include: '#link-ref'
-      - include: '#link-ref-shortcut'
+      - include: "#string-content"
+      - include: "#escape"
+      - include: "#ampersand"
+      - include: "#bracket"
+      - include: "#raw"
+      - include: "#bold"
+      - include: "#image-inline"
+      - include: "#link-inline"
+      - include: "#link-inet"
+      - include: "#link-email"
+      - include: "#image-ref"
+      - include: "#link-ref-literal"
+      - include: "#link-ref"
+      - include: "#link-ref-shortcut"
 
   link-email:
     captures:
@@ -2061,7 +2071,7 @@ repository:
     match: (<)((?:mailto:)?[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)(>)
     name: meta.link.email.lt-gt.markdown
     patterns:
-      - include: '#string-content'
+      - include: "#string-content"
 
   link-inet:
     captures:
@@ -2071,7 +2081,7 @@ repository:
     match: (<)((?:https?|ftp)://.*?)(>)
     name: meta.link.inet.markdown
     patterns:
-      - include: '#string-content'
+      - include: "#string-content"
 
   link-inline:
     captures:
@@ -2108,7 +2118,7 @@ repository:
       (\))
     name: meta.link.inline.markdown
     patterns:
-      - include: '#string-content'
+      - include: "#string-content"
 
   link-ref:
     captures:
@@ -2121,7 +2131,7 @@ repository:
     match: (\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])(\[)([^\]]*+)(\])
     name: meta.link.reference.markdown
     patterns:
-      - include: '#string-content'
+      - include: "#string-content"
 
   link-ref-literal:
     captures:
@@ -2133,7 +2143,7 @@ repository:
     match: (\[)((?<square>[^\[\]\\]|\\.|\[\g<square>*+\])*+)(\])[ ]?(\[)(\])
     name: meta.link.reference.literal.markdown
     patterns:
-      - include: '#string-content'
+      - include: "#string-content"
 
   link-ref-shortcut:
     captures:
@@ -2143,80 +2153,80 @@ repository:
     match: (\[)(\S+?)(\])
     name: meta.link.reference.markdown
     patterns:
-      - include: '#string-content'
+      - include: "#string-content"
 
   raw:
     captures:
       1: { name: punctuation.definition.raw.markdown }
-      2: { patterns: [include: '#string-content'] }
+      2: { patterns: [include: "#string-content"] }
       3: { name: punctuation.definition.raw.markdown }
     match: (`+)([^`]|(?!(?<!`)\1(?!`))`)*+(\1)
     name: markup.inline.raw.string.markdown
     patterns:
-      - include: '#string-content'
+      - include: "#string-content"
 
   markdown:
     patterns:
-      - include: '#comments'
-      - include: '#jsx-entities'
-      - include: '#html-tag'
-      - include: '#string-content'
-      - include: '#evaluated-code'
-      - include: '#executed-code'
-      - include: '#inline-styles'
-      - include: '#blockquote'
-      - include: '#unordered-list'
-      - include: '#ordered-list'
-      - include: '#inline-markdown'
+      - include: "#comments"
+      - include: "#jsx-entities"
+      - include: "#html-tag"
+      - include: "#string-content"
+      - include: "#evaluated-code"
+      - include: "#executed-code"
+      - include: "#inline-styles"
+      - include: "#blockquote"
+      - include: "#unordered-list"
+      - include: "#ordered-list"
+      - include: "#inline-markdown"
 
     repository:
       blockquote:
-        comment: '> blockquote'
+        comment: "> blockquote"
         begin: ^\s*(\>)(\s+.*)\n*
         end: ^(?=\S)|(?!\G)
         beginCaptures:
           1: { name: punctuation.definition.quote.begin.markdown }
           2:
             name: markup.quote.markdown
-            patterns: [include: '#markdown']
+            patterns: [include: "#markdown"]
         name: markup.quote.markdown
         patterns:
           - begin: ^(\s+)(?!\s)
             end: ^(?!\1|\s*$)
             name: markup.quote.markdown
-            patterns: [include: '#markdown']
+            patterns: [include: "#markdown"]
 
       unordered-list:
-        comment: '- unordered list'
+        comment: "- unordered list"
         begin: ^\s*(\-)(?!>)\s+(.*)\n*
         end: ^(?=\S)|(?!\G)
         beginCaptures:
           1: { name: punctuation.definition.list.begin.markdown }
           2:
             name: markup.list.unnumbered.markdown
-            patterns: [include: '#markdown']
+            patterns: [include: "#markdown"]
         name: markup.list.unnumbered.markdown
         patterns:
           - begin: ^(\s+)(?!\s)
             end: ^(?!\1|\s*$)
             name: markup.list.unnumbered.markdown
-            patterns: [include: '#markdown']
+            patterns: [include: "#markdown"]
 
       ordered-list:
-        comment: '+ ordered list'
+        comment: "+ ordered list"
         begin: ^\s*(\+)(?!>)\s+(.*)\n*
         end: ^(?=\S)|(?!\G)
         beginCaptures:
           1: { name: punctuation.definition.list.begin.markdown }
           2:
             name: markup.list.numbered.markdown
-            patterns: [include: '#markdown']
+            patterns: [include: "#markdown"]
         name: markup.list.numbered.markdown
         patterns:
           - begin: ^(\s+)(?!\s)
             end: ^(?!\1|\s*$)
             name: markup.list.numbered.markdown
-            patterns: [include: '#markdown']
+            patterns: [include: "#markdown"]
 
       evaluated-code:
         applyEndPatternLast: true
@@ -2268,14 +2278,14 @@ repository:
             captures:
               1: { name: punctuation.definition.mapping.saga }
             patterns:
-              - include: '#style-properties'
+              - include: "#style-properties"
               - include: $self
           - begin: (\()\s*
             end: \s*(\))
             captures:
               1: { name: punctuation.definition.parameters.saga }
             patterns:
-              - include: '#tag-attributes'
+              - include: "#tag-attributes"
               - include: $self
           - match: \s*([.#])(?=[\w$])
             name: punctuation.definition.entity.saga
@@ -2285,15 +2295,15 @@ repository:
             end: \s*((\1)(?!'+))
             captures:
               1: { name: punctuation.definition.string.saga }
-            patterns: [include: '#markdown']
+            patterns: [include: "#markdown"]
           - comment: inline markup
             begin: (?<!"+)\s*("""+|")
             contentName: string.quoted.double.saga
             end: \s*((\1)(?!"+))
             captures:
               1: { name: punctuation.definition.string.saga }
-            patterns: [include: '#markdown']
-          - include: '#regexps'
+            patterns: [include: "#markdown"]
+          - include: "#regexps"
 
       inline-styles:
         begin: (?<=^|[\w\s'"`])(\+>)(.*)\n*
@@ -2304,10 +2314,10 @@ repository:
               - match: (?<=^|\s)([?:]?=)(?=\s+|$)
                 captures:
                   1: { name: keyword.operator.assignment.saga }
-              - include: '#comments'
-              - include: '#style-pair'
-              - include: '#style-rules'
-              - include: '#declaration-clause'
+              - include: "#comments"
+              - include: "#style-pair"
+              - include: "#style-rules"
+              - include: "#declaration-clause"
               - match: *entity-name
                 name: entity.name.style.saga
         end: ^(?=\S)|(?!\G)
@@ -2315,7 +2325,7 @@ repository:
           - begin: ^(\s+)(?!\s)
             end: ^(?!\1|\s*$)
             name: meta.style.yaml
-            patterns: [include: '#style-properties']
+            patterns: [include: "#style-properties"]
 
   # Special code blocks
 
@@ -2333,7 +2343,7 @@ repository:
     captures:
       1:
         patterns:
-          - include: '#css-value-names'
+          - include: "#css-value-names"
           - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
             name: constant.other.saga
           - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b
@@ -2348,22 +2358,22 @@ repository:
     captures:
       1: { name: punctuation.definition.expression.saga }
     patterns:
-      - include: '#punctuation'
-      - include: '#style-property-values'
+      - include: "#punctuation"
+      - include: "#style-property-values"
       - include: $self
 
   style-property-values:
     patterns:
-      - include: '#style-list'
-      - include: '#style-block'
-      - include: '#literals'
-      - include: '#property-name'
-      - include: '#hex-colors'
-      - include: '#embedded-expression'
-      - include: '#html-builtins'
-      - include: '#line-continuation'
-      - include: '#jsx'
-      - include: '#brackets'
+      - include: "#style-list"
+      - include: "#style-block"
+      - include: "#literals"
+      - include: "#property-name"
+      - include: "#hex-colors"
+      - include: "#embedded-expression"
+      - include: "#html-builtins"
+      - include: "#line-continuation"
+      - include: "#jsx"
+      - include: "#brackets"
 
   hex-colors:
     match: (#)\b(?:\h{3,4}|\h{6}|\h{8})\b
@@ -2386,7 +2396,7 @@ repository:
     captures:
       1: { name: punctuation.section.property-list.saga }
     patterns:
-      - include: '#style-properties'
+      - include: "#style-properties"
 
   style-pair:
     applyEndPatternLast: true
@@ -2396,29 +2406,29 @@ repository:
     beginCaptures:
       1:
         name: support.type.property-name.saga
-        patterns: [include: '#css-property-names']
+        patterns: [include: "#css-property-names"]
       2:
         name: punctuation.separator.key-value.saga
     patterns:
-      - include: '#style-property-values'
+      - include: "#style-property-values"
       - match: \s+
         name: meta.var.expr.saga
 
   style-properties:
     patterns:
-      - include: '#comments'
-      - include: '#embedded'
-      - include: '#clauses'
-      - include: '#declarations'
-      - include: '#keywords'
-      - include: '#style-pair'
-      - include: '#style-rules'
-      - include: '#style-block'
+      - include: "#comments"
+      - include: "#embedded"
+      - include: "#clauses"
+      - include: "#declarations"
+      - include: "#keywords"
+      - include: "#style-pair"
+      - include: "#style-rules"
+      - include: "#style-block"
       - include: $self
 
   style-rules:
     patterns:
-      - include: '#calls'
+      - include: "#calls"
       - comment: CSS operators
         match: \s*(?:(\+)|(\-)|(\*)|(/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|(\#)|([<>]))\s*
         captures:
@@ -2443,25 +2453,25 @@ repository:
         patterns:
           - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.saga
-          - include: '#clauses'
-          - include: '#constants'
-          - include: '#declarations'
-          - include: '#expression-keywords'
-          - include: '#style-pair'
-          - include: '#parameter-variables'
+          - include: "#clauses"
+          - include: "#constants"
+          - include: "#declarations"
+          - include: "#expression-keywords"
+          - include: "#style-pair"
+          - include: "#parameter-variables"
           - include: $self
       - begin: \s*(\[)\s*
         end: \s*(\])\s*
         captures:
           1: { name: punctuation.definition.selector.saga }
         patterns:
-          - include: '#attribute-selectors'
+          - include: "#attribute-selectors"
           - include: $self
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|except|only|as)(?!\B|\p{Pd}+\b)\s*
         name: keyword.operator.expression.saga
-      - include: '#style-selectors'
-      - include: '#format-syntax'
-      - include: '#tag-names'
+      - include: "#style-selectors"
+      - include: "#format-syntax"
+      - include: "#tag-names"
 
   style-selectors:
     patterns:
@@ -2495,9 +2505,9 @@ repository:
 
   comments:
     patterns:
-      - include: '#block-comments'
-      - include: '#line-comments'
-      - include: '#nested-comments'
+      - include: "#block-comments"
+      - include: "#line-comments"
+      - include: "#nested-comments"
 
   block-comments:
     patterns:
@@ -2507,9 +2517,9 @@ repository:
         captures:
           1: { name: punctuation.definition.comment.saga }
         patterns:
-          - include: '#jsdoc'
+          - include: "#jsdoc"
           - include: text.html.markdown#inline
-          - include: '#nested-jsdoc'
+          - include: "#nested-jsdoc"
       - begin: \s*(/\*)(?=\s+|\s*$)
         end: \s*(\*/)
         name: comment.block.saga
@@ -2517,7 +2527,7 @@ repository:
           1: { name: punctuation.definition.comment.saga }
         patterns:
           - include: text.html.markdown#inline
-          - include: '#nested-block'
+          - include: "#nested-block"
 
   line-comments:
     patterns:
@@ -2527,7 +2537,7 @@ repository:
         captures:
           1: { name: punctuation.definition.comment.saga }
         patterns:
-          - include: '#jsdoc'
+          - include: "#jsdoc"
           - include: text.html.markdown#inline
       - begin: \s*(//)(?=\s+|\s*$)
         end: \s*$
@@ -2544,9 +2554,9 @@ repository:
     captures:
       1: { name: punctuation.definition.comment.saga }
     patterns:
-      - include: '#jsdoc'
+      - include: "#jsdoc"
       - include: text.html.markdown#inline
-      - include: '#nested-jsdoc'
+      - include: "#nested-jsdoc"
 
   nested-block:
     begin: (/\*)(?=\s+|\s*$)
@@ -2556,20 +2566,20 @@ repository:
       1: { name: punctuation.definition.comment.saga }
     patterns:
       - include: text.html.markdown#inline
-      - include: '#nested-block'
+      - include: "#nested-block"
 
   # JSDoc
 
   jsdoc:
     patterns:
-      - include: '#jsdoc-inline-tags'
-      - include: '#jsdoc-access'
-      - include: '#jsdoc-as-name-path'
-      - include: '#jsdoc-simple'
-      - include: '#jsdoc-simple-name-path'
-      - include: '#jsdoc-module'
-      - include: '#jsdoc-type-name'
-      - include: '#jsdoc-type-no-name'
+      - include: "#jsdoc-inline-tags"
+      - include: "#jsdoc-access"
+      - include: "#jsdoc-as-name-path"
+      - include: "#jsdoc-simple"
+      - include: "#jsdoc-simple-name-path"
+      - include: "#jsdoc-module"
+      - include: "#jsdoc-type-name"
+      - include: "#jsdoc-type-no-name"
       - comment: additional jsdoc V2 keywords
         match: (?<!\w)@(add|api|body|codeend|codestart|demo|download|group|hide|iframe|image|inherits|option|outline|page|parent|signature|tag)\b
         name: storage.type.class.jsdoc
@@ -2578,20 +2588,20 @@ repository:
         name: storage.type.class.jsdoc
 
   jsdoc-access:
-    comment: '@tag protected....'
+    comment: "@tag protected...."
     match: (@(access))\s*(private|protected|public)?(?=\s|$)
     captures:
       1: { name: storage.type.class.jsdoc }
       3: { name: storage.modifier.jsdoc }
 
   jsdoc-module:
-    comment: '@tag {optional type} module:file'
+    comment: "@tag {optional type} module:file"
     begin: (@(exports|module|listens|requires)\b)\s*(?=({(?:(?>(?:[^\\{}]|\\.)+)|\g<-1>)*\})?\s*(\S*)([\S\s]*))
     end: ^|(?=\*/)|(?=\5$)
     beginCaptures:
       1: { name: storage.type.class.jsdoc }
     patterns:
-      - include: '#jsdoc-typedef-scopes'
+      - include: "#jsdoc-typedef-scopes"
       - match: (?:(module)(:))?(((?!\*/)\S)+)
         captures:
           1: { name: keyword.module.jsdoc }
@@ -2605,42 +2615,42 @@ repository:
     beginCaptures:
       1: { name: storage.type.class.jsdoc }
     patterns:
-      - include: '#jsdoc-name-path-scopes'
+      - include: "#jsdoc-name-path-scopes"
 
   jsdoc-simple:
-    comment: '@tag'
+    comment: "@tag"
     match: (@(abstract|author|classdesc|copyright|default|defaultvalue|deprecated|description|desc|example|external|fileoverview|file|global|host|ignore|inheritdoc|inner|instance|license|override|overview|readonly|see|since|static|summary|todo|tutorial|virtual|variation|version)\b)(?=$|\s)
     captures:
       1: { name: storage.type.class.jsdoc }
 
   jsdoc-simple-name-path:
-    comment: '@tag {opt type} Class#xxx or Class#Event:aaaa etc'
+    comment: "@tag {opt type} Class#xxx or Class#Event:aaaa etc"
     begin: (@(alias|augments|callback|extends|emits|event|fires|interface|memberof|mixes|name|property|property|this|typedef)\b)\s*(?=({(?:(?>(?:[^\\{}]|\\.)+)|\g<-1>)*\})?\s*\S*([\S*\s]*))
     end: ^|(?=\*/)|(?=\4$)
     beginCaptures:
       1: { name: storage.type.class.jsdoc }
     patterns:
-      - include: '#jsdoc-typedef-scopes'
-      - include: '#jsdoc-name-path-scopes'
+      - include: "#jsdoc-typedef-scopes"
+      - include: "#jsdoc-name-path-scopes"
 
   jsdoc-type-name:
-    comment: '@tag {optional type} name'
+    comment: "@tag {optional type} name"
     begin: (@(arg|argument|class|constant|constructor|constructs|const|function|fn|kind|member|method|mixin|namespace|param|var)\b)\s*(?=({(?:(?>(?:[^\\{}]|\\.)+)|\g<-1>)*\})?\s*(((\[(?:(?>[^\[\]]+)|\g<-1>)*\])|\S)+)?([\S\s]*))
     end: ^|(?=\*/)|(?=\7$)
     beginCaptures:
       1: { name: storage.type.class.jsdoc }
     patterns:
-      - include: '#jsdoc-typedef-scopes'
-      - include: '#jsdoc-name-scopes'
+      - include: "#jsdoc-typedef-scopes"
+      - include: "#jsdoc-name-scopes"
 
   jsdoc-type-no-name:
-    comment: '@tag {types}'
+    comment: "@tag {types}"
     begin: (@(enum|exception|implements|private|protected|public|returns|return|throws|type)\b)\s*(?=({(?:(?>(?:[^\\{}]|\\.)+)|\g<-1>)*\})?\s*([\S\s]*))
     end: ^|(?=\*/)|(?=\4$)
     beginCaptures:
       1: { name: storage.type.class.jsdoc }
     patterns:
-      - include: '#jsdoc-typedef-scopes'
+      - include: "#jsdoc-typedef-scopes"
 
   jsdoc-inline-tags:
     name: meta.tag.inline.jsdoc
@@ -2659,14 +2669,14 @@ repository:
 
   jsdoc-typedef-scopes:
     name: entity.name.type.instance.jsdoc
-    begin: '{'
-    end: '}|^'
+    begin: "{"
+    end: "}|^"
     captures:
       0: { name: meta.brace.curly.jsdoc }
     patterns:
-      - include: '#jsdoc-typedef-primitives'
-      - include: '#jsdoc-name-path-scopes'
-      - include: '#jsdoc-typedef-obj'
+      - include: "#jsdoc-typedef-primitives"
+      - include: "#jsdoc-name-path-scopes"
+      - include: "#jsdoc-typedef-obj"
 
   jsdoc-typedef-primitives:
     match: \b(null|undefined|boolean|string|number)\b
@@ -2675,17 +2685,17 @@ repository:
 
   jsdoc-typedef-obj:
     comment: typedef object
-    begin: '{'
-    end: '}|^'
+    begin: "{"
+    end: "}|^"
     captures:
       0: { name: meta.brace.curly.jsdoc }
     patterns:
-      - include: '#jsdoc-typedef-primitives'
+      - include: "#jsdoc-typedef-primitives"
       - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b\s*(:)
         captures:
           1: { name: variable.other.readwrite.jsdoc }
-      - include: '#jsdoc-name-path-scopes'
-      - include: '#jsdoc-typedef-obj'
+      - include: "#jsdoc-name-path-scopes"
+      - include: "#jsdoc-typedef-obj"
 
   jsdoc-name-scopes:
     patterns:
@@ -2696,8 +2706,8 @@ repository:
         begin: \[
         end: \]|^
         patterns:
-          - include: '#jsdoc-string'
-          - include: '#jsdoc-name-scopes'
+          - include: "#jsdoc-string"
+          - include: "#jsdoc-name-scopes"
 
   jsdoc-name-path-scopes:
     patterns:
@@ -2730,7 +2740,7 @@ repository:
         end: (?=.)
         applyEndPatternLast: true
         patterns:
-          - include: '#jsdoc-string'
+          - include: "#jsdoc-string"
 
   jsdoc-string:
     name: string.jsdoc
@@ -2776,7 +2786,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|property
+                  |element|property|model
                   |go|defer|do|with|from|where
                   |if|elsif|else|then|def
                   |for|each|repeat|while
@@ -2806,7 +2816,7 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|property
+              |element|property|model
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|each|repeat|while
@@ -2858,7 +2868,7 @@ repository:
                     |interface|enum|module|struct
                     |protocol|iterator|macro|query
                     |object|contract|trait|style
-                    |element|property
+                    |element|property|model
                     |go|defer|do|with|from|where
                     |if|elsif|else|then|def
                     |for|each|repeat|while
@@ -2901,10 +2911,10 @@ repository:
           )
         )
       captures:
-        1: { patterns: [include: '#function-names'] }
+        1: { patterns: [include: "#function-names"] }
 
     patterns:
-      - include: '#embedded-calls'
+      - include: "#embedded-calls"
       - name: meta.function.call.saga
         match: |
           (?x)
@@ -2922,7 +2932,7 @@ repository:
                 |interface|enum|module|struct
                 |protocol|iterator|macro|query
                 |object|contract|trait|style
-                |element|property
+                |element|property|model
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
                 |for|each|repeat|while
@@ -2947,7 +2957,7 @@ repository:
           (?=
             \s*
             (?: # function application, composition and piping
-                (?: \$ | \s \. | <\|{1,3}| <\+) ['"`({\[\w\s]
+                (?: \$ | \s \. \s | <\|{1,3}| <\+) ['"`({\[\w\s]
               | # C-style function call
                 (?:[!?]\.=?|\.=)? \#?\(
               | # generics
@@ -2955,7 +2965,7 @@ repository:
             )
           )
         captures:
-          1: { patterns: [include: '#function-names'] }
+          1: { patterns: [include: "#function-names"] }
 
       - name: meta.function.call.saga
         match: |
@@ -2979,7 +2989,7 @@ repository:
                 |interface|enum|module|struct
                 |protocol|iterator|macro|query
                 |object|contract|trait|style
-                |element|property
+                |element|property|model
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
                 |for|each|repeat|while
@@ -3002,7 +3012,7 @@ repository:
           )
           \b
         captures:
-          1: { patterns: [include: '#function-names'] }
+          1: { patterns: [include: "#function-names"] }
 
   embedded-calls:
     patterns:
@@ -3047,8 +3057,8 @@ repository:
         captures:
           1:
             patterns: &builtin-names
-              - include: '#type-names'
-              - include: '#support-functions'
+              - include: "#type-names"
+              - include: "#support-functions"
             name: entity.name.tag.saga
           2:
             patterns: *builtin-names
@@ -3127,8 +3137,8 @@ repository:
         captures:
           1:
             patterns: &builtin-names
-              - include: '#type-names'
-              - include: '#support-functions'
+              - include: "#type-names"
+              - include: "#support-functions"
             name: entity.name.tag.saga
           2:
             patterns: *builtin-names
@@ -3151,8 +3161,8 @@ repository:
           8:
             patterns: *builtin-names
             name: entity.name.function.saga
-      - include: '#variables'
-      - include: '#primary-operators'
+      - include: "#variables"
+      - include: "#primary-operators"
 
   # Variables
 
@@ -3174,7 +3184,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|property|as
+                  |element|property|model|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3214,7 +3224,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|property|as
+                  |element|property|model|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3254,7 +3264,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|property|as
+                  |element|property|model|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3294,7 +3304,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|property|as
+                  |element|property|model|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3334,7 +3344,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|property|as
+                  |element|property|model|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3374,7 +3384,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|property|as
+                  |element|property|model|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3476,11 +3486,11 @@ repository:
 
   operators:
     patterns:
-      - include: '#special-operators'
-      - include: '#infix-operators'
-      - include: '#primary-operators'
-      - include: '#suffix-operators'
-      - include: '#prefix-operators'
+      - include: "#special-operators"
+      - include: "#infix-operators"
+      - include: "#primary-operators"
+      - include: "#suffix-operators"
+      - include: "#prefix-operators"
 
   special-operators:
     patterns:
@@ -3925,15 +3935,15 @@ repository:
 
   types:
     patterns:
-      - include: '#line-continuation'
-      - include: '#argument-list'
-      - include: '#angle-brackets'
-      - include: '#type-keywords'
-      - include: '#type-names'
-      - include: '#literals'
-      - include: '#type-variables'
-      - include: '#type-operators'
-      - include: '#type-brackets'
+      - include: "#line-continuation"
+      - include: "#argument-list"
+      - include: "#angle-brackets"
+      - include: "#type-keywords"
+      - include: "#type-names"
+      - include: "#literals"
+      - include: "#type-variables"
+      - include: "#type-operators"
+      - include: "#type-brackets"
       - match: \s+
         name: meta.type.saga
 
@@ -3958,7 +3968,7 @@ repository:
           |interface|enum|module|struct
           |protocol|iterator|macro|query
           |object|contract|trait|style
-          |element|property
+          |element|property|model
           |go|defer|do|with|from|where
           |if|elsif|else|then|def
           |for|each|repeat|while
@@ -4031,7 +4041,7 @@ repository:
     beginCaptures:
       1: { name: punctuation.definition.annotation.saga }
     patterns:
-      - include: '#types'
+      - include: "#types"
       - match: \s+
         name: meta.type.saga
 
@@ -4042,39 +4052,39 @@ repository:
     captures:
       1: { name: punctuation.definition.variable.saga }
     patterns:
-      - include: '#types'
+      - include: "#types"
       - include: $self
 
   type-strings:
     comment: coming soon
     patterns:
-      - include: '#string-double-quoted'
-      - include: '#string-single-quoted'
-      - include: '#string-unquoted'
+      - include: "#string-double-quoted"
+      - include: "#string-single-quoted"
+      - include: "#string-unquoted"
 
   type-embedded:
     patterns:
-      - include: '#embedded-format'
-      - include: '#type-embedded-expression'
+      - include: "#embedded-format"
+      - include: "#type-embedded-expression"
 
   type-embedded-verbatim:
     patterns:
       - match: \$\$|\%\%|\#\#
         name: constant.character.escape.saga
-      - include: '#embedded-format'
-      - include: '#type-embedded-expression'
+      - include: "#embedded-format"
+      - include: "#type-embedded-expression"
 
   type-brackets:
     patterns:
-      - include: '#type-curly-brackets'
-      - include: '#type-square-brackets'
-      - include: '#type-round-brackets'
+      - include: "#type-curly-brackets"
+      - include: "#type-square-brackets"
+      - include: "#type-round-brackets"
 
   type-curly-brackets:
     repository:
       punctuation:
         patterns:
-          - match: ','
+          - match: ","
             name: punctuation.separator.mapping.saga
           - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*):(?=['"`({\[\w\s]|$)
             name: punctuation.separator.key-value.saga
@@ -4097,9 +4107,9 @@ repository:
         captures:
           1: { name: punctuation.definition.mapping.saga }
         patterns:
-          - include: '#labels'
-          - include: '#punctuation'
-          - include: '#types'
+          - include: "#labels"
+          - include: "#punctuation"
+          - include: "#types"
           - include: $self
       - begin: |
           (?x)
@@ -4118,16 +4128,16 @@ repository:
         captures:
           1: { name: punctuation.definition.dictionary.saga }
         patterns:
-          - include: '#labels'
-          - include: '#punctuation'
-          - include: '#types'
+          - include: "#labels"
+          - include: "#punctuation"
+          - include: "#types"
           - include: $self
 
   type-round-brackets:
     repository:
       punctuation:
         patterns:
-          - match: ','
+          - match: ","
             name: punctuation.separator.arguments.saga
           - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.saga
@@ -4146,8 +4156,8 @@ repository:
         captures:
           1: { name: punctuation.definition.parameters.saga }
         patterns:
-          - include: '#param-bracket-content'
-          - include: '#types'
+          - include: "#param-bracket-content"
+          - include: "#types"
           - include: $self
       - begin: |
           (?x)
@@ -4167,8 +4177,8 @@ repository:
         captures:
           1: { name: punctuation.definition.binding-pattern.tuple.saga }
         patterns:
-          - include: '#punctuation'
-          - include: '#types'
+          - include: "#punctuation"
+          - include: "#types"
           - include: $self
       - begin: (\#\()\s*
         end: \s*(\))
@@ -4176,7 +4186,7 @@ repository:
         captures:
           1: { name: punctuation.definition.tuple.saga }
         patterns:
-          - include: '#types'
+          - include: "#types"
           - include: $self
       - begin: (\()\s*
         end: \s*(\))
@@ -4184,14 +4194,14 @@ repository:
         captures:
           1: { name: punctuation.definition.expression.saga }
         patterns:
-          - include: '#types'
+          - include: "#types"
           - include: $self
 
   type-square-brackets:
     repository:
       punctuation:
         patterns:
-          - match: ','
+          - match: ","
             name: punctuation.separator.sequence.saga
     patterns:
       - begin: |
@@ -4206,7 +4216,7 @@ repository:
         captures:
           1: { name: punctuation.definition.attribute-selector.saga }
         patterns:
-          - include: '#types'
+          - include: "#types"
           - include: $self
       - begin: |
           (?x)
@@ -4226,25 +4236,26 @@ repository:
         captures:
           1: { name: punctuation.definition.binding-pattern.array.saga }
         patterns:
-          - include: '#punctuation'
-          - include: '#types'
+          - include: "#punctuation"
+          - include: "#types"
           - include: $self
       - begin: (\#\[)\s*
         end: \s*(\])
         name: meta.brace.square.saga
         captures:
-          1: { name: punctuation.definition.tuple.saga }
+          1: { name: punctuation.definition.sequence.saga }
         patterns:
-          - include: '#punctuation'
+          - include: "#punctuation"
+          - include: "#types"
           - include: $self
       - begin: (\[)\s*
         end: \s*(\])
         name: meta.brace.square.saga
         captures:
-          1: { name: punctuation.definition.expression.saga }
+          1: { name: punctuation.definition.array.saga }
         patterns:
-          - include: '#punctuation'
-          - include: '#types'
+          - include: "#punctuation"
+          - include: "#types"
           - include: $self
 
   type-keywords:
@@ -4259,11 +4270,7 @@ repository:
         name: keyword.operator.expression.$1of.saga
 
   type-operators:
-    patterns:
-      - match: \s*(--?>|~~?>)
-        name: keyword.operator.type.function.saga
-      - match: \s*(<--?|<~~?)
-        name: keyword.operator.type.channel.saga
+    old:
       - comment: Function types
         match: (?:^|\s+)(?:(\|)|(>))(?=['"`({\[\w])|(?<=['"`)}\]\w])(?:(\|)|(<))(?:$|\s+)
         captures:
@@ -4271,17 +4278,16 @@ repository:
           2: { name: keyword.operator.type.channel.saga }
           3: { name: keyword.operator.type.function.saga }
           4: { name: keyword.operator.type.channel.saga }
-      - &primary-operators
-        comment: Primary binary operators
-        match: (?<=['"`)}\]\w])(?:([>.]\.[.<] | \.\. | [=.]\.[.=])|(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=['"`({\[\w])
-        captures:
-          1: { name: keyword.operator.range.saga }
-          2: { name: keyword.operator.optional.saga }
-          3: { name: keyword.operator.assert.saga }
-          4: { name: keyword.operator.accessor.saga }
+
+    patterns:
+      - match: \s*(--?>|~~?>)
+        name: keyword.operator.type.function.saga
+      - match: \s*(<--?|<~~?)
+        name: keyword.operator.type.channel.saga
+      - *embedded-primary-operators
       - comment: type operators
-        match: \s*(?:(\+)|(\-)|(\*)|(\/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|([<>]))(?=$|[({\[\w'"\s])
-        captures:
+        match: (?<=['"`)}\]\w])(?:(\+)|(\-)|(\*)|(\/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|([<>]))(?=['"`({\[\w])
+        captures: &type-operators
           1: { name: keyword.operator.sum.saga }
           2: { name: keyword.operator.difference.saga }
           3: { name: keyword.operator.product.saga }
@@ -4295,6 +4301,9 @@ repository:
           11: { name: keyword.operator.negation.saga }
           12: { name: keyword.operator.macro.dollar.saga }
           13: { name: keyword.operator.class.saga }
+      - comment: type operators
+        match: (?<=^|[({\[\s])(?:(\+)|(\-)|(\*)|(\/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|([<>]))(?=[\s)}\]]|$)
+        captures: *type-operators
 
   # Clauses and Keywords
 
@@ -4304,7 +4313,7 @@ repository:
     captures:
       1: { name: punctuation.definition.parameters.saga }
     patterns:
-      - include: '#param-bracket-content'
+      - include: "#param-bracket-content"
       - include: $self
 
   declaration-clause:
@@ -4323,10 +4332,10 @@ repository:
             name: entity.name.namespace.saga
           - match: *class-name
             name: entity.name.trait.saga
-          - include: '#comments'
-          - include: '#brackets'
-          - include: '#comma'
-          - include: '#line-continuation'
+          - include: "#comments"
+          - include: "#brackets"
+          - include: "#comma"
+          - include: "#line-continuation"
       - applyEndPatternLast: true
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(extends)(?!\B|\p{Pd}+\b)\s*
         end: (?=.)|$
@@ -4339,27 +4348,27 @@ repository:
             name: entity.name.module.saga
           - match: *class-name
             name: entity.name.class.saga
-          - include: '#comments'
-          - include: '#brackets'
-          - include: '#comma'
-          - include: '#line-continuation'
+          - include: "#comments"
+          - include: "#brackets"
+          - include: "#comma"
+          - include: "#line-continuation"
       - match: \s*(?<!\*)\*(?!\*)\s*
         name: keyword.generator.asterisk.saga
-      - include: '#comments'
-      - include: '#comma'
-      - include: '#line-continuation'
-      - include: '#type-keywords'
-      - include: '#type-square-brackets'
-      - include: '#brackets'
-      - include: '#type-signature'
-      - include: '#literals'
+      - include: "#comments"
+      - include: "#comma"
+      - include: "#line-continuation"
+      - include: "#type-keywords"
+      - include: "#type-square-brackets"
+      - include: "#brackets"
+      - include: "#type-signature"
+      - include: "#literals"
       - applyEndPatternLast: true
         begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]))
         end: (?=)|$
         beginCaptures:
           1: { name: punctuation.definition.annotation.saga }
         patterns:
-          - include: '#types'
+          - include: "#types"
       - match: ::|\.
         name: punctuation.separator.namespace.saga
       - match: \s+
@@ -4378,10 +4387,12 @@ repository:
                 public|private|protected|final|readonly|override
                 |global|local|intern|extern|implicit|explicit
                 |post|get|set|put|delete|required|optional
+                |checked|unchecked|delegate|safe|unsafe
 
                 |sealed|abstract|impure|pure|early|late
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
+                |changed|unchanged|open|opened|closed?
 
                 |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
@@ -4399,14 +4410,14 @@ repository:
           |interface|enum|module|struct
           |protocol|iterator|macro|query
           |object|contract|trait|style
-          |element|property
+          |element|property|model
         )
         (?!\B|\p{Pd}+\b)
       )
     captures:
       1:
         patterns:
-          - include: '#modifiers'
+          - include: "#modifiers"
 
   modifiers:
     patterns:
@@ -4418,6 +4429,7 @@ repository:
             public|private|protected|final|readonly|override
             |global|local|intern|extern|implicit|explicit
             |post|get|set|put|delete|required|optional
+            |checked|unchecked|delegate|safe|unsafe
           )
           (?!\B|\p{Pd}+\b)
           \s*
@@ -4430,6 +4442,7 @@ repository:
             sealed|abstract|impure|pure|early|late
             |covar|contra|a?sync|static|dynamic|lazy
             |eager|bound|free|unique|struct|union
+            |changed|unchanged|open|opened|closed?
           )
           (?!\B|\p{Pd}+\b)
           \s*
@@ -4457,10 +4470,12 @@ repository:
           \s*
             (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
             (
-              function|procedure|method|type
-              |class|interface|enum|module|struct|protocol
-              |iterator|macro|query|object|contract
-              |trait|style|element|property
+              function
+              |procedure|method|type|class
+              |interface|enum|module|struct
+              |protocol|iterator|macro|query
+              |object|contract|trait|style
+              |element|property|model
             )
             (?!\B|\p{Pd}+\b)
           \s*
@@ -4502,14 +4517,14 @@ repository:
 
   keywords:
     patterns:
-      - include: '#modifier-keywords'
-      - include: '#validation-expression'
-      - include: '#module-expression'
-      - include: '#control-expression'
-      - include: '#query-expression'
-      - include: '#declaration-keywords'
-      - include: '#expression-keywords'
-      - include: '#general-keywords'
+      - include: "#modifier-keywords"
+      - include: "#validation-expression"
+      - include: "#module-expression"
+      - include: "#control-expression"
+      - include: "#query-expression"
+      - include: "#declaration-keywords"
+      - include: "#expression-keywords"
+      - include: "#general-keywords"
 
     repository:
       control-expression:
@@ -4532,12 +4547,12 @@ repository:
             patterns:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|as|only|except|default)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.module.saga
-              - include: '#type-keywords'
-              - include: '#declarations'
-              - include: '#strings'
-              - include: '#symbols'
-              - include: '#type-operators'
-              - match: ','
+              - include: "#type-keywords"
+              - include: "#declarations"
+              - include: "#strings"
+              - include: "#symbols"
+              - include: "#type-operators"
+              - match: ","
                 name: punctuation.separator.comma.saga
               - match: *entity-name
                 name: variable.other.readwrite.alias.saga
@@ -4553,9 +4568,13 @@ repository:
               \s*
               (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
                 (
-                  require|ensure|(de|in)(crease|crement)|throw|read|modifie
-                  |return|yield|varie|change|create|alter|delete|drop|rename
-                )s
+                  (?:
+                    require|ensure|(de|in)(crease|crement)|throw|read|assume
+                    |return|yield|varie|change|create|alter|delete|drop|rename
+                    |reveal
+                  )s?
+                  | modify|modifies
+                )
               (?!\B|\p{Pd}+\b)
               \s*
             name: keyword.control.validate.saga
@@ -4567,34 +4586,52 @@ repository:
           1: { name: keyword.control.query.saga }
         end: (?=[,;)}\]])|$
         patterns:
-          - include: '#query-body'
+          - include: "#query-body"
           - include: $self
 
       query-body:
         patterns:
-          - include: '#in-clause'
-          - include: '#where-clause'
-          - include: '#join-clause'
-          - include: '#sort-clause'
-          - include: '#select-clause'
-          - include: '#group-clause'
-          - include: '#limit-clause'
-          - include: '#reduce-clause'
+          - include: "#in-clause"
+          - include: "#where-clause"
+          - include: "#join-clause"
+          - include: "#sort-clause"
+          - include: "#select-clause"
+          - include: "#group-clause"
+          - include: "#limit-clause"
+          - include: "#reduce-clause"
 
         repository:
           in-clause:
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
+            begin: |
+              (?x)
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+                (
+                  in|of
+                )
+              (?!\B|\p{Pd}+\b)
+              \s*
             beginCaptures:
               1: { name: keyword.control.query.saga }
               2: { patterns: [include: $self] }
               3: { name: keyword.control.query.saga }
             end: (?=[,;)}\]])|$
             patterns:
-              - include: '#query-body'
+              - include: "#query-body"
               - include: $self
 
           join-clause:
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:full|part|self|cross)?(?!\B|\p{Pd}+\b)\s*\b(?:inner|outer|left|right)?(?!\B|\p{Pd}+\b)\s*\bjoin)(?!\B|\p{Pd}+\b)\s*
+            begin: |
+              (?x)
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+                (
+                  \b (?:full|part|self|cross)? \b \s*
+                  \b (?:inner|outer|left|right)? \b \s*
+                  \b (?:join)
+                )
+              (?!\B|\p{Pd}+\b)
+              \s*
             beginCaptures:
               1: { name: keyword.control.query.saga }
               2: { patterns: [include: $self] }
@@ -4603,94 +4640,148 @@ repository:
             patterns:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b([io]nto|equal)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.saga
-              - include: '#query-body'
+              - include: "#query-body"
               - include: $self
 
           where-clause:
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where|having|filter|reject)(?!\B|\p{Pd}+\b)\s*
+            begin: |
+              (?x)
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+                (
+                  where|having|filter|reject
+                )
+              (?!\B|\p{Pd}+\b)
+              \s*
             beginCaptures:
               1: { name: keyword.control.query.saga }
             end: (?=[,;)}\]])|$
             patterns:
-              - include: '#query-body'
+              - include: "#query-body"
               - include: $self
 
           sort-clause:
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:sort|order)(?!\B|\p{Pd}+\b)\s*\b(?:asc|desc)?(?!\B|\p{Pd}+\b)\s*\b(?:by|with)?)(?!\B|\p{Pd}+\b)\s*
+            begin: |
+              (?x)
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+                (
+                  \b (?:sort|order) \b \s*
+                  \b (?:asc|desc)? \b \s*
+                  \b (?:by|with)?
+                )
+              (?!\B|\p{Pd}+\b)
+              \s*
             beginCaptures:
               1: { name: keyword.control.query.saga }
             end: (?=[,;)}\]])|$
             patterns:
-              - include: '#query-body'
+              - include: "#query-body"
               - include: $self
 
           select-clause:
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:select|map)(?!\B|\p{Pd}+\b)\s*\b(?:unique|any|all)?)(?!\B|\p{Pd}+\b)\s*
+            begin: |
+              (?x)
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+                (
+                  \b (?:select|map) \b \s*
+                  \b (?:unique|any|all|some|every)?
+                )
+              (?!\B|\p{Pd}+\b)
+              \s*
             beginCaptures:
               1: { name: keyword.control.query.saga }
             end: (?=[,;)}\]])|$
             patterns:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.saga
-              - include: '#query-body'
+              - include: "#query-body"
               - include: $self
 
           limit-clause:
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:take|drop|limit|offset)(?!\B|\p{Pd}+\b)\s*\b(?:first|last|head|tail)?)(?!\B|\p{Pd}+\b)\s*
+            begin: |
+              (?x)
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+                (
+                  \b (?:take|drop|limit|offset) \b \s*
+                  \b (?:first|last|head|tail)?
+                )
+              (?!\B|\p{Pd}+\b)
+              \s*
             beginCaptures:
               1: { name: keyword.control.query.saga }
             end: (?=[,;)}\]])|$
             patterns:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.saga
-              - include: '#query-body'
+              - include: "#query-body"
               - include: $self
 
           reduce-clause:
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((?:fold|reduce|scan)(?!\B|\p{Pd}+\b)\s*\b(?:left|right)?)(?!\B|\p{Pd}+\b)\s*
+            begin: |
+              (?x)
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+                (
+                  \b (?:fold|reduce|scan) \b \s*
+                  \b (?:first|last|left|right)?
+                )
+              (?!\B|\p{Pd}+\b)
+              \s*
             beginCaptures:
               1: { name: keyword.control.query.saga }
             end: (?=[,;)}\]])|$
             patterns:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.saga
-              - include: '#query-body'
+              - include: "#query-body"
               - include: $self
 
           group-clause:
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(group)(?!\B|\p{Pd}+\b)\s*
+            begin: |
+              (?x)
+              \s*
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+                (
+                  group
+                )
+              (?!\B|\p{Pd}+\b)
+              \s*
             beginCaptures:
               1: { name: keyword.control.query.saga }
             end: (?=[,;)}\]])|$
             patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|into)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|[io]nto)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.query.saga
-              - include: '#query-body'
+              - include: "#query-body"
               - include: $self
 
   declarations:
     patterns:
-      - include: '#variable'
-      - include: '#declare'
-      - include: '#style'
-      - include: '#markup'
-      - include: '#function'
-      - include: '#procedure'
-      - include: '#method'
-      - include: '#class'
-      - include: '#interface'
-      - include: '#enum'
-      - include: '#module'
-      - include: '#iterator'
-      - include: '#macro'
-      - include: '#query'
-      - include: '#object'
-      - include: '#trait'
-      - include: '#component'
-      - include: '#property'
-      - include: '#contract'
-      - include: '#struct'
-      - include: '#protocol'
+      - include: "#variable"
+      - include: "#declare"
+      - include: "#style"
+      - include: "#markup"
+      - include: "#function"
+      - include: "#procedure"
+      - include: "#method"
+      - include: "#class"
+      - include: "#interface"
+      - include: "#enum"
+      - include: "#module"
+      - include: "#iterator"
+      - include: "#macro"
+      - include: "#query"
+      - include: "#object"
+      - include: "#trait"
+      - include: "#component"
+      - include: "#property"
+      - include: "#contract"
+      - include: "#struct"
+      - include: "#protocol"
+      - include: "#model"
 
     repository:
       style:
@@ -4701,10 +4792,10 @@ repository:
           1: { name: storage.type.style.saga }
         name: meta.style.saga
         patterns:
-          - include: '#style-rules'
-          - include: '#style-pair'
-          - include: '#style-block'
-          - include: '#declaration-clause'
+          - include: "#style-rules"
+          - include: "#style-pair"
+          - include: "#style-block"
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.style.saga
 
@@ -4715,7 +4806,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.component.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.component.saga
             patterns: *html-tag-names
@@ -4741,7 +4832,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.function.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.function.saga
 
@@ -4752,7 +4843,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.method.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.method.saga
 
@@ -4763,7 +4854,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.procedure.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.procedure.saga
 
@@ -4774,7 +4865,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.class.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.class.saga
 
@@ -4785,7 +4876,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.interface.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.interface.saga
 
@@ -4796,7 +4887,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.enum.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.enum.saga
 
@@ -4807,7 +4898,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.module.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.module.saga
 
@@ -4818,9 +4909,20 @@ repository:
         beginCaptures:
           1: { name: storage.type.iterator.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.iterator.saga
+
+      model:
+        applyEndPatternLast: true
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(model)(?!\B|\p{Pd}+\b)\s*
+        end: (?=)|$
+        beginCaptures:
+          1: { name: storage.type.model.saga }
+        patterns:
+          - include: "#declaration-clause"
+          - match: *entity-name
+            name: entity.name.model.saga
 
       macro:
         applyEndPatternLast: true
@@ -4829,7 +4931,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.macro.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.macro.saga
 
@@ -4840,7 +4942,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.query.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.query.saga
 
@@ -4851,7 +4953,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.object.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.object.saga
 
@@ -4862,7 +4964,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.trait.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.trait.saga
 
@@ -4873,7 +4975,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.contract.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.contract.saga
 
@@ -4884,7 +4986,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.protocol.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.protocol.saga
 
@@ -4895,7 +4997,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.struct.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.struct.saga
 
@@ -4906,7 +5008,7 @@ repository:
         beginCaptures:
           1: { name: storage.type.property.saga }
         patterns:
-          - include: '#declaration-clause'
+          - include: "#declaration-clause"
           - match: *entity-name
             name: entity.name.property.saga
 
@@ -4937,10 +5039,12 @@ repository:
                 public|private|protected|final|readonly|override
                 |global|local|intern|extern|implicit|explicit
                 |post|get|set|put|delete|required|optional
+                |checked|unchecked|delegate|safe|unsafe
 
                 |sealed|abstract|impure|pure|early|late
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
+                |changed|unchanged|open|opened|closed?
 
                 |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
@@ -4956,7 +5060,7 @@ repository:
               function|procedure|method|type
               |class|interface|enum|module|struct|protocol
               |iterator|macro|query|object|contract
-              |trait|style|element|property
+              |trait|style|element|property|model
             )
             \b
           )
@@ -4964,7 +5068,7 @@ repository:
         captures:
           1: { name: entity.name.method.saga }
           2: { name: keyword.operator.assignment.saga }
-          3: { patterns: [include: '#modifier-keywords'] }
+          3: { patterns: [include: "#modifier-keywords"] }
       - begin: |
           (?x)
 
@@ -4985,10 +5089,12 @@ repository:
                 public|private|protected|final|readonly|override
                 |global|local|intern|extern|implicit|explicit
                 |post|get|set|put|delete|required|optional
+                |checked|unchecked|delegate|safe|unsafe
 
                 |sealed|abstract|impure|pure|early|late
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
+                |changed|unchanged|open|opened|closed?
 
                 |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
@@ -5004,12 +5110,12 @@ repository:
         captures:
           1: { name: entity.name.method.saga }
           2: { name: keyword.operator.assignment.saga }
-          3: { patterns: [include: '#modifier-keywords'] }
+          3: { patterns: [include: "#modifier-keywords"] }
           4: { name: punctuation.separator.arguments.saga }
         endCaptures:
           1: { name: punctuation.separator.arguments.saga }
         patterns:
-          - include: '#param-bracket-content'
+          - include: "#param-bracket-content"
           - include: $self
       - comment: |
           Function def before function keyword
@@ -5032,10 +5138,12 @@ repository:
                 public|private|protected|final|readonly|override
                 |global|local|intern|extern|implicit|explicit
                 |post|get|set|put|delete|required|optional
+                |checked|unchecked|delegate|safe|unsafe
 
                 |sealed|abstract|impure|pure|early|late
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
+                |changed|unchanged|open|opened|closed?
 
                 |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
@@ -5051,7 +5159,7 @@ repository:
               function|procedure|method|type
               |class|interface|enum|module|struct|protocol
               |iterator|macro|query|object|contract
-              |trait|style|element|property
+              |trait|style|element|property|model
             )
             \b
           )
@@ -5059,7 +5167,7 @@ repository:
         captures:
           1: { name: entity.name.saga }
           2: { name: keyword.operator.assignment.saga }
-          3: { patterns: [include: '#modifier-keywords'] }
+          3: { patterns: [include: "#modifier-keywords"] }
       - begin: |
           (?x)
 
@@ -5080,10 +5188,12 @@ repository:
                 public|private|protected|final|readonly|override
                 |global|local|intern|extern|implicit|explicit
                 |post|get|set|put|delete|required|optional
+                |checked|unchecked|delegate|safe|unsafe
 
                 |sealed|abstract|impure|pure|early|late
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
+                |changed|unchanged|open|opened|closed?
 
                 |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
@@ -5099,12 +5209,12 @@ repository:
         captures:
           1: { name: entity.name.saga }
           2: { name: keyword.operator.assignment.saga }
-          3: { patterns: [include: '#modifier-keywords'] }
+          3: { patterns: [include: "#modifier-keywords"] }
           4: { name: punctuation.separator.arguments.saga }
         endCaptures:
           1: { name: punctuation.separator.arguments.saga }
         patterns:
-          - include: '#param-bracket-content'
+          - include: "#param-bracket-content"
           - include: $self
 
   argument-list:
@@ -5135,7 +5245,7 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|property
+              |element|property|model
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|each|repeat|while
@@ -5156,20 +5266,20 @@ repository:
       1: { name: punctuation.separator.arguments.saga }
     end: (?<!\|)(\|)(?!\|)
     patterns:
-      - include: '#param-bracket-content'
+      - include: "#param-bracket-content"
       - include: $self
 
   clauses:
     patterns:
-      - include: '#for-clause'
-      - include: '#if-clause'
-      - include: '#match-clause'
-      - include: '#catch-clause'
-      - include: '#with-clause'
-      - include: '#do-clause'
-      - include: '#type-clause'
-      - include: '#new-clause'
-      - include: '#case-clause'
+      - include: "#for-clause"
+      - include: "#if-clause"
+      - include: "#match-clause"
+      - include: "#catch-clause"
+      - include: "#with-clause"
+      - include: "#do-clause"
+      - include: "#type-clause"
+      - include: "#new-clause"
+      - include: "#case-clause"
 
     repository:
       new-clause:
@@ -5181,10 +5291,10 @@ repository:
         patterns:
           - match: *entity-name
             name: entity.name.instance.saga
-          - include: '#type-keywords'
-          - include: '#type-square-brackets'
-          - include: '#parameter-brackets'
-          - include: '#round-brackets'
+          - include: "#type-keywords"
+          - include: "#type-square-brackets"
+          - include: "#parameter-brackets"
+          - include: "#round-brackets"
 
       type-clause:
         patterns:
@@ -5194,14 +5304,14 @@ repository:
             beginCaptures:
               1: { name: keyword.operator.expression.$1.saga }
             patterns:
-              - include: '#types'
+              - include: "#types"
           - applyEndPatternLast: true
             begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)(?!\B|\p{Pd}+\b)\s*
             end: (?=)|$
             captures:
               1: { name: keyword.other.typedef.saga }
             patterns:
-              - include: '#types'
+              - include: "#types"
               - match: \s*([?:]?=)\s*
                 captures:
                   1: { name: keyword.operator.assignment.saga }
@@ -5289,17 +5399,17 @@ repository:
                 captures:
                   1: { name: punctuation.definition.expression.saga }
                 patterns:
-                  - include: '#argument-list'
+                  - include: "#argument-list"
                   - applyEndPatternLast: true
                     begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
                     end: (?=)|$
                     beginCaptures:
                       1: { name: keyword.control.switch.saga }
                     patterns:
-                      - include: '#types'
+                      - include: "#types"
                   - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|as)(?!\B|\p{Pd}+\b)\s*
                     name: keyword.control.switch.saga
-                  - include: '#type-keywords'
+                  - include: "#type-keywords"
                   - include: $self
 
       with-clause:
@@ -5345,10 +5455,12 @@ repository:
                 public|private|protected|final|readonly|override
                 |global|local|intern|extern|implicit|explicit
                 |post|get|set|put|delete|required|optional
+                |checked|unchecked|delegate|safe|unsafe
 
                 |sealed|abstract|impure|pure|early|late
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
+                |changed|unchanged|open|opened|closed?
 
                 |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
@@ -5365,7 +5477,7 @@ repository:
               function|procedure|method|type
               |class|interface|enum|module|struct|protocol
               |iterator|macro|query|object|contract
-              |trait|style|element|property
+              |trait|style|element|property|model
             )
             \b
           )
@@ -5373,7 +5485,7 @@ repository:
         captures:
           1: { name: entity.name.saga }
           2: { name: punctuation.separator.key-value.saga }
-          3: { patterns: [include: '#modifier-keywords'] }
+          3: { patterns: [include: "#modifier-keywords"] }
       - begin: |
           (?x)
           (?<=(?:^ | [{;,]) \s*)
@@ -5395,10 +5507,12 @@ repository:
                 public|private|protected|final|readonly|override
                 |global|local|intern|extern|implicit|explicit
                 |post|get|set|put|delete|required|optional
+                |checked|unchecked|delegate|safe|unsafe
 
                 |sealed|abstract|impure|pure|early|late
                 |covar|contra|a?sync|static|dynamic|lazy
                 |eager|bound|free|unique|struct|union
+                |changed|unchanged|open|opened|closed?
 
                 |recursive|operator|curried|inline|prefix|suffix
                 |infix|binary|unary|left|right
@@ -5415,12 +5529,12 @@ repository:
         captures:
           1: { name: entity.name.saga }
           2: { name: punctuation.separator.key-value.saga }
-          3: { patterns: [include: '#modifier-keywords'] }
+          3: { patterns: [include: "#modifier-keywords"] }
           4: { name: punctuation.separator.arguments.saga }
         endCaptures:
           1: { name: punctuation.separator.arguments.saga }
         patterns:
-          - include: '#param-bracket-content'
+          - include: "#param-bracket-content"
           - include: $self
       - match: |
           (?x)
@@ -5437,26 +5551,26 @@ repository:
           1:
             name: constant.other.object.key.saga
             patterns:
-              - include: '#constants'
-              - include: '#numbers'
-              - include: '#symbols'
-              - include: '#string-content'
+              - include: "#constants"
+              - include: "#numbers"
+              - include: "#symbols"
+              - include: "#string-content"
 
   # Punctuation
 
   punctuation:
     patterns:
-      - include: '#line-continuation'
-      - include: '#comma'
-      - include: '#semicolon'
+      - include: "#line-continuation"
+      - include: "#comma"
+      - include: "#semicolon"
 
   line-continuation:
     begin: \s*(`)\s*(?=/[/*]\s|$)
-    end: ^\s*
+    end: ^\s*(?=\S)
     captures:
       1: { name: punctuation.separator.continuation.line.saga }
     patterns:
-      - include: '#comments'
+      - include: "#comments"
   comma:
     match: \s*(,)
     name: punctuation.separator.expression.saga
@@ -5469,10 +5583,10 @@ repository:
 
   brackets:
     patterns:
-      - include: '#curly-brackets'
-      - include: '#square-brackets'
-      - include: '#round-brackets'
-      - include: '#angle-brackets'
+      - include: "#curly-brackets"
+      - include: "#square-brackets"
+      - include: "#round-brackets"
+      - include: "#angle-brackets"
 
   angle-brackets:
     patterns:
@@ -5483,15 +5597,15 @@ repository:
         captures:
           1: { name: punctuation.type.arguments.saga }
         patterns:
-          - include: '#punctuation'
-          - include: '#brackets'
-          - include: '#types'
+          - include: "#punctuation"
+          - include: "#brackets"
+          - include: "#types"
 
   curly-brackets:
     repository:
       punctuation:
         patterns:
-          - match: ','
+          - match: ","
             name: punctuation.separator.mapping.saga
           - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*):(?=['"`({\[\w\s]|$)
             name: punctuation.separator.key-value.saga
@@ -5515,8 +5629,8 @@ repository:
         captures:
           1: { name: punctuation.definition.binding-pattern.object.saga }
         patterns:
-          - include: '#labels'
-          - include: '#punctuation'
+          - include: "#labels"
+          - include: "#punctuation"
           - include: $self
       - begin: |
           (?x)
@@ -5538,8 +5652,8 @@ repository:
         captures:
           1: { name: punctuation.definition.mapping.saga }
         patterns:
-          - include: '#labels'
-          - include: '#punctuation'
+          - include: "#labels"
+          - include: "#punctuation"
           - include: $self
       - begin: |
           (?x)
@@ -5561,8 +5675,8 @@ repository:
         captures:
           1: { name: punctuation.definition.dictionary.saga }
         patterns:
-          - include: '#labels'
-          - include: '#punctuation'
+          - include: "#labels"
+          - include: "#punctuation"
           - include: $self
       - begin: |
           (?x)
@@ -5615,8 +5729,8 @@ repository:
         captures:
           1: { name: punctuation.definition.mapping.saga }
         patterns:
-          - include: '#labels'
-          - include: '#punctuation'
+          - include: "#labels"
+          - include: "#punctuation"
           - include: $self
       - begin: |
           (?x)
@@ -5635,8 +5749,8 @@ repository:
         captures:
           1: { name: punctuation.definition.dictionary.saga }
         patterns:
-          - include: '#labels'
-          - include: '#punctuation'
+          - include: "#labels"
+          - include: "#punctuation"
           - include: $self
       - begin: (\#\{)\s*
         end: \s*(\})
@@ -5657,7 +5771,7 @@ repository:
     repository:
       punctuation:
         patterns:
-          - match: ','
+          - match: ","
             name: punctuation.separator.arguments.saga
           - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
             name: keyword.operator.expression.as.saga
@@ -5677,7 +5791,7 @@ repository:
         captures:
           1: { name: punctuation.definition.parameters.saga }
         patterns:
-          - include: '#param-bracket-content'
+          - include: "#param-bracket-content"
           - include: $self
       - begin: |
           (?x)
@@ -5697,7 +5811,7 @@ repository:
         captures:
           1: { name: punctuation.definition.binding-pattern.tuple.saga }
         patterns:
-          - include: '#punctuation'
+          - include: "#punctuation"
           - include: $self
       - begin: (\#\()\s*
         end: \s*(\))
@@ -5718,7 +5832,7 @@ repository:
     repository:
       punctuation:
         patterns:
-          - match: ','
+          - match: ","
             name: punctuation.separator.sequence.saga
 
     patterns:
@@ -5753,23 +5867,23 @@ repository:
         captures:
           1: { name: punctuation.definition.binding-pattern.array.saga }
         patterns:
-          - include: '#punctuation'
+          - include: "#punctuation"
           - include: $self
       - begin: (\#\[)\s*
         end: \s*(\])
         name: meta.brace.square.saga
         captures:
-          1: { name: punctuation.definition.tuple.saga }
+          1: { name: punctuation.definition.sequence.saga }
         patterns:
-          - include: '#punctuation'
+          - include: "#punctuation"
           - include: $self
       - begin: (\[)\s*
         end: \s*(\])
         name: meta.brace.square.saga
         captures:
-          1: { name: punctuation.definition.expression.saga }
+          1: { name: punctuation.definition.array.saga }
         patterns:
-          - include: '#punctuation'
+          - include: "#punctuation"
           - include: $self
 
   # Support
@@ -5785,7 +5899,7 @@ repository:
         name: support.constant.color.w3c-standard-color-name.css.saga
       - match: (?x)\b( aliceblue|antiquewhite|aquamarine|azure|beige|bisque|blanchedalmond|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|gainsboro|ghostwhite|gold|goldenrod|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|limegreen|linen|magenta|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|oldlace|olivedrab|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|rebeccapurple|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|thistle|tomato|transparent|turquoise|violet|wheat|whitesmoke|yellowgreen )(?!\B|\p{Pd}+\b)
         name: support.constant.color.w3c-extended-color-name.css.saga
-      - match: (?x)\b(currentColor)(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( currentColor )(?!\B|\p{Pd}+\b)
         name: support.constant.color.current.css.saga
       - match: (?x)\b( ActiveBorder|ActiveCaption|AppWorkspace|Background|ButtonFace|ButtonHighlight|ButtonShadow|ButtonText|CaptionText|GrayText|Highlight|HighlightText|InactiveBorder|InactiveCaption|InactiveCaptionText|InfoBackground|InfoText|Menu|MenuText|Scrollbar|ThreeDDarkShadow|ThreeDFace|ThreeDHighlight|ThreeDLightShadow|ThreeDShadow|Window|WindowFrame|WindowText )(?!\B|\p{Pd}+\b)
         name: support.constant.color.system.css.saga
@@ -5805,10 +5919,10 @@ repository:
 
   entities:
     patterns:
-      - include: '#function-names'
-      - include: '#constant-names'
-      - include: '#type-names'
-      - include: '#variable-names'
+      - include: "#function-names"
+      - include: "#constant-names"
+      - include: "#type-names"
+      - include: "#variable-names"
 
   type-names:
     comment: Names for built-in types
@@ -5888,9 +6002,9 @@ repository:
         patterns:
           - match: '''''|\$\$|%%|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: double-quoted verbatim, interpolated, format, and template string
         begin: (?<!"+)((?i:fprs|fpsr|frps|frsp|fspr|fsrp|pfrs|pfsr|prfs|prsf|psfr|psrf|rfps|rfsp|rpfs|rpsf|rsfp|rspf|sfpr|sfrp|spfr|sprf|srfp|srpf))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -5901,9 +6015,9 @@ repository:
         patterns:
           - match: '""|\$\$|%%|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: single-quoted verbatim, interpolated, and format string
         begin: (?<!'+)((?i:frs|fsr|rfs|rsf|sfr|srf))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -5914,8 +6028,8 @@ repository:
         patterns:
           - match: '''''|\$\$|%%'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
       - comment: double-quoted verbatim, interpolated, and format string
         begin: (?<!"+)((?i:frs|fsr|rfs|rsf|sfr|srf))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -5926,8 +6040,8 @@ repository:
         patterns:
           - match: '""|\$\$|%%'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
       - comment: single-quoted verbatim, interpolated, and template string
         begin: (?<!'+)((?i:prs|psr|rps|rsp|spr|srp))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -5938,8 +6052,8 @@ repository:
         patterns:
           - match: '''''|\$\$|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-expression"
+          - include: "#embedded-placeholder"
       - comment: double-quoted verbatim, interpolated, and template string
         begin: (?<!"+)((?i:prs|psr|rps|rsp|spr|srp))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -5950,8 +6064,8 @@ repository:
         patterns:
           - match: '""|\$\$|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-expression"
+          - include: "#embedded-placeholder"
       - comment: single-quoted verbatim, format, and template string
         begin: (?<!'+)((?i:fpr|frp|pfr|prf|rfp|rpf))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -5962,8 +6076,8 @@ repository:
         patterns:
           - match: '''''|%%|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: double-quoted verbatim, format, and template string
         begin: (?<!"+)((?i:fpr|frp|pfr|prf|rfp|rpf))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -5974,8 +6088,8 @@ repository:
         patterns:
           - match: '""|%%|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: single-quoted interpolated, format, and template string
         begin: (?<!'+)((?i:fps|fsp|pfs|psf|sfp|spf))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -5984,10 +6098,10 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: double-quoted interpolated, format, and template string
         begin: (?<!"+)((?i:fps|fsp|pfs|psf|sfp|spf))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -5996,10 +6110,10 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: single-quoted verbatim and interpolated string
         begin: (?<!'+)((?i:rs|sr))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6010,7 +6124,7 @@ repository:
         patterns:
           - match: '''''|\$\$'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
+          - include: "#embedded-expression"
       - comment: double-quoted verbatim and interpolated string
         begin: (?<!"+)((?i:rs|sr))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6021,7 +6135,7 @@ repository:
         patterns:
           - match: '""|\$\$'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
+          - include: "#embedded-expression"
       - comment: single-quoted interpolated and format string
         begin: (?<!'+)((?i:fs|sf))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6030,9 +6144,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
       - comment: double-quoted interpolated and format string
         begin: (?<!"+)((?i:fs|sf))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6041,9 +6155,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
       - comment: single-quoted verbatim and template string
         begin: (?<!'+)((?i:pr|rp))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6054,7 +6168,7 @@ repository:
         patterns:
           - match: '''''|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-placeholder'
+          - include: "#embedded-placeholder"
       - comment: double-quoted verbatim and template string
         begin: (?<!"+)((?i:pr|rp))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6065,7 +6179,7 @@ repository:
         patterns:
           - match: '""|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-placeholder'
+          - include: "#embedded-placeholder"
       - comment: single-quoted interpolated and template string
         begin: (?<!'+)((?i:ps|sp))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6074,9 +6188,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-placeholder"
       - comment: double-quoted interpolated and template string
         begin: (?<!"+)((?i:ps|sp))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6085,9 +6199,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-placeholder"
       - comment: single-quoted format and template string
         begin: (?<!'+)((?i:fp|pf))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6096,9 +6210,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: double-quoted format and template string
         begin: (?<!"+)((?i:fp|pf))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6107,9 +6221,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: single-quoted verbatim string
         begin: (?<!'+)((?i:r))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6138,8 +6252,8 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
       - comment: double-quoted interpolated string
         begin: (?<!"+)((?i:s))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6148,8 +6262,8 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
       - comment: single-quoted template string
         begin: (?<!'+)((?i:p))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6158,8 +6272,8 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-placeholder"
       - comment: double-quoted template string
         begin: (?<!"+)((?i:p))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6168,5 +6282,5 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-placeholder"
