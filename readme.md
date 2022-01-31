@@ -1,16 +1,16 @@
-# Protea
+# SagaScript: A Great Alternative to JavaScript
 
-Protea is a type-safe, multi-paradigm programming language that combines modern, successful concepts from other languages, while still preserving the original design of JavaScript: to be used on the frontend and backend; and to build fast, scalable and maintainable cross-platform applications with ease.
+SagaScript is a type-safe, multi-paradigm programming language that combines modern, successful concepts from other languages, while still preserving the original design of JavaScript: to be used on the frontend and backend; and to build fast, scalable and maintainable cross-platform applications with ease.
 
 ```swift
 // Code
 export module Fibonacci {
-  public recursive function fibonacci(let n: int): int {
+  public recursive function fibonacci(let n: Int): Int {
     if (n < 2) return n;
     return fibonacci(n - 1) + fibonacci(n - 2);
   }
 }
-x(x, y, z)
+
 // Styling
 style App as body {
   color: ${|props|
@@ -26,17 +26,20 @@ element HelloMessage implements React.Component {
 }
 
 // Schemas
-interface BlogPost {
-  id: id!
-  title: string!
-  content: string!
+model BlogPost {
+  id       : Int @id @default(this.autoIncrement())
+  title    : String
+  content  : String?
+  published: Boolean | String @default(false)
+  author   : User? @relation(fields: [authorId], references: [id])
+  authorId : Int?
 }
 
 // Queries
-query MdxBlogPost(title: string) {
+query MdxBlogPost(title: String) {
   mdx(`title == title) {
-    `id: string
-    `title: string
+    `id: String
+    `title: String
   }
 }
 ```
@@ -45,32 +48,37 @@ query MdxBlogPost(title: string) {
 
 ## Overview
 
-Protea is a language for building fullstack cross-platform apps and libraries for the modern and future web. Protea looks like JS, acts like JS, and compiles to the highest quality of clean, readable and performant JS, directly runnable in browsers and Node.
+SagaScript is a language for building fullstack cross-platform apps and libraries for the modern and future web. SagaScript looks like JS, acts like JS, and compiles to the highest quality of clean, readable and performant JS, directly runnable in browsers and Node.
 
 **Feature list:**
 
 - Human-understandable error messages
 - Blazing-fast compiler that outputs readable JS
-- Familiar JavaScript-based syntax
+- Syntax inspired by modern languages, while still keeping its JavaScript style
+- First-class syntactic support for:
+  - Components
+  - Styling
+  - Schemas
+  - Queries
+  - Testing
 - First-class JSX, CSS and GraphQL support
-- Extensible syntax and macros
 - Strong and robust type system
 - A mix of declarative and imperative approaches
 - Compilation to JavaScript or native code
 - Comprehensive standard library
-- Unified frontend and backend features
-- Built-in testing and profiling syntax
 - Support for JS, TS and other JS frameworks
 
 ---
 
-If you have any questions, comments or suggestions for the language, please feel free to open an issue on GitHub and I will promptly respond. Protea is currently still in its conceptual and experimental stage, as I am still experimenting on the language's grammar.
+If you have any questions, comments or suggestions for the language, please feel free to open an issue on GitHub and I will promptly respond. SagaScript is currently still in its conceptual and experimental stage, as I am still experimenting on the language's grammar.
 
 ---
 
-# Protea's Reference
+# SagaScript's Reference
 
-This document serves as a guide to Protea's syntax and reference, and would be a big help for you if you already know some JavaScript and TypeScript. This reference is structured in a way that can be read from top to bottom, and later concepts will be easily found and recognized.
+This document serves as a guide to SagaScript's syntax and reference, and would be a big help for you if you already know some JavaScript and TypeScript. This reference is structured in a way that can be read from top to bottom, and later concepts will be easily found and recognized.
+
+SagaScript is inspired by many modern languages, such as Scala, Kotlin, Go, ReScript, Rust, C# and some other modern languages, while still maintaining a familiar syntax and design to JavaScript, Flow and TypeScript.
 
 ## Hello World!
 
@@ -90,26 +98,21 @@ element App {
 
 ## Installation and Project Structure
 
-A Protea project is a directory that contains the following directories:
+A SagaScript project is a directory that contains the following directories:
 
-```txt
-| app/ -- frontend codes
-| dist/ -- compilation output
-| env/ -- environment files (optional)
-| node_modules/ -- Node modules (optional)
-| src/ -- backend codes
-| test/ -- testing codes
-| types/ -- type definitions (optional)
-| main.ptm -- main file (or name it something else)
-| package.yaml -- Protea's config file (very similar)
-| package.json -- JavaScript file
-```
+- `app/`: frontend code
+- `src/`: backend code
+- `lib/`: libraries
+- `test/`: testing codes
+- `types/`: type definitions
+- `main.ptm`: main file (or name it something else)
+- `package.yml`: SagaScript's config file (very similar)
 
 ### New Project
 
 ```
 cd ~/path/to/new-project
-npm install @protea-lang/core
+npm install @SagaScript-lang/core
 npm run build
 node dist/src/Demo.pt.mjs
 ```
@@ -121,12 +124,12 @@ The `npm run build` command compiles all your code into JavaScript and uses Node
 Run the same command as above, but this time you can save it as a devDependency in your `package.json` file.
 
 ```
-npm install @protea-lang/core --save-dev
+npm install @SagaScript-lang/core --save-dev
 npm run build
-node dist/src/Demo.pt.mjs
+node dist/src/demo.pt.mjs
 ```
 
-Then create a Protea configuration at the root, then you can configure convenience scripts to run your files:
+Then create a SagaScript configuration at the root, then you can configure convenience scripts to run your files:
 
 ```json
 {
@@ -135,17 +138,11 @@ Then create a Protea configuration at the root, then you can configure convenien
     "pta:build": "pta compile /*",
     "pta:start": "pta run init"
   },
-  "protea": {
+  "SagaScript": {
     "sources": [{ "dir": "src/**" }],
     "packageSpecs": [
       {
         "module": "es6",
-        "inSource": true,
-        "includeLibs": true,
-        "options": { "prettify": true }
-      },
-      {
-        "module": "ts",
         "inSource": true,
         "includeLibs": true,
         "options": { "prettify": true }
@@ -159,123 +156,23 @@ Then create a Protea configuration at the root, then you can configure convenien
 
 ### File extensions
 
-Protea source code uses one of three different file extensions:
+SagaScript source code uses one of three different file extensions:
 
-- `.pt` for **module files**
-- `.pts` for **script files**
-- `.pti` for **interface files**
+- `.sga` for **module files**
+- `.sgs` for **script files**
+- `.sgi` for **interface files**
 
-The starting point for a Protea project is a `main.pt` file, which is the entry point for your application. The `main.pt` file is a module file that contains a `function main()` declaration. It is required when starting a project.
+The starting point for a SagaScript project is a `main.pt` file, which is the entry point for your application. The `main.pt` file is a module file that contains a `function main()` declaration. It is required when starting a project.
 
 Script files do not need to have a `main()` declaration, and can run other scripts, and import other modules. Script files are compiled to JavaScript and run in Node.JS.
 
 Interface files are used to define interfaces for your application. They are compiled to either TypeScript or Flow type declaration files, which supplement the compiled JavaScript. A module file can have a corresponding interface file.
 
-## Overview
-
-This section serves as a comparison of how Protea's syntax differs from TypeScript's.
-
-### Semicolons and commas
-
-| JavaScript                  | Protea                |
-| --------------------------- | --------------------- |
-| Rules enforced by formatter | No semicolons needed! |
-
-### Comments
-
-Comments require at least a leading space or a newline.
-
-| JavaScript             | Protea                   |
-| ---------------------- | ------------------------ |
-| `/* Comment */`        | Same                     |
-| `// Line comment`      | Same                     |
-| `/** JSDoc comment */` | Same                     |
-| No JSDoc line comment  | `/// JSDoc line comment` |
-
-### Semicolons and commas
-
-| JavaScript     | Protea                        |
-| -------------- | ----------------------------- |
-| `const x = 5;` | Same                          |
-| `var x = 5;`   | Same (`var` works like `let`) |
-| `let x = 5;`   | Same                          |
-
-### Numbers
-
-JavaScript has no distinction between integers and floats.
-
-| JavaScript                       | Protea     |
-| -------------------------------- | ---------- |
-| `1, 0.1`                         | Same       |
-| `.1`                             | Same       |
-| `1.`                             | Same       |
-| `010, `                          | `008`      |
-| `0b10`, `0x10`, `0o10`           | Same       |
-| `10e-10`                         | Same       |
-| `0x10*2**10`                     | `0x10p+10` |
-| `+`, `-`, `*`, `/`, `%`, `**`    | Same       |
-| `&`, `\|`, `^`, `~1`             | Same       |
-| `<`, `>`, `<=`, `>=`, `==`, `!=` | Same       |
-| `x != y`                         | `x <> y`   |
-| `x < y ? -1 : x > y ? 1 : 0`     | `x <=> y`  |
-
-### Strings
-
-| JavaScript                     | Protea                   |
-| ------------------------------ | ------------------------ |
-| `"Hello world!"`               | Same                     |
-| `'Hello world!'`               | Same                     |
-| `"\0\b\t\r\v\n\f\'\"\\"`       | Same                     |
-| `"\x00\u0000\u{10ffff}"`       | Same                     |
-| `` String.raw`Hello world!` `` | `r'Hello world!'`        |
-| `` `Hello ${name}!` ``         | `s'Hello $name!'`        |
-| No string formatting           | `sf'Hello $name%upper!'` |
-| `'x' + 'y'`                    | Same                     |
-
-### Booleans and Constants
-
-| JavaScript              | Protea               |
-| ----------------------- | -------------------- |
-| `true`, `false`, `null` | Same                 |
-| `undefined`             | `void`               |
-| `NaN`                   | `nan`                |
-| `Infinity`              | `infinity`           |
-| `this`                  | Same, `self`         |
-| `!true`                 | Same                 |
-| `&&`, `\|\|`            | Same                 |
-| No XOR operator         | `x ^^ y`             |
-| No deep equality        | `a == b`, `a != b`   |
-| Same                    | `a === b`, `a !== b` |
-| `a == b`, `a != b`      | `a =~ b`, `a !~ b`   |
-
-### Regular expressions
-
-Regular expressions use the same syntax as Ruby, Python and Perl, and use JavaScript to augment them.
-
-| JavaScript          | Protea                 |
-| ------------------- | ---------------------- |
-| `/pattern/g`        | Same                   |
-| No multi-line regex | `//pattern//g`         |
-| No multi-line regex | `//pattern/replace//g` |
-
-### Functions
-
-Regular expressions use the same syntax as Ruby, Python and Perl, and use JavaScript to augment them.
-
-| JavaScript | Protea |
-| --- | --- |
-| `arg => retVal` | `\|arg\| retVal` |
-| `(arg): int => retVal` | `\|arg\|: int => retVal` |
-| `function named(arg): int {...}` | Same |
-| `const f = function(arg) {...} ` | Same |
-| `add(4, add(5, 6))` | Same |
-| `z(y(x))` | `x\|>y\|>z`, `z<\|y<\|x`, `(y+>z)(x)`, `(z<+y)(x)` |
-
-## Basic concepts
+### Concepts
 
 #### Comments
 
-Comments are the same as JavaScript, except that block comments can be nested within each other. Comments `/*` and `/**` can be nested inside other comments. Comments beginning with `///` and `/**` compile to JSDoc and support Markdown.
+Block comments `/*` and `//*` can be nested. `///` and `/**` are used for documentation purposes.
 
 ```swift
 // This is a single line comment.
@@ -293,17 +190,23 @@ Comments are the same as JavaScript, except that block comments can be nested wi
 
 #### Semicolons and commas
 
-Semicolons and commas are a bit buggy in JS, but there are two simple rules regarding the insertion of semicolons and commas. The general rule is that semicolons and commas are inserted if the token on the next line can begin a statement or expression.
+Semicolons and commas in SagaScript are optional and you can use newlines to separate expressions or statements. The general rule is that semicolons and commas are inserted if the token on the next line can begin a statement or expression.
+
+```swift
+function main() { println("hello") }
+```
 
 ### Identifiers
 
-Protea identifiers come in two flavors: regular identifiers and operators. Operators begin with any combination of alphanumerics, underscores, dashes, digits and marks (diacritics) provided it does not begin with a number and end in any number of dashes.
+There are two types of identifiers in SagaScript: regular identifiers and operators.
+
+Regular identifiers begin with a letter or underscore, followed by any number of letters, numbers, underscores or combining marks and separated by dashes.
 
 ```swift
 let regex = /\b[\pL\pPc][\pL\pM\pNd\pPc\pPd]*\b/
 ```
 
-Operators consist of all Unicode punctuation `P` and symbol `S` characters except the comma `,`, semicolon `;`, single, double and backquote `'`, `"` and `` ` ``, and also the opening and closing brackets `(){}[]`.
+Operators consist of any combination of Unicode punctuation or symbol characters excluding the semicolon, comma, quotes, backtick and opening/closing brackets.
 
 ```swift
 /[\pP\pS--[,;'"`(){}\[\]]]+/
@@ -311,46 +214,64 @@ Operators consist of all Unicode punctuation `P` and symbol `S` characters excep
 
 #### Identifier comparison
 
-Protea uses a special comparison algorithm when comparing two names - this is to accomodate different naming conventions while not having to worry about the actual spelling of the names.
+Two identifiers are considered equal if the following condition result returns true:
 
 ```swift
-"FOOBAR" != "FooBar" != "Foo_bar" != "foo_bar"
-"FOOBar" == "FOO_Bar" == "FOO-Bar"
-"__FOO__BAR__" == "FOO__BAR__" == "FOOBAR"
-"Foo_bar" == "Foobar" == "Foo-bar"
-"fooBar" == "foobar" == "foo_bar" == "foo-bar"
-"église" == "eglise"
+method String.identEquals(b: string): boolean =
+  this.asIdent() == b.asIdent()
+
+method String.asIdent(): string {
+  let ident = id
+    // decompose into Unicode NFD
+    .normalize(:nfd)
+    // remove dashes, underscores and marks
+    .replace(/[^\pL\pNd]/, '')
+
+  let { begin, end } = /
+    // ignore leading digits
+    (?!\pNd)
+      // match uppercase
+      (?<begin> [\pL\pPc] [\pL\pM\pNd\pPc\pPd--\pLl]*)?
+      // then lowercase
+      (?<end> [\pL\pM\pNd\pPc\pPd]*)
+    // ignore trailing dashes
+    \b
+  /.exec(ident)
+
+  // leave beginning as-is and
+  // case-fold remainder to lowercase
+  return (begin + end.lowerCase())
+}
+
+a.identEquals(b)
 ```
 
-The algorithm works as follows:
+That means only the first non-lowercase letters are compared as they are manner. Other letters are compared case-insensitively and non-alphanumeric characters are ignored.
+
+You can use your own preferred spelling style, so you won't need to remember the exact spelling of a method, constant or variable.
+
+```swift
+FOOBAR != Foo_Bar != foo_bar
+FOOBar == FOO_Bar == FOO-Bar
+__FOO__BAR__ == FOO__BAR__ == FOOBAR
+FooBar == Foo_bar == Foobar == Foo-bar
+fooBar == foobar == foo_bar == foo-bar
+église == eglise
+```
 
 - Text is Unicode-normalized canonically.
 - Non-alphanumeric characters are discarded
 - names are case-folded to lowercase except the first few non-lowercase characters
 
-```swift
-function cmpIdent(a: string, b: string): boolean =
-  transformIdent(a) == transformIdent(b)
-
-function transformIdent(id: string): string {
-  let ident = id.normalize(:nfd).replace(/[^\pL\d]/, '')
-  let { begin, end } = /\b
-    (?!\d) // ignore leading digits
-      (?<begin>[\pPc\pL][\d\pL\pM\pPc\pPd--\pLl]*)?
-      (?<end>[\d\pL\pM\pPc\pPd]*)
-    \b // ignore trailing dashes
-  /.exec(ident)
-  return (begin + end.foldCase)
-}
-```
-
 Note that this comparison does not apply to keywords, which are all written in all-lowercase.
 
 ### Keywords
 
-A lot of the keywords in Protea are very familiar, such as `if`, `for`, `while`, `try`, but also some new ones like `redo` and `retry`. Because of how names are compared, you can use any number of non-alphanumerics to "strop" a keyword to turn it into an identifier: insert any number of leading and/or trailing underscores as you wish.
+A lot of the keywords in SagaScript are very familiar, such as `if`, `for`, `while`, `try`, but also some new ones like `redo` and `retry`.
 
-Keywords also become names when part of a qualified name, such as `x.for.then` or `y::loop`, as well as within literals such as style blocks, interfaces and JSX (with some exceptions).
+Keywords are written entirely in lowercase. Because of this, you can use workarounds to turn them into identifiers: `if` can be written as `if_`, `iF` or `i_f`. They are also ignored when part of a qualified name, such as `x.for`, as well as within literals such as style blocks, interfaces and JSX (with some exceptions).
+
+Refer to the Appendix for the list of keywords.
 
 ```swift
 var _var = "Hello Stropping"
@@ -366,12 +287,12 @@ assert assert_
 
 ### Bindings
 
-Use `let` and `var` to declare mutable variables, and `let` or `val` to declare immutable variables.
+Use `let` and `var` to declare mutable variables, and `const` or `val` to declare immutable variables. Note that SagaScript's `var` behaves and compiles to `let`. The `val` keyword is a synonym for `const`.
 
 ```swift
-let greeting = "hello!"
-let score = 10
-let newScore = 10 + score
+const greeting = "hello!"
+const score = 10
+const newScore = 10 + score
 ```
 
 All bindings are scoped to the nearest enclosing block, never outside. They are also bound to any arguments passed to the enclosing function, including the binding itself.
@@ -379,9 +300,9 @@ All bindings are scoped to the nearest enclosing block, never outside. They are 
 The value of the last line of a block is implicitly returned.
 
 ```swift
-let message = {
-  let part1 = "hello"
-  let part2 = "world"
+const message = {
+  const part1 = "hello"
+  const part2 = "world"
   part1 ++ " " ++ part2
 }
 // `part1` and `part2` not accessible here!
@@ -404,17 +325,261 @@ for (let i = 0; i < 1000; i += 1) {
 All bindings are private by default; they can be made public by using the `public` or `export` keyword.
 
 ```swift
-module A = {
+module A {
   public let a = 3
   let b = 4
 }
 ```
 
+### Data Types
+
+SagaScript comes with a number of built-in data types, including numbers, strings, booleans, but also maps, sets, arrays, tuples, functions and regular expressions.
+
+```swift
+val int: Integer = 4
+var float: Float = 4.5
+val string: String = "hello"
+val bool: Boolean = true
+val regex: RegExp = /\b\c(\w*\i)?\b/
+val map: Map = { foo: "bar" }
+val set: Set = { :foo, "bar" }
+val array: Array = [1, 2, 3]
+val tuple: Tuple = (1, 2, 3)
+val func: Function = |x: int, y: int| { x + y }
+```
+
+There are two basic types of numeric literals: integers and floats. They can be extended with the help of type suffixes or operations with other numeric types: unsigned, imaginary, rational and complex numbers, and even arbitrary-precision `big` numbers.
+
+Numeric literals are case-insensitive.
+
+#### Integers
+
+For readability, underscore characters `_` may appear between digits. Leading zeroes may also appear at the beginning of said literal or after the prefix of multi-base literals.
+
+```swift
+1 // int
+1u // nat
+1i // int
+1un // bigint
+
+18446744073709551616 // bigint
+18_446_744_073_709_551_616 // bigint
+
+decimal = 11256099
+hex = 0x0123456789ABCDEF
+octal = 0o52740443
+binary = 0b101010111100000100100011
+```
+
+#### Floating points
+
+A binary, octal or hexadecimal floating literal is structured the same way as a decimal one except that the exponent scales the mantissa by powers of 2, and is prefixed with `0b`, `0o` or `0x` respectively.
+
+Underscores may appear between digits in the mantissa. Leading zeroes may also appear at the beginning of the mantissa.
+
+```swift
+1.0  // float
+1.0f // float
+1f   // float
+1r   // rat
+
+1j     // imag
+1 + 1j // comp
+
+decimal = 11256099.012e+14
+hex = 0xABC1234.012p-40
+octal = 0o52740443.012p-40
+binary = 0b10101011110.0000100100011p-40
+```
+
+#### Suffixes
+
+Several suffixes can be used in conjunction with one another, as shown in the previous example with floats.
+
+- `n` for unsigned
+- `l` for arbitrary-precision (i.e long)
+- `i` for imaginary numbers
+- `r` for rational numbers
+- `f` for floating point literals
+
+### Strings
+
+A string literal consists of a character sequence enclosed in either single or double quotes. By default, strings are escaped with a backslash. All escapes except triple-digit octal sequences are supported.
+
+```swift
+val string1 = "A string primitive";
+val string2 = 'Also a string primitive';
+```
+
+Normally these escapes are interpreted as the character itself, and would evaluate to the same value, just without the backslash.
+
+String literals can also be delimited by at least three single or double quotes, provided they end with _at least_ that many quotes of the same type. The rules for single- and double-quoted strings also apply.
+
+Some transformations are applied to string literals of this type:
+
+- all beginning and ending newlines and whitespace are discarded
+- newlines are normalized to `\n` and carriage returns discarded
+- all beginning indentation is based on the column of the opening quote, discarding whitespace as needed.
+
+```swift
+val greeting =
+assert '"
+Hello World
+"' == greeting
+```
+
+### Escapes
+
+Escape sequences are used to represent characters that would otherwise have a syntax error. Like a lot of languages, all escapes begin with a backslash. The first character of an escape sequence is the escape character, and the second character is the character to be escaped.
+
+Certain single-letter escapes represent non-printable, control characters:
+
+```
+\a    U+0007  alert or bell
+\b    U+0008  backspace
+\e    U+000B  escape
+\f    U+000C  form feed
+\n    U+000A  line feed or newline
+\p            platform-dependent newline
+\r    U+000D  carriage return
+\s    U+0020  space
+\t    U+0009  horizontal tab
+\v    U+000B  vertical tab
+\c[A-Za-z]    control character
+```
+
+A backslash-newline joins the next line to the current line, skipping any indentation.
+
+The escapes `\b`, `\d`, `\o`, `\u` and `\x`, allow you to encode Unicode code points as integers in a double-quoted string. The value of the literal is the value represented by the digits in the corresponding base. Any escape that also exceeds the upper limit of 0x10FFFF (decimal 1114111) will give a compile time error.
+
+```
+\b[01]+         binary
+\d[0-9]+        decimal
+\o[0-7]+        octal
+\u[0-9A-Fa-f]+  hexadecimal (UTF-16)
+\x[0-9A-Fa-f]+  hexadecimal (UTF-8)
+\N($id&*[:.])   unicode name where $id is an identifier
+```
+
+Code points in the ranges `80-FF` for `\x` and `D800-DFFF` for `\u` which are used to represent multi-byte characters or surrogate pairs respectively; they hence would be invalid if they appear on their own or form an invalid byte/character sequence.
+
+```swift
+"日本語"
+'日本語'
+"\u65e5\u672c\u8a9e"
+"\u0065e5\u0672c\u8a9e"
+"\x{E6,97,A5 E6,9C,AC E8,AA,9E}"
+```
+
+The same escape characters when followed immediately by curly brackets are used to encode code points or byte sequences without reusing and repeating the same syntax again. You can use commas, semicolons or spaces to separate the numbers, and each running sequence is checked for validity.
+
+```swift
+decimal = "\112569"
+hex = "\xABC12"
+octal = "\o52740"
+binary = "\b10101011110000010010"
+
+// "HELLO"
+"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
+"\d{72 69 76 76 79 65535}" == "\72\69\76\76\79"
+```
+
+The escape `\N` is used to represent a Unicode character sequences using a special notation reminiscent of LaTeX notation. The first argument can either be a name or its script, followed by the `:letter_name` or `.letter_form`. For instance `\NA` would equal capital A, and `\NAlpha` would equal the Greek capital letter `Α` (alpha).
+
+```swift
+// => "\u{1F60A}"
+"\u{1F600}" // => "😀"
+"\NPeseta" // "₧"
+"\Nemoji:smile" || "\N{emoji:smile}" // => 😀
+"\Nflag:SG" // => 🇸🇬
+"\Nkr{an nyeong ha se yo}" // 안녕하세요
+```
+
+### Prefixes
+
+String literals can have one or more of four unique prefixes immediately before the opening quote, in any order and combination. The `f` flag requires either the `s` and `p` flags to be enabled, while `s` and `p` cannot exist together.
+
+| Prefix | Sigil | Description |
+| --- | --- | --- |
+| `r` |  | Disables backslash escaping, thereby making the string verbatim |
+| `s` | `$` | Enables interpolation of variables and expressions |
+| `f` | `%` | Enables formatting |
+| `p` | `#` | Enables interpolation of template arguments |
+
+These flags trigger embedding of code in the string literal, through the use of sigil prefixing. If the `r` flag is enabled, an alternative escaping method is used, which is achieved by doubling the sigil if it forms a valid embedded expression on its own.
+
+#### Interpolation
+
+Strings can be interpolated with variables and expressions, using the `$` sigil. The most general form of interpolation encloses a block in between `${` and `}`, i.e. `${block}`.
+
+The simpler form consists of a `$`-sign without having to write curly braces around the expression. A subset of these expressions are supported, as shown below. Between the brackets, expressions and block statements are allowed.
+
+- a single identifier: `name`
+- a qualified name: `x.y.z` or `x::y::z`
+- an object accessor: `x[ ]`
+- a function call: `fn()`
+- a type casting operation: `<int>`
+- a type assertion: `name{int}`
+- and any combination of the like
+
+```swift
+val greeting = s"Hello $name!"
+val greeting = s"Hello $name.upper()!"
+val greeting = s"Hello ${name.upper()}!"
+```
+
+The expanded expression is type-checked as with all other expressions, and can be explicitly specified using either postfix curly or angle brackets immediately after the expression or before the closing bracket.
+
+### Templating
+
+Templating is a mechanism for embedding expressions in strings, and is used to interpolate template arguments, and **return a function** as opposed to evaluating them directly. The `p` sigil prefix is used to enable this feature.
+
+The simplest form of templating is a single variable name or numeric literal referring to the position or name of the template argument in the list of arguments, this time Those can be marked as optional or required, by prefixing it with `?` or `!`.
+
+Defaults and aliases can be applied within `#{}`.
+
+```swift
+p"You're #{adjective=`pretty}, #{endearment='my love'}."(
+  adjective=`hot, endearment=`cupcake
+)
+
+fp"Hey #name, there is a 0x#errNo%hex error!"(
+  name=`John, errNo=0xb12349
+)
+```
+
+### Formatting
+
+Formatting transforms the interpolated expressions before inserting it into the string, and is composed of a sequence of directives (i.e. methods) to be performed on said value, thus "formatting" the expression.
+
+The first directive is prefixed with the `%` sigil, followed by the name of the method to be applied. The method name can be followed by a literal or a set of arguments encased in a tuple. Further methods are chained together by a pipe `|`.
+
+```swift
+sf"Hello ${"world"}"
+sf"Hello ${"world"}%upper" // => "Hello WORLD"
+sf"${1234567890}%sep:(',')|sep:(id + 1)" // => "1,234,567,890"
+
+sf"Percentage correct answers: ${2/3}%deci:2|unit:('%')"
+s"Percentage correct answers: ${(2/3).deci(2).unit('%')}"
+```
+
+### Backtick strings
+
+Protea offers another way to represent unquoted (partially quoted) strings much more efficiently. It is used to represent identifiers as strings more efficiently (thus being easier to type) without having to quote them.
+
+The string ends as soon as the first non-word character is encountered, however you can also escape those characters by preceding it with a backslash---including spaces and newlines.
+
+```swift
+`hello
+`world
+`hello\ world == 'hello world'
+```
+
 ### Types
 
-Types are what makes Protea a strongly typed language. They are used to define the type of a binding, and are used to check the type of an expression.
+Types are what makes SagaScript a strongly typed language. They are used to define the type of a binding, and are used to check the type of an expression.
 
-Protea for the most part would infer a type of a binding from its syntax. For example, the following code would infer the type of `score` to be `int`, and `add` to be `int -> int`.
+SagaScript for the most part would infer a type of a binding from its syntax. For example, the following code would infer the type of `score` to be `int`, and `add` to be `int -> int`.
 
 ```swift
 let score = 10
@@ -483,7 +648,7 @@ type result<a, b> = Ok<a> | Error<b>
 
 type MyPayload = {data: string}
 
-type MyPayloadResults<errorType> = Array<Result<MyPayload, errorType>>
+type MyPayloadResults<ErrorType> = Array<Result<MyPayload, ErrorType>>
 
 let payloadResults: MyPayloadResults<string> = [
   Ok({data: "hi"}),
@@ -501,8 +666,8 @@ type JSON = (
   string | int | float | bool | null | Array | Object | JSON
 )
 
-rec type Student = {taughtBy: Teacher}
-rec type Teacher = {students: Array<Student>}
+recursive type Student = {taughtBy: Teacher}
+recursive type Teacher = {students: Array<Student>}
 ```
 
 #### Shorthands
@@ -512,7 +677,7 @@ Use a `!` on an object to mark all fields in the object as required, and `?` to 
 > A `data` declaration is the same as an interface in a lot of languages.
 
 ```swift
-data Person {
+interface Person {
   name: !string // required
   gender: `male + `female
   age: int // required
@@ -536,8 +701,8 @@ type IntOrString = int + string
 Or use set operations on objects:
 
 ```swift
-data A {a: int, b: int, c: int}
-data B {c: int, d: int, e: int}
+type A = {a: int, b: int, c: int}
+type B = {c: int, d: int, e: int}
 
 type C = B | A // {a: int, b: int, c: int, d: int, e: int}
 type D = B & A // {c: int}
