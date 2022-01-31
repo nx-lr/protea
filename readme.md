@@ -76,809 +76,777 @@ If you have any questions, comments or suggestions for the language, please feel
 
 # SagaScript's Reference
 
-This document serves as a guide to SagaScript's syntax and reference, and would be a big help for you if you already know some JavaScript and TypeScript. This reference is structured in a way that can be read from top to bottom, and later concepts will be easily found and recognized.
-
-SagaScript is inspired by many modern languages, such as Scala, Kotlin, Go, ReScript, Rust, C# and some other modern languages, while still maintaining a familiar syntax and design to JavaScript, Flow and TypeScript.
-
-## Hello World!
-
 ```swift
-// Backend
-function main(): void {
-  console.log('Hello World!')
-}
+/* Identifiers can begin with letters, underscores or currency symbols.
+   Further characters can include digits. Identifiers are case-sensitive. */
 
-// Frontend
-element App {
-  <div>
-    <h1>Hello, world!</h1>
-  </div>
-}
-```
+let ez: real = 1.10 // Constant. Can't be reassigned.
+var sivir = "I always take my toll, blood or gold." // Variable.
 
-## Installation and Project Structure
+var x = {}
+x.prop = {}
 
-A SagaScript project is a directory that contains the following directories:
+/* An operator identifier consists of symbols which can either be
+  non-quote or bracket punctuation, or symbols.
 
-- `app/`: frontend code
-- `src/`: backend code
-- `lib/`: libraries
-- `test/`: testing codes
-- `types/`: type definitions
-- `main.ptm`: main file (or name it something else)
-- `package.yml`: SagaScript's config file (very similar)
-
-### New Project
-
-```
-cd ~/path/to/new-project
-npm install @SagaScript-lang/core
-npm run build
-node dist/src/Demo.pt.mjs
-```
-
-The `npm run build` command compiles all your code into JavaScript and uses Node to execute it. During development you would run `npm run watch` instead to watch your files and recompile them when they change.
-
-### Integrate Into an Existing JS Project
-
-Run the same command as above, but this time you can save it as a devDependency in your `package.json` file.
-
-```
-npm install @SagaScript-lang/core --save-dev
-npm run build
-node dist/src/demo.pt.mjs
-```
-
-Then create a SagaScript configuration at the root, then you can configure convenience scripts to run your files:
-
-```json
-{
-  "name": "your-project-name",
-  "scripts": {
-    "pta:build": "pta compile /*",
-    "pta:start": "pta run init"
-  },
-  "SagaScript": {
-    "sources": [{ "dir": "src/**" }],
-    "packageSpecs": [
-      {
-        "module": "es6",
-        "inSource": true,
-        "includeLibs": true,
-        "options": { "prettify": true }
-      }
-    ],
-    "suffix": ".pt.mjs",
-    "dependencies": { "three": "^0.0.1" }
-  }
-}
-```
-
-### File extensions
-
-SagaScript source code uses one of three different file extensions:
-
-- `.sga` for **module files**
-- `.sgs` for **script files**
-- `.sgi` for **interface files**
-
-The starting point for a SagaScript project is a `main.pt` file, which is the entry point for your application. The `main.pt` file is a module file that contains a `function main()` declaration. It is required when starting a project.
-
-Script files do not need to have a `main()` declaration, and can run other scripts, and import other modules. Script files are compiled to JavaScript and run in Node.JS.
-
-Interface files are used to define interfaces for your application. They are compiled to either TypeScript or Flow type declaration files, which supplement the compiled JavaScript. A module file can have a corresponding interface file.
-
-### Concepts
-
-#### Comments
-
-Block comments `/*` and `//*` can be nested. `///` and `/**` are used for documentation purposes.
-
-```swift
-// This is a single line comment.
-/*
-  This is a multiline comment.
-  /* It can be nested. */
+The following operators/punctuation are considered built-in:
+// /> </ /* */ () [] {} . , : ; = .= := !. ? ?: # @ :: <- -> <: >:
 */
+binary let ‰ = |a, b| a.sub(b, '')
+// compiled output
+let permil = function (a, b) { a.sub(b, '') }
 
-/// This is a single line documentation comment.
-/**
-  This is a multiline documentation comment
-  /* It can be nested. */
-*/
-```
+/* A literal identifier is a string prefixed with @. */
+let @"hello world" = "hello world!"
 
-#### Semicolons and commas
+/* 'let' is immutable and hoisted, but can be redeclared. The binding you
+   refer to is the closest binding upward. */
+let result = 0
+let result = result + 2
+let result = result + 2
 
-Semicolons and commas in SagaScript are optional and you can use newlines to separate expressions or statements. The general rule is that semicolons and commas are inserted if the token on the next line can begin a statement or expression.
+/* 'val' bindings are also immutable, however they cannot be redeclared.
+   They are only assigned constant expressions, like enum members. */
+val result = 4
 
-```swift
-function main() { println("hello") }
-```
+/* Saga's compiler is smart to infer types and would make sure
+   they stay the same throughout its lifetime. Annotate with 'any'
+   to make it dynamic. */
+var name: str = 'Bob' // explicit annotation
+var name = 'Bob' // implicit inference
 
-### Identifiers
+/* Saga's compiler is smart to infer types and would make sure
+   they stay the same throughout its lifetime. Annotate with 'any'
+   to make it dynamic. */
+var (
+  greeting = 'hello' // `str`
+  score = 10 // `int`
+  newScore = 10 + score // `int`
+)
 
-There are two types of identifiers in SagaScript: regular identifiers and operators.
-
-Regular identifiers begin with a letter or underscore, followed by any number of letters, numbers, underscores or combining marks and separated by dashes.
-
-```swift
-let regex = /\b[\pL\pPc][\pL\pM\pNd\pPc\pPd]*\b/
-```
-
-Operators consist of any combination of Unicode punctuation or symbol characters excluding the semicolon, comma, quotes, backtick and opening/closing brackets.
-
-```swift
-/[\pP\pS--[,;'"`(){}\[\]]]+/
-```
-
-#### Identifier comparison
-
-Two identifiers are considered equal if the following condition result returns true:
-
-```swift
-method String.identEquals(b: string): boolean =
-  this.asIdent() == b.asIdent()
-
-method String.asIdent(): string {
-  let ident = id
-    // decompose into Unicode NFD
-    .normalize(:nfd)
-    // remove dashes, underscores and marks
-    .replace(/[^\pL\pNd]/, '')
-
-  let { begin, end } = /
-    // ignore leading digits
-    (?!\pNd)
-      // match uppercase
-      (?<begin> [\pL\pPc] [\pL\pM\pNd\pPc\pPd--\pLl]*)?
-      // then lowercase
-      (?<end> [\pL\pM\pNd\pPc\pPd]*)
-    // ignore trailing dashes
-    \b
-  /.exec(ident)
-
-  // leave beginning as-is and
-  // case-fold remainder to lowercase
-  return (begin + end.lowerCase())
-}
-
-a.identEquals(b)
-```
-
-That means only the first non-lowercase letters are compared as they are manner. Other letters are compared case-insensitively and non-alphanumeric characters are ignored.
-
-You can use your own preferred spelling style, so you won't need to remember the exact spelling of a method, constant or variable.
-
-```swift
-FOOBAR != Foo_Bar != foo_bar
-FOOBar == FOO_Bar == FOO-Bar
-__FOO__BAR__ == FOO__BAR__ == FOOBAR
-FooBar == Foo_bar == Foobar == Foo-bar
-fooBar == foobar == foo_bar == foo-bar
-église == eglise
-```
-
-- Text is Unicode-normalized canonically.
-- Non-alphanumeric characters are discarded
-- names are case-folded to lowercase except the first few non-lowercase characters
-
-Note that this comparison does not apply to keywords, which are all written in all-lowercase.
-
-### Keywords
-
-A lot of the keywords in SagaScript are very familiar, such as `if`, `for`, `while`, `try`, but also some new ones like `redo` and `retry`.
-
-Keywords are written entirely in lowercase. Because of this, you can use workarounds to turn them into identifiers: `if` can be written as `if_`, `iF` or `i_f`. They are also ignored when part of a qualified name, such as `x.for`, as well as within literals such as style blocks, interfaces and JSX (with some exceptions).
-
-Refer to the Appendix for the list of keywords.
-
-```swift
-var _var = "Hello Stropping"
-type obj = { type: int }
-let _object_ = new obj(~type = 9)
-assert _object_ is obj
-assert _object_.type == 9
-var _var = 42; let let_ = 8
-assert _var + let_ == 50
-var assert_ = true
-assert assert_
-```
-
-### Bindings
-
-Use `let` and `var` to declare mutable variables, and `const` or `val` to declare immutable variables. Note that SagaScript's `var` behaves and compiles to `let`. The `val` keyword is a synonym for `const`.
-
-```swift
-const greeting = "hello!"
-const score = 10
-const newScore = 10 + score
-```
-
-All bindings are scoped to the nearest enclosing block, never outside. They are also bound to any arguments passed to the enclosing function, including the binding itself.
-
-The value of the last line of a block is implicitly returned.
-
-```swift
-const message = {
-  const part1 = "hello"
-  const part2 = "world"
+/* Create indented blocks with the 'do' keyword. Do-blocks return
+   their last statement. */
+var message = do {
+  var part1 = "hello", part2 = "world"
   part1 ++ " " ++ part2
 }
-// `part1` and `part2` not accessible here!
-```
-
-All the code blocks and functions use the same block scoping mechanism.
-
-```swift
-if (displayGreeting) {
-  let message = "Enjoying the docs so far?"
-  print(message)
+/* Variables are scoped by curly brackets and can't be accessed from
+   outside. */
+var displayGreeting
+if (displayGreeting = true) {
+  var message = 'Enjoying the docs so far?'
+  print message
 }
 
-for (let i = 0; i < 1000; i += 1) {
-  let message = "This is a loop"
-  print(message)
+/* Destructuring assignment can be performed on:
+... tuples or arrays */
+let pair = [1, "Hello"]
+let [one, hello] = pair
+print(hello) // 'Hello'
+
+/* ... records or objects */
+let alice = {name: 'Alice', age: 42, job: 'Programmer'}
+let {name, *details} = alice
+print(details) // { age: 42, job: 'Programmer' }
+
+/* ... or even on function arguments: */
+let sum = |*args: Number[]|: Number = args.reduce(|x, y| x + y, 0)
+let numberArray = [1, 2, 3]
+let runningTotal = sum(*numberArray) // 6
+```
+
+### Built-In Types
+
+```swift
+// 8 primitive types
+let null: Null = null
+let bool: Boolean = false
+let num: Int = 0
+let float: Float = 1.0
+let str: String = ''
+let func: Function<(), Void> = def () {}
+let regex: RegExp = / /
+let symbol: Symbol = sym``
+
+// Data structures
+let array: Array = []
+var tuple: Tuple = #[] // immutable array
+let set: Set = {}
+let set: FrozenSet = {}
+let map: Map = #{}
+var record: Record = #{}
+var seq: Sequence = ()
+var fSeq: FrozenSeq = #()
+
+/// BOOLEANS, NULL AND UNDEFINED
+true false
+null void // void reserved for JS interop
+
+/// NUMBERS
+/* Leading zeroes and underscores are ignored.
+Numbers are cast into this order: int > frac > real > complex */
+1 // decimal integer
+0x1 // hexadecimal
+0o1 // octal
+0b1 // binary
+
+0.1 0x1f.0 3.0 // decimal 'real'
+0x0.3p100 0o1.3p40 0b0.0p40 // p is exponent
+
+infinity
+nan // not a number
+
+/// STRINGS
+/* Strings are encoded as UTF-16 tries. They can allow embedding of
+variables/properties and expressions. */
+
+/// Strings are multiline
+"hello
+world"
+
+'Hello world' // single-quoted string
+"Hello World!" // double-quoted string
+`Hello // unquoted string
+chalk(s"{blue 'hello world!'}") // Tagged template literal (ES6)
+
+/// Multi-quoted strings
+"""x"""
+// Strings end until the last remaining multi-quote
+"""""x""""""""
+
+/// verbatim string
+var message = r"No escapes needed!"
+
+/// interpolation
+var message = s"Value of E = $Math.E"
+
+/// formatting
+var [a, b] = [10, 20], c = a + b
+var message = sf"Sum of $a%str and $b%str is $c%str"
+message = "Sum of " + a.str() + " and " + b.str() + " is " + c.str()
+// above says "Sum of 10 and 20 is 30"
+
+/// Escape Sequences
+'\'' // single quote
+'\"' // double quote
+'\`' // backtick
+'\\' // literal backslash
+'\a' // alert
+'\b' // backspace
+'\e' // escape
+'\f' // form feed
+'\n' // newline
+'\r' // carriage return
+'\t' // tab
+'\v' // vertical tab
+'\p' // platform-specific newline
+'\s' // space
+'\ca\ma' // control character
+'\b0101011011' // explicit bytes
+'\300' // Character with decimal value 300
+'\o300' // Character with octal value 300 (U+00C0)
+'\x30' // ASCII character U+30
+'\u40AC' // 16-bit Unicode character U+40AC
+'\u{10FFFF}' // non-BMP Unicode character U+10FFFF
+'\u{0 1 2 3 4}' // multiple Unicode characters
+
+'\u{10ffff}' == '\u{10FFFF}' == '\u10ffff' == '\x10ffff'
+
+/// REGULAR EXPRESSIONS
+/*
+Saga's regular expression engine runs on Oniguruma by K. Kosako,
+hence bringing the best regex syntax from other languages.
+
+Saga's regexes also allow:
+- interpolation
+- free spacing
+- multi-line mode
+- comments: (?#inline) /*block*/ //end-of-line
+*/
+let @regex = /^1?$|^(11+?)\1+?$/g
+let isPrime = /
+  (?<element> \g<starttag> \g<content>* \g<endtag> ){0}
+  (?<starttag> < \g<name> \s* > ){0}
+  (?<name> [a-zA-Z_:]+ ){0}
+  (?<content> [^<&]+ (\g<element> | [^<&]+)* ){0}
+  (?<endtag> </ \k<name+1> >){0}
+  \g<element>
+/
+
+/// FUNCTIONS
+/// If there are no arguments, simply write `=> ()` or `=>`
+function add(a, b) = a + b
+function add(a, b): number { a + b }
+add = |a: number, b: number|: number { a + b }
+
+// _ is default to "params" object by default
+let add: <T extends number>(a: T, b: T) T = | | _0 + _1
+
+/// SYMBOLS (JavaScript interop only)
+let symbol = :'$'
+let symbol = :symbol
+
+/// DATA STRUCTURES
+// Commas optional when each property is listed on its own line
+let array = [1, 2, 3]
+let list = #[1, 2, 3]
+let set = { 1, 2, 3 }
+let frozenSet = { 1, 2, 3 }
+let map = { a: 1, b: 2, c: 3 }
+let record = #{ a: 1, b: 2, c: 3 }
+let sequence = (1, 2, 3)
+let sequence = #(1, 2, 3) // alternative syntax
+
+// Map keys as identifier strings
+{a:1,b:2,c:3}=={"a":1,`b:2,'c':3}
+{a:1}.a // 1
+{:a:`b,:c:3}::c==3 // Symbol keys
+
+// This would compile to:
+let sequence = function* () {
+  for (var x = 1; x <= 3; x++) yield x
 }
+
+/* A trailing comma is required for sequences */
+() // null/unit literal
+(,) // empty sequence
+(1) // not a sequence: a singleton value
+(1,) // sequence with one element
+(1, 2) // argument list with two elements
+(1, 2,) // sequence with two elements
+(1 to infinity) // infinite list
+1 to infinity /* infinite list
+  (for, from, to and til expressions produce sequences) */
 ```
 
-All bindings are private by default; they can be made public by using the `public` or `export` keyword.
+### Operators
 
 ```swift
-module A {
-  public let a = 3
-  let b = 4
+/// HIGHEST PRECEDENCE
+x() /* function call */
+x[] /* bracket accessor (computed accessor) */
+new list [] /* Java-style data structure literal */
+new X(); new class {} /* object initializer */
+
+/// OBJECT OPERATORS
+x.y /* property accessor */
+x?.y /* optional chaining */
+x!.y /* non-null assertion */
+
+// Use the dot operator to access properties.
+const adventurer = { name: 'Alice', cat: { name: 'Dinah', bark() = } }
+
+x..y /* cascade */
+x..y /* cascade */
+x::y /* namespace accessor */
+x->y /* function binding operator */
+x<-y /* reverse binding operator */
+
+/// UNARY OPERATORS
+/// Unary operations are evaluated right to left.
+x! /* _check_: non-null assertion  */
+x? /* _isset_: existence check */
+!x /* _not_: logical not */
+~x /* _lnot_: bitwise not */
++x /* _plus_: number conversion */
+-x /* _neg_: negation */
+typeof x /* runtime type checking */
+sizeof x /* size of object */
+length x /* length of object */
+nameof x /* name of object */
+void x /* converts things into null */
+delete x.prop /* delete property from object */
+
+int x Object.keys x /* unary function calls */
+
+/// ARITHMETIC OPERATORS
+x ** y /* _exp_: exponent */
+
+/* ~/ returns an integer, %% returns a positive number */
+x * y/* _times_: multiplication repeat */
+x / y /* _div_: division split group */
+x ~/ y /* _fldiv_: floor division */
+x % y /* _rem_: remainder format map */
+x %% y /* _mod_: unsigned remainder */
+
+x + y /* _add_: addition concatenation */
+x - y /* _minus_: subtraction difference */
+
+/* Maximum/minimum operators return whichever is larger or smaller */
+x *> y /* _min_: maximum */
+x <* y /* _max_: minimum */
+
+/// STRING/LIST OPERATORS
+'x' ++ 'y' /* _concat_: concatenate */
+'x' -- 'x' /* _sub_: replace, filter */
+
+/// BITWISE OPERATORS
+x >> x /* _shr_: bitwise right shift */
+x << x /* _shl_: bitwise left shift */
+x >>> x /* _ushr_: unsigned bitwise right shift */
+x <<< x /* _ushl_: unsigned bitwise left shift */
+
+/// BITWISE/SET OPERATORS
+x & x /* _bitand_: bitwise and; intersection */
+x | x /* _bitor_: bitwise or; union */
+x ^ x /* _bitxor_: bitwise xor; symmetric difference */
+
+/// COMPARISON AND EQUALITY
+/*
+Two objects can be compared only when both operands are of
+the same type.
+
+Comparisons can be chained: x <= y <= z == x <= y && y <= z
+You can define a custom <=> or _cmp_ function which
+would return one of three different values, -1, 0 or 1.
+
+| Operator | True if <=> is |
+|----------|----------------|
+|    <     |       -1       |
+|    >     |       1        |
+|    <=    |    -1 or 0     |
+|    >=    |     0 or 1     |
+|    ==    |       0        |
+|    !=    |    -1 or 1     |
+*/
+x > y /* _great_: more than */
+x < y /* _less_: less than */
+x >= y /* _geq_: more than or equal to */
+x <= y /* _leq_: less than or equal to */
+x <=> y /* _cmp_: three-way comparison */
+
+/// EQUALITY OPERATORS
+/*
+Abstract equality works the same way as strict equality,
+however both objects are serialized to strings with
+_str_ and compared.
+*/
+x == y /* _equal_: strict equality */
+x != y /* _neq_: strict inequality */
+x =< y /* _sim_: abstract equality */
+x <> y /* _diff_: abstract inequality */
+
+/// MEMBERSHIP/TYPE OPERATORS
+in /* string/array presence */
+of /* object key presence */
+is /* instance of a class */
+!in !of is! /* opposite of the above */
+o.prop set x /* set property of object */
+as as! as? /* type-casting */
+
+/// LOGICAL OPERATORS
+/*
+Logical operators compare booleans and return booleans.
+If you want JavaScript logical operators, use !: and ?:.
+*/
+x && y /* _and_: logical and */
+x || y /* _or_: logical or */
+x ^^ y /* _xor_: logical xor */
+
+/// COALESCING OPERATORS
+x ?? y /* _coal_:nullish coalescing */
+x !? y /* _ncoal_: non-null coalescing */
+x ?: y /* _tern_: falsy coalescing */
+x !: y /* _ntern_:truthy coalescing */
+
+/// FUNCTION OPERATORS
+x \Math.imul\ y /* infix function call */
+
+x |> y /* _pipe_: forward pipe */
+x <| y /* _pipl_: backward pipe */
+x +> y /* _cmps_: forward composition */
+x <+ y /* _cmpl_: backward composition */
+
+/// RANGE LITERALS
+1 to 10 /* closed range */
+1 til 10 /* end-exclusive range */
+1 til 10 by 2 /* end-exclusive range with step */
+
+/// ASSIGNMENT
+= .= :=
++= -= *= /= %=
+++= --= **= ~/= %%=
+&= |= ^= &&= ||= ^^=
+<<= >>= >>>= <<<=
+??= !?= ?:= !:=
+*>= <*= <|= |>= <+= +>=
+
+/// CONTROL FLOW
+throw new ZeroDivisionError()
+await.all x
+return x
+yield x
+yield from x
+```
+
+### Control Flow
+
+```swift
+/**
+ * You can omit a block if there is only one statement following
+ * the expression in the construct.
+ * Loops double as comprehensions, and return sequences.
+ * Other constructs return their last statements if they ran.
+ */
+
+/// IF-STATEMENTS
+// We provide many ways to write conditional statements:
+x ? y : z
+x ! y : z
+
+// unless is "if not"
+// eless is "else unless"
+
+if (x < 0) {
+  "negative"
+} elsif (x == 0) {
+  "zero"
+} else {
+  "positive"
 }
+
+if (x < 0) -x else x
+
+// `in` loops through values , including sequences
+// `of` loops through keys
+for (let x in xs) if (x > 0): return x * x
+for (let x in xs; let y in ys) println(x + y)
+
+while (x >= 0) { x = f(x) }
+repeat { x += 10 } while (x >= 0)
+repeat {
+  print(r'Please don''t try this!')
+  break
+}
+
+switch (value) {
+  case (Some(value)) doSomething(value)
+  case ((type int) as value) doSomething(value)
+  case (Some(value) if value > 10) doSomething(value)
+  case (let [a, b, ...rest]) doSomething(rest)
+  case ({foo: let value}) doSomething(value)
+  case (let /(?<value>foo)/) doSomething(value)
+  case (|x = value| x % 2 == 0) doSomething(value)
+	case ("Hello") handleHello()
+  default doSomething()
+}
+
+try {
+  body
+} catch match (ex: Exception) {
+  case (ex is IOException) handle()
+  default handle()
+}
+
+var xs = (from let #[x, y] in [1 to 200].entries()
+  where x < 100 // filter
+  join let n in 1 to 100 on n == x // join
+  order by |x, y| x - y // sort
+  group by |x| x % 2 = 0 // group
+  select x) // map
+
+/// CONTROL TRANSFER STATEMENTS
+break
+continue x
+goto x
+scope x
+fallthru
+yield x
+yield* x
+return x
 ```
 
-### Data Types
-
-SagaScript comes with a number of built-in data types, including numbers, strings, booleans, but also maps, sets, arrays, tuples, functions and regular expressions.
+### Functions
 
 ```swift
-val int: Integer = 4
-var float: Float = 4.5
-val string: String = "hello"
-val bool: Boolean = true
-val regex: RegExp = /\b\c(\w*\i)?\b/
-val map: Map = { foo: "bar" }
-val set: Set = { :foo, "bar" }
-val array: Array = [1, 2, 3]
-val tuple: Tuple = (1, 2, 3)
-val func: Function = |x: int, y: int| { x + y }
-```
+// Use 'def' to declare a named function
+def namedFunction() = ()
+// Append an asterisk after the 'def' to make it a sequence:
+def* sequenceFunction() = ()
 
-There are two basic types of numeric literals: integers and floats. They can be extended with the help of type suffixes or operations with other numeric types: unsigned, imaginary, rational and complex numbers, and even arbitrary-precision `big` numbers.
+// Anonymous functions use the fat arrow, =>,
+// with arguments in parentheses as before.
+let namedFunction = x => ()
 
-Numeric literals are case-insensitive.
+// Functions, like blocks, implicitly return the last statement.
+let add = (x, y) => x + y
 
-#### Integers
+// Types can be inserted after each argument name,
+// return types go after the argument list:
+let add = (x: num, y: num): num => x + y
+// This is a function type don't use this in your code!
+let add: (x: num, y: num) => num = (x, y) => x + y
 
-For readability, underscore characters `_` may appear between digits. Leading zeroes may also appear at the beginning of said literal or after the prefix of multi-base literals.
+// Call functions with parentheses and comma-separated arguments:
+add(1, 2)
 
-```swift
-1 // int
-1u // nat
-1i // int
-1un // bigint
+let addTwo = x => x + 2 // Leave out the parens if there is 1 arg
+let doNothing = () => () // Write parens if there is no arg
 
-18446744073709551616 // bigint
-18_446_744_073_709_551_616 // bigint
+/// NAMED ARGUMENTS
+// Arguments can be named using the '#' prefix.
+let makeCircle = (#x: num, #y: num, #radius: num): void => ()
+// Use = to call functions with named arguments.
+// Their order does not matter.
+makeCircle(#radius = 10, #x = 1, #y = 100)
 
-decimal = 11256099
-hex = 0x0123456789ABCDEF
-octal = 0o52740443
-binary = 0b101010111100000100100011
-```
+// For functions that use other functions as arguments,
+// the same arrow notation applies:
+let increment = x => x + 1
+let myArray = [1, 2, 3].map increment
+let myArray = [1, 2, 3].map { # + 1 } // Curly-bracket notation rocks!
 
-#### Floating points
+// Functions can be partially called.
+// Arrow functions are not curried by default.
+let add = x => y => x + y
+let addFive = add(5)(#)
+let eleven = addFive 6
+let twelve = addFive 7
 
-A binary, octal or hexadecimal floating literal is structured the same way as a decimal one except that the exponent scales the mantissa by powers of 2, and is prefixed with `0b`, `0o` or `0x` respectively.
+// Use # to skip arguments that are not the first:
+let divide = a => b => a / b
+let halve = divide()(#)
+let five = halve 10
 
-Underscores may appear between digits in the mantissa. Leading zeroes may also appear at the beginning of the mantissa.
+// Mark an argument with ? to make it optional.
+// All functions have at least one positional argument
+// with an implicit "null" added as the first.
+let addOne: (null, #value?: 0) => int = (#value?: int?): int => match value
+  when ?value: value + 1
+  when null: 1
 
-```swift
-1.0  // float
-1.0f // float
-1f   // float
-1r   // rat
+// Default values can be specified with '='
+let makeCircle = (#x = 0, #y = 0, #radius = 10) => ()
+/* Position (0, 0) with radius 10 */
+makeCircle()
+/* Position (10, 0) with radius 2 */
+makeCircle(#x = 10, #radius = 2)
 
-1j     // imag
-1 + 1j // comp
+// Supplying named optional parameters
+let f = (#data? = 10) => ()
+let f = (#data?: num = 10): num => ()
+let [a, b] = [100, none]
+f(#data = a) // called as f(#data = a)
+f(#data = b) // called as f()
 
-decimal = 11256099.012e+14
-hex = 0xABC1234.012p-40
-octal = 0o52740443.012p-40
-binary = 0b10101011110.0000100100011p-40
-```
+// Referencing previous arguments
+let add = (a, #b, #c = a + 1, #d = b + 2) => a + b + c + d
+add(1, #b = 1) /* 6 */
+add(1, #b = 1, #c = 10) /* 14 */
 
-#### Suffixes
+// Variadic functions:
+let product = (...a: num[]): num => a.reduce((*), 0)
+product(1, 2, 3, 4) /* 10 */
 
-Several suffixes can be used in conjunction with one another, as shown in the previous example with floats.
+// Function piping
+var exclaim = (message: str, rep: int = 1): str => message |> '${#.upper() * rep}!!'
 
-- `n` for unsigned
-- `l` for arbitrary-precision (i.e long)
-- `i` for imaginary numbers
-- `r` for rational numbers
-- `f` for floating point literals
-
-### Strings
-
-A string literal consists of a character sequence enclosed in either single or double quotes. By default, strings are escaped with a backslash. All escapes except triple-digit octal sequences are supported.
-
-```swift
-val string1 = "A string primitive";
-val string2 = 'Also a string primitive';
-```
-
-Normally these escapes are interpreted as the character itself, and would evaluate to the same value, just without the backslash.
-
-String literals can also be delimited by at least three single or double quotes, provided they end with _at least_ that many quotes of the same type. The rules for single- and double-quoted strings also apply.
-
-Some transformations are applied to string literals of this type:
-
-- all beginning and ending newlines and whitespace are discarded
-- newlines are normalized to `\n` and carriage returns discarded
-- all beginning indentation is based on the column of the opening quote, discarding whitespace as needed.
-
-```swift
-val greeting =
-assert '"
-Hello World
-"' == greeting
-```
-
-### Escapes
-
-Escape sequences are used to represent characters that would otherwise have a syntax error. Like a lot of languages, all escapes begin with a backslash. The first character of an escape sequence is the escape character, and the second character is the character to be escaped.
-
-Certain single-letter escapes represent non-printable, control characters:
-
-```
-\a    U+0007  alert or bell
-\b    U+0008  backspace
-\e    U+000B  escape
-\f    U+000C  form feed
-\n    U+000A  line feed or newline
-\p            platform-dependent newline
-\r    U+000D  carriage return
-\s    U+0020  space
-\t    U+0009  horizontal tab
-\v    U+000B  vertical tab
-\c[A-Za-z]    control character
-```
-
-A backslash-newline joins the next line to the current line, skipping any indentation.
-
-The escapes `\b`, `\d`, `\o`, `\u` and `\x`, allow you to encode Unicode code points as integers in a double-quoted string. The value of the literal is the value represented by the digits in the corresponding base. Any escape that also exceeds the upper limit of 0x10FFFF (decimal 1114111) will give a compile time error.
-
-```
-\b[01]+         binary
-\d[0-9]+        decimal
-\o[0-7]+        octal
-\u[0-9A-Fa-f]+  hexadecimal (UTF-16)
-\x[0-9A-Fa-f]+  hexadecimal (UTF-8)
-\N($id&*[:.])   unicode name where $id is an identifier
-```
-
-Code points in the ranges `80-FF` for `\x` and `D800-DFFF` for `\u` which are used to represent multi-byte characters or surrogate pairs respectively; they hence would be invalid if they appear on their own or form an invalid byte/character sequence.
-
-```swift
-"日本語"
-'日本語'
-"\u65e5\u672c\u8a9e"
-"\u0065e5\u0672c\u8a9e"
-"\x{E6,97,A5 E6,9C,AC E8,AA,9E}"
-```
-
-The same escape characters when followed immediately by curly brackets are used to encode code points or byte sequences without reusing and repeating the same syntax again. You can use commas, semicolons or spaces to separate the numbers, and each running sequence is checked for validity.
-
-```swift
-decimal = "\112569"
-hex = "\xABC12"
-octal = "\o52740"
-binary = "\b10101011110000010010"
-
-// "HELLO"
-"\x48\x45\x4c\x4c\x4f" == "\x{48 45 4c 4c 4f}"
-"\d{72 69 76 76 79 65535}" == "\72\69\76\76\79"
-```
-
-The escape `\N` is used to represent a Unicode character sequences using a special notation reminiscent of LaTeX notation. The first argument can either be a name or its script, followed by the `:letter_name` or `.letter_form`. For instance `\NA` would equal capital A, and `\NAlpha` would equal the Greek capital letter `Α` (alpha).
-
-```swift
-// => "\u{1F60A}"
-"\u{1F600}" // => "😀"
-"\NPeseta" // "₧"
-"\Nemoji:smile" || "\N{emoji:smile}" // => 😀
-"\Nflag:SG" // => 🇸🇬
-"\Nkr{an nyeong ha se yo}" // 안녕하세요
-```
-
-### Prefixes
-
-String literals can have one or more of four unique prefixes immediately before the opening quote, in any order and combination. The `f` flag requires either the `s` and `p` flags to be enabled, while `s` and `p` cannot exist together.
-
-| Prefix | Sigil | Description |
-| --- | --- | --- |
-| `r` |  | Disables backslash escaping, thereby making the string verbatim |
-| `s` | `$` | Enables interpolation of variables and expressions |
-| `f` | `%` | Enables formatting |
-| `p` | `#` | Enables interpolation of template arguments |
-
-These flags trigger embedding of code in the string literal, through the use of sigil prefixing. If the `r` flag is enabled, an alternative escaping method is used, which is achieved by doubling the sigil if it forms a valid embedded expression on its own.
-
-#### Interpolation
-
-Strings can be interpolated with variables and expressions, using the `$` sigil. The most general form of interpolation encloses a block in between `${` and `}`, i.e. `${block}`.
-
-The simpler form consists of a `$`-sign without having to write curly braces around the expression. A subset of these expressions are supported, as shown below. Between the brackets, expressions and block statements are allowed.
-
-- a single identifier: `name`
-- a qualified name: `x.y.z` or `x::y::z`
-- an object accessor: `x[ ]`
-- a function call: `fn()`
-- a type casting operation: `<int>`
-- a type assertion: `name{int}`
-- and any combination of the like
-
-```swift
-val greeting = s"Hello $name!"
-val greeting = s"Hello $name.upper()!"
-val greeting = s"Hello ${name.upper()}!"
-```
-
-The expanded expression is type-checked as with all other expressions, and can be explicitly specified using either postfix curly or angle brackets immediately after the expression or before the closing bracket.
-
-### Templating
-
-Templating is a mechanism for embedding expressions in strings, and is used to interpolate template arguments, and **return a function** as opposed to evaluating them directly. The `p` sigil prefix is used to enable this feature.
-
-The simplest form of templating is a single variable name or numeric literal referring to the position or name of the template argument in the list of arguments, this time Those can be marked as optional or required, by prefixing it with `?` or `!`.
-
-Defaults and aliases can be applied within `#{}`.
-
-```swift
-p"You're #{adjective=`pretty}, #{endearment='my love'}."(
-  adjective=`hot, endearment=`cupcake
-)
-
-fp"Hey #name, there is a 0x#errNo%hex error!"(
-  name=`John, errNo=0xb12349
-)
-```
-
-### Formatting
-
-Formatting transforms the interpolated expressions before inserting it into the string, and is composed of a sequence of directives (i.e. methods) to be performed on said value, thus "formatting" the expression.
-
-The first directive is prefixed with the `%` sigil, followed by the name of the method to be applied. The method name can be followed by a literal or a set of arguments encased in a tuple. Further methods are chained together by a pipe `|`.
-
-```swift
-sf"Hello ${"world"}"
-sf"Hello ${"world"}%upper" // => "Hello WORLD"
-sf"${1234567890}%sep:(',')|sep:(id + 1)" // => "1,234,567,890"
-
-sf"Percentage correct answers: ${2/3}%deci:2|unit:('%')"
-s"Percentage correct answers: ${(2/3).deci(2).unit('%')}"
-```
-
-### Backtick strings
-
-Protea offers another way to represent unquoted (partially quoted) strings much more efficiently. It is used to represent identifiers as strings more efficiently (thus being easier to type) without having to quote them.
-
-The string ends as soon as the first non-word character is encountered, however you can also escape those characters by preceding it with a backslash---including spaces and newlines.
-
-```swift
-`hello
-`world
-`hello\ world == 'hello world'
+// Function composition
+var quadruple = double +> double
 ```
 
 ### Types
 
-Types are what makes SagaScript a strongly typed language. They are used to define the type of a binding, and are used to check the type of an expression.
-
-SagaScript for the most part would infer a type of a binding from its syntax. For example, the following code would infer the type of `score` to be `int`, and `add` to be `int -> int`.
-
 ```swift
-let score = 10
-let add = |x, y| {x + y}
-```
+/*
+Any expression or argument may include a type annotation.
+In most cases, type annotations are not necessary and the
+compiler will infer the types automatically. You may include
+type annotations to verify your own understanding against
+what the compiler infers.
+*/
 
-But you can also optionally write down the type, or to be more formal, annotate your value:
+/// BASIC TYPES
+let x = (1 + 2: num) // type assertions
+let x: num = 1 + 2 // binding type annotation
+let add = (a: num, b: num): num => a + b // argument/return types
 
-```swift
-let score: int = 10
-```
+var x: any = 40 // top type: any
+var x: never = repeat // bottom type: never
+var x: void = null // void type
+var x: num? = 10 x = null // option or nullable type
+var x: unknown x = 10 // unknown type type of x is now known as 'num'
 
-If the type annotation for `score` doesn't correspond to our inferred type for it, we'll show you an error during compilation time. We won't silently assume your type annotation is correct, unlike many other languages.
+type num? = int | null | undef
+type numOrstring = num | str // Union types
+type hasLength = (keyof str & array<any>) // Intersection types
 
-You can also wrap any expression in parentheses and annotate it:
+// Literal types
+type httpMethods = 'GET' | 'POST' | 'PUT' | 'DELETE'
+type dice = 1 | 2 | 3 | 4 | 5 | 6
 
-```swift
-let myInt = 5
-let myInt: int = 5
-let myInt = (5: int) + (4: int)
-let add = |x: int, y: int|: int {x + y}
-let drawCircle = |~radius as r: int|: Circle {}
-```
+// Array types
+type arrayOfString = str[]
+type arrayOfString = array<str>
 
-Note: in the last line, `~radius as r: int` is a labeled argument. More on this in the function page.
+// Read-only arrays
+type readonlyArray = readonly any[]
 
-#### Aliasing
+// Tuple types
+type strNumPair = [string, Number]
 
-You can refer to a type by a different name. They'll be equivalent:
+// For-all types
+type upto100 = |x|: int where 0 < x < 100
 
-```swift
-type Score = int
-let x: Score = 10
-```
+// Restrain the type alias to the file it was declared in
+opaque type x = 40
+// make sure the object contains only these properties
+type x = {| x: str y: num |}
+interface X only:
+  x: str, y: num
 
-#### Generics
+// 'typeof'/'nameof' operator
+var greeting = 'hello world'
+type greeting = typeof greeting
+type greeting = nameof greeting
 
-Types can accept arguments which are used to define the type of a binding.
-
-```swift
-type Coords<a> = (a, a, a)
-let a: Coords<int> = (10, 20, 20)
-let b: Coords<float> = (10.5, 20.5, 20.5)
-```
-
-Note that the above codes are just contrived examples for illustration purposes. Since the types are inferred, you could have just written:
-
-```swift
-let friend = (10, 20, 20)
-```
-
-The type system infers that it's a `(int, int, int)`. Nothing else needed to be written down.
-
-Type arguments appear in many places. For example, the following code defines a type `List<T>` which is a list of values of type `T`.
-
-```swift
-// inferred as List<string>
-let greetings = ["hello", "world", "how are you"]
-```
-
-Types can receive many arguments, and be composable.
-
-```swift
-// inferred as List<string>
-type result<a, b> = Ok<a> | Error<b>
-
-type MyPayload = {data: string}
-
-type MyPayloadResults<ErrorType> = Array<Result<MyPayload, ErrorType>>
-
-let payloadResults: MyPayloadResults<string> = [
-  Ok({data: "hi"}),
-  Ok({data: "bye"}),
-  Error("Something wrong happened!")
-]
-```
-
-#### Recursion
-
-Types can reference themselves, and can be mutually recursive:
-
-```swift
-type JSON = (
-  string | int | float | bool | null | Array | Object | JSON
-)
-
-recursive type Student = {taughtBy: Teacher}
-recursive type Teacher = {students: Array<Student>}
-```
-
-#### Shorthands
-
-Use a `!` on an object to mark all fields in the object as required, and `?` to mark as all optional. You can also mark individual types in an object. For example, the following code defines a type `Person` which is a person with a required name and gender, and an optional occupation.
-
-> A `data` declaration is the same as an interface in a lot of languages.
-
-```swift
-interface Person {
-  name: !string // required
-  gender: `male + `female
-  age: int // required
-  occupation: ?string
+/// INTERFACES
+type Person = {
+  name: str
+  age: int
 }
+interface Person:
+  name: str
+  age: int
+
+var alice: Person = { name: 'Alice', age: 100 }
+
+// Optional parameters
+interface Person:
+  name: str
+  age?: int
+
+var bob: Person = { name: 'Bob' }
+
+// Read-only parameters
+interface Person:
+  readonly name: str
+  age: int
+
+var bob: Person = { name: 'Bob' }
+bob = bob.name set 'Bobby'
+/* TypeError: cannot set property 'name' as it is readonly */
+
+// Index signatures
+interface Arrayish:
+  [index: int]: any
+  length: int
+interface Stringish extends Arrayish:
+  [index: int]: str
+  length: int
+
+// Interface generics
+interface Box<Type>:
+  contents: Type
+
+// ENUMERATIONS
+enum Direction of int:
+  Up = 1, Down, Left, Right
+
+// Of portion is optional
+enum Direction of str:
+  Up = "UP"
+  Down = "DOWN"
+  Left = "LEFT"
+  Right = "RIGHT"
+
+// Any constant expressions can be used as enum members
+// and can reference previously declared members
+enum FileAccess of str | num | bool:
+  None // constant members
+  Read = 1 << 1
+  Write = 1 << 2
+  ReadWrite = Read | Write
+  Computed = length '123' // computed member
 ```
 
-The Person For example, the following code defines a type `Maybe<T>` which is either a `T` or `null`. `null` itself is either `null` or `void` which are the same as each other.
+### Classes, Namespaces, Modules, Structures and Traits
 
 ```swift
-type Maybe<T> = T + null + void
-type Maybe<T> = ?T // a shorthand
-```
+class Y {} // Empty class.
+class X ext Y {} // Inherited class
 
-Use `+` to combine types that would otherwise be incompatible (this is only used for primitive types or for types that are not themselves generic).
+// Class parameters - automatic public member defined
+class C(let x: R) {}
 
-```swift
-type IntOrString = int + string
-```
+var c = new C() // instantiate a new class
+var c = new C<String>() // instantiate a class with a parameter
+new class {} // Anonymous class
 
-Or use set operations on objects:
+// Constructor is in class body
+class C<R extends Number>(public var x: R) {
+  assert x > 0, "positive please"
+  property x = x ?? 4
 
-```swift
-type A = {a: int, b: int, c: int}
-type B = {c: int, d: int, e: int}
+  /** These modifiers modify only methods */
+  get method // getter method
+  set method // setter method
+  async method // asynchronous method
 
-type C = B | A // {a: int, b: int, c: int, d: int, e: int}
-type D = B & A // {c: int}
-type E = A ^ B // {a: int, b: int, d: int, e: int}
-type F = A - B // {a: int, b: int}
-```
+  /** These modifiers controls visibility or access inside,
+  outside classes or even derived classes. */
+  public method // visible anywhere - inside, outside and derived classes
+  private method // visible only to this class
+  protected method // visible only to this class and any derived classes
 
-`~` negates a type. This is useful when you want to define a type that is not the same as another type.
+  /** This modifier marks an attibute as immutable or mutable
+  usually for other classes which modify themselves. */
+  readonly property x = 4
+  property x = 5 //
 
-```swift
-type Not<string> = ~string
-```
+  /** Dynamic properties allow the variable to be modified with
+  whatever types it needs to be */
+  dynamic property x = 5
 
-Use `key` and `value` to get all the keys and values of an object as a tuple. Use `pairs` to get them both.
+  /** This modifier can only be used inside a class */
+  override property x = 5 // overrides a property
 
-```swift
-interface Person {
-  name: !string // required
-  gender: `male + `female
-  age: int // required
-  occupation: ?string
+  /** These modifiers can be used both inside the classes to mark
+  any or all properties of a class on an object */
+  static const // prevents initialization of a property/class (used with `new`)
+  virtual class // marks property/class to be overridden by derived classes
+  sealed class // prevents overriding of this property/class
+  abstract class // enforces overriding of this property/class
+
+   // Decorators call functions on methods.
+  method [decorator]methodName() {}
 }
 
-type C = B | A
-```
+// Derived params
+class C(x: R) extends D(x): pass
+// Objects are singleton and cannot be overridden
+object O extends D: pass
 
-## Primitives
+// Traits are classes weithout parameters
+trait Iterator<A>:
+  hasNext(): bool =
+  next(): A =
 
-_Quick overview: [Primitives](overview.md#built-in-types)_
+class IntIterator(@to: int) extends Iterator<int>:
+  private var current = 0
+  override def hasNext(): bool = current < @to
+  override def next(): int =
+    if hasNext()
+      let t = current; current += 1; t;
+    else 0
 
-These are the built in types that can be used to represent information and build more complex types.
+class C extends T {}
+class C extends D implements T {}
+class C extends T implements T, U {} // Set multiple traits with classes
 
-### Strings
+// Group types, objects, classes, constants and more
+// inside modules and namespaces
+module School:
+  export type profession = Teacher | Director
+  export var person1 = new Teacher()
+  export var getProfession = person => match(person)
+    when Teacher: "A teacher"
+    when Director: "A director"
 
-_Quick overview: [Strings](overview.md#strings)_
-
-Create a string using double quotes:
-
-```reason
-let s = "Hello World!";
-```
-
-Concatenate strings using the `++` operator:
-
-```reason
-let s = "Hello " ++ "World!";
-```
-
-More String functions can be found in standard libraries:
-
-- Native: [`module String`](https://reasonml.github.io/api/String.html)
-- BuckleScript: [`module Js.String`](https://bucklescript.github.io/bucklescript/api/Js.String.html)
-
-```reason
-let s = String.trim("  extra whitespace\n");
-/* "extra whitespace" */
-
-let s = String.concat("\n", ["line 1", "line 2"]);
-/* "Line 1\nLine 2" */
-
-let s = String.sub("Hello World!", 6, 5);
-/* "World" */
-```
-
-### Char
-
-Create a char using single quotes:
-
-```reason
-let c = 'a';
-```
-
-Access the char at an index using `string.[index]`:
-
-```reason
-let c = "Hello".[1];
-/* 'e' */
-```
-
-Convert char to string:
-
-```reason
-let s = String.make(1, 'c');
-/* "c" */
-
-let charArray = [| 'H', 'e', 'l', 'l', 'o' |];
-let s = String.init(5, i => charArray[i]);
-/* "Hello" */
-```
-
-## Integer
-
-_Quick overview: [Numbers](overview.md#numbers)_
-
-Integers are whole numbers. Their bit-size depends on the platform.
-
-```reason
-let x = 23;
-let x = -23;
-```
-
-Standard operations include `+`, `-`, `*`, `/`, `mod`:
-
-```reason
-let x = 23 + 1 - 7 * 2 / 5;
-let x = 13 mod 2;
-```
-
-### Integer literals
-
-Different radix literals can be created using prefixes `0x`, `0o`, `0b`:
-
-```reason
-let decimal = 11256099;
-let hex = 0xABC123;
-let octal = 0o52740443;
-let binary = 0b101010111100000100100011;
-```
-
-Literals can be broken up using the `_` character which will be ignored:
-
-```reason
-let trillion = 1_000_000_000_000;
-```
-
-### Bitwise operations
-
-Use infix functions: `land`, `lor`, `lxor`, `lnot`, `lsl`, `lsr`, `asr` from [`module Pervasives`](<https://reasonml.github.io/api/Pervasives.html#VAL(land)>)
-
-```reason
-let x = 0b1010 lor 0b1100;
-/* 0b1110, 14 */
-```
-
-Many bit tricks can be found here: [bithacks](http://graphics.stanford.edu/~seander/bithacks.html)
-
-```reason
-let isPowerOfTwo = x => {
-  x !== 0 && x land (x - 1) === 0
-};
-```
-
-## Float
-
-_Quick overview: [Numbers](overview.md#numbers)_
-
-Floats are 64-bit numbers that may have a decimal. They follow the [IEEE 754 standard](https://en.wikipedia.org/wiki/IEEE_754).
-
-```reason
-let x = 23.0;
-let x = 23.;
-let x = -23.0;
-```
-
-Standard operations include `+.`, `-.`, `*.`, `/.`, `**`:
-
-```reason
-let x = 3.0 +. 1.0 -. 7.0 *. 2.0 /. 5.0;
-
-/* Exponentiation */
-let x = 2.0 ** 3.0;
-```
-
-## Boolean
-
-_Quick overview: [Boolean](overview.md#boolean-values-and-logical-operations)_
-
-Reason supports a normal set of boolean and logical operations:
-
-- Boolean operations: `!`, `&&`, <code>&#124;&#124;</code>
-- Comparison: `>`, `<`, `>=`, `<=`
-- Reference equality: `===`, `!==`
-- Structural equality: `==`, `!=`
-
-```reason
-let x = true;
-let y = !true;
-let z = x && y || false;
+// Structural types
+struct Coords(x: num, y: num):
+  X = x Y = y
+  let X = get
+  let Y = get
+  override def toString() = "($X, $Y)"
 ```
