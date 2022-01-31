@@ -1,6 +1,6 @@
 name: SagaScript
 scopeName: source.swift
-fileTypes: [swift, saga]
+fileTypes: [saga, swift, sga, sgs, sgi]
 patterns: [include: "#core"]
 
 information for contributors: |
@@ -1158,8 +1158,19 @@ repository:
     end: (?=)|$
     name: meta.regexp.saga
     patterns:
+      - applyEndPatternLast: true
+        comment: Replacement section
+        begin: (?<=/+)\s*(/+)\s*
+        end: \s*(\1)(?!/+)(\p{L}*)
+        name: string.replace.regexp.saga
+        captures:
+          1: { name: punctuation.definition.regexp.saga }
+          2: { name: keyword.other.flag.saga }
+        patterns:
+          - include: "#back-references"
+          - include: "#string-content"
       - comment: Pattern section
-        begin: (/+)\s*
+        begin: (?<!/+)(/+)\s*
         end: \s*(\1)(?!/+)(\p{L}*)
         name: string.pattern.regexp.saga
         captures:
@@ -1168,16 +1179,6 @@ repository:
         patterns:
           - include: "#comments"
           - include: "#regexp-patterns"
-          - applyEndPatternLast: true
-            comment: Replacement section
-            begin: (?<!\\)(/+)\s*
-            end: \s*(?=(?<!\\)/+)
-            name: string.replace.regexp.saga
-            captures:
-              1: { name: punctuation.definition.regexp.saga }
-            patterns:
-              - include: "#back-references"
-              - include: "#string-content"
 
   fuzzy-expression:
     patterns:
@@ -2487,7 +2488,6 @@ repository:
         name: entity.other.attribute-name.pseudo-component.saga
       - match: \s*(?<=\~)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: entity.other.attribute-name.key.saga
-
       - match: \s*(?<=\&)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
         name: entity.other.attribute-name.saga entity.name.type.anchor.saga
       - match: \s*(?<=\*)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
