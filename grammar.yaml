@@ -17,39 +17,11 @@ information for contributors: |
 fixes: |
   New changes:
 
-  - Added back backslash strings, though with much more limitations.
-  - Removed JSX and style blocks; replaced them with indentation
-  - Comments have been standardized into Swift-style comments:
-    - `//` line comment
-    - `///` documentation line comment
-    - `/*` block comment `*/`
-    - `/**` documentation block comment `*/`
-  - Added `/` (full) and `//` (shorthand) command flags
-  - Removed `import`, `export`, `let`, `const` in favor of `use`, `show`, `hide`, `var` and `val`.
-  - Numbers and escape sequences have been reworked, and will no longer accept integers bigger than decimal 1114111 which now are highlighted as an error.
-  - Bases 4, 6, and 12 have been scrapped, though a multi-base generic numeric literal is still in the works.
-  - Interpolation and formatting syntax have been reworked and fixed. Spacing around identifiers have also been removed.
-  - Function call syntax is still reworked and may still be buggy. Might have a later fix in the near future, and some improvements have to be made.
-  - Fixed some bugs with regular expressions:
-    - Added and expanded quantifiers and range highlighting
-    - Add support for fuzzy matching (edits, insertions, deletions, etc.)
-    - Improved highlighting for regexes with flags
-  - Added prefixes to strings, generated using code
-  - Switched around regular expressions and backslash strings. ` now triggers an unquoted string
-    and / triggers a regular expression, using the same triggers as JSX.
-  - Fixed JSX highlighting and attributes:
-    - @directive
-    - #id and .class
-    - :event and |pipe (both from Svelte)
-    - %directive
-    - &reference and *spread
-  - Fixed regular expression replacement string highlighting
-
-  Fixes:
-
-  - Match unquoted glob patterns in routes without quotes
-  - What would Trinity's standard library look like, since it is used both in client- and server-side application development? So far I have a handful shown below, namely function names, HTML tags and known CSS properties and constants which are taken from the grammars of those languages.
-  - Rewrite complex regular expressions throughout this document and add some comments to make them more readable and less confusing
+  - Syntax now closely resembles JavaScript's. This includes keywords, comments,
+    literals, strings etc. Many parts of this document have been changed.
+  - Large regular expressions scattered through this document also have been
+    fixed up to be more readable to any editors out there. It once was presented
+    in a rather unpretty format.
     - [x] Markdown syntax
     - [x] function parameters
     - [x] function calls
@@ -61,9 +33,53 @@ fixes: |
     - [x] modifier keywords
     - [x] function assignments
     - [x] anonymous functions
-    - [ ] embedded content
-    - [ ] rounded and square brackets
-    - [ ] LINQ, inline SQL and validation syntax (more to come later)
+    - [x] embedded content
+    - [x] rounded and square brackets
+    - [x] LINQ, inline SQL and validation syntax (more to come later)
+  - Numbers and escape sequences have been reworked, and will no longer accept
+    integers bigger than decimal 1114111 which now are highlighted as an error.
+  - Bases 4, 6, and 12 have been scrapped, though a multi-base generic numeric
+    literal is still in the works.
+  - Interpolation and formatting syntax have been reworked and fixed, and can now
+    span multiple lines and beyond 20 nested layers thanks to applyEndPatternLast.
+    Because of this, spacing around most of the patterns here have also been removed;
+    a separate space scope is added to join everything together.
+  - Function call syntax is heavily standardized and would need a later fix in
+    the long run. This is if a more terser variant of SagaScript is in the need.
+    and if so would be inspired by Haskell.
+  - Fixed some bugs with regular expressions:
+    - Added and expanded quantifiers and range highlighting
+    - Add support for fuzzy matching (edits, insertions, deletions, etc.)
+    - Improved highlighting for regexes with flags
+  - Added prefixes to strings.
+  - Switched around regular expressions: / triggers a regex when it begins an
+    expression. ` is now used to open unquoted strings.
+  - Two (or more) regular expressions in a row on the same line without a comma
+    triggers a replacement string instead of a normal regular expression literal.
+  - Fixed JSX highlighting and attributes, inspired by Svelte, Angular (TS), HAML
+    - @directive
+    - #id and .class
+    - :event and |pipe (both from Svelte)
+    - %directive
+    - &reference and *spread
+
+  Fixes:
+
+  - Match unquoted globs in routes
+  - Plan and add Trinity's standard libra, then integrate it into the grammar.
+    This would be done once the compiler is all set up!
+    - A handful of built-in properties and constants are part of this grammar
+      and are used to highlight CSS properties, constants and HTML tags. Other
+      than that, nothing else is present...
+      at least not in the moment
+    - This features would include:
+      - Type, interface, module/namespace and class names
+      - Functions and methods
+      - Constants and properties
+      - Special variables
+      - Various UI elements and color names
+      - Character names (LaTeX/HTML/AGLFN)
+
   - Revamp Markdown syntax with these extensions:
     - [ ] Citations
     - [ ] Strike-through
@@ -375,14 +391,8 @@ repository:
         name: punctuation.separator.namespace.saga
       - include: "#brackets"
       - include: "#strings"
-      - match: (?<=::|\.)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\()
-        name: entity.name.function.member.saga
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\()
-        name: entity.name.decorator.saga
-      - match: (?<=::|\.)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
-        name: variable.language.property.decorator.saga
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
-        name: variable.other.readwrite.decorator.saga
+      - include: "#embedded-calls"
+      - include: "#variables"
 
   symbols:
     patterns:
@@ -1151,7 +1161,6 @@ repository:
               |debug|assert|check
             )
           \b
-          (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
         ) \s*
       ) \s*
       (?= /+)
@@ -1725,7 +1734,6 @@ repository:
               |debug|assert|check
             )
           \b
-          (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
         ) \s*
       ) \s*
       (?=<[\p{Pc}\p{L}]|<\s+>)
@@ -3944,6 +3952,7 @@ repository:
       - include: "#type-variables"
       - include: "#type-operators"
       - include: "#type-brackets"
+      - include: "#comments"
       - match: \s+
         name: meta.type.saga
 
@@ -4392,8 +4401,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix|suffix
-                |infix|binary|unary|left|right
+                |recursive|operator|curried|inline|prefix
+                |infix|suffix|unary|left|right
               )
             )
             (?!\B|\p{Pd}+\b)
@@ -4450,8 +4459,8 @@ repository:
           (?x) \s*
           \b
           (?:
-            recursive|operator|curried|inline|prefix|suffix
-            |infix|binary|unary|left|right
+            recursive|operator|curried|inline|prefix
+            |infix|suffix|unary|left|right
           )
           (?!\B|\p{Pd}+\b)
           \s*
@@ -5044,8 +5053,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix|suffix
-                |infix|binary|unary|left|right
+                |recursive|operator|curried|inline|prefix
+                |infix|suffix|unary|left|right
               )
               \s*
             )*
@@ -5094,8 +5103,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix|suffix
-                |infix|binary|unary|left|right
+                |recursive|operator|curried|inline|prefix
+                |infix|suffix|unary|left|right
               )
               \s*
             )*
@@ -5143,8 +5152,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix|suffix
-                |infix|binary|unary|left|right
+                |recursive|operator|curried|inline|prefix
+                |infix|suffix|unary|left|right
               )
               \s*
             )*
@@ -5193,8 +5202,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix|suffix
-                |infix|binary|unary|left|right
+                |recursive|operator|curried|inline|prefix
+                |infix|suffix|unary|left|right
               )
               \s*
             )*
@@ -5253,10 +5262,8 @@ repository:
               |return|yield|await|scope
               |import|export|route
               |debug|assert|check
-              |extends|implements
             )
           \b
-          (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
         ) \s*
       ) \s*
       (\|)(?!\|)
@@ -5460,8 +5467,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix|suffix
-                |infix|binary|unary|left|right
+                |recursive|operator|curried|inline|prefix
+                |infix|suffix|unary|left|right
               )
               \b
               \s*
@@ -5512,8 +5519,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix|suffix
-                |infix|binary|unary|left|right
+                |recursive|operator|curried|inline|prefix
+                |infix|suffix|unary|left|right
               )
               \b
               \s*
@@ -6000,9 +6007,9 @@ repository:
         patterns:
           - match: '''''|\$\$|%%|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: double-quoted verbatim, interpolated, format, and template string
         begin: (?<!"+)((?i:f+p+r+s+|f+p+s+r+|f+r+p+s+|f+r+s+p+|f+s+p+r+|f+s+r+p+|p+f+r+s+|p+f+s+r+|p+r+f+s+|p+r+s+f+|p+s+f+r+|p+s+r+f+|r+f+p+s+|r+f+s+p+|r+p+f+s+|r+p+s+f+|r+s+f+p+|r+s+p+f+|s+f+p+r+|s+f+r+p+|s+p+f+r+|s+p+r+f+|s+r+f+p+|s+r+p+f+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6013,9 +6020,9 @@ repository:
         patterns:
           - match: '""|\$\$|%%|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: single-quoted verbatim, interpolated, and format string
         begin: (?<!'+)((?i:f+r+s+|f+s+r+|r+f+s+|r+s+f+|s+f+r+|s+r+f+))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6026,8 +6033,8 @@ repository:
         patterns:
           - match: '''''|\$\$|%%'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
       - comment: double-quoted verbatim, interpolated, and format string
         begin: (?<!"+)((?i:f+r+s+|f+s+r+|r+f+s+|r+s+f+|s+f+r+|s+r+f+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6038,8 +6045,8 @@ repository:
         patterns:
           - match: '""|\$\$|%%'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
       - comment: single-quoted verbatim, interpolated, and template string
         begin: (?<!'+)((?i:p+r+s+|p+s+r+|r+p+s+|r+s+p+|s+p+r+|s+r+p+))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6050,8 +6057,8 @@ repository:
         patterns:
           - match: '''''|\$\$|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-expression"
+          - include: "#embedded-placeholder"
       - comment: double-quoted verbatim, interpolated, and template string
         begin: (?<!"+)((?i:p+r+s+|p+s+r+|r+p+s+|r+s+p+|s+p+r+|s+r+p+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6062,8 +6069,8 @@ repository:
         patterns:
           - match: '""|\$\$|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-expression"
+          - include: "#embedded-placeholder"
       - comment: single-quoted verbatim, format, and template string
         begin: (?<!'+)((?i:f+p+r+|f+r+p+|p+f+r+|p+r+f+|r+f+p+|r+p+f+))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6074,8 +6081,8 @@ repository:
         patterns:
           - match: '''''|%%|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: double-quoted verbatim, format, and template string
         begin: (?<!"+)((?i:f+p+r+|f+r+p+|p+f+r+|p+r+f+|r+f+p+|r+p+f+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6086,8 +6093,8 @@ repository:
         patterns:
           - match: '""|%%|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: single-quoted interpolated, format, and template string
         begin: (?<!'+)((?i:f+p+s+|f+s+p+|p+f+s+|p+s+f+|s+f+p+|s+p+f+))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6096,10 +6103,10 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: double-quoted interpolated, format, and template string
         begin: (?<!"+)((?i:f+p+s+|f+s+p+|p+f+s+|p+s+f+|s+f+p+|s+p+f+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6108,10 +6115,10 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: single-quoted verbatim and interpolated string
         begin: (?<!'+)((?i:r+s+|s+r+))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6122,7 +6129,7 @@ repository:
         patterns:
           - match: '''''|\$\$'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
+          - include: "#embedded-expression"
       - comment: double-quoted verbatim and interpolated string
         begin: (?<!"+)((?i:r+s+|s+r+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6133,7 +6140,7 @@ repository:
         patterns:
           - match: '""|\$\$'
             name: constant.character.escape.saga
-          - include: '#embedded-expression'
+          - include: "#embedded-expression"
       - comment: single-quoted interpolated and format string
         begin: (?<!'+)((?i:f+s+|s+f+))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6142,9 +6149,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
       - comment: double-quoted interpolated and format string
         begin: (?<!"+)((?i:f+s+|s+f+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6153,9 +6160,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-format'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-format"
       - comment: single-quoted verbatim and template string
         begin: (?<!'+)((?i:p+r+|r+p+))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6166,7 +6173,7 @@ repository:
         patterns:
           - match: '''''|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-placeholder'
+          - include: "#embedded-placeholder"
       - comment: double-quoted verbatim and template string
         begin: (?<!"+)((?i:p+r+|r+p+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6177,7 +6184,7 @@ repository:
         patterns:
           - match: '""|\#\#'
             name: constant.character.escape.saga
-          - include: '#embedded-placeholder'
+          - include: "#embedded-placeholder"
       - comment: single-quoted interpolated and template string
         begin: (?<!'+)((?i:p+s+|s+p+))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6186,9 +6193,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-placeholder"
       - comment: double-quoted interpolated and template string
         begin: (?<!"+)((?i:p+s+|s+p+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6197,9 +6204,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
+          - include: "#embedded-placeholder"
       - comment: single-quoted format and template string
         begin: (?<!'+)((?i:f+p+|p+f+))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6208,9 +6215,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: double-quoted format and template string
         begin: (?<!"+)((?i:f+p+|p+f+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6219,9 +6226,9 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-format'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-format"
+          - include: "#embedded-placeholder"
       - comment: single-quoted verbatim string
         begin: (?<!'+)((?i:r+))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6250,8 +6257,8 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
       - comment: double-quoted interpolated string
         begin: (?<!"+)((?i:s+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6260,8 +6267,8 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-expression'
+          - include: "#string-escapes"
+          - include: "#embedded-expression"
       - comment: single-quoted template string
         begin: (?<!'+)((?i:p+))('''+|')\s*
         contentName: string.quoted.single.saga
@@ -6270,8 +6277,8 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-placeholder"
       - comment: double-quoted template string
         begin: (?<!"+)((?i:p+))("""+|")\s*
         contentName: string.quoted.double.saga
@@ -6280,5 +6287,5 @@ repository:
           1: { name: storage.type.string.saga }
           2: { name: punctuation.definition.string.saga }
         patterns:
-          - include: '#string-escapes'
-          - include: '#embedded-placeholder'
+          - include: "#string-escapes"
+          - include: "#embedded-placeholder"
