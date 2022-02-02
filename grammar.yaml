@@ -111,7 +111,7 @@ define:
         |element|property|model
         |go|defer|do|with|from|where
         |if|elsif|else|then|def
-        |for|each|repeat|while
+        |for|foreach|repeat|while
         |try|throw|catch|finally
         |match|case|fallthru|default|goto
         |break|continue|redo|retry
@@ -144,7 +144,7 @@ define:
         |element|property|model
         |go|defer|do|with|from|where
         |if|elsif|else|then|def
-        |for|each|repeat|while
+        |for|foreach|repeat|while
         |try|throw|catch|finally
         |match|case|fallthru|default|goto
         |break|continue|redo|retry
@@ -188,7 +188,7 @@ repository:
       - include: "#punctuation"
       - include: "#literals"
       - include: "#operators"
-      - include: "#calls"
+      - include: "#function-calls"
       - include: "#variables"
       - include: "#illegal"
       - include: "#space"
@@ -391,7 +391,7 @@ repository:
         name: punctuation.separator.namespace.saga
       - include: "#brackets"
       - include: "#strings"
-      - include: "#embedded-calls"
+      - include: "#function-calls"
       - include: "#variables"
 
   symbols:
@@ -941,7 +941,7 @@ repository:
               |element|property|model
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
-              |for|each|repeat|while
+              |for|foreach|repeat|while
               |try|throw|catch|finally
               |match|case|fallthru|default|goto
               |break|continue|redo|retry
@@ -958,7 +958,7 @@ repository:
         patterns:
           - include: "#constants"
           - include: "#brackets"
-          - include: "#embedded-calls"
+          - include: "#embedded-function-calls"
           - include: "#variables"
           - include: "#numbers"
           - &embedded-primary-operators
@@ -1027,7 +1027,7 @@ repository:
                 |element|property|model
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
-                |for|each|repeat|while
+                |for|foreach|repeat|while
                 |try|throw|catch|finally
                 |match|case|fallthru|default|goto
                 |break|continue|redo|retry
@@ -1105,7 +1105,7 @@ repository:
           3: { name: punctuation.separator.key-value.saga }
         patterns: &format-values
           - include: "#constants"
-          - include: "#embedded-calls"
+          - include: "#embedded-function-calls"
           - include: "#variables"
           - include: "#brackets"
           - include: "#regexps"
@@ -1152,7 +1152,7 @@ repository:
               |element|property|model
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
-              |for|each|repeat|while
+              |for|foreach|repeat|while
               |try|throw|catch|finally
               |match|case|fallthru|default|goto
               |break|continue|redo|retry
@@ -1193,7 +1193,7 @@ repository:
     patterns:
       - include: "#punctuation"
       - include: "#comments"
-      - include: "#calls"
+      - include: "#function-calls"
       - include: "#literals"
       - include: "#embedded"
       - include: "#operators"
@@ -1691,7 +1691,7 @@ repository:
           2: { name: keyword.operator.pattern.saga }
       - include: "#operators"
 
-  # Markdown
+  # JSX and Markdown
 
   jsx:
     applyEndPatternLast: true
@@ -1725,7 +1725,7 @@ repository:
               |element|property|model
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
-              |for|each|repeat|while
+              |for|foreach|repeat|while
               |try|throw|catch|finally
               |match|case|fallthru|default|goto
               |break|continue|redo|retry
@@ -2256,7 +2256,7 @@ repository:
           1: { name: storage.type.subroutine.saga }
         patterns:
           - include: $self
-
+ 
       html-tag:
         comment: <Tags
         applyEndPatternLast: true
@@ -2269,7 +2269,9 @@ repository:
           - comment: Tag name
             match: (?<=<)\b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
             captures:
-              1: { name: entity.name.tag.saga, patterns: *html-tag-names }
+              1:
+                name: entity.name.tag.saga
+                patterns: *html-tag-names
           - comment: ID
             match: (?<=#)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
             name: entity.other.attribute-name.id.saga
@@ -2317,7 +2319,8 @@ repository:
       inline-styles:
         begin: (?<=^|[\w\s'"`])(\+>)(.*)\n*
         beginCaptures:
-          1: { name: storage.type.style.saga }
+          1:
+            name: storage.type.style.saga
           2:
             patterns:
               - match: (?<=^|\s)([?:]?=)(?=\s+|$)
@@ -2437,7 +2440,7 @@ repository:
 
   style-rules:
     patterns:
-      - include: "#calls"
+      - include: "#function-calls"
       - comment: CSS operators
         match: \s*(?:(\+)|(\-)|(\*)|(/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|(\#)|([<>]))\s*
         captures:
@@ -2756,7 +2759,7 @@ repository:
 
   # Function and method calls
 
-  calls:
+  function-calls:
     old:
       name: meta.function.call.saga
       match: |
@@ -2797,7 +2800,7 @@ repository:
                   |element|property|model
                   |go|defer|do|with|from|where
                   |if|elsif|else|then|def
-                  |for|each|repeat|while
+                  |for|foreach|repeat|while
                   |try|throw|catch|finally
                   |match|case|fallthru|default|goto
                   |break|continue|redo|retry
@@ -2827,7 +2830,7 @@ repository:
               |element|property|model
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
-              |for|each|repeat|while
+              |for|foreach|repeat|while
               |try|throw|catch|finally
               |match|case|fallthru|default|goto
               |break|continue|redo|retry
@@ -2879,7 +2882,7 @@ repository:
                     |element|property|model
                     |go|defer|do|with|from|where
                     |if|elsif|else|then|def
-                    |for|each|repeat|while
+                    |for|foreach|repeat|while
                     |try|throw|catch|finally
                     |match|case|fallthru|default|goto
                     |break|continue|redo|retry
@@ -2922,7 +2925,7 @@ repository:
         1: { patterns: [include: "#function-names"] }
 
     patterns:
-      - include: "#embedded-calls"
+      - include: "#embedded-function-calls"
       - name: meta.function.call.saga
         match: |
           (?x)
@@ -2943,7 +2946,7 @@ repository:
                 |element|property|model
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
-                |for|each|repeat|while
+                |for|foreach|repeat|while
                 |try|throw|catch|finally
                 |match|case|fallthru|default|goto
                 |break|continue|redo|retry
@@ -3000,7 +3003,7 @@ repository:
                 |element|property|model
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
-                |for|each|repeat|while
+                |for|foreach|repeat|while
                 |try|throw|catch|finally
                 |match|case|fallthru|default|goto
                 |break|continue|redo|retry
@@ -3022,7 +3025,7 @@ repository:
         captures:
           1: { patterns: [include: "#function-names"] }
 
-  embedded-calls:
+  embedded-function-calls:
     patterns:
       - &function-names
         name: meta.function.name.saga
@@ -3502,6 +3505,31 @@ repository:
 
   special-operators:
     patterns:
+      - comment: / for a single flag, with optional arguments
+        applyEndPatternLast: true
+        begin: (?<=^|\\.|['"`({\[)}\]\s])(\\)(?=[\p{Pc}\p{L}])
+        end: (?=)|$
+        captures:
+          1: { name: punctuation.definition.call.saga }
+        patterns:
+          - applyEndPatternLast: true
+            begin: (?<=\\)(?=[\p{Pc}\p{L}])
+            end: (?=)|$
+            captures:
+              1: { name: punctuation.definition.call.saga }
+            patterns:
+              - include: "#function-names"
+              - include: "#brackets"
+          - include: "#brackets"
+          - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[?!]?\.|[?!:]:)
+            name: variable.parameter.object.saga
+          - match: *entity-name
+            name: variable.parameter.saga
+          - include: "#placeholder-variables"
+          - *embedded-primary-operators
+          - include: "#comma"
+          - include: "#line-continuation"
+          - include: "#space"
       - begin: (?<=^|[\s({\[])(\?)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\?)(?=['"`({\[\w])
         end: (?<=^|[\s({\[])(\:)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\:)(?=['"`({\[\w])
         captures:
@@ -3943,7 +3971,7 @@ repository:
 
   types:
     patterns:
-      - include: "#line-continuation"
+      - include: "#comments"
       - include: "#argument-list"
       - include: "#angle-brackets"
       - include: "#type-keywords"
@@ -3952,7 +3980,6 @@ repository:
       - include: "#type-variables"
       - include: "#type-operators"
       - include: "#type-brackets"
-      - include: "#comments"
       - match: \s+
         name: meta.type.saga
 
@@ -3980,7 +4007,7 @@ repository:
           |element|property|model
           |go|defer|do|with|from|where
           |if|elsif|else|then|def
-          |for|each|repeat|while
+          |for|foreach|repeat|while
           |try|throw|catch|finally
           |match|case|fallthru|default|goto
           |break|continue|redo|retry
@@ -4493,7 +4520,7 @@ repository:
     patterns:
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|elsif|else)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.conditional.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|repeat|while)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|foreach|repeat|while)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.loop.saga
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|finally|then)(?!\B|\p{Pd}+\b)\s*
         name: keyword.control.trycatch.saga
@@ -5255,7 +5282,7 @@ repository:
               |element|property|model
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
-              |for|each|repeat|while
+              |for|foreach|repeat|while
               |try|throw|catch|finally
               |match|case|fallthru|default|goto
               |break|continue|redo|retry
@@ -5340,7 +5367,7 @@ repository:
 
       for-clause:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|each|while)(?!\B|\p{Pd}+\b)\s*(?=\()
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|foreach|while)(?!\B|\p{Pd}+\b)\s*(?=\()
         end: (?=)|$
         name: meta.for.saga
         captures:
@@ -5688,7 +5715,7 @@ repository:
           (?<=
             (?:
                 (?:^|[\s\p{P}\p{S}]): \|\s+\|
-              | (?:^|['"`)}\]\w]|\\.)\|
+              | (?:^|[,;'"`)}\]\w\s]|\\.)\|
               | ^\s*\|
             )
             \s*
@@ -5705,7 +5732,7 @@ repository:
           (?<=
             (?:
                 (?:^|[\s\p{P}\p{S}]): \|\s+\|
-              | (?:^|['"`)}\]\w]|\\.)\|
+              | (?:^|[,;'"`)}\]\w\s]|\\.)\|
               | ^\s*\|
             )
             \s*
