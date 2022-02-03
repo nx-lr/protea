@@ -1528,23 +1528,14 @@ repository:
           \b
         ) \s*
       ) \s*
-      (?=/(?!/))
+      (?= />?)
     end: (?=)|$
     name: meta.regexp.saga
     patterns:
-      - comment: Replacement section
-        begin: (?<=/+)\s*(/+)\s*
-        end: \s*(\1)(?!/+)(\p{L}*)
-        name: string.replace.regexp.saga
-        captures:
-          1: { name: punctuation.definition.regexp.saga }
-          2: { name: keyword.other.flag.saga }
-        patterns:
-          - include: '#back-references'
-          - include: '#string-content'
-      - comment: Pattern section
-        begin: (?<!/+)(/+)\s*
-        end: \s*(\1)(?!/+)(\p{L}*)
+      - applyEndPatternLast: true
+        comment: Pattern section
+        begin: (/>)\s*
+        end: \s*(</)(\p{L}*)
         name: string.pattern.regexp.saga
         captures:
           1: { name: punctuation.definition.regexp.saga }
@@ -1552,6 +1543,35 @@ repository:
         patterns:
           - include: '#comments'
           - include: '#regexp-patterns'
+          - comment: Replacement section
+            begin: (</>)\s*
+            end: \s*(?=</)
+            name: string.replace.regexp.saga
+            captures:
+              1: { name: punctuation.definition.regexp.saga }
+            patterns:
+              - include: '#back-references'
+              - include: '#string-content'
+      - comment: Pattern section
+        begin: (/)\s*(?=.+/(?:.+/)?\p{L}*)
+        end: \s*(?:(/)(.+))?(/)(\p{L}*)
+        name: string.pattern.regexp.saga
+        captures:
+          1:
+            name: punctuation.definition.regexp.saga
+          2:
+            comment: Replacement section
+            name: string.replace.regexp.saga
+            patterns:
+              - include: '#back-references'
+              - include: '#string-content'
+          3:
+            name: punctuation.definition.regexp.saga
+          4:
+            name: keyword.other.flag.saga
+        patterns:
+          - include: '#regexp-patterns'
+      - include: '#illegal'
 
   fuzzy-expression:
     patterns:
@@ -2100,7 +2120,7 @@ repository:
           \b
         ) \s*
       ) \s*
-      (?=<[\p{Pc}\p{L}]|<\s+>)
+      (?=<[\p{Pc}\p{L}]|<>)
     end: (?=)|$
     patterns:
       - include: '#tag-component-name'
@@ -2109,7 +2129,7 @@ repository:
     patterns:
       - comment: JSX Fragment
         contentName: meta.jsx.fragment.saga
-        begin: (<)\s*(?=>)
+        begin: (<)(?=>)
         end: (?<=</)(>)
         beginCaptures:
           1: { name: punctuation.definition.tag.saga }
