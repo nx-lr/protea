@@ -1571,7 +1571,6 @@ repository:
             name: keyword.other.flag.saga
         patterns:
           - include: '#regexp-patterns'
-      - include: '#illegal'
 
   fuzzy-expression:
     patterns:
@@ -2124,7 +2123,6 @@ repository:
     end: (?=)|$
     patterns:
       - include: '#tag-component-name'
-      - include: '#illegal'
 
   tag-component-name:
     patterns:
@@ -5629,7 +5627,7 @@ repository:
       - include: '#semicolon'
 
   line-continuation:
-    begin: \s*(`)\s*(?=/[/*]\s|$)
+    begin: \s*(`)\s*(?=/[/*](?![\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+)|$)
     end: ^\s*(?=\S)
     captures:
       1: { name: punctuation.separator.continuation.line.saga }
