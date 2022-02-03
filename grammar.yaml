@@ -1553,8 +1553,8 @@ repository:
               - include: '#back-references'
               - include: '#string-content'
       - comment: Pattern section
-        begin: (/)\s*(?=.+/(?:.+/)?\p{L}*)
-        end: \s*(?:(/)(.+))?(/)(\p{L}*)
+        begin: (/)\s*(?=(?:[^\\/]|\\.)+/(?:(?:[^\\/]|\\.)+/)?\p{L}*)
+        end: \s*(?:(/)((?:[^\\/]|\\.)+))?(/)(\p{L}*)
         name: string.pattern.regexp.saga
         captures:
           1:
@@ -2120,10 +2120,11 @@ repository:
           \b
         ) \s*
       ) \s*
-      (?=<[\p{Pc}\p{L}]|<>)
+      (?=<[>\p{Pc}\p{L}])
     end: (?=)|$
     patterns:
       - include: '#tag-component-name'
+      - include: '#illegal'
 
   tag-component-name:
     patterns:
