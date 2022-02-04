@@ -113,7 +113,7 @@ define:
         |go|defer|do|with|from|where
         |if|elsif|else|then|def
         |for|foreach|repeat|while
-        |try|throw|catch|finally
+        |try|throw|catch|finally|switch
         |match|case|fallthru|default|goto
         |break|continue|redo|retry
         |return|yield|await|scope
@@ -146,7 +146,7 @@ define:
         |go|defer|do|with|from|where
         |if|elsif|else|then|def
         |for|foreach|repeat|while
-        |try|throw|catch|finally
+        |try|throw|catch|finally|switch
         |match|case|fallthru|default|goto
         |break|continue|redo|retry
         |return|yield|await|scope
@@ -271,7 +271,7 @@ repository:
           |go|defer|do|with|from|where
           |if|elsif|else|then|def
           |for|foreach|repeat|while
-          |try|throw|catch|finally
+          |try|throw|catch|finally|switch
           |match|case|fallthru|default|goto
           |break|continue|redo|retry
           |return|yield|await|scope
@@ -589,7 +589,14 @@ repository:
           2: { name: keyword.operator.assert.saga }
           3: { name: keyword.operator.accessor.saga }
       - comment: type operators
-        match: (?<=^|[,;'"`(){}\[\]\w\s]|\\.)(?:(\+)|(\-)|(\*)|(\/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|(:[<>]|[<>]:))(?=$|[,;'"`(){}\[\]\w\s])
+        match: |
+          (?<=^|[,;'"`({\[)}\]\w\s]|\\.)
+          (?:
+             (\+)|(\-)|(\*)|(\/)|(\%)|(\!)
+            |(\?)|(\&)|(\|)|(\^)|(\~)|(\$)
+            |(:[<>]|[<>]:)
+          )
+          (?=$|[,;'"`({\[)}\]\w\s])
         captures: &type-operators
           1: { name: keyword.operator.sum.saga }
           2: { name: keyword.operator.difference.saga }
@@ -1313,7 +1320,7 @@ repository:
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|foreach|repeat|while
-              |try|throw|catch|finally
+              |try|throw|catch|finally|switch
               |match|case|fallthru|default|goto
               |break|continue|redo|retry
               |return|yield|await|scope
@@ -1393,7 +1400,7 @@ repository:
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
                 |for|foreach|repeat|while
-                |try|throw|catch|finally
+                |try|throw|catch|finally|switch
                 |match|case|fallthru|default|goto
                 |break|continue|redo|retry
                 |return|yield|await|scope
@@ -1518,7 +1525,7 @@ repository:
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|foreach|repeat|while
-              |try|throw|catch|finally
+              |try|throw|catch|finally|switch
               |match|case|fallthru|default|goto
               |break|continue|redo|retry
               |return|yield|await|scope
@@ -2109,7 +2116,7 @@ repository:
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|foreach|repeat|while
-              |try|throw|catch|finally
+              |try|throw|catch|finally|switch
               |match|case|fallthru|default|goto
               |break|continue|redo|retry
               |return|yield|await|scope
@@ -3184,7 +3191,7 @@ repository:
                   |go|defer|do|with|from|where
                   |if|elsif|else|then|def
                   |for|foreach|repeat|while
-                  |try|throw|catch|finally
+                  |try|throw|catch|finally|switch
                   |match|case|fallthru|default|goto
                   |break|continue|redo|retry
                   |return|yield|await|scope
@@ -3214,7 +3221,7 @@ repository:
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|foreach|repeat|while
-              |try|throw|catch|finally
+              |try|throw|catch|finally|switch
               |match|case|fallthru|default|goto
               |break|continue|redo|retry
               |return|yield|await|scope
@@ -3266,7 +3273,7 @@ repository:
                     |go|defer|do|with|from|where
                     |if|elsif|else|then|def
                     |for|foreach|repeat|while
-                    |try|throw|catch|finally
+                    |try|throw|catch|finally|switch
                     |match|case|fallthru|default|goto
                     |break|continue|redo|retry
                     |return|yield|await|scope
@@ -3330,7 +3337,7 @@ repository:
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
                 |for|foreach|repeat|while
-                |try|throw|catch|finally
+                |try|throw|catch|finally|switch
                 |match|case|fallthru|default|goto
                 |break|continue|redo|retry
                 |return|yield|await|scope
@@ -3387,7 +3394,7 @@ repository:
                 |go|defer|do|with|from|where
                 |if|elsif|else|then|def
                 |for|foreach|repeat|while
-                |try|throw|catch|finally
+                |try|throw|catch|finally|switch
                 |match|case|fallthru|default|goto
                 |break|continue|redo|retry
                 |return|yield|await|scope
@@ -4362,6 +4369,7 @@ repository:
       - include: $self
 
   declaration-clause:
+    name: meta.declaration.saga
     patterns:
       - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
         name: entity.name.namespace.saga
@@ -5294,7 +5302,7 @@ repository:
               |go|defer|do|with|from|where
               |if|elsif|else|then|def
               |for|foreach|repeat|while
-              |try|throw|catch|finally
+              |try|throw|catch|finally|switch
               |match|case|fallthru|default|goto
               |break|continue|redo|retry
               |return|yield|await|scope
@@ -5322,7 +5330,8 @@ repository:
       - include: '#do-clause'
       - include: '#type-clause'
       - include: '#new-clause'
-      - include: '#case-clause'
+      - include: '#switch-clause'
+      - include: '#match-clause'
 
     repository:
       new-clause:
@@ -5412,6 +5421,30 @@ repository:
 
       match-clause:
         applyEndPatternLast: true
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*(?=\()
+        end: (?=)|$
+        name: meta.match.saga
+        captures:
+          1: { name: keyword.control.match.saga }
+        patterns:
+          - begin: \s*(\()\s*
+            end: \s*(\))
+            captures:
+              1: { name: punctuation.definition.expression.saga }
+            patterns:
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.match.saga
+              - include: $self
+          - begin: \s*(\{)\s*
+            end: \s*(\})\s*
+            captures:
+              1: { name: punctuation.definition.expression.saga }
+            patterns:
+              - include: '#match-case-clause'
+              - include: $self
+
+      switch-clause:
+        applyEndPatternLast: true
         begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)(?!\B|\p{Pd}+\b)\s*(?=\()
         end: (?=)|$
         name: meta.switch.saga
@@ -5426,34 +5459,63 @@ repository:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.switch.saga
               - include: $self
+          - begin: \s*(\{)\s*
+            end: \s*(\})\s*
+            captures:
+              1: { name: punctuation.definition.expression.saga }
+            patterns:
+              - include: '#switch-case-clause'
+              - include: $self
 
-      case-clause:
+      switch-case-clause:
         patterns:
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(default)(?!\B|\p{Pd}+\b)\s*
-            name: keyword.control.switch.saga
-          - applyEndPatternLast: true
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*(?=\()
-            end: (?=)|$
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(default)(?!\B|\p{Pd}+\b)\s*(:)
             captures:
               1: { name: keyword.control.switch.saga }
+              2: { name: punctuation.definition.case-statement.saga }
+          - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
+            end: \s*(:)(?=['"`({\[)}\]\w\s])|$
+            beginCaptures:
+              1: { name: keyword.control.switch.saga }
+            endCaptures:
+              1: { name: punctuation.definition.case-statement.saga }
             patterns:
-              - begin: \s*(\()\s*
-                end: \s*(\))
-                captures:
-                  1: { name: punctuation.definition.expression.saga }
+              - include: '#argument-list'
+              - applyEndPatternLast: true
+                begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
+                end: (?=)|$
+                beginCaptures:
+                  1: { name: keyword.control.switch.saga }
                 patterns:
-                  - include: '#argument-list'
-                  - applyEndPatternLast: true
-                    begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
-                    end: (?=)|$
-                    beginCaptures:
-                      1: { name: keyword.control.switch.saga }
-                    patterns:
-                      - include: '#types'
-                  - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|as)(?!\B|\p{Pd}+\b)\s*
-                    name: keyword.control.switch.saga
-                  - include: '#type-keywords'
-                  - include: $self
+                  - include: '#types'
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|as)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.switch.saga
+              - include: '#type-keywords'
+              - include: $self
+
+      match-case-clause:
+        patterns:
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(default)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.match.saga
+          - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
+            end: \s*(:)(?=['"`({\[)}\]\w\s])|$
+            beginCaptures:
+              1: { name: keyword.control.match.saga }
+            endCaptures:
+              1: { name: punctuation.definition.case-statement.saga }
+            patterns:
+              - include: '#argument-list'
+              - applyEndPatternLast: true
+                begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
+                end: (?=)|$
+                beginCaptures:
+                  1: { name: keyword.control.match.saga }
+                patterns:
+                  - include: '#types'
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|as)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.match.saga
+              - include: '#type-keywords'
+              - include: $self
 
       with-clause:
         applyEndPatternLast: true
