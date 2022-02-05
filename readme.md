@@ -12,14 +12,14 @@ export module Fibonacci {
 }
 
 // Styling
-style App as body {
+style App < body {
   color: ${|props|
     props.theme == `purple ? `purple : `white};
 }
 
 // JSX support
 element HelloMessage implements React.Component {
-  property yourName: string
+  field yourName: String
   return <div #greeting>
     <h1 color=navy>Hello $yourName</h1>
   </div>;
@@ -27,19 +27,19 @@ element HelloMessage implements React.Component {
 
 // Schemas
 model BlogPost {
-  id       : Int @id @default(this.autoIncrement())
-  title    : String
-  content  : String?
-  published: Boolean | String @default(false)
-  author   : User? @relation(fields: [authorId], references: [id])
+  id       : Int @id @default(this.autoIncrement());
+  title    : String;
+  content  : String?;
+  published: Boolean | String @default(false);
+  author   : User? @relation(fields: [authorId], references: [id]);
   authorId : Int;
 }
 
 // Queries
 query MdxBlogPost(title: String) {
   mdx(`title == title) {
-    `id: String
-    `title: String
+    `id: String;
+    `title: String;
   }
 }
 ```
@@ -106,12 +106,14 @@ x.prop = {}
    Operatos should not include `,;(){}[]`.
 
    These operators are built-in and cannot be reassigned:
-   . :: ?. ?: !. !: .= ::= ?.= ?:= !.= !:= ?? !! |> ||>
-   +> -> <| <|| <+ <- @ # <: >: && || ^^ and prefix `!`
+   . :: ?. ?: !. !: .= ::= ?.= ?:= !.= !:= ?? !! |> ||> |||>
+   +> -> ~> <| <|| <||| <+ <- <~ @ # <: >: && || ^^ and prefix `!`
 
    These result in a syntax error: prefix `|`, `<` and `/`
 */
-infix operator function ‰ = |a, b| a.sub(b, '')
+infix operator function [‰](a: String, b: String) {
+  a.sub(b, '')
+}
 let permil = function (a, b) { a.sub(b, '') }
 
 /* A literal identifier is a string prefixed with @. */
@@ -154,19 +156,19 @@ var message = do {
 var displayGreeting
 if (displayGreeting = true) {
   var message = 'Enjoying the docs so far?'
-  print message
+  console.log(message)
 }
 
 /* Destructuring assignment can be performed on:
 ... tuples or arrays */
 let pair = [1, "Hello"]
 let [one, hello] = pair
-print(hello) // 'Hello'
+console.log(hello) // 'Hello'
 
 /* ... records or objects */
 let alice = {name: 'Alice', age: 42, job: 'Programmer'}
 let {name, *details} = alice
-print(details) // { age: 42, job: 'Programmer' }
+console.log(details) // { age: 42, job: 'Programmer' }
 
 /* ... or even on function arguments: */
 let sum = |*args: Number[]|: Number = args.reduce(|x, y| x + y, 0)
@@ -231,7 +233,7 @@ chalk(s"{blue 'hello world!'}") // Tagged template literal (ES6)
 // Multi-quoted strings
 """x"""
 // Strings end until the last remaining multi-quote
-"""""x""""""""
+""""""""x""""""""
 
 // verbatim string
 var message = r"No escapes needed!"
@@ -348,7 +350,6 @@ class Example {
   static method Hello(who = `world) =
     s"Hello, $who!"
 }
-
 
 x \y z // Infix operator
 Example::Hello // "Hello world"
@@ -481,8 +482,8 @@ x <+ y /* _cmpl_: backward composition */
 
 /// RANGE LITERALS
 1 to 10 /* closed range */
-1 til 10 /* end-exclusive range */
-1 til 10 by 2 /* end-exclusive range with step */
+1 till 10 /* end-exclusive range */
+1 till 10 by 2 /* end-exclusive range with step */
 
 /// ASSIGNMENT
 = .= :=
@@ -495,10 +496,10 @@ x <+ y /* _cmpl_: backward composition */
 
 /// CONTROL FLOW
 throw new ZeroDivisionError()
-await.all x
+await::all x
 return x
 yield x
-yield from x
+yield x
 ```
 
 ### Control Flow
@@ -521,13 +522,14 @@ x ! y : z
 
 if (x < 0) {
   "negative"
-} elsif (x == 0) {
+} else if (x == 0) {
   "zero"
 } else {
   "positive"
 }
 
 if (x < 0) -x else x
+unless (x >= 0) -x else x
 
 // `in` loops through values , including sequences
 // `of` loops through keys
@@ -542,27 +544,27 @@ repeat {
 }
 
 switch (value) {
-  case (Some(value)) doSomething(value)
-  case ((type int) as value) doSomething(value)
-  case (Some(value) if value > 10) doSomething(value)
-  case (let [a, b, *rest]) doSomething(rest)
-  case ({foo: let value}) doSomething(value)
-  case (let /(?<value>foo)/) doSomething(value)
-  case (|x = value| x % 2 == 0) doSomething(value)
-	case ("Hello") handleHello()
-  default doSomething()
+  case Some(value): doSomething(value)
+  case value is int: doSomething(value)
+  case Some(value) if value > 10: doSomething(value)
+  case let [a, b, *rest]: doSomething(rest)
+  case ({foo: let value}): doSomething(value)
+  case let /(?<value>foo)/: doSomething(value)
+  case |x = value| x % 2 == 0: doSomething(value)
+	case "Hello": handleHello()
+  default: doSomething()
 }
 
 try {
   body
-} catch match (ex: Exception) {
-  case (ex is IOException) handle()
-  default handle()
+} catch switch (let ex: Exception) {
+  case ex is IOException: handle()
+  default: handle()
 }
 
 var xs = (from let #[x, y] in [1 to 200].entries()
   where x < 100 // filter
-  join let n in 1 to 100 on n == x // join
+  join let n in 1 to 100 onto n == x // join
   order by |x, y| x - y // sort
   group by |x| x % 2 = 0 // group
   select x) // map
@@ -581,33 +583,31 @@ return x
 ### Functions
 
 ```swift
-// Use 'def' to declare a named function
-def namedFunction() = ()
-// Append an asterisk after the 'def' to make it a sequence:
-def* sequenceFunction() = ()
+function namedFunction() {}
+iterator sequenceFunction() {}
 
-// Anonymous functions use the fat arrow, =>,
-// with arguments in parentheses as before.
-let namedFunction = x => ()
+// Anonymous functions have their arguments in between
+// pipes
+let namedFunction = |x| x = 1
 
 // Functions, like blocks, implicitly return the last statement.
 let add = (x, y) => x + y
 
 // Types can be inserted after each argument name,
 // return types go after the argument list:
-let add = (x: num, y: num): num => x + y
+let add = |x: Number, y: Number|: Number = x + y
 // This is a function type don't use this in your code!
-let add: (x: num, y: num) => num = (x, y) => x + y
+let add: |x: Number, y: Number| Number = |x, y| x + y
 
 // Call functions with parentheses and comma-separated arguments:
 add(1, 2)
 
-let addTwo = x => x + 2 // Leave out the parens if there is 1 arg
+let addTwo = |x| x + 2 // Leave out the parens if there is 1 arg
 let doNothing = () => () // Write parens if there is no arg
 
 /// NAMED ARGUMENTS
 // Arguments can be named using the '#' prefix.
-let makeCircle = (#x: num, #y: num, #radius: num): void => ()
+let makeCircle = |#x: Number, #y: Number, #radius: Number|: void = ()
 // Use = to call functions with named arguments.
 // Their order does not matter.
 makeCircle(#radius = 10, #x = 1, #y = 100)
@@ -679,107 +679,77 @@ what the compiler infers.
 */
 
 /// BASIC TYPES
-let x = (1 + 2: num) // type assertions
-let x: num = 1 + 2 // binding type annotation
-let add = (a: num, b: num): num => a + b // argument/return types
+let x = (1 + 2: Number) // type assertions
+let x: Number = 1 + 2 // binding type annotation
+let add = (a: Number, b: Number): Number => a + b // argument/return types
 
-var x: any = 40 // top type: any
-var x: never = repeat // bottom type: never
-var x: void = null // void type
-var x: num? = 10 x = null // option or nullable type
-var x: unknown x = 10 // unknown type type of x is now known as 'num'
+var x: Any = 40 // top type: any
+var x: Never = repeat // bottom type: never
+var x: Void = null // void type
+var x: Number? = 10 x = null // option or nullable type
+var x: Unknown x = 10 // unknown type type of x is now known as 'num'
 
-type num? = int | null | undef
-type numOrstring = num | str // Union types
-type hasLength = (keyof str & array<any>) // Intersection types
+type A = Int|Null|Undefined
+type NumOrString = Num|String // Union types
+type HasLength = keyof String & Array<Any> // Intersection types
 
 // Literal types
-type httpMethods = 'GET' | 'POST' | 'PUT' | 'DELETE'
-type dice = 1 | 2 | 3 | 4 | 5 | 6
+type HttpMethods = `GET|`POST|`PUT|`DELETE|`HEAD|`OPTIONS|`PATCH|`TRACE|`CONNECT
+type Dice = 1|2|3|4|5|6
 
 // Array types
-type arrayOfString = str[]
-type arrayOfString = array<str>
+type String[]
+type Array<Str>
 
 // Read-only arrays
-type readonlyArray = readonly any[]
+type ReadonlyArray = readonly Any[]
 
 // Tuple types
-type strNumPair = [string, Number]
+type StrNumPair = [String, Number]
 
 // For-all types
-type upto100 = |x|: int where 0 < x < 100
+type UpTo100 = |x| as int where 0 < x < 100
 
 // Restrain the type alias to the file it was declared in
-opaque type x = 40
+type x = 40
 // make sure the object contains only these properties
-type x = { x: str, y: num }
-interface X only:
-  x: str, y: num
+type x = { x: String, y: Number }
+interface <T>X {
+  [index: Int]: Any
+  length: Int
+  age: Int
+  name: readonly String
+  value: T
+}
 
 // 'typeof'/'nameof' operator
 var greeting = 'hello world'
-type greeting = typeof greeting
-type greeting = nameof greeting
-
-/// INTERFACES
-type Person = {
-  name: str
-  age: int
-}
-interface Person:
-  name: str
-  age: int
+type greeting = typeof Greeting
+type greeting = nameof Greeting
 
 var alice: Person = { name: 'Alice', age: 100 }
 
-// Optional parameters
-interface Person:
-  name: str
-  age?: int
-
-var bob: Person = { name: 'Bob' }
-
-// Read-only parameters
-interface Person:
-  readonly name: str
-  age: int
-
-var bob: Person = { name: 'Bob' }
-bob = bob.name set 'Bobby'
-/* TypeError: cannot set property 'name' as it is readonly */
-
-// Index signatures
-interface Arrayish:
-  [index: int]: any
-  length: int
-interface Stringish extends Arrayish:
-  [index: int]: str
-  length: int
-
-// Interface generics
-interface Box<Type>:
-  contents: Type
-
 // ENUMERATIONS
-enum Direction of int:
+enum <Int>Direction {
   Up = 1, Down, Left, Right
+}
 
-// Of portion is optional
-enum Direction of str:
+enum <String>Direction {
   Up = "UP"
   Down = "DOWN"
   Left = "LEFT"
   Right = "RIGHT"
+}
 
 // Any constant expressions can be used as enum members
 // and can reference previously declared members
-enum FileAccess of str | num | bool:
+enum <String|Number|Boolean>FileAccess {
   None // constant members
   Read = 1 << 1
   Write = 1 << 2
   ReadWrite = Read | Write
-  Computed = length '123' // computed member
+  Computed = '123'.length  // computed member
+}
 ```
 
 ### Classes, Namespaces, Modules, Structures and Traits
