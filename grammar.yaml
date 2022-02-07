@@ -240,6 +240,7 @@ repository:
   types:
     patterns:
       - include: '#comments'
+      - include: '#embedded'
       - include: '#argument-list'
       - include: '#angle-brackets'
       - include: '#modifiers'
@@ -1258,6 +1259,7 @@ repository:
     patterns:
       - include: '#embedded-expression'
       - include: '#embedded-format'
+      - include: '#embedded-placeholder'
 
   embedded-verbatim:
     patterns:
@@ -1265,6 +1267,7 @@ repository:
         name: constant.character.escape.saga
       - include: '#embedded-expression'
       - include: '#embedded-format'
+      - include: '#embedded-placeholder'
 
   embedded-expression:
     patterns:
@@ -1537,23 +1540,23 @@ repository:
             patterns:
               - include: '#back-references'
               - include: '#string-content'
+      - comment: Replacement section
+        begin: (?<=/)\s*(/)\s*
+        end: \s*(/)(\p{L}*)
+        name: string.replace.regexp.saga
+        captures:
+          1: { name: punctuation.definition.regexp.saga }
+          2: { name: keyword.other.flag.saga }
+        patterns:
+          - include: '#back-references'
+          - include: '#string-content'
       - comment: Pattern section
-        begin: (/)\s*(?=(?:[^\\/]|\\.)+/(?:(?:[^\\/]|\\.)+/)?\p{L}*)
-        end: \s*(?:(/)((?:[^\\/]|\\.)+))?(/)(\p{L}*)
+        begin: (/)\s*
+        end: \s*(/)(\p{L}*)
         name: string.pattern.regexp.saga
         captures:
-          1:
-            name: punctuation.definition.regexp.saga
-          2:
-            comment: Replacement section
-            name: string.replace.regexp.saga
-            patterns:
-              - include: '#back-references'
-              - include: '#string-content'
-          3:
-            name: punctuation.definition.regexp.saga
-          4:
-            name: keyword.other.flag.saga
+          1: { name: punctuation.definition.regexp.saga }
+          2: { name: keyword.other.flag.saga }
         patterns:
           - include: '#regexp-patterns'
 
@@ -1606,7 +1609,7 @@ repository:
 
   back-references:
     patterns:
-      - match: \$(\d+[+-]?|[+-]\d*|&)
+      - match: \$(\d+[+-]?|[+-]\d*)
         name: keyword.other.back-reference.saga
       - begin: (\$<)\s*
         end: \s*(>)
@@ -1627,8 +1630,8 @@ repository:
 
   regexp-patterns:
     patterns:
-      - include: '#embedded'
       - include: '#comments'
+      - include: '#embedded'
       - include: '#strings'
       - match: \|
         name: keyword.operator.or.saga
@@ -1711,14 +1714,15 @@ repository:
 
   regexp-groups:
     patterns:
-      - comment: Embedded expression
-        begin: \(\?([*+])
+      - comment: Backtracking control verb
+        begin: (\(\*([\p{Pc}\p{L}][\w\p{Pd}]*)?(:)?)
         end: \s*(\))
-        name: constant.other.pcre.saga
+        name: meta.group.backtrack.saga
         captures:
-          0: { name: punctuation.section.expression.saga }
-        patterns:
-          - include: $self
+          1: { name: punctuation.section.expression.saga }
+          2: { name: keyword.control.saga }
+          3: { name: punctuation.separator.colon.saga }
+        patterns: *regexp-patterns
       - comment: Block comment
         begin: (\()(\?#)
         contentName: comment.block.regexp.saga
@@ -1785,7 +1789,7 @@ repository:
           4: { name: keyword.other.flag.saga }
           5: { name: punctuation.separator.colon.saga }
         patterns: *regexp-patterns
-      - comment: Callouts
+      - comment: Call-outs
         begin: (\(\?)(?={)
         end: \s*(\))
         name: meta.group.call-out.saga
@@ -1802,7 +1806,7 @@ repository:
               4: { patterns: [include: '#function-names'] }
               5: { name: punctuation.definition.tag.saga }
             patterns:
-          - include: $self
+              - include: $self
           - include: '#regexp-patterns'
       - comment: Atomic groups
         begin: (\(\?>)
@@ -4390,16 +4394,23 @@ repository:
       - include: '#line-continuation'
       - include: '#type-keywords'
       - include: '#type-square-brackets'
+      - begin: (\#\{)\s*
+        end: \s*(\})
+        name: meta.brace.curly.saga
+        captures:
+          1: { name: punctuation.section.class.saga }
+        patterns:
+          - include: $self
+      - begin: (\{)\s*
+        end: \s*(\})
+        name: meta.brace.curly.saga
+        captures:
+          1: { name: punctuation.definition.block.saga }
+        patterns:
+          - include: $self
       - include: '#brackets'
       - include: '#type-signature'
       - include: '#literals'
-      - applyEndPatternLast: true
-        begin: \s*(:)(?:(?=::)|(?![\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]))
-        end: (?=)|$
-        beginCaptures:
-          1: { name: punctuation.definition.annotation.saga }
-        patterns:
-          - include: '#types'
       - match: ::|\.
         name: punctuation.separator.namespace.saga
       - match: \s+
