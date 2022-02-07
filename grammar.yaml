@@ -339,14 +339,47 @@ repository:
       12: { name: entity.name.type.saga }
 
   type-signature:
-    applyEndPatternLast: true
-    name: meta.type.saga
-    begin: (:)(?=$|[\w\s'"`({\[])
-    end: (?=)|$
-    beginCaptures:
-      1: { name: punctuation.definition.annotation.saga }
     patterns:
-      - include: '#types'
+      - applyEndPatternLast: true
+        name: meta.type.saga
+        begin: (:)(?=$|[\w\s'"`({\[])
+        end: (?=)|$
+        beginCaptures:
+          1: { name: punctuation.definition.annotation.saga }
+        patterns:
+          - include: '#types'
+      - applyEndPatternLast: true
+        name: meta.type.saga
+        begin: |
+          (?x)
+          (?<=
+            ['"`)}\]] |
+            \\.\s |
+            \w+ \b
+          ) \s*
+          (?=\b\w+)
+        end: (?=)|$
+        beginCaptures:
+          1: { name: punctuation.definition.annotation.saga }
+        patterns:
+          - include: '#comments'
+          - include: '#embedded'
+          - include: '#argument-list'
+          - include: '#angle-brackets'
+          - include: '#modifiers'
+          - include: '#type-keywords'
+          - include: '#type-names'
+          - include: '#literals'
+          - &embedded-primary-operators
+            comment: Primary binary operators
+            match: (?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
+            captures:
+              1: { name: keyword.operator.optional.saga }
+              2: { name: keyword.operator.assert.saga }
+              3: { name: keyword.operator.accessor.saga }
+          - include: '#type-variables'
+          - include: '#type-brackets'
+          - include: '#space'
 
   type-brackets:
     patterns:
@@ -552,17 +585,11 @@ repository:
           4: { name: keyword.operator.type.channel.saga }
 
     patterns:
-      - match: \s*(--?>|~~?>)
+      - match: \s*(--?>|~~?>|==?>)
         name: keyword.operator.type.function.saga
-      - match: \s*(<--?|<~~?)
+      - match: \s*(<--?|<~~?|<==?)
         name: keyword.operator.type.channel.saga
-      - &embedded-primary-operators
-        comment: Primary binary operators
-        match: (?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
-        captures:
-          1: { name: keyword.operator.optional.saga }
-          2: { name: keyword.operator.assert.saga }
-          3: { name: keyword.operator.accessor.saga }
+      - *embedded-primary-operators
       - comment: type unions
         match: (?<=^|[\s({\[])(\|)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\|)(?=['"`({\[\w])
         captures:
@@ -2812,7 +2839,6 @@ repository:
 
   style-rules:
     patterns:
-      - include: '#function-calls'
       - comment: CSS operators
         match: \s*(?:(\+)|(\-)|(\*)|(/)|(\%)|(\!)|(\?)|(\&)|(\|)|(\^)|(\~)|(\$)|(\#)|([<>]))\s*
         captures:
@@ -3879,7 +3905,7 @@ repository:
     patterns:
       - comment: \ function call
         applyEndPatternLast: true
-        begin: (?<=^|\\.|['"`({\[)}\]\s])(\\)(?=[\p{Pc}\p{L}])
+        begin: (?<=^|['"`({\[)}\]\s])(\\)(?=[\p{Pc}\p{L}])
         end: (?=)|$
         captures:
           1: { name: punctuation.definition.call.saga }
@@ -4368,6 +4394,7 @@ repository:
           - match: *class-name
             name: entity.name.trait.saga
           - include: '#comments'
+          - include: '#type-square-brackets'
           - include: '#brackets'
           - include: '#comma'
           - include: '#line-continuation'
@@ -4384,6 +4411,7 @@ repository:
           - match: *class-name
             name: entity.name.class.saga
           - include: '#comments'
+          - include: '#type-square-brackets'
           - include: '#brackets'
           - include: '#comma'
           - include: '#line-continuation'
@@ -4411,6 +4439,7 @@ repository:
       - include: '#brackets'
       - include: '#type-signature'
       - include: '#literals'
+      - include: '#decorators'
       - match: ::|\.
         name: punctuation.separator.namespace.saga
       - match: \s+
@@ -4859,6 +4888,9 @@ repository:
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.variable.saga }
+        patterns:
+          - include: '#modifiers'
+          - include: '#decorators'
 
       declare:
         applyEndPatternLast: true
@@ -4866,6 +4898,9 @@ repository:
         end: (?=)|$
         beginCaptures:
           1: { name: keyword.other.declare.saga }
+        patterns:
+          - include: '#modifiers'
+          - include: '#decorators'
 
       function:
         applyEndPatternLast: true
@@ -5371,6 +5406,39 @@ repository:
             patterns:
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.error.saga
+              - include: $self
+          - begin: \s*(\{)\s*
+            end: \s*(\})\s*
+            captures:
+              1: { name: punctuation.definition.block.saga }
+            patterns:
+              - include: '#catch-case-clause'
+              - include: $self
+
+      catch-case-clause:
+        patterns:
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(default)\b\s*(:)
+            captures:
+              1: { name: keyword.control.error.saga }
+              2: { name: punctuation.definition.case-statement.saga }
+          - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
+            end: \s*(:)(?=['"`({\[)}\]\w\s])|$
+            beginCaptures:
+              1: { name: keyword.control.error.saga }
+            endCaptures:
+              1: { name: punctuation.definition.case-statement.saga }
+            patterns:
+              - include: '#argument-list'
+              - applyEndPatternLast: true
+                begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
+                end: (?=)|$
+                beginCaptures:
+                  1: { name: keyword.control.error.saga }
+                patterns:
+                  - include: '#types'
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|as)(?!\B|\p{Pd}+\b)\s*
+                name: keyword.control.error.saga
+              - include: '#type-keywords'
               - include: $self
 
       for-clause:
