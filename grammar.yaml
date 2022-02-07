@@ -113,7 +113,7 @@ define:
         |interface|enum|module|struct
         |protocol|iterator|macro|query
         |object|contract|trait|style
-        |element|field|model
+        |element|field|model|union
         |go|defer|do|with|from|where
         |if|unless|else|then|def
         |for|foreach|repeat|while|until
@@ -146,7 +146,7 @@ define:
         |interface|enum|module|struct
         |protocol|iterator|macro|query
         |object|contract|trait|style
-        |element|field|model
+        |element|field|model|union
         |go|defer|do|with|from|where
         |if|unless|else|then|def
         |for|foreach|repeat|while|until
@@ -273,7 +273,7 @@ repository:
           |interface|enum|module|struct
           |protocol|iterator|macro|query
           |object|contract|trait|style
-          |element|field|model
+          |element|field|model|union
           |go|defer|do|with|from|where
           |if|unless|else|then|def
           |for|foreach|repeat|while|until
@@ -339,30 +339,14 @@ repository:
       12: { name: entity.name.type.saga }
 
   type-signature:
+    applyEndPatternLast: true
+    name: meta.type.saga
+    begin: (:)(?=$|[\w\s'"`({\[])
+    end: (?=)|$
+    beginCaptures:
+      1: { name: punctuation.definition.annotation.saga }
     patterns:
-      - applyEndPatternLast: true
-        name: meta.type.saga
-        begin: (:)(?=$|[\w\s'"`({\[])
-        end: (?=)|$
-        beginCaptures:
-          1: { name: punctuation.definition.annotation.saga }
-        patterns:
-          - include: '#types'
-      - applyEndPatternLast: true
-        name: meta.type.saga
-        begin: |
-          (?x)
-          (?<=
-            ['"`)}\]] |
-            \\.\s |
-            \w+ \b
-          ) \s*
-          (?=\b\w+)
-        end: (?=)|$
-        beginCaptures:
-          1: { name: punctuation.definition.annotation.saga }
-        patterns:
-          - include: '#types'
+      - include: '#types'
 
   type-brackets:
     patterns:
@@ -568,7 +552,7 @@ repository:
           4: { name: keyword.operator.type.channel.saga }
 
     patterns:
-      - &embedded-primary-operators
+      - &qualified-name-separators
         comment: Primary binary operators
         match: (?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
         captures:
@@ -579,7 +563,6 @@ repository:
         name: keyword.operator.type.function.saga
       - match: \s*(<--?|<~~?|<==?)
         name: keyword.operator.type.channel.saga
-      - *embedded-primary-operators
       - comment: type unions
         match: (?<=^|[\s({\[])(\|)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\|)(?=['"`({\[\w])
         captures:
@@ -754,7 +737,7 @@ repository:
 
   decorators:
     applyEndPatternLast: true
-    begin: (\@)(?=[\p{Pc}\p{L}])
+    begin: (?<=^|\\.|['"`({\[)}\]\s:=])(\@)(?=[\p{Pc}\p{L}])
     end: (?=)|$
     name: entity.name.decorator.saga
     captures:
@@ -1314,7 +1297,7 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|field|model
+              |element|field|model|union
               |go|defer|do|with|from|where
               |if|unless|else|then|def
               |for|foreach|repeat|while|until
@@ -1337,7 +1320,7 @@ repository:
           - include: '#embedded-function-calls'
           - include: '#variables'
           - include: '#numbers'
-          - *embedded-primary-operators
+          - *qualified-name-separators
 
   embedded-placeholder:
     patterns:
@@ -1394,7 +1377,7 @@ repository:
                 |interface|enum|module|struct
                 |protocol|iterator|macro|query
                 |object|contract|trait|style
-                |element|field|model
+                |element|field|model|union
                 |go|defer|do|with|from|where
                 |if|unless|else|then|def
                 |for|foreach|repeat|while|until
@@ -1481,7 +1464,7 @@ repository:
           - include: '#regexps'
           - include: '#numbers'
           - include: '#symbols'
-          - *embedded-primary-operators
+          - *qualified-name-separators
       - comment: type specifier
         match: (?:(?<=%)|(\|))([\p{Pc}\p{L}][\w\p{Pd}]*)\b
         name: storage.type.format.saga
@@ -1519,7 +1502,7 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|field|model
+              |element|field|model|union
               |go|defer|do|with|from|where
               |if|unless|else|then|def
               |for|foreach|repeat|while|until
@@ -2111,7 +2094,7 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|field|model
+              |element|field|model|union
               |go|defer|do|with|from|where
               |if|unless|else|then|def
               |for|foreach|repeat|while|until
@@ -3148,173 +3131,34 @@ repository:
   # Function and method calls
 
   function-calls:
-    old:
-      name: meta.function.call.saga
-      match: |
-        (?x)
-        (?<! # ignore qualified names
-          \b (?: [?!]?\.=? | [?!:]:=?) (?: \b | ['"`({\[])
-        )
-        (?<=
-          (?:
-            # beginning of line
-            ^
-          | # or before a delimiter
-            [,;({\[] \s*
-          | # or before a sigil
-            [$:] \s* \b
-          | # key-value separator
-            ['"`({\[)}\]\w]: \s
-          | # operator
-            (?:^ | ['"`({\[)}\]\w\s] | \\.) # anchor
-            [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
-          | # open/close bracket
-            (?:['"`({\[)}\]] | \\.)
-            (?: [?!]?\.=? | [?!:]:=?) # accessors
-          | # command syntax
-            (?:^ | [,;({\[] | \s) //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-          | (?:
-              (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
-              \b
-                (?: # keywords
-                  in|of|as|is|new
-                  |to|till|thru|by|delete
-                  |unset|ref|and|or|xor|not
-                  |var|val|let|const|function
-                  |procedure|method|type|class
-                  |interface|enum|module|struct
-                  |protocol|iterator|macro|query
-                  |object|contract|trait|style
-                  |element|field|model
-                  |go|defer|do|with|from|where
-                  |if|unless|else|then|def
-                  |for|foreach|repeat|while|until
-                  |try|throw|catch|finally|switch
-                  |match|case|fallthru|default|goto
-                  |break|continue|redo|retry
-                  |return|yield|await|scope
-                  |import|export|route
-                  |debug|assert|check
-                )
-              \b
-              (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
-            )
-          ) \s* # before a space
-        )
-        \b
-        (
-          # ignore all keywords
-          (?!
-            (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-            (?: # keywords
-              in|of|as|is|new
-              |to|till|thru|by|delete
-              |unset|ref|and|or|xor|not
-              |var|val|let|const|function
-              |procedure|method|type|class
-              |interface|enum|module|struct
-              |protocol|iterator|macro|query
-              |object|contract|trait|style
-              |element|field|model
-              |go|defer|do|with|from|where
-              |if|unless|else|then|def
-              |for|foreach|repeat|while|until
-              |try|throw|catch|finally|switch
-              |match|case|fallthru|default|goto
-              |break|continue|redo|retry
-              |return|yield|await|scope
-              |import|export|route
-              |debug|assert|check
-            )
-            (?!\B|\p{Pd}+\b)
-          )
-          (?:
-            \b
-            [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
-            \b
-            (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
-          )*
-          [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
-        )
-        \b
-        (?=
-          \s+
-          (?:
-              # prefix operator literal
-              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
-              ['"`({\[]
-            | # array literal
-              \[
-            | # command literal
-               (?:^ | [,;({\[] | \s) //? \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
-            | # ignore orphaned qualified name
-              (?!
-                (?: [?!]?\.=? | [?!:]:=?)
-                ['"`({\[\w]
-              )
-              # prefix operator
-              [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*
-              (?:
-                # ignore all keywords
-                (?!
-                  (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                  (?: # keywords
-                    in|of|as|is|new
-                    |to|till|thru|by|delete
-                    |unset|ref|and|or|xor|not
-                    |var|val|let|const|function
-                    |procedure|method|type|class
-                    |interface|enum|module|struct
-                    |protocol|iterator|macro|query
-                    |object|contract|trait|style
-                    |element|field|model
-                    |go|defer|do|with|from|where
-                    |if|unless|else|then|def
-                    |for|foreach|repeat|while|until
-                    |try|throw|catch|finally|switch
-                    |match|case|fallthru|default|goto
-                    |break|continue|redo|retry
-                    |return|yield|await|scope
-                    |import|export|route
-                    |debug|assert|check
-                  )
-                  (?!\B|\p{Pd}+\b)
-                )
-                (?:
-                  \b
-                  [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
-                  \b
-                  (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
-                )*
-                [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
-              )
-              (?: # closing bracket
-                  [,;'"`({\[)}\]\s]
-                | # operator
-                  [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
-                | # end of line
-                  $
-              )
-          )
-          | \s* # optional space
-          (?: # command or string literal
-              (?: \\ )
-            | # function application, composition and piping
-              (?: \$ | \s \. | <\|{1,3}| <\+) ['"`({\[\w\s]
-            | # C-style function call
-              (?:[!?]\.=?|\.=)? \#? [({]
-            | # generics
-              (?:[!?]\.=?|\.=)? < ['"`({\[\w]
-            | # string literal or expression
-              ['"`(]
-          )
-        )
-      captures:
-        1: { patterns: [include: '#function-names'] }
-
     patterns:
-      - include: '#embedded-function-calls'
-      - name: meta.function.call.saga
+      - applyEndPatternLast: true
+        name: meta.function.arguments.saga
+        begin: |
+          (?x)
+          (?<=
+            ['"`)}\]] |
+            \\.\s |
+            \b # qualified name
+              (?:
+                [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+                \b
+                  (?:
+                    (?:(?:[?!]?\.|[?!:]:)=?) # q-name separator
+                    [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+                  )*
+                \b
+              )
+            \b
+          ) \s*
+          (?=\b\w+)
+        end: (?=)|$
+        patterns:
+          - include: '#literals'
+          - include: '#variables'
+          - include: '#brackets'
+          - *qualified-name-separators
+      - name: meta.function.arguments.saga
         match: |
           (?x)
           \b
@@ -3331,7 +3175,7 @@ repository:
                 |interface|enum|module|struct
                 |protocol|iterator|macro|query
                 |object|contract|trait|style
-                |element|field|model
+                |element|field|model|union
                 |go|defer|do|with|from|where
                 |if|unless|else|then|def
                 |for|foreach|repeat|while|until
@@ -3356,17 +3200,52 @@ repository:
           (?=
             \s*
             (?: # function application, composition and piping
-                (?: \$ | \s \. \s | <\|{1,3}| <\+) ['"`({\[\w\s]
+                (?: \$ | \s\.\s | <\|{1,3} | <\+) ['"`({\[\w\s]
               | # C-style function call
                 (?:[!?]\.=?|\.=)? \#? [({]
               | # generics
                 (?:[!?]\.=?|\.=)? < ['"`({\[\w]
+              | # literals
+                ['"`\d]
+              | (
+                # ignore all keywords
+                (?!
+                  (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+                  (?: # keywords
+                    in|of|as|is|new
+                    |to|till|thru|by|delete
+                    |unset|ref|and|or|xor|not
+                    |var|val|let|const|function
+                    |procedure|method|type|class
+                    |interface|enum|module|struct
+                    |protocol|iterator|macro|query
+                    |object|contract|trait|style
+                    |element|field|model|union
+                    |go|defer|do|with|from|where
+                    |if|unless|else|then|def
+                    |for|foreach|repeat|while|until
+                    |try|throw|catch|finally|switch
+                    |match|case|fallthru|default|goto
+                    |break|continue|redo|retry
+                    |return|yield|await|scope
+                    |import|export|route
+                    |debug|assert|check
+                  )
+                  (?!\B|\p{Pd}+\b)
+                )
+                (?:
+                  \b
+                  [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+                  \b
+                  (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
+                )*
+                [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
+              )
             )
           )
         captures:
           1: { patterns: [include: '#function-names'] }
-
-      - name: meta.function.call.saga
+      - name: meta.function.arguments.saga
         match: |
           (?x)
           (?<=
@@ -3388,7 +3267,7 @@ repository:
                 |interface|enum|module|struct
                 |protocol|iterator|macro|query
                 |object|contract|trait|style
-                |element|field|model
+                |element|field|model|union
                 |go|defer|do|with|from|where
                 |if|unless|else|then|def
                 |for|foreach|repeat|while|until
@@ -3583,7 +3462,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|as
+                  |element|field|model|union|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3623,7 +3502,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|as
+                  |element|field|model|union|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3663,7 +3542,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|as
+                  |element|field|model|union|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3703,7 +3582,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|as
+                  |element|field|model|union|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3743,7 +3622,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|as
+                  |element|field|model|union|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3783,7 +3662,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|as
+                  |element|field|model|union|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3822,64 +3701,101 @@ repository:
         name: variable.parameter.saga
 
   variables:
-    comment: |
-      Four types of variables:
-      - _lead_underscore
-      - UPPERCASE
-      - PascalCase
-      - camelCase
-    match: |
-      (?x) \b
+    patterns:
+      - match: |
+          (?x)
+          (?<=
+            \b # qualified name
+              [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+              (?:(?:[?!]?\.|[?!:]:)=?)
+            \b
+          )
+          (?:\d\w+)
+        name: variable.other.index.saga
+      - comment: |
+          Four types of variables:
+          - _lead_underscore
+          - UPPERCASE
+          - PascalCase
+          - camelCase
+        match: |
+          (?x) \b
 
-      (?:
-        (?<= [!?]?\.=? | [?!:]:=?) (?<! \.\.+)
-        (?: # Properties
-            # Leading underscore
-            (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-          | # Train case
-            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
-          | # Pascal case
-            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-          | # Camel or kebab case
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)
-        )
-        |
-        (?: # Objects
-            # Leading underscore
-            (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-          | # Train case
-            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
-          | # Pascal case
-            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-          | # Camel or kebab case
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)
-        )
-        (?! \.\.+) (?= [!?]?\.=? | [?!:]:=? | \#?\[)
-        |
-        (?: # Regular variables
-            # Leading underscore
-            (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-          | # Train case
-            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
-          | # Pascal case
-            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-          | # Camel or kebab case
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)
-        )
-      )\b
-    captures:
-      1: { name: variable.other.global.saga }
-      2: { name: variable.other.constant.property.saga }
-      3: { name: variable.other.property.static.saga }
-      4: { name: variable.other.property.saga }
-      5: { name: variable.other.global.saga }
-      6: { name: variable.other.constant.object.saga }
-      7: { name: variable.other.object.saga }
-      8: { name: variable.other.object.saga }
-      9: { name: variable.other.dollar.saga }
-      10: { name: variable.other.constant.saga }
-      11: { name: variable.other.class.saga }
-      12: { name: variable.other.readwrite.saga }
+          (?!
+            (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+            (?: # keywords
+              in|of|as|is|new
+              |to|till|thru|by|delete
+              |unset|ref|and|or|xor|not
+              |var|val|let|const|function
+              |procedure|method|type|class
+              |interface|enum|module|struct
+              |protocol|iterator|macro|query
+              |object|contract|trait|style
+              |element|field|model|union
+              |go|defer|do|with|from|where
+              |if|unless|else|then|def
+              |for|foreach|repeat|while|until
+              |try|throw|catch|finally|switch
+              |match|case|fallthru|default|goto
+              |break|continue|redo|retry
+              |return|yield|await|scope
+              |import|export|route
+              |debug|assert|check
+              |extends|implements
+            )
+            (?!\B|\p{Pd}+\b)
+          )
+
+          (?:
+            (?<= [!?]?\.=? | [?!:]:=?) (?<! \.\.+)
+            (?: # Properties
+                # Leading underscore
+                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+              | # Train case
+                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+              | # Pascal case
+                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+              | # Camel or kebab case
+                ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            )
+            |
+            (?: # Objects
+                # Leading underscore
+                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+              | # Train case
+                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+              | # Pascal case
+                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+              | # Camel or kebab case
+                ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            )
+            (?! \.\.+) (?= [!?]?\.=? | [?!:]:=? | \#?\[)
+            |
+            (?: # Regular variables
+                # Leading underscore
+                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+              | # Train case
+                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+              | # Pascal case
+                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+              | # Camel or kebab case
+                ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            )
+          ) \b
+        captures:
+          1: { name: variable.other.global.saga }
+          2: { name: variable.other.constant.property.saga }
+          3: { name: variable.other.property.static.saga }
+          4: { name: variable.other.property.saga }
+          5: { name: variable.other.global.saga }
+          6: { name: variable.other.constant.object.saga }
+          7: { name: variable.other.object.saga }
+          8: { name: variable.other.object.saga }
+          9: { name: variable.other.dollar.saga }
+          10: { name: variable.other.constant.saga }
+          11: { name: variable.other.class.saga }
+          12: { name: variable.other.readwrite.saga }
 
   # Operators
 
@@ -3893,29 +3809,6 @@ repository:
 
   special-operators:
     patterns:
-      - comment: \ function call
-        applyEndPatternLast: true
-        begin: (?<=^|['"`({\[)}\]\s])(\\)(?=[\p{Pc}\p{L}])
-        end: (?=)|$
-        captures:
-          1: { name: punctuation.definition.call.saga }
-        patterns:
-          - applyEndPatternLast: true
-            begin: (?<=\\)(?=[\p{Pc}\p{L}])
-            end: (?=)|$
-            captures:
-              1: { name: punctuation.definition.call.saga }
-            patterns:
-              - include: '#function-names'
-              - include: '#brackets'
-          - *embedded-primary-operators
-          - include: '#brackets'
-          - include: '#literals'
-          - include: '#embedded-function-calls'
-          - include: '#placeholder-variables'
-          - include: '#comma'
-          - include: '#line-continuation'
-          - include: '#space'
       - comment: '? ternary operator'
         begin: (?<=^|[\s({\[])(\?)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\?)(?=['"`({\[\w])
         end: (?<=^|[\s({\[])(\:)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\:)(?=['"`({\[\w])
@@ -4472,7 +4365,7 @@ repository:
           |interface|enum|module|struct
           |protocol|iterator|macro|query
           |object|contract|trait|style
-          |element|field|model
+          |element|field|model|union
         )
         (?!\B|\p{Pd}+\b)
       )
@@ -4537,7 +4430,7 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|field|model
+              |element|field|model|union
             )
             (?!\B|\p{Pd}+\b)
           \s*
@@ -4844,6 +4737,7 @@ repository:
       - include: '#struct'
       - include: '#protocol'
       - include: '#model'
+      - include: '#union'
 
     repository:
       style:
@@ -4903,6 +4797,17 @@ repository:
           - include: '#declaration-clause'
           - match: *entity-name
             name: entity.name.function.saga
+
+      union:
+        applyEndPatternLast: true
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(union)(?!\B|\p{Pd}+\b)\s*
+        end: (?=)|$
+        beginCaptures:
+          1: { name: storage.type.union.saga }
+        patterns:
+          - include: '#declaration-clause'
+          - match: *entity-name
+            name: entity.name.union.saga
 
       method:
         applyEndPatternLast: true
@@ -5128,7 +5033,7 @@ repository:
               function|procedure|method|type
               |class|interface|enum|module|struct|protocol
               |iterator|macro|query|object|contract
-              |trait|style|element|field|model
+              |trait|style|element|field|model|union
             )
             \b
           )
@@ -5227,7 +5132,7 @@ repository:
               function|procedure|method|type
               |class|interface|enum|module|struct|protocol
               |iterator|macro|query|object|contract
-              |trait|style|element|field|model
+              |trait|style|element|field|model|union
             )
             \b
           )
@@ -5313,7 +5218,7 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|field|model
+              |element|field|model|union
               |go|defer|do|with|from|where
               |if|unless|else|then|def
               |for|foreach|repeat|while|until
@@ -5631,7 +5536,7 @@ repository:
               function|procedure|method|type
               |class|interface|enum|module|struct|protocol
               |iterator|macro|query|object|contract
-              |trait|style|element|field|model
+              |trait|style|element|field|model|union
             )
             \b
           )
