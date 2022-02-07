@@ -362,24 +362,7 @@ repository:
         beginCaptures:
           1: { name: punctuation.definition.annotation.saga }
         patterns:
-          - include: '#comments'
-          - include: '#embedded'
-          - include: '#argument-list'
-          - include: '#angle-brackets'
-          - include: '#modifiers'
-          - include: '#type-keywords'
-          - include: '#type-names'
-          - include: '#literals'
-          - &embedded-primary-operators
-            comment: Primary binary operators
-            match: (?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
-            captures:
-              1: { name: keyword.operator.optional.saga }
-              2: { name: keyword.operator.assert.saga }
-              3: { name: keyword.operator.accessor.saga }
-          - include: '#type-variables'
-          - include: '#type-brackets'
-          - include: '#space'
+          - include: '#types'
 
   type-brackets:
     patterns:
@@ -585,6 +568,13 @@ repository:
           4: { name: keyword.operator.type.channel.saga }
 
     patterns:
+      - &embedded-primary-operators
+        comment: Primary binary operators
+        match: (?<=[)}\]\w])(?:(\?[.:]=?)|(![.:]=?)|((?:::|\.)=?))(?=[({\[\w])
+        captures:
+          1: { name: keyword.operator.optional.saga }
+          2: { name: keyword.operator.assert.saga }
+          3: { name: keyword.operator.accessor.saga }
       - match: \s*(--?>|~~?>|==?>)
         name: keyword.operator.type.function.saga
       - match: \s*(<--?|<~~?|<==?)
@@ -4422,6 +4412,7 @@ repository:
       - include: '#line-continuation'
       - include: '#type-keywords'
       - include: '#type-square-brackets'
+      - include: '#modifiers'
       - begin: (\#\{)\s*
         end: \s*(\})
         name: meta.brace.curly.saga
