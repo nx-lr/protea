@@ -1,11 +1,13 @@
-# SagaScript: A Great Alternative to JavaScript
+# SagaScript
 
-SagaScript is a type-safe, multi-paradigm programming language that combines modern, successful concepts from other languages, while still preserving the original design of JavaScript: to be used on the frontend and backend; and to build fast, scalable and maintainable cross-platform applications with ease.
+## Another Great Alternative to JavaScript
+
+SagaScript is a syntactic extension to JavaScript, bringing a lot of new compile-time and runtime features we as devs have come to expect from modern languages.
 
 ```swift
 // Code
-export module Fibonacci {
-  public recursive function fibonacci(let n: Int): Int {
+export module Math {
+  public recursive function fibonacci(let n: int): int {
     if (n < 2) return n;
     return fibonacci(n - 1) + fibonacci(n - 2);
   }
@@ -14,32 +16,32 @@ export module Fibonacci {
 // Styling
 style App < body {
   color: ${|props|
-    props.theme == `purple ? `purple : `white};
+    props.theme == `purple ? `purple : `white}
 }
 
 // JSX support
 element HelloMessage implements React.Component {
-  field yourName: String
+  field yourName: string
   return <div #greeting>
     <h1 color=navy>Hello $yourName</h1>
-  </div>;
+  </div>
 }
 
 // Schemas
-model BlogPost {
-  id       : Int @id @default(this.autoIncrement());
-  title    : String;
-  content  : String?;
-  published: Boolean | String @default(false);
-  author   : User? @relation(fields: [authorId], references: [id]);
-  authorId : Int;
+model User {
+  id       : Int      .id .default(autoincrement())
+  createdAt: DateTime .default(now())
+  email    : String   .unique
+  name     : String?
+  role     : Role     .default(USER)
+  posts    : Post[]
 }
 
 // Queries
 query MdxBlogPost(title: String) {
   mdx(`title == title) {
-    `id: String;
-    `title: String;
+    `id: String
+    `title: String
   }
 }
 ```
@@ -48,20 +50,15 @@ query MdxBlogPost(title: String) {
 
 ## Overview
 
-SagaScript is a language for building fullstack cross-platform apps and libraries for the modern and future web. SagaScript looks like JS, acts like JS, and compiles to the highest quality of clean, readable and performant JS, directly runnable in browsers and Node.
+- SagaScript is a language for building fullstack cross-platform apps and libraries for the modern and future web. SagaScript looks like JS, acts like JS, and compiles to the highest quality of clean, readable and performant JS, directly runnable in browsers and Node.
 
 **Feature list:**
 
 - Human-understandable error messages
 - Blazing-fast compiler that outputs readable JS
 - Syntax inspired by modern languages, while still keeping its JavaScript style
-- First-class syntactic support for:
-  - Components
-  - Styling
-  - Schemas
-  - Queries
-  - Testing
-- First-class JSX, CSS and GraphQL support
+- First-class syntactic support for components, styling, schemas, queries and testing
+- First-class JSX, CSS, Prisma and GraphQL support (albeit modified)
 - Strong and robust type system
 - A mix of declarative and imperative approaches
 - Compilation to JavaScript or native code
@@ -70,7 +67,7 @@ SagaScript is a language for building fullstack cross-platform apps and librarie
 
 ---
 
-If you have any questions, comments or suggestions for the language, please feel free to open an issue on GitHub and I will promptly respond. SagaScript is currently still in its conceptual and experimental stage, as I am still experimenting on the language's grammar.
+If you have any questions, comments or suggestions for the language, please feel free to open an issue on GitHub and I will promptly respond (though not at the moment as I am busy with school). SagaScript is currently still in its conceptual and experimental stage, as I am still experimenting on the language's grammar.
 
 ---
 
@@ -96,22 +93,35 @@ If you have any questions, comments or suggestions for the language, please feel
    Further characters include combining marks, digits and dashes.
    A variable does not end in trailing dashes. */
 
-let ez:  = 1.10 // Constant. Can't be reassigned.
-var sivir = "I always take my toll, " // Variable.
+function cmpIdent(a: string, b: string): boolean =
+  transformIdent(a) == transformIdent(b)
+
+function transformIdent(id: string): string {
+  const ident = id.normalize(:nfd).replace(/[^\pL\d]/, '')
+  const { begin, end } = />\b
+    (?!\d) // ignore leading digits
+      (?<begin>[\pPc\pL][\d\p{L:l}\pM\pPc\pPd]*)?
+      (?<end>[\d\pL\pM\pPc\pPd]*)
+    \b // ignore trailing dashes
+  </.exec(ident)
+  return (begin + end.foldCase)
+}
 
 var x = {}
 x.prop = {}
 
 /* An operator consists of one or more symbol and punctuation.
-   Operatos should not include `,;(){}[]`.
+   Operators should not include `,;(){}[]`.
 
    These operators are built-in and cannot be reassigned:
-   . :: ?. ?: !. !: .= ::= ?.= ?:= !.= !:= ?? !! |> ||> |||>
-   +> -> ~> <| <|| <||| <+ <- <~ @ # <: >: && || ^^ and prefix `!`
+   `. :: ?. ?: !. !: .= ::= ?.= ?:= !.= !:= ?? !! |> ||> |||>`
+   `+> -> ~> <| <|| <||| <+ <- <~ @ # <: >: && || ^^` and prefix `!`
 
    These result in a syntax error: prefix `|`, `<` and `/`
 */
-infix operator function [‰](a: String, b: String) {
+operator function infix [‰](
+  a: String, b: String
+) {
   a.sub(b, '')
 }
 let permil = function (a, b) { a.sub(b, '') }
@@ -119,11 +129,15 @@ let permil = function (a, b) { a.sub(b, '') }
 /* A literal identifier is a string prefixed with @. */
 let :"hello world" = "hello world!"
 
-/* 'let' is immutable and hoisted, but can be redeclared. The binding you
+/* 'let' is mutable but can be redeclared. The binding you
    refer to is the closest binding upward. */
 let result = 0
 let result = result + 2
 let result = result + 2
+let result = result + 2
+
+/* 'const' is like 'let' but immutable. */
+const result = result + 2
 
 /* 'val' bindings are also immutable, however they cannot be redeclared.
    They are only assigned constant expressions, like enum members. */
@@ -186,7 +200,7 @@ let num: Int = 0
 let float: Float = 1.0
 let str: String = ''
 let func: Function<(), Void> = | | {}
-let regex: RegExp = / /
+let regex: RegExp = /(?#int)/
 let symbol: Symbol = :''
 
 // Data structures
@@ -276,14 +290,23 @@ message = "Sum of " + a.str() + " and " + b.str() + " is " + c.str()
 /// REGULAR EXPRESSIONS
 /* Saga's regular expressions are based on the Oniguruma
    regular expression flavor, with many further extensions. */
-let regex = /^1?$|^(11+?)\1+?$/g
-let isPrime = />
-  (?<element> \g<starttag> \g<content>* \g<endtag> ){0}
-  (?<starttag> < \g<name> \s* > ){0}
-  (?<name> [a-zA-Z_:]+ ){0}
-  (?<content> [^<&]+ (\g<element> | [^<&]+)* ){0}
-  (?<endtag> </ \k<name+1> >){0}
-  \g<element>
+let isPrime = |x| /^1?$|^(11+?)\1+$/.test(`1*x)
+let html-tag = />
+  (\d\d?)              // day
+    (?:\s+|[-\/])
+  (\w+)                // month
+    (?:\s+|[-\/])
+  (\d+)                // year
+  (?:
+        (?:\s+|:)      // separator before clock
+    (\d\d?):(\d\d)     // hour:min
+    (?::(\d\d))?       // optional seconds
+  )?                   // optional clock
+        \s*
+  ([-+]?\d{2,4}|(?![APap][Mm]\b)[A-Za-z]+)? // timezone
+        \s*
+  (?:\(\w+\))?         // ASCII representation of timezone in parens.
+        \s*$
 </
 
 /// FUNCTIONS
@@ -346,7 +369,7 @@ x.=y x::=y x?.=y x?:=y x!.=y x!:=y // Access-assignment
 
 // Difference between :: and .
 class Example {
-  property Version = 1.0
+  field Version = 1.0
   static method Hello(who = `world) =
     s"Hello, $who!"
 }
@@ -374,17 +397,14 @@ x? /* existence check */
 ~x /* bitwise not */
 +x /* number conversion */
 -x /* negation */
-typeof x /* runtime type checking */
-sizeof x /* size of object */
-length x /* length of object */
-nameof x /* name of object */
-void x /* converts things into null */
+unset x /* converts things into null */
 delete x.prop /* delete property from object */
 
-\int \Object.keys x /* unary function calls */
+int (Object.keys x) /* unary function calls */
 
 /// ARITHMETIC OPERATORS
 x ** y /* _exp_: exponent */
+x *** y /* _exp_: exponent */
 
 /* ~/ returns an integer, %% returns a positive number */
 x * y/* _times_: multiplication repeat */
@@ -468,7 +488,7 @@ x ^^ y /* _xor_: logical xor */
 
 /// COALESCING OPERATORS
 x ?? y /* _coal_:nullish coalescing */
-x !? y /* _ncoal_: non-null coalescing */
+x !! y /* _ncoal_: non-null coalescing */
 x ?: y /* _tern_: falsy coalescing */
 x !: y /* _ntern_:truthy coalescing */
 
@@ -486,17 +506,18 @@ x <+ y /* _cmpl_: backward composition */
 1 till 10 by 2 /* end-exclusive range with step */
 
 /// ASSIGNMENT
-= .= :=
-+= -= *= /= %=
-++= --= **= ~/= %%=
-&= |= ^= &&= ||= ^^=
-<<= >>= >>>= <<<=
-??= !?= ?:= !:=
-*>= <*= <|= |>= <+= +>=
+
+// = .= :=
+// += -= *= /= %=
+// ++= --= **= ~/= %%=
+// &= |= ^= &&= ||= ^^=
+// <<= >>= >>>= <<<=
+// ??= !?= ?:= !:=
+// *>= <*= <|= |>= <+= +>=
 
 /// CONTROL FLOW
 throw new ZeroDivisionError()
-await::all x
+await all x
 return x
 yield x
 yield x
@@ -533,7 +554,7 @@ unless (x >= 0) -x else x
 
 // `in` loops through values , including sequences
 // `of` loops through keys
-for (let x in xs) if (x > 0): return x * x
+for (let x in xs) if (x > 0) return x * x
 for (let x in xs; let y in ys) println(x + y)
 
 while (x >= 0) { x = f(x) }
@@ -557,7 +578,7 @@ switch (value) {
 
 try {
   body
-} catch switch (let ex: Exception) {
+} catch (let ex: Exception) {
   case ex is IOException: handle()
   default: handle()
 }
@@ -603,65 +624,66 @@ let add: |x: Number, y: Number| Number = |x, y| x + y
 add(1, 2)
 
 let addTwo = |x| x + 2 // Leave out the parens if there is 1 arg
-let doNothing = () => () // Write parens if there is no arg
+let doNothing = | | () // Write parens if there is no arg
 
 /// NAMED ARGUMENTS
 // Arguments can be named using the '#' prefix.
-let makeCircle = |#x: Number, #y: Number, #radius: Number|: void = ()
+let makeCircle = |~x: Number, ~y: Number, ~radius: Number|: void = ()
 // Use = to call functions with named arguments.
 // Their order does not matter.
-makeCircle(#radius = 10, #x = 1, #y = 100)
+makeCircle(~radius = 10, ~x = 1, ~y = 100)
 
 // For functions that use other functions as arguments,
 // the same arrow notation applies:
-let increment = x => x + 1
-let myArray = [1, 2, 3].map increment
-let myArray = [1, 2, 3].map { # + 1 } // Curly-bracket notation rocks!
+let increment = |x| x + 1
+let myArray = [1, 2, 3].map(increment)
+let myArray = [1, 2, 3].map{ _ + 1 } // Curly-bracket notation rocks!
 
 // Functions can be partially called.
 // Arrow functions are not curried by default.
-let add = x => y => x + y
-let addFive = add(5)(#)
+let add = |x| |y| x + y
+let addFive = |x| add(5)(x)
 let eleven = addFive 6
 let twelve = addFive 7
 
-// Use # to skip arguments that are not the first:
-let divide = a => b => a / b
-let halve = divide()(#)
+let divide = |a| |b| a / b
+let halve = |a| divide()(a)
 let five = halve 10
 
 // Mark an argument with ? to make it optional.
 // All functions have at least one positional argument
 // with an implicit "null" added as the first.
-let addOne: (null, #value?: 0) => int = (#value?: int?): int => match value
-  when ?value: value + 1
-  when null: 1
+let addOne: |null, ?value: 0| -> int =
+  |~?e: int?|: int = match (value) {
+    case ?value: value + 1
+    case null: 1
+  }
 
 // Default values can be specified with '='
-let makeCircle = (#x = 0, #y = 0, #radius = 10) => ()
+let makeCircle = (~x = 0, ~y = 0, ~s = 10) => ()
 /* Position (0, 0) with radius 10 */
 makeCircle()
 /* Position (10, 0) with radius 2 */
-makeCircle(#x = 10, #radius = 2)
+makeCircle(~x = 10, ~s = 2)
 
 // Supplying named optional parameters
-let f = (#data? = 10) => ()
-let f = (#data?: num = 10): num => ()
+let f = |~?a = 10| = ()
+let f = |~?a: num = 10|: num = x + 1
 let [a, b] = [100, none]
-f(#data = a) // called as f(#data = a)
-f(#data = b) // called as f()
+f(~a = a) // called as f(~a = a)
+f(~a = b) // called as f()
 
 // Referencing previous arguments
-let add = (a, #b, #c = a + 1, #d = b + 2) => a + b + c + d
-add(1, #b = 1) /* 6 */
-add(1, #b = 1, #c = 10) /* 14 */
+let add = (a, ~b, ~c = a + 1, ~d = b + 2) => a + b + c + d
+add(1, ~b = 1) /*6*/
+add(1, ~b = 1, ~c = 10) /*14*/
 
 // Variadic functions:
-let product = (...a: num[]): num => a.reduce((*), 0)
-product(1, 2, 3, 4) /* 10 */
+let product = |*a: Number[]|: Num = a.reduce((*), 0)
+product(1, 2, 3, 4) /*10*/
 
 // Function piping
-var exclaim = (message: str, rep: int = 1): str => message |> s'${#.upper() * rep}!!'
+var exclaim = |message: str, rep: int = 1|: Str = message |> s'${_.upper() * rep}!!'
 
 // Function composition
 var quadruple = double +> double
@@ -711,10 +733,11 @@ type StrNumPair = [String, Number]
 type UpTo100 = |x| as int where 0 < x < 100
 
 // Restrain the type alias to the file it was declared in
-type x = 40
+type X = 40
+
 // make sure the object contains only these properties
-type x = { x: String, y: Number }
-interface <T>X {
+type X = { x: String, y: Number }
+interface X<T> {
   [index: Int]: Any
   length: Int
   age: Int
@@ -724,17 +747,17 @@ interface <T>X {
 
 // 'typeof'/'nameof' operator
 var greeting = 'hello world'
-type greeting = typeof Greeting
-type greeting = nameof Greeting
+type Greeting = typeof $greeting
+type Greeting = nameof $greeting
 
 var alice: Person = { name: 'Alice', age: 100 }
 
 // ENUMERATIONS
-enum <Int>Direction {
+enum Direction<Int> {
   Up = 1, Down, Left, Right
 }
 
-enum <String>Direction {
+enum Direction<String> {
   Up = "UP"
   Down = "DOWN"
   Left = "LEFT"
@@ -743,7 +766,7 @@ enum <String>Direction {
 
 // Any constant expressions can be used as enum members
 // and can reference previously declared members
-enum <String|Number|Boolean>FileAccess {
+enum FileAccess<String|Number|Boolean> {
   None // constant members
   Read = 1 << 1
   Write = 1 << 2
@@ -766,9 +789,9 @@ var c = new C<String>() // instantiate a class with a parameter
 new class {} // Anonymous class
 
 // Constructor is in class body
-class C<R extends Number>(public var x: R) {
+class C<R <: Number>(public var x: R) {
   assert x > 0, "positive please"
-  property x = x ?? 4
+  field x = x ?? 4
 
   /** These modifiers modify only methods */
   get method // getter method
@@ -781,46 +804,47 @@ class C<R extends Number>(public var x: R) {
   private method // visible only to this class
   protected method // visible only to this class and any derived classes
 
-  /** This modifier marks an attibute as immutable or mutable
+  /** This modifier marks an attribute as immutable or mutable
   usually for other classes which modify themselves. */
-  readonly property x = 4
-  property x = 5 //
+  readonly field x = 4
+  field x = 5 //
 
   /** Dynamic properties allow the variable to be modified with
   whatever types it needs to be */
-  dynamic property x = 5
+  dynamic field x = 5
 
   /** This modifier can only be used inside a class */
-  override property x = 5 // overrides a property
+  override field x = 5 // overrides a property
 
   /** These modifiers can be used both inside the classes to mark
   any or all properties of a class on an object */
-  static const // prevents initialization of a property/class (used with `new`)
-  virtual class // marks property/class to be overridden by derived classes
-  sealed class // prevents overriding of this property/class
-  abstract class // enforces overriding of this property/class
+  static const // prevents initialization
+  virtual class // marks to be overridden
+  sealed class // prevents overriding
+  abstract class // enforces overriding
 
-   // Decorators call functions on methods.
+  // Decorators call functions on methods.
   method [decorator]methodName() {}
 }
 
 // Derived params
-class C(x: R) extends D(x): pass
+class C(x: R) extends D
 // Objects are singleton and cannot be overridden
-object O extends D: pass
+object O extends D
 
-// Traits are classes weithout parameters
-trait Iterator<A>:
+// Traits are classes without parameters
+trait Iterator<A> {
   hasNext(): bool =
   next(): A =
+}
 
-class IntIterator(@to: int) extends Iterator<int>:
-  private var current = 0
-  override function hasNext(): bool = current < @to
-  override function next(): int =
-    if hasNext()
-      let t = current; current += 1; t;
-    else 0
+class IntIterator(to: Int) extends Iterator<Int> {
+  private field current = 0
+  override method hasNext(): bool = current < @to
+  override method next(): int =
+    if (hasNext()) { let t = current; current += 1; t; }
+    else { 0 }
+}
 
 class C extends T {}
 class C extends D implements T {}
@@ -839,8 +863,8 @@ module School {
 
 // Structural types
 struct Coords(x: Float, y: Float) {
-  property X = x
-  property Y = y
+  field X = x
+  field Y = y
   let X { get method; set method }
   let Y { get method; set method }
   override method toString() = "($X, $Y)"
