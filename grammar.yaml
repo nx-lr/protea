@@ -1540,23 +1540,23 @@ repository:
             patterns:
               - include: '#back-references'
               - include: '#string-content'
-      - comment: Replacement section
-        begin: (?<=/)\s*(/)\s*
-        end: \s*(/)(\p{L}*)
-        name: string.replace.regexp.saga
-        captures:
-          1: { name: punctuation.definition.regexp.saga }
-          2: { name: keyword.other.flag.saga }
-        patterns:
-          - include: '#back-references'
-          - include: '#string-content'
       - comment: Pattern section
-        begin: (/)\s*
-        end: \s*(/)(\p{L}*)
+        begin: (/)\s*(?=(?:[^\\/]|\\.)+/(?:(?:[^\\/]|\\.)+/)?\p{L}*)
+        end: \s*(?:(/)((?:[^\\/]|\\.)+))?(/)(\p{L}*)
         name: string.pattern.regexp.saga
         captures:
-          1: { name: punctuation.definition.regexp.saga }
-          2: { name: keyword.other.flag.saga }
+          1:
+            name: punctuation.definition.regexp.saga
+          2:
+            comment: Replacement section
+            name: string.replace.regexp.saga
+            patterns:
+              - include: '#back-references'
+              - include: '#string-content'
+          3:
+            name: punctuation.definition.regexp.saga
+          4:
+            name: keyword.other.flag.saga
         patterns:
           - include: '#regexp-patterns'
 
