@@ -311,7 +311,7 @@ repository:
           | # Camel or kebab case
             ([\p{Pc}\p{L}][\w\p{Pd}]*)
         )
-        (?! \.\.+) (?= [!?]?\.=? | [?!:]:=? | \#?\[)
+        (?! \.\.+) (?= [!?]?\.=? | [?!:]:=? | <)
         |
         (?: # Regular variables
             # Leading underscore
@@ -3132,32 +3132,6 @@ repository:
 
   function-calls:
     patterns:
-      - applyEndPatternLast: true
-        name: meta.function.arguments.saga
-        begin: |
-          (?x)
-          (?<=
-            ['"`)}\]] |
-            \\.\s |
-            \b # qualified name
-              (?:
-                [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
-                \b
-                  (?:
-                    (?:(?:[?!]?\.|[?!:]:)=?) # q-name separator
-                    [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
-                  )*
-                \b
-              )
-            \b
-          ) \s*
-          (?=\b\w+)
-        end: (?=)|$
-        patterns:
-          - include: '#literals'
-          - include: '#variables'
-          - include: '#brackets'
-          - *qualified-name-separators
       - name: meta.function.arguments.saga
         match: |
           (?x)
@@ -3720,32 +3694,6 @@ repository:
           - camelCase
         match: |
           (?x) \b
-
-          (?!
-            (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-            (?: # keywords
-              in|of|as|is|new
-              |to|till|thru|by|delete
-              |unset|ref|and|or|xor|not
-              |var|val|let|const|function
-              |procedure|method|type|class
-              |interface|enum|module|struct
-              |protocol|iterator|macro|query
-              |object|contract|trait|style
-              |element|field|model|union
-              |go|defer|do|with|from|where
-              |if|unless|else|then|def
-              |for|foreach|repeat|while|until
-              |try|throw|catch|finally|switch
-              |match|case|fallthru|default|goto
-              |break|continue|redo|retry
-              |return|yield|await|scope
-              |import|export|route
-              |debug|assert|check
-              |extends|implements
-            )
-            (?!\B|\p{Pd}+\b)
-          )
 
           (?:
             (?<= [!?]?\.=? | [?!:]:=?) (?<! \.\.+)
