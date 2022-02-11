@@ -113,9 +113,9 @@ define:
         |interface|enum|module|struct
         |protocol|iterator|macro|query
         |object|contract|trait|style
-        |element|field|model|union
+        |element|field|model|namespace
         |go|defer|do|with|from|where
-        |if|unless|else|then|def
+        |if|unless|else|then|declare
         |for|foreach|repeat|while|until
         |try|throw|catch|finally|switch
         |match|case|fallthru|default|goto
@@ -146,9 +146,9 @@ define:
         |interface|enum|module|struct
         |protocol|iterator|macro|query
         |object|contract|trait|style
-        |element|field|model|union
+        |element|field|model|namespace
         |go|defer|do|with|from|where
-        |if|unless|else|then|def
+        |if|unless|else|then|declare
         |for|foreach|repeat|while|until
         |try|throw|catch|finally|switch
         |match|case|fallthru|default|goto
@@ -240,7 +240,7 @@ repository:
   types:
     patterns:
       - include: '#comments'
-      - include: '#embedded'
+      - include: '#embedded-expression'
       - include: '#argument-list'
       - include: '#angle-brackets'
       - include: '#modifiers'
@@ -273,9 +273,9 @@ repository:
           |interface|enum|module|struct
           |protocol|iterator|macro|query
           |object|contract|trait|style
-          |element|field|model|union
+          |element|field|model|namespace
           |go|defer|do|with|from|where
-          |if|unless|else|then|def
+          |if|unless|else|then|declare
           |for|foreach|repeat|while|until
           |try|throw|catch|finally|switch
           |match|case|fallthru|default|goto
@@ -289,7 +289,7 @@ repository:
       )
 
       (?:
-        (?<= [!?]?\.=? | [?!:]:=?) (?<! \.\.+)
+        (?<=(?:^|[,;'"`)}\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?))
         (?: # Properties
             # Leading underscore
             (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
@@ -323,7 +323,15 @@ repository:
           | # Camel or kebab case
             ([\p{Pc}\p{L}][\w\p{Pd}]*)
         )
-      )\b \s*
+      )\b
+
+      \s*
+
+      (?=
+        $ |
+        | [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
+        | ['"`({\[)}\]]
+      )
     captures:
       1: { name: entity.name.trait.saga }
       2: { name: entity.name.interface.saga }
@@ -339,14 +347,31 @@ repository:
       12: { name: entity.name.type.saga }
 
   type-signature:
-    applyEndPatternLast: true
-    name: meta.type.saga
-    begin: (:)(?=$|[\w\s'"`({\[])
-    end: (?=)|$
-    beginCaptures:
-      1: { name: punctuation.definition.annotation.saga }
     patterns:
-      - include: '#types'
+      - applyEndPatternLast: true
+        name: meta.type.saga
+        begin: (?<=(?:[)}\]\w'"`]|\\.)\|?)(:)(?=$|[\w\s'"`({\[])
+        end: (?=)|$
+        beginCaptures:
+          1: { name: punctuation.definition.annotation.saga }
+        patterns:
+          - include: '#types'
+      - applyEndPatternLast: true
+        name: meta.type.saga
+        begin: |
+          (?x)
+          (?<=
+            ['"`)}\]] |
+            \\.\s |
+            \w+ \b
+          ) \s*
+          (?=\b\w+)
+        end: (?=)|$
+        beginCaptures:
+          1: { name: punctuation.definition.annotation.saga }
+        patterns:
+          - match: \w+
+            name: invalid.illegal.identifier.saga
 
   type-brackets:
     patterns:
@@ -421,7 +446,7 @@ repository:
       - begin: |
           (?x)
           (?<= # literal
-              (?: [\w'"`)}\]] | \\.) \s*
+              (?: [\w'"`)}\]] | \\.) >* \s*
             | [^.]\.=?|[?!:]:=?
           )
           (\#?\()\s*
@@ -737,25 +762,26 @@ repository:
 
   decorators:
     applyEndPatternLast: true
-    begin: (?<=^|\\.|['"`({\[)}\]\s:=])(\@)(?=[\p{Pc}\p{L}])
+    begin: (?<=^|\\.|['"`({\[)}\]\s]|(?:[)}\]\w\s'"`]|\\.)\s*[:=])(\@)(?=[\p{Pc}\p{L}])
     end: (?=)|$
     name: entity.name.decorator.saga
     captures:
       1: { name: punctuation.definition.decorator.saga }
       2: { name: entity.name.decorator.saga }
     patterns:
+      - include: '#function-calls'
+      - include: '#sigil-function-calls'
       - match: ::|\.
         name: punctuation.separator.namespace.saga
       - include: '#brackets'
       - include: '#strings'
-      - include: '#function-calls'
       - include: '#variables'
 
   symbols:
     patterns:
       - comment: quoted symbol
         applyEndPatternLast: true
-        begin: (?<=^|\\.|['"`({\[)}\]\s:=])(:)(?=[\\'"])
+        begin: (?<=^|\\.|['"`({\[)}\]\s]|(?:[)}\]\w\s'"`]|\\.)\s*[:=])(:)(?=[\\'"])
         end: (?=)|$
         name: constant.language.symbol-type.saga
         captures:
@@ -764,7 +790,7 @@ repository:
           - include: '#strings-single-quoted'
           - include: '#strings-double-quoted'
           - include: '#strings-unquoted'
-      - match: (?<=^|\\.|['"`({\[)}\]\s:=])(:)(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)
+      - match: (?<=^|\\.|['"`({\[)}\]\s]|(?:[)}\]\w\s'"`]|\\.)\s*[:=])(:)(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)
         name: constant.other.symbol.saga
         captures:
           1: { name: punctuation.definition.symbol.saga }
@@ -1297,9 +1323,9 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|field|model|union
+              |element|field|model|namespace
               |go|defer|do|with|from|where
-              |if|unless|else|then|def
+              |if|unless|else|then|declare
               |for|foreach|repeat|while|until
               |try|throw|catch|finally|switch
               |match|case|fallthru|default|goto
@@ -1377,9 +1403,9 @@ repository:
                 |interface|enum|module|struct
                 |protocol|iterator|macro|query
                 |object|contract|trait|style
-                |element|field|model|union
+                |element|field|model|namespace
                 |go|defer|do|with|from|where
-                |if|unless|else|then|def
+                |if|unless|else|then|declare
                 |for|foreach|repeat|while|until
                 |try|throw|catch|finally|switch
                 |match|case|fallthru|default|goto
@@ -1502,9 +1528,9 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|field|model|union
+              |element|field|model|namespace
               |go|defer|do|with|from|where
-              |if|unless|else|then|def
+              |if|unless|else|then|declare
               |for|foreach|repeat|while|until
               |try|throw|catch|finally|switch
               |match|case|fallthru|default|goto
@@ -1707,6 +1733,12 @@ repository:
             patterns: &regexp-patterns
               - include: '#regexp-patterns'
           - include: '#fuzzy-expression'
+      - match: \\[abefprntv]
+        name: constant.character.escape.saga
+      - match: \\[a-z]
+        name: constant.other.character-class.saga
+      - match: \\[A-Z]
+        name: constant.other.character-class.negated.saga
       - include: '#regexp-groups'
       - include: '#regexp-character-set'
       - include: '#regexp-character-class'
@@ -2094,9 +2126,9 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|field|model|union
+              |element|field|model|namespace
               |go|defer|do|with|from|where
-              |if|unless|else|then|def
+              |if|unless|else|then|declare
               |for|foreach|repeat|while|until
               |try|throw|catch|finally|switch
               |match|case|fallthru|default|goto
@@ -3130,6 +3162,36 @@ repository:
 
   # Function and method calls
 
+  sigil-function-calls:
+    name: meta.function.arguments.saga
+    match: |
+      (?x)
+      \b
+      (
+        (?:
+          \b
+          [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+          \b
+          (?:[!?]?\.=?|[?!:]:=?) # qualified name separator
+        )*
+        [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
+      )
+      \b
+      (?=
+        \s*
+        (?: # function application, composition and piping
+            (?: \$ | \s\.\s | <\|{1,3} | <\+) ['"`({\[\w\s]
+          | # C-style function call
+            (?:[!?]\.=?|\.=)? \#? [({]
+          | # generics
+            (?:[!?]\.=?|\.=)? < ['"`({\[\w]
+          | # literals
+            ['"`]
+        )
+      )
+    captures:
+      1: { patterns: [include: '#function-names'] }
+
   function-calls:
     patterns:
       - name: meta.function.arguments.saga
@@ -3149,9 +3211,9 @@ repository:
                 |interface|enum|module|struct
                 |protocol|iterator|macro|query
                 |object|contract|trait|style
-                |element|field|model|union
+                |element|field|model|namespace
                 |go|defer|do|with|from|where
-                |if|unless|else|then|def
+                |if|unless|else|then|declare
                 |for|foreach|repeat|while|until
                 |try|throw|catch|finally|switch
                 |match|case|fallthru|default|goto
@@ -3166,7 +3228,7 @@ repository:
               \b
               [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
               \b
-              (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
+              (?:[!?]?\.=?|[?!:]:=?) # qualified name separator
             )*
             [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
           )
@@ -3179,42 +3241,8 @@ repository:
                 (?:[!?]\.=?|\.=)? \#? [({]
               | # generics
                 (?:[!?]\.=?|\.=)? < ['"`({\[\w]
-              | # literals
-                ['"`\d]
-              | (
-                # ignore all keywords
-                (?!
-                  (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                  (?: # keywords
-                    in|of|as|is|new
-                    |to|till|thru|by|delete
-                    |unset|ref|and|or|xor|not
-                    |var|val|let|const|function
-                    |procedure|method|type|class
-                    |interface|enum|module|struct
-                    |protocol|iterator|macro|query
-                    |object|contract|trait|style
-                    |element|field|model|union
-                    |go|defer|do|with|from|where
-                    |if|unless|else|then|def
-                    |for|foreach|repeat|while|until
-                    |try|throw|catch|finally|switch
-                    |match|case|fallthru|default|goto
-                    |break|continue|redo|retry
-                    |return|yield|await|scope
-                    |import|export|route
-                    |debug|assert|check
-                  )
-                  (?!\B|\p{Pd}+\b)
-                )
-                (?:
-                  \b
-                  [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
-                  \b
-                  (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
-                )*
-                [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
-              )
+              | # strings
+                ['"`]
             )
           )
         captures:
@@ -3241,9 +3269,9 @@ repository:
                 |interface|enum|module|struct
                 |protocol|iterator|macro|query
                 |object|contract|trait|style
-                |element|field|model|union
+                |element|field|model|namespace
                 |go|defer|do|with|from|where
-                |if|unless|else|then|def
+                |if|unless|else|then|declare
                 |for|foreach|repeat|while|until
                 |try|throw|catch|finally|switch
                 |match|case|fallthru|default|goto
@@ -3258,7 +3286,7 @@ repository:
               \b
               [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
               \b
-              (?: [!?]?\.=? | [?!:]:=?) # qualified name separator
+              (?:[!?]?\.=?|[?!:]:=?) # qualified name separator
             )*
             [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
           )
@@ -3267,72 +3295,70 @@ repository:
           1: { patterns: [include: '#function-names'] }
 
   embedded-function-calls:
-    patterns:
-      - &function-names
-        name: meta.function.name.saga
-        match: |
-          (?x)
-          (?:
-            (?<=[!?]?\.=?|[?!:]:=?) (?<! \.\.+) \b
-              (?: # Properties
-                # Leading underscore
-                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-              | # Train case
-                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
-              | # Pascal case
-                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-              | # Camel or kebab case
-                ([\p{Pc}\p{L}][\w\p{Pd}]*)
-              )
-            \b
-              (?= \#? [({] ) # opening bracket
-            |
-            (?<= ^ # beginning of line
-              | ['"`({\[)}\]\w\s] # literal
-              (?: # operators
-                [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
-              )?
-            ) \b
-              (?: # Regular variables
-                # Leading underscore
-                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
-              | # Train case
-                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
-              | # Pascal case
-                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
-              | # Camel or kebab case
-                ([\p{Pc}\p{L}][\w\p{Pd}]*)
-              )
-            \b
-              (?= \#? [({] ) # opening bracket
+    name: meta.function.name.saga
+    match: |
+      (?x)
+      (?:
+        (?<=(?:^|[,;'"`)}\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?)) \b
+          (?: # Properties
+            # Leading underscore
+            (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+          | # Train case
+            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+          | # Pascal case
+            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+          | # Camel or kebab case
+            ([\p{Pc}\p{L}][\w\p{Pd}]*)
           )
-        captures:
-          1:
-            patterns: &builtin-names
-              - include: '#type-names'
-              - include: '#support-functions'
-            name: entity.name.tag.saga
-          2:
-            patterns: *builtin-names
-            name: entity.name.tag.saga support.class.component.saga
-          3:
-            patterns: *builtin-names
-            name: entity.name.class.builtin.saga
-          4:
-            patterns: *builtin-names
-            name: entity.name.function.method.saga
-          5:
-            patterns: *builtin-names
-            name: entity.name.function.tagged-template.saga
-          6:
-            patterns: *builtin-names
-            name: entity.name.type.saga
-          7:
-            patterns: *builtin-names
-            name: entity.name.class.saga
-          8:
-            patterns: *builtin-names
-            name: entity.name.function.saga
+        \b
+          (?= \#? [({] ) # opening bracket
+        |
+        (?<= ^ # beginning of line
+          | ['"`({\[)}\]\w\s] # literal
+          (?: # operators
+            [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
+          )?
+        ) \b
+          (?: # Regular variables
+            # Leading underscore
+            (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+          | # Train case
+            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+          | # Pascal case
+            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+          | # Camel or kebab case
+            ([\p{Pc}\p{L}][\w\p{Pd}]*)
+          )
+        \b
+          (?= \#? [({] ) # opening bracket
+      )
+    captures:
+      1:
+        patterns: &builtin-names
+          - include: '#type-names'
+          - include: '#support-functions'
+        name: entity.name.tag.saga
+      2:
+        patterns: *builtin-names
+        name: entity.name.tag.saga support.class.component.saga
+      3:
+        patterns: *builtin-names
+        name: entity.name.class.builtin.saga
+      4:
+        patterns: *builtin-names
+        name: entity.name.function.method.saga
+      5:
+        patterns: *builtin-names
+        name: entity.name.function.tagged-template.saga
+      6:
+        patterns: *builtin-names
+        name: entity.name.type.saga
+      7:
+        patterns: *builtin-names
+        name: entity.name.class.saga
+      8:
+        patterns: *builtin-names
+        name: entity.name.function.saga
 
   function-names:
     patterns:
@@ -3341,7 +3367,7 @@ repository:
         match: |
           (?x)
           (?:
-            (?<=[!?]?\.=?|[?!:]:=?) (?<! \.\.+) \b
+            (?<=(?:^|[,;'"`)}\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?)) \b
               (?: # Properties
                 # Leading underscore
                 (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
@@ -3436,7 +3462,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|union|as
+                  |element|field|model|namespace|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3476,7 +3502,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|union|as
+                  |element|field|model|namespace|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3516,7 +3542,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|union|as
+                  |element|field|model|namespace|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3556,7 +3582,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|union|as
+                  |element|field|model|namespace|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3596,7 +3622,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|union|as
+                  |element|field|model|namespace|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3636,7 +3662,7 @@ repository:
                   |interface|enum|module|struct
                   |protocol|iterator|macro|query
                   |object|contract|trait|style
-                  |element|field|model|union|as
+                  |element|field|model|namespace|as
                 ) \b
                 (?:$|[,;'"({\[)}\]\s]) # var/val/as keyword
             ) \s*
@@ -3696,7 +3722,7 @@ repository:
           (?x) \b
 
           (?:
-            (?<= [!?]?\.=? | [?!:]:=?) (?<! \.\.+)
+            (?<=(?:^|[,;'"`)}\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?))
             (?: # Properties
                 # Leading underscore
                 (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
@@ -4313,7 +4339,7 @@ repository:
           |interface|enum|module|struct
           |protocol|iterator|macro|query
           |object|contract|trait|style
-          |element|field|model|union
+          |element|field|model|namespace
         )
         (?!\B|\p{Pd}+\b)
       )
@@ -4364,7 +4390,7 @@ repository:
 
   declaration-keywords:
     patterns:
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl|def)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(declare)(?!\B|\p{Pd}+\b)\s*
         name: keyword.other.declare.saga
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)(?!\B|\p{Pd}+\b)\s*
         name: storage.type.saga
@@ -4378,7 +4404,7 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|field|model|union
+              |element|field|model|namespace
             )
             (?!\B|\p{Pd}+\b)
           \s*
@@ -4685,7 +4711,7 @@ repository:
       - include: '#struct'
       - include: '#protocol'
       - include: '#model'
-      - include: '#union'
+      - include: '#namespace'
 
     repository:
       style:
@@ -4721,19 +4747,13 @@ repository:
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.variable.saga }
-        patterns:
-          - include: '#modifiers'
-          - include: '#decorators'
 
       declare:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(decl)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(declare)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
           1: { name: keyword.other.declare.saga }
-        patterns:
-          - include: '#modifiers'
-          - include: '#decorators'
 
       function:
         applyEndPatternLast: true
@@ -4746,16 +4766,16 @@ repository:
           - match: *entity-name
             name: entity.name.function.saga
 
-      union:
+      namespace:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(union)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(namespace)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
-          1: { name: storage.type.union.saga }
+          1: { name: storage.type.namespace.saga }
         patterns:
           - include: '#declaration-clause'
           - match: *entity-name
-            name: entity.name.union.saga
+            name: entity.name.namespace.saga
 
       method:
         applyEndPatternLast: true
@@ -4981,7 +5001,7 @@ repository:
               function|procedure|method|type
               |class|interface|enum|module|struct|protocol
               |iterator|macro|query|object|contract
-              |trait|style|element|field|model|union
+              |trait|style|element|field|model|namespace
             )
             \b
           )
@@ -5080,7 +5100,7 @@ repository:
               function|procedure|method|type
               |class|interface|enum|module|struct|protocol
               |iterator|macro|query|object|contract
-              |trait|style|element|field|model|union
+              |trait|style|element|field|model|namespace
             )
             \b
           )
@@ -5166,9 +5186,9 @@ repository:
               |interface|enum|module|struct
               |protocol|iterator|macro|query
               |object|contract|trait|style
-              |element|field|model|union
+              |element|field|model|namespace
               |go|defer|do|with|from|where
-              |if|unless|else|then|def
+              |if|unless|else|then|declare
               |for|foreach|repeat|while|until
               |try|throw|catch|finally|switch
               |match|case|fallthru|default|goto
@@ -5484,7 +5504,7 @@ repository:
               function|procedure|method|type
               |class|interface|enum|module|struct|protocol
               |iterator|macro|query|object|contract
-              |trait|style|element|field|model|union
+              |trait|style|element|field|model|namespace
             )
             \b
           )
