@@ -101,39 +101,6 @@ changelog: |
     - [ ] Headings and subheadings
 
 define:
-  class-name: &class-name |
-    (?x) \s*\b
-
-    (?!
-      (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-      (?: # keywords
-        in|of|as|is|new
-        |to|till|thru|by|delete
-        |unset|ref|and|or|xor|not
-        |var|val|let|const|function
-        |procedure|method|type|class
-        |interface|enum|module|struct
-        |protocol|iterator|macro|query
-        |object|contract|trait|style
-        |element|field|model|namespace
-        |go|defer|do|with|from|where
-        |if|unless|else|then|declare
-        |for|foreach|repeat|while|until
-        |try|throw|catch|finally|switch
-        |match|case|fallthru|default|goto
-        |break|continue|redo|retry
-        |return|yield|await|scope
-        |import|export|route
-        |debug|assert|check
-        |extends|implements
-      )
-      (?!\B|\p{Pd}+\b)
-    )
-
-    # identifier
-    ([\p{Pc}\p{L}][\w\p{Pd}]*)
-    \b
-
   entity-name: &entity-name |
     (?x) \s*\b
 
@@ -1723,11 +1690,11 @@ repository:
             patterns: &regexp-patterns
               - include: '#regexp-patterns'
           - include: '#fuzzy-expression'
-      - match: \\[abefprntv]
+      - match: \\[abefrntv]
         name: constant.character.escape.saga
-      - match: \\[a-z]
+      - match: \\[wsdhulqmji]
         name: constant.other.character-class.saga
-      - match: \\[A-Z]
+      - match: \\[WSDHULQMJI]
         name: constant.other.character-class.negated.saga
       - include: '#regexp-groups'
       - include: '#regexp-character-set'
@@ -1958,7 +1925,6 @@ repository:
             | \\o(?:[0-7]+|{[0-7\s,;]+}) # octal escape
             | \\b(?:[01]+|{[01\s,;]+}) # binary escape
             | \\[cm][a-z] # meta-character
-            | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
             | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
             | \\(?:[abefprntv]|[^a-zA-Z]) # any escape character
             | [^-\\\[\]] # any unescaped character
@@ -1972,7 +1938,6 @@ repository:
             | \\o(?:[0-7]+|{[0-7\s,;]+}) # octal escape
             | \\b(?:[01]+|{[01\s,;]+}) # binary escape
             | \\[cm][a-z] # meta-character
-            | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
             | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
             | \\(?:[abefprntv]|[^a-zA-Z]) # any escape character
             | [^-\\\[\]] # any unescaped character
@@ -1987,7 +1952,6 @@ repository:
               | \\o(?:[0-7]+|{[0-7\s,;]+}) # octal escape
               | \\b(?:[01]+|{[01\s,;]+}) # binary escape
               | \\[cm][a-z] # meta-character
-              | \\p(?:[a-z]{1,2}|{(?:[^\\{}]|\\.)+}) # Unicode char-group
               | \\n{(?:[^\\{}]|\\.)+} # Unicode named character
               | \\(?:[abefprntv]|[^a-zA-Z]) # any escape character
               | [^-\\\[\]] # any unescaped character
@@ -4888,7 +4852,6 @@ repository:
           - include: '#declaration-clause'
           - match: *entity-name
             name: entity.name.field.saga
-
 
   declaration-clause:
     name: meta.declaration.saga
