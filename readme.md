@@ -1,13 +1,15 @@
-# SagaScript
+# SagaScript | A Great Alternative to JS
 
-## Another Great Alternative to JavaScript
+## The real language for serious web-based development
 
 SagaScript is a syntactic extension to JavaScript, bringing a lot of new compile-time and runtime features we as devs have come to expect from modern languages.
 
 ```swift
+import { Runtime as arr } from 'saga'
+
 // Code
 export module Math {
-  public recursive function fibonacci(let n: int): int {
+  public recursive function fibonacci(let n: int) {
     if (n < 2) return n;
     return fibonacci(n - 1) + fibonacci(n - 2);
   }
@@ -20,7 +22,7 @@ style App < body {
 }
 
 // JSX support
-element HelloMessage implements React.Component {
+element HelloMessage extends React.Component {
   field yourName: string
   return <div #greeting>
     <h1 color=navy>Hello $yourName</h1>
@@ -28,22 +30,26 @@ element HelloMessage implements React.Component {
 }
 
 // Schemas
+enum Role { USER, ADMIN, SUPER_ADMIN }
+
 model User {
-  id       : Int      .id .default(autoincrement())
+  id: int .id .default(autoincrement())
   createdAt: DateTime .default(now())
-  email    : String   .unique
-  name     : String?
-  role     : Role     .default(USER)
-  posts    : Post[]
+  email: string .unique
+  name: string?
+  role: Role .default(Role.USER)
+  posts: Post[]
 }
 
 // Queries
-query MdxBlogPost(title: String) {
-  mdx(`title == title) {
-    `id: String
-    `title: String
+query MdxBlogPost(_title: string) {
+  mdx(title == _title) {
+    id: string
+    title: string
   }
 }
+
+export * as Module to './Module'
 ```
 
 ---
@@ -74,149 +80,134 @@ If you have any questions, comments or suggestions for the language, please feel
 # SagaScript's Reference
 
 ```swift
-// This is a line comment
-/// This is also a line comment, but for documentation.
-
+// line comment
+/// doc line comment
 /* This is a block comment. */
 /** This is a documentation block. */
 
-/** Block comments allow /* nesting. */
-    Note the **spacing** between the comment opener and
-    the first character. */
+/* Identifiers match the following regex: */
+const ident = /\b[\pL\pPc][\pL\pM\pNd\pPc\pPd]+\b/
 
-/**
-  * This is also accepted, but keep in mind that lines do
-    not need to begin with an asterisk.
-  */
+function cmpIdent(a: string, b: string): bool =
+  convertIdent(a) == convertIdent(b)
 
-/* Variables begin with letters and underscores.
-   Further characters include combining marks, digits and dashes.
-   A variable does not end in trailing dashes. */
-
-function cmpIdent(a: string, b: string): boolean =
-  transformIdent(a) == transformIdent(b)
-
-function transformIdent(id: string): string {
-  const ident = id.normalize(:nfd).replace(/[^\pL\d]/, '')
+function convertIdent(id: string): string {
+  const ident = id.normalize(:nfd).replace(/[^\pL\d]/g, p'')
   const { begin, end } = />\b
     (?!\d) // ignore leading digits
       (?<begin>[\pPc\pL][\d\p{L:l}\pM\pPc\pPd]*)?
       (?<end>[\d\pL\pM\pPc\pPd]*)
     \b // ignore trailing dashes
   </.exec(ident)
-  return (begin + end.foldCase)
+  return begin + end.foldCase()
 }
 
 var x = {}
 x.prop = {}
 
-/* An operator consists of one or more symbol and punctuation.
-   Operators should not include `,;(){}[]`.
+/*
+An operator consists of one or more symbol and punctuation.
+Operators should not include `,;(){}[]`.
 
-   These operators are built-in and cannot be reassigned:
-   `. :: ?. ?: !. !: .= ::= ?.= ?:= !.= !:= ?? !! |> ||> |||>`
-   `+> -> ~> <| <|| <||| <+ <- <~ @ # <: >: && || ^^` and prefix `!`
+These operators are built-in and cannot be reassigned:
+`. :: ?. ?: !. !: .= ::= ?.= ?:= !.= !:= ?? !! |> ||> |||>`
+`+> -> ~> <| <|| <||| <+ <- <~ @ # <: >: && || ^^` and prefix `!`
 
-   These result in a syntax error: prefix `|`, `<` and `/`
+These result in a syntax error: prefix `|`, `<` and `/`
 */
-operator function infix [‰](
-  a: String, b: String
-) {
+const operator = /[\pS\pP--\pPc,;'"`({\[)}\]]+/
+infix operator function [‰](a: string, b: string) {
   a.sub(b, '')
 }
-let permil = function (a, b) { a.sub(b, '') }
 
-/* A literal identifier is a string prefixed with @. */
-let :"hello world" = "hello world!"
+val id = 'id'
+id = 'id1' // Error: `id` is immutable
+var id = 'id' // `id` definition overridden
+const result = id.replace(/id/g, '')
+result = 'id1' // Error: `result` is immutable
+let result = id.replace(/id/g, '') // invalid, result already declared
 
-/* 'let' is mutable but can be redeclared. The binding you
-   refer to is the closest binding upward. */
-let result = 0
-let result = result + 2
-let result = result + 2
-let result = result + 2
-
-/* 'const' is like 'let' but immutable. */
-const result = result + 2
-
-/* 'val' bindings are also immutable, however they cannot be redeclared.
-   They are only assigned constant expressions, like enum members. */
-val result = 4
-
-/* Saga's compiler is smart to infer types and would make sure
-   they stay the same throughout its lifetime. Annotate with 'any'
-   to make it dynamic. */
+// Type annotations
 var name: String = 'Bob' // explicit annotation
 var name = 'Bob' // implicit inference
 
-/* Saga's compiler is smart to infer types and would make sure
-   they stay the same throughout its lifetime. Annotate with 'any'
-   to make it dynamic. */
-var (
-  greeting = 'hello' // `str`
-  score = 10 // `int`
+var greeting = 'hello', // `str`
+  score = 10, // `int`
   newScore = 10 + score // `int`
-)
 
-/* Create indented blocks with the 'do' keyword. Do-blocks return
-   their last statement. */
 var message = do {
   var part1 = "hello", part2 = "world"
   part1 ++ " " ++ part2
 }
 
-/* Variables are scoped by curly brackets and can't be accessed from
-   outside. */
 var displayGreeting
 if (displayGreeting = true) {
   var message = 'Enjoying the docs so far?'
   console.log(message)
+  message
 }
 
-/* Destructuring assignment can be performed on:
-... tuples or arrays */
+// Destructuring
+match (x) {
+  case {x: {y: 1} as x}: console.log(x.y === 1)
+}
+
 let pair = [1, "Hello"]
 let [one, hello] = pair
-console.log(hello) // 'Hello'
+hello // 'Hello'
 
-/* ... records or objects */
 let alice = {name: 'Alice', age: 42, job: 'Programmer'}
 let {name, *details} = alice
-console.log(details) // { age: 42, job: 'Programmer' }
+details // { age: 42, job: 'Programmer' }
 
-/* ... or even on function arguments: */
-let sum = |*args: Number[]|: Number = args.reduce(|x, y| x + y, 0)
+const {x: {y} as x} = {x: {y: 1}}
+x // is {y: 1}
+y // is 1
+
+let sum = |*args: number[]|: number = args.reduce(|x, y| x + y, 0)
 let numberArray = [1, 2, 3]
 let runningTotal = sum(*numberArray) // 6
+
+function foo({y} as x, [z] as zed = [1]) {
+  // x is {y: ...}
+  // y is x.y
+  // z is runs an initializer if arguments[0][1] is undefined
+}
 ```
 
 ### Built-In Types
 
 ```swift
 // 8 primitive types
-let null: Null = null
-let bool: Boolean = false
-let num: Int = 0
-let float: Float = 1.0
-let str: String = ''
-let func: Function<(), Void> = | | {}
-let regex: RegExp = /(?#int)/
-let symbol: Symbol = :''
+let null_: null = null
+let undef: undefined = undefined
+let bool: boolean = false
+let int: int = 0 // BigInt primitive type
+let float: float = 1.0
+let string: string = ''
+let symbol: symbol = :''
 
 // Data structures
 let array: Array = []
-var tuple: Tuple = #[] // immutable array
-let set: Set = {}
-let set: FrozenSet = {}
-let map: Map = #{}
-var record: Record = #{}
-var seq: Sequence = ()
-var fSeq: FrozenSeq = #()
+let tuple: Tuple = #[] // immutable array
+let set_: Set = {}
+let fSet: FrozenSet = #{}
+let map: Map = {}
+let record: Record = #{}
+let seq: Sequence = ()
+let fSeq: FrozenSeq = #()
+let regex: RegExp = /()/
+let func: () => void = function () {}
+let lambda: () => void = | | {}
+let object_: Object = object {}
+let class_: Class = class {}
+let enum_: Enum = enum {}
+let interface_: Interface = interface {}
 
 /// CONSTANTS
-true false
-null undefined
-infinity nan
+true; false
+null; undefined
+infinity; nan
 
 /// NUMBERS
 /* Leading zeroes and underscores are ignored.
@@ -226,8 +217,8 @@ Numbers are cast into this order: int > frac > real > complex */
 0o1 // octal
 0b1 // binary
 
-0.1 0x1f.0 3.0 // decimal 'real'
-0x0.3p100 0o1.3p40 0b0.0p40 // p is exponent
+0.1; 0x1f.0; 3.0 // decimal 'real'
+0x0.3p100; 0o1.3p40; 0b0.0p40 // p is exponent
 
 infinity
 nan // not a number
@@ -247,7 +238,7 @@ chalk(s"{blue 'hello world!'}") // Tagged template literal (ES6)
 // Multi-quoted strings
 """x"""
 // Strings end until the last remaining multi-quote
-""""""""x""""""""
+"""""""x"""""""""
 
 // verbatim string
 var message = r"No escapes needed!"
@@ -257,8 +248,8 @@ var message = s"Value of E = $Math.E"
 
 // formatting
 var [a, b] = [10, 20], c = a + b
-var message = sf"Sum of $a%str and $b%str is $c%str"
-message = "Sum of " + a.str() + " and " + b.str() + " is " + c.str()
+var message = sf"Sum of $a%string and $b%string is $c%string"
+message = "Sum of " + a.string() + " and " + b.string() + " is " + c.string()
 // above says "Sum of 10 and 20 is 30"
 
 // escape sequences
@@ -311,12 +302,12 @@ let html-tag = />
 
 /// FUNCTIONS
 function add(a, b) = a + b
-function add(a, b): Number { a + b }
+function add(a, b): number { a + b }
 
 // Anonymous functions
-add = |a: Number, b: Number|: Number { a + b }
+add = |a: number, b: number|: number { a + b }
 // _ is default to "params" object by default
-let add: <T: Number>(a: T, b: T) T = | | _0 + _1
+let add: <T: number>(a: T, b: T) => T = |x, y = 1|: number = x + y
 
 /// SYMBOLS (JavaScript interop only)
 let symbol = :'$'
@@ -327,7 +318,7 @@ let symbol = :symbol
 let array = [1, 2, 3]
 let list = #[1, 2, 3]
 let set = {1, 2, 3}
-let frozenSet = {1, 2, 3}
+let frozenSet = #{1, 2, 3}
 let map = {a: 1, b: 2, c: 3}
 let record = #{a: 1, b: 2, c: 3}
 let sequence = (1, 2, 3)
@@ -362,19 +353,18 @@ x::y // Scope resolution
 new List // Constructor call
 
 // Property access operators
-x.y x::y // Ordinary property access
-x?.y x?:y // Optional chaining
-x!.y x!:y // Optional unwrapping
-x.=y x::=y x?.=y x?:=y x!.=y x!:=y // Access-assignment
+x.y; x::y // Ordinary property access
+x?.y; x?:y // Optional chaining
+x!.y; x!:y // Optional unwrapping
+x.=y; x::=y; x?.=y; x?:=y; x!.=y; x!:=y // Access-assignment
 
-// Difference between :: and .
+// Scope resolution vs ordinary access operator
 class Example {
   field Version = 1.0
   static method Hello(who = `world) =
     s"Hello, $who!"
 }
 
-x \y z // Infix operator
 Example::Hello // "Hello world"
 Example.Hello("hacker") // "Hello hacker"
 Example::Version // 1.0
@@ -487,7 +477,7 @@ x || y /* _or_: logical or */
 x ^^ y /* _xor_: logical xor */
 
 /// COALESCING OPERATORS
-x ?? y /* _coal_:nullish coalescing */
+x ?? y /* _coal_: nullish coalescing */
 x !! y /* _ncoal_: non-null coalescing */
 x ?: y /* _tern_: falsy coalescing */
 x !: y /* _ntern_:truthy coalescing */
@@ -517,10 +507,11 @@ x <+ y /* _cmpl_: backward composition */
 
 /// CONTROL FLOW
 throw new ZeroDivisionError()
-await all x
+await x
+await* x
 return x
 yield x
-yield x
+yield* x
 ```
 
 ### Control Flow
@@ -542,11 +533,11 @@ x ! y : z
 // eless is "else unless"
 
 if (x < 0) {
-  "negative"
+  `negative
 } else if (x == 0) {
-  "zero"
+  `zero
 } else {
-  "positive"
+  `positive
 }
 
 if (x < 0) -x else x
@@ -559,21 +550,43 @@ for (let x in xs; let y in ys) println(x + y)
 
 while (x >= 0) { x = f(x) }
 repeat { x += 10 } while (x >= 0)
+until (x < 0) { x -= 10 }
 repeat {
   print(r'Please don''t try this!')
   break
 }
 
-switch (value) {
-  case Some(value): doSomething(value)
-  case value is int: doSomething(value)
-  case Some(value) if value > 10: doSomething(value)
-  case let [a, b, *rest]: doSomething(rest)
-  case ({foo: let value}): doSomething(value)
-  case let /(?<value>foo)/: doSomething(value)
-  case |x = value| x % 2 == 0: doSomething(value)
-	case "Hello": handleHello()
-  default: doSomething()
+// Switch statements are like if-statements, but with multiple
+// cases.
+enum Month {
+  JAN, FEB, MAR, APR, MAY, JUN,
+  JUL, AUG, SEP, OCT, NOV, DEC
+}
+
+function numberOfDays(year, month: Month) =
+  switch (value) {
+    case JAN, MAR, MAY, JUL, AUG, OCT, DEC: 31
+    case APR, JUN, SEP, NOV: 30
+    case FEB:
+      if (year % 400 == 0) 29
+      else if (year % 100 == 0) 28
+      else if (year % 4 == 0) 29
+      else 28
+  }
+
+// Match statements allow you to match against a value
+// functional-style and execute a block of code.
+match (input) {
+  case Map@{1: x, 2: y}:
+    s"x: $x, y: $y"
+  case /(?<year>\d{4})-(?<month>\d{2})/u@{groups:{year,month}}:
+    s"The year is ${year}, and the month is ${month}"
+  case Some@1:
+    s"option succeeded with an internal value of 1"
+  case Some@x:
+    s"option succeeded with a non-1 value of ${x}",
+  case None@{}:
+    s"option failed"
 }
 
 try {
@@ -583,15 +596,15 @@ try {
   default: handle()
 }
 
-var xs = (from let #[x, y] in [1 to 200].entries()
+var xs = from let #[x, y] in [1 to 200].entries()
   where x < 100 // filter
   join let n in 1 to 100 onto n == x // join
   order by |x, y| x - y // sort
   group by |x| x % 2 = 0 // group
-  select x) // map
+  select x; // map
 
 /// CONTROL TRANSFER STATEMENTS
-break
+break x
 continue x
 goto x
 scope x
@@ -616,9 +629,9 @@ let add = (x, y) => x + y
 
 // Types can be inserted after each argument name,
 // return types go after the argument list:
-let add = |x: Number, y: Number|: Number = x + y
+let add = |x: int, y: int|: int = x + y
 // This is a function type don't use this in your code!
-let add: |x: Number, y: Number| Number = |x, y| x + y
+let add: |x: int, y: int| int = |x, y| x + y
 
 // Call functions with parentheses and comma-separated arguments:
 add(1, 2)
@@ -628,7 +641,7 @@ let doNothing = | | () // Write parens if there is no arg
 
 /// NAMED ARGUMENTS
 // Arguments can be named using the '#' prefix.
-let makeCircle = |~x: Number, ~y: Number, ~radius: Number|: void = ()
+let makeCircle = |~x: int, ~y: int, ~radius: int|: void = ()
 // Use = to call functions with named arguments.
 // Their order does not matter.
 makeCircle(~radius = 10, ~x = 1, ~y = 100)
@@ -668,25 +681,38 @@ makeCircle(~x = 10, ~s = 2)
 
 // Supplying named optional parameters
 let f = |~?a = 10| = ()
-let f = |~?a: num = 10|: num = x + 1
+let f = |~?a: int = 10|: int = x + 1
 let [a, b] = [100, none]
 f(~a = a) // called as f(~a = a)
 f(~a = b) // called as f()
 
 // Referencing previous arguments
-let add = (a, ~b, ~c = a + 1, ~d = b + 2) => a + b + c + d
+let add = |a, ~b, ~c = a + 1, ~d = b + 2| = a + b + c + d
 add(1, ~b = 1) /*6*/
 add(1, ~b = 1, ~c = 10) /*14*/
 
 // Variadic functions:
-let product = |*a: Number[]|: Num = a.reduce((*), 0)
+let product = |*a: int[]|: int = a.reduce((*), 0)
 product(1, 2, 3, 4) /*10*/
 
 // Function piping
-var exclaim = |message: str, rep: int = 1|: Str = message |> s'${_.upper() * rep}!!'
+var exclaim = |message: string, rep: int = 1|: string = message |> s'${_.upper() * rep}!!'
 
 // Function composition
 var quadruple = double +> double
+
+// Function binding
+const _mod = {
+  x: 42,
+  getX() {
+    return this.x;
+  }
+}
+
+const unboundGetX = _mod.getX;
+console.log(unboundGetX())
+const boundGetX = unboundGetX->_mod.getX;
+console.log(boundGetX())
 ```
 
 ### Types
