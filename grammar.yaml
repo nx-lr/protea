@@ -35,7 +35,7 @@ changelog: |
     - [x] anonymous functions
     - [x] embedded content
     - [x] rounded and square brackets
-    - [x] LINQ, inline SQL and validation syntax (more to come later)
+    - [x] LINQ, inline SQL and constraint syntax (more to come later)
   - Numbers and escape sequences have been reworked, and will no longer accept
     integers bigger than decimal 1114111 which now are highlighted as an error.
   - Bases 4, 6, and 12 have been scrapped, though a multi-base generic numeric
@@ -60,6 +60,7 @@ changelog: |
     consistent with JavaScript.
   - Function calls now trigger beside ( and {.
   - Added Perl/Ruby's unless and until keywords.
+  - Fixed module syntax to be more consistent with JavaScript.
   - Fixed JSX highlighting and attributes, inspired by Svelte, Angular (TS), HAML
     - @directive
     - #id and .class
@@ -356,8 +357,6 @@ repository:
         begin: |
           (?x)
           (?<=
-            ['"`)}\]] |
-            \\.\s |
             \w+ \b
           ) \s*
           (?=\b\w+)
@@ -459,7 +458,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                var|val|let|const
+                var|val|let|const|case
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -518,7 +517,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                var|val|let|const
+                var|val|let|const|case
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -663,6 +662,10 @@ repository:
   # Numbers
 
   numbers:
+    applyEndPatternLast: true
+    begin: (?<!\.)(?=\d)
+    end: \b
+    name: meta.number.saga
     patterns:
       - comment: hexadecimal integers
         name: constant.numeric.hexadecimal.saga
@@ -3167,13 +3170,13 @@ repository:
       (?=
         \s*
         (?: # function application, composition and piping
-            (?: \$ | \s\.\s | <\|{1,3} | <\+) ['"`({\[\w\s]
+            (?: [$@] | \s\.\s | <\|{1,3} | <\+) ['"`({\[\w\s]
           | # C-style function call
             (?:[!?]\.=?|\.=)? \#? [({]
           | # generics
             (?:[!?]\.=?|\.=)? < ['"`({\[\w]
           | # literals
-            ['"`]
+            \w*['"] | `
         )
       )
     captures:
@@ -3223,13 +3226,13 @@ repository:
           (?=
             \s*
             (?: # function application, composition and piping
-                (?: \$ | \s\.\s | <\|{1,3} | <[+-]) ['"`({\[\w\s]
+                (?: [$@] | \s\.\s | <\|{1,3} | <[+-]) ['"`({\[\w\s]
               | # C-style function call
                 (?:[!?]\.=?|\.=)? \#? [({]
               | # generics
                 (?:[!?]\.=?|\.=)? < ['"`({\[\w]
               | # strings
-                ['"`]
+                \w*['"] | `
             )
           )
         captures:
@@ -3369,7 +3372,7 @@ repository:
               (?=
                   $ # end of line
                 | (?: # operators
-                    <\|{1,3} | <[-+] | \|{1,3}> | [-+]> | \$ | \s\.
+                    <\|{1,3} | <[-+] | \|{1,3}> | [-+]> | [$@] | \s\.
                   )?
                   ['"`({\[)}\]\w\s]
               )
@@ -3394,7 +3397,7 @@ repository:
               (?=
                   $ # end of line
                 | (?: # operators
-                    <\|{1,3} | <[-+] | \|{1,3}> | [-+]> | \$ | \s\.
+                    <\|{1,3} | <[-+] | \|{1,3}> | [-+]> | [$@] | \s\.
                   )?
                   ['"`({\[)}\]\w\s]
               )
@@ -4220,76 +4223,6 @@ repository:
       - include: '#param-bracket-content'
       - include: $self
 
-  declaration-clause:
-    name: meta.declaration.saga
-    patterns:
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
-        name: entity.name.namespace.saga
-      - applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(implements)(?!\B|\p{Pd}+\b)\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: { name: storage.type.$1.saga }
-        patterns:
-          - match: ::|\.
-            name: punctuation.separator.namespace.saga
-          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
-            name: entity.name.namespace.saga
-          - match: *class-name
-            name: entity.name.trait.saga
-          - include: '#comments'
-          - include: '#type-square-brackets'
-          - include: '#brackets'
-          - include: '#comma'
-          - include: '#line-continuation'
-      - applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(extends)(?!\B|\p{Pd}+\b)\s*
-        end: (?=.)|$
-        beginCaptures:
-          1: { name: storage.type.$1.saga }
-        patterns:
-          - match: ::|\.
-            name: punctuation.separator.namespace.saga
-          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
-            name: entity.name.module.saga
-          - match: *class-name
-            name: entity.name.class.saga
-          - include: '#comments'
-          - include: '#type-square-brackets'
-          - include: '#brackets'
-          - include: '#comma'
-          - include: '#line-continuation'
-      - match: \s*(?<!\*)\*(?!\*)\s*
-        name: keyword.generator.asterisk.saga
-      - include: '#comments'
-      - include: '#comma'
-      - include: '#line-continuation'
-      - include: '#type-keywords'
-      - include: '#type-square-brackets'
-      - include: '#modifiers'
-      - begin: (\#\{)\s*
-        end: \s*(\})
-        name: meta.brace.curly.saga
-        captures:
-          1: { name: punctuation.section.class.saga }
-        patterns:
-          - include: $self
-      - begin: (\{)\s*
-        end: \s*(\})
-        name: meta.brace.curly.saga
-        captures:
-          1: { name: punctuation.definition.block.saga }
-        patterns:
-          - include: $self
-      - include: '#brackets'
-      - include: '#type-signature'
-      - include: '#literals'
-      - include: '#decorators'
-      - match: ::|\.
-        name: punctuation.separator.namespace.saga
-      - match: \s+
-        name: meta.block.saga
-
   modifier-keywords:
     match: |
       (?x)
@@ -4434,7 +4367,7 @@ repository:
   keywords:
     patterns:
       - include: '#modifier-keywords'
-      - include: '#validation-expression'
+      - include: '#constraint-expression'
       - include: '#module-expression'
       - include: '#control-expression'
       - include: '#query-expression'
@@ -4442,77 +4375,149 @@ repository:
       - include: '#expression-keywords'
       - include: '#general-keywords'
 
-    repository:
-      control-expression:
-        applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|continue|redo|retry|scope|goto|fallthru)(?!\B|\p{Pd}+\b)\s*
+  control-expression:
+    applyEndPatternLast: true
+    begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|continue|redo|retry|scope|goto|fallthru)(?!\B|\p{Pd}+\b)\s*
+    end: (?=)|$
+    beginCaptures:
+      1: { name: keyword.control.flow.saga }
+    patterns:
+      - match: *entity-name
+        name: constant.other.label.saga
+
+  module-expression:
+    patterns:
+      - applyEndPatternLast: true
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|route)(?!\B|\p{Pd}+\b)\s*
         end: (?=)|$
         beginCaptures:
-          1: { name: keyword.control.flow.saga }
+          1: { name: keyword.control.module.saga }
         patterns:
-          - match: *entity-name
-            name: constant.other.label.saga
+          - include: '#module-content'
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|as|only|except|default)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.module.saga
 
-      module-expression:
+    repository:
+      module-content:
         patterns:
-          - applyEndPatternLast: true
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|route)(?!\B|\p{Pd}+\b)\s*
-            end: (?=)|$
-            beginCaptures:
-              1: { name: keyword.control.module.saga }
+          - begin: ({)\s*
+            end: \s*(})
+            captures:
+              1: { name: punctuation.definition.block.saga }
             patterns:
               - include: '#module-content'
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|as|only|except|default)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.module.saga
+              - include: '#illegal'
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.module.saga
+          - include: '#type-keywords'
+          - include: '#strings'
+          - include: '#symbols'
+          - include: '#type-operators'
+          - include: '#modifiers'
+          - include: '#comma'
+          - include: '#line-continuation'
+          - match: *entity-name
+            name: variable.other.readwrite.alias.saga
 
-        repository:
-          module-content:
-            patterns:
-              - begin: ({)\s*
-                end: \s*(})
-                captures:
-                  1: { name: punctuation.definition.block.saga }
-                patterns:
-                  - include: '#module-content'
-                  - include: '#illegal'
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.module.saga
-              - include: '#declarations'
-              - include: '#type-keywords'
-              - include: '#strings'
-              - include: '#symbols'
-              - include: '#type-operators'
-              - include: '#modifiers'
-              - include: '#comma'
-              - include: '#line-continuation'
-              - match: *entity-name
-                name: variable.other.readwrite.alias.saga
+  constraint-expression:
+    begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where)(?!\B|\p{Pd}+\b)\s*
+    beginCaptures:
+      1: { name: keyword.control.validate.saga }
+    end: (?=[,;)}\]])
+    patterns:
+      - match: &constraint-keyword |
+          (?x)
+          \s*
+            (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(
+              (?:
+                require|ensure|(de|in)(crease|crement)|throw|read|assume
+                |return|yield|varie|change|create|alter|delete|drop|rename
+                |reveal|write|name|permit|allow|grant|revoke|deny|disallow
+                |modifie|renew|transfer|postpone|suspend|resume|abort|reject
+                |cancel|post|put|get|set|patch|delete|trace|connect|disconnect
+                |accept|receive|send|open|close|lock|unlock|flush|reboot|reload
+                |restart|start|stop|kill|spawn|invoke|execute|derive|connect
+                |extend|implement|use
+              )s
+            )
+            (?!\B|\p{Pd}+\b)\s*
+          \s*
+        name: keyword.control.validate.saga
+      - include: $self
 
-      validation-expression:
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where)(?!\B|\p{Pd}+\b)\s*
+  query-expression:
+    begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)(?!\B|\p{Pd}+\b)\s*
+    beginCaptures:
+      1: { name: keyword.control.query.saga }
+    end: (?=[,;)}\]])
+    patterns:
+      - include: '#query-body'
+      - include: $self
+
+  query-body:
+    patterns:
+      - include: '#in-clause'
+      - include: '#where-clause'
+      - include: '#join-clause'
+      - include: '#sort-clause'
+      - include: '#select-clause'
+      - include: '#group-clause'
+      - include: '#limit-clause'
+      - include: '#reduce-clause'
+
+    repository:
+      in-clause:
+        begin: |
+          (?x)
+          \s*
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+            (
+              in|of
+            )
+          (?!\B|\p{Pd}+\b)
+          \s*
         beginCaptures:
-          1: { name: keyword.control.validate.saga }
+          1: { name: keyword.control.query.saga }
+          2: { patterns: [include: $self] }
+          3: { name: keyword.control.query.saga }
         end: (?=[,;)}\]])
         patterns:
-          - match: |
-              (?x)
-              \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                (
-                  (?:
-                    require|ensure|(de|in)(crease|crement)|throw|read|assume
-                    |return|yield|varie|change|create|alter|delete|drop|rename
-                    |reveal|write|name
-                  )s?
-                  | modify|modifies
-                )
-              (?!\B|\p{Pd}+\b)
-              \s*
-            name: keyword.control.validate.saga
+          - include: '#query-body'
           - include: $self
 
-      query-expression:
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)(?!\B|\p{Pd}+\b)\s*
+      join-clause:
+        begin: |
+          (?x)
+          \s*
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+            (
+              \b (?:full|part|self|cross)? \b \s*
+              \b (?:inner|outer|left|right)? \b \s*
+              \b (?:join)
+            )
+          (?!\B|\p{Pd}+\b)
+          \s*
+        beginCaptures:
+          1: { name: keyword.control.query.saga }
+          2: { patterns: [include: $self] }
+          3: { name: keyword.control.query.saga }
+        end: (?=[,;)}\]])
+        patterns:
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b([io]nto|equal|in|of)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.query.saga
+          - include: '#query-body'
+          - include: $self
+
+      where-clause:
+        begin: |
+          (?x)
+          \s*
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+            (
+              where|having|filter|reject
+            )
+          (?!\B|\p{Pd}+\b)
+          \s*
         beginCaptures:
           1: { name: keyword.control.query.saga }
         end: (?=[,;)}\]])
@@ -4520,174 +4525,103 @@ repository:
           - include: '#query-body'
           - include: $self
 
-      query-body:
+      sort-clause:
+        begin: |
+          (?x)
+          \s*
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+            (
+              \b (?:sort|order) \b \s*
+              \b (?:asc|desc)? \b \s*
+              \b (?:by|with)?
+            )
+          (?!\B|\p{Pd}+\b)
+          \s*
+        beginCaptures:
+          1: { name: keyword.control.query.saga }
+        end: (?=[,;)}\]])
         patterns:
-          - include: '#in-clause'
-          - include: '#where-clause'
-          - include: '#join-clause'
-          - include: '#sort-clause'
-          - include: '#select-clause'
-          - include: '#group-clause'
-          - include: '#limit-clause'
-          - include: '#reduce-clause'
+          - include: '#query-body'
+          - include: $self
 
-        repository:
-          in-clause:
-            begin: |
-              (?x)
-              \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                (
-                  in|of
-                )
-              (?!\B|\p{Pd}+\b)
-              \s*
-            beginCaptures:
-              1: { name: keyword.control.query.saga }
-              2: { patterns: [include: $self] }
-              3: { name: keyword.control.query.saga }
-            end: (?=[,;)}\]])
-            patterns:
-              - include: '#query-body'
-              - include: $self
+      select-clause:
+        begin: |
+          (?x)
+          \s*
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+            (
+              \b (?:select|map) \b \s*
+              \b (?:unique|any|all|some|every)?
+            )
+          (?!\B|\p{Pd}+\b)
+          \s*
+        beginCaptures:
+          1: { name: keyword.control.query.saga }
+        end: (?=[,;)}\]])
+        patterns:
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.query.saga
+          - include: '#query-body'
+          - include: $self
 
-          join-clause:
-            begin: |
-              (?x)
-              \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                (
-                  \b (?:full|part|self|cross)? \b \s*
-                  \b (?:inner|outer|left|right)? \b \s*
-                  \b (?:join)
-                )
-              (?!\B|\p{Pd}+\b)
-              \s*
-            beginCaptures:
-              1: { name: keyword.control.query.saga }
-              2: { patterns: [include: $self] }
-              3: { name: keyword.control.query.saga }
-            end: (?=[,;)}\]])
-            patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b([io]nto|equal|in|of)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.query.saga
-              - include: '#query-body'
-              - include: $self
+      limit-clause:
+        begin: |
+          (?x)
+          \s*
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+            (
+              \b (?:take|drop|limit|offset) \b \s*
+              \b (?:first|last|head|tail)?
+            )
+          (?!\B|\p{Pd}+\b)
+          \s*
+        beginCaptures:
+          1: { name: keyword.control.query.saga }
+        end: (?=[,;)}\]])
+        patterns:
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.query.saga
+          - include: '#query-body'
+          - include: $self
 
-          where-clause:
-            begin: |
-              (?x)
-              \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                (
-                  where|having|filter|reject
-                )
-              (?!\B|\p{Pd}+\b)
-              \s*
-            beginCaptures:
-              1: { name: keyword.control.query.saga }
-            end: (?=[,;)}\]])
-            patterns:
-              - include: '#query-body'
-              - include: $self
+      reduce-clause:
+        begin: |
+          (?x)
+          \s*
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+            (
+              \b (?:fold|reduce|scan) \b \s*
+              \b (?:first|last|left|right)?
+            )
+          (?!\B|\p{Pd}+\b)
+          \s*
+        beginCaptures:
+          1: { name: keyword.control.query.saga }
+        end: (?=[,;)}\]])
+        patterns:
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.query.saga
+          - include: '#query-body'
+          - include: $self
 
-          sort-clause:
-            begin: |
-              (?x)
-              \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                (
-                  \b (?:sort|order) \b \s*
-                  \b (?:asc|desc)? \b \s*
-                  \b (?:by|with)?
-                )
-              (?!\B|\p{Pd}+\b)
-              \s*
-            beginCaptures:
-              1: { name: keyword.control.query.saga }
-            end: (?=[,;)}\]])
-            patterns:
-              - include: '#query-body'
-              - include: $self
-
-          select-clause:
-            begin: |
-              (?x)
-              \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                (
-                  \b (?:select|map) \b \s*
-                  \b (?:unique|any|all|some|every)?
-                )
-              (?!\B|\p{Pd}+\b)
-              \s*
-            beginCaptures:
-              1: { name: keyword.control.query.saga }
-            end: (?=[,;)}\]])
-            patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.query.saga
-              - include: '#query-body'
-              - include: $self
-
-          limit-clause:
-            begin: |
-              (?x)
-              \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                (
-                  \b (?:take|drop|limit|offset) \b \s*
-                  \b (?:first|last|head|tail)?
-                )
-              (?!\B|\p{Pd}+\b)
-              \s*
-            beginCaptures:
-              1: { name: keyword.control.query.saga }
-            end: (?=[,;)}\]])
-            patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.query.saga
-              - include: '#query-body'
-              - include: $self
-
-          reduce-clause:
-            begin: |
-              (?x)
-              \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                (
-                  \b (?:fold|reduce|scan) \b \s*
-                  \b (?:first|last|left|right)?
-                )
-              (?!\B|\p{Pd}+\b)
-              \s*
-            beginCaptures:
-              1: { name: keyword.control.query.saga }
-            end: (?=[,;)}\]])
-            patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.query.saga
-              - include: '#query-body'
-              - include: $self
-
-          group-clause:
-            begin: |
-              (?x)
-              \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
-                (
-                  group
-                )
-              (?!\B|\p{Pd}+\b)
-              \s*
-            beginCaptures:
-              1: { name: keyword.control.query.saga }
-            end: (?=[,;)}\]])
-            patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|[io]nto)(?!\B|\p{Pd}+\b)\s*
-                name: keyword.control.query.saga
-              - include: '#query-body'
-              - include: $self
+      group-clause:
+        begin: |
+          (?x)
+          \s*
+          (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+            (
+              group
+            )
+          (?!\B|\p{Pd}+\b)
+          \s*
+        beginCaptures:
+          1: { name: keyword.control.query.saga }
+        end: (?=[,;)}\]])
+        patterns:
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|[io]nto)(?!\B|\p{Pd}+\b)\s*
+            name: keyword.control.query.saga
+          - include: '#query-body'
+          - include: $self
 
   declarations:
     patterns:
@@ -4954,6 +4888,44 @@ repository:
           - include: '#declaration-clause'
           - match: *entity-name
             name: entity.name.field.saga
+
+
+  declaration-clause:
+    name: meta.declaration.saga
+    patterns:
+      - match: *constraint-keyword
+        name: keyword.other.$1.saga
+      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
+        name: entity.name.namespace.saga
+      - include: '#type-square-brackets'
+      - include: '#type-signature'
+      - include: '#decorators'
+      - include: '#type-keywords'
+      - match: \s*(?<!\*)\*(?!\*)\s*
+        name: keyword.generator.asterisk.saga
+      - include: '#comments'
+      - include: '#comma'
+      - include: '#line-continuation'
+      - begin: (\#\{)\s*
+        end: \s*(\})
+        name: meta.brace.curly.saga
+        captures:
+          1: { name: punctuation.section.class.saga }
+        patterns:
+          - include: $self
+      - begin: (\{)\s*
+        end: \s*(\})
+        name: meta.brace.curly.saga
+        captures:
+          1: { name: punctuation.definition.block.saga }
+        patterns:
+          - include: $self
+      - include: '#brackets'
+      - include: '#literals'
+      - match: ::|\.
+        name: punctuation.separator.namespace.saga
+      - match: \s+
+        name: meta.block.saga
 
   function-clause:
     patterns:
@@ -5640,6 +5612,10 @@ repository:
           - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*):(?=['"`({\[\w\s]|$)
             name: punctuation.separator.key-value.saga
 
+      as-keyword:
+        match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+        name: keyword.operator.expression.as.saga
+
     patterns:
       - begin: |
           (?x)
@@ -5647,7 +5623,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                var|val|let|const
+                var|val|let|const|case
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -5661,6 +5637,7 @@ repository:
         patterns:
           - include: '#labels'
           - include: '#punctuation'
+          - include: '#as-keyword'
           - include: $self
       - begin: |
           (?x)
@@ -5808,6 +5785,10 @@ repository:
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.saga
 
+      as-keyword:
+        match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+        name: keyword.operator.expression.as.saga
+
     patterns:
       - begin: |
           (?x)
@@ -5829,7 +5810,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                var|val|let|const
+                var|val|let|const|case
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -5841,6 +5822,7 @@ repository:
         captures:
           1: { name: punctuation.definition.binding-pattern.tuple.saga }
         patterns:
+          - include: '#as-keyword'
           - include: '#punctuation'
           - include: $self
       - begin: (\#\()\s*
@@ -5865,6 +5847,10 @@ repository:
           - match: ','
             name: punctuation.separator.sequence.saga
 
+      as-keyword:
+        match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+        name: keyword.operator.expression.as.saga
+
     patterns:
       - begin: |
           (?x)
@@ -5885,7 +5871,7 @@ repository:
             (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
             \b
               (?: # destructuring keywords
-                var|val|let|const
+                var|val|let|const|case
               )
             \b
             (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
@@ -5898,6 +5884,7 @@ repository:
           1: { name: punctuation.definition.binding-pattern.array.saga }
         patterns:
           - include: '#punctuation'
+          - include: '#as-keyword'
           - include: $self
       - begin: (\#\[)\s*
         end: \s*(\])
