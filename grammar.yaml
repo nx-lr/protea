@@ -70,6 +70,7 @@ changelog: |
   Fixes:
 
   - Match unquoted globs in routes
+  - Fix syntax for JavaScript ES5 module import and export statements
   - Plan and add Trinity's standard library, then integrate it into the grammar.
     This would all be done in a separate PR and once the grammar is completely
     finished.
@@ -216,7 +217,7 @@ repository:
         name: punctuation.definition.metadata.saga
       - include: '#clauses'
       - include: '#constants'
-      - include: '#declaration-keywords'
+      - include: '#declarations'
       - include: '#parameter-variables'
       - include: '#keywords'
 
@@ -289,7 +290,7 @@ repository:
       )
 
       (?:
-        (?<=(?:^|[,;'"`)}\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?))
+        (?<=(?:^|[,;'"`(){}\[\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?))
         (?: # Properties
             # Leading underscore
             (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
@@ -311,7 +312,7 @@ repository:
           | # Camel or kebab case
             ([\p{Pc}\p{L}][\w\p{Pd}]*)
         )
-        (?! \.\.+) (?= [!?]?\.=? | [?!:]:=? | <)
+        (?=(?:[!?]?\.=?|[?!:]:=?|<)(?:[,;'"`(){}\[\]\w\s]|$))
         |
         (?: # Regular variables
             # Leading underscore
@@ -326,12 +327,6 @@ repository:
       )\b
 
       \s*
-
-      (?=
-        $ |
-        | [\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]+
-        | ['"`({\[)}\]]
-      )
     captures:
       1: { name: entity.name.trait.saga }
       2: { name: entity.name.interface.saga }
@@ -1567,21 +1562,13 @@ repository:
               - include: '#back-references'
               - include: '#string-content'
       - comment: Pattern section
-        begin: (/)\s*(?=(?:[^\\/]|\\.)+/(?:(?:[^\\/]|\\.)+/)?\p{L}*)
-        end: \s*(?:(/)((?:[^\\/]|\\.)+))?(/)(\p{L}*)
+        begin: (/)\s*(?=(?:[^\\/]|\\.)+/\p{L}*)
+        end: \s*(/)(\p{L}*)
         name: string.pattern.regexp.saga
         captures:
           1:
             name: punctuation.definition.regexp.saga
           2:
-            comment: Replacement section
-            name: string.replace.regexp.saga
-            patterns:
-              - include: '#back-references'
-              - include: '#string-content'
-          3:
-            name: punctuation.definition.regexp.saga
-          4:
             name: keyword.other.flag.saga
         patterns:
           - include: '#regexp-patterns'
@@ -2218,7 +2205,7 @@ repository:
   tag-attributes:
     patterns:
       - include: '#literals'
-      - include: '#embedded'
+      - include: '#embedded-expression'
       - include: '#brackets'
       - applyEndPatternLast: true
         begin: \s*(=)\s*
@@ -3236,7 +3223,7 @@ repository:
           (?=
             \s*
             (?: # function application, composition and piping
-                (?: \$ | \s\.\s | <\|{1,3} | <\+) ['"`({\[\w\s]
+                (?: \$ | \s\.\s | <\|{1,3} | <[+-]) ['"`({\[\w\s]
               | # C-style function call
                 (?:[!?]\.=?|\.=)? \#? [({]
               | # generics
@@ -3252,7 +3239,7 @@ repository:
           (?x)
           (?<=
             \s* # opening
-            (?:\|{1,3}> | \+>) # operator
+            (?:\|{1,3}> | [+-]>) # operator
             \s*
           )
           \b
@@ -3299,7 +3286,7 @@ repository:
     match: |
       (?x)
       (?:
-        (?<=(?:^|[,;'"`)}\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?)) \b
+        (?<=(?:^|[,;'"`(){}\[\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?)) \b
           (?: # Properties
             # Leading underscore
             (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
@@ -3367,7 +3354,7 @@ repository:
         match: |
           (?x)
           (?:
-            (?<=(?:^|[,;'"`)}\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?)) \b
+            (?<=(?:^|[,;'"`(){}\[\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?)) \b
               (?: # Properties
                 # Leading underscore
                 (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
@@ -3382,7 +3369,7 @@ repository:
               (?=
                   $ # end of line
                 | (?: # operators
-                    <\|{1,3} | <\+ | \|{1,3}> | \+> | \$ | \s\.
+                    <\|{1,3} | <[-+] | \|{1,3}> | [-+]> | \$ | \s\.
                   )?
                   ['"`({\[)}\]\w\s]
               )
@@ -3407,7 +3394,7 @@ repository:
               (?=
                   $ # end of line
                 | (?: # operators
-                    <\|{1,3} | <\+ | \|{1,3}> | \+> | \$ | \s\.
+                    <\|{1,3} | <[-+] | \|{1,3}> | [-+]> | \$ | \s\.
                   )?
                   ['"`({\[)}\]\w\s]
               )
@@ -3722,7 +3709,7 @@ repository:
           (?x) \b
 
           (?:
-            (?<=(?:^|[,;'"`)}\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?))
+            (?<=(?:^|[,;'"`(){}\[\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?))
             (?: # Properties
                 # Leading underscore
                 (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
@@ -3744,7 +3731,7 @@ repository:
               | # Camel or kebab case
                 ([\p{Pc}\p{L}][\w\p{Pd}]*)
             )
-            (?! \.\.+) (?= [!?]?\.=? | [?!:]:=? | \#?\[)
+            (?=(?:[!?]?\.=?|[?!:]:=?|\s*\#?\[)(?:[,;'"`(){}\[\]\w\s]|$))
             |
             (?: # Regular variables
                 # Leading underscore
@@ -4323,8 +4310,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix
-                |infix|suffix|unary|left|right
+                |recursive|operator|curried|opaque|transparent|inline
+                |prefix|infix|suffix|unary|left|right
               )
             )
             (?!\B|\p{Pd}+\b)
@@ -4381,8 +4368,8 @@ repository:
           (?x) \s*
           \b
           (?:
-            recursive|operator|curried|inline|prefix
-            |infix|suffix|unary|left|right
+            recursive|operator|curried|opaque|transparent|inline
+            |prefix|infix|suffix|unary|left|right
           )
           (?!\B|\p{Pd}+\b)
           \s*
@@ -4474,15 +4461,29 @@ repository:
             beginCaptures:
               1: { name: keyword.control.module.saga }
             patterns:
+              - include: '#module-content'
+              - include: '#illegal'
+
+        repository:
+          module-content:
+            patterns:
+              - begin: ({)\s*
+                end: \s*(})
+                captures:
+                  1: { name: punctuation.definition.block.saga }
+                patterns:
+                  - include: '#module-content'
+                  - include: '#illegal'
               - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|as|only|except|default)(?!\B|\p{Pd}+\b)\s*
                 name: keyword.control.module.saga
-              - include: '#type-keywords'
               - include: '#declarations'
+              - include: '#type-keywords'
               - include: '#strings'
               - include: '#symbols'
               - include: '#type-operators'
-              - match: ','
-                name: punctuation.separator.comma.saga
+              - include: '#modifiers'
+              - include: '#comma'
+              - include: '#line-continuation'
               - match: *entity-name
                 name: variable.other.readwrite.alias.saga
 
@@ -4500,7 +4501,7 @@ repository:
                   (?:
                     require|ensure|(de|in)(crease|crement)|throw|read|assume
                     |return|yield|varie|change|create|alter|delete|drop|rename
-                    |reveal
+                    |reveal|write|name
                   )s?
                   | modify|modifies
                 )
@@ -4987,8 +4988,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix
-                |infix|suffix|unary|left|right
+                |recursive|operator|curried|opaque|transparent|inline
+                |prefix|infix|suffix|unary|left|right
               )
               \s*
             )*
@@ -5037,8 +5038,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix
-                |infix|suffix|unary|left|right
+                |recursive|operator|curried|opaque|transparent|inline
+                |prefix|infix|suffix|unary|left|right
               )
               \s*
             )*
@@ -5086,8 +5087,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix
-                |infix|suffix|unary|left|right
+                |recursive|operator|curried|opaque|transparent|inline
+                |prefix|infix|suffix|unary|left|right
               )
               \s*
             )*
@@ -5136,8 +5137,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix
-                |infix|suffix|unary|left|right
+                |recursive|operator|curried|opaque|transparent|inline
+                |prefix|infix|suffix|unary|left|right
               )
               \s*
             )*
@@ -5489,8 +5490,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix
-                |infix|suffix|unary|left|right
+                |recursive|operator|curried|opaque|transparent|inline
+                |prefix|infix|suffix|unary|left|right
               )
               \b
               \s*
@@ -5541,8 +5542,8 @@ repository:
                 |eager|bound|free|unique|struct|union
                 |changed|unchanged|open|opened|closed?
 
-                |recursive|operator|curried|inline|prefix
-                |infix|suffix|unary|left|right
+                |recursive|operator|curried|opaque|transparent|inline
+                |prefix|infix|suffix|unary|left|right
               )
               \b
               \s*
