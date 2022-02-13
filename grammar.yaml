@@ -1349,7 +1349,7 @@ repository:
           (\#) # sigil
           (
             (?:
-              (?:&|%|\$|~~?|\*\*?)? # sigil
+              (?:&|%|\$|~~?|\*\*?) # sigil
               [!?]? # required or optional
             )
             \b
@@ -3134,7 +3134,7 @@ repository:
       (?=
         \s*
         (?: # function application, composition and piping
-            (?: [$@] | \s\.\s | <\|{1,3} | <\+) ['"`({\[\w\s]
+            (?: [$@] | \s\.\s | <\|{1,3} | <[+-]) ['"`({\[\w\s]
           | # C-style function call
             (?:[!?]\.=?|\.=)? \#? [({]
           | # generics
@@ -4357,9 +4357,9 @@ repository:
         beginCaptures:
           1: { name: keyword.control.module.saga }
         patterns:
-          - include: '#module-content'
           - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|as|only|except|default)(?!\B|\p{Pd}+\b)\s*
             name: keyword.control.module.saga
+          - include: '#module-content'
 
     repository:
       module-content:
@@ -4375,6 +4375,7 @@ repository:
             name: keyword.control.module.saga
           - include: '#type-keywords'
           - include: '#strings'
+          - include: '#regexps'
           - include: '#symbols'
           - include: '#type-operators'
           - include: '#modifiers'
