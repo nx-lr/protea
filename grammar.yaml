@@ -70,8 +70,6 @@ changelog: |
 
   Fixes:
 
-  - Match unquoted globs in routes
-  - Fix syntax for JavaScript ES5 module import and export statements
   - Plan and add Trinity's standard library, then integrate it into the grammar.
     This would all be done in a separate PR and once the grammar is completely
     finished.
@@ -86,7 +84,16 @@ changelog: |
       - Special variables
       - Various UI elements and color names
       - Character names (LaTeX/HTML/AGLFN)
-
+  - Add new parameter binding/destructuring syntax for:
+    - [ ] Strings
+    - [ ] Regular expressions
+    - [ ] Arrays
+    - [ ] Sets
+    - [ ] Maps and objects
+    - [ ] Tuples
+    - [ ] Functions
+  - Match unquoted globs in routes
+  - Fix syntax for JavaScript ES5 module import and export statements
   - Revamp Markdown syntax with these extensions:
     - [ ] Citations
     - [ ] Strike-through
@@ -133,6 +140,34 @@ define:
     ([\p{Pc}\p{L}][\w\p{Pd}]*)
     \b
 
+  keywords: |
+    (?x) \s* \b
+
+    (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+      (?: # keywords
+        in|of|as|is|new
+        |to|till|thru|by|delete
+        |unset|ref|and|or|xor|not
+        |var|val|let|const|function
+        |procedure|method|type|class
+        |interface|enum|module|struct
+        |protocol|iterator|macro|query
+        |object|contract|trait|style
+        |element|field|model|namespace
+        |go|defer|do|with|from|where
+        |if|unless|else|then|declare
+        |for|foreach|repeat|while|until
+        |try|throw|catch|finally|switch
+        |match|case|fallthru|default|goto
+        |break|continue|redo|retry
+        |return|yield|await|scope
+        |import|export|route
+        |debug|assert|check
+      )
+    (?!\B|\p{Pd}+\b)
+
+    \b
+
   html-tag-names: &html-tag-names
     - match: '\.|:|::'
       name: punctuation.separator.namespace.saga
@@ -174,20 +209,6 @@ repository:
   space:
     match: \s+
     name: meta.var.expr.saga
-
-  # Function brackets (early here as not to break things)
-
-  param-bracket-content:
-    patterns:
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.operator.expression.as.saga
-      - match: (?<=[\w\s][(|])\.
-        name: punctuation.definition.metadata.saga
-      - include: '#clauses'
-      - include: '#constants'
-      - include: '#declarations'
-      - include: '#parameter-variables'
-      - include: '#keywords'
 
   # Illegal Syntax
 
@@ -313,7 +334,7 @@ repository:
     patterns:
       - applyEndPatternLast: true
         name: meta.type.saga
-        begin: (?<=(?:[)}\]\w'"`]|\\.)\|?)(:)(?=$|[\w\s'"`({\[])
+        begin: (?<=(?:[)}\]\w\s'"`]|\\.)\|?|^)(:)(?=$|[\w\s'"`({\[])
         end: (?=)|$
         beginCaptures:
           1: { name: punctuation.definition.annotation.saga }
@@ -350,6 +371,77 @@ repository:
             name: punctuation.separator.key-value.saga
 
     patterns:
+      - begin: |
+          (?x)
+          (?<=
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
+            \b
+              (?: # destructuring keywords
+                var|val|let|const|case
+              )
+            \b
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
+            \s*
+          )
+          (\#?\{)\s*
+        end: \s*(\})
+        name: meta.brace.curly.saga
+        captures:
+          1: { name: punctuation.definition.binding-pattern.object.saga }
+        patterns:
+          - include: '#labels'
+          - include: '#punctuation'
+          - include: '#as-keyword'
+          - include: '#types'
+          - include: $self
+      - begin: |
+          (?x)
+          (?<=
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
+            \b
+              (?: # expression keywords
+                in|of|as|is|new
+                |to|till|thru|by|delete
+                |unset|ref|and|or|xor|not
+              )
+            \b
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
+            \s*
+          )
+          (\#\{)\s*
+        end: \s*(\})
+        name: meta.brace.curly.saga
+        captures:
+          1: { name: punctuation.definition.mapping.saga }
+        patterns:
+          - include: '#labels'
+          - include: '#punctuation'
+          - include: '#types'
+          - include: $self
+      - begin: |
+          (?x)
+          (?<=
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
+            \b
+              (?: # expression keywords
+                in|of|as|is|new
+                |to|till|thru|by|delete
+                |unset|ref|and|or|xor|not
+              )
+            \b
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
+            \s*
+          )
+          (\{)\s*
+        end: \s*(\})
+        name: meta.brace.curly.saga
+        captures:
+          1: { name: punctuation.definition.dictionary.saga }
+        patterns:
+          - include: '#labels'
+          - include: '#punctuation'
+          - include: '#types'
+          - include: $self
       - begin: |
           (?x)
           (?<=
@@ -416,7 +508,6 @@ repository:
         captures:
           1: { name: punctuation.definition.parameters.saga }
         patterns:
-          - include: '#param-bracket-content'
           - include: '#types'
           - include: $self
       - begin: |
@@ -2102,7 +2193,7 @@ repository:
   tag-component-name:
     patterns:
       - comment: JSX Fragment
-        contentName: meta.jsx.fragment.saga
+        contentName: text.html.fragment.saga
         begin: (<)(?=>)
         end: (?<=</)(>)
         beginCaptures:
@@ -2112,7 +2203,7 @@ repository:
         patterns:
           - include: '#tag-termination'
       - comment: Tags that end > are trapped in tag-termination
-        contentName: meta.jsx.saga
+        contentName: text.html.saga
         begin: |
           (?x)
           (<) # start tag begin
@@ -3140,7 +3231,7 @@ repository:
           | # generics
             (?:[!?]\.=?|\.=)? < ['"`({\[\w]
           | # literals
-            \w*['"] | `
+            \w*['"] | `\s*(?=\N)
         )
       )
     captures:
@@ -3196,7 +3287,7 @@ repository:
               | # generics
                 (?:[!?]\.=?|\.=)? < ['"`({\[\w]
               | # strings
-                \w*['"] | `
+                \w*['"] | `\s*(?=\N)
             )
           )
         captures:
@@ -4184,8 +4275,7 @@ repository:
     captures:
       1: { name: punctuation.definition.parameters.saga }
     patterns:
-      - include: '#param-bracket-content'
-      - include: $self
+      - include: '#binding-pattern'
 
   modifier-keywords:
     match: |
@@ -4377,7 +4467,8 @@ repository:
           - include: '#strings'
           - include: '#regexps'
           - include: '#symbols'
-          - include: '#type-operators'
+          - match: \s*(?<!\*)\*(?!\*)\s*
+            name: constant.language.import-export-all.js
           - include: '#modifiers'
           - include: '#comma'
           - include: '#line-continuation'
@@ -4870,6 +4961,13 @@ repository:
       - include: '#comments'
       - include: '#comma'
       - include: '#line-continuation'
+      - begin: (\()\s*
+        end: \s*(\))
+        captures:
+          1: { name: punctuation.definition.parameters.saga }
+        patterns:
+          - include: '#binding-pattern'
+          - include: $self
       - begin: (\#\{)\s*
         end: \s*(\})
         name: meta.brace.curly.saga
@@ -4994,8 +5092,7 @@ repository:
         endCaptures:
           1: { name: punctuation.separator.arguments.saga }
         patterns:
-          - include: '#param-bracket-content'
-          - include: $self
+          - include: '#argument-list-content'
       - comment: |
           Function def before function keyword
           x = def()
@@ -5093,8 +5190,7 @@ repository:
         endCaptures:
           1: { name: punctuation.separator.arguments.saga }
         patterns:
-          - include: '#param-bracket-content'
-          - include: $self
+          - include: '#argument-list-content'
 
   argument-list:
     name: meta.function.arguments.saga
@@ -5143,8 +5239,17 @@ repository:
       1: { name: punctuation.separator.arguments.saga }
     end: (?<!\|)(\|)(?!\|)
     patterns:
-      - include: '#param-bracket-content'
-      - include: $self
+      - include: '#argument-list-content'
+
+  argument-list-content:
+    patterns:
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+        name: keyword.operator.expression.as.saga
+      - match: (?<=[\w\s][(|])\.
+        name: punctuation.definition.metadata.saga
+      - match: ','
+        name: punctuation.separator.arguments.saga
+      - include: '#binding-pattern'
 
   clauses:
     patterns:
@@ -5168,6 +5273,7 @@ repository:
         patterns:
           - match: *entity-name
             name: entity.name.instance.saga
+          - include: '#type-clause'
           - include: '#type-keywords'
           - include: '#type-square-brackets'
           - include: '#parameter-brackets'
@@ -5394,6 +5500,100 @@ repository:
                 name: keyword.control.with.saga
               - include: $self
 
+  # Binding patterns
+
+  object-key:
+    begin: (?<=^|{|,|;)
+    end: (?=,|;|}|$|:['"`({\[)}\]\w\s])
+    name: meta.object-literal.key.saga
+    patterns:
+      - include: '#core'
+
+  object-value:
+    match: (?<=^|{|,|;)\s*(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)(?=,|;|}|$|:['"`({\[)}\]\w\s])
+    captures:
+      1: { name: variable.property.shorthand.saga }
+
+  object-argument:
+    match: (?<=^|{|,|;)\s*(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)(?=,|;|}|$|:['"`({\[)}\]\w\s])
+    captures:
+      1: { name: variable.parameter.named.saga }
+
+  as-keyword:
+    match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+    name: keyword.operator.expression.as.saga
+
+  binding-pattern-object:
+    begin: (#?{)\s*
+    end: \s*(})
+    name: meta.brace.curly.saga
+    captures:
+      1: { name: punctuation.definition.binding-pattern.object.saga }
+    patterns:
+      - include: '#labels'
+      - match: ','
+        name: punctuation.separator.mapping.saga
+      - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*):(?=['"`({\[\w\s]|$)
+        name: punctuation.separator.key-value.saga
+      - include: '#object-argument'
+      - include: '#object-key'
+      - include: '#binding-pattern'
+      - include: '#illegal'
+
+  binding-pattern-tuple:
+    begin: (#?\[)\s*
+    end: \s*(])
+    name: meta.brace.curly.saga
+    captures:
+      1: { name: punctuation.definition.binding-pattern.tuple.saga }
+    patterns:
+      - include: '#labels'
+      - match: ','
+        name: punctuation.separator.arguments.saga
+      - include: '#binding-pattern'
+      - include: '#illegal'
+
+  binding-pattern-array:
+    begin: (#?\()\s*
+    end: \s*(\))
+    name: meta.brace.curly.saga
+    captures:
+      1: { name: punctuation.definition.binding-pattern.array.saga }
+    patterns:
+      - include: '#labels'
+      - match: ','
+        name: punctuation.separator.sequence.saga
+      - include: '#binding-pattern'
+      - include: '#illegal'
+
+  binding-pattern:
+    patterns:
+      - include: '#binding-pattern-object'
+      - include: '#binding-pattern-tuple'
+      - include: '#binding-pattern-array'
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+        name: keyword.operator.expression.as.saga
+      - include: '#type-operators'
+      - applyEndPatternLast: true
+        begin: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
+        end: (?=)|$
+        beginCaptures:
+          0: { name: variable.parameter.saga }
+        patterns:
+          - match: \w+
+            name: invalid.illegal.identifier.saga
+      - include: '#type-signature'
+      - include: '#space'
+      - begin: (?<=^|[\s({\[])(\=)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\=)(?=['"`({\[\w])
+        captures:
+          1: { name: keyword.operator.assignment.saga }
+          2: { name: keyword.operator.assignment.saga }
+        end: (?=[,;)}\]])
+        patterns:
+          - include: $self
+      - include: '#comments'
+      - include: '#calls'
+
   # Object labels
 
   labels:
@@ -5499,8 +5699,7 @@ repository:
         endCaptures:
           1: { name: punctuation.separator.arguments.saga }
         patterns:
-          - include: '#param-bracket-content'
-          - include: $self
+          - include: '#argument-list-content'
       - match: |
           (?x)
           (?<=(?:^ | [{;,]) \s*)
@@ -5576,10 +5775,6 @@ repository:
           - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*):(?=['"`({\[\w\s]|$)
             name: punctuation.separator.key-value.saga
 
-      as-keyword:
-        match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.operator.expression.as.saga
-
     patterns:
       - begin: |
           (?x)
@@ -5601,6 +5796,8 @@ repository:
         patterns:
           - include: '#labels'
           - include: '#punctuation'
+          - include: '#object-value'
+          - include: '#object-key'
           - include: '#as-keyword'
           - include: $self
       - begin: |
@@ -5625,6 +5822,8 @@ repository:
         patterns:
           - include: '#labels'
           - include: '#punctuation'
+          - include: '#object-value'
+          - include: '#object-key'
           - include: $self
       - begin: |
           (?x)
@@ -5648,6 +5847,8 @@ repository:
         patterns:
           - include: '#labels'
           - include: '#punctuation'
+          - include: '#object-value'
+          - include: '#object-key'
           - include: $self
       - begin: |
           (?x)
@@ -5670,7 +5871,7 @@ repository:
           (?x)
           (?<=
             (?:
-                (?:^|[\s\p{P}\p{S}]): \|\s+\|
+                (?:^|[\s\p{P}\p{S}]):\|\s+\|
               | (?:^|[,;'"`)}\]\w\s]|\\.)\|
               | ^\s*\|
             )
@@ -5702,6 +5903,8 @@ repository:
         patterns:
           - include: '#labels'
           - include: '#punctuation'
+          - include: '#object-value'
+          - include: '#object-key'
           - include: $self
       - begin: |
           (?x)
@@ -5722,6 +5925,8 @@ repository:
         patterns:
           - include: '#labels'
           - include: '#punctuation'
+          - include: '#object-value'
+          - include: '#object-key'
           - include: $self
       - begin: (\#\{)\s*
         end: \s*(\})
@@ -5749,25 +5954,7 @@ repository:
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.saga
 
-      as-keyword:
-        match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.operator.expression.as.saga
-
     patterns:
-      - begin: |
-          (?x)
-          (?<= # literal
-              (?: [\w'"`)}\]] | \\.) \s*
-            | [^.]\.=?|[?!:]:=?
-          )
-          (\#?\()\s*
-        end: \s*(\))
-        name: meta.brace.round.saga
-        captures:
-          1: { name: punctuation.definition.parameters.saga }
-        patterns:
-          - include: '#param-bracket-content'
-          - include: $self
       - begin: |
           (?x)
           (?<=
@@ -5788,6 +5975,19 @@ repository:
         patterns:
           - include: '#as-keyword'
           - include: '#punctuation'
+          - include: $self
+      - begin: |
+          (?x)
+          (?<= # literal
+              (?: [\w'"`)}\]] | \\.) >* \s*
+            | [^.]\.=?|[?!:]:=?
+          )
+          (\#?\()\s*
+        end: \s*(\))
+        name: meta.brace.round.saga
+        captures:
+          1: { name: punctuation.definition.parameters.saga }
+        patterns:
           - include: $self
       - begin: (\#\()\s*
         end: \s*(\))
@@ -5811,24 +6011,7 @@ repository:
           - match: ','
             name: punctuation.separator.sequence.saga
 
-      as-keyword:
-        match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.operator.expression.as.saga
-
     patterns:
-      - begin: |
-          (?x)
-          (?<= # literal
-              (?: [\w'"`)}\]] | \\.) \s*
-            | [^.]\.=?|[?!:]:=?
-          )
-          (\#?\[)\s*
-        end: \s*(\])
-        name: meta.brace.square.saga
-        captures:
-          1: { name: punctuation.definition.attribute-selector.saga }
-        patterns:
-          - include: $self
       - begin: |
           (?x)
           (?<=
@@ -5849,6 +6032,63 @@ repository:
         patterns:
           - include: '#punctuation'
           - include: '#as-keyword'
+          - include: $self
+      - begin: |
+          (?x)
+          (?<=
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
+            \b
+              (?: # destructuring keywords
+                in|of|as|is|new
+                |to|till|thru|by|delete
+                |unset|ref|and|or|xor|not
+              )
+            \b
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
+            \s*
+          )
+          (\[)\s*
+        end: \s*(\])
+        name: meta.brace.square.saga
+        captures:
+          1: { name: punctuation.definition.sequence.saga }
+        patterns:
+          - include: '#punctuation'
+          - include: $self
+      - begin: |
+          (?x)
+          (?<=
+            (?:^|[,;'"({\[)}\]\s]) # beside a delimiter or space
+            \b
+              (?: # destructuring keywords
+                in|of|as|is|new
+                |to|till|thru|by|delete
+                |unset|ref|and|or|xor|not
+              )
+            \b
+            (?:$|[,;'"({\[)}\]\s]) # beside a delimiter or space
+            \s*
+          )
+          (\[)\s*
+        end: \s*(\])
+        name: meta.brace.square.saga
+        captures:
+          1: { name: punctuation.definition.array.saga }
+        patterns:
+          - include: '#punctuation'
+          - include: $self
+      - begin: |
+          (?x)
+          (?<= # literal
+              (?: [\w'"`)}\]] | \\.) \s*
+            | [^.]\.=?|[?!:]:=?
+          )
+          (\#?\[)\s*
+        end: \s*(\])
+        name: meta.brace.square.saga
+        captures:
+          1: { name: punctuation.definition.attribute-selector.saga }
+        patterns:
           - include: $self
       - begin: (\#\[)\s*
         end: \s*(\])
@@ -5974,7 +6214,7 @@ repository:
   strings-prefixed:
     patterns:
       - comment: single-quoted verbatim, interpolated, format, and template string
-        begin: (?<!'+)((?i:f+p+r+s+|f+p+s+r+|f+r+p+s+|f+r+s+p+|f+s+p+r+|f+s+r+p+|p+f+r+s+|p+f+s+r+|p+r+f+s+|p+r+s+f+|p+s+f+r+|p+s+r+f+|r+f+p+s+|r+f+s+p+|r+p+f+s+|r+p+s+f+|r+s+f+p+|r+s+p+f+|s+f+p+r+|s+f+r+p+|s+p+f+r+|s+p+r+f+|s+r+f+p+|s+r+p+f+))('''+|')\s*
+        begin: (?<!'+)((?i:fprs|fpsr|frps|frsp|fspr|fsrp|pfrs|pfsr|prfs|prsf|psfr|psrf|rfps|rfsp|rpfs|rpsf|rsfp|rspf|sfpr|sfrp|spfr|sprf|srfp|srpf))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -5987,7 +6227,7 @@ repository:
           - include: '#embedded-format'
           - include: '#embedded-placeholder'
       - comment: double-quoted verbatim, interpolated, format, and template string
-        begin: (?<!"+)((?i:f+p+r+s+|f+p+s+r+|f+r+p+s+|f+r+s+p+|f+s+p+r+|f+s+r+p+|p+f+r+s+|p+f+s+r+|p+r+f+s+|p+r+s+f+|p+s+f+r+|p+s+r+f+|r+f+p+s+|r+f+s+p+|r+p+f+s+|r+p+s+f+|r+s+f+p+|r+s+p+f+|s+f+p+r+|s+f+r+p+|s+p+f+r+|s+p+r+f+|s+r+f+p+|s+r+p+f+))("""+|")\s*
+        begin: (?<!"+)((?i:fprs|fpsr|frps|frsp|fspr|fsrp|pfrs|pfsr|prfs|prsf|psfr|psrf|rfps|rfsp|rpfs|rpsf|rsfp|rspf|sfpr|sfrp|spfr|sprf|srfp|srpf))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6000,7 +6240,7 @@ repository:
           - include: '#embedded-format'
           - include: '#embedded-placeholder'
       - comment: single-quoted verbatim, interpolated, and format string
-        begin: (?<!'+)((?i:f+r+s+|f+s+r+|r+f+s+|r+s+f+|s+f+r+|s+r+f+))('''+|')\s*
+        begin: (?<!'+)((?i:frs|fsr|rfs|rsf|sfr|srf))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6012,7 +6252,7 @@ repository:
           - include: '#embedded-expression'
           - include: '#embedded-format'
       - comment: double-quoted verbatim, interpolated, and format string
-        begin: (?<!"+)((?i:f+r+s+|f+s+r+|r+f+s+|r+s+f+|s+f+r+|s+r+f+))("""+|")\s*
+        begin: (?<!"+)((?i:frs|fsr|rfs|rsf|sfr|srf))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6024,7 +6264,7 @@ repository:
           - include: '#embedded-expression'
           - include: '#embedded-format'
       - comment: single-quoted verbatim, interpolated, and template string
-        begin: (?<!'+)((?i:p+r+s+|p+s+r+|r+p+s+|r+s+p+|s+p+r+|s+r+p+))('''+|')\s*
+        begin: (?<!'+)((?i:prs|psr|rps|rsp|spr|srp))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6036,7 +6276,7 @@ repository:
           - include: '#embedded-expression'
           - include: '#embedded-placeholder'
       - comment: double-quoted verbatim, interpolated, and template string
-        begin: (?<!"+)((?i:p+r+s+|p+s+r+|r+p+s+|r+s+p+|s+p+r+|s+r+p+))("""+|")\s*
+        begin: (?<!"+)((?i:prs|psr|rps|rsp|spr|srp))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6048,7 +6288,7 @@ repository:
           - include: '#embedded-expression'
           - include: '#embedded-placeholder'
       - comment: single-quoted verbatim, format, and template string
-        begin: (?<!'+)((?i:f+p+r+|f+r+p+|p+f+r+|p+r+f+|r+f+p+|r+p+f+))('''+|')\s*
+        begin: (?<!'+)((?i:fpr|frp|pfr|prf|rfp|rpf))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6060,7 +6300,7 @@ repository:
           - include: '#embedded-format'
           - include: '#embedded-placeholder'
       - comment: double-quoted verbatim, format, and template string
-        begin: (?<!"+)((?i:f+p+r+|f+r+p+|p+f+r+|p+r+f+|r+f+p+|r+p+f+))("""+|")\s*
+        begin: (?<!"+)((?i:fpr|frp|pfr|prf|rfp|rpf))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6072,7 +6312,7 @@ repository:
           - include: '#embedded-format'
           - include: '#embedded-placeholder'
       - comment: single-quoted interpolated, format, and template string
-        begin: (?<!'+)((?i:f+p+s+|f+s+p+|p+f+s+|p+s+f+|s+f+p+|s+p+f+))('''+|')\s*
+        begin: (?<!'+)((?i:fps|fsp|pfs|psf|sfp|spf))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6084,7 +6324,7 @@ repository:
           - include: '#embedded-format'
           - include: '#embedded-placeholder'
       - comment: double-quoted interpolated, format, and template string
-        begin: (?<!"+)((?i:f+p+s+|f+s+p+|p+f+s+|p+s+f+|s+f+p+|s+p+f+))("""+|")\s*
+        begin: (?<!"+)((?i:fps|fsp|pfs|psf|sfp|spf))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6096,7 +6336,7 @@ repository:
           - include: '#embedded-format'
           - include: '#embedded-placeholder'
       - comment: single-quoted verbatim and interpolated string
-        begin: (?<!'+)((?i:r+s+|s+r+))('''+|')\s*
+        begin: (?<!'+)((?i:rs|sr))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6107,7 +6347,7 @@ repository:
             name: constant.character.escape.saga
           - include: '#embedded-expression'
       - comment: double-quoted verbatim and interpolated string
-        begin: (?<!"+)((?i:r+s+|s+r+))("""+|")\s*
+        begin: (?<!"+)((?i:rs|sr))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6118,7 +6358,7 @@ repository:
             name: constant.character.escape.saga
           - include: '#embedded-expression'
       - comment: single-quoted interpolated and format string
-        begin: (?<!'+)((?i:f+s+|s+f+))('''+|')\s*
+        begin: (?<!'+)((?i:fs|sf))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6129,7 +6369,7 @@ repository:
           - include: '#embedded-expression'
           - include: '#embedded-format'
       - comment: double-quoted interpolated and format string
-        begin: (?<!"+)((?i:f+s+|s+f+))("""+|")\s*
+        begin: (?<!"+)((?i:fs|sf))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6140,7 +6380,7 @@ repository:
           - include: '#embedded-expression'
           - include: '#embedded-format'
       - comment: single-quoted verbatim and template string
-        begin: (?<!'+)((?i:p+r+|r+p+))('''+|')\s*
+        begin: (?<!'+)((?i:pr|rp))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6151,7 +6391,7 @@ repository:
             name: constant.character.escape.saga
           - include: '#embedded-placeholder'
       - comment: double-quoted verbatim and template string
-        begin: (?<!"+)((?i:p+r+|r+p+))("""+|")\s*
+        begin: (?<!"+)((?i:pr|rp))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6162,7 +6402,7 @@ repository:
             name: constant.character.escape.saga
           - include: '#embedded-placeholder'
       - comment: single-quoted interpolated and template string
-        begin: (?<!'+)((?i:p+s+|s+p+))('''+|')\s*
+        begin: (?<!'+)((?i:ps|sp))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6173,7 +6413,7 @@ repository:
           - include: '#embedded-expression'
           - include: '#embedded-placeholder'
       - comment: double-quoted interpolated and template string
-        begin: (?<!"+)((?i:p+s+|s+p+))("""+|")\s*
+        begin: (?<!"+)((?i:ps|sp))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6184,7 +6424,7 @@ repository:
           - include: '#embedded-expression'
           - include: '#embedded-placeholder'
       - comment: single-quoted format and template string
-        begin: (?<!'+)((?i:f+p+|p+f+))('''+|')\s*
+        begin: (?<!'+)((?i:fp|pf))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6195,7 +6435,7 @@ repository:
           - include: '#embedded-format'
           - include: '#embedded-placeholder'
       - comment: double-quoted format and template string
-        begin: (?<!"+)((?i:f+p+|p+f+))("""+|")\s*
+        begin: (?<!"+)((?i:fp|pf))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6206,7 +6446,7 @@ repository:
           - include: '#embedded-format'
           - include: '#embedded-placeholder'
       - comment: single-quoted verbatim string
-        begin: (?<!'+)((?i:r+))('''+|')\s*
+        begin: (?<!'+)((?i:r))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6216,7 +6456,7 @@ repository:
           - match: "''"
             name: constant.character.escape.saga
       - comment: double-quoted verbatim string
-        begin: (?<!"+)((?i:r+))("""+|")\s*
+        begin: (?<!"+)((?i:r))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6226,7 +6466,7 @@ repository:
           - match: '""'
             name: constant.character.escape.saga
       - comment: single-quoted interpolated string
-        begin: (?<!'+)((?i:s+))('''+|')\s*
+        begin: (?<!'+)((?i:s))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6236,7 +6476,7 @@ repository:
           - include: '#string-escapes'
           - include: '#embedded-expression'
       - comment: double-quoted interpolated string
-        begin: (?<!"+)((?i:s+))("""+|")\s*
+        begin: (?<!"+)((?i:s))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
@@ -6246,7 +6486,7 @@ repository:
           - include: '#string-escapes'
           - include: '#embedded-expression'
       - comment: single-quoted template string
-        begin: (?<!'+)((?i:p+))('''+|')\s*
+        begin: (?<!'+)((?i:p))('''+|')\s*
         contentName: string.quoted.single.saga
         end: \s*()(\2)(?!'+)
         captures:
@@ -6256,7 +6496,7 @@ repository:
           - include: '#string-escapes'
           - include: '#embedded-placeholder'
       - comment: double-quoted template string
-        begin: (?<!"+)((?i:p+))("""+|")\s*
+        begin: (?<!"+)((?i:p))("""+|")\s*
         contentName: string.quoted.double.saga
         end: \s*()(\2)(?!"+)
         captures:
