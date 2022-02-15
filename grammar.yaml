@@ -355,6 +355,7 @@ repository:
         patterns:
           - match: \w+
             name: invalid.illegal.identifier.saga
+          - include: '#space'
 
   type-brackets:
     patterns:
@@ -5504,11 +5505,23 @@ repository:
   # Binding patterns
 
   object-key:
-    begin: (?<=^|{|,|;)
-    end: (?=,|;|}|$|:['"`({\[)}\]\w\s])
+    begin: (?<=^|{|,|;)\s*
+    end: \s*(?=:|}|,|;|$)
     name: meta.object-literal.key.saga
     patterns:
-      - include: '#core'
+      - include: '#literals'
+      - include: '#brackets'
+      - applyEndPatternLast: true
+        begin: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
+        end: (?=)|$
+        beginCaptures:
+          0: { name: variable.parameter.saga }
+        patterns:
+          - match: \w+
+            name: invalid.illegal.identifier.saga
+          - include: '#space'
+      - include: '#space'
+      - include: '#illegal'
 
   object-value:
     match: (?<=^|{|,|;)\s*(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)(?=,|;|}|$|:['"`({\[)}\]\w\s])
@@ -5569,11 +5582,10 @@ repository:
 
   binding-pattern:
     patterns:
+      - include: '#as-keyword'
       - include: '#binding-pattern-object'
       - include: '#binding-pattern-tuple'
       - include: '#binding-pattern-array'
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
-        name: keyword.operator.expression.as.saga
       - include: '#type-operators'
       - applyEndPatternLast: true
         begin: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
