@@ -5506,7 +5506,7 @@ repository:
 
   object-key:
     begin: (?<=^|{|,|;)\s*
-    end: \s*(?=:|}|,|;|$)
+    end: \s*(?=(?:['"`)}\]\w\s]|\\.):|}|,|;|$)
     name: meta.object-literal.key.saga
     patterns:
       - include: '#literals'
@@ -5545,7 +5545,7 @@ repository:
       1: { name: punctuation.definition.binding-pattern.object.saga }
     patterns:
       - include: '#labels'
-      - match: ','
+      - match: ;|,
         name: punctuation.separator.mapping.saga
       - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*):(?=['"`({\[\w\s]|$)
         name: punctuation.separator.key-value.saga
@@ -5562,7 +5562,7 @@ repository:
       1: { name: punctuation.definition.binding-pattern.tuple.saga }
     patterns:
       - include: '#labels'
-      - match: ','
+      - match: ;|,
         name: punctuation.separator.arguments.saga
       - include: '#binding-pattern'
       - include: '#illegal'
@@ -5575,7 +5575,7 @@ repository:
       1: { name: punctuation.definition.binding-pattern.array.saga }
     patterns:
       - include: '#labels'
-      - match: ','
+      - match: ;|,
         name: punctuation.separator.sequence.saga
       - include: '#binding-pattern'
       - include: '#illegal'
