@@ -193,6 +193,7 @@ repository:
       - include: '#symbols'
       - include: '#decorators'
       - include: '#type-signature'
+      - include: '#illegal-identifier'
       - include: '#jsx'
       - include: '#brackets'
       - include: '#punctuation'
@@ -225,6 +226,15 @@ repository:
         name: invalid.illegal.operator.saga
       - match: \S+?
         name: invalid.illegal.uncaught.saga
+
+  illegal-identifier:
+    applyEndPatternLast: true
+    name: meta.type.saga
+    begin: (?<=\w+\b)\s*(?=\b\w+)
+    end: (?=)|$
+    patterns:
+      - match: \w+
+        name: invalid.illegal.identifier.saga
 
   # Types
 
@@ -332,30 +342,14 @@ repository:
       12: { name: entity.name.type.saga }
 
   type-signature:
+    applyEndPatternLast: true
+    name: meta.type.saga
+    begin: (?<=(?:[)}\]\w\s'"`]|\\.)\|?|^)(:)(?=$|[\w\s'"`({\[])
+    end: (?=)|$
+    beginCaptures:
+      1: { name: punctuation.definition.annotation.saga }
     patterns:
-      - applyEndPatternLast: true
-        name: meta.type.saga
-        begin: (?<=(?:[)}\]\w\s'"`]|\\.)\|?|^)(:)(?=$|[\w\s'"`({\[])
-        end: (?=)|$
-        beginCaptures:
-          1: { name: punctuation.definition.annotation.saga }
-        patterns:
-          - include: '#types'
-      - applyEndPatternLast: true
-        name: meta.type.saga
-        begin: |
-          (?x)
-          (?<=
-            \w+ \b
-          ) \s*
-          (?=\b\w+)
-        end: (?=)|$
-        beginCaptures:
-          1: { name: punctuation.definition.annotation.saga }
-        patterns:
-          - match: \w+
-            name: invalid.illegal.identifier.saga
-          - include: '#space'
+      - include: '#types'
 
   type-brackets:
     patterns:
@@ -5506,23 +5500,19 @@ repository:
 
   object-key:
     begin: (?<=^|{|,|;)\s*
-    end: \s*(?:(:)|(?=|}|,|;|$))
+    end: \s*(?=}|,|;|$)|\s*(:)
     name: meta.object-literal.key.saga
-    endCaptures: 
-      1: {name: punctuation.separator.key-value.saga}
+    endCaptures:
+      1: { name: punctuation.separator.key-value.saga }
     patterns:
       - include: '#literals'
       - include: '#brackets'
-      - applyEndPatternLast: true
-        begin: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
-        end: (?=)|$
-        beginCaptures:
-          0: { name: variable.parameter.saga }
-        patterns:
-          - match: \w+
-            name: invalid.illegal.identifier.saga
-          - include: '#space'
+      - include: '#illegal-identifier'
+      - match: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
+        name: constant.other.object.key.saga
       - include: '#space'
+      - include: '#comments'
+      - include: '#line-continuation'
       - include: '#illegal'
 
   object-value:
@@ -5582,6 +5572,15 @@ repository:
       - include: '#binding-pattern'
       - include: '#illegal'
 
+  default-value:
+    begin: (?<=^|[\s({\[])(\=)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\=)(?=['"`({\[\w])
+    captures:
+      1: { name: keyword.operator.assignment.saga }
+      2: { name: keyword.operator.assignment.saga }
+    end: (?=[,;)}\]])
+    patterns:
+      - include: $self
+
   binding-pattern:
     patterns:
       - include: '#as-keyword'
@@ -5589,23 +5588,10 @@ repository:
       - include: '#binding-pattern-tuple'
       - include: '#binding-pattern-array'
       - include: '#type-operators'
-      - applyEndPatternLast: true
-        begin: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
-        end: (?=)|$
-        beginCaptures:
-          0: { name: variable.parameter.saga }
-        patterns:
-          - match: \w+
-            name: invalid.illegal.identifier.saga
+      - include: '#placeholder-variables'
       - include: '#type-signature'
       - include: '#space'
-      - begin: (?<=^|[\s({\[])(\=)(?=$|[)}\]\s])|(?<=['"`)}\]\w]|\\.)(\=)(?=['"`({\[\w])
-        captures:
-          1: { name: keyword.operator.assignment.saga }
-          2: { name: keyword.operator.assignment.saga }
-        end: (?=[,;)}\]])
-        patterns:
-          - include: $self
+      - include: '#default-value'
       - include: '#comments'
       - include: '#calls'
 
