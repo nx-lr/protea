@@ -1446,7 +1446,7 @@ repository:
               [!?]? # required or optional
             )
             \b
-             [\p{Pc}\p{L}][\w\p{Pd}]*
+              [\p{Pc}\p{L}][\w\p{Pd}]*
             \b
             |
             # ignore all keywords
@@ -5506,8 +5506,10 @@ repository:
 
   object-key:
     begin: (?<=^|{|,|;)\s*
-    end: \s*(?=(?:['"`)}\]\w\s]|\\.):|}|,|;|$)
+    end: \s*(?:(:)|(?=|}|,|;|$))
     name: meta.object-literal.key.saga
+    endCaptures: 
+      1: {name: punctuation.separator.key-value.saga}
     patterns:
       - include: '#literals'
       - include: '#brackets'
