@@ -5499,8 +5499,8 @@ repository:
   # Binding patterns
 
   object-key:
-    begin: (?<=^|{|,|;)\s*
-    end: \s*(?=}|,|;|$)|\s*(:)
+    begin: (?<={\s*|,\s*|;\s*|^\s*)\s*
+    end: \s*(?=,|;|}|$)|\s*(:)
     name: meta.object-literal.key.saga
     endCaptures:
       1: { name: punctuation.separator.key-value.saga }
@@ -5516,14 +5516,12 @@ repository:
       - include: '#illegal'
 
   object-value:
-    match: (?<=^|{|,|;)\s*(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)(?=,|;|}|$|:['"`({\[)}\]\w\s])
-    captures:
-      1: { name: variable.property.shorthand.saga }
+    match: (?<={\s*|,\s*|;\s*|^\s*)\s*(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)\s*(?=,|;|}|$)
+    name: variable.property.shorthand.saga
 
   object-argument:
-    match: (?<=^|{|,|;)\s*(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)(?=,|;|}|$|:['"`({\[)}\]\w\s])
-    captures:
-      1: { name: variable.parameter.named.saga }
+    match: (?<={\s*|,\s*|;\s*|^\s*)\s*(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)\s*(?=,|;|}|$)
+    name: variable.parameter.named.saga
 
   as-keyword:
     match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
@@ -5536,19 +5534,19 @@ repository:
     captures:
       1: { name: punctuation.definition.binding-pattern.object.saga }
     patterns:
+      - include: '#object-argument'
       - include: '#labels'
+      - include: '#object-key'
       - match: ;|,
         name: punctuation.separator.mapping.saga
       - match: (?<=(?:['"`)}\]\w]|\\.)[\p{S}\p{P}&&[^,;'"`({\[)}\]\p{Pc}]]*):(?=['"`({\[\w\s]|$)
         name: punctuation.separator.key-value.saga
-      - include: '#object-argument'
-      - include: '#object-key'
       - include: '#binding-pattern'
       - include: '#illegal'
 
   binding-pattern-tuple:
-    begin: (#?\[)\s*
-    end: \s*(])
+    begin: (#?\()\s*
+    end: \s*(\))
     name: meta.brace.curly.saga
     captures:
       1: { name: punctuation.definition.binding-pattern.tuple.saga }
@@ -5560,8 +5558,8 @@ repository:
       - include: '#illegal'
 
   binding-pattern-array:
-    begin: (#?\()\s*
-    end: \s*(\))
+    begin: (#?\[)\s*
+    end: \s*(])
     name: meta.brace.curly.saga
     captures:
       1: { name: punctuation.definition.binding-pattern.array.saga }
@@ -5587,8 +5585,16 @@ repository:
       - include: '#binding-pattern-object'
       - include: '#binding-pattern-tuple'
       - include: '#binding-pattern-array'
+      - include: '#illegal-identifier'
+      - applyEndPatternLast: true
+        begin: (\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)
+        end: (?=)|$
+        captures:
+          1: { name: variable.parameter.saga }
+        patterns:
+          - match: \w+
+            name: invalid.illegal.identifier.saga
       - include: '#type-operators'
-      - include: '#placeholder-variables'
       - include: '#type-signature'
       - include: '#space'
       - include: '#default-value'
