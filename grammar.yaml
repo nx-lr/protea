@@ -61,6 +61,7 @@ changelog: |
   - Function calls now trigger beside ( and {.
   - Added Perl/Ruby's unless and until keywords.
   - Fixed module syntax to be more consistent with JavaScript.
+  - Dashes are no longer allowed in identifiers.
   - Fixed JSX highlighting and attributes, inspired by Svelte, Angular (TS), HAML
     - @directive
     - #id and .class
@@ -134,11 +135,11 @@ define:
         |import|export|route
         |debug|assert|check
       )
-      (?!\B|\p{Pd}+\b)
+      \b
     )
 
     # identifier
-    ([\p{Pc}\p{L}][\w\p{Pd}]*)
+    ([\p{Pc}\p{L}]\w*)
     \b
 
   keywords: |
@@ -165,16 +166,16 @@ define:
         |import|export|route
         |debug|assert|check
       )
-    (?!\B|\p{Pd}+\b)
+    \b
 
     \b
 
   html-tag-names: &html-tag-names
     - match: '\.|:|::'
       name: punctuation.separator.namespace.saga
-    - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[:.])
+    - match: \b([\p{Pc}\p{L}]\w*)\b(?=[:.])
       name: entity.name.tag.namespace.saga
-    - match: \b((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)\b
+    - match: \b((?:[\p{Pc}\p{L}&&\P{Ll}][\w&&\P{Lu}]*)+)\b
       name: support.class.component.saga
     - include: '#clauses'
     - include: '#declarations'
@@ -286,43 +287,43 @@ repository:
           |debug|assert|check
           |extends|implements
         )
-        (?!\B|\p{Pd}+\b)
+        \b
       )
 
       (?:
         (?<=(?:^|[,;'"`(){}\[\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?))
         (?: # Properties
             # Leading underscore
-            (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+            (\p{Pc}+\w*\b(?!\p{Pc}+))
           | # Train case
-            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+            ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)
           | # Pascal case
-            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w&&\P{Lu}]*)+)
           | # Camel or kebab case
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            ([\p{Pc}\p{L}]\w*)
         )
         |
         (?: # Objects
             # Leading underscore
-            (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+            (\p{Pc}+\w*\b(?!\p{Pc}+))
           | # Train case
-            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+            ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)
           | # Pascal case
-            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w&&\P{Lu}]*)+)
           | # Camel or kebab case
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            ([\p{Pc}\p{L}]\w*)
         )
         (?=(?:[!?]?\.=?|[?!:]:=?|<)(?:[,;'"`(){}\[\]\w\s]|$))
         |
         (?: # Regular variables
             # Leading underscore
-            (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+            (\p{Pc}+\w*\b(?!\p{Pc}+))
           | # Train case
-            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+            ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)
           | # Pascal case
-            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w&&\P{Lu}]*)+)
           | # Camel or kebab case
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            ([\p{Pc}\p{L}]\w*)
         )
       )\b
 
@@ -487,7 +488,7 @@ repository:
         patterns:
           - match: ','
             name: punctuation.separator.arguments.saga
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
             name: keyword.operator.expression.as.saga
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.saga
@@ -607,11 +608,11 @@ repository:
 
   type-keywords:
     patterns:
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(extends|implements)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(extends|implements)\b\s*
         name: storage.type.$1.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(infer|as|is)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(infer|as|is)\b\s*
         name: keyword.operator.expression.$1.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((instance|value|pair|type|name|size|key)of)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b((instance|value|pair|type|name|size|key)of)\b\s*
         name: keyword.operator.expression.$1.saga
 
   type-operators:
@@ -683,7 +684,7 @@ repository:
             (true|false) # boolean
             |(null|nan|undefined|infinity) # null, NaN
           )
-          (?!\B|\p{Pd}+\b)
+          \b
         captures:
           1: { name: constant.language.boolean.$1.saga }
           2: { name: constant.language.$2.saga }
@@ -696,7 +697,7 @@ repository:
             |(constructor) # constructor
             |(prototype) # prototype
           )
-          (?!\B|\p{Pd}+\b)
+          \b
         captures:
           1: { name: variable.language.$1.saga }
           2: { name: variable.language.arguments.saga }
@@ -709,7 +710,7 @@ repository:
             console|document|window|global|process|require|module|exports
             |navigator|location|history|localStorage|sessionStorage
           )
-          (?!\B|\p{Pd}+\b)
+          \b
         captures:
           1: { name: support.type.object.$1.saga }
 
@@ -734,7 +735,7 @@ repository:
               ([+-])? # sign
               ([\d_]+) # mantissa
             )?
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)? # type suffix
+            ([\p{Pc}\p{L}]\w*)? # type suffix
           \b
         captures:
           1: { name: storage.type.numeric.saga }
@@ -756,7 +757,7 @@ repository:
               ([+-])? # sign
               ([\d_]+) # mantissa
             )?
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)? # type suffix
+            ([\p{Pc}\p{L}]\w*)? # type suffix
           \b
         captures:
           1: { name: storage.type.numeric.saga }
@@ -778,7 +779,7 @@ repository:
               ([+-])? # sign
               ([\d_]+) # mantissa
             )?
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)? # type suffix
+            ([\p{Pc}\p{L}]\w*)? # type suffix
           \b
         captures:
           1: { name: storage.type.numeric.saga }
@@ -800,7 +801,7 @@ repository:
               ([+-])? # sign
               ([\d_]+) # mantissa
             )?
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)? # type suffix
+            ([\p{Pc}\p{L}]\w*)? # type suffix
           \b
         captures:
           1: { name: storage.type.numeric.saga }
@@ -842,7 +843,7 @@ repository:
           - include: '#strings-single-quoted'
           - include: '#strings-double-quoted'
           - include: '#strings-unquoted'
-      - match: (?<=^|\\.|['"`({\[)}\]\s]|(?:[)}\]\w\s'"`]|\\.)\s*[:=])(:)(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)
+      - match: (?<=^|\\.|['"`({\[)}\]\s]|(?:[)}\]\w\s'"`]|\\.)\s*[:=])(:)(\b[\p{Pc}\p{L}]\w*\b)
         name: constant.other.symbol.saga
         captures:
           1: { name: punctuation.definition.symbol.saga }
@@ -949,7 +950,7 @@ repository:
     patterns:
       - applyEndPatternLast: true
         name: constant.other.function.saga
-        begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b(?=\{)
+        begin: \b([\p{Pc}\p{L}]\w*\b([:.][\p{Pc}\p{L}]\w*)*)\b(?=\{)
         beginCaptures:
           1: { patterns: [include: '#function-namespace'] }
         end: (?=)|$
@@ -960,7 +961,7 @@ repository:
               1: { name: constant.other.function.saga }
             patterns:
               - include: '#named-characters'
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
+      - match: \b([\p{Pc}\p{L}]\w*\b([:.][\p{Pc}\p{L}]\w*)*)\b([;,]|(?=\W))
         name: constant.character.escape.saga
         captures:
           1: { patterns: [include: '#character-namespace'] }
@@ -970,23 +971,23 @@ repository:
 
   function-namespace:
     patterns:
-      - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
+      - match: ([\p{Pc}\p{L}]\w*)\b(?=[.:])
         name: support entity.name.tag.namespace.saga
-      - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+      - match: ([\p{Pc}\p{L}]\w*)\b
         name: support entity.name.function.member.saga
 
   character-namespace:
     patterns:
-      - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
+      - match: ([\p{Pc}\p{L}]\w*)\b(?=[.:])
         name: constant.other.character-class.saga
-      - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+      - match: ([\p{Pc}\p{L}]\w*)\b
         name: constant.character.escape.unicode.saga
 
   named-escapes:
     patterns:
       - applyEndPatternLast: true
         name: constant.other.function.saga
-        begin: \\N([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b(?=\{)
+        begin: \\N([\p{Pc}\p{L}]\w*\b([:.][\p{Pc}\p{L}]\w*)*)\b(?=\{)
         beginCaptures:
           1: { patterns: [include: '#function-namespace'] }
         end: (?=)|$
@@ -997,7 +998,7 @@ repository:
               1: { name: constant.other.function.saga }
             patterns:
               - include: '#named-characters'
-      - match: \\N([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
+      - match: \\N([\p{Pc}\p{L}]\w*\b([:.][\p{Pc}\p{L}]\w*)*)\b([;,]|(?=\W))
         name: constant.character.escape.saga
         captures:
           1: { patterns: [include: '#character-namespace'] }
@@ -1007,7 +1008,7 @@ repository:
         patterns:
           - applyEndPatternLast: true
             name: constant.other.function.saga
-            begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b(?=\{)
+            begin: \b([\p{Pc}\p{L}]\w*\b([:.][\p{Pc}\p{L}]\w*)*)\b(?=\{)
             beginCaptures:
               1: { patterns: [include: '#function-namespace'] }
             end: (?=)|$
@@ -1018,7 +1019,7 @@ repository:
                   1: { name: constant.other.function.saga }
                 patterns:
                   - include: '#named-characters'
-          - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b([:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b([;,]|(?=\W))
+          - match: \b([\p{Pc}\p{L}]\w*\b([:.][\p{Pc}\p{L}]\w*)*)\b([;,]|(?=\W))
             name: constant.character.escape.saga
             captures:
               1: { patterns: [include: '#character-namespace'] }
@@ -1386,7 +1387,7 @@ repository:
               |import|export|route
               |debug|assert|check
             )
-            (?!\B|\p{Pd}+\b)
+            \b
           )
           (?=[\p{Pc}\p{L}]) # next to a word
         end: (?=)|$
@@ -1440,7 +1441,7 @@ repository:
               [!?]? # required or optional
             )
             \b
-              [\p{Pc}\p{L}][\w\p{Pd}]*
+              [\p{Pc}\p{L}]\w*
             \b
             |
             # ignore all keywords
@@ -1466,10 +1467,10 @@ repository:
                 |import|export|route
                 |debug|assert|check
               )
-              (?!\B|\p{Pd}+\b)
+              \b
             )
             \b
-            [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+            [\p{Pc}\p{L}]\w* # identifier
             \b
           )
         captures:
@@ -1496,7 +1497,7 @@ repository:
           1: { name: punctuation.definition.flag.saga }
         patterns:
           - comment: Format switch without value
-            match: ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            match: ([\p{Pc}\p{L}]\w*)
             captures:
               1: { name: keyword.other.flag.saga }
       - comment: / for a single flag, with optional arguments
@@ -1507,7 +1508,7 @@ repository:
           1: { name: punctuation.definition.flag.saga }
         patterns:
           - comment: Format switch without value
-            match: ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            match: ([\p{Pc}\p{L}]\w*)
             captures:
               1: { name: keyword.modifier.saga }
 
@@ -1527,7 +1528,7 @@ repository:
     patterns:
       - comment: with optional value
         applyEndPatternLast: true
-        begin: (?:(?<=%)|(\|))([\p{Pc}\p{L}][\w\p{Pd}]*)\b(:)
+        begin: (?:(?<=%)|(\|))([\p{Pc}\p{L}]\w*)\b(:)
         end: (?=)|$
         name: storage.type.format.saga
         captures:
@@ -1544,7 +1545,7 @@ repository:
           - include: '#symbols'
           - *qualified-name-separators
       - comment: type specifier
-        match: (?:(?<=%)|(\|))([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+        match: (?:(?<=%)|(\|))([\p{Pc}\p{L}]\w*)\b
         name: storage.type.format.saga
         captures:
           1: { name: punctuation.separator.mapping.saga }
@@ -1602,7 +1603,7 @@ repository:
         comment: Pattern section
         begin: (/>)\s*
         end: \s*(</)(\p{L}*)
-        name: string.pattern.regexp.saga
+        name: string.regexp.pattern.saga
         captures:
           1: { name: punctuation.definition.regexp.saga }
           2: { name: keyword.other.flag.saga }
@@ -1612,7 +1613,7 @@ repository:
           - comment: Replacement section
             begin: (</>)\s*
             end: \s*(?=</)
-            name: string.replace.regexp.saga
+            name: string.regexp.replace.saga
             captures:
               1: { name: punctuation.definition.regexp.saga }
             patterns:
@@ -1621,7 +1622,7 @@ repository:
       - comment: Pattern section
         begin: (/)\s*(?=(?:[^\\/]|\\.)+/\p{L}*)
         end: \s*(/)(\p{L}*)
-        name: string.pattern.regexp.saga
+        name: string.regexp.pattern.saga
         captures:
           1:
             name: punctuation.definition.regexp.saga
@@ -1642,7 +1643,7 @@ repository:
       - include: '#declarations'
       - include: '#keywords'
       - include: '#fuzzy-brackets'
-      - match: \b[\p{Pc}\p{L}][\w\p{Pd}]*\b
+      - match: \b[\p{Pc}\p{L}]\w*\b
         name: keyword.other.unit.saga
       - include: '#space'
 
@@ -1791,7 +1792,7 @@ repository:
   regexp-groups:
     patterns:
       - comment: Backtracking control verb
-        begin: (\(\*([\p{Pc}\p{L}][\w\p{Pd}]*)?(:)?)
+        begin: (\(\*([\p{Pc}\p{L}]\w*)?(:)?)
         end: \s*(\))
         name: meta.group.backtrack.saga
         captures:
@@ -1913,7 +1914,7 @@ repository:
           1: { name: punctuation.definition.group.absent.saga }
         patterns: *regexp-patterns
       - comment: Back-reference groups
-        begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}][\w\p{Pd}]*)))(:)?
+        begin: \((\?&(?:([+-]?\d+)|([\p{Pc}\p{L}]\w*)))(:)?
         end: \s*\)
         name: meta.group.back-reference.saga
         captures:
@@ -2121,7 +2122,7 @@ repository:
         name: keyword.operator.logical.saga
       - match: \b(in|is)\b
         name: keyword.operator.expression.$1.saga
-      - begin: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b([:!=</>.^$%?*+|&~]?=)
+      - begin: \b([\p{Pc}\p{L}]\w*)\b([:!=</>.^$%?*+|&~]?=)
         beginCaptures:
           1: { name: entity.other.attribute-name.key.saga }
           2: { name: keyword.operator.pattern.saga }
@@ -2130,7 +2131,7 @@ repository:
         patterns:
           - include: '#style-property-values'
       - comment: Attribute names
-        match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+        match: \b([\p{Pc}\p{L}]\w*)\b
         captures:
           1: { name: entity.other.attribute-name.saga }
           2: { name: keyword.operator.pattern.saga }
@@ -2206,11 +2207,11 @@ repository:
           (
             (?:
               \b
-              [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+              [\p{Pc}\p{L}]\w* # identifier
               \b
               (?:::|\.?) # qualified name separator
             )*
-            [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
+            [\p{Pc}\p{L}]\w* # last part of identifier
             \b
           )
           (?=[,;'"`({\[)}\]/>\s])
@@ -2712,16 +2713,16 @@ repository:
           1: { name: punctuation.definition.tag.saga }
         patterns:
           - comment: Tag name
-            match: (?<=<)\b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:[:.][\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
+            match: (?<=<)\b([\p{Pc}\p{L}]\w*\b(?:[:.][\p{Pc}\p{L}]\w*)*)\b
             captures:
               1:
                 name: entity.name.tag.saga
                 patterns: *html-tag-names
           - comment: ID
-            match: (?<=#)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+            match: (?<=#)\b([\p{Pc}\p{L}]\w*)\b
             name: entity.other.attribute-name.id.saga
           - comment: Class
-            match: (?<=\.)\b([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+            match: (?<=\.)\b([\p{Pc}\p{L}]\w*)\b
             name: entity.other.attribute-name.class.saga
           - begin: (\[)\s*
             end: \s*(\])\s*
@@ -2795,15 +2796,15 @@ repository:
       - include: source.css.scss#constant_optional
 
   property-name:
-    match: \b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:(?:::|\.?)[\p{Pc}\p{L}][\w\p{Pd}]*)*)\b
+    match: \b([\p{Pc}\p{L}]\w*\b(?:(?:::|\.?)[\p{Pc}\p{L}]\w*)*)\b
     name: meta.property-name.saga
     captures:
       1:
         patterns:
           - include: '#css-value-names'
-          - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=[.:])
+          - match: ([\p{Pc}\p{L}]\w*)\b(?=[.:])
             name: constant.other.saga
-          - match: ([\p{Pc}\p{L}][\w\p{Pd}]*)\b
+          - match: ([\p{Pc}\p{L}]\w*)\b
             name: constant.language.saga
           - match: '\.|:|::'
             name: punctuation.separator.namespace.saga
@@ -2839,7 +2840,7 @@ repository:
       1: { name: punctuation.definition.constant.css }
 
   tag-names:
-    match: \s*\b([\p{Pc}\p{L}][\w\p{Pd}]*\b(?:(?:::|\.?)[\p{Pc}\p{L}][\w\p{Pd}]*)*)\b\s*
+    match: \s*\b([\p{Pc}\p{L}]\w*\b(?:(?:::|\.?)[\p{Pc}\p{L}]\w*)*)\b\s*
     name: entity.name.tag.saga
     captures:
       1:
@@ -2907,7 +2908,7 @@ repository:
         captures:
           1: { name: punctuation.definition.parameters.saga }
         patterns:
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
             name: keyword.operator.expression.as.saga
           - include: '#clauses'
           - include: '#constants'
@@ -2923,7 +2924,7 @@ repository:
         patterns:
           - include: '#attribute-selectors'
           - include: $self
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|except|only|as)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|except|only|as)\b\s*
         name: keyword.operator.expression.saga
       - include: '#style-selectors'
       - include: '#format-syntax'
@@ -2933,27 +2934,27 @@ repository:
     patterns:
       - match: \s*([@#&*|%.:~^]|::)(?=[\w$'"`])
         name: punctuation.definition.entity.saga
-      - match: \s*(?<=\@)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: \s*(?<=\@)[\p{Pc}\p{L}]\w*\b\s*
         name: keyword.control.at-rule.saga
-      - match: \s*(?<=\#)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: \s*(?<=\#)[\p{Pc}\p{L}]\w*\b\s*
         name: entity.other.attribute-name.id.saga
-      - match: \s*(?<=\.)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: \s*(?<=\.)[\p{Pc}\p{L}]\w*\b\s*
         name: entity.other.attribute-name.class.saga
-      - match: \s*(?<=::)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: \s*(?<=::)[\p{Pc}\p{L}]\w*\b\s*
         name: entity.other.attribute-name.pseudo-component.saga
-      - match: \s*(?<=\~)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: \s*(?<=\~)[\p{Pc}\p{L}]\w*\b\s*
         name: entity.other.attribute-name.key.saga
-      - match: \s*(?<=\&)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: \s*(?<=\&)[\p{Pc}\p{L}]\w*\b\s*
         name: entity.other.attribute-name.saga entity.name.type.anchor.saga
-      - match: \s*(?<=\*)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: \s*(?<=\*)[\p{Pc}\p{L}]\w*\b\s*
         name: entity.other.attribute-name.saga entity.name.type.alias.saga
-      - match: \s*(?<=\%)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: \s*(?<=\%)[\p{Pc}\p{L}]\w*\b\s*
         name: entity.other.attribute-name.saga entity.name.function.saga
-      - match: \s*(?<=\|)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: \s*(?<=\|)[\p{Pc}\p{L}]\w*\b\s*
         name: entity.other.attribute-name.saga entity.name.method.saga
-      - match: \s*(?<=\:)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: \s*(?<=\:)[\p{Pc}\p{L}]\w*\b\s*
         name: entity.other.attribute-name.saga entity.name.procedure.saga
-      - match: \s*(?<=\^)[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: \s*(?<=\^)[\p{Pc}\p{L}]\w*\b\s*
         name: entity.other.attribute-name.saga entity.name.property.saga
 
   # Comments
@@ -3146,7 +3147,7 @@ repository:
       0: { name: meta.brace.curly.jsdoc }
     patterns:
       - include: '#jsdoc-typedef-primitives'
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b\s*(:)
+      - match: \b([\p{Pc}\p{L}]\w*)\b\s*(:)
         captures:
           1: { name: variable.other.readwrite.jsdoc }
       - include: '#jsdoc-name-path-scopes'
@@ -3166,22 +3167,22 @@ repository:
 
   jsdoc-name-path-scopes:
     patterns:
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*(?=[\p{Pc}\p{L}])
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*(?=[\p{Pc}\p{L}])
         captures:
           1: { name: keyword.as.jsdoc }
-      - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}][\w\p{Pd}]*))(?=[\s\-~.#]|$)
+      - match: \s*(?:([\p{Pc}\p{L}&&\P{Ll}]+\w*)|([\p{Pc}\p{L}]\w*))(?=[\s\-~.#]|$)
         captures:
           1: { name: entity.name.class.jsdoc }
           2: { name: entity.name.function.jsdoc }
-      - match: (\.)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\s|$|\")
+      - match: (\.)([\p{Pc}\p{L}]\w*)\b(?=\s|$|\")
         captures:
           1: { name: keyword.operator.accessor.jsdoc }
           2: { name: entity.name.function.method.static.jsdoc }
-      - match: (\#)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\s|$|\")
+      - match: (\#)([\p{Pc}\p{L}]\w*)\b(?=\s|$|\")
         captures:
           1: { name: keyword.operator.accessor.jsdoc }
           2: { name: entity.name.function.method.instance.jsdoc }
-      - match: (~|-)([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=\s|$|\")
+      - match: (~|-)([\p{Pc}\p{L}]\w*)\b(?=\s|$|\")
         captures:
           1: { name: keyword.operator.accessor.jsdoc }
           2: { name: entity.name.function.method.inner.jsdoc }
@@ -3211,11 +3212,11 @@ repository:
       (
         (?:
           \b
-          [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+          [\p{Pc}\p{L}]\w* # identifier
           \b
           (?:[!?]?\.=?|[?!:]:=?) # qualified name separator
         )*
-        [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
+        [\p{Pc}\p{L}]\w* # last part of identifier
       )
       \b
       (?=
@@ -3263,15 +3264,15 @@ repository:
                 |import|export|route
                 |debug|assert|check
               )
-              (?!\B|\p{Pd}+\b)
+              \b
             )
             (?:
               \b
-              [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+              [\p{Pc}\p{L}]\w* # identifier
               \b
               (?:[!?]?\.=?|[?!:]:=?) # qualified name separator
             )*
-            [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
+            [\p{Pc}\p{L}]\w* # last part of identifier
           )
           \b
           (?=
@@ -3321,15 +3322,15 @@ repository:
                 |import|export|route
                 |debug|assert|check
               )
-              (?!\B|\p{Pd}+\b)
+              \b
             )
             (?:
               \b
-              [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+              [\p{Pc}\p{L}]\w* # identifier
               \b
               (?:[!?]?\.=?|[?!:]:=?) # qualified name separator
             )*
-            [\p{Pc}\p{L}][\w\p{Pd}]* # last part of identifier
+            [\p{Pc}\p{L}]\w* # last part of identifier
           )
           \b
         captures:
@@ -3343,13 +3344,13 @@ repository:
         (?<=(?:^|[,;'"`(){}\[\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?)) \b
           (?: # Properties
             # Leading underscore
-            (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+            (\p{Pc}+\w*\b(?!\p{Pc}+))
           | # Train case
-            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+            ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)
           | # Pascal case
-            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w&&\P{Lu}]*)+)
           | # Camel or kebab case
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            ([\p{Pc}\p{L}]\w*)
           )
         \b
           (?= \#? [({] ) # opening bracket
@@ -3362,13 +3363,13 @@ repository:
         ) \b
           (?: # Regular variables
             # Leading underscore
-            (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+            (\p{Pc}+\w*\b(?!\p{Pc}+))
           | # Train case
-            ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+            ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)
           | # Pascal case
-            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+            ((?:[\p{Pc}\p{L}&&\P{Ll}][\w&&\P{Lu}]*)+)
           | # Camel or kebab case
-            ([\p{Pc}\p{L}][\w\p{Pd}]*)
+            ([\p{Pc}\p{L}]\w*)
           )
         \b
           (?= \#? [({] ) # opening bracket
@@ -3411,13 +3412,13 @@ repository:
             (?<=(?:^|[,;'"`(){}\[\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?)) \b
               (?: # Properties
                 # Leading underscore
-                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+                (\p{Pc}+\w*\b(?!\p{Pc}+))
               | # Train case
-                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+                ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)
               | # Pascal case
-                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w&&\P{Lu}]*)+)
               | # Camel or kebab case
-                ([\p{Pc}\p{L}][\w\p{Pd}]*)
+                ([\p{Pc}\p{L}]\w*)
               )
             \b
               (?=
@@ -3436,13 +3437,13 @@ repository:
             ) \b
               (?: # Regular variables
                 # Leading underscore
-                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+                (\p{Pc}+\w*\b(?!\p{Pc}+))
               | # Train case
-                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+                ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)
               | # Pascal case
-                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w&&\P{Lu}]*)+)
               | # Camel or kebab case
-                ([\p{Pc}\p{L}][\w\p{Pd}]*)
+                ([\p{Pc}\p{L}]\w*)
               )
             \b
               (?=
@@ -3510,7 +3511,7 @@ repository:
           )
             \s*
             [?!] # optional or required
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+            \b [\p{Pc}\p{L}]\w* \b
             \s*
           (?=
             $ # EOL
@@ -3520,7 +3521,7 @@ repository:
               \s* [;,]
             | # as keyword (aliasing)
               \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b
               \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`({\[]
@@ -3551,7 +3552,7 @@ repository:
             \s*
             \*\*? # spread
             [?!]? # optional or required
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+            \b [\p{Pc}\p{L}]\w* \b
           (?=
             $ # EOL
             | # close bracket or pipe
@@ -3560,7 +3561,7 @@ repository:
               \s* [;,]
             | # as keyword (aliasing)
               \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b
               \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`({\[]
@@ -3591,7 +3592,7 @@ repository:
             \s*
             ~~? # named
             [?!]? # optional or required
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+            \b [\p{Pc}\p{L}]\w* \b
           (?=
             $ # EOL
             | # close bracket or pipe
@@ -3600,7 +3601,7 @@ repository:
               \s* [;,]
             | # as keyword (aliasing)
               \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b
               \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`({\[]
@@ -3631,7 +3632,7 @@ repository:
             \s*
             \& # reference
             [?!]? # optional or required
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+            \b [\p{Pc}\p{L}]\w* \b
           (?=
             $ # EOL
             | # close bracket or pipe
@@ -3640,7 +3641,7 @@ repository:
               \s* [;,]
             | # as keyword (aliasing)
               \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b
               \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`({\[]
@@ -3671,7 +3672,7 @@ repository:
             \s*
             \% # other
             [?!]? # optional or required
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+            \b [\p{Pc}\p{L}]\w* \b
           (?=
             $ # EOL
             | # close bracket or pipe
@@ -3680,7 +3681,7 @@ repository:
               \s* [;,]
             | # as keyword (aliasing)
               \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b
               \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`({\[]
@@ -3709,7 +3710,7 @@ repository:
             ) \s*
           )
             \s*
-            \b [\p{Pc}\p{L}][\w\p{Pd}]* \b
+            \b [\p{Pc}\p{L}]\w* \b
           (?=
             $ # EOL
             | # close bracket or pipe
@@ -3718,7 +3719,7 @@ repository:
               \s* [;,]
             | # as keyword (aliasing)
               \s*
-              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)
+              (?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b
               \s*
             | # type specifier and assignment
               (?::|[?:]?=) \s* [\w'"`({\[]
@@ -3728,17 +3729,17 @@ repository:
 
   placeholder-variables:
     patterns:
-      - match: (?i)\s*[?!][\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: (?i)\s*[?!][\p{Pc}\p{L}]\w*\b\s*
         name: variable.parameter.optional.saga
-      - match: (?i)\s*\*\*?[?!]?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: (?i)\s*\*\*?[?!]?[\p{Pc}\p{L}]\w*\b\s*
         name: variable.parameter.spread.saga
-      - match: (?i)\s*~~?[?!]?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: (?i)\s*~~?[?!]?[\p{Pc}\p{L}]\w*\b\s*
         name: variable.parameter.name.saga
-      - match: (?i)\s*&[?!]?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: (?i)\s*&[?!]?[\p{Pc}\p{L}]\w*\b\s*
         name: variable.parameter.reference.saga
-      - match: (?i)\s*%[?!]?[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: (?i)\s*%[?!]?[\p{Pc}\p{L}]\w*\b\s*
         name: variable.parameter.other.saga
-      - match: (?i)\s*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b\s*
+      - match: (?i)\s*\b[\p{Pc}\p{L}]\w*\b\s*
         name: variable.parameter.saga
 
   variables:
@@ -3747,7 +3748,7 @@ repository:
           (?x)
           (?<=
             \b # qualified name
-              [\p{Pc}\p{L}][\w\p{Pd}]* # identifier
+              [\p{Pc}\p{L}]\w* # identifier
               (?:(?:[?!]?\.|[?!:]:)=?)
             \b
           )
@@ -3766,46 +3767,46 @@ repository:
             (?<=(?:^|[,;'"`(){}\[\]\w\s]|\\.)(?:[!?]?\.=?|[?!:]:=?))
             (?: # Properties
                 # Leading underscore
-                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+                (\p{Pc}+\w*\b(?!\p{Pc}+))
               | # Train case
-                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+                ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)
               | # Pascal case
-                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w&&\P{Lu}]*)+)
               | # Camel or kebab case
-                ([\p{Pc}\p{L}][\w\p{Pd}]*)
+                ([\p{Pc}\p{L}]\w*)
             )
             |
             (?: # Objects
                 # Leading underscore
-                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+                (\p{Pc}+\w*\b(?!\p{Pc}+))
               | # Train case
-                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+                ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)
               | # Pascal case
-                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w&&\P{Lu}]*)+)
               | # Camel or kebab case
-                ([\p{Pc}\p{L}][\w\p{Pd}]*)
+                ([\p{Pc}\p{L}]\w*)
             )
             (?=(?:[!?]?\.=?|[?!:]:=?|\s*\#?\[)(?:[,;'"`(){}\[\]\w\s]|$))
             |
             (?: # Regular variables
                 # Leading underscore
-                (\p{Pc}+[\p{Pc}\p{L}][\w\p{Pd}]*\b(?!\p{Pc}+))
+                (\p{Pc}+\w*\b(?!\p{Pc}+))
               | # Train case
-                ([\p{L}&&\P{Ll}]\w*\p{Pd}[\w\p{Pd}]*)
+                ([\p{L}&&\P{Ll}][\w&&\P{Ll}]*)
               | # Pascal case
-                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w\p{Pd}&&\P{Lu}]*)+)
+                ((?:[\p{Pc}\p{L}&&\P{Ll}][\w&&\P{Lu}]*)+)
               | # Camel or kebab case
-                ([\p{Pc}\p{L}][\w\p{Pd}]*)
+                ([\p{Pc}\p{L}]\w*)
             )
           ) \b
         captures:
-          1: { name: variable.other.global.saga }
+          1: { name: variable.other.property.dynamic.saga }
           2: { name: variable.other.constant.property.saga }
           3: { name: variable.other.property.static.saga }
           4: { name: variable.other.property.saga }
           5: { name: variable.other.global.saga }
           6: { name: variable.other.constant.object.saga }
-          7: { name: variable.other.object.saga }
+          7: { name: variable.other.class.static.saga }
           8: { name: variable.other.object.saga }
           9: { name: variable.other.dollar.saga }
           10: { name: variable.other.constant.saga }
@@ -4297,7 +4298,7 @@ repository:
                 |prefix|infix|suffix|unary|left|right
               )
             )
-            (?!\B|\p{Pd}+\b)
+            \b
           \s*
         )*
       )
@@ -4311,7 +4312,7 @@ repository:
           |object|contract|trait|style
           |element|field|model|namespace
         )
-        (?!\B|\p{Pd}+\b)
+        \b
       )
     captures:
       1:
@@ -4330,7 +4331,7 @@ repository:
             |post|get|set|put|delete|required|optional
             |checked|unchecked|delegate|safe|unsafe|virtual
           )
-          (?!\B|\p{Pd}+\b)
+          \b
           \s*
         name: storage.modifier.saga
       - comment: Visibility modifiers
@@ -4343,7 +4344,7 @@ repository:
             |eager|bound|free|unique|struct|union
             |changed|unchanged|open|opened|closed?
           )
-          (?!\B|\p{Pd}+\b)
+          \b
           \s*
         name: storage.modifier.declaration.saga
       - comment: Functional modifiers
@@ -4354,15 +4355,15 @@ repository:
             recursive|operator|curried|opaque|transparent|inline
             |prefix|infix|suffix|unary|left|right
           )
-          (?!\B|\p{Pd}+\b)
+          \b
           \s*
         name: storage.modifier.function.saga
 
   declaration-keywords:
     patterns:
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(declare)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(declare)\b\s*
         name: keyword.other.declare.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)\b\s*
         name: storage.type.saga
       - match: |
           (?x)
@@ -4376,42 +4377,42 @@ repository:
               |object|contract|trait|style
               |element|field|model|namespace
             )
-            (?!\B|\p{Pd}+\b)
+            \b
           \s*
         name: storage.type.$1.saga
 
   general-keywords:
     comment: general keywords
     patterns:
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|unless|else)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|unless|else)\b\s*
         name: keyword.control.conditional.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|foreach|repeat|while|until)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|foreach|repeat|while|until)\b\s*
         name: keyword.control.loop.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|finally|then)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(try|throw|catch|finally|then)\b\s*
         name: keyword.control.trycatch.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch|case|default)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch|case|default)\b\s*
         name: keyword.control.switch.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|continue|redo|retry|return|await|scope|yield|goto|fallthru)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|continue|redo|retry|return|await|scope|yield|goto|fallthru)\b\s*
         name: keyword.control.flow.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|route)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|route)\b\s*
         name: keyword.control.module.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|do|from|ref|go|defer)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with|do|from|ref|go|defer)\b\s*
         name: keyword.control.$1.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|assert|check|where)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(debug|assert|check|where)\b\s*
         name: keyword.other.$1.saga
 
   expression-keywords:
     comment: expression keywords
     patterns:
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of|as|is|new)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of|as|is|new)\b\s*
         name: keyword.operator.expression.$1.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(delete)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(delete)\b\s*
         name: keyword.operator.expression.delete.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(to|till|thru|by)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(to|till|thru|by)\b\s*
         name: keyword.operator.expression.range.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unset)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(unset)\b\s*
         name: keyword.operator.expression.void.saga
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(and|or|xor|not)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(and|or|xor|not)\b\s*
         name: keyword.operator.expression.logical.saga
 
   keywords:
@@ -4427,7 +4428,7 @@ repository:
 
   control-expression:
     applyEndPatternLast: true
-    begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|continue|redo|retry|scope|goto|fallthru)(?!\B|\p{Pd}+\b)\s*
+    begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|continue|redo|retry|scope|goto|fallthru)\b\s*
     end: (?=)|$
     beginCaptures:
       1: { name: keyword.control.flow.saga }
@@ -4438,12 +4439,12 @@ repository:
   module-expression:
     patterns:
       - applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|route)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|route)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: keyword.control.module.saga }
         patterns:
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|as|only|except|default)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from|to|as|only|except|default)\b\s*
             name: keyword.control.module.saga
           - include: '#module-content'
 
@@ -4457,7 +4458,7 @@ repository:
             patterns:
               - include: '#module-content'
               - include: '#illegal'
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
             name: keyword.control.module.saga
           - include: '#type-keywords'
           - include: '#strings'
@@ -4472,7 +4473,7 @@ repository:
             name: variable.other.readwrite.alias.saga
 
   constraint-expression:
-    begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where)(?!\B|\p{Pd}+\b)\s*
+    begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(where)\b\s*
     beginCaptures:
       1: { name: keyword.control.validate.saga }
     end: (?=[,;)}\]])
@@ -4492,13 +4493,13 @@ repository:
                 |extend|implement|use
               )s
             )
-            (?!\B|\p{Pd}+\b)\s*
+            \b\s*
           \s*
         name: keyword.control.validate.saga
       - include: $self
 
   query-expression:
-    begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)(?!\B|\p{Pd}+\b)\s*
+    begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(from)\b\s*
     beginCaptures:
       1: { name: keyword.control.query.saga }
     end: (?=[,;)}\]])
@@ -4526,7 +4527,7 @@ repository:
             (
               in|of
             )
-          (?!\B|\p{Pd}+\b)
+          \b
           \s*
         beginCaptures:
           1: { name: keyword.control.query.saga }
@@ -4547,7 +4548,7 @@ repository:
               \b (?:inner|outer|left|right)? \b \s*
               \b (?:join)
             )
-          (?!\B|\p{Pd}+\b)
+          \b
           \s*
         beginCaptures:
           1: { name: keyword.control.query.saga }
@@ -4555,7 +4556,7 @@ repository:
           3: { name: keyword.control.query.saga }
         end: (?=[,;)}\]])
         patterns:
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b([io]nto|equal|in|of)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b([io]nto|equal|in|of)\b\s*
             name: keyword.control.query.saga
           - include: '#query-body'
           - include: $self
@@ -4568,7 +4569,7 @@ repository:
             (
               where|having|filter|reject
             )
-          (?!\B|\p{Pd}+\b)
+          \b
           \s*
         beginCaptures:
           1: { name: keyword.control.query.saga }
@@ -4587,7 +4588,7 @@ repository:
               \b (?:asc|desc)? \b \s*
               \b (?:by|with)?
             )
-          (?!\B|\p{Pd}+\b)
+          \b
           \s*
         beginCaptures:
           1: { name: keyword.control.query.saga }
@@ -4605,13 +4606,13 @@ repository:
               \b (?:select|map) \b \s*
               \b (?:unique|any|all|some|every)?
             )
-          (?!\B|\p{Pd}+\b)
+          \b
           \s*
         beginCaptures:
           1: { name: keyword.control.query.saga }
         end: (?=[,;)}\]])
         patterns:
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
             name: keyword.control.query.saga
           - include: '#query-body'
           - include: $self
@@ -4625,13 +4626,13 @@ repository:
               \b (?:take|drop|limit|offset) \b \s*
               \b (?:first|last|head|tail)?
             )
-          (?!\B|\p{Pd}+\b)
+          \b
           \s*
         beginCaptures:
           1: { name: keyword.control.query.saga }
         end: (?=[,;)}\]])
         patterns:
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
             name: keyword.control.query.saga
           - include: '#query-body'
           - include: $self
@@ -4645,13 +4646,13 @@ repository:
               \b (?:fold|reduce|scan) \b \s*
               \b (?:first|last|left|right)?
             )
-          (?!\B|\p{Pd}+\b)
+          \b
           \s*
         beginCaptures:
           1: { name: keyword.control.query.saga }
         end: (?=[,;)}\]])
         patterns:
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|while|until|with)\b\s*
             name: keyword.control.query.saga
           - include: '#query-body'
           - include: $self
@@ -4664,13 +4665,13 @@ repository:
             (
               group
             )
-          (?!\B|\p{Pd}+\b)
+          \b
           \s*
         beginCaptures:
           1: { name: keyword.control.query.saga }
         end: (?=[,;)}\]])
         patterns:
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|[io]nto)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(by|[io]nto)\b\s*
             name: keyword.control.query.saga
           - include: '#query-body'
           - include: $self
@@ -4704,7 +4705,7 @@ repository:
     repository:
       style:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(style)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.style.saga }
@@ -4719,7 +4720,7 @@ repository:
 
       component:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(element)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(element)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.component.saga }
@@ -4731,21 +4732,21 @@ repository:
 
       variable:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(var|val|let|const)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.variable.saga }
 
       declare:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(declare)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(declare)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: keyword.other.declare.saga }
 
       function:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(function)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(function)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.function.saga }
@@ -4756,7 +4757,7 @@ repository:
 
       namespace:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(namespace)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(namespace)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.namespace.saga }
@@ -4767,7 +4768,7 @@ repository:
 
       method:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(method)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(method)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.method.saga }
@@ -4778,7 +4779,7 @@ repository:
 
       procedure:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(procedure)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(procedure)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.procedure.saga }
@@ -4789,7 +4790,7 @@ repository:
 
       class:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(class)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.class.saga }
@@ -4800,7 +4801,7 @@ repository:
 
       interface:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(interface)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(interface)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.interface.saga }
@@ -4811,7 +4812,7 @@ repository:
 
       enum:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(enum)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.enum.saga }
@@ -4822,7 +4823,7 @@ repository:
 
       module:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(module)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.module.saga }
@@ -4833,7 +4834,7 @@ repository:
 
       iterator:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iterator)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(iterator)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.iterator.saga }
@@ -4844,7 +4845,7 @@ repository:
 
       model:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(model)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(model)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.model.saga }
@@ -4855,7 +4856,7 @@ repository:
 
       macro:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(macro)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.macro.saga }
@@ -4866,7 +4867,7 @@ repository:
 
       query:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(query)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(query)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.query.saga }
@@ -4877,7 +4878,7 @@ repository:
 
       object:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(object)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.object.saga }
@@ -4888,7 +4889,7 @@ repository:
 
       trait:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(trait)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.trait.saga }
@@ -4899,7 +4900,7 @@ repository:
 
       contract:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(contract)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(contract)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.contract.saga }
@@ -4910,7 +4911,7 @@ repository:
 
       protocol:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(protocol)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(protocol)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.protocol.saga }
@@ -4921,7 +4922,7 @@ repository:
 
       struct:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(struct)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.struct.saga }
@@ -4932,7 +4933,7 @@ repository:
 
       field:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(field)(?!\B|\p{Pd}+\b)\s*
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(field)\b\s*
         end: (?=)|$
         beginCaptures:
           1: { name: storage.type.field.saga }
@@ -4946,7 +4947,7 @@ repository:
     patterns:
       - match: *constraint-keyword
         name: keyword.other.$1.saga
-      - match: \b([\p{Pc}\p{L}][\w\p{Pd}]*)\b(?=::|\.)
+      - match: \b([\p{Pc}\p{L}]\w*)\b(?=::|\.)
         name: entity.name.namespace.saga
       - include: '#type-square-brackets'
       - include: '#type-signature'
@@ -5239,7 +5240,7 @@ repository:
 
   argument-list-content:
     patterns:
-      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
         name: keyword.operator.expression.as.saga
       - match: (?<=[\w\s][(|])\.
         name: punctuation.definition.metadata.saga
@@ -5262,7 +5263,7 @@ repository:
     repository:
       new-clause:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(new)(?!\B|\p{Pd}+\b)
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(new)\b
         end: (?=)|$
         beginCaptures:
           1: { name: keyword.operator.expression.$1.saga }
@@ -5278,14 +5279,14 @@ repository:
       type-clause:
         patterns:
           - applyEndPatternLast: true
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is|as)\b\s*
             end: (?=)|$
             beginCaptures:
               1: { name: keyword.operator.expression.$1.saga }
             patterns:
               - include: '#types'
           - applyEndPatternLast: true
-            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)(?!\B|\p{Pd}+\b)\s*
+            begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(type)\b\s*
             end: (?=)|$
             captures:
               1: { name: keyword.other.typedef.saga }
@@ -5297,7 +5298,7 @@ repository:
 
       catch-clause:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(catch)(?!\B|\p{Pd}+\b)\s*(?=\()
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(catch)\b\s*(?=\()
         end: (?=)|$
         name: meta.catch.saga
         captures:
@@ -5308,7 +5309,7 @@ repository:
             captures:
               1: { name: punctuation.definition.expression.saga }
             patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
                 name: keyword.control.error.saga
               - include: $self
           - begin: \s*(\{)\s*
@@ -5325,7 +5326,7 @@ repository:
             captures:
               1: { name: keyword.control.error.saga }
               2: { name: punctuation.definition.case-statement.saga }
-          - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
+          - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)\b\s*
             end: \s*(:)(?=['"`({\[)}\]\w\s])|$
             beginCaptures:
               1: { name: keyword.control.error.saga }
@@ -5334,20 +5335,20 @@ repository:
             patterns:
               - include: '#argument-list'
               - applyEndPatternLast: true
-                begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
+                begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)\b\s*
                 end: (?=)|$
                 beginCaptures:
                   1: { name: keyword.control.error.saga }
                 patterns:
                   - include: '#types'
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|as)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|as)\b\s*
                 name: keyword.control.error.saga
               - include: '#type-keywords'
               - include: $self
 
       for-clause:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|foreach|while|until)(?!\B|\p{Pd}+\b)\s*(?=\()
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(for|foreach|while|until)\b\s*(?=\()
         end: (?=)|$
         name: meta.for.saga
         captures:
@@ -5358,13 +5359,13 @@ repository:
             captures:
               1: { name: punctuation.definition.expression.saga }
             patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(in|of)\b\s*
                 name: keyword.control.loop.saga
               - include: $self
 
       if-clause:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|unless)(?!\B|\p{Pd}+\b)\s*(?=\()
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|unless)\b\s*(?=\()
         end: (?=)|$
         name: meta.if.saga
         captures:
@@ -5375,13 +5376,13 @@ repository:
             captures:
               1: { name: punctuation.definition.expression.saga }
             patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await)\b\s*
                 name: keyword.control.conditional.saga
               - include: $self
 
       match-clause:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)(?!\B|\p{Pd}+\b)\s*(?=\()
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)\b\s*(?=\()
         end: (?=)|$
         name: meta.match.saga
         captures:
@@ -5392,7 +5393,7 @@ repository:
             captures:
               1: { name: punctuation.definition.expression.saga }
             patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await)\b\s*
                 name: keyword.control.match.saga
               - include: $self
           - begin: \s*(\{)\s*
@@ -5405,7 +5406,7 @@ repository:
 
       switch-clause:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)(?!\B|\p{Pd}+\b)\s*(?=\()
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)\b\s*(?=\()
         end: (?=)|$
         name: meta.switch.saga
         captures:
@@ -5416,7 +5417,7 @@ repository:
             captures:
               1: { name: punctuation.definition.expression.saga }
             patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await)\b\s*
                 name: keyword.control.switch.saga
               - include: $self
           - begin: \s*(\{)\s*
@@ -5433,7 +5434,7 @@ repository:
             captures:
               1: { name: keyword.control.switch.saga }
               2: { name: punctuation.definition.case-statement.saga }
-          - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
+          - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)\b\s*
             end: \s*(:)(?=['"`({\[)}\]\w\s])|$
             beginCaptures:
               1: { name: keyword.control.switch.saga }
@@ -5442,13 +5443,13 @@ repository:
             patterns:
               - include: '#argument-list'
               - applyEndPatternLast: true
-                begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
+                begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)\b\s*
                 end: (?=)|$
                 beginCaptures:
                   1: { name: keyword.control.switch.saga }
                 patterns:
                   - include: '#types'
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|as)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|as)\b\s*
                 name: keyword.control.switch.saga
               - include: '#type-keywords'
               - include: $self
@@ -5459,7 +5460,7 @@ repository:
             captures:
               1: { name: keyword.control.match.saga }
               2: { name: punctuation.definition.case-statement.saga }
-          - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)(?!\B|\p{Pd}+\b)\s*
+          - begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(case)\b\s*
             end: \s*(:)(?=['"`({\[)}\]\w\s])|$
             beginCaptures:
               1: { name: keyword.control.match.saga }
@@ -5468,20 +5469,20 @@ repository:
             patterns:
               - include: '#argument-list'
               - applyEndPatternLast: true
-                begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)(?!\B|\p{Pd}+\b)\s*
+                begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(is)\b\s*
                 end: (?=)|$
                 beginCaptures:
                   1: { name: keyword.control.match.saga }
                 patterns:
                   - include: '#types'
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|as)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(if|as)\b\s*
                 name: keyword.control.match.saga
               - include: '#type-keywords'
               - include: $self
 
       with-clause:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)(?!\B|\p{Pd}+\b)\s*(?=\()
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(with)\b\s*(?=\()
         end: (?=)|$
         name: meta.with.saga
         captures:
@@ -5492,7 +5493,7 @@ repository:
             captures:
               1: { name: punctuation.definition.expression.saga }
             patterns:
-              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await|as)(?!\B|\p{Pd}+\b)\s*
+              - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(await|as)\b\s*
                 name: keyword.control.with.saga
               - include: $self
 
@@ -5509,9 +5510,9 @@ repository:
       - include: '#embedded-expression'
       - include: '#brackets'
       - include: '#illegal-identifier'
-      - match: ([^\w,;{}])*\b[\p{Pc}\p{L}][\w\p{Pd}]*\b([^\w,;{}])+
+      - match: ([^\w,;{}])*\b[\p{Pc}\p{L}]\w*\b([^\w,;{}])+
         name: invalid.illegal.object.key.saga
-      - match: (?<={\s*|,\s*|;\s*|^\s*)\s*(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)\s*(?=,|;|}|$|:)
+      - match: (?<={\s*|,\s*|;\s*|^\s*)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$|:)
         name: constant.other.object.key.saga
       - include: '#space'
       - include: '#comments'
@@ -5519,15 +5520,15 @@ repository:
       - include: '#illegal'
 
   object-value:
-    match: (?<={\s*|,\s*|;\s*|^\s*)\s*(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)\s*(?=,|;|}|$)
-    name: variable.property.shorthand.saga
+    match: (?<={\s*|,\s*|;\s*|^\s*)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$)
+    name: variable.other.constant.saga
 
   object-argument:
-    match: (?<={\s*|,\s*|;\s*|^\s*)\s*(\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)\s*(?=,|;|}|$)
+    match: (?<={\s*|,\s*|;\s*|^\s*)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$)
     name: variable.parameter.named.saga
 
   as-keyword:
-    match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+    match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
     name: keyword.operator.expression.as.saga
 
   binding-pattern-object:
@@ -5588,7 +5589,7 @@ repository:
       - include: '#binding-pattern-array'
       - include: '#illegal-identifier'
       - applyEndPatternLast: true
-        begin: (\b[\p{Pc}\p{L}][\w\p{Pd}]*\b)
+        begin: (\b[\p{Pc}\p{L}]\w*\b)
         end: (?=)|$
         captures:
           1: { name: variable.parameter.saga }
@@ -5957,7 +5958,7 @@ repository:
         patterns:
           - match: ','
             name: punctuation.separator.arguments.saga
-          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)(?!\B|\p{Pd}+\b)\s*
+          - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(as)\b\s*
             name: keyword.operator.expression.as.saga
           - match: (?<=[\w\s][(|])\.
             name: punctuation.definition.metadata.saga
@@ -6118,32 +6119,32 @@ repository:
   # Support
 
   css-property-names:
-    match: (?x)\b( additive-symbols|additiveSymbols|adjust|after|align|align-content|align-items|align-last|align-self|alignContent|alignItems|alignLast|alignment|alignment-adjust|alignment-baseline|alignmentAdjust|alignmentBaseline|alignSelf|all|animation|animation-delay|animation-direction|animation-duration|animation-fill-mode|animation-iteration-count|animation-name|animation-play-state|animation-timing-function|animationDelay|animationDirection|animationDuration|animationFillMode|animationIterationCount|animationName|animationPlayState|animationTimingFunction|appearance|attachment|azimuth|backdrop-filter|backdropFilter|backface-visibility|backfaceVisibility|background|background-attachment|background-blend-mode|background-break|background-clip|background-color|background-image|background-origin|background-position|background-position-[xy]|background-repeat|background-size|backgroundAttachment|backgroundBlendMode|backgroundBreak|backgroundClip|backgroundColor|backgroundImage|backgroundOrigin|backgroundPosition|backgroundPosition[XY]|backgroundRepeat|backgroundSize|balance|baseline|baseline-shift|baselineShift|before|bidi|binding|bleed|block-size|blockSize|bookmark|bookmark-label|bookmark-level|bookmark-target|bookmarkLabel|bookmarkLevel|bookmarkTarget|border|border-block-end|border-block-end-color|border-block-end-style|border-block-end-width|border-block-start|border-block-start-color|border-block-start-style|border-block-start-width|border-bottom|border-bottom-color|border-bottom-left-radius|border-bottom-right-radius|border-bottom-style|border-bottom-width|border-collapse|border-color|border-end-end-radius|border-end-start-radius|border-image|border-image-outset|border-image-repeat|border-image-slice|border-image-source|border-image-width|border-inline-end|border-inline-end-color|border-inline-end-style|border-inline-end-width|border-inline-start|border-inline-start-color|border-inline-start-style|border-inline-start-width|border-left|border-left-color|border-left-style|border-left-width|border-length|border-radius|border-right|border-right-color|border-right-style|border-right-width|border-spacing|border-start-end-radius|border-start-start-radius|border-style|border-top|border-top-color|border-top-left-radius|border-top-right-radius|border-top-style|border-top-width|border-width|borderBlockEnd|borderBlockEndColor|borderBlockEndStyle|borderBlockEndWidth|borderBlockStart|borderBlockStartColor|borderBlockStartStyle|borderBlockStartWidth|borderBottom|borderBottomColor|borderBottomLeftRadius|borderBottomRightRadius|borderBottomStyle|borderBottomWidth|borderCollapse|borderColor|borderEndEndRadius|borderEndStartRadius|borderImage|borderImageOutset|borderImageRepeat|borderImageSlice|borderImageSource|borderImageWidth|borderInlineEnd|borderInlineEndColor|borderInlineEndStyle|borderInlineEndWidth|borderInlineStart|borderInlineStartColor|borderInlineStartStyle|borderInlineStartWidth|borderLeft|borderLeftColor|borderLeftStyle|borderLeftWidth|borderLength|borderRadius|borderRight|borderRightColor|borderRightStyle|borderRightWidth|borderSpacing|borderStartEndRadius|borderStartStartRadius|borderStyle|borderTop|borderTopColor|borderTopLeftRadius|borderTopRightRadius|borderTopStyle|borderTopWidth|borderWidth|bottom|bottom-color|bottom-left-radius|bottom-right-radius|bottom-style|bottom-width|bottomColor|bottomLeftRadius|bottomRightRadius|bottomStyle|bottomWidth|box|box-align|box-decoration-break|box-direction|box-flex|box-flex-group|box-lines|box-ordinal-group|box-orient|box-pack|box-shadow|box-sizing|boxAlign|boxDecorationBreak|boxDirection|boxFlex|boxFlexGroup|boxLines|boxOrdinalGroup|boxOrient|boxPack|boxShadow|boxSizing|break|break-after|break-before|break-inside|breakAfter|breakBefore|breakInside|caption-side|captionSide|caret-color|caretColor|character|clear|clip|clip-path|clip-rule|clipPath|clipRule|collapse|color|color-adjust|color-interpolation|color-interpolation-filters|color-profile|color-rendering|colorAdjust|colorInterpolation|colorInterpolationFilters|colorProfile|colorRendering|column|column-break-after|column-break-before|column-count|column-fill|column-gap|column-rule|column-rule-color|column-rule-style|column-rule-width|column-span|column-width|columnBreakAfter|columnBreakBefore|columnCount|columnFill|columnGap|columnRule|columnRuleColor|columnRuleStyle|columnRuleWidth|columns|columnSpan|columnWidth|contain|content|count|counter|counter-increment|counter-reset|counterIncrement|counterReset|crop|cue|cue-after|cue-before|cueAfter|cueBefore|cursor|cx|cy|decoration|decoration-break|decorationBreak|delay|direction|display|display-model|display-role|displayModel|displayRole|dominant-baseline|dominantBaseline|down|drop|drop-initial-after-adjust|drop-initial-after-align|drop-initial-before-adjust|drop-initial-before-align|drop-initial-size|drop-initial-value|dropInitialAfterAdjust|dropInitialAfterAlign|dropInitialBeforeAdjust|dropInitialBeforeAlign|dropInitialSize|dropInitialValue|duration|elevation|emphasis|empty-cells|emptyCells|enable-background|enableBackground|fallback|family|fill|fill-opacity|fill-rule|fillOpacity|fillRule|filter|fit|fit-position|fitPosition|flex|flex-basis|flex-direction|flex-flow|flex-group|flex-grow|flex-shrink|flex-wrap|flexBasis|flexDirection|flexFlow|flexGroup|flexGrow|flexShrink|flexWrap|float|float-offset|floatOffset|flood-color|flood-opacity|floodColor|floodOpacity|font|font-display|font-family|font-feature-settings|font-kerning|font-language-override|font-optical-sizing|font-size|font-size-adjust|font-stretch|font-style|font-synthesis|font-variant|font-variant-alternates|font-variant-caps|font-variant-east-asian|font-variant-ligatures|font-variant-numeric|font-variant-position|font-variation-settings|font-weight|fontDisplay|fontFamily|fontFeatureSettings|fontKerning|fontLanguageOverride|fontOpticalSizing|fontSize|fontSizeAdjust|fontStretch|fontStyle|fontSynthesis|fontVariant|fontVariantAlternates|fontVariantCaps|fontVariantEastAsian|fontVariantLigatures|fontVariantNumeric|fontVariantPosition|fontVariationSettings|fontWeight|gap|glyph-orientation-horizontal|glyph-orientation-vertical|glyphOrientationHorizontal|glyphOrientationVertical|grid|grid-area|grid-auto-columns|grid-auto-flow|grid-auto-rows|grid-column|grid-column-end|grid-column-gap|grid-column-start|grid-columns|grid-gap|grid-row|grid-row-end|grid-row-gap|grid-row-start|grid-rows|grid-template|grid-template-areas|grid-template-columns|grid-template-rows|gridArea|gridAutoColumns|gridAutoFlow|gridAutoRows|gridColumn|gridColumnEnd|gridColumnGap|gridColumns|gridColumnStart|gridGap|gridRow|gridRowEnd|gridRowGap|gridRows|gridRowStart|gridTemplate|gridTemplateAreas|gridTemplateColumns|gridTemplateRows|hanging-punctuation|hangingPunctuation|header|height|hyphenate|hyphenate-after|hyphenate-before|hyphenate-character|hyphenate-lines|hyphenate-resource|hyphenateAfter|hyphenateBefore|hyphenateCharacter|hyphenateLines|hyphenateResource|hyphens|icon|image|image-orientation|image-rendering|image-resolution|imageOrientation|imageRendering|imageResolution|ime-mode|imeMode|increment|indent|index|initial-after-adjust|initial-after-align|initial-before-adjust|initial-before-align|initial-letter|initial-letter-align|initial-size|initial-value|initialAfterAdjust|initialAfterAlign|initialBeforeAdjust|initialBeforeAlign|initialLetter|initialLetterAlign|initialSize|initialValue|inline-box-align|inline-size|inlineBoxAlign|inlineSize|inset|inset-block|inset-block-end|inset-block-start|inset-inline|inset-inline-end|inset-inline-start|insetBlock|insetBlockEnd|insetBlockStart|insetInline|insetInlineEnd|insetInlineStart|isolation|iteration-count|iterationCount|justify|justify-content|justify-items|justify-self|justifyContent|justifyItems|justifySelf|kerning|label|left|left-color|left-style|left-width|leftColor|leftStyle|leftWidth|length|letter-spacing|letterSpacing|level|lighting-color|lightingColor|line|line-break|line-clamp|line-height|line-stacking|line-stacking-ruby|line-stacking-shift|line-stacking-strategy|lineBreak|lineClamp|lineHeight|lines|lineStacking|lineStackingRuby|lineStackingShift|lineStackingStrategy|list|list-style|list-style-image|list-style-position|list-style-type|listStyle|listStyleImage|listStylePosition|listStyleType|margin|margin-block-end|margin-block-start|margin-bottom|margin-inline-end|margin-inline-start|margin-left|margin-right|margin-top|marginBlockEnd|marginBlockStart|marginBottom|marginInlineEnd|marginInlineStart|marginLeft|marginRight|marginTop|mark|mark-after|mark-before|markAfter|markBefore|marker-end|marker-mid|marker-start|markerEnd|markerMid|markerStart|marks|marquee|marquee-direction|marquee-play-count|marquee-speed|marquee-style|marqueeDirection|marqueePlayCount|marqueeSpeed|marqueeStyle|mask|mask-border|mask-border-mode|mask-border-outset|mask-border-repeat|mask-border-slice|mask-border-source|mask-border-width|mask-clip|mask-composite|mask-image|mask-mode|mask-origin|mask-position|mask-repeat|mask-size|mask-type|maskBorder|maskBorderMode|maskBorderOutset|maskBorderRepeat|maskBorderSlice|maskBorderSource|maskBorderWidth|maskClip|maskComposite|maskImage|maskMode|maskOrigin|maskPosition|maskRepeat|maskSize|maskType|max|max-block-size|max-height|max-inline-size|max-lines|max-width|max-zoom|maxBlockSize|maxHeight|maxInlineSize|maxLines|maxWidth|maxZoom|min|min-block-size|min-height|min-inline-size|min-width|min-zoom|minBlockSize|minHeight|minInlineSize|minWidth|minZoom|mix-blend-mode|mixBlendMode|model|move-to|moveTo|name|nav|nav-down|nav-index|nav-left|nav-right|nav-up|navDown|navIndex|navLeft|navRight|navUp|negative|new|numeral|object-fit|object-position|objectFit|objectPosition|offset|offset-anchor|offset-distance|offset-path|offset-position|offset-rotation|offsetAnchor|offsetDistance|offsetPath|offsetPosition|offsetRotation|opacity|order|ordinal-group|ordinalGroup|orient|orientation|origin|orphans|outline|outline-color|outline-offset|outline-style|outline-width|outlineColor|outlineOffset|outlineStyle|outlineWidth|overflow|overflow-[xy]|overflow-anchor|overflow-block|overflow-inline|overflow-style|overflow-wrap|overflow[XY]|overflowAnchor|overflowBlock|overflowInline|overflowStyle|overflowWrap|overhang|overscroll-behavior|overscroll-behavior-[xy]|overscroll-behavior-block|overscroll-behavior-inline|overscrollBehavior|overscrollBehavior[XY]|overscrollBehaviorBlock|overscrollBehaviorInline|pack|pad|padding|padding-block-end|padding-block-start|padding-bottom|padding-inline-end|padding-inline-start|padding-left|padding-right|padding-top|paddingBlockEnd|paddingBlockStart|paddingBottom|paddingInlineEnd|paddingInlineStart|paddingLeft|paddingRight|paddingTop|page|page-break-after|page-break-before|page-break-inside|page-policy|pageBreakAfter|pageBreakBefore|pageBreakInside|pagePolicy|paint-order|paintOrder|pause|pause-after|pause-before|pauseAfter|pauseBefore|perspective|perspective-origin|perspectiveOrigin|phonemes|pitch|pitch-range|pitchRange|place-content|place-items|place-self|placeContent|placeItems|placeSelf|play-count|play-during|play-state|playCount|playDuring|playState|point|pointer-events|pointerEvents|position|prefix|presentation|presentation-level|presentationLevel|profile|property|punctuation|punctuation-trim|punctuationTrim|quotes|r|radius|range|rate|rendering-intent|renderingIntent|repeat|replace|reset|resize|resolution|resource|respond-to|respondTo|rest|rest-after|rest-before|restAfter|restBefore|richness|right|right-color|right-style|right-width|rightColor|rightStyle|rightWidth|role|rotate|rotation|rotation-point|rotationPoint|row-gap|rowGap|rows|ruby|ruby-align|ruby-merge|ruby-overhang|ruby-position|ruby-span|rubyAlign|rubyMerge|rubyOverhang|rubyPosition|rubySpan|rule|rule-color|rule-style|rule-width|ruleColor|ruleStyle|ruleWidth|rx|ry|scale|scroll-behavior|scroll-margin|scroll-margin-block|scroll-margin-block-end|scroll-margin-block-start|scroll-margin-bottom|scroll-margin-inline|scroll-margin-inline-end|scroll-margin-inline-start|scroll-margin-left|scroll-margin-right|scroll-margin-top|scroll-padding|scroll-padding-block|scroll-padding-block-end|scroll-padding-block-start|scroll-padding-bottom|scroll-padding-inline|scroll-padding-inline-end|scroll-padding-inline-start|scroll-padding-left|scroll-padding-right|scroll-padding-top|scroll-snap-align|scroll-snap-coordinate|scroll-snap-destination|scroll-snap-stop|scroll-snap-type|scrollbar-color|scrollbar-gutter|scrollbar-width|scrollbarColor|scrollbarGutter|scrollbarWidth|scrollBehavior|scrollMargin|scrollMarginBlock|scrollMarginBlockEnd|scrollMarginBlockStart|scrollMarginBottom|scrollMarginInline|scrollMarginInlineEnd|scrollMarginInlineStart|scrollMarginLeft|scrollMarginRight|scrollMarginTop|scrollPadding|scrollPaddingBlock|scrollPaddingBlockEnd|scrollPaddingBlockStart|scrollPaddingBottom|scrollPaddingInline|scrollPaddingInlineEnd|scrollPaddingInlineStart|scrollPaddingLeft|scrollPaddingRight|scrollPaddingTop|scrollSnapAlign|scrollSnapCoordinate|scrollSnapDestination|scrollSnapStop|scrollSnapType|shadow|shape-image-threshold|shape-margin|shape-outside|shape-rendering|shapeImageThreshold|shapeMargin|shapeOutside|shapeRendering|size|size-adjust|sizeAdjust|sizing|space|space-collapse|spaceCollapse|spacing|span|speak|speak-as|speak-header|speak-numeral|speak-punctuation|speakAs|speakHeader|speakNumeral|speakPunctuation|speech|speech-rate|speechRate|speed|src|stacking|stacking-ruby|stacking-shift|stacking-strategy|stackingRuby|stackingShift|stackingStrategy|stop-color|stop-opacity|stopColor|stopOpacity|stress|stretch|string-set|stringSet|stroke|stroke-dasharray|stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|stroke-width|strokeDasharray|strokeDashoffset|strokeLinecap|strokeLinejoin|strokeMiterlimit|strokeOpacity|strokeWidth|style|style-image|style-position|style-type|styleImage|stylePosition|styleType|suffix|symbols|system|tab-size|table-layout|tableLayout|tabSize|target|target-name|target-new|target-position|targetName|targetNew|targetPosition|text|text-align|text-align-last|text-anchor|text-combine-upright|text-decoration|text-decoration-color|text-decoration-line|text-decoration-skip|text-decoration-skip-ink|text-decoration-style|text-emphasis|text-emphasis-color|text-emphasis-position|text-emphasis-style|text-height|text-indent|text-justify|text-orientation|text-outline|text-overflow|text-rendering|text-replace|text-shadow|text-size-adjust|text-transform|text-underline-position|text-wrap|textAlign|textAlignLast|textAnchor|textCombineUpright|textDecoration|textDecorationColor|textDecorationLine|textDecorationSkip|textDecorationSkipInk|textDecorationStyle|textEmphasis|textEmphasisColor|textEmphasisPosition|textEmphasisStyle|textHeight|textIndent|textJustify|textOrientation|textOutline|textOverflow|textRendering|textReplace|textShadow|textSizeAdjust|textTransform|textUnderlinePosition|textWrap|timing-function|timingFunction|top|top-color|top-left-radius|top-right-radius|top-style|top-width|topColor|topLeftRadius|topRightRadius|topStyle|topWidth|touch-action|touchAction|transform|transform-box|transform-origin|transform-style|transformBox|transformOrigin|transformStyle|transition|transition-delay|transition-duration|transition-property|transition-timing-function|transitionDelay|transitionDuration|transitionProperty|transitionTimingFunction|translate|trim|unicode|unicode-bidi|unicode-range|unicodeBidi|unicodeRange|up|user-select|user-zoom|userSelect|userZoom|variant|vertical-align|verticalAlign|visibility|voice|voice-balance|voice-duration|voice-family|voice-pitch|voice-pitch-range|voice-rate|voice-stress|voice-volume|voiceBalance|voiceDuration|voiceFamily|voicePitch|voicePitchRange|voiceRate|voiceStress|voiceVolume|volume|weight|white|white-space|white-space-collapse|whiteSpace|whiteSpaceCollapse|widows|width|will-change|willChange|word|word-break|word-spacing|word-wrap|wordBreak|wordSpacing|wordWrap|wrap|writing-mode|writingMode|x|y|z-index|zIndex|zoom )(?!\B|\p{Pd}+\b)
+    match: (?x)\b( additive-symbols|additiveSymbols|adjust|after|align|align-content|align-items|align-last|align-self|alignContent|alignItems|alignLast|alignment|alignment-adjust|alignment-baseline|alignmentAdjust|alignmentBaseline|alignSelf|all|animation|animation-delay|animation-direction|animation-duration|animation-fill-mode|animation-iteration-count|animation-name|animation-play-state|animation-timing-function|animationDelay|animationDirection|animationDuration|animationFillMode|animationIterationCount|animationName|animationPlayState|animationTimingFunction|appearance|attachment|azimuth|backdrop-filter|backdropFilter|backface-visibility|backfaceVisibility|background|background-attachment|background-blend-mode|background-break|background-clip|background-color|background-image|background-origin|background-position|background-position-[xy]|background-repeat|background-size|backgroundAttachment|backgroundBlendMode|backgroundBreak|backgroundClip|backgroundColor|backgroundImage|backgroundOrigin|backgroundPosition|backgroundPosition[XY]|backgroundRepeat|backgroundSize|balance|baseline|baseline-shift|baselineShift|before|bidi|binding|bleed|block-size|blockSize|bookmark|bookmark-label|bookmark-level|bookmark-target|bookmarkLabel|bookmarkLevel|bookmarkTarget|border|border-block-end|border-block-end-color|border-block-end-style|border-block-end-width|border-block-start|border-block-start-color|border-block-start-style|border-block-start-width|border-bottom|border-bottom-color|border-bottom-left-radius|border-bottom-right-radius|border-bottom-style|border-bottom-width|border-collapse|border-color|border-end-end-radius|border-end-start-radius|border-image|border-image-outset|border-image-repeat|border-image-slice|border-image-source|border-image-width|border-inline-end|border-inline-end-color|border-inline-end-style|border-inline-end-width|border-inline-start|border-inline-start-color|border-inline-start-style|border-inline-start-width|border-left|border-left-color|border-left-style|border-left-width|border-length|border-radius|border-right|border-right-color|border-right-style|border-right-width|border-spacing|border-start-end-radius|border-start-start-radius|border-style|border-top|border-top-color|border-top-left-radius|border-top-right-radius|border-top-style|border-top-width|border-width|borderBlockEnd|borderBlockEndColor|borderBlockEndStyle|borderBlockEndWidth|borderBlockStart|borderBlockStartColor|borderBlockStartStyle|borderBlockStartWidth|borderBottom|borderBottomColor|borderBottomLeftRadius|borderBottomRightRadius|borderBottomStyle|borderBottomWidth|borderCollapse|borderColor|borderEndEndRadius|borderEndStartRadius|borderImage|borderImageOutset|borderImageRepeat|borderImageSlice|borderImageSource|borderImageWidth|borderInlineEnd|borderInlineEndColor|borderInlineEndStyle|borderInlineEndWidth|borderInlineStart|borderInlineStartColor|borderInlineStartStyle|borderInlineStartWidth|borderLeft|borderLeftColor|borderLeftStyle|borderLeftWidth|borderLength|borderRadius|borderRight|borderRightColor|borderRightStyle|borderRightWidth|borderSpacing|borderStartEndRadius|borderStartStartRadius|borderStyle|borderTop|borderTopColor|borderTopLeftRadius|borderTopRightRadius|borderTopStyle|borderTopWidth|borderWidth|bottom|bottom-color|bottom-left-radius|bottom-right-radius|bottom-style|bottom-width|bottomColor|bottomLeftRadius|bottomRightRadius|bottomStyle|bottomWidth|box|box-align|box-decoration-break|box-direction|box-flex|box-flex-group|box-lines|box-ordinal-group|box-orient|box-pack|box-shadow|box-sizing|boxAlign|boxDecorationBreak|boxDirection|boxFlex|boxFlexGroup|boxLines|boxOrdinalGroup|boxOrient|boxPack|boxShadow|boxSizing|break|break-after|break-before|break-inside|breakAfter|breakBefore|breakInside|caption-side|captionSide|caret-color|caretColor|character|clear|clip|clip-path|clip-rule|clipPath|clipRule|collapse|color|color-adjust|color-interpolation|color-interpolation-filters|color-profile|color-rendering|colorAdjust|colorInterpolation|colorInterpolationFilters|colorProfile|colorRendering|column|column-break-after|column-break-before|column-count|column-fill|column-gap|column-rule|column-rule-color|column-rule-style|column-rule-width|column-span|column-width|columnBreakAfter|columnBreakBefore|columnCount|columnFill|columnGap|columnRule|columnRuleColor|columnRuleStyle|columnRuleWidth|columns|columnSpan|columnWidth|contain|content|count|counter|counter-increment|counter-reset|counterIncrement|counterReset|crop|cue|cue-after|cue-before|cueAfter|cueBefore|cursor|cx|cy|decoration|decoration-break|decorationBreak|delay|direction|display|display-model|display-role|displayModel|displayRole|dominant-baseline|dominantBaseline|down|drop|drop-initial-after-adjust|drop-initial-after-align|drop-initial-before-adjust|drop-initial-before-align|drop-initial-size|drop-initial-value|dropInitialAfterAdjust|dropInitialAfterAlign|dropInitialBeforeAdjust|dropInitialBeforeAlign|dropInitialSize|dropInitialValue|duration|elevation|emphasis|empty-cells|emptyCells|enable-background|enableBackground|fallback|family|fill|fill-opacity|fill-rule|fillOpacity|fillRule|filter|fit|fit-position|fitPosition|flex|flex-basis|flex-direction|flex-flow|flex-group|flex-grow|flex-shrink|flex-wrap|flexBasis|flexDirection|flexFlow|flexGroup|flexGrow|flexShrink|flexWrap|float|float-offset|floatOffset|flood-color|flood-opacity|floodColor|floodOpacity|font|font-display|font-family|font-feature-settings|font-kerning|font-language-override|font-optical-sizing|font-size|font-size-adjust|font-stretch|font-style|font-synthesis|font-variant|font-variant-alternates|font-variant-caps|font-variant-east-asian|font-variant-ligatures|font-variant-numeric|font-variant-position|font-variation-settings|font-weight|fontDisplay|fontFamily|fontFeatureSettings|fontKerning|fontLanguageOverride|fontOpticalSizing|fontSize|fontSizeAdjust|fontStretch|fontStyle|fontSynthesis|fontVariant|fontVariantAlternates|fontVariantCaps|fontVariantEastAsian|fontVariantLigatures|fontVariantNumeric|fontVariantPosition|fontVariationSettings|fontWeight|gap|glyph-orientation-horizontal|glyph-orientation-vertical|glyphOrientationHorizontal|glyphOrientationVertical|grid|grid-area|grid-auto-columns|grid-auto-flow|grid-auto-rows|grid-column|grid-column-end|grid-column-gap|grid-column-start|grid-columns|grid-gap|grid-row|grid-row-end|grid-row-gap|grid-row-start|grid-rows|grid-template|grid-template-areas|grid-template-columns|grid-template-rows|gridArea|gridAutoColumns|gridAutoFlow|gridAutoRows|gridColumn|gridColumnEnd|gridColumnGap|gridColumns|gridColumnStart|gridGap|gridRow|gridRowEnd|gridRowGap|gridRows|gridRowStart|gridTemplate|gridTemplateAreas|gridTemplateColumns|gridTemplateRows|hanging-punctuation|hangingPunctuation|header|height|hyphenate|hyphenate-after|hyphenate-before|hyphenate-character|hyphenate-lines|hyphenate-resource|hyphenateAfter|hyphenateBefore|hyphenateCharacter|hyphenateLines|hyphenateResource|hyphens|icon|image|image-orientation|image-rendering|image-resolution|imageOrientation|imageRendering|imageResolution|ime-mode|imeMode|increment|indent|index|initial-after-adjust|initial-after-align|initial-before-adjust|initial-before-align|initial-letter|initial-letter-align|initial-size|initial-value|initialAfterAdjust|initialAfterAlign|initialBeforeAdjust|initialBeforeAlign|initialLetter|initialLetterAlign|initialSize|initialValue|inline-box-align|inline-size|inlineBoxAlign|inlineSize|inset|inset-block|inset-block-end|inset-block-start|inset-inline|inset-inline-end|inset-inline-start|insetBlock|insetBlockEnd|insetBlockStart|insetInline|insetInlineEnd|insetInlineStart|isolation|iteration-count|iterationCount|justify|justify-content|justify-items|justify-self|justifyContent|justifyItems|justifySelf|kerning|label|left|left-color|left-style|left-width|leftColor|leftStyle|leftWidth|length|letter-spacing|letterSpacing|level|lighting-color|lightingColor|line|line-break|line-clamp|line-height|line-stacking|line-stacking-ruby|line-stacking-shift|line-stacking-strategy|lineBreak|lineClamp|lineHeight|lines|lineStacking|lineStackingRuby|lineStackingShift|lineStackingStrategy|list|list-style|list-style-image|list-style-position|list-style-type|listStyle|listStyleImage|listStylePosition|listStyleType|margin|margin-block-end|margin-block-start|margin-bottom|margin-inline-end|margin-inline-start|margin-left|margin-right|margin-top|marginBlockEnd|marginBlockStart|marginBottom|marginInlineEnd|marginInlineStart|marginLeft|marginRight|marginTop|mark|mark-after|mark-before|markAfter|markBefore|marker-end|marker-mid|marker-start|markerEnd|markerMid|markerStart|marks|marquee|marquee-direction|marquee-play-count|marquee-speed|marquee-style|marqueeDirection|marqueePlayCount|marqueeSpeed|marqueeStyle|mask|mask-border|mask-border-mode|mask-border-outset|mask-border-repeat|mask-border-slice|mask-border-source|mask-border-width|mask-clip|mask-composite|mask-image|mask-mode|mask-origin|mask-position|mask-repeat|mask-size|mask-type|maskBorder|maskBorderMode|maskBorderOutset|maskBorderRepeat|maskBorderSlice|maskBorderSource|maskBorderWidth|maskClip|maskComposite|maskImage|maskMode|maskOrigin|maskPosition|maskRepeat|maskSize|maskType|max|max-block-size|max-height|max-inline-size|max-lines|max-width|max-zoom|maxBlockSize|maxHeight|maxInlineSize|maxLines|maxWidth|maxZoom|min|min-block-size|min-height|min-inline-size|min-width|min-zoom|minBlockSize|minHeight|minInlineSize|minWidth|minZoom|mix-blend-mode|mixBlendMode|model|move-to|moveTo|name|nav|nav-down|nav-index|nav-left|nav-right|nav-up|navDown|navIndex|navLeft|navRight|navUp|negative|new|numeral|object-fit|object-position|objectFit|objectPosition|offset|offset-anchor|offset-distance|offset-path|offset-position|offset-rotation|offsetAnchor|offsetDistance|offsetPath|offsetPosition|offsetRotation|opacity|order|ordinal-group|ordinalGroup|orient|orientation|origin|orphans|outline|outline-color|outline-offset|outline-style|outline-width|outlineColor|outlineOffset|outlineStyle|outlineWidth|overflow|overflow-[xy]|overflow-anchor|overflow-block|overflow-inline|overflow-style|overflow-wrap|overflow[XY]|overflowAnchor|overflowBlock|overflowInline|overflowStyle|overflowWrap|overhang|overscroll-behavior|overscroll-behavior-[xy]|overscroll-behavior-block|overscroll-behavior-inline|overscrollBehavior|overscrollBehavior[XY]|overscrollBehaviorBlock|overscrollBehaviorInline|pack|pad|padding|padding-block-end|padding-block-start|padding-bottom|padding-inline-end|padding-inline-start|padding-left|padding-right|padding-top|paddingBlockEnd|paddingBlockStart|paddingBottom|paddingInlineEnd|paddingInlineStart|paddingLeft|paddingRight|paddingTop|page|page-break-after|page-break-before|page-break-inside|page-policy|pageBreakAfter|pageBreakBefore|pageBreakInside|pagePolicy|paint-order|paintOrder|pause|pause-after|pause-before|pauseAfter|pauseBefore|perspective|perspective-origin|perspectiveOrigin|phonemes|pitch|pitch-range|pitchRange|place-content|place-items|place-self|placeContent|placeItems|placeSelf|play-count|play-during|play-state|playCount|playDuring|playState|point|pointer-events|pointerEvents|position|prefix|presentation|presentation-level|presentationLevel|profile|property|punctuation|punctuation-trim|punctuationTrim|quotes|r|radius|range|rate|rendering-intent|renderingIntent|repeat|replace|reset|resize|resolution|resource|respond-to|respondTo|rest|rest-after|rest-before|restAfter|restBefore|richness|right|right-color|right-style|right-width|rightColor|rightStyle|rightWidth|role|rotate|rotation|rotation-point|rotationPoint|row-gap|rowGap|rows|ruby|ruby-align|ruby-merge|ruby-overhang|ruby-position|ruby-span|rubyAlign|rubyMerge|rubyOverhang|rubyPosition|rubySpan|rule|rule-color|rule-style|rule-width|ruleColor|ruleStyle|ruleWidth|rx|ry|scale|scroll-behavior|scroll-margin|scroll-margin-block|scroll-margin-block-end|scroll-margin-block-start|scroll-margin-bottom|scroll-margin-inline|scroll-margin-inline-end|scroll-margin-inline-start|scroll-margin-left|scroll-margin-right|scroll-margin-top|scroll-padding|scroll-padding-block|scroll-padding-block-end|scroll-padding-block-start|scroll-padding-bottom|scroll-padding-inline|scroll-padding-inline-end|scroll-padding-inline-start|scroll-padding-left|scroll-padding-right|scroll-padding-top|scroll-snap-align|scroll-snap-coordinate|scroll-snap-destination|scroll-snap-stop|scroll-snap-type|scrollbar-color|scrollbar-gutter|scrollbar-width|scrollbarColor|scrollbarGutter|scrollbarWidth|scrollBehavior|scrollMargin|scrollMarginBlock|scrollMarginBlockEnd|scrollMarginBlockStart|scrollMarginBottom|scrollMarginInline|scrollMarginInlineEnd|scrollMarginInlineStart|scrollMarginLeft|scrollMarginRight|scrollMarginTop|scrollPadding|scrollPaddingBlock|scrollPaddingBlockEnd|scrollPaddingBlockStart|scrollPaddingBottom|scrollPaddingInline|scrollPaddingInlineEnd|scrollPaddingInlineStart|scrollPaddingLeft|scrollPaddingRight|scrollPaddingTop|scrollSnapAlign|scrollSnapCoordinate|scrollSnapDestination|scrollSnapStop|scrollSnapType|shadow|shape-image-threshold|shape-margin|shape-outside|shape-rendering|shapeImageThreshold|shapeMargin|shapeOutside|shapeRendering|size|size-adjust|sizeAdjust|sizing|space|space-collapse|spaceCollapse|spacing|span|speak|speak-as|speak-header|speak-numeral|speak-punctuation|speakAs|speakHeader|speakNumeral|speakPunctuation|speech|speech-rate|speechRate|speed|src|stacking|stacking-ruby|stacking-shift|stacking-strategy|stackingRuby|stackingShift|stackingStrategy|stop-color|stop-opacity|stopColor|stopOpacity|stress|stretch|string-set|stringSet|stroke|stroke-dasharray|stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|stroke-width|strokeDasharray|strokeDashoffset|strokeLinecap|strokeLinejoin|strokeMiterlimit|strokeOpacity|strokeWidth|style|style-image|style-position|style-type|styleImage|stylePosition|styleType|suffix|symbols|system|tab-size|table-layout|tableLayout|tabSize|target|target-name|target-new|target-position|targetName|targetNew|targetPosition|text|text-align|text-align-last|text-anchor|text-combine-upright|text-decoration|text-decoration-color|text-decoration-line|text-decoration-skip|text-decoration-skip-ink|text-decoration-style|text-emphasis|text-emphasis-color|text-emphasis-position|text-emphasis-style|text-height|text-indent|text-justify|text-orientation|text-outline|text-overflow|text-rendering|text-replace|text-shadow|text-size-adjust|text-transform|text-underline-position|text-wrap|textAlign|textAlignLast|textAnchor|textCombineUpright|textDecoration|textDecorationColor|textDecorationLine|textDecorationSkip|textDecorationSkipInk|textDecorationStyle|textEmphasis|textEmphasisColor|textEmphasisPosition|textEmphasisStyle|textHeight|textIndent|textJustify|textOrientation|textOutline|textOverflow|textRendering|textReplace|textShadow|textSizeAdjust|textTransform|textUnderlinePosition|textWrap|timing-function|timingFunction|top|top-color|top-left-radius|top-right-radius|top-style|top-width|topColor|topLeftRadius|topRightRadius|topStyle|topWidth|touch-action|touchAction|transform|transform-box|transform-origin|transform-style|transformBox|transformOrigin|transformStyle|transition|transition-delay|transition-duration|transition-property|transition-timing-function|transitionDelay|transitionDuration|transitionProperty|transitionTimingFunction|translate|trim|unicode|unicode-bidi|unicode-range|unicodeBidi|unicodeRange|up|user-select|user-zoom|userSelect|userZoom|variant|vertical-align|verticalAlign|visibility|voice|voice-balance|voice-duration|voice-family|voice-pitch|voice-pitch-range|voice-rate|voice-stress|voice-volume|voiceBalance|voiceDuration|voiceFamily|voicePitch|voicePitchRange|voiceRate|voiceStress|voiceVolume|volume|weight|white|white-space|white-space-collapse|whiteSpace|whiteSpaceCollapse|widows|width|will-change|willChange|word|word-break|word-spacing|word-wrap|wordBreak|wordSpacing|wordWrap|wrap|writing-mode|writingMode|x|y|z-index|zIndex|zoom )\b
     name: support.type.property-name.css.saga
 
   css-value-names:
     comment: TODO
     patterns:
-      - match: (?x)\b( aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|purple|red|silver|teal|white|yellow )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|purple|red|silver|teal|white|yellow )\b
         name: support.constant.color.w3c-standard-color-name.css.saga
-      - match: (?x)\b( aliceblue|antiquewhite|aquamarine|azure|beige|bisque|blanchedalmond|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|gainsboro|ghostwhite|gold|goldenrod|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|limegreen|linen|magenta|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|oldlace|olivedrab|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|rebeccapurple|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|thistle|tomato|transparent|turquoise|violet|wheat|whitesmoke|yellowgreen )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( aliceblue|antiquewhite|aquamarine|azure|beige|bisque|blanchedalmond|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|gainsboro|ghostwhite|gold|goldenrod|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|limegreen|linen|magenta|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|oldlace|olivedrab|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|rebeccapurple|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|thistle|tomato|transparent|turquoise|violet|wheat|whitesmoke|yellowgreen )\b
         name: support.constant.color.w3c-extended-color-name.css.saga
-      - match: (?x)\b( currentColor )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( currentColor )\b
         name: support.constant.color.current.css.saga
-      - match: (?x)\b( ActiveBorder|ActiveCaption|AppWorkspace|Background|ButtonFace|ButtonHighlight|ButtonShadow|ButtonText|CaptionText|GrayText|Highlight|HighlightText|InactiveBorder|InactiveCaption|InactiveCaptionText|InfoBackground|InfoText|Menu|MenuText|Scrollbar|ThreeDDarkShadow|ThreeDFace|ThreeDHighlight|ThreeDLightShadow|ThreeDShadow|Window|WindowFrame|WindowText )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( ActiveBorder|ActiveCaption|AppWorkspace|Background|ButtonFace|ButtonHighlight|ButtonShadow|ButtonText|CaptionText|GrayText|Highlight|HighlightText|InactiveBorder|InactiveCaption|InactiveCaptionText|InfoBackground|InfoText|Menu|MenuText|Scrollbar|ThreeDDarkShadow|ThreeDFace|ThreeDHighlight|ThreeDLightShadow|ThreeDShadow|Window|WindowFrame|WindowText )\b
         name: support.constant.color.system.css.saga
-      - match: (?x)\b( above|absolute|active|add|additive|after-edge|afterEdge|alias|all|all-petite-caps|all-scroll|all-small-caps|allPetiteCaps|allScroll|allSmallCaps|alpha|alphabetic|alternate|alternate-reverse|alternateReverse|always|antialiased|auto|auto-pos|autoPos|available|avoid|avoid-column|avoid-page|avoid-region|avoidColumn|avoidPage|avoidRegion|backwards|balance|baseline|before-edge|beforeEdge|below|bevel|bidi-override|bidiOverride|blink|block|block-axis|block-end|block-start|blockAxis|blockEnd|blockStart|bold|bolder|border|border-box|borderBox|both|bottom|bottom-outside|bottomOutside|break-all|break-word|breakAll|breakWord|bullets|butt|capitalize|caption|cell|center|central|char|circle|clip|clone|close-quote|closeQuote|closest-corner|closest-side|closestCorner|closestSide|col-resize|collapse|color|color-burn|color-dodge|colorBurn|colorDodge|colResize|column|column-reverse|columnReverse|common-ligatures|commonLigatures|compact|condensed|contain|content|content-box|contentBox|contents|context-menu|contextMenu|contextual|copy|cover|crisp-edges|crispEdges|crosshair|cyclic|darken|dashed|decimal|default|dense|diagonal-fractions|diagonalFractions|difference|digits|disabled|disc|discretionary-ligatures|discretionaryLigatures|distribute|distribute-all-lines|distribute-letter|distribute-space|distributeAllLines|distributeLetter|distributeSpace|dot|dotted|double|double-circle|doubleCircle|downleft|downright|e-resize|each-line|eachLine|ease|ease-in|ease-in-out|ease-out|easeIn|easeInOut|easeOut|economy|ellipse|ellipsis|embed|end|eResize|evenodd|ew-resize|ewResize|exact|exclude|exclusion|expanded|extends|extra-condensed|extra-expanded|extraCondensed|extraExpanded|fallback|farthest-corner|farthest-side|farthestCorner|farthestSide|fill|fill-available|fill-box|fillAvailable|fillBox|filled|fit-content|fitContent|fixed|flat|flex|flex-end|flex-start|flexEnd|flexStart|flip|flow-root|flowRoot|forwards|free|from-image|fromImage|full-width|fullWidth|geometricPrecision|georgian|grab|grabbing|grayscale|grid|groove|hand|hanging|hard-light|hardLight|help|hidden|hide|historical-forms|historical-ligatures|historicalForms|historicalLigatures|horizontal|horizontal-tb|horizontalTb|hue|icon|ideograph-alpha|ideograph-numeric|ideograph-parenthesis|ideograph-space|ideographAlpha|ideographic|ideographNumeric|ideographParenthesis|ideographSpace|inactive|infinite|inherit|initial|inline|inline-axis|inline-block|inline-end|inline-flex|inline-grid|inline-list-item|inline-start|inline-table|inlineAxis|inlineBlock|inlineEnd|inlineFlex|inlineGrid|inlineListItem|inlineStart|inlineTable|inset|inside|inter-character|inter-ideograph|inter-word|interCharacter|interIdeograph|intersect|interWord|invert|isolate|isolate-override|isolateOverride|italic|jis04|jis78|jis83|jis90|justify|justify-all|justifyAll|kannada|keep-all|keepAll|landscape|large|larger|left|lighten|lighter|line|line-edge|line-through|linear|linearRGB|lineEdge|lineThrough|lining-nums|liningNums|list-item|listItem|local|loose|lowercase|lr|lr-tb|lrTb|ltr|luminance|luminosity|main-size|mainSize|mandatory|manipulation|manual|margin-box|marginBox|match-parent|match-source|matchParent|matchSource|mathematical|max-content|maxContent|medium|menu|message-box|messageBox|middle|min-content|minContent|miter|mixed|move|multiply|n-resize|narrower|ne-resize|nearest-neighbor|nearestNeighbor|neResize|nesw-resize|neswResize|newspaper|no-change|no-clip|no-close-quote|no-common-ligatures|no-contextual|no-discretionary-ligatures|no-drop|no-historical-ligatures|no-open-quote|no-repeat|noChange|noClip|noCloseQuote|noCommonLigatures|noContextual|noDiscretionaryLigatures|noDrop|noHistoricalLigatures|none|nonzero|noOpenQuote|noRepeat|normal|not-allowed|notAllowed|nowrap|nResize|ns-resize|nsResize|numbers|numeric|nw-resize|nwResize|nwse-resize|nwseResize|oblique|oldstyle-nums|oldstyleNums|open|open-quote|openQuote|optimizeLegibility|optimizeQuality|optimizeSpeed|optional|ordinal|outset|outside|over|overlay|overline|padding|padding-box|paddingBox|page|painted|pan-down|pan-left|pan-right|pan-up|pan-x|pan-y|panDown|panLeft|panRight|panUp|panX|panY|paused|petite-caps|petiteCaps|pixelated|plaintext|pointer|portrait|pre|pre-line|pre-wrap|preLine|preserve-3d|preserve3d|preWrap|progress|progressive|proportional-nums|proportional-width|proportionalNums|proportionalWidth|proximity|radial|recto|region|relative|remove|repeat|repeat-[xy]|repeat[xy]|reset-size|resetSize|reverse|revert|ridge|right|rl|rl-tb|rlTb|round|row|row-resize|row-reverse|row-severse|rowResize|rowReverse|rowSeverse|rtl|ruby|ruby-base|ruby-base-container|ruby-text|ruby-text-container|rubyBase|rubyBaseContainer|rubyText|rubyTextContainer|run-in|runIn|running|s-resize|saturation|scale-down|scaleDown|screen|scroll|scroll-position|scrollPosition|se-resize|semi-condensed|semi-expanded|semiCondensed|semiExpanded|separate|seResize|sesame|show|sideways|sideways-left|sideways-lr|sideways-right|sideways-rl|sidewaysLeft|sidewaysLr|sidewaysRight|sidewaysRl|simplified|slashed-zero|slashedZero|slice|small|small-caps|small-caption|smallCaps|smallCaption|smaller|smooth|soft-light|softLight|solid|space|space-around|space-between|space-evenly|spaceAround|spaceBetween|spaceEvenly|spell-out|spellOut|square|sResize|sRGB|stacked-fractions|stackedFractions|start|static|status-bar|statusBar|step-end|step-start|stepEnd|stepStart|sticky|stretch|strict|stroke|stroke-box|strokeBox|structze|style|sub|subgrid|subpixel-antialiased|subpixelAntialiased|subtract|super|sw-resize|swap|swResize|symbolic|table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row|table-row-group|tableCaption|tableCell|tableColumn|tableColumnGroup|tableFooterGroup|tableHeaderGroup|tableRow|tableRowGroup|tabular-nums|tabularNums|tb|tb-rl|tbRl|text|text-after-edge|text-before-edge|text-bottom|text-top|textAfterEdge|textBeforeEdge|textBottom|textTop|thick|thin|titling-caps|titlingCaps|top|top-outside|topOutside|touch|traditional|transparent|triangle|ultra-condensed|ultra-expanded|ultraCondensed|ultraExpanded|under|underline|unicase|uniq|unset|upleft|uppercase|upright|use-glyph-orientation|use-script|useGlyphOrientation|useScript|verso|vertical|vertical-ideographic|vertical-lr|vertical-rl|vertical-text|verticalIdeographic|verticalLr|verticalRl|verticalText|view-box|viewBox|visible|visibleFill|visiblePainted|visibleStroke|w-resize|wait|wavy|weight|whitespace|wider|words|wrap|wrap-reverse|wrapReverse|wResize|x|x-large|x-small|xLarge|xSmall|xx-large|xx-small|xxLarge|xxSmall|y|zero|zoom-in|zoom-out|zoomIn|zoomOut )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( above|absolute|active|add|additive|after-edge|afterEdge|alias|all|all-petite-caps|all-scroll|all-small-caps|allPetiteCaps|allScroll|allSmallCaps|alpha|alphabetic|alternate|alternate-reverse|alternateReverse|always|antialiased|auto|auto-pos|autoPos|available|avoid|avoid-column|avoid-page|avoid-region|avoidColumn|avoidPage|avoidRegion|backwards|balance|baseline|before-edge|beforeEdge|below|bevel|bidi-override|bidiOverride|blink|block|block-axis|block-end|block-start|blockAxis|blockEnd|blockStart|bold|bolder|border|border-box|borderBox|both|bottom|bottom-outside|bottomOutside|break-all|break-word|breakAll|breakWord|bullets|butt|capitalize|caption|cell|center|central|char|circle|clip|clone|close-quote|closeQuote|closest-corner|closest-side|closestCorner|closestSide|col-resize|collapse|color|color-burn|color-dodge|colorBurn|colorDodge|colResize|column|column-reverse|columnReverse|common-ligatures|commonLigatures|compact|condensed|contain|content|content-box|contentBox|contents|context-menu|contextMenu|contextual|copy|cover|crisp-edges|crispEdges|crosshair|cyclic|darken|dashed|decimal|default|dense|diagonal-fractions|diagonalFractions|difference|digits|disabled|disc|discretionary-ligatures|discretionaryLigatures|distribute|distribute-all-lines|distribute-letter|distribute-space|distributeAllLines|distributeLetter|distributeSpace|dot|dotted|double|double-circle|doubleCircle|downleft|downright|e-resize|each-line|eachLine|ease|ease-in|ease-in-out|ease-out|easeIn|easeInOut|easeOut|economy|ellipse|ellipsis|embed|end|eResize|evenodd|ew-resize|ewResize|exact|exclude|exclusion|expanded|extends|extra-condensed|extra-expanded|extraCondensed|extraExpanded|fallback|farthest-corner|farthest-side|farthestCorner|farthestSide|fill|fill-available|fill-box|fillAvailable|fillBox|filled|fit-content|fitContent|fixed|flat|flex|flex-end|flex-start|flexEnd|flexStart|flip|flow-root|flowRoot|forwards|free|from-image|fromImage|full-width|fullWidth|geometricPrecision|georgian|grab|grabbing|grayscale|grid|groove|hand|hanging|hard-light|hardLight|help|hidden|hide|historical-forms|historical-ligatures|historicalForms|historicalLigatures|horizontal|horizontal-tb|horizontalTb|hue|icon|ideograph-alpha|ideograph-numeric|ideograph-parenthesis|ideograph-space|ideographAlpha|ideographic|ideographNumeric|ideographParenthesis|ideographSpace|inactive|infinite|inherit|initial|inline|inline-axis|inline-block|inline-end|inline-flex|inline-grid|inline-list-item|inline-start|inline-table|inlineAxis|inlineBlock|inlineEnd|inlineFlex|inlineGrid|inlineListItem|inlineStart|inlineTable|inset|inside|inter-character|inter-ideograph|inter-word|interCharacter|interIdeograph|intersect|interWord|invert|isolate|isolate-override|isolateOverride|italic|jis04|jis78|jis83|jis90|justify|justify-all|justifyAll|kannada|keep-all|keepAll|landscape|large|larger|left|lighten|lighter|line|line-edge|line-through|linear|linearRGB|lineEdge|lineThrough|lining-nums|liningNums|list-item|listItem|local|loose|lowercase|lr|lr-tb|lrTb|ltr|luminance|luminosity|main-size|mainSize|mandatory|manipulation|manual|margin-box|marginBox|match-parent|match-source|matchParent|matchSource|mathematical|max-content|maxContent|medium|menu|message-box|messageBox|middle|min-content|minContent|miter|mixed|move|multiply|n-resize|narrower|ne-resize|nearest-neighbor|nearestNeighbor|neResize|nesw-resize|neswResize|newspaper|no-change|no-clip|no-close-quote|no-common-ligatures|no-contextual|no-discretionary-ligatures|no-drop|no-historical-ligatures|no-open-quote|no-repeat|noChange|noClip|noCloseQuote|noCommonLigatures|noContextual|noDiscretionaryLigatures|noDrop|noHistoricalLigatures|none|nonzero|noOpenQuote|noRepeat|normal|not-allowed|notAllowed|nowrap|nResize|ns-resize|nsResize|numbers|numeric|nw-resize|nwResize|nwse-resize|nwseResize|oblique|oldstyle-nums|oldstyleNums|open|open-quote|openQuote|optimizeLegibility|optimizeQuality|optimizeSpeed|optional|ordinal|outset|outside|over|overlay|overline|padding|padding-box|paddingBox|page|painted|pan-down|pan-left|pan-right|pan-up|pan-x|pan-y|panDown|panLeft|panRight|panUp|panX|panY|paused|petite-caps|petiteCaps|pixelated|plaintext|pointer|portrait|pre|pre-line|pre-wrap|preLine|preserve-3d|preserve3d|preWrap|progress|progressive|proportional-nums|proportional-width|proportionalNums|proportionalWidth|proximity|radial|recto|region|relative|remove|repeat|repeat-[xy]|repeat[xy]|reset-size|resetSize|reverse|revert|ridge|right|rl|rl-tb|rlTb|round|row|row-resize|row-reverse|row-severse|rowResize|rowReverse|rowSeverse|rtl|ruby|ruby-base|ruby-base-container|ruby-text|ruby-text-container|rubyBase|rubyBaseContainer|rubyText|rubyTextContainer|run-in|runIn|running|s-resize|saturation|scale-down|scaleDown|screen|scroll|scroll-position|scrollPosition|se-resize|semi-condensed|semi-expanded|semiCondensed|semiExpanded|separate|seResize|sesame|show|sideways|sideways-left|sideways-lr|sideways-right|sideways-rl|sidewaysLeft|sidewaysLr|sidewaysRight|sidewaysRl|simplified|slashed-zero|slashedZero|slice|small|small-caps|small-caption|smallCaps|smallCaption|smaller|smooth|soft-light|softLight|solid|space|space-around|space-between|space-evenly|spaceAround|spaceBetween|spaceEvenly|spell-out|spellOut|square|sResize|sRGB|stacked-fractions|stackedFractions|start|static|status-bar|statusBar|step-end|step-start|stepEnd|stepStart|sticky|stretch|strict|stroke|stroke-box|strokeBox|structze|style|sub|subgrid|subpixel-antialiased|subpixelAntialiased|subtract|super|sw-resize|swap|swResize|symbolic|table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row|table-row-group|tableCaption|tableCell|tableColumn|tableColumnGroup|tableFooterGroup|tableHeaderGroup|tableRow|tableRowGroup|tabular-nums|tabularNums|tb|tb-rl|tbRl|text|text-after-edge|text-before-edge|text-bottom|text-top|textAfterEdge|textBeforeEdge|textBottom|textTop|thick|thin|titling-caps|titlingCaps|top|top-outside|topOutside|touch|traditional|transparent|triangle|ultra-condensed|ultra-expanded|ultraCondensed|ultraExpanded|under|underline|unicase|uniq|unset|upleft|uppercase|upright|use-glyph-orientation|use-script|useGlyphOrientation|useScript|verso|vertical|vertical-ideographic|vertical-lr|vertical-rl|vertical-text|verticalIdeographic|verticalLr|verticalRl|verticalText|view-box|viewBox|visible|visibleFill|visiblePainted|visibleStroke|w-resize|wait|wavy|weight|whitespace|wider|words|wrap|wrap-reverse|wrapReverse|wResize|x|x-large|x-small|xLarge|xSmall|xx-large|xx-small|xxLarge|xxSmall|y|zero|zoom-in|zoom-out|zoomIn|zoomOut )\b
         name: support.constant.property-value.css.saga
-      - match: (?x)\b( arabic-indic|arabicIndic|armenian|bengali|cambodian|circle|cjk-decimal|cjk-earthly-branch|cjk-heavenly-stem|cjk-ideographic|cjkDecimal|cjkEarthlyBranch|cjkHeavenlyStem|cjkIdeographic|decimal|decimal-leading-zero|decimalLeadingZero|devanagari|disc|disclosure-closed|disclosure-open|disclosureClosed|disclosureOpen|ethiopic-halehame-am|ethiopic-halehame-ti-e[rt]|ethiopic-numeric|ethiopicHalehameAm|ethiopicHalehameTiE[rt]|ethiopicNumeric|georgian|gujarati|gurmukhi|hangul|hangul-consonant|hangulConsonant|hebrew|hiragana|hiragana-iroha|hiraganaIroha|japanese-formal|japanese-informal|japaneseFormal|japaneseInformal|kannada|katakana|katakana-iroha|katakanaIroha|khmer|korean-hangul-formal|korean-hanja-formal|korean-hanja-informal|koreanHangulFormal|koreanHanjaFormal|koreanHanjaInformal|lao|lower-alpha|lower-armenian|lower-greek|lower-latin|lower-roman|lowerAlpha|lowerArmenian|lowerGreek|lowerLatin|lowerRoman|malayalam|mongolian|myanmar|oriya|persian|simp-chinese-formal|simp-chinese-informal|simpChineseFormal|simpChineseInformal|square|tamil|telugu|thai|tibetan|trad-chinese-formal|trad-chinese-informal|tradChineseFormal|tradChineseInformal|upper-alpha|upper-armenian|upper-latin|upper-roman|upperAlpha|upperArmenian|upperLatin|upperRoman|urdu )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( arabic-indic|arabicIndic|armenian|bengali|cambodian|circle|cjk-decimal|cjk-earthly-branch|cjk-heavenly-stem|cjk-ideographic|cjkDecimal|cjkEarthlyBranch|cjkHeavenlyStem|cjkIdeographic|decimal|decimal-leading-zero|decimalLeadingZero|devanagari|disc|disclosure-closed|disclosure-open|disclosureClosed|disclosureOpen|ethiopic-halehame-am|ethiopic-halehame-ti-e[rt]|ethiopic-numeric|ethiopicHalehameAm|ethiopicHalehameTiE[rt]|ethiopicNumeric|georgian|gujarati|gurmukhi|hangul|hangul-consonant|hangulConsonant|hebrew|hiragana|hiragana-iroha|hiraganaIroha|japanese-formal|japanese-informal|japaneseFormal|japaneseInformal|kannada|katakana|katakana-iroha|katakanaIroha|khmer|korean-hangul-formal|korean-hanja-formal|korean-hanja-informal|koreanHangulFormal|koreanHanjaFormal|koreanHanjaInformal|lao|lower-alpha|lower-armenian|lower-greek|lower-latin|lower-roman|lowerAlpha|lowerArmenian|lowerGreek|lowerLatin|lowerRoman|malayalam|mongolian|myanmar|oriya|persian|simp-chinese-formal|simp-chinese-informal|simpChineseFormal|simpChineseInformal|square|tamil|telugu|thai|tibetan|trad-chinese-formal|trad-chinese-informal|tradChineseFormal|tradChineseInformal|upper-alpha|upper-armenian|upper-latin|upper-roman|upperAlpha|upperArmenian|upperLatin|upperRoman|urdu )\b
         name: support.constant.property-value.list-style-type.css.saga
-      - match: (?x)\b( arial|century|comic|courier|garamond|georgia|helvetica|impact|lucida|monospace|sans-serif|sansSerif|serif|symbol|system|system-ui|systemUi|tahoma|times|trebuchet|ui-monospace|ui-rounded|ui-sans-serif|ui-serif|uiMonospace|uiRounded|uiSansSerif|uiSerif|utopia|verdana|webdings )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( arial|century|comic|courier|garamond|georgia|helvetica|impact|lucida|monospace|sans-serif|sansSerif|serif|symbol|system|system-ui|systemUi|tahoma|times|trebuchet|ui-monospace|ui-rounded|ui-sans-serif|ui-serif|uiMonospace|uiRounded|uiSansSerif|uiSerif|utopia|verdana|webdings )\b
         name: support.constant.font-name.css.saga
 
   html-tag-names:
     patterns:
-      - match: (?x)\b( all|print|screen|speech|aural|braille|embossed|handheld|projection|tty|tv )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( all|print|screen|speech|aural|braille|embossed|handheld|projection|tty|tv )\b
         name: support.constant.media.css.saga
-      - match: (?x)\b( a|abbr|acronym|address|altGlyph|altGlyphDef|altGlyphItem|animate|animateColor|animateMotion|animateTransform|annotation|annotationXml|applet|area|article|aside|audio|b|base|basefont|bdi|bdo|bgsound|big|blink|blockquote|body|br|button|canvas|caption|center|circle|cite|clipPath|code|col|colgroup|colorProfile|command|content|cursor|data|datalist|dd|defs|del|desc|details|dfn|dialog|dir|discard|div|dl|dt|element|ellipse|em|embed|feBlend|feColorMatrix|feComponentTransfer|feComposite|feConvolveMatrix|feDiffuseLighting|feDisplacementMap|feDistantLight|feDropShadow|feFlood|feFuncA|feFuncB|feFuncG|feFuncR|feGaussianBlur|feImage|feMerge|feMergeNode|feMorphology|feOffset|fePointLight|feSpecularLighting|feSpotLight|feTile|feTurbulence|fieldset|figcaption|figure|filter|font|fontFace|fontFaceFormat|fontFaceName|fontFaceSrc|fontFaceUri|footer|foreignObject|form|frame|frameset|g|glyph|glyphRef|hatch|hatchpath|hd|head|header|hgroup|hkern|hr|html|h[1-6]|i|iframe|image|img|input|ins|isindex|kbd|keygen|label|legend|li|line|linearGradient|link|listing|maction|main|maligngroup|malignmark|map|mark|marker|marquee|mask|math|menclose|menu|menuitem|merror|mesh|meshgradient|meshpatch|meshrow|meta|metadata|meter|mfenced|mfrac|mglyph|mi|missingGlyph|mlabeledtr|mlongdiv|mmultiscripts|mn|mo|mover|mpadded|mpath|mphantom|mroot|mrow|ms|mscarries|mscarry|msgroup|msline|mspace|msqrt|msrow|mstack|mstyle|msub|msubsup|msup|mtable|mtd|mtext|mtr|multicol|munder|munderover|nav|nextid|nobr|noembed|noframes|noscript|object|ol|optgroup|option|output|p|param|path|pattern|picture|plaintext|polygon|polyline|pre|progress|q|radialGradient|rb|rect|rp|rt|rtc|ruby|s|samp|script|section|select|semantics|set|shadow|slot|small|solidcolor|source|spacer|span|stop|strike|strong|style|sub|summary|sup|svg|switch|symbol|table|tbody|td|template|text|textarea|textPath|tfoot|th|thead|time|title|tr|track|tref|tspan|tt|u|ul|use|var|video|view|vkern|wbr|xmp )(?!\B|\p{Pd}+\b)
+      - match: (?x)\b( a|abbr|acronym|address|altGlyph|altGlyphDef|altGlyphItem|animate|animateColor|animateMotion|animateTransform|annotation|annotationXml|applet|area|article|aside|audio|b|base|basefont|bdi|bdo|bgsound|big|blink|blockquote|body|br|button|canvas|caption|center|circle|cite|clipPath|code|col|colgroup|colorProfile|command|content|cursor|data|datalist|dd|defs|del|desc|details|dfn|dialog|dir|discard|div|dl|dt|element|ellipse|em|embed|feBlend|feColorMatrix|feComponentTransfer|feComposite|feConvolveMatrix|feDiffuseLighting|feDisplacementMap|feDistantLight|feDropShadow|feFlood|feFuncA|feFuncB|feFuncG|feFuncR|feGaussianBlur|feImage|feMerge|feMergeNode|feMorphology|feOffset|fePointLight|feSpecularLighting|feSpotLight|feTile|feTurbulence|fieldset|figcaption|figure|filter|font|fontFace|fontFaceFormat|fontFaceName|fontFaceSrc|fontFaceUri|footer|foreignObject|form|frame|frameset|g|glyph|glyphRef|hatch|hatchpath|hd|head|header|hgroup|hkern|hr|html|h[1-6]|i|iframe|image|img|input|ins|isindex|kbd|keygen|label|legend|li|line|linearGradient|link|listing|maction|main|maligngroup|malignmark|map|mark|marker|marquee|mask|math|menclose|menu|menuitem|merror|mesh|meshgradient|meshpatch|meshrow|meta|metadata|meter|mfenced|mfrac|mglyph|mi|missingGlyph|mlabeledtr|mlongdiv|mmultiscripts|mn|mo|mover|mpadded|mpath|mphantom|mroot|mrow|ms|mscarries|mscarry|msgroup|msline|mspace|msqrt|msrow|mstack|mstyle|msub|msubsup|msup|mtable|mtd|mtext|mtr|multicol|munder|munderover|nav|nextid|nobr|noembed|noframes|noscript|object|ol|optgroup|option|output|p|param|path|pattern|picture|plaintext|polygon|polyline|pre|progress|q|radialGradient|rb|rect|rp|rt|rtc|ruby|s|samp|script|section|select|semantics|set|shadow|slot|small|solidcolor|source|spacer|span|stop|strike|strong|style|sub|summary|sup|svg|switch|symbol|table|tbody|td|template|text|textarea|textPath|tfoot|th|thead|time|title|tr|track|tref|tspan|tt|u|ul|use|var|video|view|vkern|wbr|xmp )\b
         name: entity.name.tag.css.saga
 
   entities:
@@ -6170,7 +6171,7 @@ repository:
               number|int(eger)?|float|decimal|natural
               |rational|imaginary|complex
             )
-          )(?!\B|\p{Pd}+\b)
+          )\b
         name: support.type.builtin.primitive.saga
       - comment: Data query classes
         match: |
@@ -6182,7 +6183,7 @@ repository:
             |array|tuple|set|map|object|sequence|record|dictionary
             |process|range|stack|heap|queue|tree|trie|graph
             |future|stream|regexp|function|buffer|frozense[tq]
-          )(?!\B|\p{Pd}+\b)
+          )\b
         name: support.type.builtin.saga
       - comment: Constant/algebraic classes
         match: |
@@ -6192,29 +6193,29 @@ repository:
             # lower flat case
             |true|false|null|void|nan|infinity|empty|unit|obj
             |any|mixed|just|some|none|never|(im)?pure|const|undefined
-          )(?!\B|\p{Pd}+\b)
+          )\b
         name: support.type.primitive.saga
       - comment: Error classes | BaseError, etc
-        match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)?(Error|Exception)(?!\B|\p{Pd}+\b)
+        match: \s*\b((\p{Lu}[\w&&\P{Lu}]*)+)?(Error|Exception)\b
         name: support.class.error.saga
       - comment: Interface classes | IEnumerable, etc
-        match: \s*\bI((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)(?!\B|\p{Pd}+\b)
+        match: \s*\bI((\p{Lu}[\w&&\P{Lu}]*)+)\b
         name: entity.name.interface.saga
       - comment: Namespace classes | NSString, etc
-        match: \s*\bNS((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)(?!\B|\p{Pd}+\b)
+        match: \s*\bNS((\p{Lu}[\w&&\P{Lu}]*)+)\b
         name: entity.name.namespace.saga
       - comment: Trait classes | Serializable, Loggable etc
-        match: \s*\b((\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+)able(?!\B|\p{Pd}+\b)
+        match: \s*\b((\p{Lu}[\w&&\P{Lu}]*)+)able\b
         name: support.class.trait.saga
 
   support-functions:
     comment: Names for built-in functions (initial dump)
     patterns:
       - comment: predicate functions
-        match: \s*\bis(\p{Lu}[\w\p{Pd}&&\P{Lu}]*)+(?!\B|\p{Pd}+\b)\s*
+        match: \s*\bis(\p{Lu}[\w&&\P{Lu}]*)+\b\s*
         name: support.function.predicate.saga
       - comment: magic functions
-        match: \s*\b\p{Pc}+([\p{Pc}\p{L}][\w\p{Pd}]*)+\p{Pc}+(?!\B|\p{Pd}+\b)\s*
+        match: \s*\b\p{Pc}+([\p{Pc}\p{L}]\w*)+\p{Pc}+\b\s*
         name: support.function.magic.saga
 
   # Generated
