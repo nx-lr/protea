@@ -1,6 +1,6 @@
 name: Protea
-scopeName: source.rescript
-fileTypes: [protea, pta, res, resi]
+scopeName: source.spwn
+fileTypes: [protea, spwn]
 patterns: [include: '#core']
 
 informationForContributors: |
@@ -4273,6 +4273,7 @@ repository:
       1: { name: punctuation.definition.parameters.protea }
     patterns:
       - include: '#binding-pattern'
+      - include: $self
 
   modifier-keywords:
     match: |
@@ -5500,9 +5501,9 @@ repository:
   # Binding patterns
 
   object-key:
-    begin: (?<={\s*|,\s*|;\s*|^\s*)\s*
+    begin: (?<={|,|;|^)\s*
     end: \s*(?=,|;|}|$)|\s*(:)
-    name: meta.object-literal.key.protea
+    name: meta.object-key.protea
     endCaptures:
       1: { name: punctuation.separator.key-value.protea }
     patterns:
@@ -5510,21 +5511,19 @@ repository:
       - include: '#embedded-expression'
       - include: '#brackets'
       - include: '#illegal-identifier'
-      - match: ([^\w,;{}])*\b[\p{Pc}\p{L}]\w*\b([^\w,;{}])+
-        name: invalid.illegal.object.key.protea
-      - match: (?<={\s*|,\s*|;\s*|^\s*)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$|:)
+      - match: (?<={|,|;|^)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$|:)
         name: constant.other.object.key.protea
       - include: '#space'
       - include: '#comments'
       - include: '#line-continuation'
-      - include: '#illegal'
+      - include: $self
 
   object-value:
-    match: (?<={\s*|,\s*|;\s*|^\s*)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$)
+    match: (?<={|,|;|^)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$)
     name: variable.other.constant.protea
 
   object-argument:
-    match: (?<={\s*|,\s*|;\s*|^\s*)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$)
+    match: (?<={|,|;|^)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$)
     name: variable.parameter.named.protea
 
   as-keyword:
@@ -5589,7 +5588,7 @@ repository:
       - include: '#binding-pattern-array'
       - include: '#illegal-identifier'
       - applyEndPatternLast: true
-        begin: (\b[\p{Pc}\p{L}]\w*\b)
+        begin: (?<=[({\[,;]|^)\s*(\b[\p{Pc}\p{L}]\w*\b)
         end: (?=)|$
         captures:
           1: { name: variable.parameter.protea }
