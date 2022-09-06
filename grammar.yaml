@@ -68,6 +68,7 @@ changelog: |
     - :event and |pipe (both from Svelte)
     - %directive
     - &reference and *spread
+  - Fixed keys in literal objects not highlighting properly.
 
   Fixes:
 
@@ -185,6 +186,7 @@ define:
 repository:
   core:
     patterns:
+      - include: '#ignore-long-lines'
       - include: '#clauses'
       - include: '#declarations'
       - include: '#keywords'
@@ -234,7 +236,7 @@ repository:
     begin: (?<=\w+\b)\s*(?=\b\w+)
     end: (?=)|$
     patterns:
-      - match: \w+
+      - match: \s*\w+\s*
         name: invalid.illegal.identifier.protea
 
   # Types
@@ -5501,7 +5503,7 @@ repository:
   # Binding patterns
 
   object-key:
-    begin: (?<={|,|;|^)\s*
+    begin: (?<=^|{|;|,)\s*
     end: \s*(?=,|;|}|$)|\s*(:)
     name: meta.object-key.protea
     endCaptures:
@@ -5510,8 +5512,7 @@ repository:
       - include: '#literals'
       - include: '#embedded-expression'
       - include: '#brackets'
-      - include: '#illegal-identifier'
-      - match: (?<={|,|;|^)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$|:)
+      - match: (?<=^|{|;|,)\s*\b[\p{Pc}\p{L}]\w*\b\s*(?=,|;|}|:|$)
         name: constant.other.object.key.protea
       - include: '#space'
       - include: '#comments'
@@ -5519,11 +5520,11 @@ repository:
       - include: $self
 
   object-value:
-    match: (?<={|,|;|^)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$)
+    match: (?<=^|{|;|,)\s*\b[\p{Pc}\p{L}]\w*\b\s*(?=,|;|}|=['"`({\[\w\s]|$)
     name: variable.other.constant.protea
 
   object-argument:
-    match: (?<={|,|;|^)\s*(\b[\p{Pc}\p{L}]\w*\b)\s*(?=,|;|}|$)
+    match: (?<=^|{|;|,)\s*\b[\p{Pc}\p{L}]\w*\b\s*(?=,|;|}|=['"`({\[\w\s]|$)
     name: variable.parameter.named.protea
 
   as-keyword:
