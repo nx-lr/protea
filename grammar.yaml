@@ -1356,8 +1356,7 @@ repository:
 
   embedded-expression:
     patterns:
-      - &embedded-expression
-        comment: Interpolated expression
+      - comment: Interpolated expression
         begin: (\${)\s*
         end: \s*(})
         name: meta.embedded.expression.protea
@@ -1371,6 +1370,59 @@ repository:
         begin: |
           (?x)
           (\$) # beginning of identifier
+          # ignore all keywords
+          (?!
+            (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
+            (?: # keywords
+              in|of|as|is|new
+              |to|till|thru|by|delete
+              |unset|ref|and|or|xor|not
+              |var|val|let|const|function
+              |procedure|method|type|class
+              |interface|enum|module|struct
+              |protocol|iterator|macro|query
+              |object|contract|trait|style|script
+              |element|field|model|namespace
+              |go|defer|do|with|from|where
+              |if|unless|else|then|declare
+              |for|foreach|repeat|while|until
+              |try|throw|catch|finally|switch
+              |match|case|fallthru|default|goto
+              |break|continue|redo|retry
+              |return|yield|await|scope
+              |import|export|route
+              |debug|assert|check
+            )
+            \b
+          )
+          (?=[\p{Pc}\p{L}]) # next to a word
+        end: (?=)|$
+        captures:
+          1: {name: punctuation.definition.variable.protea}
+        patterns:
+          - include: "#constants"
+          - include: "#brackets"
+          - include: "#embedded-function-calls"
+          - include: "#variables"
+          - include: "#numbers"
+          - *qualified-name-separators
+
+  interpolated-code:
+    patterns:
+      - comment: Interpolated expression
+        begin: (\#{)\s*
+        end: \s*(})
+        name: meta.embedded.expression.protea
+        captures:
+          1: {name: punctuation.definition.variable.protea}
+        patterns:
+          - include: $self
+      - comment: Interpolated expression
+        applyEndPatternLast: true
+        name: meta.embedded.expression.protea
+        begin: |
+          (?x)
+          (\#) # beginning of identifier
           # ignore all keywords
           (?!
             (?<!(?:(?<!\.)\.|[?!:]:)=?)\b
@@ -2861,8 +2913,9 @@ repository:
     captures:
       1: {name: punctuation.definition.block.script.protea}
     patterns:
-      - *embedded-expression
+      - include: "#interpolated-code"
       - include: source.js
+      - include: $self
 
   style-block:
     begin: (\{)\s*
