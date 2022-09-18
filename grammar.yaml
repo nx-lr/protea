@@ -70,7 +70,9 @@ changelog: |
     - &reference and *spread
   - Fixed keys in literal objects
   - Fixed modifier keywords beside function literals
-  - Fixed default values in function arguments
+  - Fixed default values in function arguments, thus no longer requiring trailing
+    commas. Only exception now is the (infix/suffix) operator '|' and an unquoted
+    string ending in '|'.
 
   Fixes:
 
@@ -349,7 +351,7 @@ repository:
   type-signature:
     applyEndPatternLast: true
     name: meta.type.protea
-    begin: (?<=(?:[)}\]\w\s'"`]|\\.)\|?|^)(:)(?=$|[\w\s'"`({\[])
+    begin: (?<=(?:[)}\]\w\s'"`]|\\.)\|?|^\|?)(:)(?=$|[\w\s'"`({\[])
     end: (?=)|$
     beginCaptures:
       1: { name: punctuation.definition.annotation.protea }
