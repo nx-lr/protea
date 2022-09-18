@@ -75,6 +75,7 @@ changelog: |
   - Fixed default values in function arguments, thus no longer requiring trailing
     commas. Only exception now is the (infix/suffix) operator '|' and an unquoted
     string ending in '|'.
+  - Slightly changed attribute selectors to allow for regexp matches.
 
   Fixes:
 
@@ -1613,6 +1614,38 @@ repository:
 
   # Regular expressions
 
+  attribute-patterns:
+    patterns:
+      - applyEndPatternLast: true
+        comment: Pattern section
+        begin: (/>)\s*
+        end: \s*(</)(\p{L}*)
+        name: string.regexp.pattern.protea
+        captures:
+          1: {name: punctuation.definition.regexp.protea}
+          2: {name: keyword.other.flag.protea}
+        patterns:
+          - include: "#comments"
+          - include: "#regexp-patterns"
+          - comment: Replacement section
+            begin: (</>)\s*
+            end: \s*(?=</)
+            name: string.regexp.replace.protea
+            captures:
+              1: {name: punctuation.definition.regexp.protea}
+            patterns:
+              - include: "#back-references"
+              - include: "#string-content"
+      - comment: Pattern section
+        begin: (/)\s*
+        end: \s*(/)(\p{L}*)
+        name: string.regexp.pattern.protea
+        captures:
+          1: {name: punctuation.definition.regexp.protea}
+          2: {name: keyword.other.flag.protea}
+        patterns:
+          - include: "#regexp-patterns"
+
   regexps:
     applyEndPatternLast: true
     begin: |
@@ -1684,10 +1717,8 @@ repository:
         end: \s*(/)(\p{L}*)
         name: string.regexp.pattern.protea
         captures:
-          1:
-            name: punctuation.definition.regexp.protea
-          2:
-            name: keyword.other.flag.protea
+          1: {name: punctuation.definition.regexp.protea}
+          2: {name: keyword.other.flag.protea}
         patterns:
           - include: "#regexp-patterns"
 
@@ -2168,33 +2199,33 @@ repository:
           - include: "#regexp-character-set"
 
   attribute-selectors:
+    name: meta.attribute-selector.protea
     patterns:
-      - match: ","
-        name: punctuation.separator.sequence.protea
-      - include: "#comments"
-      - include: "#strings"
-      - match: (?xi)\b[is]\b\s*(?=[)}\]]|([&|^])\1)
-        name: storage.modifier.ignore-when.protea
-      - include: "#string-escapes"
       - match: "[:!=</>.^$%?*+|&~]?="
         name: keyword.operator.pattern.protea
       - match: \&\&|\|\||\^\^|\!
         name: keyword.operator.logical.protea
+      - match: ","
+        name: punctuation.separator.sequence.protea
       - match: \b(in|is)\b
         name: keyword.operator.expression.$1.protea
       - begin: \b([\p{Pc}\p{L}]\w*)\b([:!=</>.^$%?*+|&~]?=)
         beginCaptures:
           1: {name: entity.other.attribute-name.key.protea}
           2: {name: keyword.operator.pattern.protea}
-        end: (?=\&\&|\|\||\^\^|[\s,:;'"`({\[)}\]])
+        end: (?=\&\&|\|\||\^\^|[\s,:;'"`)}\]]|\\.)
         name: string.unquoted.attribute-name.protea
         patterns:
-          - include: "#style-property-values"
+          - include: "#regexp-patterns"
+      - match: (?xi)\b[is]\b\s*(?=[)}\]]|([&|^])\1)
+        name: storage.modifier.ignore-when.protea
+      - include: "#string-escapes"
       - comment: Attribute names
         match: \b([\p{Pc}\p{L}]\w*)\b
         captures:
           1: {name: entity.other.attribute-name.protea}
           2: {name: keyword.operator.pattern.protea}
+      - include: "#comments"
       - include: "#operators"
 
   # JSX and Markdown
@@ -2885,6 +2916,7 @@ repository:
       - include: "#style-list"
       - include: "#style-block"
       - include: "#literals"
+      - include: "#function-calls"
       - include: "#property-name"
       - include: "#hex-colors"
       - include: "#embedded-expression"
