@@ -68,8 +68,9 @@ changelog: |
     - :event and |pipe (both from Svelte)
     - %directive
     - &reference and *spread
-  - Fixed keys in literal objects not highlighting properly,
-    including function keys.
+  - Fixed keys in literal objects
+  - Fixed modifier keywords beside function literals
+  - Fixed default values in function arguments
 
   Fixes:
 
@@ -5043,7 +5044,7 @@ repository:
             )
             \b
           )
-        name: meta.object-literal.key.protea
+        name: meta.function.declaration.protea
         captures:
           1: { name: entity.name.method.protea }
           2: { name: keyword.operator.assignment.protea }
@@ -5085,7 +5086,7 @@ repository:
           \s*
           (\|)(?!\|)
         end: (?<!\|)(\|)(?!\|)
-        name: meta.object-literal.key.protea
+        name: meta.function.declaration.protea
         captures:
           1: { name: entity.name.method.protea }
           2: { name: keyword.operator.assignment.protea }
@@ -5141,7 +5142,7 @@ repository:
             )
             \b
           )
-        name: meta.object-literal.key.protea
+        name: meta.function.declaration.protea
         captures:
           1: { name: entity.name.protea }
           2: { name: keyword.operator.assignment.protea }
@@ -5183,7 +5184,7 @@ repository:
           \s*
           (\|)(?!\|)
         end: (?<!\|)(\|)(?!\|)
-        name: meta.object-literal.key.protea
+        name: meta.function.declaration.protea
         captures:
           1: { name: entity.name.protea }
           2: { name: keyword.operator.assignment.protea }
@@ -5579,7 +5580,7 @@ repository:
     captures:
       1: { name: keyword.operator.assignment.protea }
       2: { name: keyword.operator.assignment.protea }
-    end: (?=[,;|)}\]])
+    end: (?=\|(?:$|[^|])|[,;)}\]])
     patterns:
       - include: $self
 
