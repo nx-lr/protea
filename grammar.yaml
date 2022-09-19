@@ -1,6 +1,6 @@
 name: Protea
-scopeName: source.spwn
-fileTypes: [protea, spwn]
+scopeName: source.js
+fileTypes: [protea, js]
 patterns: [include: "#core"]
 
 informationForContributors: |
@@ -73,12 +73,27 @@ changelog: |
   - Fixed keys in literal objects
   - Fixed modifier keywords beside function literals
   - Fixed default values in function arguments, thus no longer requiring trailing
-    commas. Only exception now is the (infix/suffix) operator '|' and an unquoted
-    string ending in '|'.
+    commas. 'from' and 'where' statements, the string `\| and the operator | have to
+    be bracketed.
   - Slightly changed attribute selectors to allow for regexp matches.
 
   Fixes:
-
+  
+  - Match unquoted globs in routes
+  - Fix syntax for JavaScript ES5 module import and export statements
+  - Revamp Markdown syntax with these extensions:
+    - [ ] Citations
+    - [ ] Strike-through
+    - [ ] Deleted and inserted text
+    - [ ] Superscript
+    - [ ] Subscript
+    - [ ] Spans
+    - [ ] Selectors and anchors
+    - [ ] Code blocks
+    - [ ] Definition blocks
+    - [ ] Tables
+    - [ ] Headings and subheadings
+  - Rework inline "Markdown" syntax. Refer to Texy, Textile, AsciiDoc and cousins.
   - Plan and add Trinity's standard library, then integrate it into the grammar.
     This would all be done in a separate PR and once the grammar is completely
     finished.
@@ -102,20 +117,7 @@ changelog: |
     - [ ] Tuples
     - [ ] Function arguments
     - [ ] Variables
-  - Match unquoted globs in routes
-  - Fix syntax for JavaScript ES5 module import and export statements
-  - Revamp Markdown syntax with these extensions:
-    - [ ] Citations
-    - [ ] Strike-through
-    - [ ] Deleted and inserted text
-    - [ ] Superscript
-    - [ ] Subscript
-    - [ ] Spans
-    - [ ] Selectors and anchors
-    - [ ] Code blocks
-    - [ ] Definition blocks
-    - [ ] Tables
-    - [ ] Headings and subheadings
+  
 
 define:
   entity-name: &entity-name |
@@ -995,7 +997,7 @@ repository:
     patterns:
       - applyEndPatternLast: true
         name: constant.other.function.protea
-        begin: \\N([\p{Pc}\p{L}]\w*\b([:.][\p{Pc}\p{L}]\w*)*)\b(?=\{)
+        begin: \\j([\p{Pc}\p{L}]\w*\b([:.][\p{Pc}\p{L}]\w*)*)\b(?=\{)
         beginCaptures:
           1: {patterns: [include: "#function-namespace"]}
         end: (?=)|$
@@ -1006,11 +1008,11 @@ repository:
               1: {name: constant.other.function.protea}
             patterns:
               - include: "#named-characters"
-      - match: \\N([\p{Pc}\p{L}]\w*\b([:.][\p{Pc}\p{L}]\w*)*)\b([;,]|(?=\W))
+      - match: \\j([\p{Pc}\p{L}]\w*\b([:.][\p{Pc}\p{L}]\w*)*)\b([;,]|(?=\W))
         name: constant.character.escape.protea
         captures:
           1: {patterns: [include: "#character-namespace"]}
-      - begin: \\N{\s*
+      - begin: \\j{\s*
         end: \s*}
         name: constant.other.character-class.unicode.protea
         patterns:
@@ -4499,6 +4501,8 @@ repository:
         name: keyword.control.trycatch.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch|case|default)\b\s*
         name: keyword.control.switch.protea
+      - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)\b\s*
+        name: keyword.control.match.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(break|continue|redo|retry|return|await|scope|yield|goto|fallthru)\b\s*
         name: keyword.control.flow.protea
       - match: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(import|export|route)\b\s*
@@ -5122,7 +5126,7 @@ repository:
           \s*
 
           # Label
-          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          \b([\p{Pc}\p{L}]\w*)\b\s+
 
           # Assignment operator
           (:?=)\s+
@@ -5172,7 +5176,7 @@ repository:
           \s*
 
           # Label
-          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          \b([\p{Pc}\p{L}]\w*)\b\s+
 
           # Assignment operator
           (:?=)\s+
@@ -5220,7 +5224,7 @@ repository:
           \s*
 
           # Label
-          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          \b([\p{Pc}\p{L}]\w*)\b\s+
 
           # Assignment operator
           (:?=)\s+
@@ -5268,7 +5272,7 @@ repository:
           \s*
 
           # Label
-          (\b[\p{Pc}\p{L}][\p{Pd}\w]*\b)\s+
+          \b([\p{Pc}\p{L}]\w*)\b\s+
 
           # Assignment operator
           (:?=)\s+
@@ -5503,7 +5507,7 @@ repository:
 
       match-clause:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)\b\s*(?=\()
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(match)\b\s*(?=[({])
         end: (?=)|$
         name: meta.match.protea
         captures:
@@ -5527,7 +5531,7 @@ repository:
 
       switch-clause:
         applyEndPatternLast: true
-        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)\b\s*(?=\()
+        begin: \s*(?<!(?:(?<!\.)\.|[?!:]:)=?)\b(switch)\b\s*(?=[({])
         end: (?=)|$
         name: meta.switch.protea
         captures:
