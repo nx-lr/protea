@@ -5133,6 +5133,7 @@ repository:
           (
             (?:
               \s*
+              \b
               (?: # Modifier keywords
                 public|private|protected|final|readonly|override
                 |global|local|intern|extern|implicit|explicit
@@ -5147,6 +5148,7 @@ repository:
                 |recursive|operator|curried|opaque|transparent|inline
                 |prefix|infix|suffix|unary|left|right
               )
+              \b
               \s*
             )*
           )
@@ -5166,7 +5168,7 @@ repository:
         captures:
           1: {name: entity.name.method.protea}
           2: {name: keyword.operator.assignment.protea}
-          3: {patterns: [include: "#modifier-keywords"]}
+          3: {patterns: [include: "#modifiers"]}
       - begin: |
           (?x)
 
@@ -5183,6 +5185,7 @@ repository:
           (
             (?:
               \s*
+              \b
               (?: # Modifier keywords
                 public|private|protected|final|readonly|override
                 |global|local|intern|extern|implicit|explicit
@@ -5197,6 +5200,7 @@ repository:
                 |recursive|operator|curried|opaque|transparent|inline
                 |prefix|infix|suffix|unary|left|right
               )
+              \b
               \s*
             )*
           )
@@ -5208,7 +5212,7 @@ repository:
         captures:
           1: {name: entity.name.method.protea}
           2: {name: keyword.operator.assignment.protea}
-          3: {patterns: [include: "#modifier-keywords"]}
+          3: {patterns: [include: "#modifiers"]}
           4: {name: punctuation.separator.arguments.protea}
         endCaptures:
           1: {name: punctuation.separator.arguments.protea}
@@ -5231,6 +5235,7 @@ repository:
           (
             (?:
               \s*
+              \b
               (?: # Modifier keywords
                 public|private|protected|final|readonly|override
                 |global|local|intern|extern|implicit|explicit
@@ -5245,6 +5250,7 @@ repository:
                 |recursive|operator|curried|opaque|transparent|inline
                 |prefix|infix|suffix|unary|left|right
               )
+              \b
               \s*
             )*
           )
@@ -5264,7 +5270,7 @@ repository:
         captures:
           1: {name: entity.name.protea}
           2: {name: keyword.operator.assignment.protea}
-          3: {patterns: [include: "#modifier-keywords"]}
+          3: {patterns: [include: "#modifiers"]}
       - begin: |
           (?x)
 
@@ -5281,6 +5287,7 @@ repository:
           (
             (?:
               \s*
+              \b
               (?: # Modifier keywords
                 public|private|protected|final|readonly|override
                 |global|local|intern|extern|implicit|explicit
@@ -5295,6 +5302,7 @@ repository:
                 |recursive|operator|curried|opaque|transparent|inline
                 |prefix|infix|suffix|unary|left|right
               )
+              \b
               \s*
             )*
           )
@@ -5306,7 +5314,7 @@ repository:
         captures:
           1: {name: entity.name.protea}
           2: {name: keyword.operator.assignment.protea}
-          3: {patterns: [include: "#modifier-keywords"]}
+          3: {patterns: [include: "#modifiers"]}
           4: {name: punctuation.separator.arguments.protea}
         endCaptures:
           1: {name: punctuation.separator.arguments.protea}
@@ -5416,7 +5424,7 @@ repository:
               1: {name: keyword.other.typedef.protea}
             patterns:
               - include: "#types"
-              - match: \s*([?:]?=)\s*
+              - match: \s*([:!=</>.^$%?*+|&~]?=)\s*
                 captures:
                   1: {name: keyword.operator.assignment.protea}
 
@@ -5773,7 +5781,7 @@ repository:
         captures:
           1: {name: entity.name.protea}
           2: {name: punctuation.separator.key-value.protea}
-          3: {name: storage.modifier.protea}
+          3: {patterns: [include: "#modifiers"]}
       - begin: |
           (?x)
           (?<=^\s*|[{;,]\s*)
@@ -5817,7 +5825,7 @@ repository:
         beginCaptures:
           1: {name: entity.name.protea}
           2: {name: punctuation.separator.key-value.protea}
-          3: {name: storage.modifier.protea}
+          3: {patterns: [include: "#modifiers"]}
           4: {name: punctuation.separator.arguments.protea}
         endCaptures:
           1: {name: punctuation.separator.arguments.protea}
